@@ -82,7 +82,7 @@
                   ng-click="showSharePopover($event)">
           </button>
           <button class="button button-calm ink-dark"
-                  ng-if="formData.pubkey && !isUserPubkey(formData.pubkey)"
+                  ng-if="showTransfer"
                   ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.title})">
             {{'COMMON.BTN_SEND_MONEY' | translate}}
           </button>
@@ -99,11 +99,11 @@
           </button>
         </div>
 
-        <ion-item>
+        <div class="item">
           <h2 trust-as-html="formData.description"></h2>
-        </ion-item>
+        </div>
 
-        <ion-item ng-if="formData.category || formData.address">
+        <div class="item" ng-if="formData.category || formData.address">
           <h4 ng-if="formData.category">
             <span class="gray" translate>REGISTRY.VIEW.CATEGORY</span>
             <a class="positive" ng-if="formData.category" ui-sref="app.wot_lookup.tab_registry({category:formData.category.id})">
@@ -118,11 +118,11 @@
               <span ng-bind-html="formData.city"></span>
             </a>
           </h4>
-        </ion-item>
+        </div>
 
         <!-- Socials networks -->
         <ng-if ng-if="formData.socials && formData.socials.length>0">
-          <ion-item class="item-icon-left"
+          <div class="item item-icon-left"
                     type="no-padding item-text-wrap"
                     ng-repeat="social in formData.socials track by social.url"
                     id="social-{{social.url|formatSlug}}">
@@ -132,7 +132,7 @@
             <h2>
               <a ng-click="openLink($event, social.url, social.type)">{{social.url}}</a>
             </h2>
-          </ion-item>
+          </div>
         </ng-if>
 
         <!-- pubkey -->

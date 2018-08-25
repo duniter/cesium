@@ -33,7 +33,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
     })
 
     .state('app.wallet_pages', {
-      url: "/wallet/pages?refresh",
+      url: "/account/pages?refresh",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/view_wallet_pages.html",
@@ -42,7 +42,23 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
       },
       data: {
         login: true,
-        minData: true
+        minData: true,
+        silentLocationChange: true
+      }
+    })
+
+    .state('app.wallet_pages_by_id', {
+      url: "/wallets/:id/pages?refresh",
+      views: {
+        'menuContent': {
+          templateUrl: "plugins/es/templates/registry/view_wallet_pages.html",
+          controller: 'ESWalletPagesCtrl'
+        }
+      },
+      data: {
+        login: true,
+        minData: true,
+        silentLocationChange: true
       }
     })
 
@@ -68,7 +84,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
 
     .state('app.registry_add_record', {
       cache: false,
-      url: "/page/add/:type",
+      url: "/page/add/:type?wallet",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/edit_record.html",
@@ -83,7 +99,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
 
     .state('app.registry_edit_record', {
       cache: false,
-      url: "/page/edit/:id/:title",
+      url: "/page/edit/:id/:title?wallet",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/edit_record.html",
@@ -718,7 +734,7 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
 }
 
 
-function ESWalletPagesController($scope, $controller, $timeout, UIUtils, csWallet) {
+function ESWalletPagesController($scope, $controller, $timeout, UIUtils, esModals, csWallet) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -726,10 +742,19 @@ function ESWalletPagesController($scope, $controller, $timeout, UIUtils, csWalle
 
   $scope.searchTextId = undefined; // avoid focus
 
+  var wallet;
+
   // Override the default enter
   $scope.enter = function(e, state) {
     if (!$scope.entered) {
-      return csWallet.login({minData: true})
+
+      wallet = (state.stateParams && state.stateParams.id) ? csWallet.children.get(state.stateParams.id) : csWallet;
+      if (!wallet) {
+        UIUtils.alert.error('ERROR.UNKNOWN_WALLET_ID');
+        return $scope.showHome();
+      }
+
+      return wallet.login({minData: true})
         .then(function(walletData) {
           UIUtils.loading.hide();
           $scope.search.issuer = walletData.pubkey;
@@ -747,10 +772,16 @@ function ESWalletPagesController($scope, $controller, $timeout, UIUtils, csWalle
   };
 
   $scope.doUpdate = function() {
-    if (!csWallet.isLogin()) return;
+    if (!wallet || !wallet.isLogin()) return;
     $scope.search.issuer = csWallet.data.pubkey;
     $scope.search.advanced = true;
     return $scope.doSearch();
+  };
+
+  // Override inherited, to pass the select wallet
+  $scope.showNewPageModal = function() {
+    $scope.hidePopovers();
+    return esModals.showNewPage({wallet: wallet});
   };
 
 }
@@ -765,6 +796,7 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
   $scope.category = {};
   $scope.pictures = [];
   $scope.canEdit = false;
+  $scope.showTransfer = false;
   $scope.loading = true;
   $scope.motion = UIUtils.motion.fadeSlideIn;
 
@@ -799,7 +831,8 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
           $scope.id= data.id;
           $scope.formData = data.record;
           //console.debug('Loading record', $scope.formData);
-          $scope.canEdit = csWallet.isUserPubkey($scope.formData.issuer);
+          $scope.canEdit = csWallet.isUserPubkey($scope.formData.issuer) || csWallet.children.hasPubkey($scope.formData.issuer);
+          $scope.showTransfer = !$scope.canEdit && $scope.formData.pubkey;
           $scope.issuer = data.issuer;
           // avatar
           $scope.avatar = $scope.formData.avatar;
@@ -872,11 +905,16 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
   // Edit click
   $scope.edit = function() {
     UIUtils.loading.show();
-    $state.go('app.registry_edit_record', {id: $scope.id});
+    var wallet = csWallet.isUserPubkey($scope.formData.issuer) ? csWallet : csWallet.children.getByPubkey($scope.formData.issuer);
+    if (!wallet) return;
+    $state.go('app.registry_edit_record', {id: $scope.id, wallet: wallet.id});
   };
 
   $scope.delete = function() {
     $scope.hideActionsPopover();
+
+    var wallet = csWallet.isUserPubkey($scope.formData.issuer) ? csWallet : csWallet.children.getByPubkey($scope.formData.issuer);
+    if (!wallet) return;
 
     // translate
     var translations;
@@ -887,15 +925,21 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
     })
     .then(function(confirm) {
       if (confirm) {
-        esRegistry.record.remove($scope.id)
+        esRegistry.record.remove($scope.id, {wallet: wallet})
         .then(function () {
-          if (csWallet.data.pages && csWallet.data.pages.count) {
-            csWallet.data.pages.count--;
+          if (wallet.data.pages && wallet.data.pages.count) {
+            wallet.data.pages.count--;
           }
           $ionicHistory.nextViewOptions({
             historyRoot: true
           });
-          $state.go('app.wallet_pages', {refresh: true});
+          if (wallet.isDefault()) {
+            $state.go('app.wallet_pages', {refresh: true});
+          }
+          else {
+            $state.go('app.wallet_pages_by_id', {refresh: true, id: wallet.id});
+          }
+
           UIUtils.toast.show(translations['REGISTRY.INFO.RECORD_REMOVED']);
         })
         .catch(UIUtils.onError('REGISTRY.ERROR.REMOVE_RECORD_FAILED'));
@@ -976,26 +1020,37 @@ function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHis
     $scope.form = form;
   };
 
+  var wallet;
+
   $scope.$on('$ionicView.enter', function(e, state) {
-    $scope.loadWallet({minData: true})
-      .then(function(walletData) {
-        $scope.walletData = walletData;
-        if (state.stateParams && state.stateParams.id) { // Load by id
-          $scope.load(state.stateParams.id);
-        }
-        else {
-          if (state.stateParams && state.stateParams.type) {
-            $scope.updateView({
-              record: {
-                type: state.stateParams.type
-              }
-            });
+
+    if ($scope.loading) {
+      wallet = (state.stateParams && state.stateParams.wallet && state.stateParams.wallet != 'default') ? csWallet.children.get(state.stateParams.wallet) : csWallet;
+      if (!wallet) {
+        UIUtils.alert.error('ERROR.UNKNOWN_WALLET_ID');
+        return $scope.showHome();
+      }
+
+      return wallet.login({minData: true})
+        .then(function(walletData) {
+          $scope.walletData = walletData;
+          if (state.stateParams && state.stateParams.id) { // Load by id
+            $scope.load(state.stateParams.id);
           }
-        }
-        // removeIf(device)
-        $focus('registry-record-title');
-        // endRemoveIf(device)
-      });
+          else {
+            if (state.stateParams && state.stateParams.type) {
+              $scope.updateView({
+                record: {
+                  type: state.stateParams.type
+                }
+              });
+            }
+          }
+          // removeIf(device)
+          $focus('registry-record-title');
+          // endRemoveIf(device)
+        });
+    }
   });
 
   $scope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
@@ -1202,15 +1257,15 @@ function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHis
       .then(function(json){
         // Create
         if (!$scope.id) {
-          return esRegistry.record.add(json);
+          return esRegistry.record.add(json, {wallet: wallet});
         }
         // Update
-        return esRegistry.record.update(json, {id: $scope.id});
+        return esRegistry.record.update(json, {id: $scope.id, wallet: wallet});
       })
 
       .then(function(id) {
         console.info("[ES] [page] Record successfully saved.");
-        if (!$scope.id && csWallet.data.pages && csWallet.data.pages.count) {
+        if (!$scope.id && wallet.data.pages && wallet.data.pages.count) {
           csWallet.data.pages.count++;
         }
         $scope.id = $scope.id || id;

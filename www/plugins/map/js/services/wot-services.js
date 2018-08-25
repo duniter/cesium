@@ -10,6 +10,7 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
       DEFAULT_LOAD_SIZE: 1000
     },
     fields = {
+      min: ["title", "geoPoint"],
       profile: ["title", "geoPoint", "avatar._content_type", "address", "city"]
     };
 
@@ -43,8 +44,7 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
     // Filter on bounding box
     // see https://www.elastic.co/guide/en/elasticsearch/reference/2.4/geo-point.html
     if (options.bounds && options.bounds.northEast && options.bounds.southWest) {
-      query.bool.should = query.bool.should || {};
-      query.bool.should.geo_bounding_box = {
+      var boundingBox = {
         "geoPoint" : {
           "top_left" : {
             "lat" : Math.max(Math.min(options.bounds.northEast.lat, 90), -90),
@@ -56,6 +56,9 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
           }
         }
       };
+      console.debug("[map] [wot] Filtering on bounds: ", options.bounds);
+      query.bool.must = query.bool.must || [];
+      query.bool.must.push({geo_bounding_box:  boundingBox});
     }
     return query;
   }
@@ -67,7 +70,7 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
     options.searchAddress = esGeo.google.isEnable() && (angular.isDefined(options.searchAddress) ? options.searchAddress : true);
 
     options.fields = options.fields || {};
-    options.fields.description = angular.isDefined(options.fields.description) ? options.fields.description : true;
+    options.fields.description = angular.isDefined(options.fields.description) ? options.fields.description : false;
 
     var request = {
       query: createFilterQuery(options),

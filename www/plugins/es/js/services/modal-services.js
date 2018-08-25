@@ -38,8 +38,9 @@ angular.module('cesium.es.modal.services', ['cesium.modal.services', 'cesium.es.
       });
   }
 
-  function showNewPage() {
-    return csWallet.auth({minData: true})
+  function showNewPage(options) {
+    var wallet = options && options.wallet || csWallet;
+    return wallet.auth({minData: true})
       .then(function() {
         UIUtils.loading.hide();
 
@@ -48,7 +49,7 @@ angular.module('cesium.es.modal.services', ['cesium.modal.services', 'cesium.es.
         })
           .then(function(type){
             if (type) {
-              $state.go('app.registry_add_record', {type: type});
+              $state.go('app.registry_add_record', {type: type, wallet: wallet.id});
             }
           });
       });

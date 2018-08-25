@@ -13,6 +13,7 @@
   </ion-nav-buttons>
 
   <ion-content scroll="true"
+               class="padding no-padding-xs"
                bind-notifier="{ rebind:formData.useRelative, locale:settings.locale.id}">
 
     <ion-refresher pulling-text="{{:locale:'COMMON.BTN_REFRESH' | translate}}"
@@ -50,9 +51,9 @@
     </div>
 
     <ion-list ng-if="!loading" class="{{::motion.ionListClass}}">
-      <ng-repeat ng-repeat="wallet in wallets track by wallet.id"
-                 ng-include="'templates/wallet/list/item_wallet.html'">
-      </ng-repeat>
+      <ng-include ng-repeat="wallet in wallets track by wallet.id"
+                 src="'templates/wallet/list/item_wallet.html'">
+      </ng-include>
     </ion-list>
 
   </ion-content>

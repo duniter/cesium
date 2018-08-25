@@ -395,7 +395,7 @@
     "SHOW_SALT": "Afficher l'identifiant secret ?",
     "PASSWORD": "Mot de passe",
     "PASSWORD_HELP": "Mot de passe",
-    "PUBKEY_HELP": "Exemple : « AbsxSY4qoZRzyV2irfep1V9xw1EMNyKJw2TkuVD4N1mv »",
+    "PUBKEY_HELP": "Clé publique ou pseudonyme",
     "NO_ACCOUNT_QUESTION": "Vous n'avez pas encore de compte ?",
     "CREATE_ACCOUNT": "Créer un compte...",
     "FORGOTTEN_ID": "Mot de passe oublié ?",
@@ -729,6 +729,7 @@
     "ADD_SECONDARY_WALLET_FAILED": "Echec de l'ajout du portefeuille secondaire.",
     "UPDATE_WALLET_LIST_FAILED": "Echec du rafraichissement des portefeuilles secondaires.",
     "LOAD_WALLET_LIST_FAILED": "Echec du chargement des portefeuilles secondaires.",
+    "SAVE_WALLET_LIST_FAILED": "Echec de la sauvegarde des portefeuilles secondaires.",
     "COULD_NOT_ADD_MAIN_WALLET": "Le portefeuille à ajouter <b>doit être différent du compte principal</b> avec lequel vous êtes connecté.",
     "UNKNOWN_WALLET_ID": "Portefeuille secondaire inconnu."
   },

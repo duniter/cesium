@@ -268,7 +268,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
     // Load unread notifications count
     loadUnreadNotificationsCount(
         data.pubkey, {
-          readTime: csSettings.data.wallet ? csSettings.data.wallet.notificationReadTime : 0,
+          readTime: data.notifications && data.notifications.readTime || 0,
           excludeCodes: constants.EXCLUDED_CODES
         })
       .then(function(unreadCount) {

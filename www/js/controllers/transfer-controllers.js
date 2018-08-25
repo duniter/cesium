@@ -52,37 +52,12 @@ function TransferController($scope, $controller, UIUtils) {
 
   $scope.enter = function(e, state) {
 
-    // Compute parameters from state
-    var parameters = {};
+    // Apply state  parameters
     if (state && state.stateParams) {
-      if (state.stateParams.pubkey) {
-        parameters.pubkey = state.stateParams.pubkey;
-      }
-      if (state.stateParams.amount) {
-        parameters.useRelative = false;
-        parameters.amount = state.stateParams.amount;
-      }
-      else if (state.stateParams.udAmount) {
-        parameters.useRelative = true;
-        parameters.udAmount = state.stateParams.udAmount;
-      }
-      if (state.stateParams.comment) {
-        parameters.comment = state.stateParams.comment;
-      }
-      if (state.stateParams.restPub) {
-        parameters.restPub = state.stateParams.restPub;
-      }
-      if (state.stateParams.all) {
-        parameters.all = state.stateParams.all;
-        $scope.formData.all = state.stateParams.all;
-      }
-      if (state.stateParams.wallet) {
-        parameters.wallet = state.stateParams.wallet;
-      }
+      $scope.setParameters(state.stateParams);
     }
-    // Apply parameters
-    $scope.setParameters(parameters);
 
+    // Load wallet
     return $scope.load()
       .then(UIUtils.loading.hide);
   };
@@ -355,7 +330,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     });
   };
 
-  $scope.askTransferConfirm = function(confirmationMessage) {
+  $scope.askTransferConfirm = function() {
     return $translate(['COMMON.UD', 'COMMON.EMPTY_PARENTHESIS'])
       .then(function(translations) {
         var hasRest = $scope.formData.all  && $scope.formData.restAmount > 0;

@@ -2,10 +2,9 @@
 <ion-list class="{{::motion.ionListClass}}"
           ng-if="!search.loading && search.results">
 
-  <ion-item ng-repeat="item in search.results"
-            class="item item-border-large item-avatar item-icon-right ink"
-            ng-class="::{'item-icon-left': !smallscreen}"
-            ui-sref="app.view_page({id: item.id, title: item.urlTitle})">
+  <div class="item item-avatar item-icon-right item-border-large ink"
+       ng-repeat="item in search.results"
+       ui-sref="app.view_page({id: item.id, title: item.urlTitle})">
 
     <i ng-if="::!item.avatar" class="item-image icon cion-page-{{::item.type}}"></i>
     <i ng-if="::item.avatar" class="item-image avatar" style="background-image: url({{::item.avatar.src}})"></i>
@@ -30,5 +29,5 @@
       <span ng-if="!item.category">{{::'REGISTRY.TYPE.ENUM.'+item.type|uppercase|translate}}</span>
     </h4>
     <i class="icon ion-ios-arrow-right "></i>
-  </ion-item>
+  </div>
 </ion-list>

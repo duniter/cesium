@@ -18,7 +18,7 @@ angular.module('cesium.es.profile.controllers', ['cesium.es.services'])
       })
 
       .state('app.edit_profile_by_id', {
-        url: "/wallet/list/:id/profile/edit",
+        url: "/wallets/:id/profile/edit",
         views: {
           'menuContent': {
             templateUrl: "plugins/es/templates/user/edit_profile.html",

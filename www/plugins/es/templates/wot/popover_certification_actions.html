@@ -5,6 +5,14 @@
   <ion-content scroll="false">
     <div class="list item-text-wrap">
 
+      <!-- certify  -->
+      <a class="item item-icon-left ink"
+         ng-if="canCertify"
+         ng-click="certify()">
+        <i class="icon ion-ribbon-b" ></i>
+        {{'WOT.BTN_CERTIFY' | translate}}
+      </a>
+
       <!-- ask certification to current identities -->
       <a class="item item-icon-left ink"
          ng-if="!isUserPubkey(formData.pubkey) && formData.isMember"

@@ -50,9 +50,14 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
 ;
 
 
-function MapWotViewController($scope, $filter, $templateCache, $interpolate, $timeout, $location, $translate, $q,
+function MapWotViewController($scope, $filter, $templateCache, $interpolate, $timeout, $location, $translate, $q, $controller,
+                              ionicReady,
                               leafletData, UIUtils, csSettings, csWallet, MapUtils, mapWot) {
   'ngInject';
+
+  // Initialize the super classes and extend it.
+  angular.extend(this, $controller('WotIdentityAbstractCtrl', { $scope: $scope}));
+  angular.extend(this, $controller('ESWotIdentityViewCtrl', {$scope: $scope}));
 
   var
     // Create a  hidden layer, to hold search markers
@@ -107,6 +112,13 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
     loading: true
   }, $scope.mapId);
 
+  $scope.showDescription = !UIUtils.screen.isSmall();
+  ionicReady().then(function() {
+    $scope.showDescription = $scope.showDescription && ionic.Platform.grade.toLowerCase() === 'a';
+    if (!$scope.showDescription) {
+     console.debug("[map] [wot] Disable profile description.", ionic.Platform.grade);
+    }
+  });
 
   $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
     // Enable back button (workaround need for navigation outside tabs - https://stackoverflow.com/a/35064602)
@@ -116,6 +128,12 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
   $scope.enter = function(e, state) {
 
     if ($scope.loading) {
+
+      // $translate.get('')
+      //$ionicBackdrop.retain();
+      UIUtils.loading.show({
+        noBackdrop: true // avoid a too long release
+      });
       if (state.stateParams && state.stateParams.c) {
         var cPart = state.stateParams.c.split(':');
         $scope.map.center.lat = parseFloat(cPart[0]);
@@ -132,20 +150,19 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
       }, true);
 
       // Load the map (and init if need)
+      var now = new Date().getTime();
       $scope.loadMap()
+        .then($scope.load)
         .then(function() {
-          if (csWallet.isLogin()) {
-            $scope.showHelpTip();
-          }
-          return $scope.load();
+          console.debug("[map] [wot] Loaded in "+ (Date.now() - now) +"ms");
+
+          $scope.showHelpTip();
         });
     }
     else {
       // Make sure to have previous center coordinate defined in the location URL
       $scope.updateLocationHref();
-      if (csWallet.isLogin()) {
-        $scope.showHelpTip();
-      }
+      $scope.showHelpTip();
     }
   };
   $scope.$on('$ionicView.enter', $scope.enter);
@@ -265,6 +282,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
       //MapUtils.cache.bind($scope, $scope.mapId, $scope.map);
 
       $scope.map.loading = false;
+
       return map;
     });
   };
@@ -283,9 +301,16 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
 
     var options = {
       fields: {
-        description: !UIUtils.screen.isSmall()
+        description: ionic.Platform.grade.toLowerCase()==='a' &&
+        !UIUtils.screen.isSmall()
       }
     };
+
+    // add bounding box
+    if ($scope.map.bounds) {
+      options.bounds = angular.copy($scope.map.bounds);
+      delete options.bounds.options;
+    }
 
     // Load wot data, from service
     return mapWot.load(options)
@@ -314,9 +339,17 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
               lat: hit.geoPoint.lat,
               lng: hit.geoPoint.lon,
               getMessageScope: function () {
-                var scope = $scope.$new();
-                scope.hit = hit;
-                return scope;
+                $scope.loading = true;
+                $scope.$applyAsync(function() {
+                  $scope.formData = {
+                    pubkey: hit.pubkey,
+                    uid: hit.uid,
+                    name: hit.name,
+                    profile: hit
+                  };
+                  $scope.loading = false;
+                });
+                return $scope;
               },
               focus: false,
               message: hit.type ? pageMarkerTemplate : userMarkerTemplate,
@@ -344,10 +377,16 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
 
         $scope.map.markers = markers;
 
-        $scope.loading = false;
+        return $timeout(function(){
+          $scope.loading = false;
 
-        // hide loading indicator
-        map.fire('dataload');
+          console.log("dataload");
+
+          // hide loading indicator
+          map.fire('dataload');
+
+          UIUtils.loading.hide();
+        });
       })
       .catch(function(err) {
         $scope.map.markers = {};
@@ -367,20 +406,6 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
     // endRemoveIf(device)
   };
 
-  // removeIf(device)
-  // Update the browser location, to be able to refresh the page
-  // FIXME: not need, should be removed
-  $scope.$on("centerUrlHash", function(event, centerHash) {
-    if (!$scope.loading) {
-
-      return $timeout(function() {
-        $scope.updateLocationHref(centerHash);
-      }, 300);
-    }
-  });
-  // endRemoveIf(device)
-
-
   /* -- help tip -- */
 
   // Show help tour
@@ -390,6 +415,8 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
 
   // Show help tip
   $scope.showHelpTip = function(index, isTour) {
+    if (!isTour && !csWallet.isLogin()) return;
+
     index = angular.isDefined(index) ? index :
       (angular.isNumber(csSettings.data.helptip.mapwot) ? csSettings.data.helptip.mapwot : 0);
     isTour = angular.isDefined(isTour) ? isTour : false;

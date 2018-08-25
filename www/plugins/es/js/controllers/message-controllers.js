@@ -117,7 +117,7 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services'])
 
 ;
 
-function ESMessageAbstractListController($scope, $state, $translate, $ionicHistory, $ionicPopover, $timeout, $filter,
+function ESMessageAbstractListController($scope, $state, $translate, $ionicHistory, $ionicPopover, $timeout,
                                  csWallet, esModals, UIUtils, esMessage) {
   'ngInject';
 
@@ -451,45 +451,25 @@ function ESMessageOutboxListController($scope, $controller) {
   $scope.fabButtonNewMessageId = 'fab-add-message-record-outbox';
 }
 
-function ESMessageComposeController($scope, $controller, UIUtils) {
+function ESMessageComposeController($scope, $controller) {
   'ngInject';
 
   // Initialize the super class and extend it.
   angular.extend(this, $controller('ESMessageComposeModalCtrl', {$scope: $scope, parameters: {}}));
 
-  $scope.$on('$ionicView.enter', function(e, state) {
-    if (state.stateParams) {
-      if (state.stateParams.pubkey) {
-        $scope.formData.destPub = state.stateParams.pubkey;
-        if (state.stateParams.uid) {
-          $scope.destUid = state.stateParams.uid;
-          $scope.destPub = '';
-        }
-        else {
-          $scope.destUid = '';
-          $scope.destPub = $scope.formData.destPub;
-        }
-      }
 
-      if (state.stateParams.title) {
-        $scope.formData.title = state.stateParams.title;
-      }
+  $scope.enter = function(e, state) {
 
-      if (state.stateParams.content) {
-        $scope.formData.content = state.stateParams.content;
-      }
+    // Apply state parameters
+    if (state && state.stateParams) {
+      $scope.setParameters(state.stateParams);
     }
 
-    $scope.loadWallet({minData: true})
-      .then(function() {
-        UIUtils.loading.hide();
-      })
-      .catch(function(err){
-        if (err === 'CANCELLED') {
-          $scope.showHome();
-        }
-      });
-  });
+    // Load wallet
+    return $scope.load()
+      .then(UIUtils.loading.hide);
+  };
+  $scope.$on('$ionicView.enter',$scope.enter);
 
   $scope.cancel = function() {
     $scope.showHome();
@@ -508,18 +488,75 @@ function ESMessageComposeController($scope, $controller, UIUtils) {
 function ESMessageComposeModalController($scope, Modals, UIUtils, csWallet, esHttp, esMessage, parameters) {
   'ngInject';
 
+  var wallet;
+
   $scope.formData = {
-    title: parameters ? parameters.title : null,
-    content: parameters ? parameters.content : null,
-    destPub: parameters ? parameters.destPub : null
+    title: null,
+    content: null,
+    destPub: null,
+    walletId: null
   };
-  $scope.destUid = parameters ? parameters.destUid : null;
-  $scope.destPub = (parameters && !parameters.destUid) ? parameters.destPub : null;
-  $scope.isResponse = parameters ? parameters.isResponse : false;
+  $scope.destUid = null;
+  $scope.destPub = null;
+  $scope.isResponse = false;
+  $scope.enableSelectWallet = true;
+
+  $scope.setParameters = function(parameters) {
+    if (!parameters) return;
+
+    if (parameters.pubkey || parameters.destPub) {
+      $scope.formData.destPub = parameters.pubkey || parameters.destPub;
+      if (parameters.uid || parameters.destUid) {
+        $scope.destUid = parameters.uid || parameters.destUid;
+        $scope.destPub = '';
+      }
+      else {
+        $scope.destUid = '';
+        $scope.destPub = $scope.formData.destPub;
+      }
+    }
+
+    if (parameters.title) {
+      $scope.formData.title = parameters.title;
+    }
+
+    if (parameters.content) {
+      $scope.formData.content = parameters.content;
+    }
+
+    $scope.isResponse = parameters.isResponse || false;
+
+    if (parameters.wallet) {
+      $scope.formData.walletId = parameters.wallet;
+    }
+  };
+
+  // Read default parameters
+  $scope.setParameters(parameters);
+
+  $scope.load = function() {
+    $scope.enableSelectWallet = csWallet.children.count() > 0;
+
+    wallet = $scope.enableSelectWallet && ($scope.formData.walletId ? csWallet.children.get($scope.formData.walletId) : csWallet) || csWallet;
+    if (!wallet.isDefault()) {
+      console.debug("[message] Using {" + wallet.id + "} wallet");
+    }
+
+    return wallet.login({minData: true, silent: true})
+      .then(function(data) {
+        $scope.walletData = data;
+      })
+      .catch(function(err){
+        if (err === 'CANCELLED') {
+          $scope.cancel();
+        }
+      })
+  };
+  $scope.$on('modal.shown', $scope.load);
 
   $scope.doSend = function(forceNoContent) {
     $scope.form.$submitted=true;
-    if(!$scope.form.$valid /*|| !$scope.formData.destPub*/) {
+    if(!$scope.form.$valid) {
       return;
     }
 
@@ -535,20 +572,25 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, csWallet, esHt
 
     UIUtils.loading.show();
     var data = {
-      issuer: csWallet.data.pubkey,
+      issuer: wallet.data.pubkey,
       recipient: $scope.formData.destPub,
       title: $scope.formData.title,
       content: $scope.formData.content,
       time: esHttp.date.now()
     };
 
-    esMessage.send(data)
+    esMessage.send(data, {wallet: wallet})
       .then(function(id) {
         $scope.id=id;
         UIUtils.loading.hide();
         $scope.closeModal(id);
       })
       .catch(UIUtils.onError('MESSAGE.ERROR.SEND_MSG_FAILED'));
+  };
+
+
+  $scope.cancel = function() {
+    $scope.closeModal();
   };
 
   /* -- Modals -- */
@@ -572,9 +614,21 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, csWallet, esHt
       });
   };
 
-  $scope.cancel = function() {
-    $scope.closeModal();
+  $scope.showSelectWalletModal = function() {
+    if (!$scope.enableSelectWallet) return;
+
+    return Modals.showSelectWallet({
+      showDefault: true,
+      showBalance: false
+    })
+      .then(function(newWallet) {
+        if (!newWallet || (wallet && wallet.id === newWallet.id)) return;
+        wallet = newWallet;
+        $scope.walletData = wallet.data;
+        console.debug("[message] Using {" + wallet.id + "} wallet");
+      });
   };
+
 
 
   // TODO : for DEV only

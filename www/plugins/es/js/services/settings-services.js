@@ -20,11 +20,14 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
       excludes: ['timeout', 'cacheTimeMs', 'time', 'login', 'build'],
       plugins: {
         es: {
-          excludes: ['enable', 'host', 'port', 'wsPort', 'fallbackNodes']
+          excludes: ['enable', 'host', 'port', 'wsPort', 'fallbackNodes', 'enableGoogleApi', 'googleApiKey'],
+          notifications: {
+          }
         }
       },
       wallet: {
-        includes: ['alertIfUnusedWallet', 'notificationReadTime']
+        includes: ['alertIfUnusedWallet'],
+        excludes: ['notificationReadTime']
       },
       helptip: {
         excludes: ['installDocUrl']
@@ -39,7 +42,6 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
             askEnable: false,
             useRemoteStorage: true,
             notifications: {
-              readTime: true,
               txSent: true,
               txReceived: true,
               certSent: true,

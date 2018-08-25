@@ -395,7 +395,7 @@
     "SHOW_SALT": "Display secret identifier?",
     "PASSWORD": "Password",
     "PASSWORD_HELP": "Password",
-    "PUBKEY_HELP": "Example: « AbsxSY4qoZRzyV2irfep1V9xw1EMNyKJw2TkuVD4N1mv »",
+    "PUBKEY_HELP": "Public key or pseudonym",
     "NO_ACCOUNT_QUESTION": "Don't have an account yet?",
     "CREATE_ACCOUNT": "Create an account",
     "FORGOTTEN_ID": "Forgot password?",

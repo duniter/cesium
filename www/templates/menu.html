@@ -30,12 +30,12 @@
            class="button button-icon button-clear hidden-xs hidden-sm"
            ng-click="showProfilePopover($event)">
           <i class="avatar avatar-member"
-             ng-if="!$root.walletData.avatar"
+             ng-if="!walletData.avatar"
              ng-class="{'disable': !login, 'royal-bg': login}">
           </i>
           <i class="avatar"
-             ng-if="$root.walletData.avatar"
-             style="background-image: url('{{$root.walletData.avatar.src}}')">
+             ng-if="walletData.avatar"
+             style="background-image: url('{{walletData.avatar.src}}')">
           </i>
           <span ng-if="login && !auth"
                 class="badge badge-button badge-secondary badge-assertive ion-locked"> </span>
@@ -60,12 +60,12 @@
 
       <div class="visible-sm visible-xs hero">
         <div class="content">
-          <i class="avatar avatar-member hero-icon" ng-if="!$root.walletData.avatar" ng-class="{'royal-bg': login, 'stable-bg': !login}" ng-click="!login ? showHome() : loginAndGo()" menu-close></i>
-          <a class="avatar hero-icon" ng-if="$root.walletData.avatar" style="background-image: url('{{$root.walletData.avatar.src}}')" ui-sref="app.view_wallet" menu-close></a>
+          <i class="avatar avatar-member hero-icon" ng-if="!walletData.avatar" ng-class="{'royal-bg': login, 'stable-bg': !login}" ng-click="!login ? showHome() : loginAndGo()" menu-close></i>
+          <a class="avatar hero-icon" ng-if="walletData.avatar" style="background-image: url('{{walletData.avatar.src}}')" ui-sref="app.view_wallet" menu-close></a>
           <h4 ng-if="login">
             <a class="light" ui-sref="app.view_wallet" menu-close>
-              {{$root.walletData.name||$root.walletData.uid}}
-              <span ng-if="!$root.walletData.name && !$root.walletData.uid"><i class="icon ion-key"></i>&nbsp;{{$root.walletData.pubkey|formatPubkey}}</span>
+              {{walletData.name||walletData.uid}}
+              <span ng-if="!walletData.name && !walletData.uid"><i class="icon ion-key"></i>&nbsp;{{walletData.pubkey|formatPubkey}}</span>
             </a>
           </h4>
           <h4 ng-if="!login">
@@ -137,7 +137,7 @@
         <a menu-close
            class="item item-icon-left"
            active-link="active"
-           active-link-path-prefix="#/app/wallet/main"
+           active-link-path-prefix="#/app/account"
            ui-sref="app.view_wallet"
            ng-class="{'item-menu-disable': !login}">
           <i class="icon ion-person"></i>

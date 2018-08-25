@@ -1,23 +1,82 @@
-<div class="item no-border no-padding item-avatar" ng-class="::{'item-avatar': hit.avatar}">
-  <img ng-if="::hit.avatar" class="item-image avatar" ng-src="{{::hit.avatar.src}}">
-  <i ng-if="::!hit.avatar" class="item-image icon " ng-class="::{'ion-person': hit.uid, 'ion-card': !hit.uid}"></i>
-  <div class="item-content item-avatar-left-padding padding-top">
-    <h2 class="dark"><a ui-sref="app.wot_identity({pubkey: hit.pubkey, uid: hit.uid})">{{::hit.name}}</a></h2>
-    <h4>
-      <span ng-if="::hit.uid" class="positive">
-        <b class="ion-person"></b>
-        {{::hit.uid}}
-      </span>
-      <span class="gray" title="{{::hit.pubkey}}"><b class="ion-key"></b> {{::hit.pubkey|formatPubkey}}</span>
-      <span class="assertive" ng-if="!hit.uid">
-        {{::'WOT.NOT_MEMBER_PARENTHESIS'|translate}}
-      </span>
+
+<div class="item no-border no-padding item-avatar "
+     ng-if="loading">
+
+  <i class="item-image icon ion-person"></i>
+
+  <div class="item-content item-avatar-left-padding padding-top" >
+    <h2 class="stable-bg">
+      &nbsp;
+    </h2>
+    <h4 class="stable-bg col-75">
+      &nbsp;
     </h4>
-    <h4 ng-if="::hit.city" class="gray" title="{{::hit.city}}">
-      <b class="ion-location"></b> {{::hit.city}}
+    <h4 class="stable-bg col-50">
+      &nbsp;
     </h4>
   </div>
 </div>
-<div class="item no-border no-padding item-text-wrap hidden-xs" ng-if="::hit.description">
-  <small trust-as-html="::hit.description"></small>
+
+<a class="item no-border no-padding item-avatar ink animate-fade-in animate-show-hide ng-hide"
+   ng-show="!loading"
+   ui-sref="app.wot_identity({pubkey: formData.pubkey, uid: formData.uid})">
+
+  <i ng-if="formData.avatar" class="item-image avatar" style="background-image: url({{::formData.avatar.src}})"></i>
+  <i ng-if="!formData.avatar && formData.uid" class="item-image icon ion-person"></i>
+  <i ng-if="!formData.avatar && !formData.uid" class="item-image icon ion-card"></i>
+
+  <div class="item-content item-avatar-left-padding padding-top">
+    <h2 class="dark">
+      {{formData.name}}
+    </h2>
+    <h4>
+      <span ng-if="formData.uid" class="positive">
+        <b class="ion-person"></b>
+        {{formData.uid}}
+      </span>
+      <span class="gray" title="{{formData.pubkey}}"><b class="ion-key"></b> {{formData.pubkey|formatPubkey}}</span>
+      <span class="assertive" ng-if="!formData.isMember">
+        {{::'WOT.NOT_MEMBER_PARENTHESIS'|translate}}
+      </span>
+    </h4>
+    <h4 ng-if="formData.profile.city" class="gray" title="{{formData.profile.city}}">
+      <b class="ion-location"></b> {{formData.profile.city}}
+    </h4>
+  </div>
+</a>
+<!-- buttons -->
+<div class="item no-border no-padding">
+  <div class="pull-left gray">
+    <!-- show description -->
+    <a class="animate-fade-in animate-show-hide gray ng-hide"
+       ng-class="{'ion-arrow-down-b': !$parent.showDescription, 'ion-arrow-up-b': $parent.showDescription}"
+       ng-click="$parent.showDescription=!$parent.showDescription;"
+       title="{{'PROFILE.DESCRIPTION'|translate}}"
+       ng-show="!loading && formData.profile.description">
+      &nbsp;
+    </a>
+  </div>
+  <div style="font-size: 18px;" class="pull-right gray">
+    <!-- share -->
+    <a class="icon ion-android-share-alt "
+       ng-click="showSharePopover($event)"
+       title="{{'COMMON.BTN_SHARE' | translate}}">&nbsp;</a>
+    <!-- certify -->
+    <a class="icon ion-ribbon-b"
+       ng-click="certify()"
+       title="{{'WOT.BTN_CERTIFY' | translate}}"
+       ng-hide="!canCertify">&nbsp;</a>
+    <!-- compose message -->
+    <a class="icon ion-compose"
+       ng-click="showNewMessageModal()"
+       title="{{'MESSAGE.BTN_WRITE' | translate}}">&nbsp;</a>
+    <!-- transfer -->
+    <a class="icon ion-card"
+       ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.name||formData.uid})"
+       title="{{'COMMON.BTN_SEND_MONEY' | translate}}">&nbsp;</a>
+
+  </div>
+</div>
+<div class="item no-border no-padding item-text-wrap hidden-xs ng-hide" ng-show="$parent.showDescription">
+  <small trust-as-html="formData.profile.description|truncText:500"></small>
 </div>

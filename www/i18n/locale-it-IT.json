@@ -386,7 +386,7 @@
      "SHOW_SALT": "Mostrare identificativo segreto?",
      "PASSWORD": "Passsord",
      "PASSWORD_HELP": "Password",
-     "PUBKEY_HELP": "Esempio: « AbsxSY4qoZRzyV2irfep1V9xw1EMNyKJw2TkuVD4N1mv »",
+     "PUBKEY_HELP": "Chiave pubblica, pseudonimo",
      "NO_ACCOUNT_QUESTION": "Ancora non hai un conto?",
      "CREATE_ACCOUNT": "Creare un conto",
      "FORGOTTEN_ID": "Non ricordi la password?",

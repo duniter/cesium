@@ -400,12 +400,20 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // add listener on wallet event
   csWallet.api.data.on.login($scope, function(data, deferred) {
     $scope.login = true;
-    $rootScope.walletData = data || {};
+    //$rootScope.walletData = data || {};
+    $scope.walletData  = data || {};
+    // $scope.walletData = {
+    //   pubkey: data.pubkey,
+    //   uid: data.uid,
+    //   name: data.name,
+    //   avatar: data.avatar
+    // };
     return deferred ? deferred.resolve() : $q.when();
   });
   csWallet.api.data.on.logout($scope, function() {
     $scope.login = false;
-    $rootScope.walletData = {};
+    //$rootScope.walletData = {};
+    $scope.walletData = {};
   });
   csWallet.api.data.on.auth($scope, function(data, deferred) {
     $scope.auth = true;

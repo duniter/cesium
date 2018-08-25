@@ -177,9 +177,7 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
     var readTime = lastNotification.time ? lastNotification.time : 0;
     if (readTime && (!wallet.data.invitations.time != readTime)) {
       wallet.data.invitations.readTime = readTime;
-      // TODO: check this !
-      console.log("Resetting invitations readTime to {0}. TODO: check if store wallet is necessary !".format(readTime));
-      wallet.store();
+      wallet.storeData();
     }
   };
 

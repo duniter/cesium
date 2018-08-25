@@ -6,7 +6,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
 
 
       .state('app.view_wallet', {
-        url: "/wallet?refresh",
+        url: "/account?refresh",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/view_wallet.html",
@@ -20,7 +20,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
       })
 
       .state('app.view_wallet_tx', {
-        url: "/history?refresh",
+        url: "/history/account?refresh",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/view_wallet_tx.html",
@@ -34,7 +34,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
       })
 
       .state('app.view_wallet_tx_errors', {
-        url: "/wallet/tx/errors",
+        url: "/history/account/errors",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/view_wallet_tx_error.html",
@@ -60,7 +60,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
       })
 
       .state('app.view_wallet_by_id', {
-        url: "/wallet/list/:id?refresh",
+        url: "/wallets/:id?refresh",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/view_wallet.html",
@@ -74,7 +74,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
       })
 
       .state('app.view_wallet_tx_by_id', {
-        url: "/history/:id?refresh",
+        url: "/history/wallets/:id?refresh",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/view_wallet_tx.html",
@@ -84,6 +84,19 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
         data: {
           login: true,
           silentLocationChange: true
+        }
+      })
+
+      .state('app.view_wallet_tx_errors_by_id', {
+        url: "/history/wallets/:id/errors",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wallet/view_wallet_tx_error.html",
+            controller: 'WalletTxErrorCtrl'
+          }
+        },
+        data: {
+          login: true
         }
       })
     ;
@@ -143,9 +156,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   $scope.load = function() {
     if (!wallet) return;
 
-    return $scope.loadWallet({
-      wallet: wallet
-    })
+    return wallet.login()
       .then(function(walletData) {
         $scope.formData = walletData;
         $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
@@ -538,19 +549,37 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   $scope.showCertifications = function() {
     // Warn: do not use a simple link here (a ng-click is mandatory for help tour)
-    $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert' : 'app.wallet_cert_lg', {
-      pubkey: $scope.formData.pubkey,
-      uid: $scope.formData.name || $scope.formData.uid,
-      type: 'received'
-    });
+    if ($scope.isDefaultWallet) {
+      $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert' : 'app.wallet_cert_lg', {
+        type: 'received'
+      });
+    }
+    else {
+      $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert_by_id' : 'app.wallet_cert_by_id_lg', {
+        id: $scope.walletId,
+        type: 'received'
+      });
+    }
   };
 
   $scope.showGivenCertifications = function() {
     // Warn: do not use a simple link here (a ng-click is mandatory for help tour)
+    if ($scope.isDefaultWallet) {
       $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert' : 'app.wallet_cert_lg', {
-        pubkey: $scope.formData.pubkey,
-        uid: $scope.formData.name || $scope.formData.uid,
         type: 'given'
+      });
+    }
+    else {
+      $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert_by_id' : 'app.wallet_cert_by_id_lg', {
+        id: $scope.walletId,
+        type: 'given'
+      });
+    }
+  };
+
+  $scope.showTxHistory = function() {
+    $state.go($scope.isDefaultWallet ? 'app.view_wallet_tx' : 'app.view_wallet_tx_by_id', {
+      id: $scope.walletId
     });
   };
 
@@ -727,7 +756,6 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
     if (!wallet) return;
 
     var options = {
-      wallet: wallet,
       minData: !wallet.isDataLoaded({minData: true}),
       sources: true,
       tx: {
@@ -735,7 +763,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
       }
     };
 
-    return $scope.loadWallet(options)
+    return wallet.login(options)
       .then(function(walletData) {
         $scope.formData = walletData;
         $scope.loading = false; // very important, to avoid TX to be display before wallet.currentUd is loaded
@@ -997,12 +1025,26 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
 function WalletTxErrorController($scope, UIUtils, csSettings, csWallet) {
   'ngInject';
 
+  var wallet;
   $scope.settings = csSettings.data;
   $scope.loading = true;
   $scope.formData = {};
 
   $scope.$on('$ionicView.enter', function(e) {
-    $scope.loadWallet()
+
+    wallet = (state.stateParams && state.stateParams.id) ? csWallet.children.get(state.stateParams.id) : csWallet;
+    if (!wallet) {
+      UIUtils.alert.error('ERROR.UNKNOWN_WALLET_ID');
+      return $scope.showHome();
+    }
+
+    return $scope.load();
+  });
+
+  $scope.load = function() {
+    if (!wallet) return;
+
+    return wallet.login()
       .then(function(walletData) {
         $scope.formData = walletData;
         $scope.loading = false;
@@ -1010,7 +1052,7 @@ function WalletTxErrorController($scope, UIUtils, csSettings, csWallet) {
         $scope.showFab('fab-redo-transfer');
         UIUtils.loading.hide();
       });
-  });
+  };
 
   // Updating wallet data
   $scope.doUpdate = function(silent) {
@@ -1517,12 +1559,28 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
   $scope.editWallet = function(event, wallet) {
 
     event.preventDefault();
+
     return $scope.showEditPopup(wallet)
       .then(function(newName) {
         if (!newName) return;
-        wallet.data.name = newName;
-        $scope.$broadcast('$$rebind::' + 'rebind'); // force rebind
-      });
+
+        // Save changes
+        return csWallet.auth({minData: true})
+          .then(function() {
+            wallet.data.name = newName;
+            csWallet.store();
+            UIUtils.loading.hide();
+            $scope.updateView();
+          })
+          .catch(function(err) {
+            if (err === 'CANCELLED') {
+              return UIUtils.loading.hide();
+            }
+            UIUtils.onError('ERROR.SAVE_WALLET_LIST_FAILED')(err);
+          });
+      })
+
+
   };
 
   /* -- modals -- */
@@ -1534,6 +1592,7 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
     return wallet.login({
       showNewAccountLink: false,
       title: 'ACCOUNT.WALLET_LIST.BTN_NEW',
+      okText: 'COMMON.BTN_ADD',
       // Load data options :
       minData: true,
       sources: true,
@@ -1550,21 +1609,27 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
         return;
       }
 
-      return csWallet.api.data.raisePromise.load(wallet.data)
-        // continue, when plugins extension failed (just log in console)
-        .catch(console.error)
+      // Make sure to auth on the main wallet
+      return csWallet.auth({minData: true})
         .then(function() {
-          $scope.listeners.push(wallet.api.data.on.unauth($scope, $scope.updateView));
-          $scope.listeners.push(wallet.api.data.on.auth($scope, $scope.updateView));
-          csWallet.children.add(wallet);
-          UIUtils.loading.hide();
-          $scope.motion.show({selector: '.list .item.item-wallet', ink: true});
+          return csWallet.api.data.raisePromise.load(wallet.data)
+          // continue, when plugins extension failed (just log in console)
+            .catch(console.error)
+            .then(function() {
+              $scope.listeners.push(wallet.api.data.on.unauth($scope, $scope.updateView));
+              $scope.listeners.push(wallet.api.data.on.auth($scope, $scope.updateView));
+              csWallet.children.add(wallet);
+              UIUtils.loading.hide();
+              $scope.updateView();
+            });
+        })
+        .catch(function(err) {
+          if (err === 'CANCELLED') {
+            return UIUtils.loading.hide();
+          }
+          UIUtils.onError('ERROR.ADD_SECONDARY_WALLET_FAILED')(err);
         });
-      })
-      .catch(function(err) {
-        if (err === 'CANCELLED') return;
-        UIUtils.onError('ERROR.ADD_SECONDARY_WALLET_FAILED')(err);
-      });
+    });
   };
 
   $scope.selectAndRemoveWallet = function() {
@@ -1575,7 +1640,20 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
       })
       .then(function(wallet) {
         if (!wallet || !wallet.id) return;
-        csWallet.children.remove(wallet.id);
+
+        // Make sure to auth on the main wallet
+        return csWallet.auth({minData: true})
+          .then(function() {
+            csWallet.children.remove(wallet.id);
+            UIUtils.loading.hide();
+            $scope.updateView();
+          })
+          .catch(function(err) {
+            if (err === 'CANCELLED') {
+              return UIUtils.loading.hide();
+            }
+            UIUtils.onError('ERROR.ADD_SECONDARY_WALLET_FAILED')(err);
+          });
       });
   };
 

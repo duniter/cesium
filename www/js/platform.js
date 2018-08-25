@@ -161,7 +161,6 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       return started;
     }
 
-
     function getLatestRelease() {
       var latestRelease = csSettings.data.latestReleaseUrl && csHttp.uri.parse(csSettings.data.latestReleaseUrl);
       if (latestRelease) {

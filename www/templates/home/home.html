@@ -73,7 +73,7 @@
       <!-- disconnect link -->
       <div class="text-center no-padding" ng-show="login">
         <br class="visible-xs visible-sm"/>
-        <span ng-bind-html="'HOME.NOT_YOUR_ACCOUNT_QUESTION'|translate:$root.walletData"></span>
+        <span ng-bind-html="'HOME.NOT_YOUR_ACCOUNT_QUESTION'|translate:{pubkey: walletData.pubkey}"></span>
         <br/>
         <b>
           <a class="assertive hidden-xs hidden-sm" ng-click="logout()" translate>

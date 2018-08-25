@@ -185,7 +185,9 @@ function ESGroupViewController($scope, $state, $ionicPopover, $ionicHistory, $tr
   $scope.formData = {};
   $scope.id = null;
   $scope.pictures = [];
+  $scope.canEdit = false;
   $scope.loading = true;
+  $scope.motion = UIUtils.motion.fadeSlideIn;
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (state.stateParams && state.stateParams.id) { // Load by id
@@ -208,7 +210,7 @@ function ESGroupViewController($scope, $state, $ionicPopover, $ionicHistory, $tr
         $scope.id = data.id;
         $scope.formData = data.record;
         $scope.issuer= data.issuer;
-        $scope.canEdit = csWallet.isUserPubkey($scope.formData.issuer);
+        $scope.canEdit = csWallet.isUserPubkey($scope.formData.issuer) || csWallet.children.hasPubkey($scope.formData.issuer);
 
         $scope.pictures = data.record.pictures || [];
         delete data.record.pictures; // remove, as already stored in $scope.pictures

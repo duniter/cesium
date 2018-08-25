@@ -164,9 +164,7 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
     var readTime = lastNotification.time ? lastNotification.time : 0;
     if (readTime && (!wallet.data.notifications.readTime != readTime)) {
       wallet.data.notifications.readTime = readTime;
-      // TODO: check this !
-      console.log("Resetting notifications readTime to {0}. TODO: check if store wallet is necessary !".format(readTime));
-      wallet.store();
+      wallet.storeData();
     }
   };
 

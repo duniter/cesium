@@ -2,8 +2,9 @@
           class="view-wallet-tx">
   <ion-nav-title>
     <!-- no title on large screen-->
-    <span class="visible-xs visible-sm" ng-if="!loading">
-      {{formData.name || formData.uid}} - <i class="ion-key"></i> {{formData.pubkey|formatPubkey}}
+    <span class="visible-xs visible-sm" ng-if="!loading && enableSelectWallet">
+      <span ng-if="formData.name || formData.uid">{{formData.name || formData.uid}} </span>
+      <i class="ion-key"></i> {{formData.pubkey|formatPubkey}}
     </span>
   </ion-nav-title>
 
@@ -32,7 +33,8 @@
            ng-if="enableSelectWallet"
            title="{{:locale:'ACCOUNT.SELECT_WALLET_MODAL.TITLE'|translate}}"
            ng-click="showSelectWalletPopover($event)">
-           {{formData.name || formData.uid}} - <i class="ion-key"></i> {{formData.pubkey|formatPubkey}}
+          <span ng-if="formData.name || formData.uid">{{formData.name || formData.uid}} </span>
+          <i class="ion-key"></i> {{formData.pubkey|formatPubkey}}
           <i class="ion-arrow-down-b"></i>
         </a>
 

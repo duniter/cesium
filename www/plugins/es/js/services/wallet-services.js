@@ -115,16 +115,19 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
 
       return (keypair ? $q.when(keypair) : csWallet.getKeypair({silent: true}))
         .then(function(keypair) {
+          // box keypair already computed: use it
           if (keypair && keypair.boxPk && keypair.boxSk) {
             return $q.when(keypair);
           }
-          return esCrypto.box.getKeypair(keypair);
-        })
-        .then(function(res) {
-          keypair.boxSk = res.boxSk;
-          keypair.boxPk = res.boxPk;
-          console.debug("[ES] [wallet] Box keypair successfully computed");
-          return keypair;
+          // Compute box keypair
+          return esCrypto.box.getKeypair(keypair)
+            .then(function(res) {
+              // Store in the wallet keypair
+              keypair.boxSk = res.boxSk;
+              keypair.boxPk = res.boxPk;
+              console.debug("[ES] [wallet] Box keypair successfully computed");
+              return keypair;
+            });
         });
     }
 

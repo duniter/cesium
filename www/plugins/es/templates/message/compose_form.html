@@ -19,18 +19,21 @@
         </div>
       </div>
 
-      <div class="item item-text-wrap">
+      <ion-item class="item-text-wrap ink"
+           ng-class="{'item-icon-right': enableSelectWallet}"
+           ng-click="showSelectWalletModal()">
           <span class="gray" translate>TRANSFER.FROM</span>
-          <span class="badge badge-balanced">
-              <ion-spinner icon="android" ng-if="!$root.walletData.pubkey"></ion-spinner>
-              <span ng-if="$root.walletData.pubkey && !$root.walletData.isMember">
-              {{$root.walletData.pubkey| formatPubkey}}&nbsp;&nbsp;
+          <span class="badge badge-balanced animate-fade-in animate-show-hide" ng-show="!loading">
+              <ion-spinner icon="android" ng-if="!walletData.pubkey"></ion-spinner>
+              <span ng-if="walletData.pubkey && !walletData.isMember">
+                <i class="ion-key"></i> {{walletData.pubkey| formatPubkey}}&nbsp;&nbsp;
               </span>
-              <span ng-if="$root.walletData.isMember">
-                {{$root.walletData.name||$root.walletData.uid}}
+              <span ng-if="walletData.isMember">
+                <i class="ion-person"></i> {{walletData.name||walletData.uid}}
               </span>
           </span>
-      </div>
+        <i class="gray icon ion-ios-arrow-right" ng-if="enableSelectWallet"></i>
+      </ion-item>
 
       <!-- Object -->
       <div class="item item-input"

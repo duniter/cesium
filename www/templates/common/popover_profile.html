@@ -2,19 +2,19 @@
   <ion-content scroll="false">
     <div class="row">
       <div class="col col-33">
-        <i class="avatar avatar-member" ng-if="!$root.walletData.avatar" ng-class="{'royal-bg': login, 'stable-bg': !login}"></i>
-        <i class="avatar" ng-if="$root.walletData.avatar" style="background-image: url('{{$root.walletData.avatar.src}}')"></i>
+        <i class="avatar avatar-member" ng-if="!walletData.avatar" ng-class="{'royal-bg': login, 'stable-bg': !login}"></i>
+        <i class="avatar" ng-if="walletData.avatar" style="background-image: url('{{walletData.avatar.src}}')"></i>
       </div>
       <div class="col col-66" ng-if="login">
-        <h4>{{$root.walletData.name||$root.walletData.uid}}</h4>
+        <h4>{{walletData.name||walletData.uid}}</h4>
         <h4 class="gray"
-            ng-if="!$root.walletData.name && !$root.walletData.uid"
-            copy-on-click="{{$root.walletData.pubkey}}">
-          <i class="icon ion-key"></i> {{$root.walletData.pubkey|formatPubkey}}
+            ng-if="!walletData.name && !walletData.uid"
+            copy-on-click="{{walletData.pubkey}}">
+          <i class="icon ion-key"></i> {{walletData.pubkey|formatPubkey}}
         </h4>
-        <span class="gray" ng-if="$root.walletData.name||$root.walletData.uid"
-              copy-on-click="{{$root.walletData.pubkey}}">
-          <i class="icon ion-key"></i> {{$root.walletData.pubkey|formatPubkey}}
+        <span class="gray" ng-if="walletData.name||walletData.uid"
+              copy-on-click="{{walletData.pubkey}}">
+          <i class="icon ion-key"></i> {{walletData.pubkey|formatPubkey}}
         </span>
       </div>
     </div>

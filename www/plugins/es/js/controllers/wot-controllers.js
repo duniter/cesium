@@ -89,17 +89,13 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
   // Initialize the super class and extend it.
   angular.extend(this, $controller('ESExtensionCtrl', {$scope: $scope}));
 
-  $scope.enter = function(e, state) {
-
-  };
-  $scope.$on('$ionicView.enter', $scope.enter);
+  $scope.canCertify = false; // disable certity on the popover (by default - override by the wot map controller)
 
   /* -- modals -- */
 
   $scope.showNewMessageModal = function(confirm) {
 
-    $scope.loadWallet({minData: true})
-
+    return csWallet.login({minData: true, method: 'default'})
       .then(function() {
         UIUtils.loading.hide();
 
@@ -133,7 +129,7 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
 
     var identities;
 
-    return $scope.selectWalletAndAuth()
+    return csWallet.auth({minData: true})
       .then(function(walletData) {
         UIUtils.loading.hide();
         if (!walletData) return;
@@ -251,7 +247,10 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
   $scope.askCertification = function() {
     $scope.hideCertificationActionsPopover();
 
-    return $scope.selectWalletAndAuth()
+    return (csWallet.children.count() ? Modals.showSelectWallet({displayBalance: false}) : $q.when(csWallet))
+      .then(function(wallet) {
+        return wallet.auth({minData: true});
+      })
       .then(function(walletData) {
         UIUtils.loading.hide();
         if (!walletData) return;
@@ -281,10 +280,6 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
               .catch(UIUtils.onError('INVITATION.ERROR.SEND_INVITATION_FAILED'));
           });
       });
-  };
-
-  $scope.selectWalletAndAuth = function() {
-    return csWallet.isAuth() ? $q.when(csWallet.data) : csWallet.auth({minData: true});
   };
 
   /* -- Popover -- */

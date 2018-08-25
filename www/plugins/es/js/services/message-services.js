@@ -123,15 +123,20 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
         });
     }
 
-    function sendMessage(message) {
-      return csWallet.getKeypair()
+    function sendMessage(message, options) {
+      options = options || {};
+      var wallet = options.wallet || csWallet;
+      return wallet.getKeypair()
         .then(function(keypair) {
+
+          // Send to recipient inbox
           return doSendMessage(message, keypair)
             .then(function (res) {
+
+              // Check if outbox is enable (in settings)
               var outbox = (csSettings.data.plugins.es.message &&
               angular.isDefined(csSettings.data.plugins.es.message.outbox)) ?
                 csSettings.data.plugins.es.message.outbox : true;
-
               if (!outbox) return res;
 
               // Send to outbox
@@ -142,11 +147,11 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
                 });
             })
             .then(function (res) {
-              // Raise event
+              // Raise API event
               api.data.raise.sent(res);
 
               return res;
-            });
+            })
         });
     }
 

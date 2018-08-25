@@ -381,7 +381,7 @@
     "SHOW_SALT": "¿Visualizar el identificador secreto?",
     "PASSWORD": "Frase secreta",
     "PASSWORD_HELP": "Frase secreta",
-    "PUBKEY_HELP": "Ejemplo: «AbsxSY4qoZRzyV2irfep1V9xw1EMNyKJw2TkuVD4N1mv»",
+    "PUBKEY_HELP": "llave pública",
     "NO_ACCOUNT_QUESTION": "¿Aún no tiene cuenta?",
     "CREATE_ACCOUNT": "Crear una cuenta",
     "FORGOTTEN_ID": "¿Olvidó su frase secreta?",

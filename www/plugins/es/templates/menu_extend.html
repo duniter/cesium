@@ -10,8 +10,8 @@
           active-link-path-prefix="#/app/invitations"
           ng-click="showInvitationsPopover($event)">
           <span
-            ng-if="$root.walletData.invitations.unreadCount"
-            class="badge badge-button badge-positive">{{$root.walletData.invitations.unreadCount}}</span>
+            ng-if="walletData.invitations.unreadCount"
+            class="badge badge-button badge-positive">{{walletData.invitations.unreadCount}}</span>
   </button>
 
   <!-- messages -->
@@ -21,8 +21,8 @@
           active-link-path-prefix="#/app/user/message"
           ng-click="showMessagesPopover($event)">
     <span
-      ng-if="$root.walletData.messages.unreadCount"
-      class="badge badge-button badge-positive">{{$root.walletData.messages.unreadCount}}</span>
+      ng-if="walletData.messages.unreadCount"
+      class="badge badge-button badge-positive">{{walletData.messages.unreadCount}}</span>
   </button>
 
   <!-- notifications -->
@@ -32,9 +32,9 @@
           active-link-path-prefix="#/app/notifications"
           ng-click="showNotificationsPopover($event)">
     <span
-      ng-class="{'badge-positive': !$root.walletData.notifications.warnCount, 'badge-assertive': $root.walletData.notifications.warnCount}"
-      ng-if="$root.walletData.notifications.unreadCount || $root.walletData.notifications.warnCount"
-      class="badge badge-button ">{{$root.walletData.notifications.unreadCount+$root.walletData.notifications.warnCount}}</span>
+      ng-class="{'badge-positive': !walletData.notifications.warnCount, 'badge-assertive': walletData.notifications.warnCount}"
+      ng-if="walletData.notifications.unreadCount || walletData.notifications.warnCount"
+      class="badge badge-button ">{{walletData.notifications.unreadCount+walletData.notifications.warnCount}}</span>
   </button>
 </div>
 
@@ -48,7 +48,7 @@
     <i class="icon ion-person-stalker"></i>
     <span translate>MENU.INVITATIONS</span>
     <span class="badge badge-positive"
-          ng-if="$root.walletData.invitations.unreadCount">{{$root.walletData.invitations.unreadCount}}</span>
+          ng-if="walletData.invitations.unreadCount">{{walletData.invitations.unreadCount}}</span>
   </a>
 
   <a menu-close class="item item-icon-left" active-link="active"
@@ -58,7 +58,7 @@
     <i class="icon ion-email"></i>
     <span translate>MENU.MESSAGES</span>
     <span class="badge badge-positive"
-          ng-if="$root.walletData.messages.unreadCount">{{$root.walletData.messages.unreadCount}}</span>
+          ng-if="walletData.messages.unreadCount">{{walletData.messages.unreadCount}}</span>
   </a>
 
   <a menu-close class="item item-icon-left" active-link="active"
@@ -68,7 +68,7 @@
     <i class="icon ion-android-notifications"></i>
     <span translate>MENU.NOTIFICATIONS</span>
     <span class="badge badge-positive"
-          ng-if="$root.walletData.notifications.unreadCount">{{$root.walletData.notifications.unreadCount}}</span>
+          ng-if="walletData.notifications.unreadCount">{{walletData.notifications.unreadCount}}</span>
   </a>
 
 </div>

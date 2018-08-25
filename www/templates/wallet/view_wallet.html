@@ -156,15 +156,7 @@
 
           <!-- Account transaction -->
           <a class="item item-icon-left item-icon-right ink"
-             ng-if="isDefaultWallet"
-             ui-sref="app.view_wallet_tx">
-            <i class="icon ion-card"></i>
-            <span translate>WOT.ACCOUNT_OPERATIONS</span>
-            <i class="gray icon ion-ios-arrow-right"></i>
-          </a>
-          <a class="item item-icon-left item-icon-right ink"
-             ng-if="!isDefaultWallet"
-             ui-sref="app.view_wallet_tx_by_id({id: walletId})">
+             ng-click="showTxHistory()">
             <i class="icon ion-card"></i>
             <span translate>WOT.ACCOUNT_OPERATIONS</span>
             <i class="gray icon ion-ios-arrow-right"></i>

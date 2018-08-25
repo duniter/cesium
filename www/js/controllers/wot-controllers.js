@@ -97,7 +97,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
       // wallet cert
       .state('app.wallet_cert', {
-        url: "/wallet/cert/:type",
+        url: "/account/cert/:type",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
@@ -110,7 +110,31 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wallet_cert_lg', {
-        url: "/wallet/cert/lg",
+        url: "/account/cert/lg",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wot/view_certifications.html",
+            controller: 'WotCertificationsViewCtrl'
+          }
+        }
+      })
+
+      // wallet cert
+      .state('app.wallet_cert_by_id', {
+        url: "/wallets/:id/cert/:type",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wot/view_certifications.html",
+            controller: 'WotCertificationsViewCtrl'
+          }
+        },
+        data: {
+          large: 'app.wallet_cert_lg_by_id'
+        }
+      })
+
+      .state('app.wallet_cert_by_id_lg', {
+        url: "/wallets/:id/cert/lg",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
@@ -1112,6 +1136,9 @@ function WotIdentityTxViewController($scope, $timeout, $q, BMA, csSettings, csWo
  */
 function WotCertificationsViewController($scope, $rootScope, $controller, csSettings, csWallet, UIUtils) {
   'ngInject';
+
+  var wallet;
+
   // Initialize the super class and extend it.
   angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
 
@@ -1132,39 +1159,38 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
       $scope.motions.avatar.enable = false;
     }
 
-    if (state.stateParams &&
-      state.stateParams.pubkey &&
-      state.stateParams.pubkey.trim().length > 0) {
+    // First load
+    if ($scope.loading) {
+      if (state.stateParams &&
+        state.stateParams.pubkey &&
+        state.stateParams.pubkey.trim().length > 0) {
 
-      if ($scope.loading) { // load once
         return $scope.load(state.stateParams.pubkey.trim(), true /*withCache*/, state.stateParams.uid)
-          .then(function() {
+          .then(function () {
             $scope.doMotion();
             $scope.showHelpTip();
           });
       }
-      else {
-        $scope.doMotion();
-      }
-    }
 
-    // Load from wallet pubkey
-    else if (csWallet.isLogin()){
-      if ($scope.loading) {
-        return $scope.load(csWallet.data.pubkey, true /*withCache*/, csWallet.data.uid)
-          .then(function() {
+      else {
+        wallet = (state.stateParams && state.stateParams.id) ? csWallet.children.get(state.stateParams.id) : csWallet;
+        if (!wallet) {
+          UIUtils.alert.error('ERROR.UNKNOWN_WALLET_ID');
+          return $scope.showHome();
+        }
+        if (!wallet.isLogin()) {
+          return $scope.showHome();
+        }
+        return $scope.load(wallet.data.pubkey, true /*withCache*/, csWallet.data.uid)
+          .then(function () {
             $scope.doMotion();
             $scope.showHelpTip();
           });
       }
-      else {
-        $scope.doMotion();
-      }
     }
 
-    // Redirect to home
     else {
-      $scope.showHome();
+      $scope.doMotion();
     }
   });
 

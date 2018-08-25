@@ -22,6 +22,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
   $scope.pubkeyPattern = '^(:?{0}|{1})$'.format(BMA.constants.regexp.PUBKEY, BMA.constants.regexp.PUBKEY_WITH_CHECKSUM);
 
   $scope.isAuth = parameters.auth;
+  $scope.okText = parameters.okText;
   $scope.title = parameters.title || ($scope.isAuth ? 'AUTH.TITLE' : 'LOGIN.TITLE');
   $scope.showMethods = angular.isDefined(parameters.showMethods) ? parameters.showMethods : true;
   $scope.showNewAccountLink = angular.isDefined(parameters.showNewAccountLink) ? parameters.showNewAccountLink : true;
@@ -49,8 +50,8 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     // Init method
     var method = parameters.method || csSettings.data.login && csSettings.data.login.method || 'SCRYPT_DEFAULT';
     var params = csSettings.data.login && csSettings.data.login.params;
-    if ($scope.isAuth && method == 'PUBKEY') {
-      method = 'SCRYPT_DEFAULT'; // PUBKEY not enable if auth need
+    if (($scope.isAuth && method === 'PUBKEY') || ( method === 'default')) {
+      method = 'SCRYPT_DEFAULT'; // PUBKEY not enable if auth need, or if ask for 'default'
     }
     $scope.changeMethod(method, params);
   };
