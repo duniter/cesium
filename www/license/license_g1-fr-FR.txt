@@ -2,7 +2,7 @@
 ===================
 
 :date: 2017-04-04 12:59
-:modified: 2018-02-24 09:30
+:modifié: 2018-06-06 12:00
 
 **Licence de la monnaie et engagement de responsabilité.**
 
@@ -17,17 +17,17 @@ Toile de confiance Ğ1 (TdC Ğ1)
 
 **Conseils fortement recommandés**
 
-Bien connaître une personne suppose que vous êtes en mesure de la contacter par plusieurs moyens différents (physique, électronique, autre...) mais aussi que vous connaissez aussi plusieurs personnes qui la connaissent tout aussi bien et sont donc aussi en mesure de la contacter de même. Notamment si vous ne connaissez pas bien aucun de ses autres certifieurs c'est une indication forte que vous ne connaissez pas bien la personne et une certification de ce type déclenche une alerte vers toute la communauté Ğ1. En cas de connaissance insuffisante il convient de ne surtout pas certifier.
+Bien connaître une personne suppose que vous êtes en mesure de la contacter par plusieurs moyens différents (physique, électronique, autre...) mais aussi que vous connaissez aussi plusieurs personnes qui la connaissent tout aussi bien et sont donc aussi en mesure de la contacter de même. Notamment si vous ne connaissez pas bien aucun de ses autres certificateurs c'est une indication forte que vous ne connaissez pas bien la personne et une certification de ce type déclenche une alerte vers toute la communauté Ğ1. En cas de connaissance insuffisante il convient de ne surtout pas certifier.
 
 Ne certifiez jamais seul, mais accompagné d'au moins un autre membre de la TdC Ğ1 afin d'éviter toute erreur de manipulation. En cas d'erreur, prévenez immédiatement d'autres membres de la TdC Ğ1.
 
-Avant toute certification, assurez vous de vérifier si son compte (qu'il soit en cours de validation ou déjà membre) a déjà reçu une ou plusieurs certifications. Le cas échéant demandez des informations pour entrer en contact avec ces autres certifieurs afin de vérifier ensemble que vous connaissez bien la personne concernée par la création du nouveau compte, ainsi que la clé publique correspondante.
+Avant toute certification, assurez vous de vérifier si son compte (qu'il soit en cours de validation ou déjà membre) a déjà reçu une ou plusieurs certifications. Le cas échéant demandez des informations pour entrer en contact avec ces autres certificateurs afin de vérifier ensemble que vous connaissez bien la personne concernée par la création du nouveau compte, ainsi que la clé publique correspondante.
 
 Vérifiez que le futur certifié maîtrise bien son compte : un bon moyen de vérifier cela est de transférer quelques Ğ1 vers le compte cible, et de demander ensuite un renvoi vers votre propre compte, cela assure de la bonne maîtrise par le futur certifié de sa clé privée.
 
 Vérifiez que vos contacts ont bien étudié et compris la licence Ğ1 à jour.
 
-Si vous vous rendez compte qu'un certifieur effectif ou potentiel du compte concerné ne connaît pas la personne concernée, alertez immédiatement des experts du sujet au sein de vos connaissance de la TdC Ğ1, afin que la procédure de validation soit vérifiée par la TdC Ğ1.
+Si vous vous rendez compte qu'un certificateur effectif ou potentiel du compte concerné ne connaît pas la personne concernée, alertez immédiatement des experts du sujet au sein de vos connaissance de la TdC Ğ1, afin que la procédure de validation soit vérifiée par la TdC Ğ1.
 
 Lorsque vous êtes membre de la TdC Ğ1 et que vous vous apprêtez à certifier un nouveau compte :
 
@@ -42,7 +42,7 @@ Lorsque vous êtes membre de la TdC Ğ1 et que vous vous apprêtez à certifier 
 
 4a°) De rencontrer la personne physiquement pour vous assurer que c'est bien elle que vous connaissez bien et qui gère cette clé publique.
 
-4b°) Ou bien de vérifer à distance le lien personne / clé publique en contactant la personne par plusieurs moyens de communication différents, comme courrier papier + réseau social + forum + mail + vidéo conférence + téléphone (reconnaître la voix). Car si l'on peut pirater un compte mail ou un compte forum, il sera bien plus difficile d'imaginer pirater quatre moyens de communication distincts, et imiter l'apparence (vidéo) ainsi que la voix de la personne en plus.
+4b°) Ou bien de vérifier à distance le lien personne / clé publique en contactant la personne par plusieurs moyens de communication différents, comme courrier papier + réseau social + forum + mail + vidéo conférence + téléphone (reconnaître la voix). Car si l'on peut pirater un compte mail ou un compte forum, il sera bien plus difficile d'imaginer pirater quatre moyens de communication distincts, et imiter l'apparence (vidéo) ainsi que la voix de la personne en plus.
 
 Le 4a°) restant toutefois préférable au 4b°), tandis que les points 1°) 2°) et 3°) sont préalablement indispensables.
 
@@ -90,8 +90,8 @@ Et comme variables :
 Logiciels Ğ1 et licence Ğ1
 --------------------------
 
-Les logiciels Ğ1 permettant aux utilisateurs de gérer leur utilisation de Ğ1 doivent transmettre cette licence avec le logiciel ainsi que l'ensemble des paramètres techniques de la monnaie Ğ1 et de la TdC Ğ1 qui sont inscrits dans le bloc 0 de Ğ1. Un logiciel qui ne remplirait pas ces obigations de la licence n'est pas compatible Ğ1.
+Les logiciels Ğ1 permettant aux utilisateurs de gérer leur utilisation de Ğ1 doivent transmettre cette licence avec le logiciel ainsi que l'ensemble des paramètres techniques de la monnaie Ğ1 et de la TdC Ğ1 qui sont inscrits dans le bloc 0 de Ğ1. Un logiciel qui ne remplirait pas ces obligations de la licence n'est pas compatible Ğ1.
 
-Pour plus de précisions dans les détails techniques il est possible de consulter directement le code de Duniter qui est un logiciel libre ansi que les données de la blockchain Ğ1 en la récupérant via une instance (ou noeud) Duniter Ğ1.
+Pour plus de précisions dans les détails techniques il est possible de consulter directement le code de Duniter qui est un logiciel libre ainsi que les données de la blockchain Ğ1 en la récupérant via une instance (ou nœud) Duniter Ğ1.
 
 Plus d'informations sur le site de l'équipe Duniter https://www.duniter.org
