@@ -64,7 +64,7 @@ function PluginExtensionPointController($scope, PluginService) {
  * Abstract controller (inherited by other controllers)
  */
 function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout,
-                       $ionicHistory, $controller, $window, csPlatform, CryptoUtils,
+                       $ionicHistory, $controller, $window, csPlatform, CryptoUtils, csCrypto,
                        UIUtils, BMA, csWallet, Device, Modals, csConfig, csHttp
 ) {
   'ngInject';
