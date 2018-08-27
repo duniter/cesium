@@ -60,6 +60,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   echo "----------------------------------"
   echo "- Building Android artifact..."
   echo "----------------------------------"
+  source ./env.sh
   ionic build android --release
 
   #ionic build firefoxos --release
