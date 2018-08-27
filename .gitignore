@@ -37,3 +37,5 @@
 /www/css/leaflet.app.min.css
 /www/img/layers*.png
 /www/img/marker*.png
+
+env.sh
