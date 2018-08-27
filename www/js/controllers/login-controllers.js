@@ -158,7 +158,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
           .then(function() {
             return {
               pubkey: pubkey
-            }
+            };
           });
       }
 
@@ -179,7 +179,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
               .then(function() {
                 return {
                   pubkey: pubkey
-                }
+                };
               });
           }
         }
