@@ -50,8 +50,9 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     // Init method
     var method = parameters.method || csSettings.data.login && csSettings.data.login.method || 'SCRYPT_DEFAULT';
     var params = csSettings.data.login && csSettings.data.login.params;
-    if (($scope.isAuth && method === 'PUBKEY') || ( method === 'default')) {
-      method = 'SCRYPT_DEFAULT'; // PUBKEY not enable if auth need, or if ask for 'default'
+    // used default method, when PUBKEY + auth, or SCAN, or if ask for 'default'
+    if (($scope.isAuth && method === 'PUBKEY') || (method === 'SCAN') || (method === 'default')) {
+      method = 'SCRYPT_DEFAULT';
     }
     $scope.changeMethod(method, params);
   };
@@ -348,6 +349,10 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     if ($scope.form) {
       // hide form's fields errors on the form
       delete $scope.form.$submitted;
+    }
+
+    if (method == 'SCAN') {
+      return $scope.doLogin();
     }
 
     // Scrypt (advanced or not)
