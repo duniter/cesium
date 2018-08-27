@@ -12,29 +12,54 @@ angular.module("cesium.config", [])
 	"cacheTimeMs": 300000,
 	"fallbackLanguage": "en",
 	"rememberMe": true,
-	"timeout": 300000,
+	"showUDHistory": true,
+	"timeout": 30000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
+	"keepAuthIlde": 600,
 	"useLocalStorage": true,
 	"useRelative": false,
-	"expertMode": true,
+	"expertMode": false,
 	"decimalCount": 2,
+	"httpsMode": false,
 	"shareBaseUrl": "https://g1.duniter.fr",
 	"helptip": {
-		"enable": false,
+		"enable": true,
 		"installDocUrl": {
 			"fr-FR": "https://duniter.org/fr/wiki/duniter/installer/",
-			"en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+			"en": "https://duniter.org/en/wiki/duniter/install/"
 		}
 	},
+	"license": {
+		"fr-FR": "license/license_g1-fr-FR",
+		"en": "license/license_g1-en"
+	},
 	"node": {
-		"host": "g1-test.duniter.org",
+		"host": "g1.duniter.org",
 		"port": 443
 	},
 	"fallbackNodes": [
 		{
-			"host": "g1-test.cgeek.fr",
+			"host": "g1.duniter.fr",
 			"port": 443
+		},
+		{
+			"host": "g1.monnaielibreoccitanie.org",
+			"port": 443
+		},
+		{
+			"host": "g1.le-sou.org",
+			"port": 443
+		},
+		{
+			"host": "g1.duniter.org",
+			"port": 443
+		}
+	],
+	"developers": [
+		{
+			"name": "Benoit Lavenier",
+			"pubkey": "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE"
 		}
 	],
 	"plugins": {
@@ -42,8 +67,18 @@ angular.module("cesium.config", [])
 			"enable": true,
 			"askEnable": true,
 			"useRemoteStorage": true,
-			"host": "g1-test.data.duniter.fr",
+			"host": "g1.data.duniter.fr",
 			"port": 443,
+			"fallbackNodes": [
+				{
+					"host": "g1.data.le-sou.org",
+					"port": 443
+				},
+				{
+					"host": "g1.data.duniter.fr",
+					"port": 443
+				}
+			],
 			"notifications": {
 				"txSent": true,
 				"txReceived": true,
@@ -53,8 +88,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "1.0.6",
-	"build": "2018-08-27T12:18:36.072Z",
+	"version": "1.1.0",
+	"build": "2018-08-27T15:51:55.287Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
