@@ -24,7 +24,7 @@ angular.module('cesium.es.wallet.controllers', ['cesium.es.services'])
 
 ;
 
-function ESWalletController($scope, $controller, esModals) {
+function ESWalletController($scope, $controller, $state, esModals, csWallet) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -35,7 +35,13 @@ function ESWalletController($scope, $controller, esModals) {
   /* -- modals -- */
 
   $scope.showNewPageModal = function() {
-    return esModals.showNewPage();
+    var wallet = ($state.params && $state.params.id) ? csWallet.children.get($state.params.id) : csWallet;
+    if (!wallet) {
+      UIUtils.alert.error('ERROR.UNKNOWN_WALLET_ID');
+      return;
+    }
+
+    return esModals.showNewPage({wallet: wallet});
   };
 }
 

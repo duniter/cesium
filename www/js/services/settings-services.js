@@ -48,8 +48,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
   var
   constants = {
-    OLD_STORAGE_KEY: 'CESIUM_SETTINGS',
-    STORAGE_KEY: 'settings',
+    OLD_STORAGE_KEY: 'CESIUM_SETTINGS', // for version < v1.1
+    STORAGE_KEY: 'settings', // for version >= v1.1.0
     KEEP_AUTH_IDLE_SESSION: 9999
   },
   defaultSettings = angular.merge({
@@ -221,7 +221,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     var now = new Date().getTime();
 
     return $q.all([
-        localStorage.getObject(constants.OLD_STORAGE_KEY),
+        localStorage.getObject(constants.OLD_STORAGE_KEY), // for version < v1.1
         localStorage.getObject(constants.STORAGE_KEY)
       ])
         .then(function(res) {

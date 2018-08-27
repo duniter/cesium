@@ -1,0 +1,51 @@
+<div class="item no-border no-padding item-avatar "
+     ng-if="loading">
+
+  <i class="item-image icon ion-person"></i>
+
+  <div class="item-content item-avatar-left-padding padding-top" >
+    <h2 class="stable-bg">
+      &nbsp;
+    </h2>
+    <h4 class="stable-bg col-75">
+      &nbsp;
+    </h4>
+    <h4 class="stable-bg col-50">
+      &nbsp;
+    </h4>
+  </div>
+</div>
+
+<a class="item no-border no-padding item-avatar ink animate-fade-in animate-show-hide ng-hide"
+     ng-show="!loading"
+     ui-sref="app.view_page({id: formData.id, title: formData.name})">
+  <i ng-if="formData.avatar" class="item-image avatar" style="background-image: url({{::formData.avatar.src}}"></i>
+  <i ng-if="!formData.avatar" class="item-image icon cion-page-{{::formData.type}}"></i>
+  <div class="item-content item-avatar-left-padding padding-top">
+    <h2 class="dark">
+      {{::formData.name}}
+    </h2>
+    <h4 ng-if="::formData.category" class="gray" title="{{::formData.category.name}}">
+      <b class="ion-flag"></b> {{::formData.category.name}}
+    </h4>
+    <h4 ng-if="::formData.city" class="gray" title="{{::formData.city}}">
+      <b class="ion-location"></b> {{::formData.city}}
+    </h4>
+  </div>
+</a>
+<!-- buttons -->
+<div class="item no-border no-padding">
+  <div class="pull-left gray">
+    <!-- show description -->
+    <a class="animate-fade-in animate-show-hide gray ng-hide"
+       ng-class="{'ion-arrow-down-b': !showDescription, 'ion-arrow-up-b': showDescription}"
+       ng-click="showDescription=!showDescription;"
+       title="{{'PROFILE.DESCRIPTION'|translate}}"
+       ng-show="!loading && formData.description">
+      &nbsp;
+    </a>
+  </div>
+</div>
+<div class="item no-border no-padding item-text-wrap hidden-xs ng-hide" ng-show="showDescription">
+  <small trust-as-html="::formData.description|truncText:500"></small>
+</div>

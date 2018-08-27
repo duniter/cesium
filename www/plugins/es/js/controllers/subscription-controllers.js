@@ -81,7 +81,7 @@ function ViewSubscriptionsController($scope, $q, $ionicHistory, csWot, csWallet,
           if (err == 'CANCELLED') {
             UIUtils.loading.hide(10);
             $ionicHistory.goBack();
-            return
+            return;
           }
           UIUtils.onError('SUBSCRIPTION.ERROR.LOAD_SUBSCRIPTIONS_FAILED')(err);
         });

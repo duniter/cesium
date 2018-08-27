@@ -79,7 +79,7 @@ angular.module('cesium.currency.controllers', ['ngFileSaver', 'cesium.services']
 function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA, UIUtils, csSettings, csCurrency, csNetwork, ModalUtils) {
 
   $scope.formData = {
-    useRelative: csSettings.data.useRelative,
+    useRelative: false, // Override in enter()
     currency: '',
     M: 0,
     MoverN: 0,
@@ -117,7 +117,7 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
 
   $scope.enter = function(e, state) {
     if ($scope.loading) { // run only once (first enter)
-
+      $scope.formData.useRelative = csSettings.data.useRelative;
       csCurrency.get()
         .then($scope.load)
         .then(function() {
@@ -277,7 +277,7 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
       csSettings.store();
     }
   };
-  $scope.$watch('formData.allRules', $scope.onAllRulesChange, true);
+  $scope.$watch('formData.allRules', $scope.onAllRulesChange);
 
   $scope.onAllWotRulesChange = function() {
     csSettings.data.currency = csSettings.data.currency || {};
@@ -286,7 +286,7 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
       csSettings.store();
     }
   };
-  $scope.$watch('formData.allWotRules', $scope.onAllWotRulesChange, true);
+  $scope.$watch('formData.allWotRules', $scope.onAllWotRulesChange);
 
   /* -- help tip -- */
 

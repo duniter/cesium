@@ -28,7 +28,7 @@ angular.module('cesium.es.notification.controllers', ['cesium.es.services'])
 
 ;
 
-function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtils, esHttp, csSettings, csWallet, esNotification) {
+function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtils, esHttp, csWallet, esNotification) {
   'ngInject';
 
   var defaultSearchLimit = 40;
@@ -158,11 +158,14 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
   };
 
   $scope.resetUnreadCount = function() {
+    if ($scope.search.loading || !wallet.data.notifications) {
+      return $timeout($scope.resetUnreadCount, 2000);
+    }
     if (!wallet.data.notifications.unreadCount || !$scope.search.results || !$scope.search.results.length) return;
     wallet.data.notifications.unreadCount = 0;
     var lastNotification = $scope.search.results[0];
     var readTime = lastNotification.time ? lastNotification.time : 0;
-    if (readTime && (!wallet.data.notifications.readTime != readTime)) {
+    if (readTime && (!wallet.data.notifications.readTime || wallet.data.notifications.readTime != readTime)) {
       wallet.data.notifications.readTime = readTime;
       wallet.storeData();
     }

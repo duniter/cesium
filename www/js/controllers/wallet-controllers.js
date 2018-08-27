@@ -604,7 +604,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   $scope.showSecurityModal = function(){
     $scope.hideActionsPopover();
-    return Modals.showAccountSecurity()
+    return Modals.showAccountSecurity({wallet: wallet})
       .then(function(res) {
         if (!res) return;
 
@@ -694,7 +694,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       .then(function(newWallet) {
         if (!newWallet || newWallet.id === wallet.id) return;
         if (newWallet.isDefault()) {
-          return $state.go('app.view_wallet')
+          return $state.go('app.view_wallet');
         }
         return $state.go('app.view_wallet_by_id', {id: newWallet.id});
       });
@@ -1010,7 +1010,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
       .then(function(newWallet) {
         if (!newWallet || newWallet.id === wallet.id) return;
         if (newWallet.isDefault()) {
-          return $scope.goState('app.view_wallet_tx')
+          return $scope.goState('app.view_wallet_tx');
         }
         return $scope.goState('app.view_wallet_tx_by_id', {id: newWallet.id});
       });
@@ -1092,7 +1092,9 @@ function WalletTxErrorController($scope, UIUtils, csSettings, csWallet) {
 
 }
 
-function WalletSecurityModalController($scope, UIUtils, csWallet, $translate){
+function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, parameters){
+
+  var wallet = parameters && parameters.wallet || csWallet;
 
   $scope.slides = {
     slider: null,
@@ -1108,10 +1110,11 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate){
   $scope.recover = {};
   $scope.isValidFile = false;
 
-  $scope.isLogin = csWallet.isLogin();
-  $scope.hasSelf = csWallet.hasSelf();
-  $scope.needSelf = $scope.isLogin && csWallet.data.requirements.needSelf;
-  $scope.needMembership = $scope.isLogin && csWallet.data.requirements.needMembership;
+
+  $scope.isLogin = wallet.isLogin();
+  $scope.hasSelf = wallet.hasSelf();
+  $scope.needSelf = $scope.isLogin && wallet.data.requirements.needSelf;
+  $scope.needMembership = $scope.isLogin && wallet.data.requirements.needMembership;
   $scope.option = $scope.isLogin ? 'saveID' : 'recoverID';
 
   $scope.formData = {
@@ -1295,7 +1298,7 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate){
       $scope.recover.answer += element.answer;
     });
 
-    return csWallet.recoverId($scope.recover)
+    return wallet.recoverId($scope.recover)
       .then(function (recover){
         if (angular.isDefined(recover)) {
           $scope.recover = recover;
@@ -1321,7 +1324,7 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate){
   $scope.downloadSaveIDFile = function(){
     // Force user re-auth
     var loginData;
-    return csWallet.auth({
+    return wallet.auth({
         forceAuth: true,
         expectedPubkey: $scope.pubkey,
         silent: true,
@@ -1352,9 +1355,9 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate){
           record.answer += question.answer;
         });
 
-        return csWallet.getCryptedId(record)
+        return wallet.getCryptedId(record)
           .then(function(record){
-            csWallet.downloadSaveId(record);
+            wallet.downloadSaveId(record);
             $scope.closeModal();
           });
       })
@@ -1382,11 +1385,11 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate){
    */
   $scope.downloadRevokeFile = function () {
     // Force re-authentication
-    return csWallet.auth({forceAuth: true})
+    return wallet.auth({forceAuth: true})
 
       // Download file
       .then(function() {
-        return csWallet.downloadRevocation();
+        return wallet.downloadRevocation();
       })
 
       .then(function() {
@@ -1410,7 +1413,7 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate){
     }
 
     // Make sure user re-auth
-    return csWallet.auth({forceAuth: true})
+    return wallet.auth({forceAuth: true})
       .then(function(confirm) {
         UIUtils.loading.hide();
         if (!confirm) return;
@@ -1450,10 +1453,10 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate){
     return UIUtils.loading.show()
       .then(function () {
         if (!$scope.revocation){
-          return csWallet.revoke();
+          return wallet.revoke();
         }
         else {
-          return csWallet.revokeWithFile($scope.revocation);
+          return wallet.revokeWithFile($scope.revocation);
         }
       })
       .then(function () {
@@ -1484,11 +1487,11 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate){
    */
   $scope.downloadKeyFile = function (format) {
     // Force re-authentication
-    return csWallet.auth({forceAuth: true})
+    return wallet.auth({forceAuth: true})
 
     // Download file
       .then(function() {
-        return csWallet.downloadKeyFile(format);
+        return wallet.downloadKeyFile(format);
       })
 
       .then(function() {
@@ -1578,9 +1581,7 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
             }
             UIUtils.onError('ERROR.SAVE_WALLET_LIST_FAILED')(err);
           });
-      })
-
-
+      });
   };
 
   /* -- modals -- */

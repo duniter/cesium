@@ -112,10 +112,11 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
     loading: true
   }, $scope.mapId);
 
-  $scope.showDescription = !UIUtils.screen.isSmall();
+  // Variables for marker
+  $scope.showDescription = false;
   ionicReady().then(function() {
-    $scope.showDescription = $scope.showDescription && ionic.Platform.grade.toLowerCase() === 'a';
-    if (!$scope.showDescription) {
+    $scope.enableDescription = !UIUtils.screen.isSmall() && ionic.Platform.grade.toLowerCase() === 'a';
+    if (!$scope.enableDescription) {
      console.debug("[map] [wot] Disable profile description.", ionic.Platform.grade);
     }
   });
@@ -301,8 +302,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
 
     var options = {
       fields: {
-        description: ionic.Platform.grade.toLowerCase()==='a' &&
-        !UIUtils.screen.isSmall()
+        description: $scope.enableDescription
       }
     };
 
@@ -324,8 +324,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
         if (res && res.length) {
 
           var formatPubkey = $filter('formatPubkey');
-          var userMarkerTemplate = $templateCache.get('plugins/map/templates/wot/popup_marker.html');
-          var pageMarkerTemplate = $templateCache.get('plugins/map/templates/wot/popup_page_marker.html');
+          var markerTemplate = $templateCache.get('plugins/map/templates/wot/popup_marker.html');
 
           _.forEach(res, function (hit) {
             var type = hit.pending ? 'pending' : (hit.uid ? 'member' : 'wallet');
@@ -334,7 +333,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
             var marker = {
               layer: type,
               icon: icons[type],
-              opacity: hit.uid || hit.type ? 1 : 0.7,
+              opacity: hit.uid ? 1 : 0.7,
               title: hit.name + ' | ' + shortPubkey,
               lat: hit.geoPoint.lat,
               lng: hit.geoPoint.lon,
@@ -352,7 +351,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
                 return $scope;
               },
               focus: false,
-              message: hit.type ? pageMarkerTemplate : userMarkerTemplate,
+              message: markerTemplate,
               id: id
             };
             markers[id] = marker;

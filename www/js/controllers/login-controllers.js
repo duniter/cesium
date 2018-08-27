@@ -179,7 +179,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
         }
         // Not a pubkey: launch search on
         else {
-          return $scope.showWotLookupModal(pubkey)
+          return $scope.showWotLookupModal(pubkey);
         }
       }
     }

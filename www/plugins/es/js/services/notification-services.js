@@ -279,9 +279,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
         console.debug('[ES] [notification] Loaded count (' + unreadCount + ') in '+(new Date().getTime()-now)+'ms');
         deferred.resolve(data);
       })
-      .catch(deferred.reject)
-
-
+      .catch(deferred.reject);
 
     return deferred.promise;
   }

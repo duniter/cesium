@@ -550,7 +550,7 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, csWallet, esHt
         if (err === 'CANCELLED') {
           $scope.cancel();
         }
-      })
+      });
   };
   $scope.$on('modal.shown', $scope.load);
 

@@ -28,7 +28,7 @@
 
     <div class="col">
       <a
-        ng-if=":rebind:login && doc.pubkey==$root.walletData.pubkey"
+        ng-if=":rebind:login && doc.pubkey==walletData.pubkey"
         ng-click="remove($index)"
         class="gray pull-right"
          title="{{'DOCUMENT.LOOKUP.BTN_REMOVE'|translate}}">

@@ -175,7 +175,7 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
     if (!$scope.search.results || !$scope.search.results.length) return;
     var lastNotification = $scope.search.results[0];
     var readTime = lastNotification.time ? lastNotification.time : 0;
-    if (readTime && (!wallet.data.invitations.time != readTime)) {
+    if (readTime && (!wallet.data.invitations.readTime || wallet.data.invitations.readTime != readTime)) {
       wallet.data.invitations.readTime = readTime;
       wallet.storeData();
     }
@@ -276,7 +276,7 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
         esInvitation.api.data.on.new($scope, $scope.onNewInvitation)
       );
     }
-  }
+  };
 }
 
 function PopoverInvitationController($scope, $controller, csWallet) {

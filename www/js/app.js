@@ -27,9 +27,6 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
                 Device, UIUtils, $ionicConfig, PluginService, csPlatform, csWallet) {
     'ngInject';
 
-    // Allow access to service data, from HTML templates
-    $rootScope.walletData = csWallet.data;
-
     // Must be done before any other $stateChangeStart listeners
     csPlatform.disableChangeState();
 
@@ -60,8 +57,12 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       // endRemoveIf(ios)
       // endRemoveIf(android)
 
+      var wallet = nextParams.wallet && nextParams.wallet != "default" ? csWallet.children.get(nextParams.wallet) : csWallet;
+      if (nextParams.wallet && !wallet) {
+        console.warn("[app] Unable to find the children wallet: " + nextParams.wallet);
+      }
       // If state need auth
-      if (next.data.auth && !csWallet.isAuth()) {
+      if (next.data.auth && !wallet.isAuth()) {
         event.preventDefault();
         options = next.data.minData ? {minData: true} : undefined;
         preventStateChange = true;
@@ -101,11 +102,11 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       // If state need login or auth, make sure to load wallet data
       else if (next.data.login || next.data.auth)  {
         options = next.data.minData ? {minData: true} : undefined;
-        if (!csWallet.isDataLoaded(options)) {
+        if (!wallet.isDataLoaded(options)) {
           event.preventDefault();
           // Show loading message, when full load
           if (!options || !options.minData) UIUtils.loading.show();
-          return csWallet.loadData(options)
+          return wallet.loadData(options)
             .then(function() {
               preventStateChange = false;
               return $state.go(next.name, nextParams);

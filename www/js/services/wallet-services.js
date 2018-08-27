@@ -32,7 +32,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       TX_MAX_INPUTS_COUNT: 40 // Allow to get a TX with less than 100 rows (=max row count in Duniter protocol)
     },
     data = {},
-    encrypted = false,
+    settings,
     listeners,
     started,
     startPromise,
@@ -71,7 +71,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         api.data.raise.init(data);
       }
       else {
-        if (isDefault() && !csSettings.data.useLocalStorage) {
+        if (isDefault() && settings && !settings.useLocalStorage) {
           csSettings.reset();
         }
         api.data.raise.reset(data);
@@ -375,9 +375,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     // store pubkey and uid
     store = function(pubkey) {
       pubkey = pubkey && typeof pubkey == 'string' ? pubkey : data.pubkey;
-      if (csSettings.data.useLocalStorage) {
+      if (settings.useLocalStorage) {
 
-        if (isLogin() && csSettings.data.rememberMe) {
+        if (isLogin() && settings.rememberMe) {
 
           var now = new Date().getTime();
           console.debug("[wallet] Storing...");
@@ -385,7 +385,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           var jobs = [];
 
           // Use session storage for secret key - fix #372
-          if (csSettings.data.keepAuthIdle == constants.KEEP_AUTH_IDLE_SESSION && isAuth()) {
+          if (settings.keepAuthIdle == constants.KEEP_AUTH_IDLE_SESSION && isAuth()) {
             jobs.push(sessionStorage.put(constants.STORAGE_SECKEY, CryptoUtils.base58.encode(data.keypair.signSk)));
           }
           else {
@@ -434,15 +434,18 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     // reset data store for this pubkey
     resetStore = function(pubkey) {
 
+      console.debug("[wallet] Resetting stored pubkey (and uid) in local storage...");
+
       sessionStorage.put(constants.STORAGE_SECKEY, null);
       localStorage.put(constants.STORAGE_PUBKEY, null);
       localStorage.put(constants.STORAGE_UID, null);
 
-      if (csSettings.data.useLocalStorage) {
+      if (settings.useLocalStorage) {
         // Clean data (only in the session storage - keep local)
-        return pubkey ? sessionStorage.put(constants.STORAGE_DATA_PREFIX + pubkey, null) : $q.when()
+        return pubkey ? sessionStorage.put(constants.STORAGE_DATA_PREFIX + pubkey, null) : $q.when();
       }
       else {
+        console.debug("[wallet] Resetting stored data in local storage...");
         return $q.all([
           pubkey ? sessionStorage.put(constants.STORAGE_DATA_PREFIX + pubkey, null) : $q.when(),
           pubkey ? localStorage.put(constants.STORAGE_DATA_PREFIX + pubkey, null) : $q.when()
@@ -454,7 +457,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     storeData = function() {
       if (!isLogin()) throw {message:'ERROR.NEED_LOGIN_FIRST'};
 
-      var useEncryption = csSettings.data.useLocalStorageEncryption;
+      var useEncryption = settings.useLocalStorageEncryption;
       var storageKey = constants.STORAGE_DATA_PREFIX + data.pubkey;
 
       var content; // Init only if used
@@ -526,7 +529,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
             });
             //console.debug("[wallet] Storing with encryption: ", content);
             return localStorage.put(storageKey, JSON.stringify(content));
-          })
+          });
       });
     },
 
@@ -593,15 +596,12 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       if (isNew()) return $q.when(data); // Skip restore
       // Get pubkey's data
       return $q.all([
-        sessionStorage.get(constants.STORAGE_DATA_PREFIX + data.pubkey),
-        localStorage.get(constants.STORAGE_DATA_PREFIX + data.pubkey)
+        sessionStorage.getObject(constants.STORAGE_DATA_PREFIX + data.pubkey),
+        localStorage.getObject(constants.STORAGE_DATA_PREFIX + data.pubkey)
       ])
       // Apply data, first from the session storage, then from local storage
       .then(function (res) {
-        var sessionData = res[0] && res[0] != "null" && res[0];
-        var localData = res[1] && res[1] != "null" && res[1];
-        var restoredData = sessionData || localData;
-        return applyRestoredData(restoredData && JSON.parse(restoredData));
+        return applyRestoredData(res[0] || res[1]);
       });
     },
 
@@ -717,7 +717,6 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     addEvents = function() {
       // Add user events
       if (data.requirements.revoked) {
-        console.log("REVOKED !!");
         addEvent({type:'info', message: 'ERROR.WALLET_REVOKED', context: 'requirements'});
       }
       else if (data.requirements.pendingRevocation) {
@@ -949,7 +948,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           return api.data.raisePromise.load(data)
             .then(function(){
               return data;
-            })
+            });
         });
     },
 
@@ -1612,7 +1611,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           return $q.all([
             CryptoUtils.box.pack(record.salt, nonce, record.keypair.boxPk, record.keypair.boxSk),
             CryptoUtils.box.pack(record.pwd, nonce, record.keypair.boxPk, record.keypair.boxSk)
-          ])
+          ]);
         })
         .then(function (res) {
           record.salt = res[0];
@@ -2020,17 +2019,17 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       });
     },
 
-    checkAuthIdle = function(isAuth) {
-      isAuth = angular.isDefined(isAuth) ? isAuth : isAuth();
-      var enable = isAuth && csSettings.data.keepAuthIdle > 0 && csSettings.data.keepAuthIdle != csSettings.constants.KEEP_AUTH_IDLE_SESSION;
+    checkAuthIdle = function(isAuthRes) {
+      isAuthRes = angular.isDefined(isAuthRes) ? isAuthRes : isAuth();
+      var enable = isAuthRes && settings.keepAuthIdle > 0 && settings.keepAuthIdle != csSettings.constants.KEEP_AUTH_IDLE_SESSION;
       var changed = (enableAuthIdle != enable);
 
       // need start/top watching
       if (changed) {
         // start idle
         if (enable) {
-          console.debug("[wallet] Start idle (delay: {0}s)".format(csSettings.data.keepAuthIdle));
-          Idle.setIdle(csSettings.data.keepAuthIdle);
+          console.debug("[wallet] Start idle (delay: {0}s)".format(settings.keepAuthIdle));
+          Idle.setIdle(settings.keepAuthIdle);
           Idle.watch();
         }
         // stop idle, if need
@@ -2042,30 +2041,46 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       }
 
       // if idle time changed: apply it
-      else if (enable && Idle.getIdle() !== csSettings.data.keepAuthIdle) {
-        console.debug("[idle] Updating auth idle (delay: {0}s)".format(csSettings.data.keepAuthIdle));
-        Idle.setIdle(csSettings.data.keepAuthIdle);
+      else if (enable && Idle.getIdle() !== settings.keepAuthIdle) {
+        console.debug("[idle] Updating auth idle (delay: {0}s)".format(settings.keepAuthIdle));
+        Idle.setIdle(settings.keepAuthIdle);
       }
     };
 
-    var settings = initSettingsChanged(csSettings.data);
-
-    function initSettingsChanged(settings) {
+    function getWalletSettings(settings) {
       return {
         useLocalStorage: settings.useLocalStorage,
         useLocalStorageEncryption: settings.useLocalStorageEncryption,
-        rememberMe: settings.useLocalStorage,
+        rememberMe: settings.rememberMe,
         keepAuthIdle: settings.keepAuthIdle
       };
     }
 
-    function onSettingsChanged(newSettings) {
-      var hasChanged = !angular.equals(settings, initSettingsChanged(newSettings));
+    function onSettingsChanged(allSettings) {
+      var newSettings = getWalletSettings(allSettings);
+      var hasChanged = !angular.equals(settings, newSettings);
       if (hasChanged) {
-        console.debug("[wallet] Settings changed: applying to wallet (will store, and recheck idle)");
-        store();
-        storeData();
-        checkAuthIdle();
+        var useStorageChanged = !angular.equals(settings.useLocalStorage, newSettings.useLocalStorage) ||
+          !angular.equals(settings.useLocalStorageEncryption, newSettings.useLocalStorageEncryption);
+        var keepAuthIdleChanged = !angular.equals(settings.keepAuthIdle, newSettings.keepAuthIdle);
+
+        settings = newSettings;
+
+        if (keepAuthIdleChanged) {
+          checkAuthIdle();
+        }
+
+        if (useStorageChanged) {
+          // Reset stored data
+          if (!settings.useLocalStorage) {
+            resetStore(data.pubkey);
+          }
+          else {
+            // Or stored login data
+            store();
+            storeData();
+          }
+        }
       }
     }
 
@@ -2117,7 +2132,10 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       var now = new Date().getTime();
 
       startPromise = $q.all([
-          csSettings.ready(),
+          csSettings.ready()
+            .then(function() {
+              settings = getWalletSettings(csSettings.data);
+            }),
           csCurrency.ready(),
           BMA.ready()
         ]);

@@ -50,7 +50,8 @@ angular.module('cesium.map.registry.controllers', ['cesium.services', 'cesium.ma
 
 
 function MapRegistryViewController($scope, $filter, $templateCache, $interpolate, $timeout, $location, $translate, $q,
-                              leafletData, UIUtils, csSettings, csWallet, MapUtils, mapRegistry) {
+                                   ionicReady, leafletData,
+                                   UIUtils, csSettings, csWallet, MapUtils, mapRegistry) {
   'ngInject';
 
   var
@@ -115,6 +116,15 @@ function MapRegistryViewController($scope, $filter, $templateCache, $interpolate
     loading: true
   }, $scope.mapId);
 
+  // Variables for marker
+  $scope.formData = {};
+  $scope.showDescription = false;
+  ionicReady().then(function() {
+    $scope.enableDescription = !UIUtils.screen.isSmall() && ionic.Platform.grade.toLowerCase() === 'a';
+    if (!$scope.enableDescription) {
+      console.debug("[map] [wot] Disable profile description.", ionic.Platform.grade);
+    }
+  });
 
   $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
     // Enable back button (workaround need for navigation outside tabs - https://stackoverflow.com/a/35064602)
@@ -168,19 +178,6 @@ function MapRegistryViewController($scope, $filter, $templateCache, $interpolate
       if (!$scope.map.loading) return map; // already loaded
 
       if (!UIUtils.screen.isSmall()) {
-        // Add a start tour button
-        /*L.easyButton({
-            position: 'topright',      // inherited from L.Control -- the corner it goes in
-            type: 'replace',          // set to animate when you're comfy with css
-            leafletClasses: true,     // use leaflet classes to style the button?
-            states:[{                 // specify different icons and responses for your button
-              stateName: 'show-help-tour',
-              onClick: $scope.startHelpTour,
-              title: translations['COMMON.BTN_HELP_TOUR_SCREEN'],
-              icon: 'icon ion-easel'
-            }]
-          }
-        ).addTo(map);*/
 
         // Add a refresh button
         L.easyButton({
@@ -291,7 +288,7 @@ function MapRegistryViewController($scope, $filter, $templateCache, $interpolate
 
     var options = {
       fields: {
-        description: !UIUtils.screen.isSmall()
+        description: $scope.enableDescription
       }
     };
 
@@ -307,41 +304,42 @@ function MapRegistryViewController($scope, $filter, $templateCache, $interpolate
         if (res && res.length) {
 
           var formatPubkey = $filter('formatPubkey');
-          var userMarkerTemplate = $templateCache.get('plugins/map/templates/wot/popup_marker.html');
-          var pageMarkerTemplate = $templateCache.get('plugins/map/templates/wot/popup_page_marker.html');
+          var pageMarkerTemplate = $templateCache.get('plugins/map/templates/registry/popup_marker.html');
 
           _.forEach(res, function (hit) {
-            var type = hit.type || (hit.pending ? 'pending' : (hit.uid ? 'member' : 'wallet'));
             var shortPubkey = formatPubkey(hit.pubkey);
-            var id = hit.index + '_' + (hit.id || (hit.uid ? (hit.uid + ':' + hit.pubkey) : hit.pubkey)).replace(/-/g, '_');
+            var id = hit.index + '_' + (hit.id).replace(/-/g, '_');
             var marker = {
-              layer: type,
-              icon: icons[type],
-              opacity: hit.uid || hit.type ? 1 : 0.7,
+              layer: hit.type,
+              icon: icons[hit.type],
+              opacity: 1,
               title: hit.name + ' | ' + shortPubkey,
               lat: hit.geoPoint.lat,
               lng: hit.geoPoint.lon,
               getMessageScope: function () {
-                var scope = $scope.$new();
-                scope.hit = hit;
-                return scope;
+                $scope.loading = true;
+                $scope.$applyAsync(function() {
+                  angular.extend($scope.formData, hit);
+                  $scope.loading = false;
+                });
+                return $scope;
               },
               focus: false,
-              message: hit.type ? pageMarkerTemplate : userMarkerTemplate,
+              message: pageMarkerTemplate,
               id: id
             };
             markers[id] = marker;
 
             // Create a search marker (will be hide)
-            var searchText = hit.name + ((hit.uid && hit.uid != hit.name) ? (' | ' + hit.uid) : '') + ' | ' + shortPubkey;
+            var searchText = hit.name + ' | ' + shortPubkey;
             var searchMarker = angular.merge({
-              type: type,
+              type: hit.type,
               opacity: 0,
               icon: L.divIcon({
-                className: type + ' ng-hide',
+                className: hit.type + ' ng-hide',
                 iconSize: L.point(0, 0)
               })
-            }, {title: searchText, pubkey: hit.pubkey, uid: hit.uid, name: hit.name, pending: hit.pending, popupMarkerId: id});
+            }, {title: searchText, pubkey: hit.pubkey, name: hit.name, popupMarkerId: id});
             markersSearchLayer.addLayer(new L.Marker({
                 lat: hit.geoPoint.lat,
                 lng: hit.geoPoint.lon

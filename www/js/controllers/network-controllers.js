@@ -423,7 +423,6 @@ function NetworkLookupPopoverController($scope, $controller) {
   $scope.showHelpTip = function() {};
 
   // Enter the popover
-  console.log("Will enter the popover !");
   $scope.enter();
 }
 

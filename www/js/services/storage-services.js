@@ -24,7 +24,7 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
     };
 
     exports.getObject = function(key) {
-      return $q.when(JSON.parse(exports.storage[key] || '{}'));
+      return $q.when(JSON.parse(exports.storage[key] || 'null'));
     };
 
     return exports;
@@ -74,7 +74,7 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
     };
 
     exports.standard.getObject = function(key) {
-      return $q.when(JSON.parse(exports.standard.storage[key] || '{}'));
+      return $q.when(JSON.parse(exports.standard.storage[key] || 'null'));
     };
 
     /* -- Use secure storage (using a cordova plugin) -- */
@@ -124,7 +124,7 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
     exports.secure.getObject = function(key) {
       return exports.secure.storage.get(key)
         .then(function(value) {
-          return (value && JSON.parse(value)) || {};
+          return JSON.parse(value||'null');
         });
     };
 

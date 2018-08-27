@@ -49,8 +49,8 @@
   <div class="pull-left gray">
     <!-- show description -->
     <a class="animate-fade-in animate-show-hide gray ng-hide"
-       ng-class="{'ion-arrow-down-b': !$parent.showDescription, 'ion-arrow-up-b': $parent.showDescription}"
-       ng-click="$parent.showDescription=!$parent.showDescription;"
+       ng-class="{'ion-arrow-down-b': !showDescription, 'ion-arrow-up-b': showDescription}"
+       ng-click="showDescription=!showDescription;"
        title="{{'PROFILE.DESCRIPTION'|translate}}"
        ng-show="!loading && formData.profile.description">
       &nbsp;
@@ -77,6 +77,6 @@
 
   </div>
 </div>
-<div class="item no-border no-padding item-text-wrap hidden-xs ng-hide" ng-show="$parent.showDescription">
+<div class="item no-border no-padding item-text-wrap hidden-xs ng-hide" ng-show="showDescription">
   <small trust-as-html="formData.profile.description|truncText:500"></small>
 </div>

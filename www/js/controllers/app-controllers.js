@@ -69,6 +69,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 ) {
   'ngInject';
 
+  $scope.walletData  = csWallet.data;
   $scope.search = {};
   $scope.login = csWallet.isLogin();
   $scope.auth = csWallet.isAuth();
@@ -384,9 +385,9 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       .catch(UIUtils.onError());
   };
 
-  // Login and go to a state (or wallet if not)
+  // Do authentification
   $scope.doAuth = function() {
-    return $scope.loadWallet({auth: true})
+    return csWallet.auth()
       .then(function() {
         UIUtils.loading.hide();
       });
@@ -400,20 +401,10 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // add listener on wallet event
   csWallet.api.data.on.login($scope, function(data, deferred) {
     $scope.login = true;
-    //$rootScope.walletData = data || {};
-    $scope.walletData  = data || {};
-    // $scope.walletData = {
-    //   pubkey: data.pubkey,
-    //   uid: data.uid,
-    //   name: data.name,
-    //   avatar: data.avatar
-    // };
     return deferred ? deferred.resolve() : $q.when();
   });
   csWallet.api.data.on.logout($scope, function() {
     $scope.login = false;
-    //$rootScope.walletData = {};
-    $scope.walletData = {};
   });
   csWallet.api.data.on.auth($scope, function(data, deferred) {
     $scope.auth = true;

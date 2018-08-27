@@ -151,7 +151,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
               api.data.raise.sent(res);
 
               return res;
-            })
+            });
         });
     }
 

@@ -283,10 +283,11 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
               that.add(record) :
               that.update(record, {id: record.issuer})
                 .catch(function(err) {
-                  // update failed: try add
+                  // Workaround if update failed: try to add() instead
+                  // Can occur when changing the cesium+ pod
                   if (err && err.ucode == 404) return that.add(record);
                   throw err;
-                })
+                });
           })
           .then(function() {
             return true;
