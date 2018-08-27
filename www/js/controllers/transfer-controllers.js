@@ -6,7 +6,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
 
       .state('app.new_transfer', {
         cache: false,
-        url: "/transfer?amount&udAmount&comment&restPub&all",
+        url: "/transfer?amount&udAmount&comment&restPub&all&wallet",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/new_transfer.html",
@@ -17,7 +17,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
 
       .state('app.new_transfer_pubkey_uid', {
         cache: false,
-        url: "/transfer/:pubkey/:uid?amount&udAmount&comment&restPub&all",
+        url: "/transfer/:pubkey/:uid?amount&udAmount&comment&restPub&all&wallet",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/new_transfer.html",
@@ -28,7 +28,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
 
       .state('app.new_transfer_pubkey', {
         cache: false,
-        url: "/transfer/:pubkey?amount&udAmount&comment&restPub&all",
+        url: "/transfer/:pubkey?amount&udAmount&comment&restPub&all&wallet",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/new_transfer.html",
@@ -145,8 +145,6 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       $scope.restPub = parameters.restPub;
       $scope.formData.restPub = parameters.restPub;
       $scope.formData.all = true;
-      $scope.$watch('walletData.balance', $scope.onAmountChanged, true);
-      $scope.$watch('formData.amount', $scope.onAmountChanged, true);
     }
     else {
       $scope.formData.all = false;
@@ -175,6 +173,13 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
         $scope.formData.walletId = wallet.id;
         $scope.onUseRelativeChanged();
         $scope.onAmountChanged();
+
+        $scope.$watch('walletData.balance', $scope.onAmountChanged, true);
+        $scope.$watch('formData.amount', $scope.onAmountChanged, true);
+
+        $scope.$watch('formData.useRelative', $scope.onUseRelativeChanged, true);
+        $scope.$watch('walletData.balance', $scope.onUseRelativeChanged, true);
+
         UIUtils.ink({selector: '.modal-transfer .ink'});
 
         if (!$scope.destPub || $scope.destUid) {
@@ -217,25 +222,52 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       $scope.form.$valid = undefined;
     }
   };
-  $scope.$watch('formData.useRelative', $scope.onUseRelativeChanged, true);
-  $scope.$watch('walletData.balance', $scope.onUseRelativeChanged, true);
 
   $scope.onAmountChanged = function() {
-    if (!$scope.formData.all || !$scope.formData.amount) {
-      $scope.formData.restAmount = undefined;
-      return;
-    }
+
     var amount = $scope.formData.amount;
-    if (typeof amount === "string") {
+    if (amount && typeof amount === "string") {
       amount = parseFloat(amount.replace(new RegExp('[.,]'), '.'));
     }
-    if ($scope.formData.useRelative) {
-      $scope.formData.restAmount = $scope.walletData.balance - amount * csCurrency.data.currentUD;
-      if ($scope.formData.restAmount < minQuantitativeAmount) {
-        $scope.formData.restAmount = 0;
+
+    var valid = true;
+
+    // Avoid amount less than the minimal - fix #373
+    if (amount && amount < $scope.minAmount) {
+      valid = false;
+      $scope.form.amount.$error = $scope.form.amount.$error || {};
+      $scope.form.amount.$error.min = true;
+    }
+    else if ($scope.form.amount.$error && $scope.form.amount.$error.min){
+      delete $scope.form.amount.$error.min;
+    }
+
+    // Avoid amount greater than the balance
+    if (amount && amount > $scope.convertedBalance){
+      $scope.form.$valid = false;
+      $scope.form.amount.$invalid = true;
+      $scope.form.amount.$error = $scope.form.amount.$error || {};
+      $scope.form.amount.$error = {max: true};
+    }
+    else if ($scope.form.amount.$error && $scope.form.amount.$error.max){
+      delete $scope.form.amount.$error.max;
+    }
+
+    $scope.form.$valid = valid;
+    $scope.form.amount.$invalid = !valid;
+
+    if (!valid || !$scope.formData.all || !amount) {
+      $scope.formData.restAmount = undefined;
+    }
+    else {
+      if ($scope.formData.useRelative) {
+        $scope.formData.restAmount = $scope.walletData.balance - amount * csCurrency.data.currentUD;
+        if ($scope.formData.restAmount < minQuantitativeAmount) {
+          $scope.formData.restAmount = 0;
+        }
+      } else {
+        $scope.formData.restAmount  = $scope.walletData.balance - amount * 100;
       }
-    } else {
-      $scope.formData.restAmount  = $scope.walletData.balance - amount * 100;
     }
   };
 
@@ -248,19 +280,6 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     var amount = $scope.formData.amount;
     if (typeof amount === "string") {
       amount = parseFloat(amount.replace(new RegExp('[.,]'), '.'));
-    }
-
-    // Avoid amount less than the minimal - fix #373
-    if (amount < $scope.minAmount) {
-      $scope.form.$valid = false;
-      $scope.form.amount.$invalid = true;
-      $scope.form.amount.$error = $scope.form.amount.$error || {};
-      $scope.form.amount.$error.min = true;
-      return;
-    }
-    else if ($scope.form.amount.$error && $scope.form.amount.$error.min){
-      $scope.form.amount.$invalid = false;
-      delete $scope.form.amount.$error.min;
     }
 
     // Avoid multiple call

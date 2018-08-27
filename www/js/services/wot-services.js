@@ -80,15 +80,15 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
         requirements.hasSelf = true;
         requirements.needSelf = false;
         requirements.wasMember = angular.isDefined(requirements.wasMember) ? requirements.wasMember : false; // Compat with Duniter 0.9
-        requirements.needMembership = (requirements.membershipExpiresIn <= 0 && requirements.membershipPendingExpiresIn <= 0 && !requirements.wasMember);
-        requirements.needRenew = (!requirements.needMembership &&
+        requirements.needMembership = (!requirements.revoked && requirements.membershipExpiresIn <= 0 && requirements.membershipPendingExpiresIn <= 0 && !requirements.wasMember);
+        requirements.needRenew = (!requirements.needMembership && !requirements.revoked &&
           requirements.membershipExpiresIn <= csSettings.data.timeWarningExpireMembership &&
           requirements.membershipPendingExpiresIn <= 0) ||
           (requirements.wasMember && requirements.membershipExpiresIn === 0 &&
           requirements.membershipPendingExpiresIn === 0);
-        requirements.canMembershipOut = (requirements.membershipExpiresIn > 0);
-        requirements.pendingMembership = (requirements.membershipExpiresIn <= 0 && requirements.membershipPendingExpiresIn > 0);
-        requirements.isMember = (requirements.membershipExpiresIn > 0);
+        requirements.canMembershipOut = (!requirements.revoked && requirements.membershipExpiresIn > 0);
+        requirements.pendingMembership = (!requirements.revoked && requirements.membershipExpiresIn <= 0 && requirements.membershipPendingExpiresIn > 0);
+        requirements.isMember = (!requirements.revoked && requirements.membershipExpiresIn > 0);
         requirements.blockUid = requirements.meta.timestamp;
         // Force certification count to 0, is not a member yet - fix #269
         requirements.certificationCount = (requirements.isMember && requirements.certifications) ? requirements.certifications.length : 0;

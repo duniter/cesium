@@ -904,10 +904,10 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
 
   // Edit click
   $scope.edit = function() {
-    UIUtils.loading.show();
     var wallet = csWallet.isUserPubkey($scope.formData.issuer) ? csWallet : csWallet.children.getByPubkey($scope.formData.issuer);
     if (!wallet) return;
-    $state.go('app.registry_edit_record', {id: $scope.id, wallet: wallet.id});
+    UIUtils.loading.show();
+    return $state.go('app.registry_edit_record', {id: $scope.id, wallet: wallet.id});
   };
 
   $scope.delete = function() {

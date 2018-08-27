@@ -29,7 +29,7 @@
         {{'ACCOUNT.BTN_MEMBERSHIP_RENEW_DOTS' | translate}}
       </a>
       <a class="item item-icon-left ink hidden-xs hidden-sm"
-         ng-if="!walletData.requirements.needSelf"
+         ng-if="!walletData.requirements.needSelf && !walletData.requirements.revoked"
          ng-class="{'gray':!walletData.requirements.needRenew}"
          ng-click="renewMembership()">
         <i class="icon ion-loop"></i>

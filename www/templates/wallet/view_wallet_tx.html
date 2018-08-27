@@ -89,7 +89,8 @@
         <div class="list" ng-class="::motion.ionListClass">
 
           <!-- Errors transactions-->
-          <a class="item item-icon-left item-icon-right ink" ng-if="formData.tx.errors && formData.tx.errors.length" ui-sref="app.view_wallet_tx_errors">
+          <a class="item item-icon-left item-icon-right ink" ng-if="formData.tx.errors && formData.tx.errors.length"
+             ng-click="showTxErrors()">
             <i class="icon ion-alert-circled"></i>
             {{:locale:'ACCOUNT.ERROR_TX'|translate}}
             <div class="badge badge-assertive">

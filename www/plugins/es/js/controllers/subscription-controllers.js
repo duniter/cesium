@@ -20,7 +20,7 @@ angular.module('cesium.es.subscription.controllers', ['cesium.es.services'])
 
       .state('app.edit_subscriptions_by_id', {
         cache: false,
-        url: "/wallet/list/:id/subscriptions",
+        url: "/wallets/:id/subscriptions",
         views: {
           'menuContent': {
             templateUrl: "plugins/es/templates/subscription/edit_subscriptions.html",

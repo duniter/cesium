@@ -29,7 +29,7 @@
                 ng-click="showSelectWalletModal()">
         <span class="gray" translate>TRANSFER.FROM</span>
         <span class="badge animate-fade-in animate-show-hide ng-hide" ng-show="!loading"
-            ng-class="{'badge-assertive': (convertedBalance <= 0 || (formData.amount && convertedBalance < formData.amount)), 'badge-balanced': (convertedBalance > 0 && (!formData.amount || convertedBalance >= formData.amount)) }">
+            ng-class="{'badge-assertive': (convertedBalance <= 0 || form.amount.$error.max), 'badge-balanced': (convertedBalance > 0 && (!form.amount.$error.max)) }">
             <ion-spinner icon="android" ng-show="!walletData.pubkey"></ion-spinner>
             <span ng-if="walletData.pubkey && !walletData.isMember">
               <i class="ion-key"></i> {{walletData.pubkey| formatPubkey}}&nbsp;&nbsp;
@@ -92,6 +92,9 @@
         </div>
         <div class="form-error" ng-message="min">
           <span translate="ERROR.FIELD_MIN" translate-values="{min: minAmount}"></span>
+        </div>
+        <div class="form-error" ng-message="max">
+          <span translate="ERROR.NOT_ENOUGH_CREDIT"></span>
         </div>
       </div>
 

@@ -89,7 +89,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // (code removed when NO device)
   ////////////////////////////////////////
 
-  function parseWIF_or_EWIF(data, options) {
+  $scope.parseWIF = function(data, options) {
     options = options || {};
     options.withSecret = angular.isDefined(options.withSecret) && options.withSecret || true;
     options.password = function() {
@@ -116,7 +116,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         if (err && err == 'CANCELLED') return;
         if (err && err.ucode == csCrypto.errorCodes.BAD_PASSWORD) {
           // recursive call
-          return parseWIF_or_EWIF(data, {withSecret: options.withSecret, error: 'ACCOUNT.SECURITY.KEYFILE.ERROR.BAD_PASSWORD'});
+          return $scope.parseWIF(data, {withSecret: options.withSecret, error: 'ACCOUNT.SECURITY.KEYFILE.ERROR.BAD_PASSWORD'});
         }
         console.error("[app] Unable to parse as WIF or EWIF format: " + (err && err.message || err));
         throw err; // rethrow
@@ -136,7 +136,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         // Try to parse as an URI
         return BMA.uri.parse(data)
           .then(function(res){
-            if (!res || res.pubkey) throw {message: 'ERROR.SCAN_UNKNOWN_FORMAT'};
+            if (!res || !res.pubkey) throw {message: 'ERROR.SCAN_UNKNOWN_FORMAT'};
             // If pubkey: open the identity
             return $state.go('app.wot_identity', {
               pubkey: res.pubkey,
@@ -149,48 +149,32 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
             console.debug("[app] Scan data is not an URI (get error: " + (err && err.message || err) + "). Trying to decode as a WIF or EWIF format...");
 
             // Try to read as WIF format
-            return parseWIF_or_EWIF(data)
+            return $scope.parseWIF(data)
               .then(function(keypair) {
                 if (!keypair || !keypair.signPk || !keypair.signSk) throw err; // rethrow the first error (e.g. Bad URI)
 
-                // User already logged
-                if (csWallet.isLogin()) {
-                  // Open a temporary wallet
-                  var wallet = csWallet.instance('WIF');
-                  csWallet.children.add(wallet);
-                  return wallet.login({
+                var pubkey = CryptoUtils.base58.encode(keypair.signPk);
+                console.debug("[app] Detected WIF/EWIF format. Will login to wallet {" + pubkey.substring(0, 8) + "}");
+
+                // Create the wallet (if need) or use default
+                var wallet = !csWallet.isLogin() ? csWallet : csWallet.children.create({store: false});
+
+                // Login using keypair
+                return wallet.login({
                     forceAuth: true,
                     minData: false,
                     authData: {
-                      pubkey: CryptoUtils.base58.encode(keypair.signPk),
+                      pubkey: pubkey,
                       keypair: keypair
                     }
                   })
                   .then(function () {
-                    // Transfer all wallet
+                    // Open transfer all wallet
                     return $state.go('app.new_transfer', {
-                      all: true,
-                      wallet: wallet.id
+                      all: true, // transfer all sources
+                      wallet: !wallet.isDefault() ? wallet.id : undefined
                     });
                   });
-                }
-                // TODO: Use a temporary wallet ?
-                // var wallet = csWallet.instance('WIF');
-                // return wallet.login(...)
-
-                return csWallet.login({
-                    forceAuth: true,
-                    minData: false,
-                    authData: {
-                      pubkey: CryptoUtils.base58.encode(keypair.signPk),
-                      keypair: keypair
-                    }
-                  })
-                  .then(function () {
-                    // Transfer all wallet
-                    return $state.go('app.new_transfer', {all: true});
-                  });
-
               })
               // Unknown format (nor URI, nor WIF/EWIF)
               .catch(UIUtils.onError('ERROR.SCAN_UNKNOWN_FORMAT'));

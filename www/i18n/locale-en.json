@@ -415,7 +415,8 @@
       "SCRYPT_DEFAULT": "Standard salt (default)",
       "SCRYPT_ADVANCED": "Advanced salt",
       "FILE": "Keychain file",
-      "PUBKEY": "Public key only"
+      "PUBKEY": "Public key only",
+      "SCAN": "Scan a QR code"
     },
     "SCRYPT": {
       "SIMPLE": "Light salt",

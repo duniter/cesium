@@ -89,6 +89,7 @@
     "WOT": "Directorio",
     "CURRENCY": "Moneda",
     "ACCOUNT": "Mi cuenta",
+    "WALLETS": "Mis carteras",
     "TRANSFER": "Transferencia",
     "SCAN": "Escáner",
     "SETTINGS": "Configuraciones",
@@ -129,6 +130,8 @@
     "ENABLE_UI_EFFECTS": "Activar los efectos visuales",
     "HISTORY_SETTINGS": "Operaciones de cuentas",
     "DISPLAY_UD_HISTORY": "¿Publicar los dividendos producidos?",
+    "TX_HISTORY_AUTO_REFRESH": "Activar actualización automática?",
+    "TX_HISTORY_AUTO_REFRESH_HELP": "Actualice el saldo y las operaciones automáticamente, en cada nuevo bloque.",
     "AUTHENTICATION_SETTINGS": "Autenticación",
     "KEEP_AUTH": "Caducidad de la autenticación",
     "KEEP_AUTH_HELP": "Definir cuándo limpiar la memoria de autenticación",
@@ -263,6 +266,7 @@
       "WARN_PRE_RELEASE": "prelanzamiento (última versión estable: <b>{{version}}</b>)",
       "WARN_NEW_RELEASE": "Versión <b>{{version}}</b> disponible",
       "WS2PID": "ID:",
+      "PRIVATE_ACCESS": "Acceso privado",
       "POW_PREFIX": "Prefijo de la prueba de trabajo:",
       "ENDPOINTS": {
         "BMAS": "Interfaz segura (SSL)",
@@ -390,12 +394,39 @@
       "MESSAGE": "<i class=\"ion-android-time\"></i> Se ha <b>desconectado</b> de forma automática, después de un periodo de inactividad prolongada.",
       "BTN_RELOGIN": "Volver a conectarme",
       "IDLE_WARNING": "Se desconectará en... {{countdown}}"
+    },
+    "METHOD": {
+      "SCRYPT_DEFAULT": "Identificación predeterminada",
+      "SCRYPT_ADVANCED": "Sallaje avanzado",
+      "FILE": "Archivo llavero",
+      "PUBKEY": "Solo clave pública",
+      "SCAN": "Escanear un código QR"
+    },
+    "SCRYPT": {
+      "SIMPLE": "Ligero",
+      "DEFAULT": "Predeterminado",
+      "SECURE": "Seguro",
+      "HARDEST": "El más seguro",
+      "EXTREME": "Extremo",
+      "USER": "Personalizado",
+      "N": "N (Loop):",
+      "r": "r (RAM):",
+      "p": "p (CPU):"
+    },
+    "FILE": {
+      "DATE" : "Fecha:",
+      "TYPE" : "Tipo:",
+      "SIZE": "Tamaño:",
+      "VALIDATING": "Validación en progreso...",
+      "HELP": "Formato de archivo esperado: <b>.yml</b> o <b>.dunikey</b> (tipo PubSec, WIF o EWIF)."
     }
   },
   "AUTH": {
     "TITLE": "<i class=\"icon ion-locked\"></i> AAutenticación",
     "BTN_AUTH": "Autenticar",
-    "GENERAL_HELP": "Por favor, autentíquese:"
+    "GENERAL_HELP": "Por favor, autentíquese:",
+    "EXPECTED_UID_HELP": "Por favor inicie sesión en la cuenta de <i class=\"ion-person\"></i> {{uid}}:",
+    "EXPECTED_PUBKEY_HELP": "Por favor, autentifíquese en la monedero <i class=\"ion-key\"></i> {{pubkey|formatPubkey}} :"
   },
   "ACCOUNT": {
     "TITLE": "Mi cuenta",
@@ -407,6 +438,7 @@
     "SHOW_ALL_TX": "Mostrar todo",
     "TX_FROM_DATE": "(límite actual a {{fromTime|formatFromNowShort}})",
     "PENDING_TX": "Transacciones en proceso de se procesadas",
+    "VALIDATING_TX": "Transacciones validadas",
     "ERROR_TX": "Transacciones no ejecutadas",
     "ERROR_TX_SENT": "Transacciones ejecutadas fallidas",
     "PENDING_TX_RECEIVED": "Tansacciones en espera de recepción",
@@ -422,11 +454,9 @@
     "SIG_STOCK": "Certificaciones emitidas",
     "BTN_RECEIVE_MONEY": "Recibir",
     "BTN_SELECT_ALTERNATIVES_IDENTITIES": "Cambiar a otra identidad...",
-    "BTN_MEMBERSHIP_IN_DOTS": "Volverse miembro...",
     "BTN_MEMBERSHIP_RENEW": "Renovar la adhesión",
     "BTN_MEMBERSHIP_RENEW_DOTS": "Renovar la adhesión...",
     "BTN_MEMBERSHIP_OUT_DOTS": "Cancelar la adhesión...",
-    "BTN_SEND_IDENTITY_DOTS": "Publicar su identidad...",
     "BTN_SECURITY_DOTS": "Cuenta y securidad...",
     "BTN_SHOW_DETAILS": "Publicar la información técnica",
     "LOCKED_OUTPUTS_POPOVER": {
@@ -535,12 +565,16 @@
     "COMMENT_HELP": "Comentario",
     "BTN_SEND": "Enviar",
     "BTN_ADD_COMMENT": "Añadir un comentario",
+    "REST": "Resto de cuenta",
+    "REST_TO": "a",
     "WARN_COMMENT_IS_PUBLIC": "Tenga en cuenta que los <b>comentarios son públicos</b> (sin encriptar).",
     "MODAL": {
       "TITLE": "Transferencia"
     }
   },
   "ERROR": {
+    "UNKNOWN_URI_FORMAT": "Formato URI desconocido",
+    "PUBKEY_INVALID_CHECKSUM": "Clave pública no válida (suma de comprobación incorrecta).",
     "POPUP_TITLE": "Error",
     "UNKNOWN_ERROR": "Error desconocido",
     "CRYPTO_UNKNOWN_ERROR": "Su navegador parece incompatible con las funcionalidades de cryptografía.",
@@ -592,7 +626,8 @@
     "INVALID_NODE_SUMMARY": "Nodo ilocalizable o dirección inválida.",
     "INVALID_USER_ID": "El seudónimo no debe contener ni espacios ni caracteres especiales o acentuado.",
     "INVALID_COMMENT": "El campo 'referencia’ no debe contener carácteres acentuados.",
-    "INVALID_PUBKEY": "La llave pública no tiene el formato esperado.",
+    "INVALID_PUBKEY": "La clave pública no tiene el formato esperado.",
+    "INVALID_PUBKEY_CHECKSUM": "Suma de comprobación inválida.",
     "IDENTITY_REVOKED": "Esta identidad <b>fue revocada {{revocationTime|formatFromNow}}</b> ({{revocationTime|formatDate}}). No puede estar miembro.",
     "IDENTITY_PENDING_REVOCATION": "La <b>revocación de esta identidad</b> fue solicitado y esta en espera de tratamiento. Por lo que, la certificación es desactivada.",
     "IDENTITY_INVALID_BLOCK_HASH": "Esta solicitud de adhesión no es valida (porque denomina un bloque los nodos de la red han anulado): esta persona debe renovelar su solicitud de adhesión <b>antes que</b> estar certificada.",

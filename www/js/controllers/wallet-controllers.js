@@ -883,6 +883,13 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
     // TODO
   };
 
+  $scope.showTxErrors = function(event) {
+    if (wallet.isDefault()) {
+      return $scope.goState('app.view_wallet_tx_errors');
+    }
+    return $scope.goState('app.view_wallet_tx_errors_by_id', {id: wallet.id});
+  };
+
   $scope.showMoreTx = function(fromTime) {
 
     fromTime = fromTime ||
@@ -1030,7 +1037,7 @@ function WalletTxErrorController($scope, UIUtils, csSettings, csWallet) {
   $scope.loading = true;
   $scope.formData = {};
 
-  $scope.$on('$ionicView.enter', function(e) {
+  $scope.$on('$ionicView.enter', function(e, state) {
 
     wallet = (state.stateParams && state.stateParams.id) ? csWallet.children.get(state.stateParams.id) : csWallet;
     if (!wallet) {
@@ -1049,7 +1056,7 @@ function WalletTxErrorController($scope, UIUtils, csSettings, csWallet) {
         $scope.formData = walletData;
         $scope.loading = false;
         $scope.doMotion();
-        $scope.showFab('fab-redo-transfer');
+        //$scope.showFab('fab-redo-transfer');
         UIUtils.loading.hide();
       });
   };
@@ -1059,7 +1066,7 @@ function WalletTxErrorController($scope, UIUtils, csSettings, csWallet) {
 
     $scope.loading = true;
     return (silent ?
-        csWallet.refreshData() :
+        wallet.refreshData() :
         UIUtils.loading.show()
           .then(csWallet.refreshData)
           .then(UIUtils.loading.hide)
@@ -1111,11 +1118,12 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
   $scope.isValidFile = false;
 
 
-  $scope.isLogin = wallet.isLogin();
+  $scope.login = wallet.isLogin();
   $scope.hasSelf = wallet.hasSelf();
-  $scope.needSelf = $scope.isLogin && wallet.data.requirements.needSelf;
-  $scope.needMembership = $scope.isLogin && wallet.data.requirements.needMembership;
-  $scope.option = $scope.isLogin ? 'saveID' : 'recoverID';
+  $scope.needSelf = $scope.login && wallet.data.requirements.needSelf;
+  $scope.canRevoke = $scope.login && $scope.hasSelf && !wallet.data.requirements.revoked;
+  $scope.needMembership = $scope.login && wallet.data.requirements.needMembership;
+  $scope.option = $scope.login ? 'saveID' : 'recoverID';
 
   $scope.formData = {
     addQuestion: '',
@@ -1532,6 +1540,7 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
 
       return $scope.load()
         .then(function() {
+          UIUtils.loading.hide();
           if (!$scope.wallets) return; // user cancel
           $scope.addListeners();
           $scope.showFab('fab-add-wallet');
@@ -1570,8 +1579,8 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
         // Save changes
         return csWallet.auth({minData: true})
           .then(function() {
-            wallet.data.name = newName;
-            csWallet.store();
+            wallet.data.localName = newName;
+            csWallet.storeData();
             UIUtils.loading.hide();
             $scope.updateView();
           })

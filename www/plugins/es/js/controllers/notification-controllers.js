@@ -175,7 +175,6 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
 
     if ($scope.search.loading || event.preventDefault() || $scope.search.preventSelect) return;
 
-    console.log("select", item);
     if (item.markAsRead && typeof item.markAsRead == 'function') {
       $timeout(item.markAsRead);
     }

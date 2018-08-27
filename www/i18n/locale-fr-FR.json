@@ -415,7 +415,8 @@
       "SCRYPT_DEFAULT": "Sallage standard (par défaut)",
       "SCRYPT_ADVANCED": "Sallage avancé",
       "FILE": "Fichier de trousseau",
-      "PUBKEY": "Clé publique seule"
+      "PUBKEY": "Clé publique seule",
+      "SCAN": "Scanner un QR code"
     },
     "SCRYPT": {
       "SIMPLE": "Sallage léger",
@@ -674,7 +675,7 @@
     "LOAD_WALLET_DATA_ERROR": "Echec du chargement des données du portefeuille.",
     "COPY_CLIPBOARD_FAILED": "Copie de la valeur impossible.",
     "TAKE_PICTURE_FAILED": "Echec de la récupération de la photo.",
-    "SCAN_FAILED": "Echec du scan de QR Code",
+    "SCAN_FAILED": "Echec du scan de QR code",
     "SCAN_UNKNOWN_FORMAT": "Code non reconnu.",
     "WOT_LOOKUP_FAILED": "Echec de la recherche",
     "LOAD_PEER_DATA_FAILED": "Lecture du nœud Duniter impossible. Veuillez réessayer ultérieurement.",

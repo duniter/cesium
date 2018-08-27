@@ -19,7 +19,7 @@ angular.module('cesium.es.invitation.controllers', ['cesium.es.services'])
       })
 
       .state('app.view_invitations_by_id', {
-        url: "/wallet/list/:id/invitations",
+        url: "/wallets/:id/invitations",
         views: {
           'menuContent': {
             templateUrl: "plugins/es/templates/invitation/view_invitations.html",

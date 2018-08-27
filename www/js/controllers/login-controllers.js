@@ -190,6 +190,52 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
       }
     }
 
+    // Scan QR code
+    else if (method === 'SCAN' && Device.barcode.enable) {
+
+      // Run scan cordova plugin, on device
+      promise = Device.barcode.scan()
+        .then(function(data) {
+          if (!data) return;
+
+          // Try to parse as an URI
+          return BMA.uri.parse(data)
+            .then(function(res){
+              if (!res || !res.pubkey) throw {message: 'ERROR.SCAN_UNKNOWN_FORMAT'};
+              // If simple pubkey
+              promise = UIUtils.loading.show()
+                .then(function() {
+                  return {
+                    pubkey: pubkey
+                  };
+                });
+            })
+
+            // Not an URI: try WIF or EWIF format
+            .catch(function(err) {
+              console.debug("[login] Scan data is not an URI (get error: " + (err && err.message || err) + "). Trying to decode as a WIF or EWIF format...");
+
+              // Try to read as WIF format
+              return $scope.parseWIF(data)
+                .then(function(keypair) {
+                  if (!keypair || !keypair.signPk || !keypair.signSk) throw err; // rethrow the first error (e.g. Bad URI)
+
+                  var pubkey = CryptoUtils.base58.encode(keypair.signPk);
+                  console.debug("[login] Detected WIF/EWIF format. Will login to wallet {" + pubkey.substring(0, 8) + "}");
+
+                  // Login using keypair
+                  return {
+                    pubkey: pubkey,
+                    keypair: keypair
+                  };
+                })
+                // Unknown format (nor URI, nor WIF/EWIF)
+                .catch(UIUtils.onError('ERROR.SCAN_UNKNOWN_FORMAT'));
+            });
+        })
+        .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
+    }
+
     if (!promise) {
       console.warn('[login] unknown method: ', method);
       return;

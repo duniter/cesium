@@ -729,11 +729,17 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           var matches = exports.regexp.PUBKEY_WITH_CHECKSUM.exec(uri);
           pubkey = matches[1];
           var checksum = matches[2];
+          console.debug("[BMA.parse] Detecting a pubkey {"+pubkey+"} with checksum {" + checksum + "}");
           var expectedChecksum = csCrypto.util.pkChecksum(pubkey);
-          if (checksum != expectedChecksum) throw {message: 'ERROR.PUBKEY_INVALID_CHECKSUM'};
-          resolve({
-            pubkey: pubkey
-          });
+          console.debug("[BMA.parse] Expecting checksum for pubkey is {" + expectedChecksum + "}");
+          if (checksum != expectedChecksum) {
+            reject( {message: 'ERROR.PUBKEY_INVALID_CHECKSUM'});
+          }
+          else {
+            resolve({
+              pubkey: pubkey
+            });
+          }
         }
         else if(uri.startsWith('duniter://')) {
           var parser = csHttp.uri.parse(uri),

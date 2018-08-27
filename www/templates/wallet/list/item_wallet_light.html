@@ -8,8 +8,8 @@
   <i ng-if="::walletData.avatar" class="item-image avatar" style="background-image: url({{::walletData.avatar.src}})"></i>
 
   <h2>
-    <ng-if ng-if="::walletData.name||walletData.uid" ng-bind-html="::walletData.name||walletData.uid"></ng-if>
-    <ng-if ng-if="::!walletData.name && !walletData.uid">{{::walletData.pubkey|formatPubkey}}</ng-if>
+    <ng-if ng-if="::walletData.localName||walletData.name||walletData.uid">{{::walletData.localName||walletData.name||walletData.uid}}</ng-if>
+    <ng-if ng-if="::!walletData.localName && !walletData.name && !walletData.uid">{{::walletData.pubkey|formatPubkey}}</ng-if>
   </h2>
 
   <h4 class="gray">
@@ -24,7 +24,7 @@
 
   <div class="badge" ng-if="formData.showBalance"
         ng-class="{'badge-assertive': (walletData.balance <= 0), 'badge-balanced': (walletData.balance > 0) }">
-    <span ng-bind-html="walletData.balance|formatAmount:{useRelative: true, currency: currency}"></span>
+    <span ng-bind-html="walletData.balance|formatAmount:{useRelative: formData.useRelative, currency: currency}"></span>
   </div>
 
   <i class="icon ion-ios-arrow-right "></i>

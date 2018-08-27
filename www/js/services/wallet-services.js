@@ -45,6 +45,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       data.pubkey= null;
 
       data.uid = null;
+      data.localName = null;
       data.isNew = null;
       data.sourcesIndexByKey = null;
       data.medianTime = null;
@@ -208,8 +209,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         .then(function() {
           if (needLogin) {
 
-            // store wallet (pubkey+uid)
-            store({skipData: true});
+            // store wallet
+            store();
           }
 
           // Send auth event (if need)
@@ -352,6 +353,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
          // Check registration
          data.isMember ||
          data.requirements.pendingMembership ||
+         data.requirements.revoked ||
          !data.requirements.needSelf ||
          data.requirements.wasMember ||
 
@@ -360,6 +362,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
          data.tx.pendings.length ||
 
          // Check extended data (name+avatar)
+         data.localName ||
          data.name ||
          data.avatar
         );
@@ -489,7 +492,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           return {
             pubkey: wallet.data.pubkey,
             uid: wallet.data.uid,
-            name: wallet.data.name
+            localName: wallet.data.localName
           };
         });
       }
@@ -606,7 +609,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     },
 
     applyRestoredData = function(content) {
-      if (!content) return; // skip
+      if (!content) return $q.when(); // skip
 
       // Apply children
       if (content.children) {
@@ -616,7 +619,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           var walletId = index+1;
           var wallet = service.instance(walletId, BMA);
           wallet.data.pubkey = child.pubkey;
-          wallet.data.name = child.name;
+          wallet.data.localName = child.localName;
           wallet.data.uid = child.uid;
           addChildWallet(wallet, {store: false/*skip store*/});
         });
@@ -634,13 +637,13 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
       // If auth: open encrypted data
       if (hasEncryptedData() && isAuth()) {
-        return openEncryptedData()
+        return openEncryptedData({store: false})
           .then(function(){
             return data; // Important: return the data
           });
       }
 
-      return data; // Important: return the data
+      return $q.when(data); // Important: return the data
     },
 
     getData = function() {
@@ -1664,7 +1667,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       return getSaveIDDocument(record)
         .then(function(saveId) {
           var saveIdFile = new Blob([saveId], {type: 'text/plain; charset=utf-8'});
-          FileSaver.saveAs(saveIdFile, 'saveID-{0}.txt'.format(data.pubkey.substring(0,6)));
+          FileSaver.saveAs(saveIdFile, '{0}-recover_ID.txt'.format(data.pubkey.substring(0,8)));
         });
 
     },
@@ -1876,6 +1879,13 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       };*/
     },
 
+    createNewChildWallet = function(options) {
+      var walletId = getChildrenWalletCount()+1;
+      var child = service.instance(walletId);
+      addChildWallet(wallet, options);
+      return wallet;
+    },
+
     addChildWallet = function(wallet, options) {
       // Link to parent
       wallet.children.setParent(exports); // = link to self wallet
@@ -1947,7 +1957,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         });
     },
 
-    openEncryptedData = function() {
+    openEncryptedData = function(options) {
       if (!hasEncryptedData()) return $q.when();
       if (!isAuth()) return auth().then(openEncryptedData); // Force auth if need
 
@@ -1960,8 +1970,18 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         // Then apply
         .then(function(content) {
           data.encryptedData = null; // reset encrypted data
-          return applyRestoredData(JSON.parse(content));
-        });
+          var promise = applyRestoredData(JSON.parse(content));
+
+          // Store (store data into session storage)
+          if (!options || angular.isUndefined(options.store) || options.store) {
+            promise.then(function() {
+              return storeData();
+            });
+          }
+
+          return promise;
+        })
+        ;
     },
 
     /**
@@ -2248,6 +2268,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         cleanByContext: cleanEventsByContext
       },
       children: {
+        create: createNewChildWallet,
         add: addChildWallet,
         remove: removeChildWalletById,
         get: getChildWalletById,

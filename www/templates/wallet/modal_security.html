@@ -35,7 +35,7 @@
           <div class="list">
 
             <div class="item item-complex card stable-bg item-icon-left item-icon-right ink"
-                 ng-click="selectOption('recoverID')" ng-if="!isLogin">
+                 ng-click="selectOption('recoverID')" ng-if="!login">
               <div class="item-content item-text-wrap">
                 <i class="item-image dark icon ion-person"></i>
                 <b class="ion-ios-undo icon-secondary dark" style="top: -8px; left: 39px; font-size: 12px;"></b>
@@ -46,7 +46,7 @@
             </div>
 
             <div class="item item-complex card stable-bg item-icon-left item-icon-right ink"
-                 ng-click="selectOption('revocation')" ng-if="!isLogin">
+                 ng-click="selectOption('revocation')" ng-if="!login">
               <div class="item-content item-text-wrap">
                 <i class="item-image dark icon ion-person"></i>
                 <b class="ion-close icon-secondary dark" style="top: -8px; left: 39px; font-size: 12px;"></b>
@@ -58,7 +58,7 @@
 
 
             <div class="item item-complex card stable-bg item-icon-left item-icon-right ink"
-                 ng-click="selectOption('saveID')" ng-if="isLogin">
+                 ng-click="selectOption('saveID')" ng-if="login">
               <div class="item-content item-text-wrap">
                 <i class="item-image dark icon ion-person"></i>
                 <b class="ion-ios-redo icon-secondary dark" style="top: -8px; left: 39px; font-size: 12px;"></b>
@@ -70,7 +70,7 @@
             </div>
 
             <div class="item item-complex card stable-bg item-icon-left item-icon-right ink"
-                 ng-click="selectOption('generateKeyfile')" ng-if="isLogin">
+                 ng-click="selectOption('generateKeyfile')" ng-if="login">
               <div class="item-content item-text-wrap">
                 <i class="item-image dark icon ion-document-text"></i>
                 <b class="ion-key icon-secondary dark" style="top: -8px; left: 42px; font-size: 12px;"></b>
@@ -81,7 +81,7 @@
             </div>
 
             <div class="item item-complex card stable-bg item-icon-left item-icon-right ink hidden-xs hidden-sm"
-                 ng-click="downloadRevokeFile()" ng-if="isLogin && hasSelf">
+                 ng-click="downloadRevokeFile()" ng-if="canRevoke">
               <div class="item-content item-text-wrap">
                 <i class="item-image dark icon ion-person"></i>
                 <b class="ion-ios-redo icon-secondary dark" style="top: -8px; left: 39px; font-size: 12px;"></b>
@@ -113,7 +113,7 @@
             </div>
 
             <div class="item item-complex card stable-bg item-icon-left item-icon-right ink"
-                 ng-click="revokeWalletIdentity()" ng-if="isLogin && hasSelf">
+                 ng-click="revokeWalletIdentity()" ng-if="canRevoke">
               <div class="item-content item-text-wrap">
                 <i class="item-image icon ion-person assertive-900"></i>
                 <b class="ion-close icon-secondary assertive-900" style="top: -8px; left: 39px; font-size: 12px;"></b>
@@ -135,10 +135,10 @@
         <ng-include src="'templates/wallet/slides/slides_revocation_file.html'"></ng-include>
       </ion-slide-page>
 
-      <ion-slide-page ng-if="isLogin && option == 'saveID'">
+      <ion-slide-page ng-if="login && option == 'saveID'">
         <ng-include src="'templates/wallet/slides/slides_saveID_1.html'"></ng-include>
       </ion-slide-page>
-      <ion-slide-page ng-if="isLogin && option == 'saveID'">
+      <ion-slide-page ng-if="login && option == 'saveID'">
         <ng-include src="'templates/wallet/slides/slides_saveID_2.html'"></ng-include>
       </ion-slide-page>
 
@@ -152,7 +152,7 @@
         <ng-include src="'templates/wallet/slides/slides_recoverID_3.html'"></ng-include>
       </ion-slide-page>
 
-      <ion-slide-page ng-if="isLogin && option == 'generateKeyfile'">
+      <ion-slide-page ng-if="login && option == 'generateKeyfile'">
         <ng-include src="'templates/wallet/slides/slides_generate_keyfile.html'"></ng-include>
       </ion-slide-page>
 

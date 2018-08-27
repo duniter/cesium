@@ -32,6 +32,13 @@
         <div class="item-divider"></div>
 
         <a class="item item-icon-left ink"
+           ng-if="$root.device.barcode.enable"
+           ng-click="changeMethod('SCAN')">
+          <i class="icon ion-qr-scanner"></i>
+          {{'LOGIN.METHOD.SCAN' | translate}}
+        </a>
+
+        <a class="item item-icon-left ink"
            ng-click="changeMethod('PUBKEY')">
           <i class="icon ion-key"></i>
           {{'LOGIN.METHOD.PUBKEY' | translate}}
