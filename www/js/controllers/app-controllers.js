@@ -121,8 +121,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         console.error("[app] Unable to parse as WIF or EWIF format: " + (err && err.message || err));
         throw err; // rethrow
       });
-  }
-
+  };
 
   $scope.scanQrCodeAndGo = function() {
 
