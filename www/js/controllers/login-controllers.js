@@ -154,9 +154,12 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
       var matches = BMA.regexp.PUBKEY.exec(pubkey);
       // valid pubkey: use it
       if (matches) {
-        promise = $q.when({
-          pubkey: pubkey
-        });
+        promise = UIUtils.loading.show()
+          .then(function() {
+            return {
+              pubkey: pubkey
+            }
+          });
       }
 
       // Check checksum
@@ -167,14 +170,17 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
 
           pubkey = matches[1];
           var checksum = matches[2];
-          var expectedChecksum = CryptoUtils.pkChecksum(pubkey);
+          var expectedChecksum = csCrypto.util.pkChecksum(pubkey);
           if (checksum != expectedChecksum) {
             $scope.form.pubkey.$error = {checksum: true};
           }
           else {
-            promise = $q.when({
-              pubkey: pubkey
-            });
+            promise = UIUtils.loading.show()
+              .then(function() {
+                return {
+                  pubkey: pubkey
+                }
+              });
           }
         }
         // Not a pubkey: launch search on

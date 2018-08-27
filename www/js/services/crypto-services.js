@@ -1408,9 +1408,9 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       errorCodes: errorCodes,
       constants: constants,
       // copy CryptoUtils
-      utils: angular.merge({
+      util: angular.merge({
           pkChecksum: pkChecksum
-        }, CryptoUtils.utils),
+        }, CryptoUtils.util),
       keyfile: {
         read: readKeyFile,
         parseWIF_or_EWIF: parseWIF_or_EWIF,

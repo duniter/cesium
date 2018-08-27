@@ -725,10 +725,11 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         }
         // If pubkey+checksum
         else if (exact(regexp.PUBKEY_WITH_CHECKSUM).test(uri)) {
+          console.debug("[BMA.parse] Detecting a pubkey with checksum: " + uri);
           var matches = exports.regexp.PUBKEY_WITH_CHECKSUM.exec(uri);
           pubkey = matches[1];
           var checksum = matches[2];
-          var expectedChecksum = csCrypto.utils.pkChecksum(pubkey);
+          var expectedChecksum = csCrypto.util.pkChecksum(pubkey);
           if (checksum != expectedChecksum) throw {message: 'ERROR.PUBKEY_INVALID_CHECKSUM'};
           resolve({
             pubkey: pubkey
@@ -810,6 +811,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           }
         }
         else {
+          console.debug("[BMA.parse] Could not parse URI: " + uri);
           reject( {message: 'ERROR.UNKNOWN_URI_FORMAT'});
         }
       })
