@@ -914,6 +914,11 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       // Force some load (requirements) if not already loaded
       options.requirements = angular.isDefined(options.requirements) ? options.requirements : angular.isDefined(data.requirements.needSelf);
 
+      // Force sources when TX enable
+      if (angular.isUndefined(options.sources) && options.tx && options.tx.enable) {
+        options.sources = true;
+      }
+
       var jobs = [];
 
       // Get requirements

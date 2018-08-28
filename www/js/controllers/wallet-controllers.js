@@ -694,8 +694,10 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
   $scope.load = function() {
     if (!wallet) return;
 
+    var hasMinData = wallet.isDataLoaded({minData: true});
     var options = {
-      minData: !wallet.isDataLoaded({minData: true}),
+      requirements: !hasMinData, // load requirements (=minData) once
+      minData: !hasMinData,
       sources: true,
       tx: {
         enable: true
@@ -836,7 +838,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
       (Math.trunc(new Date().getTime() / 1000) - 2 * csSettings.data.walletHistoryTimeSecond);
 
     UIUtils.loading.show();
-    return csWallet.refreshData({tx: {enable: true,fromTime: fromTime}})
+    return wallet.refreshData({tx: {enable: true,fromTime: fromTime}})
       .then(function() {
         $scope.updateView();
         UIUtils.loading.hide();
