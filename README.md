@@ -120,3 +120,13 @@ A [development tutorial](doc/fr/development_tutorial-01.md) (in French) is also 
 ## License
 
 This software is distributed under [GNU GPLv3](https://raw.github.com/duniter/cesium/master/LICENSE).
+
+## Troubleshooting
+
+#### I'm having errors on Ubuntu/Debian (desktop version)
+
+Install these dependencies:
+
+```
+sudo apt-get install -y libgconf-2-4
+```
