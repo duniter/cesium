@@ -5,7 +5,9 @@
   <i ng-if="::!walletData.avatar" class="item-image icon"
      ng-class=":rebind:{'ion-card': !walletData.isMember, 'ion-persion': walletData.isMember}"></i>
   <i ng-if="::walletData.avatar" class="item-image avatar" style="background-image: url({{::walletData.avatar.src}})"></i>
-  <i ng-hide=":rebind:wallet.isAuth()" class="icon-secondary assertive ion-locked" style="top: -16px; left: 66px; font-size: 20px;"></i>
+  <div class="badge badge-button badge-avatar badge-assertive ion-locked " ng-hide=":rebind:wallet.isAuth()">
+  </div>
+
   <h2>
     <span class="text-editable" ng-click="editWallet($event, wallet)" title="{{'ACCOUNT.WALLET_LIST.BTN_RENAME'|translate}}">
       <ng-if ng-if=":rebind:walletData.localName||walletData.name||walletData.uid" ng-bind-html="::walletData.localName||walletData.name||walletData.uid"></ng-if>

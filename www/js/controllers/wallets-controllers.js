@@ -179,8 +179,7 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
           // continue, when plugins extension failed (just log in console)
             .catch(console.error)
             .then(function() {
-              $scope.listeners.push(wallet.api.data.on.unauth($scope, $scope.updateView));
-              $scope.listeners.push(wallet.api.data.on.auth($scope, $scope.updateView));
+              $scope.addListenersOnWallet(wallet);
               csWallet.children.add(wallet);
               UIUtils.loading.hide();
               $scope.updateView();
@@ -230,7 +229,7 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
     return $q(function(resolve, reject) {
       $translate(['ACCOUNT.WALLET_LIST.EDIT_POPOVER.TITLE', 'ACCOUNT.WALLET_LIST.EDIT_POPOVER.HELP', 'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
         .then(function (translations) {
-          $scope.formData.name = wallet.data.name ||  wallet.data.uid || wallet.data.pubkey.substring(0, 8);
+          $scope.formData.name = wallet.data.localName || wallet.data.name || wallet.data.uid || wallet.data.pubkey.substring(0, 8);
 
           // Choose UID popup
           $ionicPopup.show({
@@ -297,11 +296,11 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
 
   $scope.addListeners = function() {
 
-    var listeners = [];
+    $scope.listeners =[];
 
     // Auto-update on new block
     if (csSettings.data.walletHistoryAutoRefresh) {
-      listeners.push(
+      $scope.listeners.push(
         csCurrency.api.data.on.newBlock($scope, function (block) {
           if ($scope.loading) return;
           console.debug("[wallet-list] Received new block. Will reload list.");
@@ -312,12 +311,16 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
     }
 
     // Listen auth events on each wallet
-    $scope.listeners = ($scope.wallets||[]).reduce(function(res, wallet) {
-      return res.concat([
-        wallet.api.data.on.unauth($scope, $scope.updateView),
-        wallet.api.data.on.auth($scope, $scope.updateView),
-      ]);
-    }, listeners);
+    _.forEach($scope.wallets||[], $scope.addListenersOnWallet);
+  };
+
+  $scope.addListenersOnWallet = function(wallet) {
+    if (!wallet) return;
+    $scope.listeners.push(wallet.api.data.on.unauth($scope, $scope.updateView));
+    $scope.listeners.push(wallet.api.data.on.auth($scope, function (data, deferred) {
+      $timeout($scope.updateView);
+      return deferred ? deferred.resolve() : $q.when();
+    }));
   };
 
   $scope.removeListeners = function() {

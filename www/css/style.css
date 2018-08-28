@@ -277,7 +277,7 @@
 **********/
 
 .list .item.item-wallet .badge{
-  top: 28px !important;
+  top: 28px;
 }
 .list .item.item-wallet {
   height: 38px;

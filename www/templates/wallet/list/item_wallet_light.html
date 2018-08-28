@@ -6,6 +6,8 @@
   <i ng-if="::!walletData.avatar" class="item-image icon"
      ng-class=":rebind:{'ion-card': !walletData.isMember, 'ion-persion': walletData.isMember}"></i>
   <i ng-if="::walletData.avatar" class="item-image avatar" style="background-image: url({{::walletData.avatar.src}})"></i>
+  <div class="badge badge-button badge-avatar badge-assertive ion-locked " ng-hide="::wallet.isAuth()">
+  </div>
 
   <h2>
     <ng-if ng-if="::walletData.localName||walletData.name||walletData.uid">{{::walletData.localName||walletData.name||walletData.uid}}</ng-if>

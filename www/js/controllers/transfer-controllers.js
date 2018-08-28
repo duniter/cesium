@@ -218,8 +218,8 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       $scope.convertedBalance = $scope.walletData.balance / 100;
       $scope.minAmount = minQuantitativeAmount;
     }
-    if ($scope.form) {
-      $scope.form.$valid = undefined;
+    if ($scope.form && !$scope.loading) {
+      $scope.form.$setPristine(true);
     }
   };
 
@@ -344,7 +344,8 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     })
     .catch(function(err) {
       $scope.sending = false;
-      if (err == 'CANCELLED') return; // user cancelled
+      // Wallet auth cancelled by user
+      if (err === 'CANCELLED') return;
       UIUtils.onError('ERROR.SEND_TX_FAILED')(err);
     });
   };
