@@ -72,11 +72,9 @@ function ESViewEditProfileController($scope, $q, $timeout, $state, $focus, $tran
       return $scope.showHome();
     }
 
-    $scope.loadWallet({
-      wallet: wallet,
-      auth: true,
-      minData: true
-    })
+    return wallet.auth({
+        minData: true
+      })
       .then($scope.load)
       .catch(function(err){
         if (err == 'CANCELLED') {
@@ -152,34 +150,32 @@ function ESViewEditProfileController($scope, $q, $timeout, $state, $focus, $tran
           $scope.updateView(walletData, {});
         }
 
+        UIUtils.loading.hide();
+
+        // Update loading - done with a delay, to avoid trigger onFormDataChanged()
+        return $timeout(function() {
+          $scope.loading = false;
+        }, 1000);
+      })
+      .then(function() {
         // removeIf(device)
         $focus('profile-name');
         // endRemoveIf(device)
       })
-      .catch(function(err){
-        UIUtils.loading.hide(10);
-        UIUtils.onError('PROFILE.ERROR.LOAD_PROFILE_FAILED')(err);
-      });
+      .catch(UIUtils.onError('PROFILE.ERROR.LOAD_PROFILE_FAILED'));
   };
 
   $scope.setForm = function(form) {
     $scope.form = form;
   };
 
-  $scope.updateView = function(wallet, profile) {
-    $scope.walletData = wallet;
+  $scope.updateView = function(walletData, profile) {
+    $scope.walletData = walletData;
     $scope.formData = profile;
     if (profile.avatar) {
       $scope.avatarStyle={'background-image':'url("'+$scope.avatar.src+'")'};
     }
-
     $scope.motion.show();
-    UIUtils.loading.hide();
-
-    // Update loading - done with a delay, to avoid trigger onFormDataChanged()
-    $timeout(function() {
-      $scope.loading = false;
-    }, 1000);
   };
 
   $scope.onFormDataChanged = function() {

@@ -5,7 +5,7 @@
   <i ng-if="::!walletData.avatar" class="item-image icon"
      ng-class=":rebind:{'ion-card': !walletData.isMember, 'ion-persion': walletData.isMember}"></i>
   <i ng-if="::walletData.avatar" class="item-image avatar" style="background-image: url({{::walletData.avatar.src}})"></i>
-  <!--<i ng-hide=":rebind:wallet.isAuth()" class="icon-secondary assertive ion-locked" style="top: -16px; left: 66px; font-size: 20px;"></i>-->
+  <i ng-hide=":rebind:wallet.isAuth()" class="icon-secondary assertive ion-locked" style="top: -16px; left: 66px; font-size: 20px;"></i>
   <h2>
     <span class="text-editable" ng-click="editWallet($event, wallet)" title="{{'ACCOUNT.WALLET_LIST.BTN_RENAME'|translate}}">
       <ng-if ng-if=":rebind:walletData.localName||walletData.name||walletData.uid" ng-bind-html="::walletData.localName||walletData.name||walletData.uid"></ng-if>
@@ -39,7 +39,7 @@
 
   <span class="badge" ng-if="formData.showBalance"
         ng-class=":rebind:{'badge-assertive': (walletData.balance <= 0), 'badge-balanced': (walletData.balance > 0) }">
-      <span ng-bind-html=":rebind:walletData.balance|formatAmount:{useRelative: true, currency: currency}"></span>
+      <span ng-bind-html=":rebind:walletData.balance|formatAmount:{useRelative: formData.useRelative, currency: currency}"></span>
   </span>
 
   <i class="icon ion-ios-arrow-right "></i>

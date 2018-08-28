@@ -1026,7 +1026,6 @@ function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHis
 
     if ($scope.loading) {
       wallet = (state.stateParams && state.stateParams.wallet && state.stateParams.wallet != 'default') ? csWallet.children.get(state.stateParams.wallet) : csWallet;
-      console.log(wallet);
       if (!wallet) {
         UIUtils.alert.error('ERROR.UNKNOWN_WALLET_ID');
         return $scope.showHome();

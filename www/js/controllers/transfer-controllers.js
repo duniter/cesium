@@ -164,7 +164,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
 
     wallet = $scope.enableSelectWallet && ($scope.formData.walletId ? csWallet.children.get($scope.formData.walletId) : csWallet) || csWallet;
     if (!wallet.isDefault()) {
-      console.debug("[transfer] Using {" + wallet.id + "} wallet");
+      console.debug("[transfer] Using wallet {" + wallet.id + "}");
     }
     // Make to sure to load full wallet data (balance)
     return wallet.login({sources: true, silent: true})
@@ -413,7 +413,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
         if (!newWallet || (wallet && wallet.id === newWallet.id)) return;
         wallet = newWallet;
         $scope.walletData = wallet.data;
-        console.debug("[transfer] Using {" + wallet.id + "} wallet");
+        console.debug("[transfer] Using wallet {" + wallet.id + "}");
         $scope.onAmountChanged();
       });
   };

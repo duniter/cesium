@@ -217,7 +217,6 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
 
     var isEnable = that.isEnable();
     if (isEnable && csWallet.isAuth()) {
-      console.log(data);
       if (!wasEnable) {
         onWalletAuth(csWallet.data);
       }

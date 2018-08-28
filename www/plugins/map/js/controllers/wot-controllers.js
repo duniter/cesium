@@ -379,8 +379,6 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
         return $timeout(function(){
           $scope.loading = false;
 
-          console.log("dataload");
-
           // hide loading indicator
           map.fire('dataload');
 
