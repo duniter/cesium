@@ -470,6 +470,7 @@
     "SIG_STOCK": "Certifications envoyées",
     "BTN_RECEIVE_MONEY": "Encaisser",
     "BTN_SELECT_ALTERNATIVES_IDENTITIES": "Basculer vers une autre identité...",
+    "BTN_FIX_MEMBERSHIP": "Renvoyer la demande d'adhésion...",
     "BTN_MEMBERSHIP_RENEW": "Renouveler l'adhésion",
     "BTN_MEMBERSHIP_RENEW_DOTS": "Renouveler l'adhésion...",
     "BTN_MEMBERSHIP_OUT_DOTS": "Arrêter l'adhésion...",

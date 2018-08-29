@@ -409,7 +409,9 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       return UIUtils.alert.info("INFO.NOT_NEED_MEMBERSHIP");
     }
 
-    return wallet.auth()
+    $scope.hideActionsPopover();
+
+    return wallet.auth({silent: true})
       .then(function() {
         UIUtils.alert.confirm("CONFIRM.FIX_MEMBERSHIP");
       })

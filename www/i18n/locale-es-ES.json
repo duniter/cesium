@@ -454,6 +454,7 @@
     "SIG_STOCK": "Certificaciones emitidas",
     "BTN_RECEIVE_MONEY": "Recibir",
     "BTN_SELECT_ALTERNATIVES_IDENTITIES": "Cambiar a otra identidad...",
+    "BTN_FIX_MEMBERSHIP": "Volver a enviar la adhesión...",
     "BTN_MEMBERSHIP_RENEW": "Renovar la adhesión",
     "BTN_MEMBERSHIP_RENEW_DOTS": "Renovar la adhesión...",
     "BTN_MEMBERSHIP_OUT_DOTS": "Cancelar la adhesión...",

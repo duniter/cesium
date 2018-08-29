@@ -541,7 +541,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
           delete data.hasBadSelfBlock;
           if (!data.isMember) {
             addEvent(data, {type: 'error', message: 'ERROR.IDENTITY_INVALID_BLOCK_HASH'});
-            console.debug("[wot] Invalid membership for {0}: block hash changed".format(data.uid));
+            console.debug("[wot] Invalid membership for uid {0}: block hash changed".format(data.uid));
           }
         }
         else if (data.requirements.expired) {

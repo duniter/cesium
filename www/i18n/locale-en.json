@@ -470,6 +470,7 @@
     "SIG_STOCK": "Stock of certifications to give",
     "BTN_RECEIVE_MONEY": "Receive",
     "BTN_SELECT_ALTERNATIVES_IDENTITIES": "Switch to another identity...",
+    "BTN_FIX_MEMBERSHIP": "Resubmit membership request...",
     "BTN_MEMBERSHIP_RENEW": "Renew membership",
     "BTN_MEMBERSHIP_RENEW_DOTS": "Renew membership...",
     "BTN_MEMBERSHIP_OUT_DOTS": "Revoke membership...",

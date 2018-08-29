@@ -671,13 +671,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
               // Check if self has been done on a valid block
               if (!data.isMember && blockNumber !== 0 && blockHash !== block.hash) {
-                addEvent({type: 'error', message: 'ERROR.WALLET_INVALID_BLOCK_HASH', context: 'requirements'});
-                console.debug("Invalid membership for uid={0}: block hash changed".format(data.uid));
-              }
-              // Check if self expired
-              else if (!data.isMember && data.requirements.expired) {
-                addEvent({type: 'error', message: 'ERROR.WALLET_IDENTITY_EXPIRED', context: 'requirements'});
-                console.debug("Identity expired for uid={0}.".format(data.uid));
+                data.requirements.hasBadSelfBlock = true;
               }
             })
             .catch(function(err){
@@ -720,13 +714,24 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     addEvents = function() {
       // Add user events
       if (data.requirements.revoked) {
+        delete data.requirements.hasBadSelfBlock;
         addEvent({type:'info', message: 'ERROR.WALLET_REVOKED', context: 'requirements'});
       }
       else if (data.requirements.pendingRevocation) {
+        delete data.requirements.hasBadSelfBlock;
         addEvent({type:'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'requirements'});
       }
       else {
-        if (data.requirements.pendingMembership) {
+        if (!data.isMember && data.requirements.hasBadSelfBlock) {
+          addEvent({type: 'error', message: 'ERROR.WALLET_INVALID_BLOCK_HASH', context: 'requirements'});
+          console.debug("Invalid membership for uid={0}: block hash changed".format(data.uid));
+        }
+        // Check if self expired
+        else if (!data.isMember && data.requirements.expired) {
+          addEvent({type: 'error', message: 'ERROR.WALLET_IDENTITY_EXPIRED', context: 'requirements'});
+          console.debug("Identity expired for uid={0}.".format(data.uid));
+        }
+        else if (data.requirements.pendingMembership) {
           addEvent({type:'pending', message: 'ACCOUNT.WAITING_MEMBERSHIP', context: 'requirements'});
         }
         // If user has send a SELF, ask for membership - fix #625
@@ -1455,7 +1460,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         return $q.all([
           getKeypair(),
           csCurrency.get(),
-          csCurrency.blockchain.current()
+          csCurrency.blockchain.lastValid()
         ])
         // Create identity document
         .then(function(res) {
@@ -1473,7 +1478,10 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         .then(function () {
           if (!!needToLoadRequirements) {
             // Refresh membership data (if need)
-            return loadRequirements();
+            return loadRequirements()
+
+              // Add wallet events
+              .then(addEvents)
           }
           else {
             data.uid = uid;
@@ -1497,7 +1505,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
         return $q.all([
             getKeypair(),
-            csCurrency.blockchain.current()
+            csCurrency.blockchain.lastValid()
           ])
           .then(function(res) {
             var keypair = res[0];
