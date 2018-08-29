@@ -829,7 +829,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
      Crypto advanced service for Cesium
    */
 
-  .factory('csCrypto', function($q, $rootScope, CryptoUtils) {
+  .factory('csCrypto', function($q, $rootScope, CryptoUtils, UIUtils, Modals) {
     'ngInject';
 
     function test(regexpContent) {
@@ -1034,8 +1034,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
 
 
     function parseWIF_v1(wif_base58) {
-      var that = this,
-        wif_int8 = CryptoUtils.util.decode_base58(wif_base58);
+      var wif_int8 = CryptoUtils.util.decode_base58(wif_base58);
 
       // Check identifier byte = 0x01
       if (wif_int8[0] != 1) {
@@ -1062,8 +1061,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
     }
 
     function parseEWIF_v1(ewif_base58, password) {
-      var that = this,
-        ewif_int8 = CryptoUtils.util.decode_base58(ewif_base58);
+      var ewif_int8 = CryptoUtils.util.decode_base58(ewif_base58);
 
       // Check identifier byte = 0x02
       if (ewif_int8[0] != 2) {
@@ -1134,8 +1132,71 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         });
     }
 
-    generateKeyFileContent = function(keypair, options) {
-      var that = this;
+
+    function wif_v1_from_keypair(keypair) {
+
+      var seed = CryptoUtils.seed_from_signSk(keypair.signSk);
+      if (!seed || seed.byteLength !== CryptoUtils.constants.SEED_LENGTH)
+        throw "Bad see format. Expected {0} bytes".format(CryptoUtils.constants.SEED_LENGTH);
+
+      var fi = new Uint8Array(1);
+      fi[0] = 0x01;
+      var seed_fi = concat_Uint8Array(fi, seed);
+
+      // checksum
+      var checksum = CryptoUtils.util.crypto_hash_sha256(CryptoUtils.util.crypto_hash_sha256(seed_fi)).slice(0,2);
+
+      var wif_int8 = concat_Uint8Array(seed_fi, checksum);
+      return $q.when(CryptoUtils.util.encode_base58(wif_int8));
+    }
+
+    function ewif_v1_from_keypair(keypair, password) {
+
+      var seed = CryptoUtils.seed_from_signSk(keypair.signSk);
+      if (!seed || seed.byteLength !== CryptoUtils.constants.SEED_LENGTH)
+        return $q.reject({message: "Bad see format. Expected {0} bytes".format(CryptoUtils.constants.SEED_LENGTH)});
+
+      // salt
+      var salt = CryptoUtils.util.crypto_hash_sha256(CryptoUtils.util.crypto_hash_sha256(keypair.signPk)).slice(0,4);
+
+      // scrypt_seed
+      return CryptoUtils.util.crypto_scrypt(
+        CryptoUtils.util.encode_utf8(password),
+        salt,
+        constants.EWIF.SCRYPT_PARAMS.N,
+        constants.EWIF.SCRYPT_PARAMS.r,
+        constants.EWIF.SCRYPT_PARAMS.p,
+        64)
+        .then(function(scrypt_seed) {
+          var derivedhalf1 = scrypt_seed.slice(0,32);
+          var derivedhalf2 = scrypt_seed.slice(32,64);
+
+          //XOR & AES
+          var seed1_xor_derivedhalf1_1 = xor(seed.slice(0,16), derivedhalf1.slice(0,16));
+          var seed2_xor_derivedhalf1_2 = xor(seed.slice(16,32), derivedhalf1.slice(16,32));
+
+          var aesEcb = new aesjs.ModeOfOperation.ecb(derivedhalf2);
+          var encryptedhalf1 = aesEcb.encrypt(seed1_xor_derivedhalf1_1);
+          var encryptedhalf2 = aesEcb.encrypt(seed2_xor_derivedhalf1_2);
+
+          encryptedhalf1 = new Uint8Array(encryptedhalf1);
+          encryptedhalf2 = new Uint8Array(encryptedhalf2);
+
+          // concatenate ewif
+          var ewif_int8 = new Uint8Array(1);
+          ewif_int8[0] = 0x02;
+          ewif_int8 = concat_Uint8Array(ewif_int8,salt);
+          ewif_int8 = concat_Uint8Array(ewif_int8,encryptedhalf1);
+          ewif_int8 = concat_Uint8Array(ewif_int8,encryptedhalf2);
+
+          var checksum = CryptoUtils.util.crypto_hash_sha256(CryptoUtils.util.crypto_hash_sha256(ewif_int8)).slice(0,2);
+          ewif_int8 = concat_Uint8Array(ewif_int8,checksum);
+
+          return CryptoUtils.util.encode_base58(ewif_int8);
+        });
+    }
+
+    function generateKeyFileContent(keypair, options) {
       options = options || {};
       options.type = options.type || "PubSec";
 
@@ -1196,79 +1257,16 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         default:
           return $q.reject({message: "Unknown keyfile format: " + options.type});
       }
-    };
+    }
 
-    wif_v1_from_keypair = function(keypair) {
-
-      var seed = CryptoUtils.seed_from_signSk(keypair.signSk);
-      if (!seed || seed.byteLength !== CryptoUtils.constants.SEED_LENGTH)
-        throw "Bad see format. Expected {0} bytes".format(CryptoUtils.constants.SEED_LENGTH);
-
-      var fi = new Uint8Array(1);
-      fi[0] = 0x01;
-      var seed_fi = concat_Uint8Array(fi, seed);
-
-      // checksum
-      var checksum = CryptoUtils.nacl.crypto_hash_sha256(CryptoUtils.nacl.crypto_hash_sha256(seed_fi)).slice(0,2);
-
-      var wif_int8 = concat_Uint8Array(seed_fi, checksum);
-      return CryptoUtils.util.encode_base58(wif_int8);
-    };
-
-    ewif_v1_from_keypair = function(keypair, password) {
-
-      var seed = CryptoUtils.seed_from_signSk(keypair.signSk);
-      if (!seed || seed.byteLength !== CryptoUtils.constants.SEED_LENGTH)
-        return $q.reject({message: "Bad see format. Expected {0} bytes".format(CryptoUtils.constants.SEED_LENGTH)});
-
-      // salt
-      var salt = CryptoUtils.util.crypto_hash_sha256(CryptoUtils.util.crypto_hash_sha256(keypair.signPk)).slice(0,4);
-
-      // scrypt_seed
-      return CryptoUtils.util.crypto_scrypt(
-        CryptoUtils.util.encode_utf8(password),
-        salt,
-        constants.EWIF.SCRYPT_PARAMS.N,
-        constants.EWIF.SCRYPT_PARAMS.r,
-        constants.EWIF.SCRYPT_PARAMS.p,
-        64)
-        .then(function(scrypt_seed) {
-          var derivedhalf1 = scrypt_seed.slice(0,32);
-          var derivedhalf2 = scrypt_seed.slice(32,64);
-
-          //XOR & AES
-          var seed1_xor_derivedhalf1_1 = xor(seed.slice(0,16), derivedhalf1.slice(0,16));
-          var seed2_xor_derivedhalf1_2 = xor(seed.slice(16,32), derivedhalf1.slice(16,32));
-
-          var aesEcb = new aesjs.ModeOfOperation.ecb(derivedhalf2);
-          var encryptedhalf1 = aesEcb.encrypt(seed1_xor_derivedhalf1_1);
-          var encryptedhalf2 = aesEcb.encrypt(seed2_xor_derivedhalf1_2);
-
-          encryptedhalf1 = new Uint8Array(encryptedhalf1);
-          encryptedhalf2 = new Uint8Array(encryptedhalf2);
-
-          // concatenate ewif
-          var ewif_int8 = new Uint8Array(1);
-          ewif_int8[0] = 0x02;
-          ewif_int8 = concat_Uint8Array(ewif_int8,salt);
-          ewif_int8 = concat_Uint8Array(ewif_int8,encryptedhalf1);
-          ewif_int8 = concat_Uint8Array(ewif_int8,encryptedhalf2);
-
-          var checksum = CryptoUtils.util.crypto_hash_sha256(CryptoUtils.util.crypto_hash_sha256(ewif_int8)).slice(0,2);
-          ewif_int8 = concat_Uint8Array(ewif_int8,checksum);
-
-          return CryptoUtils.util.encode_base58(ewif_int8);
-        });
-
-    };
 
 
     /* -- usefull methods -- */
 
-    pkChecksum = function(pubkey) {
+    function pkChecksum(pubkey) {
       var signPk_int8 = CryptoUtils.util.decode_base58(pubkey);
       return CryptoUtils.util.encode_base58(CryptoUtils.util.crypto_hash_sha256(CryptoUtils.util.crypto_hash_sha256(signPk_int8))).substring(0,3);
-    };
+    }
 
     /* -- box (pack/unpack a record) -- */
 
@@ -1403,17 +1401,57 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
 
     }
 
+    function parseKeyFileData(data, options){
+      options = options || {};
+      options.withSecret = angular.isDefined(options.withSecret) ? options.withSecret : true;
+      options.silent = angular.isDefined(options.withSecret) ? options.silent : false;
+      options.password = function() {
+        UIUtils.loading.hide();
+        return Modals.showPassword({
+          title: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.TITLE',
+          subTitle: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.HELP',
+          error: options.error,
+          scope: $scope
+        })
+          .then(function(password) {
+            // Timeout is need to force popup to be hide
+            return $timeout(function() {
+              if (password) UIUtils.loading.show();
+              return password;
+            }, 150);
+          });
+      };
+
+      if (!options.silent) {
+        UIUtils.loading.show();
+      }
+
+      return parseWIF_or_EWIF(data, options)
+        .then(function(res){
+          return res;
+        })
+        .catch(function(err) {
+          if (err && err == 'CANCELLED') return;
+          if (err && err.ucode == csCrypto.errorCodes.BAD_PASSWORD) {
+            // recursive call
+            return parseKeyFileData(data, {withSecret: options.withSecret, error: 'ACCOUNT.SECURITY.KEYFILE.ERROR.BAD_PASSWORD'});
+          }
+          console.error("[crypto] Unable to parse as WIF or EWIF format: " + (err && err.message || err));
+          throw err; // rethrow
+        });
+    }
+
     // exports
     return {
       errorCodes: errorCodes,
       constants: constants,
       // copy CryptoUtils
-      util: angular.merge({
+      util: angular.extend({
           pkChecksum: pkChecksum
         }, CryptoUtils.util),
       keyfile: {
         read: readKeyFile,
-        parseWIF_or_EWIF: parseWIF_or_EWIF,
+        parseData: parseKeyFileData,
         generateContent: generateKeyFileContent
       },
       box: {

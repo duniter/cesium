@@ -37,6 +37,9 @@
       <div ng-switch-when="FILE">
         <ng-include src="'templates/login/form_file_import.html'"></ng-include>
       </div>
+       <div ng-switch-when="SCAN">
+         <ng-include src="'templates/login/form_scan.html'"></ng-include>
+       </div>
       <div ng-switch-default>
         <ng-include src="'templates/login/form_scrypt.html'"></ng-include>
       </div>
@@ -52,11 +55,11 @@
     </div>
 
     <div class="text-center no-padding visible-xs">
-      <br/>
-      <a ng-click="showMethodsPopover($event)">
-        <i class="ion-loop"></i>
+      <button type="button" class="button button-small icon-right ink"
+              ng-click="showMethodsPopover($event)">
+        <i class="icon ion-loop"></i>
         <span translate>LOGIN.BTN_METHODS_DOTS</span>
-      </a>
+      </button>
       <br/><br/>
     </div>
 

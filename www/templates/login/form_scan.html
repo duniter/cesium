@@ -1,0 +1,58 @@
+<div class="item">
+  <p class="item-text-wrap" ng-bind-html="::isAuth ? 'AUTH.SCAN_FORM_HELP' : 'LOGIN.SCAN_FORM_HELP' |translate"></p>
+</div>
+
+<!-- pubkey  -->
+<div class="item item-icon-right item-text-wrap item-input"
+     ng-class="{ 'item-input-error': pubkeyError}">
+  <span class="input-label" translate>COMMON.PUBKEY</span>
+  <div class="item-content text-wrap">
+    <span class="gray animate-show-hide" ng-show="!computing && formData.pubkey">{{formData.pubkey}}</span>
+    <ion-spinner class="ion-spinner-small" icon="android" ng-if="computing"></ion-spinner>
+    <input type="hidden" ng-model="formData.pubkey" required>
+  </div>
+  <a class="button button-icon positive button-small-padding icon ion-qr-scanner animate-show-hide"
+     ng-show="!computing && (!expectedPubkey || pubkeyError)"
+     ng-click="doScan()">
+  </a>
+  <span class="button button-icon balanced button-small-padding icon ion-checkmark animate-show-hide"
+        ng-if="expectedPubkey"
+        ng-show="!computing && !pubkeyError">
+  </span>
+</div>
+
+<div class="form-errors" ng-if="expectedPubkey">
+  <div class="form-error" ng-show="pubkeyError">
+    <span trust-as-html="::'ERROR.AUTH_INVALID_PUBKEY'|translate:{pubkey: expectedPubkey}"></span>
+  </div>
+</div>
+
+
+<!--<div class="item item-input item-button-right"-->
+       <!--ng-class="{ 'item-input-error': form.$submitted && form.pubkey.$invalid}">-->
+  <!--<span class="input-label hidden-xs" translate>COMMON.PUBKEY</span>-->
+  <!--<input name="pubkey" type="text" placeholder="{{'LOGIN.PUBKEY_HELP' | translate}}"-->
+         <!--ng-model="formData.pubkey"-->
+         <!--ng-model-options="{ debounce: 650 }"-->
+         <!--readonly-->
+         <!--required >-->
+  <!--<a class="button button-stable icon ion-qr-scanner ink"-->
+          <!--ng-click="doScan()">-->
+  <!--</a>-->
+<!--</div>-->
+<!--<div class="form-errors"-->
+     <!--ng-show="form.$submitted && form.pubkey.$error"-->
+     <!--ng-messages="form.pubkey.$error">-->
+  <!--<div class="form-error" ng-message="required">-->
+    <!--<span translate="ERROR.FIELD_REQUIRED"></span>-->
+  <!--</div>-->
+  <!--<div class="form-error" ng-message="checksum">-->
+    <!--<span translate="ERROR.INVALID_PUBKEY_CHECKSUM"></span>-->
+  <!--</div>-->
+<!--</div>-->
+<!--<div class="form-errors" ng-if="expectedPubkey">-->
+  <!--<div class="form-error" ng-show="pubkeyError">-->
+    <!--<span trust-as-html="::'ERROR.AUTH_INVALID_PUBKEY'|translate:{pubkey: expectedPubkey}"></span>-->
+  <!--</div>-->
+<!--</div>-->
+

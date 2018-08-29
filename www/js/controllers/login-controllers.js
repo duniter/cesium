@@ -1,11 +1,47 @@
 
 angular.module('cesium.login.controllers', ['cesium.services'])
 
+  .config(function($stateProvider) {
+    'ngInject';
+
+    $stateProvider
+      .state('app.login', {
+        url: "/login",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/home/home.html",
+            controller: 'LoginCtrl'
+          }
+        }
+      })
+    ;
+  })
+
+  .controller('LoginCtrl', LoginController)
+
   .controller('LoginModalCtrl', LoginModalController)
 
   .controller('AuthCtrl', AuthController)
 
 ;
+
+
+function LoginController($scope, $timeout, $controller, csWallet) {
+  'ngInject';
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('HomeCtrl', {$scope: $scope}));
+
+  $scope.showLoginModal = function() {
+    if ($scope.loading) return $timeout($scope.showLoginModal, 500); // recursive call
+
+    if (!csWallet.isLogin() && !$scope.error) {
+      return $timeout(csWallet.login, 300);
+    }
+  };
+  $scope.$on('$ionicView.enter', $scope.showLoginModal);
+
+}
 
 function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, csCrypto,
                               UIUtils, BMA, Modals, csSettings, Device, parameters) {
@@ -75,14 +111,15 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
   $scope.$on('modal.hide', $scope.leave);
 
   // Login form submit
-  $scope.doLogin = function() {
-    if(!$scope.form.$valid) return;
+  $scope.doLogin = function(skipForm) {
+    var method = $scope.formData.method;
+
+    if(!$scope.form.$valid && method !== 'SCAN') return;
 
     // removeIf(no-device)
     Device.keyboard.close();
     // endRemoveIf(no-device)
 
-    var method = $scope.formData.method;
     var keepAuthIdle = $scope.formData.keepAuthIdle;
     var promise;
 
@@ -192,49 +229,17 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     }
 
     // Scan QR code
-    else if (method === 'SCAN' && Device.barcode.enable) {
+    else if (method === 'SCAN') {
+      var valid = $scope.formData.pubkey && (!$scope.isAuth || !!$scope.formData.keypair);
+      if (!valid) return;
 
-      // Run scan cordova plugin, on device
-      promise = Device.barcode.scan()
-        .then(function(data) {
-          if (!data) return;
-
-          // Try to parse as an URI
-          return BMA.uri.parse(data)
-            .then(function(res){
-              if (!res || !res.pubkey) throw {message: 'ERROR.SCAN_UNKNOWN_FORMAT'};
-              // If simple pubkey
-              promise = UIUtils.loading.show()
-                .then(function() {
-                  return {
-                    pubkey: pubkey
-                  };
-                });
-            })
-
-            // Not an URI: try WIF or EWIF format
-            .catch(function(err) {
-              console.debug("[login] Scan data is not an URI (get error: " + (err && err.message || err) + "). Trying to decode as a WIF or EWIF format...");
-
-              // Try to read as WIF format
-              return $scope.parseWIF(data)
-                .then(function(keypair) {
-                  if (!keypair || !keypair.signPk || !keypair.signSk) throw err; // rethrow the first error (e.g. Bad URI)
-
-                  var pubkey = CryptoUtils.base58.encode(keypair.signPk);
-                  console.debug("[login] Detected WIF/EWIF format. Will login to wallet {" + pubkey.substring(0, 8) + "}");
-
-                  // Login using keypair
-                  return {
-                    pubkey: pubkey,
-                    keypair: keypair
-                  };
-                })
-                // Unknown format (nor URI, nor WIF/EWIF)
-                .catch(UIUtils.onError('ERROR.SCAN_UNKNOWN_FORMAT'));
-            });
-        })
-        .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
+      promise = UIUtils.loading.show()
+        .then(function() {
+          return {
+            pubkey: $scope.formData.pubkey,
+            keypair: $scope.formData.keypair
+          };
+        });
     }
 
     if (!promise) {
@@ -339,9 +344,74 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     return Modals.showHelp(parameters);
   };
 
+  $scope.doScan = function() {
+    if ($scope.computing) return;
+
+    $scope.computing = true;
+    $scope.formData.pubkey = null;
+    $scope.formData.keypair = null;
+
+    // Run scan cordova plugin, on device
+    return Device.barcode.scan()
+      .then(function(data) {
+        if (!data) return;
+
+        // Skip simple parsing, if auth if need
+        if ($scope.isAuth) return $q.when(data);
+
+        // Try to parse as an URI
+        return BMA.uri.parse(data)
+          .then(function (res) {
+            if (!res || !res.pubkey) throw {message: 'ERROR.SCAN_UNKNOWN_FORMAT'};
+            // If simple pubkey
+            return res;
+          })
+          .catch(function(err) {
+            console.debug('[login] Error while parsing as URI: ' + (err && err.message || err));
+            return data;
+          });
+      })
+      .then(function(data) {
+        // Parse success: continue
+        if (data && data.pubkey) return data;
+
+        // Try to read as WIF format
+        return csCrypto.keyfile.parseData(data, {silent: true})
+          .then(function(keypair) {
+            if (!keypair || !keypair.signPk || !keypair.signSk) throw {message: 'ERROR.SCAN_UNKNOWN_FORMAT'}; // rethrow an error
+
+            var pubkey = CryptoUtils.base58.encode(keypair.signPk);
+
+            // Login using keypair
+            return {
+              pubkey: pubkey,
+              keypair: keypair
+            };
+          })
+          // Unknown format (nor URI, nor WIF/EWIF)
+          .catch(UIUtils.onError('ERROR.SCAN_UNKNOWN_FORMAT'));
+      })
+      .then(function(res) {
+        if (!res || !res.pubkey) return; // no data
+
+        $scope.pubkeyError = $scope.expectedPubkey && $scope.expectedPubkey != res.pubkey;
+        $scope.formData.pubkey = res.pubkey;
+        $scope.formData.keypair = res.keypair;
+      })
+      .then(function() {
+        $scope.computing = false;
+        UIUtils.loading.hide(10);
+      })
+      .catch(function(err) {
+        $scope.computing = false;
+        UIUtils.onError('ERROR.SCAN_FAILED')(err);
+      });
+  };
+
   $scope.changeMethod = function(method, params){
     $scope.hideMethodsPopover();
-    if (method == $scope.formData.method) return; // same method
+
+    if (!method || method == $scope.formData.method) return; // same method
 
     console.debug("[login] method is: " + method);
     $scope.formData.method = method;
@@ -351,12 +421,10 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
       delete $scope.form.$submitted;
     }
 
-    if (method == 'SCAN') {
-      return $scope.doLogin();
-    }
-
     // Scrypt (advanced or not)
     if (method == 'SCRYPT_DEFAULT' || method == 'SCRYPT_ADVANCED') {
+      $scope.pubkey = null;
+
       // Search scrypt object
       var scrypt;
       if (params) {
@@ -375,11 +443,15 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
 
       $scope.autoComputePubkey = $scope.autoComputePubkey && (method == 'SCRYPT_DEFAULT');
     }
+    else if (method == 'SCAN') {
+      return $scope.doScan();
+    }
     else {
       $scope.formData.username = null;
       $scope.formData.password = null;
       $scope.formData.pubkey = null;
-      $scope.formData.computing = false;
+      $scope.pubkey = null;
+      $scope.computing = false;
     }
   };
 
@@ -413,6 +485,9 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     return csCrypto.keyfile.read($scope.formData.file, options)
       .catch(function(err) {
         $scope.formData.file.password = undefined;
+        if (err === 'CANCELLED') {
+          UIUtils.loading.hide(10);
+        }
         if (err && err.ucode == csCrypto.errorCodes.BAD_PASSWORD) {
           // Recursive call
           return $scope.readKeyFile($scope.formData.file, {withSecret: options.withSecret, error: 'ACCOUNT.SECURITY.KEYFILE.ERROR.BAD_PASSWORD'});

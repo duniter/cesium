@@ -27,38 +27,21 @@
         {{'LOGIN.METHOD.FILE' | translate}}
       </a>
 
-      <ng-if ng-if="!isAuth">
+      <div ng-if="!isAuth || $root.device.barcode.enable" class="item-divider"></div>
 
-        <div class="item-divider"></div>
+      <a class="item item-icon-left ink"
+         ng-if="$root.device.barcode.enable"
+         ng-click="changeMethod('SCAN')">
+        <i class="icon ion-qr-scanner"></i>
+        {{'LOGIN.METHOD.SCAN' | translate}}
+      </a>
 
-        <a class="item item-icon-left ink"
-           ng-if="$root.device.barcode.enable"
-           ng-click="changeMethod('SCAN')">
-          <i class="icon ion-qr-scanner"></i>
-          {{'LOGIN.METHOD.SCAN' | translate}}
-        </a>
-
-        <a class="item item-icon-left ink"
-           ng-click="changeMethod('PUBKEY')">
-          <i class="icon ion-key"></i>
-          {{'LOGIN.METHOD.PUBKEY' | translate}}
-        </a>
-
-      </ng-if>
-
-<!--
-      {id: 'PUBKEY', label: 'LOGIN.METHOD.PUBKEY'}
-      ];
-      var authMethods = [
-      {id: 'SCRYPT_DEFAULT', label: 'LOGIN.METHOD.SCRYPT_DEFAULT'},
-      {
-      id: 'SCRYPT_ADVANCED', label: 'LOGIN.METHOD.SCRYPT_ADVANCED',
-      values: _.keys(CryptoUtils.constants.SCRYPT_PARAMS).reduce(function(res, key) {
-      return res.concat({id: key, label: 'LOGIN.SCRYPT.' + key, params: CryptoUtils.constants.SCRYPT_PARAMS[key]});
-      }, [{id: 'user', label: 'LOGIN.SCRYPT.USER', params: {}}])
-      },
-      {id: 'FILE', label: 'LOGIN.METHOD.FILE'}
-       -->
+      <a class="item item-icon-left ink"
+         ng-if="!isAuth"
+         ng-click="changeMethod('PUBKEY')">
+        <i class="icon ion-key"></i>
+        {{'LOGIN.METHOD.PUBKEY' | translate}}
+      </a>
 
     </div>
   </ion-content>

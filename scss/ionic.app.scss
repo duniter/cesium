@@ -2001,11 +2001,11 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 }
 @media (max-width: $screen-xs-max) {
   .popover.popover-login-methods {
-    height: 233px;
+    height: 233px !important;
   }
 
   .popover.popover-login-methods.auth {
-    height: 204px;
+    height: 233px;
   }
 }
 

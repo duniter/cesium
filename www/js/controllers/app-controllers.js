@@ -89,40 +89,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // (code removed when NO device)
   ////////////////////////////////////////
 
-  $scope.parseWIF = function(data, options) {
-    options = options || {};
-    options.withSecret = angular.isDefined(options.withSecret) && options.withSecret || true;
-    options.password = function() {
-        UIUtils.loading.hide();
-        return Modals.showPassword({
-            title: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.TITLE',
-            subTitle: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.HELP',
-            error: options.error,
-            scope: $scope
-          })
-          .then(function(password) {
-            // Timeout is need to force popup to be hide
-            return $timeout(function() {
-              if (password) UIUtils.loading.show();
-              return password;
-            }, 150);
-          });
-      };
-
-    UIUtils.loading.show();
-
-    return csCrypto.keyfile.parseWIF_or_EWIF(data, options)
-      .catch(function(err) {
-        if (err && err == 'CANCELLED') return;
-        if (err && err.ucode == csCrypto.errorCodes.BAD_PASSWORD) {
-          // recursive call
-          return $scope.parseWIF(data, {withSecret: options.withSecret, error: 'ACCOUNT.SECURITY.KEYFILE.ERROR.BAD_PASSWORD'});
-        }
-        console.error("[app] Unable to parse as WIF or EWIF format: " + (err && err.message || err));
-        throw err; // rethrow
-      });
-  };
-
   $scope.scanQrCodeAndGo = function() {
 
     if (!Device.barcode.enable) return;
@@ -148,18 +114,19 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
             console.debug("[app] Scan data is not an URI (get error: " + (err && err.message || err) + "). Trying to decode as a WIF or EWIF format...");
 
             // Try to read as WIF format
-            return $scope.parseWIF(data)
+            return csCrypto.keyfile.parseData(data)
               .then(function(keypair) {
                 if (!keypair || !keypair.signPk || !keypair.signSk) throw err; // rethrow the first error (e.g. Bad URI)
 
                 var pubkey = CryptoUtils.base58.encode(keypair.signPk);
                 console.debug("[app] Detected WIF/EWIF format. Will login to wallet {" + pubkey.substring(0, 8) + "}");
 
-                // Create the wallet (if need) or use default
+                // Create a new wallet (if default wallet is already used)
                 var wallet = !csWallet.isLogin() ? csWallet : csWallet.children.create({store: false});
 
                 // Login using keypair
                 return wallet.login({
+                    silent: true,
                     forceAuth: true,
                     minData: false,
                     authData: {
@@ -168,7 +135,11 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
                     }
                   })
                   .then(function () {
+
                     // Open transfer all wallet
+                    $ionicHistory.nextViewOptions({
+                      historyRoot: true
+                    });
                     return $state.go('app.new_transfer', {
                       all: true, // transfer all sources
                       wallet: !wallet.isDefault() ? wallet.id : undefined
@@ -498,7 +469,7 @@ function HomeController($scope, $state, $timeout, $ionicHistory, csPlatform, csC
   $scope.loading = true;
 
   $scope.enter = function(e, state) {
-    if (state && state.stateParams && state.stateParams.error) { // Query parameter
+    if (state && state.stateParams && state.stateParams.error) { // Error query parameter
       $scope.error = state.stateParams.error;
       $scope.node = csCurrency.data.node;
       $scope.loading = false;

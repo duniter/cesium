@@ -381,6 +381,7 @@
      "SCRYPT_FORM_HELP": "Accedi con tuoi dati <br> Ricordati di verificare che stai utilizzando la chiave del tuo conto.",
      "PUBKEY_FORM_HELP": "Scrivi qui la tua chiave privata:",
      "FILE_FORM_HELP": "Scegliere un portachiavi da utilizzare:",
+     "SCAN_FORM_HELP": "Scansiona il codice QR di un portafoglio.",
      "SALT": "Identificativo segreto",
      "SALT_HELP": "Identificativo segreto",
      "SHOW_SALT": "Mostrare identificativo segreto?",
@@ -406,7 +407,8 @@
        "SCRYPT_DEFAULT": "Salatura standard (imp. predefinita)",
        "SCRYPT_ADVANCED": "Salatura avanzata",
        "FILE": "File del portachiavi",
-       "PUBKEY": "Chiave pubblica soltanto"
+       "PUBKEY": "Chiave pubblica soltanto",
+       "SCAN": "Scansiona un codice QR"
      },
      "SCRYPT": {
        "SIMPLE": "Salatura leggera",
@@ -430,7 +432,10 @@
    "AUTH": {
      "TITLE": "<i class=\"icon ion-locked\"></i> Autenticazione",
      "BTN_AUTH": "Autenticarsi",
-     "GENERAL_HELP": "Autenticati :"
+     "GENERAL_HELP": "Autenticati :",
+     "EXPECTED_UID_HELP": "Effettua il login nell'account <i class=\"ion-person\"></i> {{uid}}:",
+     "EXPECTED_PUBKEY_HELP": "Si prega di autenticarsi sul portafoglio <i class=\"ion-key\"></i> {{pubkey|formatPubkey}}:",
+     "SCAN_FORM_HELP": "Scansiona il codice QR della <b>chiave privata</b> del portafoglio."
    },
    "ACCOUNT": {
      "TITLE": "Mio conto",
@@ -442,6 +447,7 @@
      "SHOW_ALL_TX": "Mostrare tutte",
      "TX_FROM_DATE": "(limite attuale del {{fromTime|formatFromNowShort}})",
      "PENDING_TX": "Transazioni pendenti",
+     "VALIDATING_TX": "Transazioni in corso di convalida",
      "ERROR_TX": "Transaction non eseguite",
      "ERROR_TX_SENT": "Transazioni inviate",
      "PENDING_TX_RECEIVED": "Transazioni in attesa di recezione",
@@ -457,12 +463,10 @@
      "SIG_STOCK": "Stock di certificazioni da inviare",
      "BTN_RECEIVE_MONEY": "Ricevere",
      "BTN_SELECT_ALTERNATIVES_IDENTITIES": "Usare un'altra identità..",
-     "BTN_MEMBERSHIP_IN_DOTS": "Registrati come membro..",
      "BTN_FIX_MEMBERSHIP": "Invia nuovamente di adesione...",
      "BTN_MEMBERSHIP_RENEW": "Rinnovare adesione",
      "BTN_MEMBERSHIP_RENEW_DOTS": "Rinnovare adesione ...",
      "BTN_MEMBERSHIP_OUT_DOTS": "Revocare adesione...",
-     "BTN_SEND_IDENTITY_DOTS": "Pubblicare identità...",
      "BTN_SECURITY_DOTS": "Login e securità...",
      "BTN_SHOW_DETAILS": "Visualizzare dati tecnici",
      "LOCKED_OUTPUTS_POPOVER": {
@@ -515,6 +519,21 @@
       "TITLE": "Selezionare una identità",
       "HELP": "Più <b>identità diverse</b> sono state inviate per la chiave pubblica <span class=\"gray\"><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</span>.<br/>Seleziona un dossier da usare :"
     },
+     "SELECT_WALLET_MODAL": {
+       "TITLE": "Selezione del portafoglio"
+     },
+     "WALLET_LIST": {
+       "TITLE": "Portafoglio secondario",
+       "BTN_NEW": "Aggiungi un portfolio",
+       "NO_WALLET": "Nessun portafoglio secondario",
+       "BTN_DELETE": "Rimuovi un portafoglio secondario ...",
+       "BTN_RENAME": "Rinominare il portafoglio",
+       "EDIT_POPOVER": {
+         "TITLE": "Rinominare il portafoglio",
+         "HELP": "Compila il nuovo nome",
+         "NAME_HELP": "Nome del portafoglio"
+       }
+     },
      "SECURITY":{
        "ADD_QUESTION" : "Aggiungere domanda personalizzata",
        "BTN_CLEAN" : "Svuotare",

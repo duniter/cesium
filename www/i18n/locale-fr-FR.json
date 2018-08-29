@@ -390,6 +390,7 @@
     "SCRYPT_FORM_HELP": "Veuillez saisir vos identifiants.<br>Pensez à vérifier que la clé publique est celle de votre compte.",
     "PUBKEY_FORM_HELP": "Veuillez saisir une clé publique de compte :",
     "FILE_FORM_HELP": "Choisissez le fichier de trousseau à utiliser :",
+    "SCAN_FORM_HELP": "Scanner le QR code d'un portefeuille.",
     "SALT": "Identifiant secret",
     "SALT_HELP": "Identifiant secret",
     "SHOW_SALT": "Afficher l'identifiant secret ?",
@@ -442,7 +443,8 @@
     "BTN_AUTH": "S'authentifier",
     "GENERAL_HELP": "Veuillez vous authentifier :",
     "EXPECTED_UID_HELP": "Veuillez vous authentifier sur le compte <i class=\"ion-person\"></i> {{uid}} :",
-    "EXPECTED_PUBKEY_HELP": "Veuillez vous authentifier sur le portefeuille <i class=\"ion-key\"></i> {{pubkey|formatPubkey}} :"
+    "EXPECTED_PUBKEY_HELP": "Veuillez vous authentifier sur le portefeuille <i class=\"ion-key\"></i> {{pubkey|formatPubkey}} :",
+    "SCAN_FORM_HELP": "Scanner le QR code de la <b>clef privée</b> du portefeuille."
   },
   "ACCOUNT": {
     "TITLE": "Mon compte",
@@ -537,7 +539,7 @@
       "BTN_RENAME": "Renommer le portefeuille",
       "EDIT_POPOVER": {
         "TITLE": "Renommer le portefeuille",
-        "HELP": "Rensignez le nouveau nom",
+        "HELP": "Renseignez le nouveau nom",
         "NAME_HELP": "Nom du portefeuille"
       }
     },

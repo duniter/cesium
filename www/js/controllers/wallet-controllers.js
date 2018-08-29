@@ -1451,7 +1451,10 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
       })
 
       .catch(function(err){
-        if (err && err == 'CANCELLED') return;
+        if (err && err === 'CANCELLED') {
+          UIUtils.loading.hide();
+          return;
+        }
         UIUtils.onError('ERROR.DOWNLOAD_KEYFILE_FAILED')(err);
       })
       ;

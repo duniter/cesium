@@ -23,13 +23,21 @@ angular.module('cesium.join.controllers', ['cesium.services'])
   .controller('JoinModalCtrl', JoinModalController)
 ;
 
-function JoinController($timeout, Modals) {
+function JoinController($scope, $timeout, $controller, Modals, csWallet) {
   'ngInject';
 
-  // Open join modal
-  $timeout(function() {
-    Modals.showJoin();
-  }, 100);
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('HomeCtrl', {$scope: $scope}));
+
+  $scope.showJoinModal = function() {
+    if ($scope.loading) return $timeout($scope.showJoinModal, 500); // recursive call
+
+    if (!csWallet.isLogin() && !$scope.error) {
+      return $timeout(Modals.showJoin, 300);
+    }
+  };
+  $scope.$on('$ionicView.enter', $scope.showJoinModal);
+
 }
 
 function JoinChooseAccountTypeModalController($scope, $state, Modals, UIUtils, csCurrency) {

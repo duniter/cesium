@@ -717,6 +717,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     exports.uri.parse = function(uri) {
       return $q(function(resolve, reject) {
         var pubkey;
+
         // If pubkey: not need to parse
         if (exact(regexp.PUBKEY).test(uri)) {
           resolve({
@@ -785,6 +786,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
                 });
               })
               .catch(function(err) {
+                console.error(err);
                 reject({message: 'Could not get node parameter. Currency could not be retrieve'});
               });
             }
@@ -813,25 +815,30 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
                   host: host,
                   currency: currency
                 });
+              })
+              .catch(function(err) {
+                console.error(err);
+                reject({message: 'Could not get node parameter. Currency could not be retrieve'});
               });
           }
         }
         else {
           console.debug("[BMA.parse] Could not parse URI: " + uri);
-          reject( {message: 'ERROR.UNKNOWN_URI_FORMAT'});
+          reject({message: 'ERROR.UNKNOWN_URI_FORMAT'});
         }
       })
 
       // Check values against regex
       .then(function(result) {
+        if (!result) return;
         if (result.pubkey && !(exact(regexp.PUBKEY).test(result.pubkey))) {
-          reject({message: "Invalid pubkey format [" + result.pubkey + "]"}); return;
+          throw {message: "Invalid pubkey format [" + result.pubkey + "]"};
         }
         if (result.uid && !(exact(regexp.USER_ID).test(result.uid))) {
-          reject({message: "Invalid uid format [" + result.uid + "]"}); return;
+          throw {message: "Invalid uid format [" + result.uid + "]"};
         }
         if (result.currency && !(exact(regexp.CURRENCY).test(result.currency))) {
-          reject({message: "Invalid currency format ["+result.currency+"]"}); return;
+          throw {message: "Invalid currency format ["+result.currency+"]"};
         }
         return result;
       });
