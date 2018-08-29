@@ -13,21 +13,20 @@
       <span ng-show="!loading" translate-values=":currency:{currency: $root.currency.name}" translate>HOME.MESSAGE</span>
     </h4>
 
-    <div class="center padding" >
+    <div class="center padding" ng-if="loading">
+      <ion-spinner icon="android" ></ion-spinner>
+    </div>
 
-      <ion-spinner icon="android" ng-if="loading"></ion-spinner>
+    <div class="center padding animate-fade-in animate-show-hide ng-hide" ng-show="!loading && error">
+      <div class="card card-item padding">
+        <p class="item-content item-text-wrap">
+            <span class="dark" trust-as-html="'HOME.CONNECTION_ERROR'|translate:node"></span>
+        </p>
 
-      <div class="animate-fade-in animate-show-hide ng-hide" ng-show="!loading && error">
-        <div class="card card-item padding">
-          <p class="item-content item-text-wrap">
-              <span class="dark" trust-as-html="'HOME.CONNECTION_ERROR'|translate:node"></span>
-          </p>
-
-          <!-- Retry -->
-          <button type="button"
-                  class="button button-positive icon icon-left ion-refresh ink"
-                  ng-click="reload()">{{'COMMON.BTN_REFRESH'|translate}}</button>
-        </div>
+        <!-- Retry -->
+        <button type="button"
+                class="button button-positive icon icon-left ion-refresh ink"
+                ng-click="reload()">{{'COMMON.BTN_REFRESH'|translate}}</button>
       </div>
     </div>
 
