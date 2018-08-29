@@ -7,7 +7,7 @@
             ng-click="closeModal()" translate>COMMON.BTN_CANCEL
     </button>
     <button class="button button-icon button-clear icon ion-ios-arrow-back buttons header-item"
-            ng-click="slidePrev()"
+            ng-click="doPrev()"
             ng-if="slides.slider.activeIndex && slideBehavior.hasPreviousButton">
     </button>
     <button class="button button-icon button-clear icon ion-ios-help-outline visible-xs"
@@ -356,60 +356,62 @@
           </div>
 
           <!-- Account available -->
-          <div ng-if="accountAvailable && !formData.computing">
-            <div class="padding text-center" translate>ACCOUNT.NEW.LAST_SLIDE_CONGRATULATION</div>
+          <ng-if ng-if="!formData.computing">
+            <div class="animate-fade-in animate-show-hide ng-hide" ng-show="accountAvailable">
+              <div class="padding text-center" translate>ACCOUNT.NEW.LAST_SLIDE_CONGRATULATION</div>
 
-            <div class="list">
+              <div class="list">
 
-              <ion-item class="item text-center item-text-wrap">
-                <h3 class="gray" translate>LOGIN.ASSOCIATED_PUBKEY</h3>
-                <!-- do NOT add copy-on-click attribute here - see issue #470-->
-                <h3 class="dark bold">
-                  {{formData.pubkey}}
-                </h3>
-              </ion-item>
-            </div>
-
-            <div class="padding hidden-xs text-right">
-              <button class="button button-clear button-dark ink" ng-click="closeModal()" type="button" translate>COMMON.BTN_CANCEL
-              </button>
-              <button class="button button-positive ink" ng-click="doNewAccount()" translate>
-                COMMON.BTN_SEND
-                <i class="icon ion-android-send"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Existing non-empty account -->
-          <div ng-if="!accountAvailable && !formData.computing">
-
-            <ion-item class="item-icon-left item-text-wrap text-center">
-                <i class="icon ion-minus-circled assertive"></i>
-                <span id="modal-license" trust-as-html="'ERROR.EXISTING_ACCOUNT'|translate"></span>
-            </ion-item>
-
-            <div class="list">
-
-              <ion-item class="item item-text-wrap item-border">
-                <div class="padding text-center">
-                  <span class="gray text-no-wrap">
+                <ion-item class="item text-center item-text-wrap">
+                  <h3 class="gray" translate>LOGIN.ASSOCIATED_PUBKEY</h3>
+                  <!-- do NOT add copy-on-click attribute here - see issue #470-->
+                  <h3 class="dark bold">
                     {{formData.pubkey}}
-                  </span>
-                </div>
-              </ion-item>
-
-              <div class="padding text-center">
-                <span translate>ERROR.EXISTING_ACCOUNT_REQUEST</span>
+                  </h3>
+                </ion-item>
               </div>
 
+              <div class="padding hidden-xs text-right">
+                <button class="button button-clear button-dark ink" ng-click="closeModal()" type="button" translate>COMMON.BTN_CANCEL
+                </button>
+                <button class="button button-positive ink" ng-click="doNewAccount()" translate>
+                  COMMON.BTN_SEND
+                  <i class="icon ion-android-send"></i>
+                </button>
+              </div>
             </div>
-            <div class="padding hidden-xs text-left">
-              <button class="button button-assertive icon-left ion-chevron-left ink"
-                      ng-click="identifierRecovery()" translate>
-                COMMON.BTN_MODIFY
-              </button>
+
+            <!-- Existing non-empty account -->
+            <div class="animate-fade-in animate-show-hide ng-hide" ng-show="!accountAvailable">
+
+              <ion-item class="item-icon-left item-text-wrap text-center">
+                  <i class="icon ion-minus-circled assertive"></i>
+                  <span id="modal-license" trust-as-html="'ERROR.EXISTING_ACCOUNT'|translate"></span>
+              </ion-item>
+
+              <div class="list">
+
+                <ion-item class="item item-text-wrap item-border">
+                  <div class="padding text-center">
+                    <span class="gray text-no-wrap">
+                      {{formData.pubkey}}
+                    </span>
+                  </div>
+                </ion-item>
+
+                <div class="padding text-center">
+                  <span translate>ERROR.EXISTING_ACCOUNT_REQUEST</span>
+                </div>
+
+              </div>
+              <div class="padding hidden-xs text-left">
+                <button class="button button-assertive icon-left ion-chevron-left ink"
+                        ng-click="identifierRecovery()" translate>
+                  COMMON.BTN_MODIFY
+                </button>
+              </div>
             </div>
-          </div>
+          </ng-if>
 
         </ion-content>
       </ion-slide-page>

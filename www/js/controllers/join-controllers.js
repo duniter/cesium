@@ -185,12 +185,16 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
     CryptoUtils.scryptKeypair($scope.formData.username, $scope.formData.password)
       .then(function(keypair) {
         $scope.formData.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-        $scope.formData.computing=false;
-        $scope.checkAccountAvailable();
+        return $scope.checkAccountAvailable();
+      })
+      .then(function() {
+        return $timeout(function(){
+          $scope.formData.computing=false;
+        }, 400);
       })
       .catch(function(err) {
-        $scope.formData.computing=false;
         $scope.formData.pubkey = undefined;
+        $scope.formData.computing=false;
         UIUtils.onError('ERROR.CRYPTO_UNKNOWN_ERROR')(err);
       });
   };
@@ -298,6 +302,11 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
 
     $scope.slideNext();
 
+    $scope.slideBehavior = $scope.computeSlideBehavior();
+  };
+
+  $scope.doPrev = function() {
+    $scope.slidePrev();
     $scope.slideBehavior = $scope.computeSlideBehavior();
   };
 
@@ -462,27 +471,25 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
   $scope.checkAccountAvailable = function() {
     delete $scope.accountAvailable;
     // Search for tx source, from pubkey
-    BMA.tx.sources({ pubkey:  $scope.formData.pubkey })
+    return BMA.tx.sources({ pubkey:  $scope.formData.pubkey })
       .then(function(res) {
-        if(!res.sources.length) {
-          $scope.formData.computing=false;
-          $scope.accountAvailable = true;
-        }
-        else{
-          $scope.formData.computing=false;
-          $scope.accountAvailable = false;
-        }
+        $scope.accountAvailable = !res || !res.sources.length;
       })
       .catch(function(err) {
         console.error(err);
-        $scope.formData.computing=false;
         $scope.accountAvailable = false;
       });
   };
 
   $scope.identifierRecovery = function() {
-    for (var i = 0; i < 2; i++)
-      $scope.slidePrev();
+    // Go back
+    $scope.slides.slider.unlockSwipes();
+    for (var i = 0; i < 2; i++) {
+      $scope.slides.slider.slidePrev();
+    }
+    $scope.slides.slider.lockSwipes();
+    // Recompute behavior
+    $scope.slideBehavior = $scope.computeSlideBehavior();
   };
 
   // TODO: remove auto add account when done
