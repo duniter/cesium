@@ -86,6 +86,7 @@
 
     <div class="visible-xs visible-sm padding text-center" ng-if="!loading">
       <button class="button button-assertive button-small-padding ink"
+              ng-if="isDefaultWallet"
               ng-click="logout({askConfirm: true})">
         <i class="icon ion-log-out"></i>
         {{'COMMON.BTN_LOGOUT' | translate}}
