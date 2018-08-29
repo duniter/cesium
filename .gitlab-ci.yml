@@ -67,3 +67,14 @@ pages:
   only:
     - master
 
+release-web:
+  stage: publish
+  script:
+    - mv platforms/web/www www
+  artifacts:
+    untracked: true
+    paths:
+      - www
+  only:
+    - tags
+
