@@ -136,7 +136,7 @@ $screen-lg:                       1200px;
         visibility: visible !important;
     }
     .button.visible-xs {
-      display: block !important;
+      display: inline-block !important;
     }
 }
 @media screen and (min-width: $screen-sm) {
@@ -186,7 +186,7 @@ $screen-lg:                       1200px;
       white-space: nowrap;
       overflow: hidden !important;
       max-width: 400px !important;
-      display: block !important;
+      display: inline-block !important;
     }
     .badge:empty {
       display: none !important;
@@ -222,7 +222,7 @@ $screen-lg:                       1200px;
         visibility: visible !important;
     }
     .button.visible-sm {
-      display: block !important;
+      display: inline-block !important;
     }
 }
 @media screen and (min-width: $screen-md) {
@@ -1999,14 +1999,13 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 .popover.popover-login-methods.auth {
   height: 204px;
 }
-
 @media (max-width: $screen-xs-max) {
   .popover.popover-login-methods {
     height: 233px;
   }
 
   .popover.popover-login-methods.auth {
-    height: 152px;
+    height: 204px;
   }
 }
 
