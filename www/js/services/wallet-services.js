@@ -1481,7 +1481,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
             return loadRequirements()
 
               // Add wallet events
-              .then(addEvents)
+              .then(addEvents);
           }
           else {
             data.uid = uid;
@@ -1894,7 +1894,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     createNewChildWallet = function(options) {
       var walletId = getChildrenWalletCount()+1;
-      var child = service.instance(walletId);
+      var wallet = service.instance(walletId);
       addChildWallet(wallet, options);
       return wallet;
     },
