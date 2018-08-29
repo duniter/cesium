@@ -414,6 +414,12 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
               isMember = false;
               return []; // continue (append pendings cert if exists in lookup)
             }
+            /*FIXME: workaround for Duniter issue #1309 */
+            else if (!!err && err.ucode == 1002) {
+              console.warn("[wallet-service] Detecting Duniter issue #1309 ! Applying workaround... ");
+              isMember = false;
+              return []; // not found
+            }
             else {
               throw err;
             }

@@ -66,7 +66,7 @@
           <div class="item item-text-wrap text-center" ng-if="formData.tx.fromTime > 0">
             <p>
               <a ng-click="showMoreTx()">{{:locale:'ACCOUNT.SHOW_MORE_TX'|translate}}</a>
-              <span class="gray" translate="ACCOUNT.TX_FROM_DATE" translate-values="{fromTime: tx.fromTime}"></span>
+              <span class="gray" translate="ACCOUNT.TX_FROM_DATE" translate-values="{fromTime: formData.tx.fromTime}"></span>
               <span class="gray">|</span>
               <a ng-click="showMoreTx(-1)" translate>ACCOUNT.SHOW_ALL_TX</a>
             </p>
