@@ -10,7 +10,8 @@ angular.module('cesium.es.wot.controllers', ['cesium.es.services'])
         .extendState('app.wot_lookup', {
           points: {
             'tabs': {
-              templateUrl: "plugins/es/templates/wot/lookup_extend.html"
+              templateUrl: "plugins/es/templates/wot/lookup_extend.html",
+              controller: "ESExtensionCtrl"
             }
           }
         })
