@@ -14,8 +14,7 @@ current=`grep -P "version\": \"\d+.\d+.\d+(\w*)" package.json | grep -oP "\d+.\d
 echo "Current version: $current"
 
 ### Get repo URL
-REMOTE_URL=`git remote -v | grep -P "push" | grep -oP "https://github.com/[^/]+/[^/ ]+"`
-REPO=`echo $REMOTE_URL | sed "s/https:\/\/github.com\///g"`
+REPO="duniter/cesium"
 REPO_URL=https://api.github.com/repos/$REPO
 
 ###  get auth token
@@ -67,13 +66,14 @@ case "$1" in
       echo " - tag: v$current"
       echo " - description: $description"
       result=`curl -H ''"$GITHUT_AUTH"'' -i $REPO_URL/releases -d '{"tag_name": "v'"$current"'","target_commitish": "master","name": "'"$current"'","body": "'"$description"'","draft": false,"prerelease": '"$prerelease"'}'`
+      echo "$result"
       upload_url=`echo "$result" | grep -P "\"upload_url\": \"[^\"]+"  | grep -oP "https://[A-Za-z0-9/.-]+"`
 
       ###  Sending files
-      echo "Uploading files to GitHub..."
+      echo "Uploading files to $upload_url"
       dirname=`pwd`
-      curl -i  -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/zip' -T $dirname/platforms/web/build/cesium-v$current-web.zip $upload_url?name=cesium-v$current-web.zip
-      curl -i  -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/vnd.android.package-archive' -T $dirname/platforms/android/build/outputs/apk/release/android-release.apk $upload_url?name=cesium-v$current-android.apk
+      curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/zip' -T $dirname/platforms/web/build/cesium-v$current-web.zip $upload_url?name=cesium-v$current-web.zip
+      curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/vnd.android.package-archive' -T $dirname/platforms/android/build/outputs/apk/release/android-release.apk $upload_url?name=cesium-v$current-android.apk
 
       echo "Successfully uploading files"
       echo " -> Release url: https://github.com/$REPO/releases/tag/v$current"
