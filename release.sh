@@ -76,8 +76,6 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   # Update config file
   gulp config --env default
   gulp build:web --release
-  #ionic build ubuntu --release
-  #cd platforms/ubuntu/native/cesium; debuild
   cd $DIRNAME
 
   echo "----------------------------------"
