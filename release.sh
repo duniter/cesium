@@ -98,7 +98,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
     echo "* Uploading artifacts to Github..."
     echo "**********************************"
 
-    ./github.sh $1 $4
+    ./github.sh $1 ''"$4"''
 
     echo "----------------------------------"
     echo "- Building desktop versions..."
