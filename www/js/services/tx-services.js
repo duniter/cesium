@@ -159,7 +159,6 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             var sliceTime = csSettings.data.walletHistorySliceSecond;
             fromTime = fromTime - (fromTime % sliceTime);
             for(var i = fromTime; i - sliceTime < nowInSec; i += sliceTime)  {
-              var startTime = Math.max(i, fromTime);
               jobs.push(BMA.tx.history.times({pubkey: pubkey, from: i, to: i+sliceTime-1})
                 .then(_reduceTx)
               );
@@ -361,7 +360,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             data.balance = balance;
 
             // Will add uid (+ plugin will add name, avatar, etc. if enable)
-            return csWot.extendAll((data.tx.history || []).concat(data.tx.pendings||[]), 'pubkey');
+            return csWot.extendAll((data.tx.history || []).concat(data.tx.validating||[]).concat(data.tx.pendings||[]), 'pubkey');
           })
           .then(function() {
             console.debug('[tx] TX and sources loaded in '+ (new Date().getTime()-now) +'ms');

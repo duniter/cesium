@@ -40,6 +40,11 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
       ;;
   esac
 
+  # Load env.sh if exists
+  if [ -f "${DIRNAME}/env.sh" ]; then
+    source ${DIRNAME}/env.sh
+  fi
+
   # force nodejs version to 5
   if [ -d "$NVM_DIR" ]; then
     . $NVM_DIR/nvm.sh
@@ -60,7 +65,6 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   echo "----------------------------------"
   echo "- Building Android artifact..."
   echo "----------------------------------"
-  source ./env.sh
   ionic build android --release
 
   #ionic build firefoxos --release
@@ -91,12 +95,12 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   echo " Waiting 30s, for propagation to github..."
   sleep 30s
 
-  if [[ $4 =~ ^[a-zA-Z0-9_]+:[a-zA-Z0-9_]+$ && "_$5" != "_" ]]; then
+  if [[ "_$4" != "_" ]]; then
     echo "**********************************"
     echo "* Uploading artifacts to Github..."
     echo "**********************************"
 
-    ./github.sh $1 $4 "'"$5"'"
+    ./github.sh $1 $4
 
     echo "----------------------------------"
     echo "- Building desktop versions..."
@@ -129,12 +133,11 @@ cesium-desktop-v$2-linux-x64.tar.gz"
     echo "* Build release succeed !"
     echo "**********************************"
 
-    echo " WARN - missing arguments: "
-    echo "       user:password 'release_description'"
+    echo " WARN - missing arguments 'release_description'"
     echo
     echo "   Binaries files NOT sending to github repository"
     echo "   Please run:"
-    echo "   > ./github.sh pre|rel user:password 'release_description'"
+    echo "   > ./github.sh pre|rel 'release_description'"
     echo
     echo "   Desktop artifact are NOT build"
     echo "   Please run:"
@@ -145,10 +148,10 @@ cesium-desktop-v$2-linux-x64.tar.gz"
 else
   echo "Wrong version format"
   echo "Usage:"
-  echo " > ./release.sh [pre|rel] <version> <android-version> <github_credentials>"
+  echo " > ./release.sh [pre|rel] <version> <android-version> <release_description>"
   echo "with:"
   echo "  version: x.y.z"
   echo "  android-version: nnn"
-  echo "  github_credentials: user:password  (a valid GitHub user account)"
+  echo "  release_description: a short description of the release"
 fi
 
