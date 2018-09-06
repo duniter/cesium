@@ -1,5 +1,5 @@
 
-<div class="comments" ng-controller="ESCommentsCtrl">
+<form class="comments" ng-controller="ESCommentsCtrl" ng-submit="save()">
 
   <div class="item item-divider">
     <i class="icon ion-chatboxes"></i>
@@ -48,10 +48,11 @@
                 id="comment-form-textarea"
                 rows="3"
                 placeholder="{{formData.replyTo ? 'COMMENTS.COMMENT_HELP_REPLY_TO' : 'COMMENTS.COMMENT_HELP'|translate}}"
-                ng-model="formData.message">
+                ng-model="formData.message"
+                ng-keypress="onKeypress($event)">
       </textarea>
       <div class="card-footer text-right">
-        <button class="button button-small button-small-padding"
+        <button type="button" class="button button-small button-small-padding"
                 ng-class="{'button-positive': formData.message.length}"
                 ng-if="!formData.id"
                 ng-click="save()" translate>
@@ -59,11 +60,11 @@
         </button>
         <!-- Edit buttons -->
         <ng-if ng-if="formData.id">
-          <button class="button button-small button-small-padding"
+          <button type="button" class="button button-small button-small-padding"
                   ng-click="cancel()" translate>
             COMMON.BTN_CANCEL
           </button>
-          <button class="button button-small button-small-padding button-positive"
+          <button type="button" class="button button-small button-small-padding button-positive"
                   ng-click="save()" translate>
             COMMON.BTN_SAVE
           </button>
@@ -105,11 +106,11 @@
                  placeholder="{{'COMMENTS.COMMENT_HELP'|translate}}"
                  on-return="save();"
                  ng-model="formData.message"/>
-          <button class="button button-small button-small-padding button-icon button-dark button-icon gray" ng-click="save()">
+          <button type="submit" class="button button-small button-small-padding button-icon button-dark button-icon gray">
             <i class="icon ion-android-send"></i>
           </button>
         </div>
       </div>
     </div>
   </div>
-</div>
+</form>

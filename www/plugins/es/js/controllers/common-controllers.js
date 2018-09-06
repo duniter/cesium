@@ -214,6 +214,14 @@ function ESCommentsController($scope, $filter, $state, $focus, UIUtils) {
       });
   };
 
+  $scope.onKeypress = function(event) {
+    // If Ctrl + Enter: submit
+    if (event && event.charCode == 10 && event.ctrlKey) {
+      $scope.save();
+      event.preventDefault();
+    }
+  };
+
   $scope.save = function() {
     if (!$scope.formData.message || !$scope.formData.message.length) return;
 
