@@ -86,11 +86,9 @@
       <div class="pull-left" ng-if="!search.loading">
         <ng-if ng-if="search.type=='last'">
           <h4>{{ ('MESSAGE.LIST.LAST_' + type) | upper | translate}}</h4>
-          <!--<small class="gray no-padding" ng-if="search.total">{{'WOT.LOOKUP.NEWCOMERS_COUNT'|translate:{count: search.total} }}</small>-->
         </ng-if>
         <ng-if ng-if="search.type=='text'">
           <h4 translate>COMMON.RESULTS_LIST</h4>
-          <!--<small class="gray no-padding" ng-if="search.total">{{'WOT.LOOKUP.PENDING_COUNT'|translate:{count: search.total} }}</small>-->
         </ng-if>
       </div>
 

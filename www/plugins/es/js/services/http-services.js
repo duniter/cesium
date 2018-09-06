@@ -343,10 +343,9 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       prefix = prefix || '#';
       var reg = prefix === '@' ? regexp.USER_TAG : regexp.HASH_TAG;
       var matches = value && reg.exec(value);
-      var tags;
+      var tags = matches && [];
       while(matches) {
         var tag = matches[1];
-        tags = tags || [];
         if (!_.contains(tags, tag)) {
           tags.push(tag);
         }
@@ -358,10 +357,9 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
     function parseUrlsFromText(value) {
       var matches = value && regexp.URL.exec(value);
-      var urls;
+      var urls = matches && [];
       while(matches) {
         var url = matches[0];
-        urls = urls || [];
         if (!_.contains(urls, url)) {
           urls.push(url);
         }
@@ -390,8 +388,9 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         // Replace URL in description
         var urls = parseUrlsFromText(content);
         _.forEach(urls, function(url){
+          var href = (url.startsWith('http://') || url.startsWith('https://')) ? url : ('http://' + url);
           // Redirect URL to the function 'openLink', to open a new window if need (e.g. desktop app)
-          var link = '<a on-tap=\"openLink($event, \'{0}\')\" href=\"{1}\" target="_blank">{2}</a>'.format(url, url, truncUrlFilter(url));
+          var link = '<a on-tap=\"openLink($event, \'{0}\')\" href=\"{1}\" target="_blank">{2}</a>'.format(href, href, truncUrlFilter(url));
           content = content.replace(url, link);
         });
 

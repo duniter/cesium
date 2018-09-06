@@ -389,6 +389,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     return function(input, size) {
       size = size || 25;
       var startIndex = input.startsWith('http://') ? 7 : (input.startsWith('https://') ? 8 : 0);
+      startIndex = input.startsWith('www.', startIndex) ? startIndex + 4 : startIndex; // Remove sequence 'www.'
       return !input || (input.length-startIndex) <= size ? input.substr(startIndex) : (input.substr(startIndex, size) + '...');
     };
   })
