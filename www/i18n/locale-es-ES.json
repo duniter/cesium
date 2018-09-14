@@ -89,7 +89,7 @@
     "WOT": "Directorio",
     "CURRENCY": "Moneda",
     "ACCOUNT": "Mi cuenta",
-    "WALLETS": "Mis carteras",
+    "WALLETS": "Mis monederos",
     "TRANSFER": "Transferencia",
     "SCAN": "Escáner",
     "SETTINGS": "Configuraciones",
@@ -491,7 +491,7 @@
       "MEMBER_ACCOUNT_HELP": "Si aún no está inscrito como un individuo (Solamente una cuenta posible por individuo).",
       "WALLET_ACCOUNT": "Simple monedero",
       "WALLET_ACCOUNT_TITLE": "Crear una cuenta simple",
-      "WALLET_ACCOUNT_HELP": "Cartera simple para todos los otros casos, por ejemplo si necesita una cuenta suplementaria.<br/>El Dividendo Universal no será producido para esta cuenta.",
+      "WALLET_ACCOUNT_HELP": "Monedero simple para todos los otros casos, por ejemplo si necesita una cuenta suplementaria.<br/>El Dividendo Universal no será producido para esta cuenta.",
       "SALT_WARNING": "Elija su identificador secreto.<br/>Se solicitará cada vez que se conectará con esta cuenta.<br/><br/><b>Retenga bien este identificador secreto</b>.<br/>¡En caso de pérdida, nadie podrá acceder a su cuenta!",
       "PASSWORD_WARNING": "Elija su frase secreta.<br/>Se solicitará cada vez que se conectará con esta cuenta.<br/><br/><b>Retenga bien esta frase secreta</b>.<br/>¡En caso de pérdida, nadie podrá acceder su cuenta!",
       "PSEUDO_WARNING": "Elija un seudónimo.<br/>Sirve para que los otros miembros puedan encontrarlo más fácilmente.<br/><br/>No debe contener <b>ni espacios ni caracteres acentuados</b>.<div class='hidden-xs'><br/>Ejemplo: <span class='gray'>SophieDupond, MarcelChemin, etc.</span>",
@@ -525,7 +525,7 @@
       "TITLE": "Selección de monedero"
     },
     "WALLET_LIST": {
-      "TITLE": "Monedero secundario",
+      "TITLE": "Mis monederos",
       "BTN_NEW": "Añadir un monedero",
       "NO_WALLET": "Sin monedero secundaria",
       "BTN_DELETE": "Eliminar una monedero secundaria...",

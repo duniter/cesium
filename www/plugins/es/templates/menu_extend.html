@@ -42,9 +42,9 @@
 <div ng-if=":state:enable && extensionPoint === 'menu-user'" class="visible-xs visible-sm">
 
   <a menu-close class="item item-icon-left" active-link="active"
-       active-link-path-prefix="#/app/invitations"
-       ng-class="{'item-menu-disable': !login}"
-       ui-sref="app.view_invitations">
+     ng-if="login && walletData.isMember"
+     active-link-path-prefix="#/app/invitations"
+     ui-sref="app.view_invitations">
     <i class="icon ion-person-stalker"></i>
     <span translate>MENU.INVITATIONS</span>
     <span class="badge badge-positive"

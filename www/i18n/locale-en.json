@@ -532,7 +532,7 @@
       "TITLE": "Wallet selection"
     },
     "WALLET_LIST": {
-      "TITLE": "secondary wallets",
+      "TITLE": "My wallets",
       "BTN_NEW": "Add a wallet",
       "NO_WALLET": "No secondary wallet",
       "BTN_DELETE": "Remove a secondary wallet...",

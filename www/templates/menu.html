@@ -146,7 +146,7 @@
         <a id="helptip-menu-btn-account"></a>
 
         <a menu-close
-           class="item item-icon-left hidden-xs hidden-sm"
+           class="item item-icon-left "
            active-link="active"
            active-link-path-prefix="#/app/wallets"
            ui-sref="app.view_wallets"
@@ -186,18 +186,20 @@
         <!-- actions divider -->
         <div class="item item-divider" ng-if="login"></div>
 
-        <!-- transfer -->
-        <ion-item menu-close class="item item-button-right hidden-xs hidden-sm" ng-if="login">
-          {{:locale:'MENU.TRANSFER'|translate}}
-          <button class="button button-positive ink-dark" ng-click="showTransferModal()">
-          <i class="icon ion-paper-airplane"></i>
-          </button>
-        </ion-item>
 
-        <!-- scan QR code -->
-        <ion-item menu-close class="item item-button-right" ng-if="$root.device.barcode.enable">
-          {{:locale:'MENU.SCAN'|translate}}
-          <button class="button button-stable ink" ng-click="scanQrCodeAndGo()">
+        <ion-item menu-close class="item  item-button-right" ng-if="login"
+          ng-class="::{'item-button-left': $root.device.barcode.enable}">
+          <!-- transfer -->
+          <button
+            class="button button-positive ink-dark"
+            ng-click="showTransferModal()">
+            <i class="icon ion-paper-airplane"></i>
+          </button>
+
+          <!-- scan QR code -->
+          <button class="button button-stable ink"
+                  ng-if="$root.device.barcode.enable"
+                  ng-click="scanQrCodeAndGo()">
             <i class="icon ion-qr-scanner"></i>
           </button>
         </ion-item>

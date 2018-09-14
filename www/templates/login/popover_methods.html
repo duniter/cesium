@@ -27,7 +27,7 @@
         {{'LOGIN.METHOD.FILE' | translate}}
       </a>
 
-      <div ng-if="!isAuth || $root.device.barcode.enable" class="item-divider"></div>
+      <div ng-if="!isAuth" class="item-divider hidden-xs hidden-sm"></div>
 
       <a class="item item-icon-left ink"
          ng-if="$root.device.barcode.enable"
@@ -35,6 +35,7 @@
         <i class="icon ion-qr-scanner"></i>
         {{'LOGIN.METHOD.SCAN' | translate}}
       </a>
+
 
       <a class="item item-icon-left ink"
          ng-if="!isAuth"

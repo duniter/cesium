@@ -1728,21 +1728,21 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   #menu .bar-header {
     background-color: $positive-900-bg;
     color: #fff;
-    height: 175px;
+    height: 150px;
     padding-right: 0px !important;
 
     .hero {
-      height: 175px;
+      height: 150px;
       box-shadow: none; // not need (define in bar-header)
 
       .content {
-        bottom: 5px;
+        bottom: 0px;
       }
     }
   }
 
   #menu .has-header {
-    top: 175px;
+    top: 150px;
   }
 }
 
@@ -2001,11 +2001,11 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 }
 @media (max-width: $screen-xs-max) {
   .popover.popover-login-methods {
-    height: 233px !important;
+    height: 256px;
   }
 
   .popover.popover-login-methods.auth {
-    height: 233px;
+    height: 204px;
   }
 }
 

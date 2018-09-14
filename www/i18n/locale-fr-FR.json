@@ -532,7 +532,7 @@
       "TITLE": "Sélection du portefeuille"
     },
     "WALLET_LIST": {
-      "TITLE": "Portefeuille secondaires",
+      "TITLE": "Mes portefeuilles",
       "BTN_NEW": "Ajouter un portefeuille",
       "NO_WALLET": "Aucun portefeuille secondaire",
       "BTN_DELETE": "Retirer un portefeuille secondaire...",

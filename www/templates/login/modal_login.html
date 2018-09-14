@@ -7,7 +7,9 @@
     </h1>
     <div class="buttons buttons-right">
       <div class="secondary-buttons">
-        <button class="button button-positive button-icon button-clear icon ion-android-done visible-xs" ng-click="doLogin()">
+        <button class="button button-icon button-clear icon ion-android-done visible-xs"
+                ng-class="{'button-positive': !isAuth}"
+                ng-click="doLogin()">
         </button>
       </div>
     </div>
