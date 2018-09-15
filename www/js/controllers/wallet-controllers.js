@@ -536,11 +536,11 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   // Transfer
   $scope.showTransferModal = function() {
     var hasCredit = (!!$scope.formData.balance && $scope.formData.balance > 0);
-    if (!hasCredit && !wallet.children.count()) {
+    if (!hasCredit && !csWallet.children.count()) {
       UIUtils.alert.info('INFO.NOT_ENOUGH_CREDIT');
       return;
     }
-    Modals.showTransfer()
+    return Modals.showTransfer({wallet: wallet.id})
       .then(function(done){
         if (done) {
           UIUtils.toast.show('INFO.TRANSFER_SENT');
@@ -826,7 +826,14 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
       UIUtils.alert.info('INFO.NOT_ENOUGH_CREDIT');
       return;
     }
-    return Modals.showTransfer();
+    return Modals.showTransfer({wallet: wallet.id})
+      .then(function(done){
+        if (done) {
+          UIUtils.toast.show('INFO.TRANSFER_SENT');
+          $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
+          $scope.motion.show({selector: '.item-pending'});
+        }
+      });
   };
 
   $scope.showHelpTip = function(index, isTour) {
@@ -866,7 +873,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
   };
 
   $scope.showSelectWalletModal = function() {
-    if (!$scope.enableSelectWallet) return;
+    if (!csWallet.children.count()) return;
 
     return Modals.showSelectWallet({
       showDefault: true,
