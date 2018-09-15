@@ -453,6 +453,13 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   /* -- UI actions -- */
 
+  var inheritedLogout = $scope.logout;
+  $scope.logout = function(options) {
+    if ($scope.isDefaultWallet) {
+      return inheritedLogout(options);
+    }
+  };
+
   $scope.startWalletTour = function() {
     $scope.hideActionsPopover();
     return csHelp.wallet.tour();

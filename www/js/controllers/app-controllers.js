@@ -267,10 +267,13 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Login and go to a state (or wallet if not)
   $scope.loginAndGo = function(state, options) {
     $scope.closeProfilePopover();
+    options = options || {};
+    var wallet = options.wallet || csWallet;
+    delete options.wallet;
 
     state = state || 'app.view_wallet';
 
-    if (!csWallet.isLogin()) {
+    if (!wallet.isLogin()) {
 
       // Make sure to protect login modal, if HTTPS enable - fix #340
       if (csConfig.httpsMode && $window.location && $window.location.protocol !== 'https:') {
@@ -280,17 +283,16 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         rootPath = 'https' + rootPath.substr(4);
         href = rootPath + $state.href(state);
         if (csConfig.httpsModeDebug) {
+          // Debug mode: just log, then continue
           console.debug('[httpsMode] --- Should redirect to: ' + href);
-          // continue
         }
         else {
           $window.location.href = href;
           return;
         }
-
       }
 
-      return csWallet.login(options)
+      return wallet.login(options)
         .then(function(){
           return $state.go(state, options);
         })
@@ -304,6 +306,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Logout
   $scope.logout = function(options) {
     options = options || {};
+    var wallet = options.wallet || csWallet;
     if (!options.force && $scope.profilePopover) {
       // Make the popover if really closed, to avoid UI refresh on popover buttons
       return $scope.profilePopover.hide()
@@ -323,28 +326,34 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     }
 
     UIUtils.loading.show();
-    return csWallet.logout()
+    return wallet.logout()
       .then(function() {
         // Close left menu if open
         if ($ionicSideMenuDelegate.isOpenLeft()) {
           $ionicSideMenuDelegate.toggleLeft();
         }
-        $ionicHistory.clearHistory();
 
-        return $ionicHistory.clearCache()
-          .then(function() {
-            return $scope.showHome();
-          });
+        // If default wallet: clear navigation history, then go back to home
+        if (wallet.isDefault()) {
+          $ionicHistory.clearHistory();
+
+          return $ionicHistory.clearCache()
+            .then(function() {
+              return $scope.showHome();
+            });
+        }
+        else {
+
+        }
       })
       .catch(UIUtils.onError());
   };
 
   // Do authentification
-  $scope.doAuth = function() {
-    return csWallet.auth()
-      .then(function() {
-        UIUtils.loading.hide();
-      });
+  $scope.doAuth = function(options) {
+    var wallet = options && options.wallet || csWallet;
+    return wallet.auth()
+      .then(UIUtils.loading.hide);
   };
 
   // If connected and same pubkey
