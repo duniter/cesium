@@ -155,8 +155,8 @@ function ViewSubscriptionsController($scope, $q, $ionicHistory, csWot, csWallet,
         esSubscription.record.add(record, wallet)
           .then($scope.addToUI)
           .then(function() {
-            $scope.wallet.data.subscriptions = $scope.wallet.data.subscriptions || {count: 0};
-            $scope.wallet.data.subscriptions.count++;
+            wallet.data.subscriptions = wallet.data.subscriptions || {count: 0};
+            wallet.data.subscriptions.count++;
             UIUtils.loading.hide();
             $scope.updateView();
           })
@@ -206,10 +206,10 @@ function ViewSubscriptionsController($scope, $q, $ionicHistory, csWot, csWallet,
     }
 
     UIUtils.loading.show();
-    esSubscription.record.remove(record.id)
+    esSubscription.record.remove(record.id, {wallet: wallet})
       .then(function() {
-        $scope.wallet.data.subscriptions = $scope.wallet.data.subscriptions || {count: 1};
-        $scope.wallet.data.subscriptions.count--;
+        wallet.data.subscriptions = wallet.data.subscriptions || {count: 1};
+        wallet.data.subscriptions.count--;
         $scope.removeFromUI(record);
         UIUtils.loading.hide();
       })
