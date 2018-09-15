@@ -11,9 +11,10 @@
   <ion-nav-buttons side="secondary">
     <cs-extension-point name="nav-buttons"></cs-extension-point>
 
-    <button class="button button-icon button-clear icon ion-arrow-down-b visible-xs visible-sm"
+    <button class="button button-icon button-clear visible-xs visible-sm"
             ng-if="enableSelectWallet"
             ng-click="showSelectWalletModal()">
+      <i class="ion-arrow-down-b"></i>
     </button>
   </ion-nav-buttons>
 
@@ -155,8 +156,8 @@
   </ion-content>
 
   <button id="fab-transfer"
-          ng-if="formData"
-          class="button button-fab button-fab-bottom-right button-energized-900 hidden-md hidden-lg drop"
+          ng-show="!loading"
+          class="button button-fab button-fab-bottom-right button-energized-900 hidden-md hidden-lg drop ng-hide"
           ng-click="showTransferModal()">
     <i class="icon ion-android-send"></i>
   </button>

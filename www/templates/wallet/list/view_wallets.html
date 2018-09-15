@@ -59,7 +59,8 @@
   </ion-content>
 
   <button id="fab-add-wallet"
-          class="button button-fab button-fab-bottom-right button-assertive hidden-md hidden-lg drop"
+          class="button button-fab button-fab-bottom-right button-assertive hidden-md hidden-lg drop ng-hide"
+          ng-show="!loading"
           ng-click="showNewWalletModal()">
     <i class="icon ion-plus"></i>
   </button>

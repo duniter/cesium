@@ -78,42 +78,30 @@ $screen-lg:                       1200px;
 //
 // Source: http://timkadlec.com/2013/01/windows-phone-8-and-device-width/
 //
-// >>Autre doc http://getbootstrap.com/css/#responsive-utilities-classes
+// Additional doc: http://getbootstrap.com/css/#responsive-utilities-classes
 //
+
+// ----------------------------------
+// Smaller device: Phones (<401px)
+// ----------------------------------
 @media screen and (max-width: $screen-xxs-max) {
   @-ms-viewport{
     width: 320px;
   }
-
-  .item .badge {
-    right: 16px;
-  }
 }
 
+// ----------------------------------
 // Extra small device: Phones (<767px)
+// ----------------------------------
 @media screen and (max-width: $screen-xs-max) {
   .hidden-xs {
       display: none !important;
       visibility: hidden !important;
   }
-  .badge {
-    text-overflow: ellipsis !important;
-    white-space: nowrap;
-    overflow: hidden !important;
-    max-width: 300px !important;
-    display: block !important;
-  }
-  .badge:empty {
-    display: none !important;
-  }
-  .item .badge {
-    right: 16px;
-  }
 
   .padding-top-xs {
     padding-top: 10px;
   }
-
 }
 @media screen and (min-width: $screen-sm) {
     .hidden-xs {
@@ -175,7 +163,10 @@ $screen-lg:                       1200px;
         margin: inherit;
     }
 }
+
+// ----------------------------------
 // Small devices: Tablets (≥768px)
+// ----------------------------------
 @media screen and (max-width: $screen-sm-max) and (min-width: $screen-sm){
     .hidden-sm, .row-header.hidden-sm {
         display: none !important;
@@ -249,7 +240,9 @@ $screen-lg:                       1200px;
 
 }
 
+// ----------------------------------
 // Medium devices: Desktops (≥992px)
+// ----------------------------------
 @media screen and (min-width: $screen-md) and (max-width: $screen-md-max) {
   .hidden-md {
       display: none !important;
@@ -297,8 +290,9 @@ $screen-lg:                       1200px;
   }
 }
 
-
+// ----------------------------------
 // Large devices: Desktops (≥1200px)
+// ----------------------------------
 @media screen and (min-width: $screen-lg) {
   .hidden-lg {
       display: none !important;
@@ -611,7 +605,7 @@ $screen-menu:                     845px;
 .popover-peer-info,
 .popover-endpoints {
   .item .badge {
-    right: 16px;
+    right: 16px !important;
   }
 
   .item .badge.badge-secondary {
@@ -861,6 +855,10 @@ $screen-menu:                     845px;
   background-image: url('../img/card.png');
 }
 
+/**************
+ Item icons
+**************/
+
 .item.item-icon-left > i.avatar:first-child {
   position: absolute;
   display: flex;
@@ -887,6 +885,12 @@ $screen-menu:                     845px;
 .item.item-checkbox.item-avatar .item-content,
 .item.item-checkbox .item-content .item-avatar {
   padding-left: 65px;
+}
+
+@media screen and (max-width: $screen-xs-max) {
+  .item.item-icon-right > i.icon:last-child {
+    right: 1px;
+  }
 }
 
 /* ----
@@ -1355,27 +1359,16 @@ a.underline:hover,
   border: solid 1px #D9D9D9;
   overflow: hidden !important;
   font-size: 45px !important;
-  /*padding-left: 0px;
-  padding-top: 0px;
-  text-align: center;
-  vertical-align: middle;*/
   line-height: 56px;
   width: 100% !important;
-  /*display: block !important;*/
   max-height: 56px !important;
   max-width: 56px !important;
   top: 12px !important;
-  //left: 12px !important;
 }
 
 .item-avatar > .icon:first-child:before ,
 .item-avatar .icon.item-image:first-child:before,
 .item-avatar .item-content > .icon:first-child:before,
-//.item-avatar .item-content .icon.item-image:first-child:before
-//.item-avatar-left > .icon:first-child:before,
-//.item-avatar-left .icon.item-image:first-child:before,
-//.item-avatar-left .item-content > .icon:first-child:before,
-//.item-avatar-left .item-content .icon.item-image:first-child:before,
 .item-avatar.item-icon-right .icon:first-child:before,
 .item-avatar.item-icon-right .icon-help:first-child:before,
 .item-avatar.item-icon-right .icon-alert:first-child:before,
@@ -1496,15 +1489,38 @@ a.underline:hover,
   }
 }
 
-/*
-* Badge
-*/
+/**********
+   Badge
+**********/
 
+/*
+ Badge inside an item
+*/
 .item.item-icon-right .badge,
 .item.item-button-right .badge
 {
   right: 43px;
 }
+
+@media screen and (max-width: $screen-xs-max) {
+  .badge {
+    text-overflow: ellipsis !important;
+    white-space: nowrap;
+    overflow: hidden !important;
+    max-width: 300px !important;
+    display: block !important;
+  }
+  .badge:empty {
+    display: none !important;
+  }
+  .item .badge {
+    right: 26px !important;
+  }
+}
+
+/*
+ Editable badge
+*/
 
 $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 
@@ -1517,6 +1533,10 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   content: $ionicon-var-badge-editable;
 }
 
+/*
+ Badge inside toolbar's button
+*/
+
 .bar {
   .badge-button {
     margin: 0 !important;
@@ -1528,9 +1548,9 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   }
 }
 
-/*
-* Text
-*/
+/**********
+   Editable text
+**********/
 
 .text-editable:hover {
   cursor: pointer;
@@ -2116,7 +2136,7 @@ div[dropzone] {
 
 .popover-locked-outputs {
   .item .badge {
-    right: 16px;
+    right: 16px !important;
   }
 }
 

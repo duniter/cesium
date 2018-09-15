@@ -29,9 +29,7 @@
     <small translate>PROFILE.PROFILE_DIVIDER_HELP</small>
   </div>
 
-  <div class="double-padding-x padding-bottom">
-    <ng-include src="'plugins/es/templates/user/items_profile.html'" ng-init="showName=true"></ng-include>
-  </div>
+  <ng-include src="'plugins/es/templates/user/items_profile.html'" ng-init="showName=true"></ng-include>
 
   <!-- subscriptions -->
   <div class="item item-divider item-divider-top-border">
@@ -61,30 +59,27 @@
     <small translate>SUBSCRIPTION.SUBSCRIPTION_DIVIDER_HELP</small>
   </div>
 
-  <div class="double-padding-x padding-bottom">
+  <div ng-if="!formData.subscriptions.count"
+       class="item gray" translate>SUBSCRIPTION.NO_SUBSCRIPTION</div>
 
-    <div ng-if="!formData.subscriptions.count"
-         class="item gray" translate>SUBSCRIPTION.NO_SUBSCRIPTION</div>
+  <a class="item item-icon-left item-text-wrap item-icon-right ink"
+     ng-if="formData.subscriptions.count && isDefaultWallet"
+     ui-sref="app.edit_subscriptions">
+    <i class="icon ion-gear-a"></i>
+    <span translate>SUBSCRIPTION.SUBSCRIPTION_COUNT</span>
+    <span class="badge badge-calm">{{formData.subscriptions.count}}</span>
 
-    <a class="item item-icon-left item-text-wrap item-icon-right ink"
-       ng-if="formData.subscriptions.count && isDefaultWallet"
-       ui-sref="app.edit_subscriptions">
-      <i class="icon ion-gear-a"></i>
-      <span translate>SUBSCRIPTION.SUBSCRIPTION_COUNT</span>
-      <span class="badge badge-calm">{{formData.subscriptions.count}}</span>
+    <i class="gray icon ion-ios-arrow-right"></i>
+  </a>
+  <a class="item item-icon-left item-text-wrap item-icon-right ink"
+     ng-if="formData.subscriptions.count && !isDefaultWallet"
+     ui-sref="app.edit_subscriptions_by_id({id: walletId})">
+    <i class="icon ion-gear-a"></i>
+    <span translate>SUBSCRIPTION.SUBSCRIPTION_COUNT</span>
+    <span class="badge badge-calm">{{formData.subscriptions.count}}</span>
 
-      <i class="gray icon ion-ios-arrow-right"></i>
-    </a>
-    <a class="item item-icon-left item-text-wrap item-icon-right ink"
-       ng-if="formData.subscriptions.count && !isDefaultWallet"
-       ui-sref="app.edit_subscriptions_by_id({id: walletId})">
-      <i class="icon ion-gear-a"></i>
-      <span translate>SUBSCRIPTION.SUBSCRIPTION_COUNT</span>
-      <span class="badge badge-calm">{{formData.subscriptions.count}}</span>
-
-      <i class="gray icon ion-ios-arrow-right"></i>
-    </a>
-  </div>
+    <i class="gray icon ion-ios-arrow-right"></i>
+  </a>
 
   <!-- page -->
   <div class="item item-divider item-divider-top-border">
@@ -108,28 +103,25 @@
     <small translate>REGISTRY.WALLET.REGISTRY_HELP</small>
   </div>
 
-  <div class="double-padding-x padding-bottom">
+  <div ng-if="!formData.pages.count"
+       class="item gray" translate>REGISTRY.NO_PAGE</div>
 
-    <div ng-if="!formData.pages.count"
-         class="item gray" translate>REGISTRY.NO_PAGE</div>
+  <a class="item item-icon-left item-text-wrap item-icon-right ink"
+     ng-if="formData.pages.count && isDefaultWallet"
+     ui-sref="app.wallet_pages">
+    <i class="icon ion-social-buffer"></i>
+    <span translate>REGISTRY.MY_PAGES</span>
+    <span class="badge badge-calm">{{formData.pages.count}}</span>
 
-    <a class="item item-icon-left item-text-wrap item-icon-right ink"
-       ng-if="formData.pages.count && isDefaultWallet"
-       ui-sref="app.wallet_pages">
-      <i class="icon ion-social-buffer"></i>
-      <span translate>REGISTRY.MY_PAGES</span>
-      <span class="badge badge-calm">{{formData.pages.count}}</span>
+    <i class="gray icon ion-ios-arrow-right"></i>
+  </a>
+  <a class="item item-icon-left item-text-wrap item-icon-right ink"
+     ng-if="formData.pages.count && !isDefaultWallet"
+     ui-sref="app.wallet_pages_by_id({id: walletId})">
+    <i class="icon ion-social-buffer"></i>
+    <span translate>REGISTRY.MY_PAGES</span>
+    <span class="badge badge-calm">{{formData.pages.count}}</span>
 
-      <i class="gray icon ion-ios-arrow-right"></i>
-    </a>
-    <a class="item item-icon-left item-text-wrap item-icon-right ink"
-       ng-if="formData.pages.count && !isDefaultWallet"
-       ui-sref="app.wallet_pages_by_id({id: walletId})">
-      <i class="icon ion-social-buffer"></i>
-      <span translate>REGISTRY.MY_PAGES</span>
-      <span class="badge badge-calm">{{formData.pages.count}}</span>
-
-      <i class="gray icon ion-ios-arrow-right"></i>
-    </a>
-  </div>
+    <i class="gray icon ion-ios-arrow-right"></i>
+  </a>
 </ng-if>
