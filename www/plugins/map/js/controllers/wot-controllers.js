@@ -338,17 +338,19 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
               lat: hit.geoPoint.lat,
               lng: hit.geoPoint.lon,
               getMessageScope: function () {
-                $scope.loadingMarker = true;
-                $scope.$applyAsync(function() {
-                  $scope.formData = {
+                var scope = $scope.$new();
+                scope.loadingMarker = true;
+                scope.formData = {};
+                scope.$applyAsync(function() {
+                  scope.formData = {
                     pubkey: hit.pubkey,
                     uid: hit.uid,
                     name: hit.name,
                     profile: hit
                   };
-                  $scope.loadingMarker = false;
+                  scope.loadingMarker = false;
                 });
-                return $scope;
+                return scope;
               },
               focus: false,
               message: markerTemplate,

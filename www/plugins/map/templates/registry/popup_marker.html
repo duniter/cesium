@@ -1,5 +1,5 @@
 <div class="item no-border no-padding item-avatar "
-     ng-if="loading">
+     ng-if="loadingMarker">
 
   <i class="item-image icon ion-person"></i>
 
@@ -17,7 +17,7 @@
 </div>
 
 <a class="item no-border no-padding item-avatar ink animate-fade-in animate-show-hide ng-hide"
-     ng-show="!loading"
+     ng-show="!loadingMarker"
      ui-sref="app.view_page({id: formData.id, title: formData.name})">
   <i ng-if="formData.avatar" class="item-image avatar" style="background-image: url({{::formData.avatar.src}}"></i>
   <i ng-if="!formData.avatar" class="item-image icon cion-page-{{::formData.type}}"></i>
@@ -41,7 +41,7 @@
        ng-class="{'ion-arrow-down-b': !showDescription, 'ion-arrow-up-b': showDescription}"
        ng-click="showDescription=!showDescription;"
        title="{{'PROFILE.DESCRIPTION'|translate}}"
-       ng-show="!loading && formData.description">
+       ng-show="!loadingMarker && formData.description">
       &nbsp;
     </a>
   </div>

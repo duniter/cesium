@@ -82,7 +82,8 @@ function MapRegistryViewController($scope, $filter, $templateCache, $interpolate
     };
 
   $scope.loading = true;
-  $scope.mapId = 'map-wot-' + $scope.$id;
+  $scope.loadingMarker = true;
+  $scope.mapId = 'map-registry-' + $scope.$id;
 
   $scope.map = MapUtils.map({
     cache: 'map-registry',
@@ -317,12 +318,14 @@ function MapRegistryViewController($scope, $filter, $templateCache, $interpolate
               lat: hit.geoPoint.lat,
               lng: hit.geoPoint.lon,
               getMessageScope: function () {
-                $scope.loading = true;
-                $scope.$applyAsync(function() {
-                  angular.extend($scope.formData, hit);
-                  $scope.loading = false;
+                var scope = $scope.$new();
+                scope.loadingMarker = true;
+                scope.formData = {};
+                scope.$applyAsync(function() {
+                  angular.extend(scope.formData, hit);
+                  scope.loadingMarker = false;
                 });
-                return $scope;
+                return scope;
               },
               focus: false,
               message: pageMarkerTemplate,
