@@ -82,6 +82,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
     };
 
   $scope.loading = true;
+  $scope.loadingMarker = true;
   $scope.mapId = 'map-wot-' + $scope.$id;
 
   $scope.map = MapUtils.map({
@@ -130,8 +131,6 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
 
     if ($scope.loading) {
 
-      // $translate.get('')
-      //$ionicBackdrop.retain();
       UIUtils.loading.show({
         noBackdrop: true // avoid a too long release
       });
@@ -308,8 +307,9 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
 
     // add bounding box
     if ($scope.map.bounds) {
-      options.bounds = angular.copy($scope.map.bounds);
-      delete options.bounds.options;
+      // FIXME - this is not working well
+      //options.bounds = angular.copy($scope.map.bounds);
+      //delete options.bounds.options;
     }
 
     // Load wot data, from service
@@ -338,7 +338,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
               lat: hit.geoPoint.lat,
               lng: hit.geoPoint.lon,
               getMessageScope: function () {
-                $scope.loading = true;
+                $scope.loadingMarker = true;
                 $scope.$applyAsync(function() {
                   $scope.formData = {
                     pubkey: hit.pubkey,
@@ -346,7 +346,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
                     name: hit.name,
                     profile: hit
                   };
-                  $scope.loading = false;
+                  $scope.loadingMarker = false;
                 });
                 return $scope;
               },
