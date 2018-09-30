@@ -55,9 +55,9 @@
       "DIVIDER_GROUP": "Groupes"
     },
     "CONFIRM": {
-      "SUGGEST_CERTIFICATIONS": "Etes-vous sûr de vouloir <b>envoyer ces suggestions de certification</b> ?",
-      "ASK_CERTIFICATION": "Etes-vous sûr de vouloir <b>envoyer une demande de certification</b> ?",
-      "ASK_CERTIFICATIONS": "Etes-vous sûr de vouloir <b>envoyer une demande de certification</b> à ces personnes ?"
+      "SUGGEST_CERTIFICATIONS": "Êtes-vous sûr de vouloir <b>envoyer ces suggestions de certification</b> ?",
+      "ASK_CERTIFICATION": "Êtes-vous sûr de vouloir <b>envoyer une demande de certification</b> ?",
+      "ASK_CERTIFICATIONS": "Êtes-vous sûr de vouloir <b>envoyer une demande de certification</b> à ces personnes ?"
     }
   },
   "INVITATION": {
@@ -87,8 +87,8 @@
       "SUGGESTION_IDENTITIES_MODAL_HELP": "Veuillez choisir vos suggestions :"
     },
     "CONFIRM": {
-      "DELETE_ALL_CONFIRMATION": "La suppression des invitations est une <b>opération irréversible</b>.<br/><br/><b>Etes-vous sûr</b> de vouloir continuer ?",
-      "SEND_INVITATIONS_TO_CERTIFY": "Etes-vous sûr de vouloir <b>envoyer cette invitation à certfier</b> ?"
+      "DELETE_ALL_CONFIRMATION": "La suppression des invitations est une <b>opération irréversible</b>.<br/><br/><b>Êtes-vous sûr</b> de vouloir continuer ?",
+      "SEND_INVITATIONS_TO_CERTIFY": "Êtes-vous sûr de vouloir <b>envoyer cette invitation à certfier</b> ?"
     },
     "INFO": {
       "INVITATION_SENT": "Invitation envoyée"
@@ -372,7 +372,7 @@
       "RESULT_HELP": "<b>Voici le résultat</b> tel que visible sur votre profil :"
     },
     "CONFIRM": {
-      "DELETE": "Etes-vous sur de vouloir <b>supprimer votre profif Cesium+ ?</b><br/><br/>Cette opération est irréversible."
+      "DELETE": "Êtes-vous sur de vouloir <b>supprimer votre profif Cesium+ ?</b><br/><br/>Cette opération est irréversible."
     },
     "ERROR": {
       "REMOVE_PROFILE_FAILED": "Erreur de suppression du profil",
@@ -433,7 +433,7 @@
       }
     },
     "CONFIRM": {
-      "DELETE_SUBSCRIPTION": "Etes-vous sûr de vouloir <b>supprimer cet abonnement</b> ?"
+      "DELETE_SUBSCRIPTION": "Êtes-vous sûr de vouloir <b>supprimer cet abonnement</b> ?"
     },
     "ERROR": {
       "LOAD_SUBSCRIPTIONS_FAILED": "Erreur lors du chargement des services en ligne",
@@ -475,8 +475,8 @@
       "REMOVED": "Document supprimé"
     },
     "CONFIRM": {
-      "REMOVE": "Etes-vous sûr de vouloir <b>supprimer ce document</b> ?",
-      "REMOVE_ALL": "Etes-vous sûr de vouloir <b>supprimer ces documents</b> ?"
+      "REMOVE": "Êtes-vous sûr de vouloir <b>supprimer ce document</b> ?",
+      "REMOVE_ALL": "Êtes-vous sûr de vouloir <b>supprimer ces documents</b> ?"
     },
     "ERROR": {
       "LOAD_DOCUMENTS_FAILED": "Erreur lors de la recherche de documents",
