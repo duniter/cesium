@@ -251,7 +251,7 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
     else if (formName == "saltForm") {
       behavior = {
         helpAnchor: 'join-salt',
-        hasPreviousButton: true,
+        hasPreviousButton: $scope.accountType === 'member',
         hasNextButton: true,
         focus: 'salt'
       };
