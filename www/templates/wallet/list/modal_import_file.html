@@ -1,0 +1,70 @@
+<ion-modal-view id="transfer" class="modal-full-height">
+  <ion-header-bar class="bar-positive">
+    <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
+    <h1 class="title" translate>ACCOUNT.WALLET_LIST.IMPORT_MODAL.TITLE</h1>
+  </ion-header-bar>
+
+  <ion-content scroll="true" class="padding">
+
+    <p translate>ACCOUNT.WALLET_LIST.IMPORT_MODAL.HELP</p>
+
+    <div dropzone="importFromFile(file)">
+      <div ng-if="!hasContent" onclick="angular.element(document.querySelector('#walletsImportFile'))[0].click();">
+        <h2 class="gray" translate>COMMON.CHOOSE_FILE</h2>
+        <input type="file" id="walletsImportFile" accept=".csv,.txt"
+               style="visibility:hidden; position:absolute;" on-read-file="importFromFile(file)"/>
+      </div>
+
+      <div ng-if="hasContent" class="item item-icon-left item-icon-right stable-bg">
+
+        <i class="icon ion-document-text gray"></i>
+
+        <div class="item-content row">
+          <div class="col">
+            <h2>{{fileData.name}}</h2>
+            <h4 ng-if="fileData.lastModified">
+              <span class="gray" translate>COMMON.FILE.DATE</span> {{fileData.lastModified/1000|formatDate}}
+            </h4>
+            <h5>
+              <span class="gray" translate>COMMON.FILE.SIZE</span> {{fileData.size|formatInteger}} Ko
+            </h5>
+          </div>
+          <div class="col padding-left">
+            <h3 ng-if="validatingFile" translate>COMMON.FILE.VALIDATING</h3>
+            <h3 ng-if="!validatingFile">
+              <span class="dark animate-show-hide ng-hide" ng-show="isValidFile && content.length"
+                    ng-bind-html="'ACCOUNT.WALLET_LIST.IMPORT_MODAL.WALLET_COUNT'|translate:{count: content.length}">
+              </span>
+              <span class="assertive animate-show-hide ng-hide" ng-show="isValidFile && !content.length"><br/>
+                <i class="ion-close-circled assertive"></i>
+                {{'ACCOUNT.WALLET_LIST.IMPORT_MODAL.NO_NEW_WALLET' |translate}}
+              </span>
+              <span class="assertive animate-show-hide ng-hide" ng-show="!isValidFile"><br/>
+                <i class="ion-close-circled assertive"></i>
+                {{'ERROR.INVALID_FILE_FORMAT' |translate}}
+              </span>
+            </h3>
+          </div>
+        </div>
+
+        <!-- remove file button -->
+        <a class="ion-close-round gray pull-right" style="font-size: 10px; position: absolute; top: 6px; right: 6px;"
+           ng-click="removeFile()"></a>
+      </div>
+    </div>
+
+    <div class="padding hidden-xs text-right">
+      <button class="button button-clear button-dark ink" ng-click="closeModal()"
+              type="button" translate>COMMON.BTN_CANCEL
+      </button>
+      <button class="button button-positive ink"
+              ng-disabled="loading || !content.length"
+              ng-click="closeModal(content)" translate>
+        COMMON.BTN_IMPORT
+      </button>
+    </div>
+  </ion-content>
+
+</ion-modal-view>
+
+

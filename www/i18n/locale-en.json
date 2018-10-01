@@ -20,6 +20,7 @@
     "BTN_RELATIVE_UNIT": "Use relative unit",
     "BTN_BACK": "Back",
     "BTN_NEXT": "Next",
+    "BTN_IMPORT": "Import",
     "BTN_CANCEL": "Cancel",
     "BTN_CLOSE": "Close",
     "BTN_LATER": "Later",
@@ -77,6 +78,12 @@
       "SHARE_ON_FACEBOOK": "Share on Facebook",
       "SHARE_ON_DIASPORA": "Share on Diaspora*",
       "SHARE_ON_GOOGLEPLUS": "Share on Google+"
+    },
+    "FILE": {
+      "DATE" : "Date:",
+      "TYPE" : "Type:",
+      "SIZE": "Size:",
+      "VALIDATING": "Validating..."
     }
   },
   "SYSTEM": {
@@ -431,10 +438,6 @@
       "p": "p (CPU):"
     },
     "FILE": {
-      "DATE" : "Date:",
-      "TYPE" : "Type:",
-      "SIZE": "Size:",
-      "VALIDATING": "Validating...",
       "HELP": "Expected file format: <b>.dunikey</b> (type PubSec). Other formats are under development (EWIF, WIF)."
     }
   },
@@ -534,13 +537,22 @@
     "WALLET_LIST": {
       "TITLE": "My wallets",
       "BTN_NEW": "Add a wallet",
+      "BTN_DOWNLOAD": "Download the list",
+      "BTN_IMPORT_FILE_DOTS": "Import from a file...",
       "NO_WALLET": "No secondary wallet",
       "BTN_DELETE": "Remove a secondary wallet...",
       "BTN_RENAME": "Rename the wallet",
+      "EXPORT_FILENAME": "my_wallets-{{pubkey|formatPubkey}}-{{currency}}.csv",
       "EDIT_POPOVER": {
         "TITLE": "Rename the wallet",
         "HELP": "Fill in the new name",
         "NAME_HELP": "Wallet name"
+      },
+      "IMPORT_MODAL": {
+        "TITLE": "Import secondary wallets",
+        "HELP": "To <b>import secodnary wallets</b>, please drag the file in the box below, or click in the box to search for a file.",
+        "WALLET_COUNT": "<b>{{count}}</b> new wallet{{count > 1 ? 's' : ''}}",
+        "NO_NEW_WALLET": "No new wallet"
       }
     },
     "SECURITY":{
@@ -733,8 +745,11 @@
     "ADD_SECONDARY_WALLET_FAILED": "Unable to add secondary wallet.",
     "UPDATE_WALLET_LIST_FAILED": "Unable to refresh the list of wallets.",
     "LOAD_WALLET_LIST_FAILED": "Unable to load the list of wallets.",
+    "SAVE_WALLET_LIST_FAILED": "Unable to save the list of wallets.",
     "COULD_NOT_ADD_MAIN_WALLET": "The wallet to add <b>must be different from the main account</b> with which you are connected.",
-    "UNKNOWN_WALLET_ID": "Unknown secondary wallet."
+    "UNKNOWN_WALLET_ID": "Unknown secondary wallet.",
+    "RESTORE_WALLET_LIST_FAILED": "Unable to restore the list of wallets.",
+    "INVALID_FILE_FORMAT": "Invalid file format."
   },
   "INFO": {
     "POPUP_TITLE": "Information",

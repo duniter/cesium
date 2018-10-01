@@ -262,17 +262,6 @@
 
 
 /**********
-   Drop zone component
-**********/
-
-.dropzone {
-  cursor: pointer;
-}
-.dropzone.hover {
-  background: lawngreen;
-}
-
-/**********
    List of wallet
 **********/
 

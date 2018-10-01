@@ -94,7 +94,7 @@
       "INVITATION_SENT": "Invitation envoyée"
     },
     "ERROR": {
-      "LOAD_INVITATIONS_FAILED": "Echec du chargement des invitations",
+      "LOAD_INVITATIONS_FAILED": "Échec du chargement des invitations",
       "REMOVE_INVITATION_FAILED": "Erreur lors de la suppression de l'invitation",
       "REMOVE_ALL_INVITATIONS_FAILED": "Erreur lors de la suppression des invitations",
       "SEND_INVITATION_FAILED": "Erreur lors de l'envoi de l'invitation",
@@ -256,7 +256,7 @@
       "RECORD_DESCRIPTION_HELP": "Description"
     },
     "ERROR": {
-      "SEARCH_GROUPS_FAILED": "Echec de la recherche de groupes",
+      "SEARCH_GROUPS_FAILED": "Échec de la recherche de groupes",
       "REMOVE_RECORD_FAILED": "Erreur de la suppression du groupe"
     },
     "INFO": {

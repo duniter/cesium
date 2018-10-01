@@ -2094,6 +2094,10 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   top: -7px;
 }
 
+/**********
+   Drop zone component
+**********/
+
 div[dropzone] {
   border: 2px dashed #bbb;
   border-radius: 5px;
@@ -2102,7 +2106,17 @@ div[dropzone] {
   font: 20pt bold;
   color: #bbb;
   margin-bottom: 20px;
+  cursor: pointer;
+
+  .list .item,
+  .item {
+    text-align: left;
+  }
 }
+div[dropzone]:hover {
+  background-color: $stable-100-bg;
+}
+
 
 .hero .button-fab-top-right,
 .hero .button-fab-top-left {

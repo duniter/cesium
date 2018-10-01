@@ -14,6 +14,26 @@
         {{'ACCOUNT.WALLET_LIST.BTN_DELETE' | translate}}
       </button>
 
+      <div class="item-divider hidden-sm hidden-xs"></div>
+
+      <!-- Download wallet list -->
+      <button class="item item-icon-left ink hidden-sm hidden-xs"
+              ng-class="{'gray': loading || !wallets.length}"
+              ng-disabled="loading || !wallets.length"
+              ng-click="downloadAsFile()">
+        <i class="icon ion-android-download"></i>
+        {{'ACCOUNT.WALLET_LIST.BTN_DOWNLOAD' | translate}}
+      </button>
+
+      <!-- Import wallet list -->
+      <button class="item item-icon-left ink hidden-sm hidden-xs"
+              ng-class="{'gray': loading}"
+              ng-disabled="loading"
+              ng-click="showImportFileModal()">
+        <i class="icon ion-android-upload"></i>
+        {{'ACCOUNT.WALLET_LIST.BTN_IMPORT_FILE_DOTS' | translate}}
+      </button>
+
     </div>
   </ion-content>
 </ion-popover-view>

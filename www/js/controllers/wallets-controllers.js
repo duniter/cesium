@@ -65,10 +65,13 @@ angular.module('cesium.wallets.controllers', ['cesium.services', 'cesium.currenc
 
   .controller('WalletSelectModalCtrl', WalletSelectModalController)
 
+  .controller('WalletListImportModalCtrl', WalletListImportModalController)
+
   .controller('PopoverWalletSelectModalCtrl', PopoverWalletSelectModalController)
 ;
 
 function WalletListController($scope, $controller, $state, $timeout, $q, $translate, $ionicPopover, $ionicPopup,
+                              ModalUtils,
                               UIUtils, Modals, csCurrency, csSettings, csWallet){
   'ngInject';
 
@@ -146,6 +149,39 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
       });
   };
 
+  $scope.downloadAsFile = function() {
+    if (!$scope.wallets) return; // user cancel
+    return csWallet.children.downloadFile();
+  };
+
+  $scope.addNewWallet = function(wallet) {
+
+    if (!wallet) return $q.reject("Missing 'wallet' argument");
+
+    // Make sure auth on the main wallet
+    if (!csWallet.isAuth()) {
+      return csWallet.auth({minData: true})
+        .then(function() {
+          return $scope.addNewWallet(wallet); // loop
+        })
+        .catch(function(err) {
+          if (err === 'CANCELLED') {
+            return UIUtils.loading.hide();
+          }
+          UIUtils.onError('ERROR.ADD_SECONDARY_WALLET_FAILED')(err);
+        })
+    }
+
+    // Call API extension on child wallet
+    return csWallet.api.data.raisePromise.load(wallet.data)
+      // continue, when plugins extension failed (just log in console)
+      .catch(console.error)
+      .then(function() {
+        $scope.addListenersOnWallet(wallet);
+        csWallet.children.add(wallet);
+      });
+  };
+
   /* -- modals -- */
 
   $scope.showNewWalletModal = function() {
@@ -162,36 +198,25 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
       api: false,
       success: UIUtils.loading.show
     })
-    .then(function(walletData) {
-      if (!walletData) return;
+      .then(function(walletData) {
+        if (!walletData) return;
 
-      // Avoid to add main wallet again
-      if (walletData.pubkey === csWallet.data.pubkey) {
-        UIUtils.loading.hide();
-        UIUtils.alert.error('ERROR.COULD_NOT_ADD_MAIN_WALLET');
-        return;
-      }
+        // Avoid to add main wallet again
+        if (walletData.pubkey === csWallet.data.pubkey) {
+          UIUtils.loading.hide();
+          UIUtils.alert.error('ERROR.COULD_NOT_ADD_MAIN_WALLET');
+          return;
+        }
 
-      // Make sure to auth on the main wallet
-      return csWallet.auth({minData: true})
-        .then(function() {
-          return csWallet.api.data.raisePromise.load(wallet.data)
-          // continue, when plugins extension failed (just log in console)
-            .catch(console.error)
-            .then(function() {
-              $scope.addListenersOnWallet(wallet);
-              csWallet.children.add(wallet);
-              UIUtils.loading.hide();
-              $scope.updateView();
-            });
-        })
-        .catch(function(err) {
-          if (err === 'CANCELLED') {
-            return UIUtils.loading.hide();
-          }
-          UIUtils.onError('ERROR.ADD_SECONDARY_WALLET_FAILED')(err);
-        });
-    });
+        console.debug("[wallet] Adding secondary wallet {"+walletData.pubkey.substring(0,8)+"} with id=" + walletId);
+
+        // Add the child wallet
+        return $scope.addNewWallet(wallet)
+          .then(function() {
+            UIUtils.loading.hide();
+            $scope.updateView();
+          });
+      });
   };
 
   $scope.selectAndRemoveWallet = function() {
@@ -207,6 +232,60 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
         return csWallet.auth({minData: true})
           .then(function() {
             csWallet.children.remove(wallet.id);
+            UIUtils.loading.hide();
+            $scope.updateView();
+          })
+          .catch(function(err) {
+            if (err === 'CANCELLED') {
+              return UIUtils.loading.hide();
+            }
+            UIUtils.onError('ERROR.ADD_SECONDARY_WALLET_FAILED')(err);
+          });
+      });
+  };
+
+  $scope.showImportFileModal = function() {
+    $scope.hideActionsPopover();
+
+    var loginAndAddWallet = function(authData) {
+      var walletId = csWallet.children.count() + 1;
+
+      console.debug("[wallet] Adding secondary wallet {"+authData.pubkey.substring(0,8)+"} with id=" + walletId);
+
+      var wallet = csWallet.instance(walletId);
+      return wallet.login({
+          authData: authData,
+          // Load data options :
+          minData: true,
+          sources: true,
+          api: false,
+          success: UIUtils.loading.show
+        })
+        .then(function(walletData) {
+          walletData.localName = authData.localName;
+          return $scope.addNewWallet(wallet);
+        });
+    };
+
+    return ModalUtils.show(
+        'templates/wallet/list/modal_import_file.html',
+        'WalletListImportModalCtrl'
+    )
+      .then(function(items){
+        if (!items || !items.length) return; // User cancel
+
+        UIUtils.loading.show();
+        // Make sure to auth on the main wallet
+        return csWallet.auth({minData: true})
+          .then(function() {
+            // Add wallet one after one
+            return items.reduce(function(promise, authData){
+              return promise.then(function() {
+                return loginAndAddWallet(authData);
+              });
+            }, $q.when());
+          })
+          .then(function() {
             UIUtils.loading.hide();
             $scope.updateView();
           })
@@ -515,4 +594,90 @@ function PopoverWalletSelectModalController($scope, $controller, UIUtils) {
     if ($event.preventDefault() || !wallet) return; // no selection
     $scope.closePopover(wallet);
   };
+}
+
+function WalletListImportModalController($scope, $timeout, BMA, csWallet) {
+  'ngInject';
+
+  $scope.hasContent = false;
+  $scope.content = null;
+  $scope.fileData =  '';
+  $scope.isValidFile = false;
+  $scope.validatingFile = false;
+
+  $scope.importFromFile = function(file) {
+    $scope.validatingFile = true;
+
+    $scope.hasContent = angular.isDefined(file) && file !== '';
+    $scope.fileData = file.fileData ? file.fileData : '';
+    var isValidFile = $scope.fileData !== '' && ($scope.fileData.type == 'text/csv' || $scope.fileData.type == 'text/plain');
+
+    // Bad file type: invalid file
+    if (!isValidFile) {
+      console.error("[wallet] Import failed. Invalid file type: " + $scope.fileData.type);
+      $scope.isValidFile = false;
+      $scope.validatingFile = false;
+      return;
+    }
+
+    // Parse file
+    console.debug("[wallet] Parsing file to import...");
+    var rows = file.fileContent.split('\n');
+    $scope.content = rows.reduce(function(res, row) {
+      // Skip empty row
+      if (!row || !row.trim().length) return res;
+
+      // Split
+      var cols = row.split('\t', 3) || undefined;
+
+      // Invalid column count: mark file as invalid
+      if (cols && cols.length != 3) {
+        console.debug("[wallet] Import: skip invalid row: " + row);
+        isValidFile = false;
+        return res;
+      }
+
+      var item = {
+        pubkey: cols[0],
+        uid: cols[1],
+        localName: cols[2]
+      };
+
+      // Check pubkey validity
+      if (!BMA.regexp.PUBKEY.test(item.pubkey)) {
+        console.debug("[wallet] Invalid pubkey, found in this row: ", row);
+        isValidFile = false;
+        return res;
+      }
+
+      // Ignore if same as current wallet
+      if (csWallet.isUserPubkey(item.pubkey)) {
+        console.debug("[wallet] Pubkey equals to main wallet. Skip this row: ", row);
+        return res;
+      }
+
+      // Ignore if already in children wallet
+      if (csWallet.children.hasPubkey(item.pubkey)) {
+        console.debug("[wallet] Pubkey already in wallet list. Skip this row", row);
+        return res;
+      }
+
+      // OK: add it to result
+      return res.concat(item);
+    }, []);
+
+    $scope.isValidFile = isValidFile;
+
+    $timeout(function() {
+      $scope.validatingFile = false;
+    }, 250); // need to have a loading effect
+  };
+
+  $scope.removeFile = function() {
+    $scope.hasContent = false;
+    $scope.content = null;
+    $scope.fileData =  '';
+    $scope.isValidFile = false;
+    $scope.validatingFile = false;
+  }
 }

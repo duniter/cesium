@@ -20,6 +20,7 @@
     "BTN_RELATIVE_UNIT": "Afficher en unité relative ?",
     "BTN_BACK": "Retour",
     "BTN_NEXT": "Suivant",
+    "BTN_IMPORT": "Importer",
     "BTN_CANCEL": "Annuler",
     "BTN_CLOSE": "Fermer",
     "BTN_LATER": "Plus tard",
@@ -77,6 +78,12 @@
       "SHARE_ON_FACEBOOK": "Partager sur Facebook",
       "SHARE_ON_DIASPORA": "Partager sur Diaspora*",
       "SHARE_ON_GOOGLEPLUS": "Partager sur Google+"
+    },
+    "FILE": {
+      "DATE" : "Date :",
+      "TYPE" : "Type :",
+      "SIZE": "Taille :",
+      "VALIDATING": "Validation en cours..."
     }
   },
   "SYSTEM": {
@@ -431,10 +438,6 @@
       "p": "p (CPU):"
     },
     "FILE": {
-      "DATE" : "Date :",
-      "TYPE" : "Type :",
-      "SIZE": "Taille :",
-      "VALIDATING": "Validation en cours...",
       "HELP": "Format de fichier attendu : <b>.yml</b> ou <b>.dunikey</b> (type PubSec, WIF ou EWIF)."
     }
   },
@@ -534,17 +537,26 @@
     "WALLET_LIST": {
       "TITLE": "Mes portefeuilles",
       "BTN_NEW": "Ajouter un portefeuille",
+      "BTN_DOWNLOAD": "Télécharger la liste",
+      "BTN_IMPORT_FILE_DOTS": "Importer depuis un fichier...",
       "NO_WALLET": "Aucun portefeuille secondaire",
       "BTN_DELETE": "Retirer un portefeuille secondaire...",
       "BTN_RENAME": "Renommer le portefeuille",
+      "EXPORT_FILENAME": "mes_portefeuilles-{{pubkey|formatPubkey}}-{{currency}}.csv",
       "EDIT_POPOVER": {
         "TITLE": "Renommer le portefeuille",
         "HELP": "Renseignez le nouveau nom",
         "NAME_HELP": "Nom du portefeuille"
+      },
+      "IMPORT_MODAL": {
+        "TITLE": "Importer des portefeuilles",
+        "HELP": "Pour <b>importer des porftefeuilles</b>, veuillez glisser dans la zone ci-dessous le fichier de la liste des portefeuilles, ou bien cliquer dans la zone pour rechercher un fichier.",
+        "WALLET_COUNT": "<b>{{count}}</b> nouveau{{count > 1 ? 'x' : ''}}  portefeuille{{count > 1 ? 's' : ''}}",
+        "NO_NEW_WALLET": "Aucun nouveau portefeuille"
       }
     },
     "SECURITY": {
-      "ADD_QUESTION": "Ajouter une question personnalisée ",
+      "ADD_QUESTION": "Ajouter une question personnalisée",
       "BTN_CLEAN": "Vider",
       "BTN_RESET": "Réinitialiser",
       "DOWNLOAD_REVOKE": "Sauvegarder mon fichier de révocation",
@@ -640,7 +652,7 @@
     "POPUP_TITLE": "Erreur",
     "UNKNOWN_ERROR": "Erreur inconnue",
     "CRYPTO_UNKNOWN_ERROR": "Votre navigateur ne semble pas compatible avec les fonctionnalités de cryptographie.",
-    "DOWNLOAD_KEYFILE_FAILED": "Echec de le génération du fichier de trousseau.",
+    "DOWNLOAD_KEYFILE_FAILED": "Échec de le génération du fichier de trousseau.",
     "EQUALS_TO_PSEUDO": "Doit être différent du pseudonyme",
     "EQUALS_TO_SALT": "Doit être différent de l'identifiant secret",
     "FIELD_REQUIRED": "Champ obligatoire.",
@@ -656,8 +668,8 @@
     "FIELD_NOT_EMAIL": "Adresse email non valide",
     "PASSWORD_NOT_CONFIRMED": "Ne correspond pas au mot de passe.",
     "SALT_NOT_CONFIRMED": "Ne correspond pas à l'identifiant secret.",
-    "SEND_IDENTITY_FAILED": "Echec de l'inscription.",
-    "SEND_CERTIFICATION_FAILED": "Echec de la certification.",
+    "SEND_IDENTITY_FAILED": "Échec de l'inscription.",
+    "SEND_CERTIFICATION_FAILED": "Échec de la certification.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY": "Vous ne pouvez pas effectuer de certification, car votre compte n'est <b>pas membre</b>.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF": "Vous ne pouvez pas effectuer de certification, car votre compte n'est pas encore membre.<br/><br/>Il vous manque encore des certifications, ou bien celles-ci n'ont pas encore été validées.",
     "NOT_MEMBER_FOR_CERTIFICATION": "Votre compte n'est pas encore membre.",
@@ -665,22 +677,22 @@
     "LOGIN_FAILED": "Erreur lors de la connexion.",
     "LOAD_IDENTITY_FAILED": "Erreur de chargement de l'identité.",
     "LOAD_REQUIREMENTS_FAILED": "Erreur de chargement des prérequis de l'identité.",
-    "SEND_MEMBERSHIP_IN_FAILED": "Echec de la tentative d'entrée dans la communauté.",
-    "SEND_MEMBERSHIP_OUT_FAILED": "Echec de l'arret de l'adhésion.",
-    "REFRESH_WALLET_DATA": "Echec du rafraichissement du portefeuille.",
-    "GET_CURRENCY_PARAMETER": "Echec de la récupération des règles de la monnaie.",
+    "SEND_MEMBERSHIP_IN_FAILED": "Échec de la tentative d'entrée dans la communauté.",
+    "SEND_MEMBERSHIP_OUT_FAILED": "Échec de l'arret de l'adhésion.",
+    "REFRESH_WALLET_DATA": "Échec du rafraichissement du portefeuille.",
+    "GET_CURRENCY_PARAMETER": "Échec de la récupération des règles de la monnaie.",
     "GET_CURRENCY_FAILED": "Chargement de la monnaie impossible. Veuillez ressayer plus tard.",
-    "SEND_TX_FAILED": "Echec du virement.",
+    "SEND_TX_FAILED": "Échec du virement.",
     "ALL_SOURCES_USED": "Veuillez attendre le calcul du prochain bloc (Toutes vos sources de monnaie ont été utilisées).",
     "NOT_ENOUGH_SOURCES": "Pas assez de change pour envoyer ce montant en une seule transaction.<br/>Montant maximum : {{amount}} {{unit}}<sub>{{subUnit}}</sub>.",
-    "ACCOUNT_CREATION_FAILED": "Echec de la création du compte membre.",
-    "RESTORE_WALLET_DATA_ERROR": "Echec du rechargement des paramètres depuis le stockage local",
-    "LOAD_WALLET_DATA_ERROR": "Echec du chargement des données du portefeuille.",
+    "ACCOUNT_CREATION_FAILED": "Échec de la création du compte membre.",
+    "RESTORE_WALLET_DATA_ERROR": "Échec du rechargement des paramètres depuis le stockage local",
+    "LOAD_WALLET_DATA_ERROR": "Échec du chargement des données du portefeuille.",
     "COPY_CLIPBOARD_FAILED": "Copie de la valeur impossible.",
-    "TAKE_PICTURE_FAILED": "Echec de la récupération de la photo.",
-    "SCAN_FAILED": "Echec du scan de QR code",
+    "TAKE_PICTURE_FAILED": "Échec de la récupération de la photo.",
+    "SCAN_FAILED": "Échec du scan de QR code",
     "SCAN_UNKNOWN_FORMAT": "Code non reconnu.",
-    "WOT_LOOKUP_FAILED": "Echec de la recherche",
+    "WOT_LOOKUP_FAILED": "Échec de la recherche",
     "LOAD_PEER_DATA_FAILED": "Lecture du nœud Duniter impossible. Veuillez réessayer ultérieurement.",
     "NEED_LOGIN_FIRST": "Veuillez d'abord vous connecter.",
     "AMOUNT_REQUIRED": "Le montant est obligatoire.",
@@ -697,7 +709,7 @@
     "IDENTITY_EXPIRED": "La publication de cette identité a expirée : cette personne doit effectuer une nouvelle demande d'adhésion <b>avant</b> d'être certifiée.",
     "IDENTITY_SANDBOX_FULL": "Le nœud Duniter utilisé par Cesium ne peut plus recevoir de nouvelles identités, car sa file d'attente est pleine.<br/><br/>Veuillez réessayer ultérieurement ou changer de nœud (via le menu <b>Paramètres</b>).",
     "IDENTITY_NOT_FOUND": "Identité non trouvée",
-    "IDENTITY_TX_FAILED": "Echec du chargement des opérations",
+    "IDENTITY_TX_FAILED": "Échec du chargement des opérations",
     "WOT_PENDING_INVALID_BLOCK_HASH": "Adhésion non valide.",
     "WALLET_INVALID_BLOCK_HASH": "Votre demande d'adhésion n'est plus valide (car elle référence un bloc que les nœuds du réseau ont annulé).<br/>Vous devez <a ng-click=\"doQuickFix('fixMembership')\">envoyer une nouvelle demande</a> pour résoudre ce problème.",
     "WALLET_IDENTITY_EXPIRED": "La publication de <b>votre identité a expirée</b>.<br/>Vous devez <a ng-click=\"doQuickFix('fixIdentity')\">publier à nouveau votre identité</a> pour résoudre ce problème.",
@@ -707,21 +719,21 @@
     "AUTH_INVALID_PUBKEY": "La clef attendue est <i class=\"ion-key\"></i> {{pubkey|formatPubkey}}...",
     "AUTH_INVALID_SCRYPT": "Identifiant ou mot de passe invalide.",
     "AUTH_INVALID_FILE": "Fichier de trousseau invalide.",
-    "AUTH_FILE_ERROR": "Echec de l'ouverture du fichier de trousseau",
+    "AUTH_FILE_ERROR": "Échec de l'ouverture du fichier de trousseau",
     "IDENTITY_ALREADY_CERTIFY": "Vous avez <b>déjà certifié</b> cette identité.<br/><br/>Cette certification est encore valide (expiration {{expiresIn|formatDurationTo}}).",
     "IDENTITY_ALREADY_CERTIFY_PENDING": "Vous avez <b>déjà certifié</b> cette identité.<br/><br/>Cette certification est en attente de traitement (date limite de traitement {{expiresIn|formatDurationTo}}).",
     "UNABLE_TO_CERTIFY_TITLE": "Certification impossible",
-    "LOAD_NEWCOMERS_FAILED": "Echec du chargement des nouveaux membres.",
-    "LOAD_PENDING_FAILED": "Echec du chargement des inscriptions en attente.",
+    "LOAD_NEWCOMERS_FAILED": "Échec du chargement des nouveaux membres.",
+    "LOAD_PENDING_FAILED": "Échec du chargement des inscriptions en attente.",
     "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "Vous devez <b>être membre</b> pour pouvoir effectuer cette action.",
     "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "Vous devez avoir <b>publié votre identité</b> pour pouvoir effectuer cette action.",
-    "GET_BLOCK_FAILED": "Echec de la récupération du bloc",
+    "GET_BLOCK_FAILED": "Échec de la récupération du bloc",
     "INVALID_BLOCK_HASH": "Bloc non trouvé (hash différent)",
-    "DOWNLOAD_REVOCATION_FAILED": "Echec du téléchargement du fichier de révocation.",
-    "REVOCATION_FAILED": "Echec de la révocation.",
+    "DOWNLOAD_REVOCATION_FAILED": "Échec du téléchargement du fichier de révocation.",
+    "REVOCATION_FAILED": "Échec de la révocation.",
     "SALT_OR_PASSWORD_NOT_CONFIRMED": "Identifiant secret ou mot de passe incorrects",
-    "RECOVER_ID_FAILED": "Echec de la récupération des identifiants",
-    "LOAD_FILE_FAILED" : "Echec du chargement du fichier",
+    "RECOVER_ID_FAILED": "Échec de la récupération des identifiants",
+    "LOAD_FILE_FAILED" : "Échec du chargement du fichier",
     "NOT_VALID_REVOCATION_FILE": "Fichier de revocation non valide (mauvais format de fichier)",
     "NOT_VALID_SAVE_ID_FILE": "Fichier de récupération non valide (mauvais format de fichier)",
     "NOT_VALID_KEY_FILE": "Fichier de trousseau non valide (format non reconnu)",
@@ -729,13 +741,15 @@
     "EXISTING_ACCOUNT_REQUEST": "Veuillez modifier vos identifiants afin qu'ils correspondent à un compte non utilisé.",
     "GET_LICENSE_FILE_FAILED": "Récupérer du fichier de licence impossible",
     "CHECK_NETWORK_CONNECTION": "Aucun nœud ne semble accessible.<br/><br/>Veuillez <b>vérifier votre connection Internet</b>.",
-    "ISSUE_524_TX_FAILED": "Echec du virement.<br/><br/>Un message a été envoyé aux développeurs pour faciliter la résolution du problème. <b>Merci de votre aide</b>.",
-    "ADD_SECONDARY_WALLET_FAILED": "Echec de l'ajout du portefeuille secondaire.",
-    "UPDATE_WALLET_LIST_FAILED": "Echec du rafraichissement des portefeuilles secondaires.",
-    "LOAD_WALLET_LIST_FAILED": "Echec du chargement des portefeuilles secondaires.",
-    "SAVE_WALLET_LIST_FAILED": "Echec de la sauvegarde des portefeuilles secondaires.",
+    "ISSUE_524_TX_FAILED": "Échec du virement.<br/><br/>Un message a été envoyé aux développeurs pour faciliter la résolution du problème. <b>Merci de votre aide</b>.",
+    "ADD_SECONDARY_WALLET_FAILED": "Échec de l'ajout du portefeuille secondaire.",
+    "UPDATE_WALLET_LIST_FAILED": "Échec du rafraichissement des portefeuilles secondaires.",
+    "LOAD_WALLET_LIST_FAILED": "Échec du chargement des portefeuilles secondaires.",
+    "SAVE_WALLET_LIST_FAILED": "Échec de la sauvegarde des portefeuilles secondaires.",
     "COULD_NOT_ADD_MAIN_WALLET": "Le portefeuille à ajouter <b>doit être différent du compte principal</b> avec lequel vous êtes connecté.",
-    "UNKNOWN_WALLET_ID": "Portefeuille secondaire inconnu."
+    "UNKNOWN_WALLET_ID": "Portefeuille secondaire inconnu.",
+    "RESTORE_WALLET_LIST_FAILED": "Échec de la restauration des portefeuilles secondaires.",
+    "INVALID_FILE_FORMAT": "Format de fichier invalide."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -888,7 +902,7 @@
         "CANCEL_REDIRECTING": "Paiement annulé.<br/>Redirection vers le site du vendeur..."
       },
       "ERROR": {
-        "TRANSFER_FAILED": "Echec du paiement"
+        "TRANSFER_FAILED": "Échec du paiement"
       }
     },
     "DOC": {

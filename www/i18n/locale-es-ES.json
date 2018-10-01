@@ -20,6 +20,7 @@
     "BTN_RELATIVE_UNIT": "¿Visualizar en unidad relativa?",
     "BTN_BACK": "Anterior",
     "BTN_NEXT": "Siguiente",
+    "BTN_IMPORT": "Importar",
     "BTN_CANCEL": "Cancelar",
     "BTN_CLOSE": "Cerrar",
     "BTN_LATER": "Más tarde",
@@ -77,6 +78,12 @@
       "SHARE_ON_FACEBOOK": "Compartir en Facebook",
       "SHARE_ON_DIASPORA": "Compartir en Diaspora*",
       "SHARE_ON_GOOGLEPLUS": "Compartir en Google+"
+    },
+    "FILE": {
+      "DATE" : "Fecha:",
+      "TYPE" : "Tipo:",
+      "SIZE": "Tamaño:",
+      "VALIDATING": "Validación en progreso..."
     }
   },
   "SYSTEM": {
@@ -424,10 +431,6 @@
       "p": "p (CPU):"
     },
     "FILE": {
-      "DATE" : "Fecha:",
-      "TYPE" : "Tipo:",
-      "SIZE": "Tamaño:",
-      "VALIDATING": "Validación en progreso...",
       "HELP": "Formato de archivo esperado: <b>.yml</b> o <b>.dunikey</b> (tipo PubSec, WIF o EWIF)."
     }
   },
@@ -527,6 +530,8 @@
     "WALLET_LIST": {
       "TITLE": "Mis monederos",
       "BTN_NEW": "Añadir un monedero",
+      "BTN_DOWNLOAD": "Descargue la lista",
+      "BTN_IMPORT_FILE_DOTS": "Importar desde un archivo...",
       "NO_WALLET": "Sin monedero secundaria",
       "BTN_DELETE": "Eliminar una monedero secundaria...",
       "BTN_RENAME": "Renombrar el monedero",
@@ -693,7 +698,8 @@
     "EXISTING_ACCOUNT": "Su frase secreta corresponde a una cuenta existente, la <a ng-click=\"showHelpModal('pubkey')\">clave pública</a> es:",
     "EXISTING_ACCOUNT_REQUEST": "Por favor, cambie su frase secreta para que coincida con una cuenta sin usar.",
     "GET_LICENSE_FILE_FAILED": "Error al obtener el archivo de licencia",
-    "CHECK_NETWORK_CONNECTION": "Ningún nodo parece alcanzable.<br/><br/><b>Compruebe la conexión a Internet</b>."
+    "CHECK_NETWORK_CONNECTION": "Ningún nodo parece alcanzable.<br/><br/><b>Compruebe la conexión a Internet</b>.",
+    "INVALID_FILE_FORMAT": "Formato de archivo inválido."
   },
   "INFO": {
     "POPUP_TITLE": "Información",
