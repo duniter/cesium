@@ -169,7 +169,7 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
             return UIUtils.loading.hide();
           }
           UIUtils.onError('ERROR.ADD_SECONDARY_WALLET_FAILED')(err);
-        })
+        });
     }
 
     // Call API extension on child wallet
@@ -679,5 +679,5 @@ function WalletListImportModalController($scope, $timeout, BMA, csWallet) {
     $scope.fileData =  '';
     $scope.isValidFile = false;
     $scope.validatingFile = false;
-  }
+  };
 }
