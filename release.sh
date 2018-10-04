@@ -5,7 +5,7 @@ branch=`git rev-parse --abbrev-ref HEAD`
 if [[ ! "$branch" = "master" ]];
 then
   echo ">> This script must be run under \`master\` branch"
-  exit
+  exit -1
 fi
 
 DIRNAME=`pwd`
@@ -37,6 +37,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
       ;;
     *)
       echo "No task given"
+      exit -1
       ;;
   esac
 
@@ -49,6 +50,9 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   if [ -d "$NVM_DIR" ]; then
     . $NVM_DIR/nvm.sh
     nvm use 5
+    if [ $? -ne 0 ]; then
+      exit -1
+    fi
   else
     echo "nvm (Node version manager) not found (directory $NVM_DIR not found). Please install, and retry"
     exit -1
@@ -66,8 +70,9 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   echo "- Building Android artifact..."
   echo "----------------------------------"
   ionic build android --release
-
-  #ionic build firefoxos --release
+  if [ $? -ne 0 ]; then
+    exit -1
+  fi
 
   echo "----------------------------------"
   echo "- Building web artifact..."
@@ -76,72 +81,71 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   # Update config file
   gulp config --env default
   gulp build:web --release
-  cd $DIRNAME
+  if [ $? -ne 0 ]; then
+    exit -1
+  fi
 
   echo "----------------------------------"
   echo "- Executing git push, with tag: v$2"
   echo "----------------------------------"
 
   # Commit
+  cd $DIRNAME
   git reset HEAD
   git add package.json config.xml install.sh www/js/config.js www/manifest.json
   git commit -m "v$2"
   git tag "v$2"
   git push
+  if [ $? -ne 0 ]; then
+    exit -1
+  fi
 
   # Pause (wait propagation to from git.duniter.org to github)
   echo " Waiting 30s, for propagation to github..."
   sleep 30s
 
-  if [[ "_$4" != "_" ]]; then
-    echo "**********************************"
-    echo "* Uploading artifacts to Github..."
-    echo "**********************************"
-
-    ./github.sh $1 ''"$4"''
-
-    echo "----------------------------------"
-    echo "- Building desktop versions..."
-    echo "----------------------------------"
-
-    # Remove old vagrant virtual machines
-    rm -rf ~/.vagrant.d/*
-
-    git submodule update --init
-    git submodule sync
-    cd platforms/desktop
-
-    # Exclude Windows - TODO FIXME (not enough space in BL directories)
-    EXPECTED_ASSETS="cesium-desktop-v$2-linux-x64.deb
-cesium-desktop-v$2-linux-x64.tar.gz"
-    export EXPECTED_ASSETS
-
-    ./release.sh $2
-
-    # back to nodejs version 5
-    cd $DIRNAME
-    nvm use 5
-
-    echo "**********************************"
-    echo "* Build release succeed !"
-    echo "**********************************"
-  else
-
-    echo "**********************************"
-    echo "* Build release succeed !"
-    echo "**********************************"
-
-    echo " WARN - missing arguments 'release_description'"
-    echo
-    echo "   Binaries files NOT sending to github repository"
-    echo "   Please run:"
-    echo "   > ./github.sh pre|rel 'release_description'"
-    echo
-    echo "   Desktop artifact are NOT build"
-    echo "   Please run:"
-    echo "   > platforms/desktop/release.sh <version>"
-    echo
+  description="$4"
+  if [[ "_$description" == "_" ]]; then
+     description="Release v$1"
   fi
+
+  echo "**********************************"
+  echo "* Uploading artifacts to Github..."
+  echo "**********************************"
+
+  ./github.sh $1 ''"$description"''
+  if [ $? -ne 0 ]; then
+      exit -1
+  fi
+
+  echo "----------------------------------"
+  echo "- Building desktop versions..."
+  echo "----------------------------------"
+
+  # Remove old vagrant virtual machines
+  rm -rf ~/.vagrant.d/*
+
+  git submodule update --init
+  git submodule sync
+  cd platforms/desktop
+
+  # Exclude Windows - TODO FIXME (not enough space in BL directories)
+  EXPECTED_ASSETS="cesium-desktop-v$2-linux-x64.deb
+cesium-desktop-v$2-linux-x64.tar.gz"
+  export EXPECTED_ASSETS
+
+  ./release.sh $2
+  if [ $? -ne 0 ]; then
+      exit -1
+  fi
+
+  # back to nodejs version 5
+  cd $DIRNAME
+  nvm use 5
+
+  echo "**********************************"
+  echo "* Build release succeed !"
+  echo "**********************************"
 
 else
   echo "Wrong version format"
