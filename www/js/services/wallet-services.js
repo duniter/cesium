@@ -631,13 +631,16 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         });
 
         try {
-          _.forEach(content.children, function(child, index) {
-            var walletId = index+1;
-            var wallet = service.instance(walletId, BMA);
-            wallet.data.pubkey = child.pubkey;
-            wallet.data.localName = child.localName;
-            wallet.data.uid = child.uid;
-            addChildWallet(wallet, {store: false/*skip store*/});
+          var pubkeys = {};
+          _.forEach(content.children, function(child) {
+            if (!pubkeys[child.pubkey]) { // make sure wallet is unique by pubkey
+              pubkeys[child.pubkey] = true;
+              var wallet = getNewChildrenInstance();
+              wallet.data.pubkey = child.pubkey;
+              wallet.data.localName = child.localName;
+              wallet.data.uid = child.uid;
+              addChildWallet(wallet, {store: false/*skip store*/});
+            }
           });
           delete content.children;
           // childrenCount not need anymore
@@ -1997,6 +2000,14 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       return angular.isDefined(data.childrenCount) ? data.childrenCount : (data.children && data.children.length || 0);
     },
 
+    getNewChildrenInstance =  function() {
+      // Return max(id) + 1
+      var walletId = (data.children && data.children.reduce(function(res, wallet) {
+          return Math.max(res, wallet.id);
+        }, 0) || data.childrenCount || 0 )+ 1;
+      return service.instance(walletId, BMA);
+    },
+
     getAllChildrenWallet = function() {
       return openEncryptedData()
         .then(function() {
@@ -2348,6 +2359,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         setParent: setParentWallet,
         count: getChildrenWalletCount,
         hasPubkey: hasChildrenWithPubkey,
+        instance: getNewChildrenInstance,
         downloadFile: downloadChildrenWalletFile
       },
       api: api

@@ -747,7 +747,8 @@
     "UPDATE_WALLET_LIST_FAILED": "Échec du rafraichissement des portefeuilles secondaires.",
     "LOAD_WALLET_LIST_FAILED": "Échec du chargement des portefeuilles secondaires.",
     "SAVE_WALLET_LIST_FAILED": "Échec de la sauvegarde des portefeuilles secondaires.",
-    "COULD_NOT_ADD_MAIN_WALLET": "Le portefeuille à ajouter <b>doit être différent du compte principal</b> avec lequel vous êtes connecté.",
+    "COULD_NOT_ADD_MAIN_WALLET": "Ce portefeuille <b>correspond au compte principal</b> avec lequel vous êtes connecté.<br/>Impossible de l'ajouter comme portefeuille secondaire",
+    "COULD_NOT_ADD_EXISTING_WALLET": "Portefeuille déjà existant dans la liste.",
     "UNKNOWN_WALLET_ID": "Portefeuille secondaire inconnu.",
     "RESTORE_WALLET_LIST_FAILED": "Échec de la restauration des portefeuilles secondaires.",
     "INVALID_FILE_FORMAT": "Format de fichier invalide."

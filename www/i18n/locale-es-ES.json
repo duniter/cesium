@@ -536,6 +536,7 @@
       "NO_WALLET": "Sin monedero secundaria",
       "BTN_DELETE": "Eliminar una monedero secundaria...",
       "BTN_RENAME": "Renombrar el monedero",
+      "EXPORT_FILENAME": "monederos-{{pubkey|formatPubkey}}-{{currency}}.csv",
       "EDIT_POPOVER": {
         "TITLE": "Renombrar el monedero",
         "HELP": "Completa el nuevo nombre",

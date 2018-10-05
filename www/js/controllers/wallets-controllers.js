@@ -175,8 +175,7 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
 
   $scope.showNewWalletModal = function() {
 
-    var walletId = csWallet.children.count() + 1;
-    var wallet = csWallet.instance(walletId);
+    var wallet = csWallet.children.instance();
     return wallet.login({
       showNewAccountLink: false,
       title: 'ACCOUNT.WALLET_LIST.BTN_NEW',
@@ -191,13 +190,20 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
         if (!walletData) return;
 
         // Avoid to add main wallet again
-        if (walletData.pubkey === csWallet.data.pubkey) {
+        if (csWallet.isUserPubkey(walletData.pubkey)) {
           UIUtils.loading.hide();
           UIUtils.alert.error('ERROR.COULD_NOT_ADD_MAIN_WALLET');
           return;
         }
 
-        console.debug("[wallet] Adding secondary wallet {"+walletData.pubkey.substring(0,8)+"} with id=" + walletId);
+        // Avoid to add exists wallet again
+        if (csWallet.children.hasPubkey(walletData.pubkey)) {
+          UIUtils.loading.hide();
+          UIUtils.alert.error('ERROR.COULD_NOT_ADD_EXISTING_WALLET');
+          return;
+        }
+
+        console.debug("[wallet] Adding secondary wallet {"+walletData.pubkey.substring(0,8)+"}");
 
         // Add the child wallet
         return $scope.addNewWallet(wallet)
@@ -237,11 +243,8 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
     $scope.hideActionsPopover();
 
     var loginAndAddWallet = function(authData) {
-      var walletId = csWallet.children.count() + 1;
-
-      console.debug("[wallet] Adding secondary wallet {"+authData.pubkey.substring(0,8)+"} with id=" + walletId);
-
-      var wallet = csWallet.instance(walletId);
+      console.debug("[wallet] Adding secondary wallet {"+authData.pubkey.substring(0,8)+"}");
+      var wallet = csWallet.children.instance();
       return wallet.login({
           authData: authData,
           // Load data options :

@@ -747,7 +747,8 @@
     "UPDATE_WALLET_LIST_FAILED": "Unable to refresh the list of wallets.",
     "LOAD_WALLET_LIST_FAILED": "Unable to load the list of wallets.",
     "SAVE_WALLET_LIST_FAILED": "Unable to save the list of wallets.",
-    "COULD_NOT_ADD_MAIN_WALLET": "The wallet to add <b>must be different from the main account</b> with which you are connected.",
+    "COULD_NOT_ADD_MAIN_WALLET": "This wallet <b>is the main account</b> with which you are connected. Unable to add it as a secondary wallet.",
+    "COULD_NOT_ADD_EXISTING_WALLET": "Wallet already existing in the list.",
     "UNKNOWN_WALLET_ID": "Unknown secondary wallet.",
     "RESTORE_WALLET_LIST_FAILED": "Unable to restore the list of wallets.",
     "INVALID_FILE_FORMAT": "Invalid file format."
