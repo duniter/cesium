@@ -78,7 +78,6 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
   $scope.settings = csSettings.data;
   $scope.listeners = [];
 
-
   // Initialize the super class and extend it.
   angular.extend(this, $controller('WalletSelectModalCtrl', {$scope: $scope, parameters: {}}));
 
@@ -102,16 +101,8 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
           $scope.showFab('fab-add-wallet');
         });
     }
-    else {
-      //$scope.addListeners();
-    }
   };
   $scope.$on('$ionicView.enter', $scope.enter);
-
-  $scope.leave = function() {
-    //$scope.removeListeners();
-  };
-  $scope.$on('$ionicView.leave', $scope.leave);
 
   $scope.cancel = function() {
     $scope.showHome();
@@ -119,10 +110,8 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
 
   $scope.select = function(event, wallet) {
     if (event.isDefaultPrevented()) return;
-
     $state.go('app.view_wallet_by_id', {id: wallet.id});
   };
-
 
   $scope.editWallet = function(event, wallet) {
 
@@ -373,9 +362,18 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
 
   /* -- listeners -- */
 
+  // Clean controller data when logout
+  $scope.onWalletLogout = function() {
+    console.warn("wallet LOGOUT !!!");
+    $scope.resetData();
+    $scope.removeListeners();
+  };
+
   $scope.addListeners = function() {
 
-    $scope.listeners =[];
+    $scope.listeners = [
+      csWallet.api.data.on.logout($scope, $scope.onWalletLogout)
+    ];
 
     // Auto-update on new block
     if (csSettings.data.walletHistoryAutoRefresh) {
@@ -428,6 +426,7 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
 
   var loadWalletWaitTime = 500;
   $scope.loading = true;
+  $scope.wallets = null;
   $scope.formData = {
     useRelative: csSettings.data.useRelative,
     showDefault: true,
@@ -461,9 +460,9 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
     if (!$scope.wallets) {
       jobs.push(
         csWallet.children.all()
-        .then(function(children) {
-          $scope.wallets = $scope.formData.showDefault ? [csWallet].concat(children) : children;
-        })
+          .then(function(children) {
+            $scope.wallets = $scope.formData.showDefault ? [csWallet].concat(children) : children;
+          })
       );
     }
 
@@ -502,6 +501,7 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
           $scope.cancel();
           throw err;
         }
+        $scope.wallets = [];
         $scope.loading = false;
         UIUtils.onError('ERROR.LOAD_WALLET_LIST_FAILED')(err);
       });
@@ -514,6 +514,12 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
 
   $scope.select = function($event, wallet) {
     $scope.closeModal(wallet);
+  };
+
+  // Clean controller data
+  $scope.resetData = function() {
+    $scope.wallets = null;
+    $scope.loading = true;
   };
 
   $scope.updateView = function() {
