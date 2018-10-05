@@ -73,8 +73,8 @@ function TransferController($scope, $controller, UIUtils) {
   };
 }
 
-function TransferModalController($scope, $q, $translate, $timeout, $filter, $focus, Device, BMA, csWallet, UIUtils, Modals,
-                                 csCurrency, csSettings, parameters) {
+function TransferModalController($scope, $q, $translate, $timeout, $filter, $focus, Device, BMA, UIUtils, Modals,
+                                 csWallet, csWot, csCurrency, csSettings, parameters) {
   'ngInject';
 
   var
