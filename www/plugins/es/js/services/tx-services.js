@@ -43,6 +43,8 @@ angular.module('cesium.es.tx.services', ['ngResource', 'cesium.services', 'cesiu
           var memberships =  res[1];
           if (!currency || !memberships || !memberships.length) return;
 
+          console.debug(memberships);
+
           // Filter memberships using options.fromTime
           if (options.fromTime !== -1) {
             memberships = memberships.reduce(function(res, membership) {
@@ -67,7 +69,8 @@ angular.module('cesium.es.tx.services', ['ngResource', 'cesium.services', 'cesiu
                         {
                           range: {
                             medianTime: {
-                              from: membership.joinTime,
+                              // Fix #736: Add 1 second, because when membership begins in a block with DU, the DU is not received
+                              from: membership.joinTime+1,
                               to: membership.leaveTime
                             }
                           }
