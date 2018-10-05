@@ -196,7 +196,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.services',
         });
 
         // Open websocket
-        var time = new Date().getTime();
+        var time = Date.now();
         console.info("[ES] [comment] Starting websocket to listen comments on [{0}/record/{1}]".format(index, recordId.substr(0,8)));
         var wsChanges = exports.raw.wsChanges();
         return wsChanges.open()
@@ -208,7 +208,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.services',
 
           // Listen changes
           .then(function(){
-            console.debug("[ES] [comment] Websocket opened in {0} ms".format(new Date().getTime() - time));
+            console.debug("[ES] [comment] Websocket opened in {0} ms".format(Date.now() - time));
             wsChanges.on(function(change) {
               if (!change) return;
               scope.$applyAsync(function() {
@@ -267,7 +267,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.services',
         // Preparing JSON to sent
         var id = comment.id;
         var json = {
-          creationTime: id ? comment.creationTime || comment.time/*for compat*/ : esHttp.date.now(),
+          creationTime: id ? comment.creationTime || comment.time/*for compat*/ : moment().utc().unix(),
           message: comment.message,
           record: recordId,
           issuer: csWallet.data.pubkey

@@ -329,7 +329,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
               .catch(function(err){
                 // Special case for currency init (root block not exists): use now
                 if (err && err.ucode == BMA.errorCodes.BLOCK_NOT_FOUND && identity.number === 0) {
-                  identity.sigDate = Math.trunc(new Date().getTime() / 1000);
+                  identity.sigDate = moment().utc().unix();
                   return identity;
                 }
                 else {
@@ -597,7 +597,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
           };
         }
 
-        var now = new Date().getTime();
+        var now = Date.now();
 
         var parameters;
         var medianTime;
@@ -617,7 +617,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
               .catch(function(err){
                 // Special case for currency init (root block not exists): use now
                 if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
-                  medianTime = Math.trunc(new Date().getTime()/1000);
+                  medianTime = Math.trunc(Date.now()/1000);
                 }
                 else {
                   throw err;
@@ -677,7 +677,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
             if (!data.pubkey) return undefined; // not found
             delete data.lookup; // not need anymore
             identityCache.put(data.pubkey, data); // add to cache
-            console.debug('[wot] Identity '+ data.pubkey.substring(0, 8) +' loaded in '+ (new Date().getTime()-now) +'ms');
+            console.debug('[wot] Identity '+ data.pubkey.substring(0, 8) +' loaded in '+ (Date.now()-now) +'ms');
             return data;
           });
       },
@@ -867,7 +867,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
       getPending = function(offset, size) {
         offset = offset || 0;
         size = size || 20;
-        var now = new Date().getTime();
+        var now = Date.now();
         return $q.all([
           BMA.wot.member.uids(),
           BMA.wot.member.pending()
@@ -943,7 +943,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
               extendAll(idties, 'pubkey', true/*skipAddUid*/)
             ])
             .then(function() {
-              console.debug("[ES] [wot] Loaded {0}/{1} pending identities in {2} ms".format(idties && idties.length || 0, total, new Date().getTime() - now));
+              console.debug("[ES] [wot] Loaded {0}/{1} pending identities in {2} ms".format(idties && idties.length || 0, total, Date.now() - now));
               return {
                 hits: idties,
                 total: total

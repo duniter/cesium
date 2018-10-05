@@ -56,7 +56,7 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
       }
 
       console.debug('[ES] [wallet] Loading user avatar+name...');
-      var now = new Date().getTime();
+      var now = Date.now();
 
       esProfile.getAvatarAndName(data.pubkey)
         .then(function(profile) {
@@ -64,7 +64,7 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
             data.name = profile.name;
             data.avatarStyle = profile.avatarStyle;
             data.avatar = profile.avatar;
-            console.debug('[ES] [wallet] Loaded user avatar+name in '+ (new Date().getTime()-now) +'ms');
+            console.debug('[ES] [wallet] Loaded user avatar+name in '+ (Date.now()-now) +'ms');
           }
           else {
             console.debug('[ES] [wallet] No user avatar+name found');
@@ -90,7 +90,7 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
       }
 
       console.debug('[ES] [wallet] Loading full user profile...');
-      var now = new Date().getTime();
+      var now = Date.now();
 
       // Load full profile
       esProfile.get(data.pubkey)
@@ -100,7 +100,7 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
             data.avatar = profile.avatar;
             data.profile = profile.source;
             data.profile.description = profile.description;
-            console.debug('[ES] [wallet] Loaded full user profile in '+ (new Date().getTime()-now) +'ms');
+            console.debug('[ES] [wallet] Loaded full user profile in '+ (Date.now()-now) +'ms');
           }
           deferred.resolve();
         });

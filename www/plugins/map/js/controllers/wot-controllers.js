@@ -150,7 +150,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
       }, true);
 
       // Load the map (and init if need)
-      var now = new Date().getTime();
+      var now = Date.now();
       $scope.loadMap()
         .then($scope.load)
         .then(function() {

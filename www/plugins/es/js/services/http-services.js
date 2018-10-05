@@ -138,11 +138,6 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       return that.start(true /*skipInit*/);
     };
 
-
-
-    // Get time (UTC)
-    that.date = { now : csHttp.date.now };
-
     that.getUrl  = function(path) {
       return csHttp.getUrl(that.host, that.port, path, that.useSsl);
     };
@@ -284,7 +279,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
             that.server,
             (that.useSsl ? ' (SSL on)' : '')
           ));
-          var now = new Date().getTime();
+          var now = Date.now();
 
           return that.checkNodeAlive()
             .then(function(alive) {
@@ -300,7 +295,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
               // Add listeners
               addListeners();
 
-              console.debug('[ES] [http] Started in '+(new Date().getTime()-now)+'ms');
+              console.debug('[ES] [http] Started in '+(Date.now()-now)+'ms');
               that.api.node.raise.start();
 
 
@@ -453,11 +448,11 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         return (wallet.isAuth() ? $q.when(wallet.data) : wallet.auth({silent: true, minData: true}))
           .then(function() {
             if (options.creationTime && !record.creationTime) {
-              record.creationTime = that.date.now();
+              record.creationTime = moment().utc().unix();
             }
             // Always update the time - fix #572
             // Make sure time is always > previous (required by ES node)
-            var now = that.date.now();
+            var now = moment().utc().unix();
             record.time = (!record.time || record.time < now) ? now : (record.time+1);
 
             var obj = angular.copy(record);
@@ -507,7 +502,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
               type: type,
               id: id,
               issuer: walletData.pubkey,
-              time: that.date.now()
+              time: moment().utc().unix()
             };
             var str = JSON.stringify(obj);
             return CryptoUtils.util.hash(str)

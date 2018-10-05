@@ -1207,7 +1207,7 @@ function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHis
         if (!$scope.needCategory()) {
           delete json.category;
         }
-        json.time = esHttp.date.now();
+        json.time = moment().utc().unix();
 
         // geo point
         if (json.geoPoint && json.geoPoint.lat && json.geoPoint.lon) {

@@ -55,7 +55,7 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
       return deferred.promise;
     }
 
-    var now = new Date().getTime();
+    var now = Date.now();
     var time = Math.trunc(now / 1000);
 
     // Skip if loaded less than 1 min ago
@@ -74,7 +74,7 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
         data.invitations = data.invitations || {};
         data.invitations.unreadCount = unreadCount;
         data.invitations.time = time;
-        console.debug('[ES] [invitation] Loaded count (' + unreadCount + ') in '+(new Date().getTime()-now)+'ms');
+        console.debug('[ES] [invitation] Loaded count (' + unreadCount + ') in '+(Date.now()-now)+'ms');
         deferred.resolve(data);
       })
       .catch(function(err){
@@ -305,7 +305,7 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
     type = type || 'certification';
 
     console.debug('[ES] [invitation] Deleting all invitations...');
-    var now = new Date().getTime();
+    var now = Date.now();
     var countBeforeDeletion = (csWallet.data.invitations && csWallet.data.invitations.count) || 0;
     var unreadCountBeforeDeletion = (csWallet.data.invitations && csWallet.data.invitations.unreadCount) || 0;
 
@@ -337,7 +337,7 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
               csWallet.data.invitations.unreadCount = 0;
             }
 
-            console.debug('[ES] [invitation] All invitations deleted in {0}ms'.format(new Date().getTime()-now));
+            console.debug('[ES] [invitation] All invitations deleted in {0}ms'.format(Date.now()-now));
           });
       });
   }

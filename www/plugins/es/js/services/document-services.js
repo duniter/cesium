@@ -147,7 +147,7 @@ angular.module('cesium.es.document.services', ['ngResource', 'cesium.platform', 
         options.index,
         options.type
       ));
-      var now = new Date().getTime();
+      var now = Date.now();
 
       return raw.searchText(request)
         .then(function(res) {
@@ -158,7 +158,7 @@ angular.module('cesium.es.document.services', ['ngResource', 'cesium.platform', 
             options.index,
             options.type,
             res && res.hits && res.hits.length || 0,
-            new Date().getTime() - now
+            Date.now() - now
           ));
           return res;
         });

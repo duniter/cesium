@@ -249,7 +249,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
       return deferred.promise;
     }
 
-    var now = new Date().getTime();
+    var now = Date.now();
     var time = Math.trunc(now / 1000);
 
     // Skip if loaded less than 1 min ago
@@ -276,7 +276,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
         data.notifications.unreadCount = unreadCount;
         data.notifications.warnCount = countWarnEvents(data);
 
-        console.debug('[ES] [notification] Loaded count (' + unreadCount + ') in '+(new Date().getTime()-now)+'ms');
+        console.debug('[ES] [notification] Loaded count (' + unreadCount + ') in '+(Date.now()-now)+'ms');
         deferred.resolve(data);
       })
       .catch(deferred.reject);

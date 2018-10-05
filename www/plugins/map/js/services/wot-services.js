@@ -196,7 +196,7 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
 
     // Resolve missing positions by addresses (only if google API enable)
     if (searchAddressItems.length) {
-      var now = new Date().getTime();
+      var now = Date.now();
       console.debug('[map] [wot] Search positions of {0} addresses...'.format(searchAddressItems.length));
       var counter = 0;
 
@@ -217,7 +217,7 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
           .catch(function() {/*silent*/}));
       }, []))
         .then(function(){
-          console.debug('[map] [wot] Resolved {0}/{1} addresses in {2}ms'.format(counter, searchAddressItems.length, new Date().getTime()-now));
+          console.debug('[map] [wot] Resolved {0}/{1} addresses in {2}ms'.format(counter, searchAddressItems.length, Date.now()-now));
           return items;
         });
     }

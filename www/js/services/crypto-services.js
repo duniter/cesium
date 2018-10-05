@@ -793,7 +793,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
 
     ionicReady().then(function() {
       console.debug('[crypto] Starting...');
-      var now = new Date().getTime();
+      var now = Date.now();
 
       var serviceImpl;
 
@@ -815,7 +815,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         })
         .then(function() {
           service.copy(serviceImpl);
-          console.debug('[crypto] Loaded \'{0}\' implementation in {1}ms'.format(service.id, new Date().getTime() - now));
+          console.debug('[crypto] Loaded \'{0}\' implementation in {1}ms'.format(service.id, Date.now() - now));
         });
 
     });
@@ -1358,7 +1358,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         cypherFieldNames = [cypherFieldNames];
       }
 
-      var now = new Date().getTime();
+      var now = Date.now();
       var issuerBoxPks = {}; // a map used as cache
 
       var jobs = [getBoxKeypair(keypair)];
@@ -1395,7 +1395,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
           }, []));
         })
         .then(function() {
-          console.debug('[ES] [crypto] All record decrypted in ' + (new Date().getTime() - now) + 'ms');
+          console.debug('[ES] [crypto] All record decrypted in ' + (Date.now() - now) + 'ms');
           return records;
         });
 

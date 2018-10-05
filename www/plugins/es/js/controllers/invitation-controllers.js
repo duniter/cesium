@@ -426,7 +426,7 @@ function NewInvitationModalController($scope, $q, Modals, UIUtils, csWallet, esH
         var confirm = res && res[1];
         if (!keypair || !confirm) return;
         UIUtils.loading.show();
-        var time = esHttp.date.now(); // use same date for each invitation
+        var time = moment().utc().unix(); // use same date for each invitation
         var comment = $scope.formData.useComment && $scope.formData.comment && $scope.formData.comment.trim();
         return $q.all(
           $scope.recipients.reduce(function (res, recipient) {

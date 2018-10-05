@@ -383,7 +383,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
         if (isLogin() && settings.rememberMe) {
 
-          var now = new Date().getTime();
+          var now = Date.now();
           console.debug("[wallet] Storing...");
 
           var jobs = [];
@@ -409,7 +409,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
           return $q.all(jobs)
             .then(function() {
-              console.debug("[wallet] Stored in "+ (new Date().getTime() - now) +"ms");
+              console.debug("[wallet] Stored in "+ (Date.now() - now) +"ms");
             });
         }
         else {
@@ -706,7 +706,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
             .catch(function(err){
               // Special case for currency init (root block not exists): use now
               if (err && err.ucode == BMA.errorCodes.BLOCK_NOT_FOUND && blockNumber === 0) {
-                data.sigDate = Math.trunc(new Date().getTime() / 1000);
+                data.sigDate = moment().utc().unix();
               }
               else {
                 throw err;
@@ -2220,7 +2220,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       options.restore =  angular.isDefined(options.restore) ? options.restore : (id === 'default');
 
       console.debug('[wallet] Starting...');
-      var now = new Date().getTime();
+      var now = Date.now();
 
       startPromise = $q.all([
           csSettings.ready()
@@ -2238,7 +2238,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       startPromise.then(function() {
           addListeners();
 
-          console.debug('[wallet] Started in ' + (new Date().getTime() - now) + 'ms');
+          console.debug('[wallet] Started in ' + (Date.now() - now) + 'ms');
 
           started = true;
           startPromise = null;

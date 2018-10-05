@@ -158,7 +158,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
       console.debug('[currency] Received new block [' + block.number + '-' + block.hash + ']');
 
       data.currentBlock = block;
-      data.currentBlock.receivedAt = Math.trunc(new Date().getTime() / 1000);
+      data.currentBlock.receivedAt = moment().utc().unix();
 
       data.medianTime = block.medianTime;
       data.membersCount = block.membersCount;
@@ -206,7 +206,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
 
     function start() {
       console.debug('[currency] Starting...');
-      var now = new Date().getTime();
+      var now = Date.now();
 
       startPromise = BMA.ready()
 
@@ -217,7 +217,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
         .then(function() {
           addListeners();
 
-          console.debug('[currency] Started in ' + (new Date().getTime() - now) + 'ms');
+          console.debug('[currency] Started in ' + (Date.now() - now) + 'ms');
 
           started = true;
           startPromise = null;
@@ -240,7 +240,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
 
         .then(function(currentBlock) {
 
-          var now = Math.trunc(new Date().getTime() / 1000);
+          var now = moment().utc().unix();
 
           if (cache) {
             if (currentBlock && (now - currentBlock.receivedAt) < 60/*1min*/) {
@@ -258,7 +258,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
             .catch(function(err){
               // Special case for currency init (root block not exists): use fixed values
               if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
-                return {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH, medianTime: Math.trunc(new Date().getTime() / 1000)};
+                return {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH, medianTime: moment().utc().unix()};
               }
               throw err;
             })
@@ -284,7 +284,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
 
     // Get time in second (UTC - medianTimeOffset)
     function getDateNow() {
-      return Math.trunc(new Date().getTime() / 1000) - (data.medianTimeOffset || constants.WELL_KNOWN_CURRENCIES.g1.medianTimeOffset);
+      return moment().utc().unix() - (data.medianTimeOffset || constants.WELL_KNOWN_CURRENCIES.g1.medianTimeOffset);
     }
 
     // TODO register new block event, to get new UD value

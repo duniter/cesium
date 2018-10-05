@@ -163,7 +163,7 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
               var keypair = res[0];
               var confirm = res[1];
               if (!confirm) return;
-              var time = esHttp.date.now(); // use same date for each invitation
+              var time = moment().utc().unix(); // use same date for each invitation
               return $q.all(
                 identities.reduce(function(res, identity){
                   return res.concat(
@@ -225,7 +225,7 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
               var keypair = res && res[0];
               var confirm = res && res[1];
               if (!keypair || !confirm) return;
-              var time = esHttp.date.now(); // use same date for each invitation
+              var time = moment().utc().unix(); // use same date for each invitation
               return $q.all(identities.reduce(function(res, identity){
                 return res.concat(
                   esInvitation.send({

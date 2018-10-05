@@ -721,13 +721,13 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
             data.expertMode = angular.isDefined(options.expertMode) ? options.expertMode : data.expertMode;
             data.timeout = angular.isDefined(options.timeout) ? options.timeout : csConfig.timeout;
             console.info('[network] Starting network from [{0}]'.format(bma.server));
-            var now = new Date().getTime();
+            var now = Date.now();
 
             addListeners();
 
             return loadPeers()
               .then(function(peers){
-                console.debug('[network] Started in '+(new Date().getTime() - now)+'ms');
+                console.debug('[network] Started in '+(Date.now() - now)+'ms');
                 return peers;
               });
           });

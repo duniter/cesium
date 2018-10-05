@@ -49,6 +49,7 @@
     "NO_ACCOUNT_QUESTION": "¿Todavía no es miembro? ¡Crear una cuenta!",
     "SEARCH_NO_RESULT": "Ningún resultado encontrado",
     "LOADING": "Espere por favor...",
+    "LOADING_WAIT": "Espere por favor...<br/><small>(Esperando disponibilidad de nodo)</small>",
     "SEARCHING": "Búsqueda en proceso...",
     "FROM": "De",
     "TO": "A",

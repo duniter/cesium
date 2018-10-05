@@ -192,7 +192,7 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
     function start() {
       if (startPromise) return startPromise;
 
-      var now = new Date().getTime();
+      var now = Date.now();
 
       // Use Cordova secure storage plugin
       if (isDevice) {
@@ -207,7 +207,7 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
 
       return startPromise
         .then(function() {
-          console.debug('[storage] Started in ' + (new Date().getTime() - now) + 'ms');
+          console.debug('[storage] Started in ' + (Date.now() - now) + 'ms');
           started = true;
           startPromise = null;
         });

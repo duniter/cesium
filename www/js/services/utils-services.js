@@ -138,6 +138,23 @@ angular.module('cesium.utils.services', [])
     return $ionicLoading.show(options);
   }
 
+  function updateLoading(options) {
+    return $ionicLoading._getLoader().then(function(loader) {
+      if (!loader || !loader.isShown) return;
+      // Translate template (if exists)
+      if (options && options.template) {
+        return $translate(options && options.template)
+          .then(function(template) {
+            options.template = template;
+            return loader;
+          });
+      }
+    })
+      .then(function(loader) {
+        if (loader && loader.isShown) return showLoading(options);
+      });
+  }
+
   function showToast(message, duration, position) {
     duration = duration || 'short';
     position = position || 'bottom';
@@ -741,7 +758,8 @@ angular.module('cesium.utils.services', [])
     },
     loading: {
       show: showLoading,
-      hide: hideLoading
+      hide: hideLoading,
+      update: updateLoading
     },
     toast: {
       show: showToast

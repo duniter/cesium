@@ -164,11 +164,13 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       if (self.delegate.readyState == 3) {
         return $q.reject('Unable to connect to websocket ['+self.delegate.url+']');
       }
-      console.debug('[http] Waiting websocket ['+self.path+'] opening...');
 
       if (self.waitDuration >= timeout) {
         console.debug("[http] Will retry openning websocket later...");
         self.waitRetryDelay = 2000; // 2 seconds
+      }
+      else {
+        console.debug('[http] Waiting websocket ['+self.path+'] opening...');
       }
 
       return $timeout(function(){
@@ -198,7 +200,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
           self.delegate.onopen = function(e) {
             console.debug('[http] Listening on websocket ['+self.path+']...');
             sockets.push(self);
-            self.delegate.openTime = new Date().getTime();
+            self.delegate.openTime = Date.now();
           };
           self.delegate.onclose = function() {
 
@@ -215,7 +217,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
             // If unexpected close event, reopen the socket (fix #535)
             else {
-              console.debug('[http] Unexpected close of websocket ['+path+'] (open '+ (new Date().getTime() - self.delegate.openTime) +'ms ago): re-opening...');
+              console.debug('[http] Unexpected close of websocket ['+path+'] (open '+ (Date.now() - self.delegate.openTime) +'ms ago): re-opening...');
 
               self.delegate = null;
 
@@ -376,7 +378,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
   // Get time in second (UTC)
   function getDateNow() {
-    return Math.trunc(new Date().getTime() / 1000);
+    return moment().utc().unix();
   }
 
   function isPositiveInteger(x) {

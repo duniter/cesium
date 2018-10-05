@@ -49,6 +49,7 @@
     "NO_ACCOUNT_QUESTION": "Not a member yet? Register now!",
     "SEARCH_NO_RESULT": "No result found",
     "LOADING": "Loading...",
+    "LOADING_WAIT": "Loading...<br/><small>(Waiting for node availability)</small>",
     "SEARCHING": "Searching...",
     "FROM": "From",
     "TO": "To",

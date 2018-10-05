@@ -143,7 +143,7 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
 
   $scope.load = function() {
     // Load data from node
-    var data = {}, M, lastUDTime, now = new Date().getTime();
+    var data = {}, M, lastUDTime, now = Date.now();
     return $q.all([
 
       // Get the currency parameters
@@ -186,7 +186,7 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
           if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
             M = 0;
             data.N = 0;
-            data.medianTime = Math.trunc(new Date().getTime() / 1000);
+            data.medianTime = moment().utc().unix();
             data.difficulty  = 0;
             data.blockUid = null;
             return;
@@ -232,7 +232,7 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
       // Apply to formData
       angular.extend($scope.formData, data);
 
-      console.debug("[currency] Parameters loaded in " + (new Date().getTime() - now) + 'ms' );
+      console.debug("[currency] Parameters loaded in " + (Date.now() - now) + 'ms' );
       $scope.loading = false;
       $scope.$broadcast('$$rebind::' + 'rebind'); // force bind of currency name
 

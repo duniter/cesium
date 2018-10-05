@@ -92,7 +92,7 @@ angular.module('cesium.es.crypto.services', ['ngResource', 'cesium.services'])
       cypherFieldNames = [cypherFieldNames];
     }
 
-    var now = new Date().getTime();
+    var now = Date.now();
     var issuerBoxPks = {}; // a map used as cache
 
     var jobs = [getBoxKeypair(keypair)];
@@ -129,7 +129,7 @@ angular.module('cesium.es.crypto.services', ['ngResource', 'cesium.services'])
         }, []));
       })
       .then(function() {
-        console.debug('[ES] [crypto] All record decrypted in ' + (new Date().getTime() - now) + 'ms');
+        console.debug('[ES] [crypto] All record decrypted in ' + (Date.now() - now) + 'ms');
         return records;
       });
 

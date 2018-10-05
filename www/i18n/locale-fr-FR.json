@@ -49,6 +49,7 @@
     "NO_ACCOUNT_QUESTION": "Pas de encore membre ? Créer un compte !",
     "SEARCH_NO_RESULT": "Aucun résultat trouvé",
     "LOADING": "Veuillez patienter...",
+    "LOADING_WAIT": "Veuillez patienter...<br/><small>(Attente de disponibilité du noeud)</small>",
     "SEARCHING": "Recherche en cours...",
     "FROM": "De",
     "TO": "À",

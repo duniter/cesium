@@ -851,7 +851,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
 
     fromTime = fromTime ||
       ($scope.formData.tx.fromTime - csSettings.data.walletHistoryTimeSecond) ||
-      (Math.trunc(new Date().getTime() / 1000) - 2 * csSettings.data.walletHistoryTimeSecond);
+      (moment().utc().unix()- 2 * csSettings.data.walletHistoryTimeSecond);
 
     UIUtils.loading.show();
     return wallet.refreshData({tx: {enable: true,fromTime: fromTime}})

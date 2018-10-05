@@ -88,7 +88,7 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
 
       query.addressdetails = 1; // need address field
 
-      var now = new Date();
+      var now = Date.now();
       //console.debug('[ES] [geo] Searching position...', query);
 
       return that.raw.osm.search(query)
@@ -116,7 +116,7 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
             });
           }, []);
 
-          console.debug('[ES] [geo] Found {0} address position(s)'.format(res && res.length || 0, new Date().getTime() - now.getTime()), res);
+          console.debug('[ES] [geo] Found {0} address position(s)'.format(res && res.length || 0, Date.now() - now), res);
 
           return res.length ? res : undefined;
         })
@@ -156,7 +156,7 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
 
       return that.raw.freegeoip.search({ip: ip})
         .then(function(res) {
-          //console.debug('[ES] [geo] Found IP {0} position in {0}ms'.format(res ? 1 : 0, new Date().getTime() - now.getTime()));
+          //console.debug('[ES] [geo] Found IP {0} position in {0}ms'.format(res ? 1 : 0, Date.now() - now.getTime()));
           return res ? {
             lat: res.latitude,
             lng: res.longitude

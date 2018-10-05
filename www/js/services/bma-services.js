@@ -2,7 +2,7 @@
 
 angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.settings.services'])
 
-.factory('BMA', function($q, $window, $rootScope, $timeout, csCrypto, Api, Device, csConfig, csSettings, csHttp) {
+.factory('BMA', function($q, $window, $rootScope, $timeout, csCrypto, Api, Device, UIUtils, csConfig, csSettings, csHttp) {
   'ngInject';
 
   function BMA(host, port, useSsl, useCache) {
@@ -64,7 +64,6 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       listeners,
       that = this;
 
-    that.date = {now: csHttp.date.now};
     that.api = new Api(this, 'BMA-' + that.server);
     that.started = false;
     that.init = init;
@@ -143,14 +142,14 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       cacheTime = that.useCache && cacheTime;
       var cacheKey = path + (cacheTime ? ('#'+cacheTime) : '');
 
-      var getRequest = function(params) {
+      var getRequestFn = function(params) {
 
         if (!that.started) {
           if (!that._startPromise) {
             console.error('[BMA] Trying to get [{0}] before start()...'.format(path));
           }
           return that.ready().then(function() {
-            return getRequest(params);
+            return getRequestFn(params);
           });
         }
 
@@ -164,10 +163,30 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           }
           that.cache.getByPath[cacheKey] = request;
         }
-        return request(params);
+        var execCount = 1;
+        return request(params)
+          .catch(function(err){
+            // If node return too many requests error
+            if (err && err.ucode == exports.errorCodes.HTTP_LIMITATION) {
+              // If max number of retry not reach
+              if (execCount <= exports.constants.LIMIT_REQUEST_COUNT) {
+                if (execCount == 1) {
+                  console.warn("[BMA] Too many HTTP requests: Will wait then retry...");
+                  // Update the loading message (if exists)
+                  UIUtils.loading.update({template: "COMMON.LOADING_WAIT"});
+                }
+                // Wait 1s then retry
+                return $timeout(function() {
+                  execCount++;
+                  return request(params);
+                }, exports.constants.LIMIT_REQUEST_DELAY);
+              }
+            }
+            throw err;
+          });
       };
 
-      return getRequest;
+      return getRequestFn;
     };
 
     post = function(path) {
@@ -280,7 +299,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         console.debug('[BMA] Starting [{0}]...'.format(that.server));
       }
 
-      var now = new Date().getTime();
+      var now = Date.now();
 
       that._startPromise = $q.all([
           csSettings.ready,
@@ -299,7 +318,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           if (!listeners || listeners.length === 0) {
             addListeners();
           }
-          console.debug('[BMA] Started in '+(new Date().getTime()-now)+'ms');
+          console.debug('[BMA] Started in '+(Date.now()-now)+'ms');
 
           that.api.node.raise.start();
           that.started = true;
@@ -633,10 +652,10 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
      * @param blockNumbers a rray of block number
      */
     exports.network.peering.peersByLeaves = function(leaves){
-      return exports.raw.getHttpRecursive(exports.network.peering.peers, 'leaf', leaves, 0, 10, callbackFlush);
+      return exports.raw.getHttpRecursive(exports.network.peering.peers, 'leaf', leaves, 0, 10);
     };
 
-    exports.raw.getHttpRecursive = function(httpGetRequest, paramName, paramValues, offset, size, callbackFlush) {
+    exports.raw.getHttpRecursive = function(httpGetRequest, paramName, paramValues, offset, size) {
       offset = angular.isDefined(offset) ? offset : 0;
       size = size || exports.constants.LIMIT_REQUEST_COUNT;
       return $q(function(resolve, reject) {

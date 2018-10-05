@@ -576,7 +576,7 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, csWallet, esHt
       recipient: $scope.formData.destPub,
       title: $scope.formData.title,
       content: $scope.formData.content,
-      time: esHttp.date.now()
+      time: moment().utc().unix()
     };
 
     esMessage.send(data, {wallet: wallet})

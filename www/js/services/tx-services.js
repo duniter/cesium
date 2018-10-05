@@ -133,8 +133,8 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           var udHistory = [];
           var txPendings = [];
 
-          var nowInSec = Math.trunc(new Date().getTime() / 1000); // TODO test to replace using moment().utc().unix()
-          fromTime = fromTime || (nowInSec - csSettings.data.walletHistoryTimeSecond);
+          var nowInSec = moment().utc().unix();
+          fromTime = fromTime || fromTime || (nowInSec - csSettings.data.walletHistoryTimeSecond);
           var processedTxMap = {};
           var tx = {};
 
@@ -149,67 +149,72 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             // get current block
             csCurrency.blockchain.current(true),
 
-            // get pendings history
+            // get pending tx
             BMA.tx.history.pending({pubkey: pubkey})
               .then(_reduceTx)
           ];
 
           // get TX history since
-          if (fromTime > 0) {
-            var sliceTime = csSettings.data.walletHistorySliceSecond;
-            fromTime = fromTime - (fromTime % sliceTime);
-            for(var i = fromTime; i - sliceTime < nowInSec; i += sliceTime)  {
-              jobs.push(BMA.tx.history.times({pubkey: pubkey, from: i, to: i+sliceTime-1})
+          if (fromTime !== 'pending') {
+
+            // get TX from a given time
+            if (fromTime > 0) {
+              // Use slice, to be able to cache requests result
+              var sliceTime = csSettings.data.walletHistorySliceSecond;
+              fromTime = fromTime - (fromTime % sliceTime);
+              for(var i = fromTime; i - sliceTime < nowInSec; i += sliceTime)  {
+                jobs.push(BMA.tx.history.times({pubkey: pubkey, from: i, to: i+sliceTime-1})
+                  .then(_reduceTx)
+                );
+              }
+
+              jobs.push(BMA.tx.history.timesNoCache({pubkey: pubkey, from: nowInSec - (nowInSec % sliceTime), to: nowInSec+999999999})
+                .then(_reduceTx));
+            }
+
+            // get all TX
+            else {
+              jobs.push(BMA.tx.history.all({pubkey: pubkey})
                 .then(_reduceTx)
               );
             }
 
-            jobs.push(BMA.tx.history.timesNoCache({pubkey: pubkey, from: nowInSec - (nowInSec % sliceTime), to: nowInSec+999999999})
-              .then(_reduceTx));
-          }
-
-          // get all TX
-          else if (fromTime !== 'pending') {
-            jobs.push(BMA.tx.history.all({pubkey: pubkey})
-              .then(_reduceTx)
-            );
-          }
-
-          // get UD history
-          if (csSettings.data.showUDHistory && fromTime > 0) {
-            /*jobs.push(
-              BMA.ud.history({pubkey: pubkey})
-                .then(function(res){
-                  udHistory = !res.history || !res.history.history ? [] :
-                    res.history.history.reduce(function(res, ud){
-                      if (ud.time < fromTime) return res; // skip to old UD
-                      var amount = powBase(ud.amount, ud.base);
-                      return res.concat({
-                        time: ud.time,
-                        amount: amount,
-                        isUD: true,
-                        block_number: ud.block_number
-                      });
-                    }, []);
-                }));*/
-            // API extension
-            jobs.push(
-              api.data.raisePromise.loadUDs({
-                pubkey: pubkey,
-                fromTime: fromTime
-              })
-                .then(function(res) {
-                  if (!res || !res.length) return;
-                  udHistory = res.reduce(function(res, hits) {
-                    return res.concat(hits);
-                  }, udHistory);
+            // get UD history
+            if (csSettings.data.showUDHistory && fromTime > 0) {
+              /*jobs.push(
+                BMA.ud.history({pubkey: pubkey})
+                  .then(function(res){
+                    udHistory = !res.history || !res.history.history ? [] :
+                      res.history.history.reduce(function(res, ud){
+                        if (ud.time < fromTime) return res; // skip to old UD
+                        var amount = powBase(ud.amount, ud.base);
+                        return res.concat({
+                          time: ud.time,
+                          amount: amount,
+                          isUD: true,
+                          block_number: ud.block_number
+                        });
+                      }, []);
+                  }));*/
+              // API extension
+              jobs.push(
+                api.data.raisePromise.loadUDs({
+                  pubkey: pubkey,
+                  fromTime: fromTime
                 })
+                  .then(function(res) {
+                    if (!res || !res.length) return;
+                    udHistory = res.reduce(function(res, hits) {
+                      return res.concat(hits);
+                    }, udHistory);
+                  })
 
-                .catch(function(err) {
-                  console.debug('Error while loading UDs history, on extension point.');
-                  console.error(err);
-                })
-              );
+                  .catch(function(err) {
+                    console.debug('Error while loading UDs history, on extension point.');
+                    console.error(err);
+                  })
+                );
+            }
           }
 
           // Execute jobs
@@ -281,7 +286,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
       },
 
       loadData = function(pubkey, fromTime) {
-        var now = new Date().getTime();
+        var now = Date.now();
 
         var data = {};
         return $q.all([
@@ -363,14 +368,14 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             return csWot.extendAll((data.tx.history || []).concat(data.tx.validating||[]).concat(data.tx.pendings||[]), 'pubkey');
           })
           .then(function() {
-            console.debug('[tx] TX and sources loaded in '+ (new Date().getTime()-now) +'ms');
+            console.debug('[tx] TX and sources loaded in '+ (Date.now()-now) +'ms');
             return data;
           });
-      },
+    },
 
-      loadSources = function(pubkey) {
-        return loadData(pubkey, 'pending');
-      };
+    loadSources = function(pubkey) {
+      return loadData(pubkey, 'pending');
+    };
 
     // Download TX history file
     downloadHistoryFile = function(pubkey, options) {

@@ -122,7 +122,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
 
   // Load settings
   function loadSettings(pubkey, boxKeypair) {
-    var now = new Date().getTime();
+    var now = Date.now();
     return that.get({id: pubkey})
         .catch(function(err){
           if (err && err.ucode && err.ucode == 404) {
@@ -139,7 +139,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
         var record = res._source;
         // Do not apply if same version
         if (record.time === csSettings.data.time) {
-          console.debug('[ES] [settings] Loaded in '+ (new Date().getTime()-now) +'ms, but already up to date');
+          console.debug('[ES] [settings] Loaded in '+ (Date.now()-now) +'ms, but already up to date');
           return;
         }
         var nonce = CryptoUtils.util.decode_base58(record.nonce);
@@ -148,7 +148,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
           .then(function(json) {
             var settings = JSON.parse(json || '{}');
             settings.time = record.time;
-            console.debug('[ES] [settings] Loaded and decrypted in '+ (new Date().getTime()-now) +'ms');
+            console.debug('[ES] [settings] Loaded and decrypted in '+ (Date.now()-now) +'ms');
             return settings;
           })
           // if error: skip stored content
@@ -250,7 +250,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
       return storeSettingsLocally();
     }
 
-    var time = esHttp.date.now(); // always update time
+    var time = moment().utc().unix(); // always update time
     console.debug('[ES] [settings] Saving user settings remotely...');
 
     return $q.all([
@@ -297,7 +297,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
         // Update settings version, then store (on local store only)
         data.time = time;
         previousRemoteData = filteredData;
-        console.debug('[ES] [settings] Saved user settings remotely in ' + (esHttp.date.now() - time) + 'ms');
+        console.debug('[ES] [settings] Saved user settings remotely in ' + (moment().utc().unix() - time) + 'ms');
         return storeSettingsLocally();
       })
       .catch(function(err) {

@@ -134,7 +134,7 @@ function ESBlockLookupController($scope, $controller, $ionicPopover, $location, 
       promise = esBlockchain.block.searchText($scope.currency, $scope.search.query, request);
     }
 
-    var time = new Date().getTime();
+    var now = Date.now();
     return promise
       .then(function(result) {
         // Apply transformation need by UI (e.g add avatar and name...)
@@ -146,7 +146,7 @@ function ESBlockLookupController($scope, $controller, $ionicPopover, $location, 
       .then(function(result) {
         $scope.showPubkey = ($scope.search.sort == 'issuer');
         // Compute time only once (on first page)
-        $scope.search.took = (from === 0) ? (new Date().getTime() - time) : $scope.search.took;
+        $scope.search.took = (from === 0) ? (Date.now() - now) : $scope.search.took;
         // Keep previous total, when already computed (because of current, that is excluded only in the first page)
         var total = (from === 0) ? result.total : $scope.search.total;
         $scope.doDisplayResult(result.hits, from, total);

@@ -218,7 +218,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   },
 
   restore = function() {
-    var now = new Date().getTime();
+    var now = Date.now();
 
     return $q.all([
         localStorage.getObject(constants.OLD_STORAGE_KEY), // for version < v1.1
@@ -239,7 +239,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
           // Apply stored data
           applyData(storedData);
 
-          console.debug('[settings] Loaded from local storage in '+(new Date().getTime()-now)+'ms');
+          console.debug('[settings] Loaded from local storage in '+(Date.now()-now)+'ms');
           emitChangedEvent();
         });
   },

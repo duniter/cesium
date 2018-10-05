@@ -52,7 +52,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
         return deferred.promise;
       }
 
-      var now = new Date().getTime();
+      var now = Date.now();
       var time = Math.trunc(now / 1000);
 
       // Skip if loaded less than 1 min ago
@@ -71,7 +71,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
           data.messages = data.messages || {};
           data.messages.unreadCount = unreadCount;
           data.messages.time = time;
-          console.debug('[ES] [message] Loaded count (' + unreadCount + ') in '+(new Date().getTime()-now)+'ms');
+          console.debug('[ES] [message] Loaded count (' + unreadCount + ') in '+(Date.now()-now)+'ms');
           deferred.resolve(data);
         })
         .catch(function(err){
@@ -329,7 +329,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
 
     function decryptMessages(messages, keypair, withSummary) {
 
-      var now = new Date().getTime();
+      var now = Date.now();
       var issuerBoxPks = {}; // a map used as cache
 
       var jobs = [esWallet.box.getKeypair(keypair)];
@@ -380,7 +380,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
           }, []));
         })
         .then(function() {
-          console.debug('[ES] [message] All messages decrypted in ' + (new Date().getTime() - now) + 'ms');
+          console.debug('[ES] [message] All messages decrypted in ' + (Date.now() - now) + 'ms');
           return messages;
         });
 
@@ -592,7 +592,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       console.info("[ES] [message] Sending logs to developers...");
       message.issuer = csWallet.data.pubkey;
       message.title = message.title || 'Sending log';
-      message.time = esHttp.date.now();
+      message.time = moment().utc().unix();
 
       csWallet.getKeypair()
         .then(function(keypair) {

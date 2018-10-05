@@ -1112,7 +1112,7 @@ function WotIdentityTxViewController($scope, $timeout, $q, BMA, csSettings, csWo
 
     fromTime = fromTime ||
       ($scope.formData.tx.fromTime - csSettings.data.walletHistoryTimeSecond) ||
-      (Math.trunc(new Date().getTime() / 1000) - 2 * csSettings.data.walletHistoryTimeSecond);
+      (moment().utc().unix() - 2 * csSettings.data.walletHistoryTimeSecond);
 
     UIUtils.loading.show();
     return csTx.load($scope.pubkey, fromTime)

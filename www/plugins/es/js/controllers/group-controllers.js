@@ -381,7 +381,7 @@ function ESGroupEditController($scope, esGroup, UIUtils, $state, $q, Device,
 
       .then(function(){
         var json = $scope.formData;
-        json.time = esHttp.date.now();
+        json.time = moment().utc().unix();
 
         // Resize pictures
         json.picturesCount = $scope.pictures.length;
@@ -411,7 +411,7 @@ function ESGroupEditController($scope, esGroup, UIUtils, $state, $q, Device,
       .then(function(json){
         // Create
         if (!$scope.id) {
-          json.creationTime = esHttp.date.now();
+          json.creationTime = moment().utc().unix();
           return esGroup.record.add(json);
         }
         // Update
