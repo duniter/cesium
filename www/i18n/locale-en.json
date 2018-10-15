@@ -727,6 +727,7 @@
     "LOAD_NEWCOMERS_FAILED": "Unable to load new members.",
     "LOAD_PENDING_FAILED": "Unable to load pending registrations.",
     "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "You must <b>be a member</b> in order to perform this action.",
+    "ONLY_MEMBER_OR_WAS_MEMBER_CAN_EXECUTE_THIS_ACTION": "You must <b>be a member (or old member)</b> in order to perform this action.",
     "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "You must have <b>published your identity</b> in order to perform this action.",
     "GET_BLOCK_FAILED": "Error while getting block",
     "INVALID_BLOCK_HASH": "Block not found (incorrect hash)",

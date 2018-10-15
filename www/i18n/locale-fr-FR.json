@@ -727,6 +727,7 @@
     "LOAD_NEWCOMERS_FAILED": "Échec du chargement des nouveaux membres.",
     "LOAD_PENDING_FAILED": "Échec du chargement des inscriptions en attente.",
     "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "Vous devez <b>être membre</b> pour pouvoir effectuer cette action.",
+    "ONLY_MEMBER_OR_WAS_MEMBER_CAN_EXECUTE_THIS_ACTION": "Vous devez <b>être membre (ou ancien membre)</b> pour pouvoir effectuer cette action.",
     "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "Vous devez avoir <b>publié votre identité</b> pour pouvoir effectuer cette action.",
     "GET_BLOCK_FAILED": "Échec de la récupération du bloc",
     "INVALID_BLOCK_HASH": "Bloc non trouvé (hash différent)",
