@@ -224,10 +224,14 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       })
       .catch(function(err) {
         if (err == 'CANCELLED') throw err;
-        if (err && err.ucode != BMA.errorCodes.MEMBERSHIP_ALREADY_SEND) return;
+        if (err && err.ucode != BMA.errorCodes.MEMBERSHIP_ALREADY_SEND) {
+          console.error("[wallet] Node: already membership", err);
+          UIUtils.loading.hide();
+          return; // OK
+        }
         if (!retryCount || retryCount <= 2) {
           return $timeout(function() {
-            $scope.doMembershipIn(retryCount ? retryCount+1 : 1);
+            return $scope.doMembershipIn((retryCount||0) + 1);
           }, 1000);
         }
         throw err;
@@ -337,16 +341,22 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
    */
   $scope.renewMembership = function(confirm) {
 
+    // Make sure user is (or was) a member
     if (!wallet.isMember() && !$scope.formData.requirements.wasMember) {
       return UIUtils.alert.error("ERROR.ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION");
     }
+
+    // If renew is not need, ask confirmation
     if (!confirm && !$scope.formData.requirements.needRenew) {
       return $translate("CONFIRM.NOT_NEED_RENEW_MEMBERSHIP", {membershipExpiresIn: $scope.formData.requirements.membershipExpiresIn})
         .then(function(message) {
           return UIUtils.alert.confirm(message);
         })
         .then(function(confirm) {
-          if (confirm) $scope.renewMembership(true); // loop with confirm
+          if (confirm) {
+            // loop with confirm
+            return $scope.renewMembership(true);
+          }
         });
     }
 
