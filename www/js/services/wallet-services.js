@@ -335,7 +335,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     },
 
     hasSelf = function() {
-      return !!data.pubkey && data.requirements && !data.requirements.needSelf;
+      return !!data.pubkey && !data.requirements.needSelf;
     },
 
     isDataLoaded = function(options) {
