@@ -1,5 +1,5 @@
 
-function Notification(json, markAsReadCallback) {
+function EsNotification(json, markAsReadCallback) {
 
   var messagePrefixes = {
     'registry': 'EVENT.REGISTRY.'
@@ -115,4 +115,6 @@ function Notification(json, markAsReadCallback) {
     that.avatarIcon = 'ion-close';
     that.icon = 'ion-close-circled assertive';
   }
+
+  return that;
 }

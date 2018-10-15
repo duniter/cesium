@@ -108,7 +108,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
     function onNewMessageEvent(event) {
       console.debug("[ES] [message] detected new message (from notification service)");
 
-      var notification = new Notification(event);
+      var notification = new EsNotification(event);
       notification.issuer = notification.pubkey;
       delete notification.pubkey;
 

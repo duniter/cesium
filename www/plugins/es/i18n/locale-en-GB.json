@@ -10,6 +10,10 @@
     "BTN_PICTURE_FAVORISE": "Default",
     "BTN_PICTURE_ROTATE": "Rotate",
     "BTN_ADD_PICTURE": "Add picture",
+    "NOTIFICATION": {
+      "TITLE": "New notification | {{'COMMON.APP_NAME'|translate}}",
+      "HAS_UNREAD": "You have {{count}} unread notification{{count>0?'s':''}}"
+    },
     "NOTIFICATIONS": {
       "TITLE": "Notifications",
       "MARK_ALL_AS_READ": "Mark all as read",

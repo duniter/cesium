@@ -10,6 +10,10 @@
     "BTN_PICTURE_FAVORISE": "Principale",
     "BTN_PICTURE_ROTATE": "Tourner",
     "BTN_ADD_PICTURE": "Ajouter une photo",
+    "NOTIFICATION": {
+      "TITLE": "Nouvelle notification | {{'COMMON.APP_NAME'|translate}}",
+      "HAS_UNREAD": "Vous avez {{count}} notification{{count>0?'s':''}} non lue{{count>0?'s':''}}"
+    },
     "NOTIFICATIONS": {
       "TITLE": "Notifications",
       "MARK_ALL_AS_READ": "Tout marquer comme lu",
