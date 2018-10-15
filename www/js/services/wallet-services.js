@@ -1188,6 +1188,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           return createAndSendTx(currency, block, keypair, destPub, amount, inputs, comments, restPub||data.pubkey, logs)
             .then(function(res) {
               data.balance -= res.amount;
+              if (data.balance < 0) data.balance = 0; // fix #712
               _.forEach(inputs.sources, function(source) {
                 source.consumed=true;
               });
