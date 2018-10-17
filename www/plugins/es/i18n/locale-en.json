@@ -230,7 +230,7 @@
     "MY_PAGES": "My pages",
     "NO_PAGE": "No page",
     "SEARCH": {
-      "TITLE": "Professional Directory",
+      "TITLE": "Pages",
       "SEARCH_HELP": "What, Who: hairdresser, Lili's restaurant, ...",
       "BTN_ADD": "New",
       "BTN_LAST_RECORDS": "Recent pages",
@@ -257,7 +257,7 @@
       "REMOVE_CONFIRMATION" : "Are you sure you want to delete this reference?<br/><br/>This is irreversible."
     },
     "TYPE": {
-      "TITLE": "New reference",
+      "TITLE": "New page",
       "SELECT_TYPE": "Kind of organization:",
       "ENUM": {
         "SHOP": "Local shops",
@@ -268,7 +268,7 @@
     },
     "EDIT": {
       "TITLE": "Edit",
-      "TITLE_NEW": "New reference",
+      "TITLE_NEW": "New page",
       "RECORD_TYPE":"Kind of organization",
       "RECORD_TITLE": "Name",
       "RECORD_TITLE_HELP": "Name",
@@ -354,7 +354,7 @@
     "DISTANCE": "Maximum distance around the city",
     "DISTANCE_UNIT": "mi",
     "DISTANCE_OPTION": "{{value}} {{'LOCATION.DISTANCE_UNIT'|translate}}",
-    "SEARCH_HELP": "Ville, Country",
+    "SEARCH_HELP": "City, Country",
     "MODAL": {
       "TITLE": "Search address",
       "SEARCH_HELP": "City, Country",
