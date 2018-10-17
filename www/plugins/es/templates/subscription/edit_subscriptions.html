@@ -6,16 +6,13 @@
 
   <ion-nav-buttons side="secondary">
 
-    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="load()">
-    </button>
-
-    <button class="button button-icon button-clear visible-xs visible-sm"
-            ng-click="showActionsPopover($event)">
-      <i class="icon ion-android-more-vertical"></i>
-    </button>
   </ion-nav-buttons>
 
   <ion-content class="padding no-padding-xs" scroll="true">
+
+    <ion-refresher pulling-text="{{:locale:'COMMON.BTN_REFRESH' | translate}}"
+                   on-refresh="load()">
+    </ion-refresher>
 
     <!-- Buttons bar -->
     <div class="hidden-xs hidden-sm padding text-center">
@@ -56,5 +53,10 @@
     </div>
 
   </ion-content>
+
+  <button id="fab-add-subscription-record"
+          class="button button-fab button-fab-bottom-right button-assertive icon ion-plus hidden-md hidden-lg spin"
+          ng-click="addSubscription()">
+  </button>
 
 </ion-view>

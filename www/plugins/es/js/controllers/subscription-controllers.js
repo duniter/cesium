@@ -77,9 +77,13 @@ function ViewSubscriptionsController($scope, $q, $ionicHistory, csWot, csWallet,
           UIUtils.loading.hide();
           return $scope.load();
         })
+        .then(function() {
+          $scope.showFab('fab-add-subscription-record');
+        })
         .catch(function(err){
           if (err == 'CANCELLED') {
             UIUtils.loading.hide(10);
+            $scope.loading=true; // reset for force reload next time
             $ionicHistory.goBack();
             return;
           }

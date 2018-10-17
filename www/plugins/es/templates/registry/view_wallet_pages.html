@@ -4,18 +4,11 @@
     {{'REGISTRY.MY_PAGES' | translate}}
   </ion-nav-title>
 
-  <ion-nav-buttons side="secondary">
-
-    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="load()">
-    </button>
-
-    <button class="button button-icon button-clear visible-xs visible-sm"
-            ng-click="showActionsPopover($event)">
-      <i class="icon ion-android-more-vertical"></i>
-    </button>
-  </ion-nav-buttons>
-
   <ion-content class="padding no-padding-xs" scroll="true">
+
+    <ion-refresher pulling-text="{{:locale:'COMMON.BTN_REFRESH' | translate}}"
+                   on-refresh="doUpdate()">
+    </ion-refresher>
 
     <!-- Buttons bar -->
     <div class="hidden-xs hidden-sm padding text-center">
@@ -44,7 +37,7 @@
   </ion-content>
 
   <button id="fab-wallet-add-registry-record"
-          class="button button-fab button-fab-bottom-right button-assertive hidden-md hidden-lg drop"
+          class="button button-fab button-fab-bottom-right button-assertive hidden-md hidden-lg spin"
           ng-click="showNewPageModal()">
     <i class="icon ion-plus"></i>
   </button>
