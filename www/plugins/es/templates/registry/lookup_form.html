@@ -71,8 +71,7 @@
 
 </form>
 
-<div class="buttons-block padding-top hidden-xs hidden-sm">
-
+<div class="padding-top hidden-xs hidden-sm" style="display: block; height: 60px;">
   <div class="pull-left" >
 
     <a class="button button-text button-small ink "
@@ -109,7 +108,6 @@
   </div>
 </div>
 
-
 <div class="padding-xs" style="display: block; height: 60px;">
   <div class="pull-left ng-hide" ng-show="!search.loading && search.results">
     <ng-if ng-if="search.lastRecords">
@@ -131,7 +129,7 @@
   </div>
 </div>
 
-<div class="center padding" ng-if="search.loading">
+<div class="center" ng-if="search.loading">
   <ion-spinner icon="android"></ion-spinner>
 </div>
 
