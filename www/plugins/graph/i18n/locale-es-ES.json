@@ -9,7 +9,13 @@
       "LINEAR_SCALE" : "Escala lineal",
       "LOGARITHMIC_SCALE" : "Escala logarítmica",
       "BTN_SHOW_STATS": "Ver estadísticas",
-      "BTN_SHOW_DETAILED_STATS": "Estadísticas detalladas"
+      "BTN_SHOW_DETAILED_STATS": "Estadísticas detalladas",
+      "RANGE_DURATION_DIVIDER": "Unidad de paso:",
+      "RANGE_DURATION": {
+        "HOUR": "Grupo por <b>hora</b>",
+        "DAY": "Grupo por <b>día</b>",
+        "MONTH": "Grupo por <b>mes</b>"
+      }
     },
     "ACCOUNT": {
       "INPUT_CHART_TITLE": "Suma del flujo entrante, por el transmisor:",
@@ -27,12 +33,7 @@
       "TX_AMOUNT_LABEL": "Volumen negociado",
       "TX_COUNT_TITLE": "Número de transacciones escritas",
       "TX_COUNT_LABEL": "Número de transacciones",
-      "TX_AVG_BY_BLOCK": "Promedio por bloque",
-      "TX_RANGE_DURATION": {
-        "HOUR": "Grupo por <b>hora</b>",
-        "DAY": "Grupo por <b>día</b>",
-        "MONTH": "Grupo por <b>mes</b>"
-      }
+      "TX_AVG_BY_BLOCK": "Promedio por bloque"
     },
     "CURRENCY": {
       "MONETARY_MASS_TITLE": "Evolución de la masa monetaria",

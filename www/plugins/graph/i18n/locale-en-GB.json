@@ -9,7 +9,13 @@
       "LINEAR_SCALE" : "Linear scale",
       "LOGARITHMIC_SCALE" : "Logarithmic scale",
       "BTN_SHOW_STATS": "See statistics",
-      "BTN_SHOW_DETAILED_STATS": "Detailed statistics"
+      "BTN_SHOW_DETAILED_STATS": "Detailed statistics",
+      "RANGE_DURATION_DIVIDER": "Step unit:",
+      "RANGE_DURATION": {
+        "HOUR": "Group by <b>hour</b>",
+        "DAY": "Group by <b>day</b>",
+        "MONTH": "Group by <b>month</b>"
+      }
     },
     "ACCOUNT": {
       "TITLE": "Statistics",
@@ -35,13 +41,7 @@
       "TX_AMOUNT_LABEL": "Exchange volume",
       "TX_COUNT_TITLE": "Number of written transactions",
       "TX_COUNT_LABEL": "Number of transactions",
-      "TX_AVG_BY_BLOCK": "Average per block",
-      "TX_RANGE_DURATION_DIVIDER": "Step unit:",
-      "TX_RANGE_DURATION": {
-        "HOUR": "Group by <b>hour</b>",
-        "DAY": "Group by <b>day</b>",
-        "MONTH": "Group by <b>month</b>"
-      }
+      "TX_AVG_BY_BLOCK": "Average per block"
     },
     "CURRENCY": {
       "MONETARY_MASS_TITLE": "Evolution of the monetary mass",
@@ -56,6 +56,30 @@
         "BLOCK_COUNT_LABEL": "Computed blocks count",
         "BLOCK_COUNT": "{{count}} blocks",
         "NO_BLOCK": "No block"
+      }
+    },
+    "DOC_STATS": {
+      "TITLE": "Data storage statistics",
+      "USER": {
+        "TITLE": "Number of documents linked to an account",
+        "USER_PROFILE": "User profiles",
+        "USER_SETTINGS": "Saved settings"
+      },
+      "MESSAGE": {
+        "TITLE": "Number of documents related to the communication",
+        "MESSAGE_INBOX": "Messages in inbox",
+        "MESSAGE_OUTBOX": "Messages in outbox",
+        "INVITATION_CERTIFICATION": "Invitations to certify"
+      },
+      "SOCIAL": {
+        "TITLE": "Number of page or group",
+        "PAGE_COMMENT": "Comments",
+        "PAGE_RECORD": "Pages",
+        "GROUP_RECORD": "Groups"
+      },
+      "OTHER": {
+        "TITLE": "Other documents",
+        "HISTORY_DELETE": "Deletion of documents"
       }
     }
   }

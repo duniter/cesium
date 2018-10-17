@@ -9,7 +9,13 @@
        "LINEAR_SCALE" : "Scala lineare",
        "LOGARITHMIC_SCALE" : "Scala logaritmica",
        "BTN_SHOW_STATS": "Vedere le statistiche",
-       "BTN_SHOW_DETAILED_STATS": "Statistiche dettagliate"
+       "BTN_SHOW_DETAILED_STATS": "Statistiche dettagliate",
+       "RANGE_DURATION_DIVIDER": "Unità di tempo :",
+       "RANGE_DURATION": {
+         "HOUR": "Ora",
+         "DAY": "Giorno",
+         "MONTH": "Mese"
+       }
      },
      "ACCOUNT": {
        "TITLE": "Statistiche",
@@ -43,13 +49,7 @@
        "TX_AMOUNT_LABEL": "Volume scambiato",
        "TX_COUNT_TITLE": "Numero di transazioni scritte",
        "TX_COUNT_LABEL": "Numero di transazioni",
-       "TX_AVG_BY_BLOCK": "Numero medio di transazioni / blocco",
-       "TX_RANGE_DURATION_DIVIDER": "Unità di tempo :",
-       "TX_RANGE_DURATION": {
-         "HOUR": "Ora",
-         "DAY": "Giorno",
-         "MONTH": "Mese"
-       }
+       "TX_AVG_BY_BLOCK": "Numero medio di transazioni / blocco"
      },
      "CURRENCY": {
        "MONETARY_MASS_TITLE": "Evoluzione della massa monetaria",
@@ -110,4 +110,3 @@
      }
    }
  }
- 

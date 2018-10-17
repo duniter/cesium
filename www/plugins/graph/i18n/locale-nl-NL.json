@@ -9,11 +9,17 @@
       "LINEAR_SCALE" : "Lineaire schaal",
       "LOGARITHMIC_SCALE" : "Logaritmische schaal",
       "BTN_SHOW_STATS": "Zie statistieken",
-      "BTN_SHOW_DETAILED_STATS": "Gedetailleerde statistieken"
+      "BTN_SHOW_DETAILED_STATS": "Gedetailleerde statistieken",
+      "RANGE_DURATION_DIVIDER": "Stap eenheid:",
+      "RANGE_DURATION": {
+        "HOUR": "Groep per <b>uur</b>",
+        "DAY": "Groep per <b>dag</b>",
+        "MONTH": "Groep per <b>maand</b>"
+      }
     },
     "ACCOUNT": {
-    "INPUT_CHART_TITLE": "Som van de binnenkomende stroom, door de zender:",
-    "OUTPUT_CHART_TITLE": "Som van de uitstroom per bestemming:"
+      "INPUT_CHART_TITLE": "Som van de binnenkomende stroom, door de zender:",
+      "OUTPUT_CHART_TITLE": "Som van de uitstroom per bestemming:"
     },
     "BLOCKCHAIN": {
       "TITLE": "Statistieken",
@@ -27,12 +33,7 @@
       "TX_AMOUNT_LABEL": "Verhandeld volume",
       "TX_COUNT_TITLE": "Aantal schriftelijke transacties",
       "TX_COUNT_LABEL": "Aantal transacties",
-      "TX_AVG_BY_BLOCK": "Gemiddeld aantal transacties / blok",
-      "TX_RANGE_DURATION": {
-        "HOUR": "Groep per <b>uur</b>",
-        "DAY": "Groep per <b>dag</b>",
-        "MONTH": "Groep per <b>maand</b>"
-      }
+      "TX_AVG_BY_BLOCK": "Gemiddeld aantal transacties / blok"
     },
     "CURRENCY": {
       "MONETARY_MASS_TITLE": "Evolutie van de monetaire massa",
