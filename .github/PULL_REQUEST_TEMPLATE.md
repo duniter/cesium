@@ -1,5 +1,5 @@
 This project is now tracked on our hosted gitlab server at:
-> https://git.duniter.org/clients/cesium/cesium
+> https://git.duniter.org/clients/cesium-grp/cesium
 
 The current github repository is a simple clone taken up to date at each push on the main gitlab repository.
 
