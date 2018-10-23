@@ -17,6 +17,7 @@ fast-build:
 
 failsafe-build:
   stage: alt_build
+  when: on_failure
   image: node:5
   script:
     - npm install
