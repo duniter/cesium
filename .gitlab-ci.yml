@@ -9,11 +9,11 @@ fast-build:
   before_script:
     - pwd
     - ls -la
-    - ls -la /cache
+    - ls -la /customCache
     - ls -la /
-    - mv /cache/node_modules /build/
-    - mv /cache/www /build/
-    - mv /cache/hooks /build/
+    - mv /customCache/node_modules /build/
+    - mv /customCache/www /build/
+    - mv /customCache/hooks /build/
     - ls -la
   script:
     - node ./node_modules/gulp/bin/gulp build:web
@@ -52,7 +52,7 @@ docker-for-fast-build:
     - docker:dind
   script:
     - echo 'FROM node:5' > Dockerfile
-    - echo 'WORKDIR /cache' >> Dockerfile
+    - echo 'WORKDIR /customCache' >> Dockerfile
     - echo 'COPY ./ ./' >> Dockerfile
     - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/before.txt' >> Dockerfile
     - echo 'RUN npm install' >> Dockerfile
