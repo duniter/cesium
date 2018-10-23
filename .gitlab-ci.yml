@@ -51,9 +51,13 @@ docker-for-fast-build:
     - echo 'COPY * ./' >> Dockerfile
     - echo 'COPY .bowerrc ./' >> Dockerfile
     - echo 'COPY .gitmodules ./' >> Dockerfile
+    - echo 'RUN pwd' >> Dockerfile
+    - echo 'RUN ls -la' >> Dockerfile
     - echo 'RUN npm install' >> Dockerfile
     - echo 'RUN npm run postinstall' >> Dockerfile
+    - echo 'RUN ls -la' >> Dockerfile
     - echo 'WORKDIR /build' >> Dockerfile
+    - echo 'RUN ls -la /cache/' >> Dockerfile
     - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
     - docker build --pull -t "$CI_REGISTRY_IMAGE" .
     - docker push "$CI_REGISTRY_IMAGE"
