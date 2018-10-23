@@ -11,9 +11,9 @@ fast-build:
     - ls -la
     - ls -la /customCache
     - ls -la /
-    - mv /customCache/node_modules /build/
-    - mv /customCache/www /build/
-    - mv /customCache/hooks /build/
+    - mv /customCache/node_modules ./
+    - cp -rf /customCache/www ./
+    - cp -rf /customCache/hooks ./
     - ls -la
   script:
     - node ./node_modules/gulp/bin/gulp build:web
