@@ -59,8 +59,10 @@ build:
 pages:
   stage: publish
   image: node:latest
+  variables:
+    GIT_STRATEGY: none
   script:
-    - ls public
+    - ls -la public
     - mv platforms/web/www public
   artifacts:
     untracked: true
@@ -71,7 +73,11 @@ pages:
 
 release-web:
   stage: publish
+  image: node:latest
+  variables:
+    GIT_STRATEGY: none
   script:
+    - ls -la www
     - mv platforms/web/www www
   artifacts:
     untracked: true
