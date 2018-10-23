@@ -58,7 +58,9 @@ build:
 
 pages:
   stage: publish
+  image: node:latest
   script:
+    - ls public
     - mv platforms/web/www public
   artifacts:
     untracked: true
