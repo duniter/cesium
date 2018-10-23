@@ -7,6 +7,7 @@ fast-build:
   stage: build
   image: $CI_REGISTRY_IMAGE
   script:
+    - pwd
     - ls -la
     - ls -la /cache
     - mv /cache/node_modules /build/
@@ -49,11 +50,11 @@ docker-for-fast-build:
     - echo 'FROM node:5' > Dockerfile
     - echo 'WORKDIR /cache' >> Dockerfile
     - echo 'COPY ./ ./' >> Dockerfile
-    - echo "RUN ls -la | awk '{print $9}'>/before.txt" >> Dockerfile
+    - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/before.txt' >> Dockerfile
     - echo 'RUN npm install' >> Dockerfile
     - echo 'RUN npm run postinstall' >> Dockerfile
+    - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/after.txt' >> Dockerfile
     - echo 'WORKDIR /build' >> Dockerfile
-    - echo "RUN ls -la /cache/ | awk '{print $9}' >/after.txt" >> Dockerfile
     - echo "RUN diff /before.txt /after.txt" >> Dockerfile
     - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
     - docker build --pull -t "$CI_REGISTRY_IMAGE" .
