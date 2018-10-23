@@ -78,6 +78,22 @@ pages:
       - public
   only:
     - master
+mirror:
+  stage: publish
+  image: liaohuqiu/rsync
+  before_script:
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - >-
+      [[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" >
+      ~/.ssh/config
+  script:
+    - mv platforms/web/www public
+    - rsync -az -e ssh ./public/ gammanu@1000i100.fr:~/g1.money/dev-cesium
+  only:
+    - master
+
 
 release-web:
   stage: publish
