@@ -6,12 +6,16 @@ stages:
 fast-build:
   stage: build
   image: $CI_REGISTRY_IMAGE
-  script:
+  before_script:
     - pwd
     - ls -la
     - ls -la /cache
+    - ls -la /
     - mv /cache/node_modules /build/
+    - mv /cache/www /build/
+    - mv /cache/hooks /build/
     - ls -la
+  script:
     - node ./node_modules/gulp/bin/gulp build:web
   artifacts:
     paths:
@@ -55,7 +59,7 @@ docker-for-fast-build:
     - echo 'RUN npm run postinstall' >> Dockerfile
     - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/after.txt' >> Dockerfile
     - echo 'WORKDIR /build' >> Dockerfile
-    - echo "RUN diff /before.txt /after.txt" >> Dockerfile
+    - echo "RUN diff /before.txt /after.txt || true" >> Dockerfile
     - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
     - docker build --pull -t "$CI_REGISTRY_IMAGE" .
     - docker push "$CI_REGISTRY_IMAGE"
