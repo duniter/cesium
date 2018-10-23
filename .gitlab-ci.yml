@@ -7,6 +7,7 @@ fast-build:
   stage: build
   image: $CI_REGISTRY_IMAGE
   script:
+    - ls -la
     - node ./node_modules/gulp/bin/gulp build:web
   artifacts:
     paths:
