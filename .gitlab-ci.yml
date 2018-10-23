@@ -8,6 +8,9 @@ fast-build:
   image: $CI_REGISTRY_IMAGE
   script:
     - ls -la
+    - ls -la /cache
+    - mv /cache/* /build/
+    - ls -la
     - node ./node_modules/gulp/bin/gulp build:web
   artifacts:
     paths:
@@ -44,13 +47,13 @@ docker-for-fast-build:
     - docker:dind
   script:
     - echo 'FROM node:5' > Dockerfile
-    - echo 'RUN pwd' >> Dockerfile
+    - echo 'WORKDIR /cache' >> Dockerfile
     - echo 'COPY * ./' >> Dockerfile
     - echo 'COPY .bowerrc ./' >> Dockerfile
     - echo 'COPY .gitmodules ./' >> Dockerfile
     - echo 'RUN npm install' >> Dockerfile
     - echo 'RUN npm run postinstall' >> Dockerfile
-    - echo 'RUN mv . ../cache' >> Dockerfile
+    - echo 'WORKDIR /build' >> Dockerfile
     - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
     - docker build --pull -t "$CI_REGISTRY_IMAGE" .
     - docker push "$CI_REGISTRY_IMAGE"
