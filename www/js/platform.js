@@ -151,7 +151,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
           // silent, but return no result (will loop to the next fallback node)
         })
         .then(function(res) {
-          if (!res) checkBmaNodeAlive(); // Loop
+          if (!res) return checkBmaNodeAlive(); // Loop
 
           return $translate('CONFIRM.USE_FALLBACK_NODE', {old: BMA.server, new: newServer})
             .then(function(msg) {
