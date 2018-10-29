@@ -384,6 +384,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         same: function(host2, port2) {
           return host2 == that.host && ((!that.port && !port2) || (that.port == port2||80));
         },
+        forceUseSsl: that.forceUseSsl
       },
       network: {
         peering: {

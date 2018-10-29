@@ -137,24 +137,45 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         throw 'ERROR.CHECK_NETWORK_CONNECTION';
       }
       var newServer = fallbackNode.host + ((!fallbackNode.port && fallbackNode.port != 80 && fallbackNode.port != 443) ? (':' + fallbackNode.port) : '');
-      return $translate('CONFIRM.USE_FALLBACK_NODE', {old: BMA.server, new: newServer})
-        .then(function(msg) {
-          return UIUtils.alert.confirm(msg);
+
+      // Skip is same as actual node
+      if (BMA.node.same(fallbackNode.host, fallbackNode.port)) {
+        console.debug('[platform] Skipping fallback node [{0}]: same as actual node'.format(newServer));
+        return checkBmaNodeAlive(); // loop (= go to next node)
+      }
+
+      // Try to get summary
+      return csHttp.get(fallbackNode.host, fallbackNode.port, '/node/summary', fallbackNode.port==443 || BMA.node.forceUseSsl)()
+        .catch(function(err) {
+          console.error('[platform] Could not reach fallback node [{0}]: skipping'.format(newServer));
+          // silent, but return no result (will loop to the next fallback node)
         })
-        .then(function (confirm) {
-          if (!confirm) return;
+        .then(function(res) {
+          if (!res) checkBmaNodeAlive(); // Loop
 
-          // FIXME: should not change settings, but only tha BMA content
-          // in UI, display data form BMA object
-          csSettings.data.node = fallbackNode;
+          return $translate('CONFIRM.USE_FALLBACK_NODE', {old: BMA.server, new: newServer})
+            .then(function(msg) {
+              return UIUtils.alert.confirm(msg);
+            })
+            .then(function (confirm) {
+              if (!confirm) return;
 
-          csSettings.data.node.temporary = true;
-          csHttp.cache.clear();
+              // Only change BMA node in settings
+              csSettings.data.node = fallbackNode;
 
-          // loop
-          return BMA.copy(fallbackNode)
-            .then(checkBmaNodeAlive);
-        });
+              // Add a marker, for UI
+              csSettings.data.node.temporary = true;
+
+              csHttp.cache.clear();
+
+              // loop
+              return BMA.copy(fallbackNode)
+                .then(checkBmaNodeAlive);
+            });
+        })
+
+
+
     }
 
     function isStarted() {
