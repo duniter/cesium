@@ -1,47 +1,31 @@
 stages:
-    - github-sync
-    - build
-    - publish
+  - build
+  - alt_build
+  - publish
 
-push_to_github:
-    stage: github-sync
-    variables:
-        GIT_STRATEGY: none
-    tags:
-        - github
-    script:
-        - rm -rf ./*
-        - rm -rf .git
-        - git clone --mirror $CI_REPOSITORY_URL .
-        - git remote add github $GITHUB_URL_AND_KEY
-        - git config --global user.email "contact@duniter.org"
-        - git config --global user.name "Duniter"
-        # Job would fail if we don't remove refs about pull requests
-        - bash -c "cat packed-refs | grep -v 'refs/pull' > packed-refs-new; echo 'Removed pull refs.'"
-        - mv packed-refs-new packed-refs
-        - bash -c "git push --force --mirror github 2>&1 | grep -v duniter-gitlab; echo $?"
-
-.enforce_readme:
-    stage: github-sync
-    variables:
-        GIT_STRATEGY: none
-    tags:
-      - github
-    script:
-      - rm -rf ./*
-      - rm -rf .git
-      - git clone $GITHUB_URL_AND_KEY .
-      - git config --global user.email "contact@duniter.org"
-      - git config --global user.name "Duniter"
-      - git checkout master
-      - cat .github/github_disclaimer.md > README.md.new
-      - cat README.md >> README.md.new
-      - mv README.md.new README.md
-      - git commit -am "Enforce github readme"
-      - git push origin master
-      
-build:
+fast-build:
   stage: build
+  image: $CI_REGISTRY_IMAGE
+  before_script:
+    - mv /customCache/node_modules ./
+    - cp -rf /customCache/www ./
+    - cp -rf /customCache/hooks ./
+  script:
+    - node ./node_modules/gulp/bin/gulp build:web
+  after_script:
+    - ls -la platforms/web/
+    - du -csh platforms/web/
+  artifacts:
+    untracked: true
+    paths:
+      - platforms/web
+    expire_in: 60 minutes
+  only:
+    - master
+
+failsafe-build:
+  stage: alt_build
+  when: on_failure
   image: node:5
   script:
     - npm install
@@ -56,9 +40,37 @@ build:
   only:
     - master
 
+docker-for-fast-build:
+  stage: alt_build
+  when: on_failure
+  allow_failure: true
+  tags:
+    - doppler-docker
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - echo 'FROM node:5' > Dockerfile
+    - echo 'WORKDIR /customCache' >> Dockerfile
+    - echo 'COPY ./ ./' >> Dockerfile
+    - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/before.txt' >> Dockerfile
+    - echo 'RUN npm install' >> Dockerfile
+    - echo 'RUN npm run postinstall' >> Dockerfile
+    - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/after.txt' >> Dockerfile
+    - echo 'WORKDIR /build' >> Dockerfile
+    - echo "RUN diff /before.txt /after.txt || true" >> Dockerfile
+    - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
+    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+    - docker push "$CI_REGISTRY_IMAGE"
+
+
 pages:
   stage: publish
+  image: node:latest
+  variables:
+    GIT_STRATEGY: none
   script:
+    - ls -la public || true
     - mv platforms/web/www public
   artifacts:
     untracked: true
@@ -66,10 +78,30 @@ pages:
       - public
   only:
     - master
+mirror:
+  stage: publish
+  image: liaohuqiu/rsync
+  before_script:
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - >-
+      [[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" >
+      ~/.ssh/config
+  script:
+    - mv platforms/web/www public
+    - rsync -az -e ssh ./public/ gammanu@1000i100.fr:~/g1.money/dev-cesium
+  only:
+    - master
+
 
 release-web:
   stage: publish
+  image: node:latest
+  variables:
+    GIT_STRATEGY: none
   script:
+    - ls -la www || true
     - mv platforms/web/www www
   artifacts:
     untracked: true
