@@ -97,9 +97,9 @@
         <ion-item class="item-icon-left" ng-if=":rebind:formData.sigDate||formData.uid">
           <i class="icon ion-calendar"></i>
           <span translate>COMMON.UID</span>
-          <h5 class="dark" ng-if=":rebind:formData.sigDate">
+          <h5 class="dark" ng-if=":rebind:formData.sigDate ">
             <span translate>WOT.REGISTERED_SINCE</span>
-            {{:rebind:formData.sigDate | formatDate}}
+            {{:rebind:formData.sigDate| formatDate}}
           </h5>
           <span class="badge badge-stable">{{:rebind:formData.uid}}</span>
         </ion-item>
@@ -142,9 +142,11 @@
         </a>
 
         <div
-          class="item item-text-wrap item-icon-left item-wallet-event assertive"
-          ng-repeat="event in :rebind:formData.events | filter: {type: 'error'}">
-          <i class="icon ion-alert-circled"></i>
+          class="item item-text-wrap item-icon-left item-wallet-event"
+          ng-class="{'assertive': event.type=='error'}"
+          ng-repeat="event in :rebind:formData.events">
+          <i class="icon"
+             ng-class="{'ion-information-circled royal': event.type=='info','ion-alert-circled': event.type=='warn'||event.type=='error','assertive': event.type=='error','ion-clock': event.type=='pending'}"></i>
           <span trust-as-html="event.message | translate:event.messageParams"></span>
         </div>
 

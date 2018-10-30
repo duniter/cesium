@@ -687,35 +687,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       cleanEventsByContext('requirements');
 
       // Get requirements
-      return csWot.loadRequirements(data)
-        .then(function(){
-
-          if (!data.requirements.uid) return;
-
-          // Get sigDate
-          var blockParts = data.requirements.blockUid.split('-', 2);
-          var blockNumber = parseInt(blockParts[0]);
-          var blockHash = blockParts[1];
-          // Retrieve registration date
-          return BMA.blockchain.block({block: blockNumber})
-            .then(function(block) {
-              data.sigDate = block.medianTime;
-
-              // Check if self has been done on a valid block
-              if (!data.isMember && blockNumber !== 0 && blockHash !== block.hash) {
-                data.requirements.hasBadSelfBlock = true;
-              }
-            })
-            .catch(function(err){
-              // Special case for currency init (root block not exists): use now
-              if (err && err.ucode == BMA.errorCodes.BLOCK_NOT_FOUND && blockNumber === 0) {
-                data.sigDate = moment().utc().unix();
-              }
-              else {
-                throw err;
-              }
-            });
-        });
+      return csWot.loadRequirements(data);
     },
 
     loadTxAndSources = function(fromTime) {
@@ -746,15 +718,15 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     addEvents = function() {
       // Add user events
       if (data.requirements.revoked) {
-        delete data.requirements.hasBadSelfBlock;
+        delete data.requirements.meta.invalid;
         addEvent({type:'info', message: 'ERROR.WALLET_REVOKED', context: 'requirements'});
       }
       else if (data.requirements.pendingRevocation) {
-        delete data.requirements.hasBadSelfBlock;
+        delete data.requirements.meta.invalid;
         addEvent({type:'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'requirements'});
       }
       else {
-        if (!data.isMember && data.requirements.hasBadSelfBlock) {
+        if (!data.isMember && data.requirements.meta.invalid) {
           addEvent({type: 'error', message: 'ERROR.WALLET_INVALID_BLOCK_HASH', context: 'requirements'});
           console.debug("Invalid membership for uid={0}: block hash changed".format(data.uid));
         }

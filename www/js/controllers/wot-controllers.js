@@ -979,7 +979,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
 /**
  * Identity view controller - should extend WotIdentityAbstractCtrl
  */
-function WotIdentityViewController($scope, $rootScope, $controller, $timeout, UIUtils, csWallet) {
+function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $state, UIUtils, Modals, csWallet) {
   'ngInject';
   // Initialize the super class and extend it.
   angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
@@ -1043,6 +1043,28 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, UI
     if (($scope.canCertify && !$scope.alreadyCertified) || $rootScope.tour) {
       $scope.showFab('fab-certify-' + $scope.formData.uid);
     }
+  };
+
+  $scope.doQuickFix = function(event) {
+    if (event == "showSelectIdentities") {
+      return $scope.showSelectIdentities();
+    }
+  };
+
+  $scope.showSelectIdentities = function() {
+    if (!$scope.formData.requirements || !$scope.formData.requirements.alternatives) return;
+
+    return Modals.showSelectPubkeyIdentity({
+      identities: [$scope.formData.requirements].concat($scope.formData.requirements.alternatives)
+    })
+    .then(function(res) {
+      if (!res || !res.pubkey) return; // Skip if cancelled
+      // open the identity
+      return $state.go('app.wot_identity', {
+        pubkey: res.pubkey,
+        uid: res.uid
+      });
+    });
   };
 }
 

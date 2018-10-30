@@ -25,6 +25,7 @@
           {{::item.pubkey | formatPubkey}}
           <span ng-if="::!item.revoked && !item.pendingRevocation && !item.isMember" class="assertive" translate>WOT.NOT_MEMBER_PARENTHESIS</span>
           <span ng-if="::item.revoked || item.pendingRevocation" class="assertive bold" translate>WOT.IDENTITY_REVOKED_PARENTHESIS</span>
+          <span ng-if="::item.meta.invalid" class="assertive" translate>ERROR.WOT_PENDING_INVALID_BLOCK_HASH</span>
         </h4>
 
         <ng-if ng-if="::!item.revoked && !item.pendingRevocation && (item.certificationCount || item.pendingCertificationCount)">

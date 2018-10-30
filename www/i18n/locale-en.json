@@ -764,6 +764,7 @@
     "NOT_NEED_MEMBERSHIP": "Already a member.",
     "IDENTITY_WILL_MISSING_CERTIFICATIONS": "This identity will soon lack certification (at least {{willNeedCertificationCount}}).",
     "IDENTITY_NEED_MEMBERSHIP": "This identity did not send a membership request. She will have to if she wishes to become a member.",
+    "HAS_ALTERNATIVE_IDENTITIES": "There are <b>multiple identities</b> attached to this public key. <b>Before any certification</b>, please <a ng-click=\"doQuickFix('showSelectIdentities')\">check other identities</a> to choose the correct one, or contact the wallet owner.",
     "REVOCATION_SENT": "Revocation sent successfully",
     "REVOCATION_SENT_WAITING_PROCESS": "Revocation <b>has been sent successfully</b>. It is awaiting processing.",
     "FEATURES_NOT_IMPLEMENTED": "This features is not implemented yet.<br/><br/>Why not to contribute to get it faster? ;)",
