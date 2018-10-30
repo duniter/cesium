@@ -172,10 +172,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
               return BMA.copy(fallbackNode)
                 .then(checkBmaNodeAlive);
             });
-        })
-
-
-
+        });
     }
 
     function isStarted() {
