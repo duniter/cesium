@@ -22,7 +22,7 @@ fast-build:
     expire_in: 60 minutes
   only:
     - master
-
+    - tags
 failsafe-build:
   stage: alt_build
   when: on_failure
@@ -39,7 +39,7 @@ failsafe-build:
     expire_in: 60 minutes
   only:
     - master
-
+    - tags
 docker-for-fast-build:
   stage: alt_build
   when: on_failure
