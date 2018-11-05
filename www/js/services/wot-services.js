@@ -85,7 +85,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
         requirements.needRenew = (!requirements.needMembership && !requirements.revoked &&
           requirements.membershipExpiresIn <= csSettings.data.timeWarningExpireMembership &&
           requirements.membershipPendingExpiresIn <= 0) ||
-          (requirements.wasMember && requirements.membershipExpiresIn === 0 &&
+          (requirements.wasMember && !requirements.revoked && requirements.membershipExpiresIn === 0 &&
           requirements.membershipPendingExpiresIn === 0);
         requirements.canMembershipOut = (!requirements.revoked && requirements.membershipExpiresIn > 0);
         requirements.pendingMembership = (!requirements.revoked && requirements.membershipExpiresIn <= 0 && requirements.membershipPendingExpiresIn > 0);
@@ -182,6 +182,8 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
       loadRequirements = function(data) {
         if (!data || (!data.pubkey && !data.uid)) return $q.when(data);
 
+        var now = Date.now();
+
         return $q.all([
           // Get currency
           csCurrency.get(),
@@ -246,6 +248,8 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
                 _fillRequirements(requirements, currency.parameters);
               });
             }
+
+            console.debug("[wot] Requirements for '{0}' loaded in {1}ms".format((data.pubkey && data.pubkey.substring(0,8))||data.uid, Date.now() - now));
 
             return data;
           })
