@@ -188,6 +188,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     // Pubkey
     else if (method === 'PUBKEY') {
       var pubkey = $scope.formData.pubkey && $scope.formData.pubkey.trim();
+      var uid = $scope.formData.uid && $scope.formData.uid.trim() || undefined;
       if (!pubkey) return;
       var matches = BMA.regexp.PUBKEY.exec(pubkey);
       // valid pubkey: use it
@@ -195,7 +196,8 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
         promise = UIUtils.loading.show()
           .then(function() {
             return {
-              pubkey: pubkey
+              pubkey: pubkey,
+              uid : uid
             };
           });
       }
@@ -216,7 +218,8 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
             promise = UIUtils.loading.show()
               .then(function() {
                 return {
-                  pubkey: pubkey
+                  pubkey: pubkey,
+                  uid : uid
                 };
               });
           }
@@ -415,6 +418,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
 
     console.debug("[login] method is: " + method);
     $scope.formData.method = method;
+    $scope.formData.uid = null;
 
     if ($scope.form) {
       // hide form's fields errors on the form
@@ -424,6 +428,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     // Scrypt (advanced or not)
     if (method == 'SCRYPT_DEFAULT' || method == 'SCRYPT_ADVANCED') {
       $scope.pubkey = null;
+
 
       // Search scrypt object
       var scrypt;
@@ -580,6 +585,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
       .then(function(res){
         if (res && res.pubkey) {
           $scope.formData.pubkey = res.pubkey;
+          $scope.formData.uid = res.uid || undefined;
           return $timeout($scope.doLogin, 300);
         }
       });
