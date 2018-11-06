@@ -751,8 +751,8 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
                 UIUtils.loading.show();
                 wallet.certify($scope.formData.uid,
                   $scope.formData.pubkey,
-                  $scope.formData.blockUid,
-                  $scope.formData.requirements.meta.sig,
+                  $scope.formData.blockUid || ($scope.formData.requirements && $scope.formData.requirements.meta && $scope.formData.requirements.meta.timestamp),
+                  $scope.formData.requirements && $scope.formData.requirements.meta && $scope.formData.requirements.meta.sig,
                   $scope.formData.isMember,
                   $scope.formData.wasMember)
                   .then(function(cert) {
@@ -857,8 +857,8 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
                 // Send certification
                 wallet.certify(identity.uid,
                   identity.pubkey,
-                  identity.timestamp,
-                  identity.sig,
+                  identity.blockUid || (identity.requirements && identity.requirements.meta && identity.requirements.meta.timestamp),
+                  identity.requirements && identity.requirements.meta && identity.requirements.meta.sig,
                   identity.isMember,
                   identity.wasMember)
                   .then(function (cert) {
