@@ -58,7 +58,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
 ;
 
 function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state, $translate, $ionicPopover, $location,
-                          UIUtils, Modals, csPopovers, BMA, csConfig, csSettings, csWallet, csHelp) {
+                          UIUtils, ModalUtils, Modals, csPopovers, BMA, csConfig, csSettings, csWallet, csHelp) {
   'ngInject';
 
   $scope.loading = true;
@@ -539,6 +539,10 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     $state.go($scope.isDefaultWallet ? 'app.view_wallet_tx' : 'app.view_wallet_tx_by_id', {
       id: $scope.walletId
     });
+  };
+
+  $scope.showLicenseModal = function() {
+    return ModalUtils.show('templates/currency/modal_license.html','CurrencyLicenseModalCtrl');
   };
 
   /* -- modals -- */

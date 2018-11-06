@@ -31,7 +31,7 @@
        "ORGANIZATION_ACCOUNT_HELP": "Se rappresenta un'azienda, un'associazione, etc.<br/>Questo conto non potrà creare il Dividendo Universale."
      },
      "EVENT": {
-       "MEMBER_WITHOUT_PROFILE": "Per ottenere sue certificazioni più velocemente, riempire le informazioni<a ui-sref=\"app.user_edit_profile\">del suo profilo</a>. I membri della rete si fidano più volontieri di profili verificabili."
+       "MEMBER_WITHOUT_PROFILE": "Per ottenere sue certificazioni più velocemente, riempire le informazioni<a ui-sref=\"app.edit_profile\">del suo profilo</a>. I membri della rete si fidano più volontieri di profili verificabili."
      },
      "ERROR": {
        "WS_CONNECTION_FAILED": "Cesium non può ricevere notifiche a causa di un problema tecnico (di conessione al data node Cesium+).<br/><br/>Se il problema persiste, le chiediamo di <b>scegliere un'altro data node</b> nelle impostazioni di Cesium+."
@@ -529,8 +529,7 @@
     "ES_USE_FALLBACK_NODE": "Nodo<b>{{old}}</b> irraggiungibile o indirizzo sbagliato.<br/><br/>Vuoi utilizzare temporaneamente il nodo di dati <b>{{new}}</b> ?"
   },
    "ERROR": {
-    "ES_CONNECTION_ERROR": "Nodo di dati<b>{{server}}</b>  irraggiungibile o indirizzo sbagliato.<br/><br/>Cesium continuerà a funzionare <b>senza l'estensione Cesium+</b> (profili utenti, messaggi privati, mappe e grafici)<br/><br/>Verifica tua connessione o cambia nodo <a class=\"positive\" ng-click=\"doQuickFix('settings')\">impostazioni dell'estensione</a>.",     
+    "ES_CONNECTION_ERROR": "Nodo di dati<b>{{server}}</b>  irraggiungibile o indirizzo sbagliato.<br/><br/>Cesium continuerà a funzionare <b>senza l'estensione Cesium+</b> (profili utenti, messaggi privati, mappe e grafici)<br/><br/>Verifica tua connessione o cambia nodo <a class=\"positive\" ng-click=\"doQuickFix('settings')\">impostazioni dell'estensione</a>.",
      "ES_MAX_UPLOAD_BODY_SIZE": "Il volume di data da inviare supera il limite imposto dal server.<br/><br/>Suggeriamo di riprovare dopo aver eliminato delle foto, per esempio."
    }
  }
- 

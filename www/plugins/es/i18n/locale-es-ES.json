@@ -31,7 +31,7 @@
       "ORGANIZATION_ACCOUNT_HELP": "Si representa una empresa, una asociación, etc.<br/>Ningún dividendo universal será creído por esta cuenta."
     },
     "EVENT": {
-      "MEMBER_WITHOUT_PROFILE": "Para obtener sus certificaciónes más rapidamente, completa <a ui-sref=\"app.user_edit_profile\">su perfil usuario</a>. Los miembros concederán más fácilmente su confianza a una identidad verificable."
+      "MEMBER_WITHOUT_PROFILE": "Para obtener sus certificaciónes más rapidamente, completa <a ui-sref=\"app.edit_profile\">su perfil usuario</a>. Los miembros concederán más fácilmente su confianza a una identidad verificable."
     },
     "ERROR": {
       "WS_CONNECTION_FAILED": "Cesium no puede recibir las notificaciónes, a causa de un error técnico (conexión al nodo de datos Cesium+).<br/><br/>Si el problema persiste, por favor <b>elige un otro nodo de datos</b> en las configuraciónes Cesium+."

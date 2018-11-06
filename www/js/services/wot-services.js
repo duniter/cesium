@@ -78,7 +78,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
 
       _fillRequirements = function(requirements, currencyParameters) {
         // Add useful custom fields
-        requirements.hasSelf = requirements.meta && requirements.meta.timestamp;
+        requirements.hasSelf = requirements.meta && !!requirements.meta.timestamp;
         requirements.needSelf = !requirements.hasSelf || requirements.meta.invalid;
         requirements.wasMember = angular.isDefined(requirements.wasMember) ? requirements.wasMember : false; // Compat with Duniter 0.9
         requirements.needMembership = (!requirements.revoked && requirements.membershipExpiresIn <= 0 && requirements.membershipPendingExpiresIn <= 0 && !requirements.wasMember);
@@ -92,7 +92,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
         requirements.isMember = (!requirements.revoked && requirements.membershipExpiresIn > 0);
         requirements.blockUid = requirements.meta.timestamp;
         // Force certification count to 0, is not a member yet - fix #269
-        requirements.certificationCount = (requirements.isMember && requirements.certifications) ? requirements.certifications.length : 0;
+        requirements.certificationCount = ((requirements.isMember || (requirements.wasMember && !requirements.expired)) && requirements.certifications) ? requirements.certifications.length : 0;
         requirements.willExpireCertificationCount = requirements.certifications ? requirements.certifications.reduce(function(count, cert){
           return count + (cert.expiresIn <= csSettings.data.timeWarningExpire ? 1 : 0);
         }, 0) : 0;
@@ -122,7 +122,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
         return requirements;
       },
 
-      _fillIdentitiesTime = function(identities) {
+      _fillIdentitiesMeta = function(identities) {
         if (!identities) return $q.when(identities);
 
         var blocks = [];
@@ -130,6 +130,8 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
           var blockUid = identity.meta.timestamp.split('-', 2);
           identity.meta.number = parseInt(blockUid[0]);
           identity.meta.hash = blockUid[1];
+          identity.meta.sig = identity.meta.sig || identity.sig;
+          delete identity.sig;
           blocks.push(identity.meta.number);
           if (identity.revocationNumber) {
             blocks.push(identity.revocationNumber);
@@ -191,7 +193,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
           // Get requirements
           BMA.wot.requirements({pubkey: data.pubkey||data.uid})
             .then(function(res) {
-              return _fillIdentitiesTime(res && res.identities);
+              return _fillIdentitiesMeta(res && res.identities);
             })
         ])
           .then(function(res){
@@ -299,8 +301,8 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
               }, []));
             }, []);
 
-            // Fill identities time
-            return _fillIdentitiesTime(identities)
+            // Fill identities meta (self)
+            return _fillIdentitiesMeta(identities)
               .then(function(identities) {
                 return {
                   identities: identities,

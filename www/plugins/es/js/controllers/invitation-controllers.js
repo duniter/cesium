@@ -40,7 +40,7 @@ angular.module('cesium.es.invitation.controllers', ['cesium.es.services'])
   .controller('ESNewInvitationModalCtrl', NewInvitationModalController)
 ;
 
-function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUtils, csSettings, csWallet,
+function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUtils, csWallet,
                                esHttp, esModals, esNotification, esInvitation) {
   'ngInject';
 

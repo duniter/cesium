@@ -109,8 +109,9 @@ function ESMenuExtendController($scope, $state, $controller, UIUtils, csWallet) 
       autoremove: false, // reuse popover
       // Auto-close if open when un-authenticate
       afterShow: function(popover) {
-        csWallet.api.data.on.unauth(popover.scope, function() {
+        var listener = csWallet.api.data.on.unauth(popover.scope, function() {
           popover.scope.closePopover();
+          listener();
         });
       }
     });

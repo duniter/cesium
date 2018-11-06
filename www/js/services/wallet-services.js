@@ -743,9 +743,15 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           addEvent({type:'warn', message: 'ACCOUNT.NO_WAITING_MEMBERSHIP', context: 'requirements'});
         }
         if (data.requirements.needRenew) {
-          if (data.requirements.membershipExpiresIn > 0) {
+          // Still a member: WILL need renew
+          if (data.isMember && data.requirements.membershipExpiresIn > 0) {
             addEvent({type:'warn', message: 'ACCOUNT.WILL_NEED_RENEW_MEMBERSHIP', messageParams: data.requirements, context: 'requirements'});
           }
+          // Fix #649: Not a member anymore, even if membership NOT expired, because membersjip cancelled for lack of certifications
+          else if (!data.isMember && data.requirements.membershipExpiresIn > 0 && data.requirements.needCertificationCount > 0) {
+            addEvent({type:'warn', message: 'ACCOUNT.NEED_RENEW_MEMBERSHIP_AFTER_CANCELLED', messageParams: data.requirements, context: 'requirements'});
+          }
+          // Not a member anymore
           else {
             addEvent({type:'warn', message: 'ACCOUNT.NEED_RENEW_MEMBERSHIP', messageParams: data.requirements, context: 'requirements'});
           }
@@ -754,6 +760,15 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         {
           if (data.requirements.needCertificationCount > 0) {
             addEvent({type:'info', message: 'ACCOUNT.WAITING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});
+            // Add a help message, if user has never been a member
+            if (!data.requirements.wasMember) {
+              addEvent({
+                type: 'help',
+                message: 'ACCOUNT.WAITING_CERTIFICATIONS_HELP',
+                messageParams: data.requirements,
+                context: 'requirements'
+              });
+            }
           }
           if (data.requirements.willNeedCertificationCount > 0) {
             addEvent({type:'warn', message: 'ACCOUNT.WILL_MISSING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});

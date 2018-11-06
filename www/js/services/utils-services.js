@@ -445,8 +445,8 @@ angular.module('cesium.utils.services', [])
           popover.isResolved = false;
 
           popover.scope.closePopover = function(result) {
-            var autoremove = popover.options.autoremove;
-            delete popover.options.autoremove; // remove to avoid to trigger 'popover.hidden'
+            var autoremove = popover.options && popover.options.autoremove;
+            if (popover.options) delete popover.options.autoremove; // remove to avoid to trigger 'popover.hidden'
             popover.hide()
               .then(function() {
                 if (autoremove) {

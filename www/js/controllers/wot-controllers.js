@@ -751,8 +751,8 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
                 UIUtils.loading.show();
                 wallet.certify($scope.formData.uid,
                   $scope.formData.pubkey,
-                  $scope.formData.timestamp,
-                  $scope.formData.sig,
+                  $scope.formData.blockUid,
+                  $scope.formData.requirements.meta.sig,
                   $scope.formData.isMember,
                   $scope.formData.wasMember)
                   .then(function(cert) {
@@ -760,7 +760,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
                     if (cert) {
                       $scope.prepareNewCert(wallet, cert);
                       $scope.alreadyCertified = true;
-                      UIUtils.alert.info('INFO.CERTIFICATION_DONE');
+                      UIUtils.toast.show('INFO.CERTIFICATION_DONE');
                       $scope.formData.received_cert_pending.unshift(cert);
                       $scope.formData.requirements.pendingCertificationCount++;
                       $scope.doMotion();
