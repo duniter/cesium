@@ -35,7 +35,7 @@
       "ORGANIZATION_ACCOUNT_HELP": "If you represent a company, association, etc.<br/>No universal dividend will be created by this account."
     },
     "EVENT": {
-      "MEMBER_WITHOUT_PROFILE": "To obtain your certification more quickly, fill in <a ui-sref=\"app.edit_profile\">your user profile</a>. Members will more easily put their trust in a verifiable identity."
+      "MEMBER_WITHOUT_PROFILE": "You can <a ui-sref=\"app.edit_profile\">fill your Cesium+ profile</a> (optional) to provide better visibility of your account."
     },
     "ERROR": {
       "WS_CONNECTION_FAILED": "Cesium can not receive notifications because of a technical error (connection to the Cesium + data node).<br/><br/>If the problem persists, please <b>choose another data node</b> in Cesium+ settings."
@@ -441,8 +441,9 @@
     "PLUGIN_NAME": "Cesium+",
     "PLUGIN_NAME_HELP": "User profiles, notifications, private messages",
     "ENABLE_TOGGLE": "Enable extension?",
-    "ENABLE_MESSAGE_TOGGLE": "Enable messages?",
-    "ENABLE_SETTINGS_TOGGLE": "Enable remote storage for settings?",
+    "ENABLE_REMOTE_STORAGE": "Enable remote storage for settings?",
+    "ENABLE_REMOTE_STORAGE_HELP": "Enables (encrypted) storage of your settings on Cesium + nodes",
+    "ENABLE_MESSAGE_TOGGLE": "Enable private messages?",
     "PEER": "Data peer address",
     "POPUP_PEER": {
       "TITLE" : "Data peer",
