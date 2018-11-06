@@ -71,7 +71,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     decimalCount: 4,
     uiEffects: true,
     minVersion: '1.1.0',
-    newIssueUrl: "https://git.duniter.org/clients/cesium/cesium/issues/new",
+    newIssueUrl: "https://git.duniter.org/clients/cesium-grp/cesium/issues/new",
     userForumUrl: "https://forum.monnaie-libre.fr",
     latestReleaseUrl: "https://api.github.com/repos/duniter/cesium/releases/latest",
     duniterLatestReleaseUrl: "https://api.github.com/repos/duniter/duniter/releases/latest",
