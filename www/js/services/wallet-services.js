@@ -1182,7 +1182,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
               // Add new sources
               if (res && res.sources.length) {
-                console.log("[wallet-service] New sources to be add after the TX: ", res.sources);
+                console.debug("[wallet-service] New sources to be add after the TX: ", res.sources);
                 addSources(res.sources);
               }
 

@@ -233,7 +233,6 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
 
   .filter('formatTime', function(filterTranslations) {
     return function(input) {
-      console.log("Format time:", input);
       return input ? moment.unix(parseInt(input)+filterTranslations.MEDIAN_TIME_OFFSET).local().format('HH:mm') : '';
     };
   })
