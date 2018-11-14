@@ -51,19 +51,23 @@ function ESPicturesEditController($scope, UIUtils, $q, Device) {
   };
 
   $scope.fileChanged = function(event) {
+    if (!event.target.files || !event.target.files.length) return;
     UIUtils.loading.show();
-    return $q(function(resolve, reject) {
-      var file = event.target.files[0];
-      UIUtils.image.resizeFile(file)
-        .then(function(imageData) {
-          $scope.pictures.push({
-            src: imageData,
-            isnew: true // use to prevent visibility hidden (if animation)
-          });
-          UIUtils.loading.hide(100);
-          resolve();
+    var file = event.target.files[0];
+    return UIUtils.image.resizeFile(file)
+      .then(function(imageData) {
+        $scope.pictures.push({
+          src: imageData,
+          isnew: true // use to prevent visibility hidden (if animation)
         });
-    });
+        event.target.value = ""; // reset input[type=file]
+        UIUtils.loading.hide(100);
+      })
+      .catch(function(err) {
+        console.error(err);
+        event.target.value = ""; // reset input[type=file]
+        UIUtils.loading.hide();
+      });
   };
 
   $scope.removePicture = function(index){
@@ -141,7 +145,7 @@ function ESCategoryModalController($scope, UIUtils, $timeout, parameters) {
 
 
 
-function ESCommentsController($scope, $filter, $state, $focus, UIUtils) {
+function ESCommentsController($scope, $filter, $state, $focus, $timeout, $anchorScroll, UIUtils) {
   'ngInject';
 
   $scope.loading = true;
@@ -150,8 +154,12 @@ function ESCommentsController($scope, $filter, $state, $focus, UIUtils) {
   $scope.comments = {};
 
   $scope.$on('$recordView.enter', function(e, state) {
+    // First enter
+    if ($scope.loading) {
+      $scope.anchor = state && state.stateParams.anchor;
+    }
     // second call (when using cached view)
-    if (!$scope.loading && $scope.id) {
+    else if (!$scope.loading && $scope.id) {
       $scope.load($scope.id, {animate: false});
     }
   });
@@ -159,15 +167,21 @@ function ESCommentsController($scope, $filter, $state, $focus, UIUtils) {
   $scope.$on('$recordView.load', function(event, id, service) {
     $scope.id = id || $scope.id;
     $scope.service = service || $scope.service;
-    console.debug("[ES] [comment] Initialized service with: " + service.id);
+    console.debug("[ES] [comment] Will use {" + service.index + "} service");
     if ($scope.id) {
-      $scope.load($scope.id);
+      $scope.load($scope.id)
+        .then(function() {
+          // Scroll to anchor
+          $scope.scrollToAnchor();
+        });
     }
   });
 
   $scope.load = function(id, options) {
     options = options || {};
     options.from = options.from || 0;
+    // If anchor has been defined, load all comments
+    options.size = options.size || ($scope.anchor && -1/*all*/);
     options.size = options.size || $scope.defaultCommentSize;
     options.animate = angular.isDefined(options.animate) ? options.animate : true;
     options.loadAvatarAllParent = angular.isDefined(options.loadAvatarAllParent) ? options.loadAvatarAllParent : true;
@@ -201,6 +215,25 @@ function ESCommentsController($scope, $filter, $state, $focus, UIUtils) {
       $scope.service.changes.stop($scope.comments);
     }
   });
+
+  $scope.scrollToAnchor = function() {
+    if (!$scope.anchor) return;
+    var elemList = document.getElementsByName($scope.anchor);
+    // Waiting for the element
+    if (!elemList || !elemList.length) {
+      return $timeout($scope.scrollToAnchor, 500);
+    }
+    // If many, remove all anchor except the last one
+    for (var i = 0; i<elemList.length-1; i++) {
+      angular.element(elemList[i]).remove();
+    }
+    // Scroll to the anchor
+    $anchorScroll($scope.anchor);
+    // Remove the anchor. This will the CSS class 'positive-100-bg' on the comment
+    $timeout(function () {
+      $scope.anchor = null;
+    }, 1500);
+  };
 
   $scope.showMore = function(){
     var from = 0;
@@ -355,8 +388,6 @@ function ESSocialsEditController($scope, $focus, $filter, UIUtils, SocialUtils) 
       selector: '#social-' + $filter('formatSlug')(social.url),
       startVelocity: 10000
     });
-
-
   };
 
   $scope.editSocialNetwork = function(index) {
@@ -381,9 +412,9 @@ function ESSocialsEditController($scope, $focus, $filter, UIUtils, SocialUtils) 
 function ESSocialsViewController($scope)  {
   'ngInject';
 
-  $scope.openSocial = function($event, social) {
-    $event.stopPropagation();
-    return $scope.openLink($event, social.url, {
+  $scope.openSocial = function(event, social) {
+    event.stopPropagation();
+    return $scope.openLink(event, social.url, {
       type: social.type
     });
   };
@@ -482,7 +513,6 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
         .catch(function(err) {
           console.error(err); // Silent
           loadingCurrentPosition = false;
-          //$scope.form.geoPoint.$setValidity('required', false);
         });
     }
 
@@ -507,22 +537,24 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
       });
   };
 
-  $scope.onCityChanged = function() {
-    if ($scope.loading) return;
-    if ($scope.form) {
-      $scope.form.$valid = undefined;
-    }
-    if ($scope.formPosition.enable) {
-      return $scope.tryToLocalize();
-    }
-  };
+    $scope.onCityChanged = function() {
+        if ($scope.loading) return;
+        if ($scope.formPosition.enable) {
+          if ($scope.formData.geoPoint) {
+            // Invalidate the position
+            $scope.formData.geoPoint.lat = undefined;
+            $scope.formData.geoPoint.lon = undefined;
+          }
+          return $scope.tryToLocalize();
+        }
+    };
 
   $scope.onUseGeopointChanged = function() {
     if ($scope.loading) return;
     if (!$scope.formPosition.enable) {
       if ($scope.formData.geoPoint) {
-        $scope.formData.geoPoint = null;
-        //$scope.form.geoPoint.$setValidity('required', true);
+        $scope.formData.geoPoint.lat = undefined;
+        $scope.formData.geoPoint.lon = undefined;
         $scope.dirty = true;
       }
     }
@@ -696,7 +728,7 @@ function ESLookupPositionController($scope, $q, csConfig, esGeo, ModalUtils) {
   };
 }
 
-function ESSearchPositionItemController($scope, $q, $timeout, ModalUtils, csConfig, esGeo) {
+function ESSearchPositionItemController($scope, $timeout, ModalUtils, csConfig, esGeo) {
   'ngInject';
 
   // The default country used for address localisation
@@ -780,15 +812,20 @@ function ESSearchPositionItemController($scope, $q, $timeout, ModalUtils, csConf
   $scope.showDropdown = function() {
     var text = $scope.search.location && $scope.search.location.trim();
     if (!text || text.length < minLength) {
-      $scope.locations = undefined;
-      return $q.when(); // nothing to search
+        return $scope.hideDropdown(true/*force, if still loading*/);
     }
+
+    // Compute a request id, to apply response only if current request
+    var requestId = ($scope.requestId && $scope.requestId + 1) || 1;
+    $scope.requestId = requestId;
 
     loadingPosition = true;
 
     // Execute the given query
     return esGeo.point.searchByAddress(text)
       .then(function(res) {
+        if ($scope.requestId != requestId) return; // Skip apply if not same request:
+
         loadingPosition = false;
         $scope.locations = res||[];
         $scope.license = res && res.length && res[0].license;
@@ -800,6 +837,7 @@ function ESSearchPositionItemController($scope, $q, $timeout, ModalUtils, csConf
   };
 
   $scope.hideDropdown = function(force) {
+    // force, even if still loading
     if (force) {
       $scope.locations = undefined;
       $scope.selectLocationIndex = -1;

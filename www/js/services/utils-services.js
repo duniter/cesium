@@ -26,17 +26,17 @@ angular.module('cesium.utils.services', [])
   var
     loadingTextCache=null,
     CONST = {
-      MAX_HEIGHT: 400,
-      MAX_WIDTH: 400,
-      THUMB_MAX_HEIGHT: 100,
-      THUMB_MAX_WIDTH: 100
+      MAX_HEIGHT: 480,
+      MAX_WIDTH: 640,
+      THUMB_MAX_HEIGHT: 200,
+      THUMB_MAX_WIDTH: 200
     },
     data = {
       smallscreen: screenmatch.bind('xs, sm', $rootScope)
     },
     exports,
     raw = {}
-  ;
+    ;
 
   function alertError(err, subtitle) {
     if (!err) {
@@ -45,45 +45,45 @@ angular.module('cesium.utils.services', [])
 
     return $q(function(resolve) {
       $translate([err, subtitle, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'])
-      .then(function (translations) {
-        var message = err.message || translations[err];
-        return $ionicPopup.show({
-          template: '<p>' + (message || translations['ERROR.UNKNOWN_ERROR']) + '</p>',
-          title: translations['ERROR.POPUP_TITLE'],
-          subTitle: translations[subtitle],
-          buttons: [
-            {
-              text: '<b>'+translations['COMMON.BTN_OK']+'</b>',
-              type: 'button-assertive',
-              onTap: function(e) {
-                resolve(e);
+        .then(function (translations) {
+          var message = err.message || translations[err];
+          return $ionicPopup.show({
+            template: '<p>' + (message || translations['ERROR.UNKNOWN_ERROR']) + '</p>',
+            title: translations['ERROR.POPUP_TITLE'],
+            subTitle: translations[subtitle],
+            buttons: [
+              {
+                text: '<b>'+translations['COMMON.BTN_OK']+'</b>',
+                type: 'button-assertive',
+                onTap: function(e) {
+                  resolve(e);
+                }
               }
-            }
-          ]
+            ]
+          });
         });
-      });
     });
   }
 
   function alertInfo(message, subtitle) {
     return $q(function(resolve) {
       $translate([message, subtitle, 'INFO.POPUP_TITLE', 'COMMON.BTN_OK'])
-      .then(function (translations) {
-        $ionicPopup.show({
-          template: '<p>' + translations[message] + '</p>',
-          title: translations['INFO.POPUP_TITLE'],
-          subTitle: translations[subtitle],
-          buttons: [
-            {
-              text: translations['COMMON.BTN_OK'],
-              type: 'button-positive',
-              onTap: function(e) {
-                resolve(e);
+        .then(function (translations) {
+          $ionicPopup.show({
+            template: '<p>' + translations[message] + '</p>',
+            title: translations['INFO.POPUP_TITLE'],
+            subTitle: translations[subtitle],
+            buttons: [
+              {
+                text: translations['COMMON.BTN_OK'],
+                type: 'button-positive',
+                onTap: function(e) {
+                  resolve(e);
+                }
               }
-            }
-          ]
+            ]
+          });
         });
-      });
     });
   }
 
@@ -243,41 +243,82 @@ angular.module('cesium.utils.services', [])
   function getSelectionText(){
     var selectedText = "";
     if (window.getSelection){ // all modern browsers and IE9+
-        selectedText = $window.getSelection().toString();
+      selectedText = $window.getSelection().toString();
     }
     return selectedText;
   }
 
   function imageOnLoadResize(resolve, reject, thumbnail) {
     return function(event) {
-          var width = event.target.width;
-          var height = event.target.height;
-       var maxWidth = (thumbnail ? CONST.THUMB_MAX_WIDTH : CONST.MAX_WIDTH);
-       var maxHeight = (thumbnail ? CONST.THUMB_MAX_HEIGHT : CONST.MAX_HEIGHT);
+      var width = event.target.width,
+        height = event.target.height,
+        maxWidth = (thumbnail ? CONST.THUMB_MAX_WIDTH : CONST.MAX_WIDTH),
+        maxHeight = (thumbnail ? CONST.THUMB_MAX_HEIGHT : CONST.MAX_HEIGHT)
+        ;
 
-          if (width > height) {
-         if (width > maxWidth) {
-           height *= maxWidth / width;
-           width = maxWidth;
-            }
-          } else {
-         if (height > maxHeight) {
-           width *= maxHeight / height;
-           height = maxHeight;
-            }
+      var canvas = document.createElement("canvas");
+      var ctx;
+
+      // Thumbnail: resize and crop (to the expected size)
+      if (thumbnail) {
+
+        // landscape
+        if (width > height) {
+          width *= maxHeight / height;
+          height = maxHeight;
+        }
+
+        // portrait
+        else {
+          height *= maxWidth / width;
+          width = maxWidth;
+        }
+        canvas.width = maxWidth;
+        canvas.height = maxHeight;
+        ctx = canvas.getContext("2d");
+        var xoffset = Math.trunc((maxWidth - width) / 2 + 0.5);
+        var yoffset = Math.trunc((maxHeight - height) / 2 + 0.5);
+        ctx.drawImage(event.target,
+          xoffset, // x1
+          yoffset, // y1
+          maxWidth + -2 * xoffset, // x2
+          maxHeight + -2 * yoffset // y2
+        );
+      }
+
+      // Resize, but keep the full image
+      else {
+
+        // landscape
+        if (width > height) {
+          if (width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
           }
-          var canvas = document.createElement("canvas");
-          canvas.width = width;
-          canvas.height = height;
-          var ctx = canvas.getContext("2d");
-          ctx.drawImage(event.target, 0, 0,  canvas.width, canvas.height);
+        }
 
-          var dataurl = canvas.toDataURL();
+        // portrait
+        else {
+          if (height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
+          }
+        }
 
-          canvas.remove();
+        canvas.width = width;
+        canvas.height = height;
+        ctx = canvas.getContext("2d");
 
-          resolve(dataurl);
-        };
+        // Resize the whole image
+        ctx.drawImage(event.target, 0, 0,  canvas.width, canvas.height);
+      }
+
+      var dataurl = canvas.toDataURL();
+
+      canvas.remove();
+
+      resolve(dataurl);
+    };
   }
 
   function resizeImageFromFile(file, thumbnail) {
@@ -387,34 +428,34 @@ angular.module('cesium.utils.services', [])
       angular.merge(popover.scope, options.bindings);
       $timeout(function() { // This is need for Firefox
         popover.show(event)
-        .then(function() {
-          var element;
-          // Auto select text
-          if (options.autoselect) {
-            element = document.querySelectorAll(options.autoselect)[0];
-            if (element) {
-              if ($window.getSelection && !$window.getSelection().toString()) {
-                element.setSelectionRange(0, element.value.length);
-                element.focus();
-              }
-              else {
-                element.focus();
+          .then(function() {
+            var element;
+            // Auto select text
+            if (options.autoselect) {
+              element = document.querySelectorAll(options.autoselect)[0];
+              if (element) {
+                if ($window.getSelection && !$window.getSelection().toString()) {
+                  element.setSelectionRange(0, element.value.length);
+                  element.focus();
+                }
+                else {
+                  element.focus();
+                }
               }
             }
-          }
-          else {
-            // Auto focus on a element
-            if (options.autofocus) {
-              element = document.querySelectorAll(options.autofocus)[0];
-              if (element) element.focus();
+            else {
+              // Auto focus on a element
+              if (options.autofocus) {
+                element = document.querySelectorAll(options.autofocus)[0];
+                if (element) element.focus();
+              }
             }
-          }
 
-          popover.scope.$parent.$emit('popover.shown');
+            popover.scope.$parent.$emit('popover.shown');
 
-          // Callback 'afterShow'
-          if (options.afterShow) options.afterShow(popover);
-        });
+            // Callback 'afterShow'
+            if (options.afterShow) options.afterShow(popover);
+          });
       });
     };
 
@@ -424,9 +465,9 @@ angular.module('cesium.utils.services', [])
         delete options.scope.popovers[options.templateUrl];
         // Remove the popover
         popover.remove()
-          // Workaround for issue #244
-          // See also https://github.com/driftyco/ionic-v1/issues/71
-          // and https://github.com/driftyco/ionic/issues/9069
+        // Workaround for issue #244
+        // See also https://github.com/driftyco/ionic-v1/issues/71
+        // and https://github.com/driftyco/ionic/issues/9069
           .then(function() {
             var bodyEl = angular.element($window.document.querySelectorAll('body')[0]);
             bodyEl.removeClass('popover-open');
@@ -628,7 +669,7 @@ angular.module('cesium.utils.services', [])
   function motionDelegate(delegate, ionListClass) {
     var motionTimeout = isSmallScreen() ? 100 : 10;
     var defaultSelector = '.list.{0} .item, .list .{0} .item'.format(ionListClass, ionListClass);
-      return {
+    return {
       ionListClass: ionListClass,
       show: function(options) {
         options = options || {};
@@ -688,8 +729,8 @@ angular.module('cesium.utils.services', [])
     ripple: motionDelegate(ionicMaterialMotion.ripple, 'animate-ripple'),
     slideUp: motionDelegate(ionicMaterialMotion.slideUp, 'slide-up'),
     fadeIn: motionDelegate(function(options) {
-        toggleOn(options);
-      }, 'fade-in'),
+      toggleOn(options);
+    }, 'fade-in'),
     toggleOn: toggleOn,
     toggleOff: toggleOff
   };
@@ -743,10 +784,8 @@ angular.module('cesium.utils.services', [])
     }, timeout || 900);
   }
 
-
-
   csSettings.api.data.on.changed($rootScope, function(data) {
-   setEffects(data.uiEffects);
+    setEffects(data.uiEffects);
   });
 
   exports = {

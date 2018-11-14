@@ -9,7 +9,16 @@ angular.module('cesium.map.user.controllers', ['cesium.services', 'cesium.map.se
 
       PluginServiceProvider
 
-        .extendState('app.user_edit_profile', {
+        .extendState('app.edit_profile', {
+          points: {
+            'after-position': {
+              templateUrl: 'plugins/map/templates/user/edit_profile_extend.html',
+              controller: 'MapEditProfileViewCtrl'
+            }
+          }
+        })
+
+        .extendState('app.edit_profile_by_id', {
           points: {
             'after-position': {
               templateUrl: 'plugins/map/templates/user/edit_profile_extend.html',
