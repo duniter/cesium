@@ -8,18 +8,6 @@
     </div>
   </ion-item>
 
-
-  <ion-item class="item-icon-left item-text-wrap">
-    <i class="icon ion-record"></i>
-    <div class="col col-60">
-      <span translate>CURRENCY.VIEW.MASS</span>
-      <span class="gray">(M<sub>t</sub>)</span>
-    </div>
-    <span class="badge badge-calm"
-          ng-if="!loading"
-          ng-bind-html=":rebind:formData.M | formatAmount:{currency: formData.currency, useRelative: formData.useRelative, currentUD: formData.currentUD}"></span>
-  </ion-item>
-
   <ion-item id="helptip-currency-mass-member" class="item-icon-left item-text-wrap">
     <i class="icon ion-pie-graph"></i>
     <div class="col col-60">
@@ -28,11 +16,21 @@
     </div>
     <span id="helptip-currency-mass-member-unit"
           ng-if="!loading"
-          class="badge badge-energized"
+          class="badge badge-calm"
           ng-bind-html=":rebind:formData.MoverN | formatAmount:{currency: formData.currency, useRelative: formData.useRelative, currentUD: formData.currentUD}">
     </span>
   </ion-item>
 
+  <ion-item class="item-icon-left item-text-wrap">
+    <i class="icon ion-record"></i>
+    <div class="col col-60">
+      <span translate>CURRENCY.VIEW.MASS</span>
+      <span class="gray">(M<sub>t</sub>)</span>
+    </div>
+    <span class="badge badge-energized"
+          ng-if="!loading"
+          ng-bind-html=":rebind:formData.M | formatAmount:{currency: formData.currency, useRelative: formData.useRelative, currentUD: formData.currentUD}"></span>
+  </ion-item>
 
   <!-- Allow extension here -->
   <cs-extension-point name="parameters-actual"></cs-extension-point>

@@ -164,31 +164,31 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
         var data = [];
         if($scope.formData.useRelative) {
 
-          // Mass
-          data.push(
-            result.blocks.reduce(function(res, block) {
-              return res.concat(truncAmount(block.monetaryMass / block.dividend));
-            }, []));
-
           // M/N
           data.push(
             result.blocks.reduce(function(res, block) {
               return res.concat(truncAmount(block.monetaryMass / block.dividend / block.membersCount));
             }, []));
+
+          // Mass
+          data.push(
+            result.blocks.reduce(function(res, block) {
+              return res.concat(truncAmount(block.monetaryMass / block.dividend));
+            }, []));
         }
 
         // Data: quantitative
         else {
-          // Mass
-          data.push(
-            result.blocks.reduce(function(res, block) {
-              return res.concat(block.monetaryMass / 100);
-            }, []));
-
           // M/N
           data.push(
             result.blocks.reduce(function(res, block) {
               return res.concat(truncAmount(block.monetaryMass / block.membersCount / 100));
+            }, []));
+
+          // Mass
+          data.push(
+            result.blocks.reduce(function(res, block) {
+              return res.concat(block.monetaryMass / 100);
             }, []));
         }
         $scope.data = data;
@@ -216,16 +216,17 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
           scales: {
             yAxes: [
               {
-                id: 'y-axis-mass'
+                id: 'y-axis-mn'
               },
               {
-                id: 'y-axis-mn',
+                id: 'y-axis-mass',
                 display: $scope.displayShareAxis,
                 position: 'right',
                 gridLines: {
                   drawOnChartArea: false
                 }
-              }
+              },
+
             ]
           },
           tooltips: {
@@ -243,18 +244,18 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
 
         $scope.datasetOverride = [
           {
-            yAxisID: 'y-axis-mass',
+            yAxisID: 'y-axis-mn',
             type: 'line',
-            label: translations['GRAPH.CURRENCY.MONETARY_MASS_LABEL'],
+            label: translations['GRAPH.CURRENCY.MONETARY_MASS_SHARE_LABEL'],
             borderWidth: 2,
             pointRadius: 0,
             pointHitRadius: 4,
             pointHoverRadius: 3
           },
           {
-            yAxisID: 'y-axis-mn',
+            yAxisID: 'y-axis-mass',
             type: 'line',
-            label: translations['GRAPH.CURRENCY.MONETARY_MASS_SHARE_LABEL'],
+            label: translations['GRAPH.CURRENCY.MONETARY_MASS_LABEL'],
             fill: false,
             showLine: true,
             borderColor: gpColor.rgba.energized(),
