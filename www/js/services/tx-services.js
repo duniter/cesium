@@ -15,9 +15,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
       api = new Api(this, "csTx-" + id),
 
       _reduceTxAndPush = function(pubkey, txArray, result, processedTxMap, allowPendings) {
-        if (!txArray || txArray.length === 0) {
-          return;
-        }
+        if (!txArray || !txArray.length) return; // Skip if empty
 
         _.forEach(txArray, function(tx) {
           if (tx.block_number || allowPendings) {
@@ -304,7 +302,8 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
             var txPendings = [];
             var txErrors = [];
-            var balance = data.balance;
+            var balanceFromSource = data.balance;
+            var balanceWithPending = data.balance;
 
             function _processPendingTx(tx) {
               var consumedSources = [];
@@ -332,7 +331,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                 delete tx.inputs;
               }
               if (valid) {
-                balance += tx.amount; // update balance
+                balanceWithPending += tx.amount; // update balance
                 txPendings.push(tx);
                 _.forEach(consumedSources, function(src) {
                   src.consumed=true;
@@ -362,7 +361,8 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
             data.tx.pendings = txPendings;
             data.tx.errors = txErrors;
-            data.balance = balance;
+            // Negative balance not allow (use only source's balance) - fix #769
+            data.balance = (balanceWithPending < 0) ? balanceFromSource : balanceWithPending;
 
             // Will add uid (+ plugin will add name, avatar, etc. if enable)
             return csWot.extendAll((data.tx.history || []).concat(data.tx.validating||[]).concat(data.tx.pendings||[]), 'pubkey');
