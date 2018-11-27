@@ -10,7 +10,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
 
   })
 
-.factory('esNotification', function($rootScope, $q, $timeout, $translate, $state,
+.factory('esNotification', function($rootScope, $q, $timeout, $translate, $state, csHttp,
                                     esHttp, csConfig, csSettings, csWallet, csWot, UIUtils, filterTranslations,
                                     BMA, CryptoUtils, csPlatform, Api) {
   'ngInject';
@@ -134,10 +134,10 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
 
         // Add wallet events as notifications
         if (wallet.data.events && wallet.data.events.length) {
-          var time = moment().utc().unix() - filterTranslations.MEDIAN_TIME_OFFSET;
+          var time = csHttp.data.now() - filterTranslations.MEDIAN_TIME_OFFSET;
           events = (wallet.data.events || []).reduce(function(res, event) {
             if (event.type != "warn") return res;
-            var notification = new Notification({}, function(self) {
+            var notification = new EsNotification({}, function(self) {
               if (!self.read) {
                 self.read = true;
                 if (wallet.data.notifications && wallet.data.notifications.warnCount > 0) {
