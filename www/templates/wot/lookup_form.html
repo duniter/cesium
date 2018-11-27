@@ -72,6 +72,14 @@
         <i class="icon ion-clock"></i>
         {{'WOT.LOOKUP.BTN_PENDING' | translate}}
       </a>
+      <a ng-if="enableWallets"
+         class="button button-text button-small ink"
+         ng-class="{'button-text-positive': search.type=='wallets'}"
+         ng-click="doGetWallets()" class="badge-balanced">
+        <i class="icon ion-card" style="left: -1px; top: 4px; position: relative; padding-left: 3px; padding-right: 3px;"></i>
+        <b class="icon-secondary ion-card" style="left: 10px; top: -4px; font-size: 14px;"> </b>
+        {{'MENU.WALLETS' | translate}}
+      </a>
 
       <!-- Allow extension here -->
       <cs-extension-point name="filter-buttons"></cs-extension-point>

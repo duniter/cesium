@@ -385,7 +385,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     // Hide numerical keyboard
     $scope.hideDigitKeyboard(0);
 
-    return Modals.showWotLookup()
+    return Modals.showWotLookup({enableWallets: true})
       .then(function(result){
         if (result) {
           if (formDataField == 'destPub') {

@@ -176,6 +176,7 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
   $scope.entered = false;
   $scope.wotSearchTextId = 'wotSearchText';
   $scope.enableFilter = true;
+  $scope.enableWallets = false;
   $scope.allowMultiple = false;
   $scope.selection = [];
   $scope.showResultLabel = true;
@@ -208,6 +209,9 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
           }
           else if (params.type == 'pending') {
             $scope.doGetPending(0, undefined, true/*skipLocationUpdate*/);
+          }
+          else if (params.type == 'wallets') {
+            $scope.doGetWallets(0, undefined, true/*skipLocationUpdate*/);
           }
 
         }, 100);
@@ -376,6 +380,42 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
         $scope.search.hasMore = false;
         UIUtils.onError('ERROR.LOAD_PENDING_FAILED')(err);
       });
+  };
+
+  $scope.doGetWallets = function(offset, size, skipLocationUpdate) {
+    offset = offset || 0;
+    size = size || defaultSearchLimit;
+    if (size < defaultSearchLimit) size = defaultSearchLimit;
+
+    $scope.hideActionsPopover();
+    $scope.search.loading = (offset === 0);
+    $scope.search.type = 'wallets';
+
+    // Update location href
+    if (!offset && !skipLocationUpdate) {
+      $scope.updateLocationHref();
+    }
+
+    return csWallet.children.all()
+      .then(function(children) {
+        if (!children || $scope.search.type != 'wallets') return false; // could have change
+        var res = [csWallet].concat(children).reduce(function(res, wallet, index) {
+          var item = {
+            id: index,
+            pubkey: wallet.data.pubkey,
+            uid: wallet.data.uid,
+            name: wallet.data.localName || wallet.data.name,
+            avatar: wallet.data.avatar
+          };
+          return res.concat(item);
+        }, []);
+
+        $scope.doDisplayResult(res, offset, size, res.length);
+        $scope.search.hasMore = false;
+        return true;
+      });
+
+
   };
 
   $scope.showMore = function() {
@@ -575,7 +615,7 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
 
 }
 
-function WotLookupModalController($scope, $controller, $focus, parameters){
+function WotLookupModalController($scope, $controller, $focus, csWallet, parameters){
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -584,6 +624,7 @@ function WotLookupModalController($scope, $controller, $focus, parameters){
   parameters = parameters || {};
   $scope.search.loading = false;
   $scope.enableFilter = angular.isDefined(parameters.enableFilter) ? parameters.enableFilter : false;
+  $scope.enableWallets = angular.isDefined(parameters.enableWallets) ? (csWallet.isLogin() && csWallet.children.count() && parameters.enableWallets) : false;
   $scope.allowMultiple = angular.isDefined(parameters.allowMultiple) ? parameters.allowMultiple : false;
   $scope.parameters = parameters;
   $scope.showResultLabel = false;
