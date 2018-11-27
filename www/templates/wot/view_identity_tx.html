@@ -52,6 +52,37 @@
             </div>
           </div>
 
+          <!-- Errors transactions-->
+          <div class="item item-icon-left " ng-if="formData.tx.errors && formData.tx.errors.length">
+            <i class="icon ion-alert-circled"></i>
+            {{:locale:'ACCOUNT.ERROR_TX'|translate}}
+            <div class="badge badge-assertive">
+              {{formData.tx.errors.length}}
+            </div>
+          </div>
+
+          <!-- Pending transactions -->
+          <span class="item item-pending item-divider" ng-if="formData.tx.pendings && formData.tx.pendings.length">
+            {{:locale:'ACCOUNT.PENDING_TX'|translate}}
+          </span>
+
+          <div class="item item-pending item-tx item-icon-left"
+               ng-repeat="tx in formData.tx.pendings"
+               ng-init="pending=true;"
+               ng-include="'templates/wallet/item_tx.html'">
+          </div>
+
+          <!-- Validating transactions -->
+          <span class="item item-pending item-divider" ng-if="formData.tx.validating &&formData.tx.validating.length">
+            {{:locale:'ACCOUNT.VALIDATING_TX'|translate}}
+          </span>
+
+          <div class="item item-pending item-tx item-icon-left"
+               ng-repeat="tx in formData.tx.validating"
+               ng-init="validating=true;"
+               ng-include="'templates/wallet/item_tx.html'">
+          </div>
+
           <span class="item item-divider" ng-if="!loading">
             {{:locale:'ACCOUNT.LAST_TX'|translate}}
             <a id="helptip-wallet-tx" style="position: relative; bottom: 0; right: 0px;">&nbsp;</a>
