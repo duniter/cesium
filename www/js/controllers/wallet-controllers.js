@@ -677,7 +677,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
 
 function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
-                            UIUtils, Modals, csPopovers, BMA, csSettings, csCurrency, csWallet, csTx) {
+                            UIUtils, Modals, csPopovers, BMA, csHttp, csSettings, csCurrency, csWallet, csTx) {
   'ngInject';
 
   $scope.loading = true;
@@ -774,10 +774,12 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
   // Updating wallet data
   $scope.doUpdate = function(silent) {
     console.debug('[wallet] TX history reloading...');
+    var fromTime = $scope.formData &&  $scope.formData.tx && $scope.formData.tx.fromTime || undefined;
     var options = {
       sources: true,
       tx:  {
-        enable: true
+        enable: true,
+        fromTime: fromTime
       },
       api: false
     };
@@ -865,10 +867,10 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
 
     fromTime = fromTime ||
       ($scope.formData.tx.fromTime - csSettings.data.walletHistoryTimeSecond) ||
-      (moment().utc().unix()- 2 * csSettings.data.walletHistoryTimeSecond);
+      (csHttp.date.now() - 2 * csSettings.data.walletHistoryTimeSecond);
 
     UIUtils.loading.show();
-    return wallet.refreshData({tx: {enable: true,fromTime: fromTime}})
+    return wallet.refreshData({tx: {enable: true, fromTime: fromTime}})
       .then(function() {
         $scope.updateView();
         UIUtils.loading.hide();

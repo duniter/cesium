@@ -132,7 +132,7 @@
             <span class="gray">{{:locale:'ACCOUNT.NO_TX'|translate}}</span>
           </span>
 
-          <div ng-repeat="tx in formData.tx.history"
+          <div ng-repeat="tx in formData.tx.history track by tx.hash"
              class="item item-tx item-icon-left"
              ng-include="::!tx.isUD ? 'templates/wallet/item_tx.html' : 'templates/wallet/item_ud.html'">
           </div>
