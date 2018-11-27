@@ -2117,11 +2117,26 @@ div[dropzone]:hover {
   background-color: $stable-100-bg;
 }
 
-
 .hero .button-fab-top-right,
-.hero .button-fab-top-left {
+.hero .button-fab-top-left,
+.button-fab-hero.button-fab-top-right,
+.button-fab-hero.button-fab-top-left {
   top: 170px !important;
 }
+
+.button.button-fab.mini,
+.bar .button.button-fab.mini {
+  min-width: 40px;
+  min-height: 40px;
+}
+
+.hero .button-fab-top-right.mini,
+.hero .button-fab-top-left.mini,
+.button-fab-hero.button-fab-top-right.mini,
+.button-fab-hero.button-fab-top-left.mini{
+  top: 178px !important;
+}
+
 
 .text-no-transform {
   text-transform: inherit;

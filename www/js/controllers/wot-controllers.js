@@ -647,7 +647,7 @@ function WotLookupModalController($scope, $controller, $focus, parameters){
  * @constructor
  */
 function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $ionicHistory, $q,
-                                       UIUtils, Modals, csConfig, csCurrency, csWot, csWallet) {
+                                       UIUtils, Modals, csConfig, csSettings, csCurrency, csWot, csWallet) {
   'ngInject';
 
   $scope.formData = {
@@ -666,12 +666,12 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
       .then(function(identity){
         if (!identity) return UIUtils.onError('ERROR.IDENTITY_NOT_FOUND')().then($scope.showHome);
         $scope.formData = identity;
+        var isLogin = csWallet.isLogin();
         $scope.revoked = identity.requirements && (identity.requirements.revoked || identity.requirements.pendingRevocation);
-        $scope.canCertify = identity.hasSelf && (!csWallet.isLogin() || (!csWallet.isUserPubkey(pubkey))) && !$scope.revoked;
-        $scope.canSelectAndCertify = identity.hasSelf && csWallet.isUserPubkey(pubkey);
-        $scope.alreadyCertified = !$scope.canCertify || !csWallet.isLogin() ? false :
-          (!!_.findWhere(identity.received_cert, { pubkey: csWallet.data.pubkey, valid: true }) ||
-          !!_.findWhere(identity.received_cert_pending, { pubkey: csWallet.data.pubkey, valid: true }));
+        $scope.canCertify = identity.hasSelf && !$scope.revoked && (!isLogin || !csWallet.isUserPubkey(pubkey) || csWallet.children.count() > 0);
+        $scope.canSelectAndCertify = identity.hasSelf && (csWallet.isUserPubkey(pubkey) || csWallet.children.hasPubkey(pubkey));
+        var cert = isLogin && _.findWhere(identity.received_cert.concat(identity.received_cert_pending), { pubkey: csWallet.data.pubkey, valid: true });
+        $scope.alreadyCertified = (!$scope.canCertify || !isLogin || csWallet.children.count() > 0) ? false : (!!cert && cert.expiresIn > csSettings.data.timeWarningExpire);
         $scope.disableCertifyButton = $scope.alreadyCertified || $scope.revoked;
         $scope.loading = false;
       })
@@ -697,6 +697,8 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
     // Select wallet, if many
     return (csWallet.children.count() ? Modals.showSelectWallet({displayBalance: false}) : $q.when(csWallet))
       .then(function(wallet) {
+        if (!wallet) return; // user cancelled
+
         // Need user auth - fix #513
         return wallet.auth({minData: true})
           .then(function(walletData) {
@@ -1043,6 +1045,8 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
     if (($scope.canCertify && !$scope.alreadyCertified) || $rootScope.tour) {
       $scope.showFab('fab-certify-' + $scope.formData.uid);
     }
+
+    $scope.$broadcast('$csExtension.motion');
   };
 
   $scope.doQuickFix = function(event) {
@@ -1236,6 +1240,7 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
   };
 
   $scope.doMotion = function(skipItems) {
+
     // Motions received certifications part
     $scope.doMotionReceivedCertifications(0, skipItems);
 

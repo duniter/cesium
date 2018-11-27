@@ -6,6 +6,15 @@
   </button>
 </ng-if>
 
+<!-- Top fab buttons -->
+<ng-if ng-if=":state:enable && extensionPoint === 'buttons-top-fab'">
+  <button id="fab-compose-{{:rebind:formData.uid}}"
+          class="button button-fab button-fab-top-right button-fab-hero mini button-stable spin"
+          ng-click="showNewMessageModal()">
+    <i class="icon ion-compose"></i>
+  </button>
+</ng-if>
+
 <!-- General section -->
 <ng-if ng-if=":state:enable && extensionPoint === 'after-general'">
 
