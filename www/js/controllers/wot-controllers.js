@@ -670,7 +670,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
         $scope.revoked = identity.requirements && (identity.requirements.revoked || identity.requirements.pendingRevocation);
         $scope.canCertify = identity.hasSelf && !$scope.revoked && (!isLogin || !csWallet.isUserPubkey(pubkey) || csWallet.children.count() > 0);
         $scope.canSelectAndCertify = identity.hasSelf && (csWallet.isUserPubkey(pubkey) || csWallet.children.hasPubkey(pubkey));
-        var cert = isLogin && _.findWhere(identity.received_cert.concat(identity.received_cert_pending), { pubkey: csWallet.data.pubkey, valid: true });
+        var cert = isLogin && _.findWhere((identity.received_cert||[]).concat(identity.received_cert_pending), { pubkey: csWallet.data.pubkey, valid: true });
         $scope.alreadyCertified = (!$scope.canCertify || !isLogin || csWallet.children.count() > 0) ? false : (!!cert && cert.expiresIn > csSettings.data.timeWarningExpire);
         $scope.disableCertifyButton = $scope.alreadyCertified || $scope.revoked;
         $scope.loading = false;
