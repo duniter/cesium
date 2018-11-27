@@ -8,7 +8,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
     .state('app.network', {
       url: "/network?type&expert",
-      cache: true,
+      cache: false, // fix #766
       views: {
         'menuContent': {
           templateUrl: "templates/network/view_network.html",
