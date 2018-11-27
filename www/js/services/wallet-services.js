@@ -508,7 +508,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       }
 
       // Encryption is enable, but user not auth: use the session storage
-      // (and keep the localstorage value)
+      // (and keep the local storage value)
       if (!isAuth()) return sessionStorage.put(storageKey, contentStr||null);
 
       return $q.all([

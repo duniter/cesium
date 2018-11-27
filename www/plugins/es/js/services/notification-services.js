@@ -11,7 +11,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
   })
 
 .factory('esNotification', function($rootScope, $q, $timeout, $translate, $state, csHttp,
-                                    esHttp, csConfig, csSettings, csWallet, csWot, UIUtils, filterTranslations,
+                                    csConfig, csSettings, esHttp, esSettings, csWallet, csWot, UIUtils, filterTranslations,
                                     BMA, CryptoUtils, csPlatform, Api) {
   'ngInject';
 
@@ -197,7 +197,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
         }
       })
       .then(function() {
-        return emitEsNotification(notification);
+        if (esSettings.notifications.isEmitHtml5Enable()) return emitEsNotification(notification);
       });
   }
 
@@ -326,7 +326,8 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
       return deferred.promise;
     }
 
-    console.debug('[ES] [notification] Loading count...');
+    var isDefaultWallet =  csWallet.isUserPubkey(data.pubkey);
+    console.debug('[ES] [notification] Loading count...' + data.pubkey.substr(0,8));
 
     // Load unread notifications count
     loadUnreadNotificationsCount(
@@ -339,14 +340,14 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
         data.notifications.unreadCount = unreadCount;
         data.notifications.warnCount = countWarnEvents(data);
 
-        // Emit HTML5 notification
-        if (unreadCount > 0) {
+        // Emit HTML5 notification (only on main wallet)
+        if (unreadCount > 0 && esSettings.notifications.isEmitHtml5Enable() && isDefaultWallet) {
           $timeout(function() {
             emitEsNotification({
               message: 'COMMON.NOTIFICATION.HAS_UNREAD',
               count: unreadCount,
               state: 'app.view_notifications'
-            }, 'COMMON.APP_NAME');
+            }, data.ui || data.name || data.pubkey.substr(0,8));
           }, 500);
         }
 

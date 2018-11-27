@@ -1,0 +1,14 @@
+<h4 class="dark" ng-if=":state:enable">
+  <a ng-if="walletData.invitations.unreadCount">
+    <i class="dark ion-person-stalker"></i>
+    {{walletData.invitations.unreadCount}}
+  </a>
+  <a ng-if="walletData.messages.unreadCount" ui-sref="app.view_messages_by_id({id: wallet.id})">
+    <i class="dark ion-email"></i>
+    {{walletData.messages.unreadCount}}
+  </a>
+  <a ng-if="walletData.notifications.unreadCount" ui-sref="app.view_notifications_by_id({id: wallet.id})">
+    <i class="dark ion-android-notifications"></i>
+    {{walletData.notifications.unreadCount}}
+  </a>
+</h4>

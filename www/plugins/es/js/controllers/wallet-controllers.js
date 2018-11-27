@@ -14,6 +14,16 @@ angular.module('cesium.es.wallet.controllers', ['cesium.es.services'])
             }
           }
         })
+
+        .extendState('app.view_wallets', {
+          points: {
+            'item-wallet': {
+              templateUrl: "plugins/es/templates/wallet/item_wallet_extend.html",
+              controller: 'ESExtensionCtrl'
+            }
+          }
+        })
+
       ;
     }
 

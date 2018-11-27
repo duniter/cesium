@@ -507,7 +507,9 @@
       "ENABLE_TX_SENT": "Notifier les <b>paiement émis</b> ?",
       "ENABLE_TX_RECEIVED": "Notifier les <b>paiements reçus</b> ?",
       "ENABLE_CERT_SENT": "Notifier les <b>certifications émises</b> ?",
-      "ENABLE_CERT_RECEIVED": "Notifier les <b>certifications reçues</b> ?"
+      "ENABLE_CERT_RECEIVED": "Notifier les <b>certifications reçues</b> ?",
+      "ENABLE_HTML5_NOTIFICATION": "Avertir à chaque nouvelle notification ?",
+      "ENABLE_HTML5_NOTIFICATION_HELP": "Ouvre une petite fenetre à chaque nouvelle notification."
     },
     "CONFIRM": {
       "ASK_ENABLE_TITLE": "Fonctionnalités optionnelles",

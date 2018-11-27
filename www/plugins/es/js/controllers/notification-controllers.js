@@ -19,6 +19,18 @@ angular.module('cesium.es.notification.controllers', ['cesium.es.services'])
           login: true
         }
       })
+      .state('app.view_notifications_by_id', {
+        url: "/wallets/:id/notifications",
+        views: {
+          'menuContent': {
+            templateUrl: "plugins/es/templates/notification/view_notifications.html",
+            controller: 'NotificationsCtrl'
+          }
+        },
+        data: {
+          login: true
+        }
+      })
     ;
   })
 

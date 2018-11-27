@@ -456,7 +456,9 @@
       "ENABLE_TX_SENT": "Notify the validation of <b>sent payments</b>?",
       "ENABLE_TX_RECEIVED": "Notify the validation of <b>received payments</b>?",
       "ENABLE_CERT_SENT": "Notify the validation of <b>sent certifications</b>?",
-      "ENABLE_CERT_RECEIVED": "Notify the validation of <b>received certifications</b>?"
+      "ENABLE_CERT_RECEIVED": "Notify the validation of <b>received certifications</b>?",
+      "ENABLE_HTML5_NOTIFICATION": "Warn with each new notification?",
+      "ENABLE_HTML5_NOTIFICATION_HELP": "Opens a small popup window with each new notification."
     },
     "CONFIRM": {
       "ASK_ENABLE_TITLE": "Optional features",

@@ -2,9 +2,9 @@
   ng-click="select($event, wallet)"
   ng-init="walletData=wallet.data;">
 
-  <i ng-if="::!walletData.avatar" class="item-image icon"
-     ng-class=":rebind:{'ion-card': !walletData.isMember, 'ion-persion': walletData.isMember}"></i>
-  <i ng-if="::walletData.avatar" class="item-image avatar" style="background-image: url({{::walletData.avatar.src}})"></i>
+  <i ng-if=":rebind:!walletData.avatar" class="item-image icon"
+     ng-class=":rebind:{'ion-card': !walletData.isMember, 'ion-person': walletData.isMember}"></i>
+  <i ng-if=":rebind:walletData.avatar" class="item-image avatar" style="background-image: url({{::walletData.avatar.src}})"></i>
   <div class="badge badge-button badge-avatar badge-assertive ion-locked " ng-hide=":rebind:wallet.isAuth()">
   </div>
 
@@ -24,20 +24,7 @@
     <span ng-if="::!walletData.uid" class="assertive" translate>WOT.NOT_MEMBER_PARENTHESIS</span>
   </h4>
 
-  <h4 class="dark">
-    <span ng-if="walletData.invitations.unreadCount">
-      <i class="dark ion-person-stalker"></i>
-      {{walletData.invitations.unreadCount}}
-    </span>
-      <span ng-if="walletData.messages.unreadCount">
-      <i class="dark ion-email"></i>
-      {{walletData.messages.unreadCount}}
-    </span>
-    <span ng-if="walletData.notifications.unreadCount">
-      <i class="dark ion-android-notifications"></i>
-      {{walletData.notifications.unreadCount}}
-    </span>
-  </h4>
+  <cs-extension-point name="item-wallet"></cs-extension-point>
 
   <span class="badge" ng-if="formData.showBalance"
         ng-class=":rebind:{'badge-assertive': (walletData.balance <= 0), 'badge-balanced': (walletData.balance > 0) }">

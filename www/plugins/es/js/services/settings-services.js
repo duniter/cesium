@@ -45,7 +45,8 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
               txSent: true,
               txReceived: true,
               certSent: true,
-              certReceived: true
+              certReceived: true,
+              emitHtml5: false
             },
             invitations: {
               readTime: true
@@ -84,6 +85,13 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
       csSettings.data.plugins.es &&
       csSettings.data.plugins.es.enable &&
       !!csSettings.data.plugins.es.host;
+  };
+
+  that.notifications = {};
+  that.notifications.isEmitHtml5Enable = function() {
+    return that.isEnable() &&
+      csSettings.data.plugins.es.notifications &&
+      angular.isDefined(csSettings.data.plugins.es.notifications.emitHtml5) ? csSettings.data.plugins.es.notifications.emitHtml5 : false;
   };
 
   that.wot = {};

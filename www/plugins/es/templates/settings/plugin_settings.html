@@ -15,10 +15,10 @@
     </div>
 
     <div class="item item-toggle dark">
-      <div class="input-label" translate>ES_SETTINGS.ENABLE_REMOTE_STORAGE</div>
+      <div ng-class="{'gray': !formData.enable}" class="input-label" translate>ES_SETTINGS.ENABLE_REMOTE_STORAGE</div>
       <h4 class="gray" ng-bind-html="'ES_SETTINGS.ENABLE_REMOTE_STORAGE_HELP' | translate"></h4>
       <label class="toggle toggle-royal">
-        <input type="checkbox" ng-model="formData.useRemoteStorage" >
+        <input type="checkbox" ng-model="formData.useRemoteStorage" ng-disabled="!formData.enable">
         <div class="track">
           <div class="handle"></div>
         </div>
@@ -45,6 +45,18 @@
     </div>
 
     <span class="item item-divider" translate>ES_SETTINGS.NOTIFICATIONS.DIVIDER</span>
+
+    <!-- Enable HTML notifications -->
+    <div class="item item-toggle dark hidden-xs hidden-sm">
+      <div ng-class="{'gray': !formData.enable}" class="input-label" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_HTML5_NOTIFICATION</div>
+      <h4 class="gray" ng-bind-html="'ES_SETTINGS.NOTIFICATIONS.ENABLE_HTML5_NOTIFICATION_HELP' | translate"></h4>
+      <label class="toggle toggle-royal">
+        <input type="checkbox" ng-model="formData.notifications.emitHtml5"  ng-disabled="!formData.enable">
+        <div class="track">
+          <div class="handle"></div>
+        </div>
+      </label>
+    </div>
 
     <span class="item gray item-text-wrap" translate>ES_SETTINGS.NOTIFICATIONS.HELP_TEXT</span>
 
@@ -84,6 +96,7 @@
         </div>
       </div>
     </label>
+
 
     <!-- Allow extension here -->
     <cs-extension-point name="common"></cs-extension-point>

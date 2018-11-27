@@ -227,6 +227,15 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
   $scope.onFormChanged = function() {
     if ($scope.loading) return;
 
+    if ($scope.formData.notifications.emitHtml5 !== (!!("Notification" in window) && Notification.permission === "granted")){
+      Notification.requestPermission(function (permission) {
+        // If the user accepts, let's create a notification
+        $scope.formData.notifications.emitHtml5 = (permission === "granted"); // revert to false if permission not granted
+        $scope.onFormChanged(); // Loop
+      });
+      return;
+    }
+
     $scope.loading = true;
     csSettings.data.plugins = csSettings.data.plugins || {};
     csSettings.data.plugins.es = csSettings.data.plugins.es ?
@@ -235,6 +244,8 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
 
     // Fix old settings (unused)
     delete csSettings.data.plugins.es.newNode;
+
+
 
     csSettings.store()
       .then(function() {

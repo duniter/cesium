@@ -11,10 +11,11 @@ angular.module('cesium.es.tx.services', ['ngResource', 'cesium.services', 'cesiu
 
   })
 
-  .factory('esTx', function($q, $rootScope, csCurrency, csTx, esHttp, esWot) {
+  .factory('esTx', function($q, $rootScope, csPlatform, csCurrency, csTx, esHttp, esWot) {
     'ngInject';
 
     var
+      listeners,
       raw = {
         block: {
           search: esHttp.post('/:currency/block/_search')
@@ -115,8 +116,38 @@ angular.module('cesium.es.tx.services', ['ngResource', 'cesium.services', 'cesiu
       return deferred.promise;
     }
 
-    // Register extensions
-    csTx.api.data.on.loadUDs($rootScope, onLoadUDs, this);
+    function addListeners() {
+      // Extend API events
+      listeners = [
+        csTx.api.data.on.loadUDs($rootScope, onLoadUDs, this)
+      ];
+    }
+
+    function removeListeners() {
+      _.forEach(listeners, function(remove){
+        remove();
+      });
+      listeners = [];
+    }
+
+    function refreshState() {
+      var enable = esHttp.alive;
+      if (!enable && listeners && listeners.length > 0) {
+        console.debug("[ES] [tx] Disable");
+        removeListeners();
+      }
+      else if (enable && (!listeners || listeners.length === 0)) {
+        console.debug("[ES] [tx] Enable");
+        addListeners();
+      }
+    }
+
+    // Default action
+    csPlatform.ready().then(function() {
+      esHttp.api.node.on.start($rootScope, refreshState, this);
+      esHttp.api.node.on.stop($rootScope, refreshState, this);
+      return refreshState();
+    });
 
     // Exports
     return {};
