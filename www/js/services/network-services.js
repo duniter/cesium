@@ -347,26 +347,26 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
                     }
                     else if (refreshedPeer.buid !== existingMainBuid){
                       console.debug('[network] {0} endpoint [{1}] new current block'.format(
-                        refreshedPeer.bma.useBma ? 'BMA' : 'WS2P',
+                        refreshedPeer.bma && (refreshedPeer.bma.useBma ? 'BMA' : 'WS2P') || 'null',
                         refreshedPeer.server));
                       hasUpdates = true;
                     }
                     else if (existingOnline !== refreshedPeer.online){
                       console.debug('[network] {0} endpoint [{1}] is now {2}'.format(
-                        refreshedPeer.bma.useBma ? 'BMA' : 'WS2P',
+                        refreshedPeer.bma && (refreshedPeer.bma.useBma ? 'BMA' : 'WS2P') || 'null',
                         refreshedPeer.server,
                         refreshedPeer.online ? 'UP' : 'DOWN'));
                       hasUpdates = true;
                     }
                     else {
                       console.debug("[network] {0} endpoint [{1}] unchanged".format(
-                        refreshedPeer.bma.useBma ? 'BMA' : 'WS2P',
+                        refreshedPeer.bma && (refreshedPeer.bma.useBma ? 'BMA' : 'WS2P') || 'null',
                         refreshedPeer.server));
                     }
                   }
                   else if (refreshedPeer && (refreshedPeer.online === data.filter.online || data.filter.online === 'all')) {
                     console.debug("[network] {0} endpoint [{1}] is {2}".format(
-                      refreshedPeer.bma.useBma ? 'BMA' : 'WS2P',
+                      refreshedPeer.bma && (refreshedPeer.bma.useBma ? 'BMA' : 'WS2P') || 'null',
                       refreshedPeer.server,
                       refreshedPeer.online ? 'UP' : 'DOWN'
                     ));
