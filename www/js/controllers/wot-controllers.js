@@ -711,8 +711,8 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
         $scope.revoked = identity.requirements && (identity.requirements.revoked || identity.requirements.pendingRevocation);
         $scope.canCertify = identity.hasSelf && !$scope.revoked && (!isLogin || !csWallet.isUserPubkey(pubkey) || csWallet.children.count() > 0);
         $scope.canSelectAndCertify = identity.hasSelf && (csWallet.isUserPubkey(pubkey) || csWallet.children.hasPubkey(pubkey));
-        var cert = isLogin && _.findWhere((identity.received_cert||[]).concat(identity.received_cert_pending), { pubkey: csWallet.data.pubkey, valid: true });
-        $scope.alreadyCertified = (!$scope.canCertify || !isLogin || csWallet.children.count() > 0) ? false : (!!cert && cert.expiresIn > csSettings.data.timeWarningExpire);
+        var cert = isLogin && _.find((identity.received_cert||[]).concat(identity.received_cert_pending), function (cert) { return cert.pubkey === csWallet.data.pubkey && cert.valid && cert.expiresIn > csSettings.data.timeWarningExpire});
+        $scope.alreadyCertified = (!$scope.canCertify || !isLogin || csWallet.children.count() > 0) ? false : !!cert;
         $scope.disableCertifyButton = $scope.alreadyCertified || $scope.revoked;
         $scope.loading = false;
       })
@@ -763,7 +763,9 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
             }
 
             // Check not already certified
-            var previousCert = _.findWhere($scope.formData.received_cert, { pubkey: wallet.data.pubkey, valid: true});
+            var previousCert = _.find($scope.formData.received_cert, function(cert) {
+              return cert.pubkey === wallet.data.pubkey && cert.valid && cert.expiresIn > csSettings.data.timeWarningExpire;
+            });
             if (previousCert) {
               $translate('ERROR.IDENTITY_ALREADY_CERTIFY', previousCert)
                 .then(function(message) {
@@ -772,7 +774,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               return;
             }
 
-            // Check not pending certification
+            // Check no pending certification
             previousCert = _.findWhere($scope.formData.received_cert_pending, { pubkey: wallet.data.pubkey, valid: true});
             if (previousCert) {
               $translate('ERROR.IDENTITY_ALREADY_CERTIFY_PENDING', previousCert)
