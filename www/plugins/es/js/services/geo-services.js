@@ -29,6 +29,7 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
         search: csHttp.get('maps.google.com', 443, '/maps/api/geocode/json')
       },
       freegeoip: {
+        //search: csHttp.get('localhost', 8080, '/json/:ip'),
         search: csHttp.get('freegeoip.net', 443, '/json/:ip'),
         license: {
           name: 'freegeoip',

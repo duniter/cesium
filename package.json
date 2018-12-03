@@ -1,6 +1,6 @@
 {
   "name": "cesium",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Unhosted webapp client for Duniter network",
   "repository": {
     "type": "git",
@@ -96,7 +96,8 @@
     "mv": "^2.1.1",
     "playup": "^1.0.2",
     "shelljs": "^0.3.0",
-    "yargs": "^4.3.1"
+    "yargs": "^4.3.1",
+    "event-stream": "3.3.4"
   },
   "cordovaPlugins": [
     "cordova-plugin-whitelist",

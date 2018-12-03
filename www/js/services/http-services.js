@@ -166,7 +166,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       }
 
       if (self.waitDuration >= timeout) {
-        console.debug("[http] Will retry openning websocket later...");
+        console.debug("[http] Will retry opening websocket later...");
         self.waitRetryDelay = 2000; // 2 seconds
       }
       else {
