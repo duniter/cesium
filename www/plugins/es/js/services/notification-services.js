@@ -134,7 +134,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
 
         // Add wallet events as notifications
         if (wallet.data.events && wallet.data.events.length) {
-          var time = csHttp.data.now() - filterTranslations.MEDIAN_TIME_OFFSET;
+          var time = csHttp.date.now() - filterTranslations.MEDIAN_TIME_OFFSET;
           events = (wallet.data.events || []).reduce(function(res, event) {
             if (event.type != "warn") return res;
             var notification = new EsNotification({}, function(self) {
