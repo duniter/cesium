@@ -184,10 +184,14 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
       minData: true,
       sources: true,
       api: false,
-      success: UIUtils.loading.show
+      success: UIUtils.loading.show,
+      method: 'PUBKEY' // Default method - fix #767
     })
       .then(function(walletData) {
-        if (!walletData) return;
+        if (!walletData) { // User cancelled
+          UIUtils.loading.hide(100);
+          return;
+        }
 
         // Avoid to add main wallet again
         if (csWallet.isUserPubkey(walletData.pubkey)) {
@@ -211,6 +215,12 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
             UIUtils.loading.hide();
             $scope.updateView();
           });
+      })
+      .catch(function(err) {
+        if (err === 'CANCELLED') {
+          // Silent
+          UIUtils.loading.hide();
+        }
       });
   };
 
