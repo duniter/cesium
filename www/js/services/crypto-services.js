@@ -59,9 +59,9 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
           r: 16,
           p: 1,
           memory: -1 // default
-        }
+        },
         // removeIf(no-device)
-        ,SECURE: {
+        SECURE: {
           N: 16384,
           r: 32,
           p: 2,
@@ -80,7 +80,6 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
           memory: 536870912
         }
         // endRemoveIf(no-device)
-
       }
     };
 
