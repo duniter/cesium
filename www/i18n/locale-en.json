@@ -37,7 +37,7 @@
     "BTN_START": "Start",
     "BTN_CONTINUE": "Continue",
     "BTN_CREATE": "Create",
-    "BTN_UNDERSTOOD": "I understandd",
+    "BTN_UNDERSTOOD": "I understand",
     "BTN_OPTIONS": "Options",
     "BTN_HELP_TOUR": "Features tour",
     "BTN_HELP_TOUR_SCREEN": "Discover this screen",
@@ -465,6 +465,7 @@
     "ERROR_TX_SENT": "Sent transactions",
     "PENDING_TX_RECEIVED": "Transactions awaiting receipt",
     "EVENTS": "Events",
+    "OUT_DISTANCED": "Your current certifications come from a group too isolated from the <a ng-click=\"showHelpModal('wot')\"> Web of Trust</a> (WoT): the <a ng-click=\"showHelpModal('distance_rule')\">maximum distance rule</a> is violated.<br/>You must obtain certifications from another area of the Web of Trust, or wait for it to tighten.",
     "WAITING_MEMBERSHIP": "Membership application sent. Waiting validation.",
     "WAITING_CERTIFICATIONS": "You need {{needCertificationCount}} certification(s) to become a member and produce the <a ng-click=\"showHelpModal('ud')\">Universal Dividend</a>. Your account is however already operational, to receive and send payments.",
     "WAITING_CERTIFICATIONS_HELP": "To get your certifications, only request members <b>who know you enough</b>, as required by <a ng-click=\"showLicenseModal()\">the currency license</a> that you have accepted.<br/>If you do not know enough members, let them know on <a ng-click=\"openLink($event, $root.settings.userForumUrl)\">the user forum</a>.",
@@ -825,7 +826,11 @@
       "CURRENCY_RULES_DEF": "The currency rules are defined only once, and for all. They set the parameters under which the currency will perform: universal dividend calculation, the amount of certifications needed to become a member, the maximum amount of certifications a member can send, etc.<br/><br/>The parameters cannot be modified because of the use of a <span class=\"text-italic\">Blockchain</span> which carries and executes these rules, and constantly verifies their correct application. <a href=\"#/app/currency\">See current parameters</a>.",
       "BLOCKCHAIN": "Blockchain",
       "BLOCKCHAIN_DEF": "The Blockchain is a decentralised system which, in case of Duniter, serves to carry and execute the <span class=\"text-italic\">currency rules</span>.<br/><a href=\"http://en.duniter.org/presentation/\" target=\"_blank\">Read more about Duniter</a> and the working of its blockchain.",
-      "UNIVERSAL_DIVIDEND_DEF": "The Universal Dividend (UD) is the quantity of money co-created by each member, according to the period and the calculation defined in the <span class=\"text-italic\">currency rules</span>.<br/>Every term, the members receive an equal amount of new money on their account.<br/><br/>The UD undergoes a steady growth, to remain fair under its members (current and future), calculated by an average life expectancy, as demonstrated in the Relative Theory of Money (RTM).<br/><a href=\"http://trm.creationmonetaire.info\" target=\"_system\">Read more about RTM</a> and open money."
+      "UNIVERSAL_DIVIDEND_DEF": "The Universal Dividend (UD) is the quantity of money co-created by each member, according to the period and the calculation defined in the <span class=\"text-italic\">currency rules</span>.<br/>Every term, the members receive an equal amount of new money on their account.<br/><br/>The UD undergoes a steady growth, to remain fair under its members (current and future), calculated by an average life expectancy, as demonstrated in the Relative Theory of Money (RTM).<br/><a href=\"http://trm.creationmonetaire.info\" target=\"_system\">Read more about RTM</a> and open money.",
+      "WOT": "Web of Trust (WoT)",
+      "WOT_DEF": "The Web of Trust is made up of all the members of the currency, and the links of certification which connect them.",
+      "DISTANCE_RULE": "Distance rule",
+      "DISTANCE_RULE_DEF": "The rule of distance defines <b>a maximum distance to meet</b> between an applicant and a minimum number of referring member. This distance is calculated using the certification links."
     },
     "TIP": {
       "MENU_BTN_CURRENCY": "Menu <b>{{'MENU.CURRENCY'|translate}}</b> allows discovery of <b>currency parameters</b> and its state.",

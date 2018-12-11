@@ -737,11 +737,17 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         }
         else if (data.requirements.pendingMembership) {
           addEvent({type:'pending', message: 'ACCOUNT.WAITING_MEMBERSHIP', context: 'requirements'});
+
+          // Add a warning when out distanced - fix #777
+          if (data.requirements.outdistanced) {
+            addEvent({type:'warn', message: 'ACCOUNT.OUT_DISTANCED', context: 'requirements'});
+          }
         }
         // If user has send a SELF, ask for membership - fix #625
         else if (!data.requirements.needSelf && data.requirements.needMembership){
           addEvent({type:'warn', message: 'ACCOUNT.NO_WAITING_MEMBERSHIP', context: 'requirements'});
         }
+
         if (data.requirements.needRenew) {
           // Still a member: WILL need renew
           if (data.isMember && data.requirements.membershipExpiresIn > 0) {
@@ -775,6 +781,10 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           }
           if (data.requirements.wasMember && data.requirements.needMembership) {
             addEvent({type:'warn', message: 'ACCOUNT.NEED_RENEW_MEMBERSHIP', messageParams: data.requirements, context: 'requirements'});
+          }
+          // Add a warning when out distanced - fix #777
+          if (!data.requirements.needCertificationCount && !data.requirements.willNeedCertificationCount && data.requirements.outdistanced) {
+            addEvent({type:'warn', message: 'ACCOUNT.OUT_DISTANCED', context: 'requirements'});
           }
         }
       }

@@ -98,6 +98,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
         }, 0) : 0;
         requirements.willExpire = requirements.willExpireCertificationCount > 0;
         requirements.pendingRevocation = !requirements.revoked && !!requirements.revocation_sig;
+        //requirements.outdistanced = requirements.outdistanced; // outdistanced is always present in requirement - see #777
 
         // Fix pending certifications count - Fix #624
         if (!requirements.isMember && !requirements.wasMember) {
