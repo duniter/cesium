@@ -59,25 +59,28 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
           r: 16,
           p: 1,
           memory: -1 // default
-        },
-        SECURE: {
+        }
+        // removeIf(no-device)
+        ,SECURE: {
           N: 16384,
           r: 32,
           p: 2,
-          memory: -1 // default
+          memory: 33554432
         },
         HARDEST: {
           N: 65536,
           r: 32,
           p: 4,
-          memory: -1 // default
+          memory: 134217728
         },
         EXTREME: {
           N: 262144,
           r: 64,
           p: 8,
-          memory: -1 // default
+          memory: 536870912
         }
+        // endRemoveIf(no-device)
+
       }
     };
 
@@ -91,8 +94,6 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       var that = this;
       if (scrypt_module_factory !== null){
         on_ready(scrypt_module_factory(options.requested_total_memory));
-        that.scrypt.requested_total_memory = options.requested_total_memory;
-        //console.log('inside async_load_scrypt', that); // TODO manage memory changes
       }
       else {$timeout(function(){that.async_load_scrypt(on_ready, options);}, 100);}
     };
@@ -201,6 +202,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         return that.nacl.crypto_hash_sha256(msg_int8);
       };
       this.util.crypto_scrypt = function(password, salt, N, r, p, seedLength) {
+
         return $q(function(resolve, reject) {
           try {
             var seed = that.scrypt.crypto_scrypt(
@@ -297,23 +299,23 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
        * Create key pairs (sign and box), from salt+password (Scrypt auth)
        */
       this.scryptKeypair = function(salt, password, scryptParams) {
-        return $q(function(resolve, reject) {
-          var seed = that.scrypt.crypto_scrypt(
-            that.util.encode_utf8(password),
-            that.util.encode_utf8(salt),
-            scryptParams && scryptParams.N || that.constants.SCRYPT_PARAMS.DEFAULT.N,
-            scryptParams && scryptParams.r || that.constants.SCRYPT_PARAMS.DEFAULT.r,
-            scryptParams && scryptParams.p || that.constants.SCRYPT_PARAMS.DEFAULT.p,
-            that.constants.SEED_LENGTH);
-          var signKeypair = that.nacl.crypto_sign_seed_keypair(seed);
-          var boxKeypair = that.nacl.crypto_box_seed_keypair(seed);
-          resolve({
-            signPk: signKeypair.signPk,
-            signSk: signKeypair.signSk,
-            boxPk: boxKeypair.boxPk,
-            boxSk: boxKeypair.boxSk
+        return that.util.crypto_scrypt(
+          that.util.encode_utf8(password),
+          that.util.encode_utf8(salt),
+          scryptParams && scryptParams.N || that.constants.SCRYPT_PARAMS.DEFAULT.N,
+          scryptParams && scryptParams.r || that.constants.SCRYPT_PARAMS.DEFAULT.r,
+          scryptParams && scryptParams.p || that.constants.SCRYPT_PARAMS.DEFAULT.p,
+          that.constants.SEED_LENGTH)
+          .then(function(seed){
+            var signKeypair = that.nacl.crypto_sign_seed_keypair(seed);
+            var boxKeypair = that.nacl.crypto_box_seed_keypair(seed);
+            return {
+              signPk: signKeypair.signPk,
+              signSk: signKeypair.signSk,
+              boxPk: boxKeypair.boxPk,
+              boxSk: boxKeypair.boxSk
+            };
           });
-        });
       };
 
       /**
@@ -393,7 +395,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         var naclOptions = {};
         var scryptOptions = {};
         if (ionic.Platform.grade.toLowerCase()!='a') {
-          console.info('Reduce NaCl memory because plateform grade is not [a] but [' + ionic.Platform.grade + ']');
+          console.info('Reduce NaCl memory to 16mb,  because plateform grade is not [a] but [{0}]'.format(ionic.Platform.grade));
           naclOptions.requested_total_memory = 16 * 1048576; // 16 Mo
         }
         var loadedLib = 0;
@@ -410,6 +412,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         }, naclOptions);
         this.async_load_scrypt(function(lib) {
           that.scrypt = lib;
+          that.scrypt.requested_total_memory = scryptOptions.requested_total_memory;
           checkAllLibLoaded();
         }, scryptOptions);
         this.async_load_base58(function(lib) {
