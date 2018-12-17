@@ -35,14 +35,6 @@
         "port": 443
       },
       {
-        "host": "g1.monnaielibreoccitanie.org",
-        "port": 443
-      },
-      {
-        "host": "g1.le-sou.org",
-        "port": 443
-      },
-      {
         "host": "g1.duniter.org",
         "port": 443
       }
@@ -195,10 +187,6 @@
       },
       {
         "host": "g1.duniter.fr",
-        "port": 443
-      },
-      {
-        "host": "g1.le-sou.org",
         "port": 443
       }
     ],

@@ -20,7 +20,7 @@
     },
     "WOT": {
       "LOOKUP": {
-        "BTN_MAP": "Members map",
+        "BTN_MAP": "Map",
         "BTN_MAP_HELP": "Open members map"
       },
       "VIEW": {
