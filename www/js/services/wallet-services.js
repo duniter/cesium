@@ -312,7 +312,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     },
 
     isAuth = function() {
-      return !!(data.pubkey && data.keypair && data.keypair.signSk);
+      return data.pubkey && data.keypair && data.keypair.signSk && true;
     },
 
     getKeypair = function(options) {
@@ -389,7 +389,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           var jobs = [];
 
           // Use session storage for secret key - fix #372
-          if (settings.keepAuthIdle == constants.KEEP_AUTH_IDLE_SESSION && isAuth()) {
+          if (settings.keepAuthIdle == csSettings.constants.KEEP_AUTH_IDLE_SESSION && isAuth()) {
             jobs.push(sessionStorage.put(constants.STORAGE_SECKEY, CryptoUtils.base58.encode(data.keypair.signSk)));
           }
           else {
@@ -580,8 +580,19 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         })
 
         .then(function() {
-          // Successful restored: raise API event
-          if (isLogin()) {
+          // Successful restored: raise API events
+          if (isAuth()) {
+            return $q.all([
+              api.data.raisePromise.login(data),
+              checkAuthIdle(true),
+              api.data.raisePromise.auth(data)
+            ])
+              .catch(function(err) {
+                console.warn('Error during extension call [wallet.api.data.on.auth]', err);
+                // continue
+              });
+          }
+          else if (isLogin()) {
             return api.data.raisePromise.login(data)
               .catch(function(err) {
                 console.warn('Error during extension call [wallet.api.data.on.login]', err);
@@ -2119,31 +2130,37 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       });
     },
 
-    checkAuthIdle = function(isAuthRes) {
-      isAuthRes = angular.isDefined(isAuthRes) ? isAuthRes : isAuth();
-      var enable = isAuthRes && settings.keepAuthIdle > 0 && settings.keepAuthIdle != csSettings.constants.KEEP_AUTH_IDLE_SESSION;
-      var changed = (enableAuthIdle != enable);
+    checkAuthIdle = function(isAuthResult) {
+      isAuthResult = angular.isDefined(isAuthResult) ? isAuthResult : isAuth();
+      const newEnableAuthIdle = isAuthResult && settings.keepAuthIdle > 0 && settings.keepAuthIdle != csSettings.constants.KEEP_AUTH_IDLE_SESSION;
+      const changed = (enableAuthIdle != newEnableAuthIdle);
 
       // need start/top watching
       if (changed) {
         // start idle
-        if (enable) {
+        if (newEnableAuthIdle) {
           console.debug("[wallet] Start idle (delay: {0}s)".format(settings.keepAuthIdle));
           Idle.setIdle(settings.keepAuthIdle);
           Idle.watch();
         }
-        // stop idle, if need
+        // stop idle, if was enable
         else if (enableAuthIdle){
           console.debug("[wallet] Stop idle");
           Idle.unwatch();
         }
-        enableAuthIdle = enable;
+        enableAuthIdle = newEnableAuthIdle;
       }
 
       // if idle time changed: apply it
-      else if (enable && Idle.getIdle() !== settings.keepAuthIdle) {
+      else if (newEnableAuthIdle && Idle.getIdle() !== settings.keepAuthIdle) {
         console.debug("[idle] Updating auth idle (delay: {0}s)".format(settings.keepAuthIdle));
         Idle.setIdle(settings.keepAuthIdle);
+      }
+
+      // Make sure to store seckey, in the session storage for secret key -fix #372
+      const storeSecKey = isAuthResult && settings.keepAuthIdle == csSettings.constants.KEEP_AUTH_IDLE_SESSION && true;
+      if (storeSecKey) {
+        sessionStorage.put(constants.STORAGE_SECKEY, CryptoUtils.base58.encode(data.keypair.signSk));
       }
     };
 

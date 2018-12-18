@@ -198,6 +198,9 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     // Apply stored settings
     angular.merge(data, newData);
 
+    // Delete temporary properties, if false
+    if (!data.node.temporary) delete data.node.temporary;
+
     // Always force the usage of default settings
     // This is a workaround for DEV (TODO: implement edition in settings ?)
     data.timeWarningExpire = defaultSettings.timeWarningExpire;
@@ -211,9 +214,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     data.userForumUrl = defaultSettings.userForumUrl;
 
     // Apply the new locale (only if need)
-    if (localeChanged) {
-      $translate.use(fixLocale(data.locale.id)); // will produce an event cached by onLocaleChange();
-    }
+    // will produce an event cached by onLocaleChange();
+    if (localeChanged) $translate.use(data.locale.id);
 
   },
 
@@ -321,6 +323,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     ready: ready,
     start: start,
     data: data,
+    apply: applyData,
     getByPath: getByPath,
     reset: reset,
     store: store,

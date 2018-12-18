@@ -270,11 +270,8 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
     $timeout(function() {
       // Make sure to format helptip
       $scope.cleanupHelpTip();
-      angular.merge(csSettings.data, $scope.formData);
-      // Manually removed some attributes
-      if (!$scope.formData.temporary) {
-        delete csSettings.data.node.temporary;
-      }
+
+      csSettings.apply($scope.formData);
       csSettings.store();
       $scope.saving = false;
     }, 100);

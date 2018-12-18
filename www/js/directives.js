@@ -409,15 +409,17 @@ angular.module('cesium.directives', [])
 
   // Un-authenticate when window closed
   // see: https://stackoverflow.com/questions/28197316/javascript-or-angularjs-defer-browser-close-or-tab-close-between-refresh
-  .directive('windowExitUnauth', function($window, csWallet) {
+  .directive('windowExitUnauth', function($window, csSettings, csWallet) {
     return {
       restrict: 'AE',
       link: function(element, attrs){
         var myEvent = $window.attachEvent || $window.addEventListener,
-          chkevent = $window.attachEvent ? 'onunload' : 'unload'; /// make IE7, IE8 compatable
+          chkevent = $window.attachEvent ? 'onunload' : 'unload'; /// make IE7, IE8 compatible
 
         myEvent(chkevent, function (e) { // For >=IE7, Chrome, Firefox
-          return csWallet.unauth();
+          if (csSettings.data && csSettings.data.keepAuthIdle != csSettings.constants.KEEP_AUTH_IDLE_SESSION) {
+            return csWallet.unauth();
+          }
         });
       }
     };
