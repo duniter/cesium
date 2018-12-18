@@ -7,7 +7,9 @@
 /node_modules/
 /platforms/*
 !/platforms/desktop
+/platforms/desktop/*
 !/platforms/android
+/platforms/android/*
 /resources/android/build/local.properties
 /resources/android/build/Cesium.keystore
 /resources/android/build/release-signing.properties
