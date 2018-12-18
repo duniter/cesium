@@ -240,7 +240,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
 
         .then(function(currentBlock) {
 
-          var now = moment().utc().unix();
+          const now = moment().utc().unix();
 
           if (cache) {
             if (currentBlock && (now - currentBlock.receivedAt) < 60/*1min*/) {

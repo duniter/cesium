@@ -1063,11 +1063,11 @@ function WalletTxErrorController($scope, UIUtils, csSettings, csWallet) {
   };
 
   $scope.hasReceivedTx = function(){
-    return $scope.formData.tx && !!_($scope.formData.tx.errors || []).find($scope.filterReceivedTx);
+    return $scope.formData.tx && _($scope.formData.tx.errors || []).find($scope.filterReceivedTx) && true;
   };
 
   $scope.hasSentTx = function(){
-    return $scope.formData.tx && !!_($scope.formData.tx.errors || []).find($scope.filterSentTx);
+    return $scope.formData.tx && _($scope.formData.tx.errors || []).find($scope.filterSentTx) && true;
   };
 
 }

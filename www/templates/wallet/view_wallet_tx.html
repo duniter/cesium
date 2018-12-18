@@ -101,29 +101,37 @@
           </a>
 
           <!-- Pending transactions -->
-          <span class="item item-pending item-divider" ng-if="formData.tx.pendings && formData.tx.pendings.length">
-            {{:locale:'ACCOUNT.PENDING_TX'|translate}}
-          </span>
+          <ng-if ng-if="formData.tx.pendings.length">
+            <span class="item item-pending item-divider" >
+               <b class="ion-clock"> </b>
+              {{:locale:'ACCOUNT.PENDING_TX'|translate}}
+            </span>
 
-          <div class="item item-pending item-tx item-icon-left"
-               ng-repeat="tx in formData.tx.pendings"
-               ng-init="pending=true;"
-               ng-include="'templates/wallet/item_tx.html'">
-          </div>
+            <div class="item item-pending item-tx item-icon-left"
+                 ng-repeat="tx in formData.tx.pendings"
+                 ng-init="pending=true;"
+                 ng-include="'templates/wallet/item_tx.html'">
+            </div>
+          </ng-if>
 
           <!-- Validating transactions -->
-          <span class="item item-pending item-divider" ng-if="formData.tx.validating &&formData.tx.validating.length">
-            {{:locale:'ACCOUNT.VALIDATING_TX'|translate}}
-          </span>
+          <ng-if ng-if="formData.tx.validating.length">
+            <span class="item item-pending item-divider">
+              <b class="icon ion-checkmark" style="font-size: 12px;"> </b>
+              <b class="icon-secondary ion-help" style="font-size: 12px; top: 2px; left: 11px;"> </b>
+              {{:locale:'ACCOUNT.VALIDATING_TX'|translate}}
+            </span>
 
-          <div class="item item-pending item-tx item-icon-left"
-               ng-repeat="tx in formData.tx.validating"
-               ng-init="validating=true;"
-               ng-include="'templates/wallet/item_tx.html'">
-          </div>
+            <div class="item item-pending item-tx item-icon-left"
+                 ng-repeat="tx in formData.tx.validating"
+                 ng-init="validating=true;"
+                 ng-include="::'templates/wallet/item_tx.html'">
+            </div>
+          </ng-if>
 
           <!-- Last Transactions -->
           <span class="item item-divider" ng-if="!loading">
+            <b class="icon ion-checkmark"> </b>
             {{:locale:'ACCOUNT.LAST_TX'|translate}}
             <a id="helptip-wallet-tx" style="position: relative; bottom: 0; right: 0px;">&nbsp;</a>
           </span>
@@ -132,7 +140,10 @@
             <span class="gray">{{:locale:'ACCOUNT.NO_TX'|translate}}</span>
           </span>
 
+          <!-- Fix #780: do NOT use hash ash id
           <div ng-repeat="tx in formData.tx.history track by tx.hash"
+          -->
+          <div ng-repeat="tx in formData.tx.history"
              class="item item-tx item-icon-left"
              ng-include="::!tx.isUD ? 'templates/wallet/item_tx.html' : 'templates/wallet/item_ud.html'">
           </div>

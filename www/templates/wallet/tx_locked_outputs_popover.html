@@ -54,7 +54,7 @@
         <div ng-if="condition.type=='CLTV'">
           <i class="icon ion-clock dark"></i>
           <span class="dark" ng-bind-html="::'BLOCKCHAIN.VIEW.TX_OUTPUT_FUNCTION.CLTV' | translate"></span>
-          {{::condition.value|formatDate}}
+          {{::condition.value|medianDate}}
         </div>
       </div>
     </div>

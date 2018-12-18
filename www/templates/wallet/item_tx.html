@@ -5,14 +5,13 @@
 
 <div class="row no-padding">
   <div class="col no-padding">
-    <b class="ion-clock" ng-if="::pending"> </b>
-    <b class="ion-clock" ng-if="::validating"> </b>
-    <a class="" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="tx.uid">
+    <a class="" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="::tx.uid">
       {{::tx.name||tx.uid}}
     </a>
-    <a class="gray" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="!tx.uid">
+    <a class="gray" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="::!tx.uid">
       <i class="ion-key gray"></i>
       {{::tx.pubkey | formatPubkey}}
+      <span ng-if="::tx.name"> - {{::tx.name | truncText:40}}</span>
     </a>
     <p class="dark visible-xs width-cup text-italic"
        data-toggle="tooltip"
@@ -23,10 +22,10 @@
     </p>
     <h4>
       <a ng-if="::!pending" class="gray underline" ui-sref="app.view_block({number: tx.block_number})">
-        {{::tx.time | formatFromNow}} | {{::tx.time | formatDate}}
+        {{::tx.time | medianFromNowAndDate: false}}
       </a>
       <span ng-if="::pending" class="gray">
-        {{::tx.time | formatFromNow}} | {{::tx.time | formatDate}}
+        {{::tx.time | medianFromNowAndDate: false}}
       </span>
     </h4>
   </div>

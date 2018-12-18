@@ -55,7 +55,7 @@
           </div>
 
           <!-- Errors transactions-->
-          <div class="item item-icon-left " ng-if="formData.tx.errors && formData.tx.errors.length">
+          <div class="item item-icon-left " ng-if="formData.tx.errors.length">
             <i class="icon ion-alert-circled"></i>
             {{:locale:'ACCOUNT.ERROR_TX'|translate}}
             <div class="badge badge-assertive">
@@ -64,27 +64,31 @@
           </div>
 
           <!-- Pending transactions -->
-          <span class="item item-pending item-divider" ng-if="formData.tx.pendings && formData.tx.pendings.length">
-            <i class="ion-clock"></i>
-            {{:locale:'ACCOUNT.PENDING_TX'|translate}}
-          </span>
+          <ng-if ng-if="formData.tx.pendings.length">
+            <span class="item item-pending item-divider" >
+              <i class="ion-clock"></i>
+              {{:locale:'ACCOUNT.PENDING_TX'|translate}}
+            </span>
 
-          <div class="item item-pending item-tx item-icon-left"
-               ng-repeat="tx in formData.tx.pendings"
-               ng-init="pending=true;"
-               ng-include="'templates/wallet/item_tx.html'">
-          </div>
+            <div class="item item-pending item-tx item-icon-left"
+                 ng-repeat="tx in formData.tx.pendings"
+                 ng-init="pending=true;"
+                 ng-include="::'templates/wallet/item_tx.html'">
+            </div>
+          </ng-if>
 
           <!-- Validating transactions -->
-          <span class="item item-pending item-divider" ng-if="formData.tx.validating &&formData.tx.validating.length">
-            {{:locale:'ACCOUNT.VALIDATING_TX'|translate}}
-          </span>
+          <ng-if ng-if="formData.tx.validating.length">
+            <span class="item item-pending item-divider">
+              {{:locale:'ACCOUNT.VALIDATING_TX'|translate}}
+            </span>
 
-          <div class="item item-pending item-tx item-icon-left"
-               ng-repeat="tx in formData.tx.validating"
-               ng-init="validating=true;"
-               ng-include="'templates/wallet/item_tx.html'">
-          </div>
+            <div class="item item-pending item-tx item-icon-left"
+                 ng-repeat="tx in formData.tx.validating"
+                 ng-init="validating=true;"
+                 ng-include="::'templates/wallet/item_tx.html'">
+            </div>
+          </ng-if>
 
           <span class="item item-divider" ng-if="!loading">
             {{:locale:'ACCOUNT.LAST_TX'|translate}}
@@ -92,7 +96,7 @@
           </span>
 
           <!-- iterate on each TX -->
-          <div ng-repeat="tx in formData.tx.history track by tx.hash"
+          <div ng-repeat="tx in formData.tx.history"
                class="item item-tx item-icon-left"
                ng-include="::!tx.isUD ? 'templates/wallet/item_tx.html' : 'templates/wallet/item_ud.html'">
           </div>

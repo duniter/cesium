@@ -151,10 +151,10 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
         var blocksPeriod = result.times[result.times.length-1] - result.times[0];
         var formatDate;
         if (blocksPeriod < 31557600/* less than 1 year */) {
-          formatDate = $filter('formatDateShort');
+          formatDate = $filter('medianDateShort');
         }
         else {
-          formatDate = $filter('formatDateMonth');
+          formatDate = $filter('formatDateMonth'); //see #683
         }
 
         var formatAmount =  $filter('formatDecimal');
@@ -338,7 +338,7 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpColor, gp
         var blocksPeriod = result.times[result.times.length-1] - result.times[0];
         var dateFilter;
         if (blocksPeriod < 31557600/* less than 1 year */) {
-          dateFilter = $filter('formatDateShort');
+          dateFilter = $filter('medianDateShort');
         }
         else {
           dateFilter = $filter('formatDateMonth');
@@ -446,7 +446,7 @@ function GpCurrencyMembersCountController($scope, $controller, $q, $state, $tran
         var blocksPeriod = result.times[result.blocks.length-1] - result.times[0];
         var dateFilter;
         if (blocksPeriod < 31557600/* less than 1 year*/) {
-          dateFilter = $filter('formatDateShort');
+          dateFilter = $filter('medianDateShort');
         }
         else {
           dateFilter = $filter('formatDateMonth');

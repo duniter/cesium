@@ -203,7 +203,7 @@
       "TX_SEARCH_FILTER": {
         "MEMBER_FLOWS": "Entradas/salidas de miembros",
         "EXISTING_TRANSACTION": "Con transacciones",
-        "PERIOD": "<b class=\"ion-clock\"></b> Entre el <b class=\"gray\">{{params[1]|formatDateShort}}</b> ({{params[1]|formatTime}}) y el <b class=\"gray\">{{params[2]|formatDateShort}}</b> ({{params[2]|formatTime}})",
+        "PERIOD": "<b class=\"ion-clock\"></b> Entre el <b class=\"gray\">{{params[1]|medianDateShort}}</b> ({{params[1]|medianTime}}) y el <b class=\"gray\">{{params[2]|medianDateShort}}</b> ({{params[2]|medianTime}})",
         "ISSUER": "<b class=\"ion-android-desktop\"></b> Calculado por <b class=\"ion-key\"></b> {{params[1]|formatPubkey}}",
         "TX_PUBKEY": "<b class=\"ion-card\"></b> Transacciones que implican <b class=\"ion-key\"></b> {{params[1]|formatPubkey}}"
       }
