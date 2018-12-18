@@ -48,12 +48,12 @@
         <small class="gray" ng-if=":rebind:expertMode && search.filters && search.filters.length">
           - <a ng-click="toggleShowQuery()"
             ng-if="!showQuery" >
-            Voir la requête
+            {{'DOCUMENT.LOOKUP.SHOW_QUERY'|translate }}
             <i class="icon ion-arrow-down-b gray"></i>
           </a>
           <a ng-click="toggleShowQuery()"
              ng-if="showQuery" >
-             Masquer la requête
+            {{'DOCUMENT.LOOKUP.HIDE_QUERY'|translate }}
              <i class="icon ion-arrow-up-b gray"></i>
           </a>
         </small>
