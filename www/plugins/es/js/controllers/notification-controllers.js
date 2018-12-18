@@ -75,8 +75,7 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
         return $scope.showHome();
       }
 
-      $scope.loadWallet({
-        wallet: wallet,
+      wallet.login({
         minData: true
       })
         .then(function() {
