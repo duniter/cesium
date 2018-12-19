@@ -10,9 +10,13 @@
     <i ng-if="notification.avatar" class="item-image avatar" style="background-image: url({{::notification.avatar.src}})"></i>
 
     <h3 trust-as-html="notification.message | translate:(notification.messageParams||notification)"></h3>
-    <h4>
+    <h4 ng-if="!notification.medianTime">
       <i class="icon {{notification.icon}}"></i>&thinsp;<span class="dark">{{notification.time|formatFromNow}}</span>
       <span class="gray">| {{notification.time|formatDate}}</span>
+    </h4>
+    <h4 ng-if="notification.medianTime">
+      <i class="icon {{notification.icon}}"></i>&thinsp;<span class="dark">{{notification.medianTime|medianFromNow}}</span>
+      <span class="gray">| {{notification.medianTime|medianDate}}</span>
     </h4>
   </ion-item>
 </ion-list>

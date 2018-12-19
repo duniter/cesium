@@ -98,6 +98,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       data.tx = data.tx || {};
       data.tx.history = [];
       data.tx.pendings = [];
+      data.tx.validating = [];
       data.tx.errors = [];
       delete data.tx.fromTime;
       delete data.tx.toTime;
@@ -2246,7 +2247,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       options.restore =  angular.isDefined(options.restore) ? options.restore : (id === 'default');
 
       console.debug('[wallet] Starting...');
-      var now = Date.now();
+      const now = Date.now();
 
       startPromise = $q.all([
           csSettings.ready()

@@ -111,9 +111,7 @@ angular.module('cesium.rml9.plugin', ['ngFileSaver', 'cesium.services'])
           if (!result || !result.tx || !result.tx.history) return; // no TX
 
           var formatDecimal = $filter('formatDecimal');
-          var formatPubkey = $filter('formatPubkey');
           var formatDate = $filter('formatDate');
-          var formatDateForFile = $filter('formatDateForFile');
 
           var headers = [translations['RML9.HEADERS.TIME'],
             translations['COMMON.UID'],

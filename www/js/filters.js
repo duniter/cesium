@@ -10,7 +10,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
       startPromise,
       that = this;
 
-    that.MEDIAN_TIME_OFFSET = 3600 /*G1 default value*/;
+    that.MEDIAN_TIME_OFFSET = 3600  /*G1 default value*/;
 
     // Update some translations, when locale changed
     function onLocaleChange() {
@@ -160,7 +160,6 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     };
   })
 
-
   .filter('currencySymbol', function(filterTranslations, $filter, csSettings) {
     return function(input, useRelative) {
       if (!input) return '';
@@ -178,7 +177,6 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
         $filter('abbreviate')(input);
     };
   })
-
 
   .filter('formatDecimal', function(csConfig, csCurrency) {
     var minValue = 1 / Math.pow(10, csConfig.decimalCount || 4);
@@ -209,13 +207,13 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
 
   .filter('formatDate', function(filterTranslations) {
     return function(input) {
-      return input ? moment.unix(parseInt(input) + filterTranslations.MEDIAN_TIME_OFFSET).local().format(filterTranslations.DATE_PATTERN || 'YYYY-MM-DD HH:mm') : '';
+      return input ? moment.unix(parseInt(input)).local().format(filterTranslations.DATE_PATTERN || 'YYYY-MM-DD HH:mm') : '';
     };
   })
 
   .filter('formatDateShort', function(filterTranslations) {
     return function(input) {
-      return input ? moment.unix(parseInt(input) + filterTranslations.MEDIAN_TIME_OFFSET).local().format(filterTranslations.DATE_SHORT_PATTERN || 'YYYY-MM-DD') : '';
+      return input ? moment.unix(parseInt(input)).local().format(filterTranslations.DATE_SHORT_PATTERN || 'YYYY-MM-DD') : '';
     };
   })
 
@@ -231,18 +229,24 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     };
   })
 
-  .filter('formatTime', function(filterTranslations) {
+  .filter('formatTime', function() {
     return function(input) {
-      return input ? moment.unix(parseInt(input)+filterTranslations.MEDIAN_TIME_OFFSET).local().format('HH:mm') : '';
+      return input ? moment.unix(parseInt(input)).local().format('HH:mm') : '';
     };
   })
 
-  .filter('formatFromNow', function(filterTranslations) {
+  .filter('formatFromNow', function() {
     return function(input) {
-      return input ? moment.unix(parseInt(input)+filterTranslations.MEDIAN_TIME_OFFSET).fromNow() : '';
+      return input ? moment.unix(parseInt(input)).fromNow() : '';
     };
   })
 
+  .filter('formatFromNowAndDate', function(filterTranslations) {
+    return function(input, options) {
+      const m = input && moment.unix(parseInt(input));
+      return m && (m.fromNow() + (options && options.separator || ' | ') + m.local().format(filterTranslations.DATE_PATTERN || 'YYYY-MM-DD HH:mm')) || '';
+    };
+  })
 
   .filter('formatDurationTo', function() {
     return function(input) {
@@ -289,11 +293,54 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     };
   })
 
-  .filter('formatFromNowShort', function(filterTranslations) {
+  .filter('formatFromNowShort', function() {
+    return function(input) {
+      return input ? moment.unix(parseInt(input)+offset).fromNow(true) : '';
+    };
+  })
+
+  /* -- median time (apply currency offset)-- */
+
+  .filter('medianDate', function(filterTranslations) {
+    return function(input) {
+      return input ? moment.unix(parseInt(input) + filterTranslations.MEDIAN_TIME_OFFSET).local().format(filterTranslations.DATE_PATTERN || 'YYYY-MM-DD HH:mm') : '';
+    };
+  })
+
+  .filter('medianDateShort', function(filterTranslations) {
+    return function(input) {
+      return input ? moment.unix(parseInt(input) + filterTranslations.MEDIAN_TIME_OFFSET).local().format(filterTranslations.DATE_SHORT_PATTERN || 'YYYY-MM-DD') : '';
+    };
+  })
+
+
+  .filter('medianTime', function(filterTranslations) {
+    return function(input) {
+      return input ? moment.unix(parseInt(input)+filterTranslations.MEDIAN_TIME_OFFSET).local().format('HH:mm') : '';
+    };
+  })
+
+  .filter('medianFromNow', function(filterTranslations) {
+    return function(input) {
+      return input ? moment.unix(parseInt(input) + filterTranslations.MEDIAN_TIME_OFFSET).fromNow() : '';
+    };
+  })
+
+  .filter('medianFromNowShort', function(filterTranslations) {
     return function(input) {
       return input ? moment.unix(parseInt(input)+filterTranslations.MEDIAN_TIME_OFFSET).fromNow(true) : '';
     };
   })
+
+  .filter('medianFromNowAndDate', function(filterTranslations) {
+    return function(input, options) {
+      const m = input && moment.unix(parseInt(input)+filterTranslations.MEDIAN_TIME_OFFSET);
+      return m && (m.fromNow() + (options && options.separator || ' | ')  + m.local().format(filterTranslations.DATE_PATTERN || 'YYYY-MM-DD HH:mm')) || '';
+    };
+  })
+
+
+  /* -- text filter -- */
 
   .filter('capitalize', function() {
     return function(input) {

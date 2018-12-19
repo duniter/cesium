@@ -11,7 +11,7 @@
     <div class="col" style="min-width: 110px; max-width: 130px;">
       <h4 ng-class="{'gray': block.compacted, 'dark': !block.compacted}">
         <i class="ion-clock"></i>
-        {{:rebind:block.medianTime|formatDate}}
+        {{:rebind:block.medianTime|medianDate}}
       </h4>
       <h4 ng-if="!block.empty">
         <!-- joiners/leavers -->

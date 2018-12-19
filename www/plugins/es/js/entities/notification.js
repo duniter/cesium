@@ -43,12 +43,14 @@ function EsNotification(json, markAsReadCallback) {
     that.avatarIcon = 'ion-person';
     that.icon = 'ion-information-circled positive';
     that.state = 'app.view_wallet';
+    that.medianTime = that.time;
   }
 
   // TX
   else if (json.code.startsWith('TX_')) {
     that.avatarIcon = 'ion-card';
     that.icon = (json.code == 'TX_SENT') ? 'ion-paper-airplane dark' : 'ion-archive balanced';
+    that.medianTime = that.time;
     pubkeys = json.params.length > 0 ? json.params[0] : null;
     if (pubkeys && pubkeys.indexOf(',') == -1) {
       that.pubkey = pubkeys;
@@ -62,6 +64,7 @@ function EsNotification(json, markAsReadCallback) {
     that.avatarIcon = (json.code == 'CERT_RECEIVED') ? 'ion-ribbon-b' : 'ion-ribbon-a';
     that.icon = (json.code == 'CERT_RECEIVED') ? 'ion-ribbon-b balanced' : 'ion-ribbon-a gray';
     that.pubkey = json.params.length > 0 ? json.params[0] : null;
+    that.medianTime = that.time;
     that.state = 'app.wallet_cert';
     that.stateParams = {
       type: (json.code == 'CERT_RECEIVED') ? 'received' : 'given'

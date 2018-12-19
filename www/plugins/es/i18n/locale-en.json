@@ -207,7 +207,7 @@
       "TX_SEARCH_FILTER": {
         "MEMBER_FLOWS": "<b class=\"ion-person\"></b> Members input/output",
         "EXISTING_TRANSACTION": "<b class=\"ion-card\"></b> Having transactions",
-        "PERIOD": "<b class=\"ion-clock\"></b> Between <b class=\"gray\">{{params[1]|formatDateShort}}</b> ({{params[1]|formatTime}}) and <b class=\"gray\">{{params[2]|formatDateShort}}</b> ({{params[2]|formatTime}})",
+        "PERIOD": "<b class=\"ion-clock\"></b> Between <b class=\"gray\">{{params[1]|medianDateShort}}</b> ({{params[1]|medianTime}}) and <b class=\"gray\">{{params[2]|medianDateShort}}</b> ({{params[2]|medianTime}})",
         "ISSUER": "<b class=\"ion-android-desktop\"></b> Computed by {{params[1]|formatPubkey}}",
         "TX_PUBKEY": "<b class=\"ion-card\"></b> Transactions concerning <b class=\"ion-key\"></b> {{params[1]|formatPubkey}}"
       }

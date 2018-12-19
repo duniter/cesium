@@ -127,23 +127,25 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
       loadTx = function(pubkey, fromTime) {
         return $q(function(resolve, reject) {
-          var txHistory = [];
-          var udHistory = [];
-          var txPendings = [];
 
-          var nowInSec = moment().utc().unix();
+          const nowInSec = moment().utc().unix();
           fromTime = fromTime || fromTime || (nowInSec - csSettings.data.walletHistoryTimeSecond);
-          var processedTxMap = {};
-          var tx = {};
-
-          var _reduceTx = function(res){
-            _reduceTxAndPush(pubkey, res.history.sent, txHistory, processedTxMap);
-            _reduceTxAndPush(pubkey, res.history.received, txHistory, processedTxMap);
-            _reduceTxAndPush(pubkey, res.history.sending, txPendings, processedTxMap, true /*allow pendings*/);
-            _reduceTxAndPush(pubkey, res.history.pending, txPendings, processedTxMap, true /*allow pendings*/);
+          const tx = {
+            pendings: [],
+            validating: [],
+            history: [],
+            errors: []
           };
 
-          var jobs = [
+          const processedTxMap = {};
+          const _reduceTx = function (res) {
+            _reduceTxAndPush(pubkey, res.history.sent, tx.history, processedTxMap);
+            _reduceTxAndPush(pubkey, res.history.received, tx.history, processedTxMap);
+            _reduceTxAndPush(pubkey, res.history.sending, tx.pendings, processedTxMap, true /*allow pendings*/);
+            _reduceTxAndPush(pubkey, res.history.pending, tx.pendings, processedTxMap, true /*allow pendings*/);
+          };
+
+          const jobs = [
             // get current block
             csCurrency.blockchain.current(true),
 
@@ -158,7 +160,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             // get TX from a given time
             if (fromTime > 0) {
               // Use slice, to be able to cache requests result
-              var sliceTime = csSettings.data.walletHistorySliceSecond;
+              const sliceTime = csSettings.data.walletHistorySliceSecond;
               fromTime = fromTime - (fromTime % sliceTime);
               for(var i = fromTime; i - sliceTime < nowInSec; i += sliceTime)  {
                 jobs.push(BMA.tx.history.times({pubkey: pubkey, from: i, to: i+sliceTime-1})
@@ -183,16 +185,16 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                 BMA.ud.history({pubkey: pubkey})
                   .then(function(res){
                     udHistory = !res.history || !res.history.history ? [] :
-                      res.history.history.reduce(function(res, ud){
+                      _.forEach(res.history.history, function(ud){
                         if (ud.time < fromTime) return res; // skip to old UD
                         var amount = powBase(ud.amount, ud.base);
-                        return res.concat({
+                        udHistory.push({
                           time: ud.time,
                           amount: amount,
                           isUD: true,
                           block_number: ud.block_number
                         });
-                      }, []);
+                      });
                   }));*/
               // API extension
               jobs.push(
@@ -202,9 +204,9 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                 })
                   .then(function(res) {
                     if (!res || !res.length) return;
-                    udHistory = res.reduce(function(res, hits) {
-                      return res.concat(hits);
-                    }, udHistory);
+                    _.forEach(res, function(hits) {
+                      tx.history.push(hits);
+                    });
                   })
 
                   .catch(function(err) {
@@ -218,31 +220,26 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           // Execute jobs
           $q.all(jobs)
             .then(function(res){
-              var current = res[0];
+              const current = res[0];
 
               // sort by time desc
-              txHistory = txHistory.concat(udHistory).sort(function(tx1, tx2) {
+              tx.history.sort(function(tx1, tx2) {
                 return (tx2.time - tx1.time);
               });
-              tx.validating = txHistory.filter(function(tx) {
+              tx.validating = tx.history.filter(function(tx) {
                 return (tx.block_number > current.number - csSettings.data.blockValidityWindow);
               });
-              tx.history = (!tx.validating.length) ? txHistory : txHistory.slice(tx.validating.length);
+              // remove validating from history
+              if (tx.validating.length) {
+                tx.history.splice(0, tx.validating.length);
+              }
 
-              tx.pendings = txPendings;
               tx.fromTime = fromTime;
               tx.toTime = tx.history.length ? tx.history[0].time /*=max(tx.time)*/: fromTime;
 
               resolve(tx);
             })
-            .catch(function(err) {
-              tx.history = [];
-              tx.pendings = [];
-              tx.errors = [];
-              delete tx.fromTime;
-              delete tx.toTime;
-              reject(err);
-            });
+            .catch(reject);
         });
       },
 
@@ -267,7 +264,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
       loadSourcesAndBalance = function(pubkey) {
         return BMA.tx.sources({pubkey: pubkey})
           .then(function(res){
-            var result = {
+            const data = {
               sources: [],
               sourcesIndexByKey: [],
               balance: 0
@@ -275,18 +272,17 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             if (res.sources && res.sources.length) {
               _.forEach(res.sources, function(src) {
                 src.consumed = false;
-                result.balance += powBase(src.amount, src.base);
+                data.balance += powBase(src.amount, src.base);
               });
-              addSources(result, res.sources);
+              addSources(data, res.sources);
             }
-            return result;
+            return data;
           });
       },
 
       loadData = function(pubkey, fromTime) {
-        var now = Date.now();
+        const now = Date.now();
 
-        var data = {};
         return $q.all([
 
             // Load Sources
@@ -297,25 +293,26 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           ])
 
           .then(function(res) {
-            angular.merge(data, res[0]);
+            // Copy sources and balance
+            const data = res[0];
             data.tx = res[1];
 
-            var txPendings = [];
-            var txErrors = [];
-            var balanceFromSource = data.balance;
-            var balanceWithPending = data.balance;
+            const txPendings = [];
+            let txErrors = [];
+            const balanceFromSource = data.balance;
+            let balanceWithPending = data.balance;
 
             function _processPendingTx(tx) {
-              var consumedSources = [];
-              var valid = true;
+              const consumedSources = [];
+              let valid = true;
               if (tx.amount > 0) { // do not check sources from received TX
                 valid = false;
                 // TODO get sources from the issuer ?
               }
               else {
                 _.forEach(tx.inputs, function(input) {
-                  var inputKey = input.split(':').slice(2).join(':');
-                  var srcIndex = data.sourcesIndexByKey[inputKey];
+                  const inputKey = input.split(':').slice(2).join(':');
+                  const srcIndex = data.sourcesIndexByKey[inputKey];
                   if (angular.isDefined(srcIndex)) {
                     consumedSources.push(data.sources[srcIndex]);
                   }
@@ -342,9 +339,9 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
               }
             }
 
-            var txs = data.tx.pendings;
-            var retry = true;
-            while(txs && txs.length > 0) {
+            let txs = data.tx.pendings;
+            let retry = true;
+            while(txs && txs.length) {
               // process TX pendings
               _.forEach(txs, _processPendingTx);
 
@@ -359,17 +356,22 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
               }
             }
 
-            data.tx.pendings = txPendings;
-            data.tx.errors = txErrors;
+            data.tx = data.tx || {};
+            data.tx.pendings = txPendings.sort(function(tx1, tx2) {
+              return (tx2.time - tx1.time);
+            });
+            data.tx.errors = txErrors.sort(function(tx1, tx2) {
+              return (tx2.time - tx1.time);
+            });
             // Negative balance not allow (use only source's balance) - fix #769
             data.balance = (balanceWithPending < 0) ? balanceFromSource : balanceWithPending;
 
             // Will add uid (+ plugin will add name, avatar, etc. if enable)
-            return csWot.extendAll((data.tx.history || []).concat(data.tx.validating||[]).concat(data.tx.pendings||[]), 'pubkey');
-          })
-          .then(function() {
-            console.debug('[tx] TX and sources loaded in '+ (Date.now()-now) +'ms');
-            return data;
+            return csWot.extendAll((data.tx.history || []).concat(data.tx.validating||[]).concat(data.tx.pendings||[]), 'pubkey')
+              .then(function() {
+                console.debug('[tx] TX and sources loaded in '+ (Date.now()-now) +'ms');
+                return data;
+              })
           });
     },
 
@@ -396,39 +398,35 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
         loadData(pubkey, options.fromTime)
       ])
         .then(function(result){
+          const translations = result[0];
+          const currentBlock = result[1];
+          const currentTime = (currentBlock && currentBlock.medianTime) || moment().utc().unix();
+          const currency = currentBlock && currentBlock.currency;
 
-          var translations = result[0];
-
-          var currentBlock = result[1];
-          var currentTime = (currentBlock && currentBlock.medianTime) || moment().utc().unix();
-          var currency = currentBlock && currentBlock.currency;
-
-          result = result[2];
+          const data = result[2];
 
           // no TX
-          if (!result || !result.tx || !result.tx.history) {
+          if (!data || !data.tx || !data.tx.history) {
             return UIUtils.toast.show('INFO.EMPTY_TX_HISTORY');
           }
 
           return $translate('ACCOUNT.FILE_NAME', {currency: currency, pubkey: pubkey, currentTime : currentTime})
             .then(function(filename){
 
-              var formatDecimal = $filter('formatDecimal');
-              var formatPubkey = $filter('formatPubkey');
-              var formatDate = $filter('formatDate');
-              var formatDateForFile = $filter('formatDateForFile');
-              var formatSymbol = $filter('currencySymbolNoHtml');
+              const formatDecimal = $filter('formatDecimal');
+              const medianDate = $filter('medianDate');
+              const formatSymbol = $filter('currencySymbolNoHtml');
 
-              var headers = [
+              const headers = [
                 translations['ACCOUNT.HEADERS.TIME'],
                 translations['COMMON.UID'],
                 translations['COMMON.PUBKEY'],
                 translations['ACCOUNT.HEADERS.AMOUNT'] + ' (' + formatSymbol(currency) + ')',
                 translations['ACCOUNT.HEADERS.COMMENT']
               ];
-              var content = result.tx.history.reduce(function(res, tx){
+              const content = data.tx.history.concat(data.tx.validating).reduce(function(res, tx){
                 return res.concat([
-                    formatDate(tx.time),
+                    medianDate(tx.time),
                     tx.uid,
                     tx.pubkey,
                     formatDecimal(tx.amount/100),
@@ -436,7 +434,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                   ].join(';') + '\n');
               }, [headers.join(';') + '\n']);
 
-              var file = new Blob(content, {type: 'text/plain; charset=utf-8'});
+              const file = new Blob(content, {type: 'text/plain; charset=utf-8'});
               FileSaver.saveAs(file, filename);
             });
         });

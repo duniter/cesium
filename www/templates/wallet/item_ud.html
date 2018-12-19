@@ -5,7 +5,7 @@
     <span class="energized" translate>COMMON.UNIVERSAL_DIVIDEND</span>
     <h4>
       <a class="gray underline" ui-sref="app.view_block({number: tx.block_number})">
-        {{::tx.time | formatFromNow}} | {{::tx.time | formatDate}}
+        {{::tx.time | medianFromNowAndDate}}
       </a>
     </h4>
   </div>
