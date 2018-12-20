@@ -1,4 +1,4 @@
-<h4 class="dark" ng-if=":state:enable">
+<h4 class="dark" ng-if=":state:enable && wallet.id!='default'">
   <a ng-if="walletData.invitations.unreadCount">
     <i class="dark ion-person-stalker"></i>
     {{walletData.invitations.unreadCount}}
