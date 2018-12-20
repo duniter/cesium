@@ -459,6 +459,7 @@ gulp.task('optimize-api-files:web', ['debug-api-files:web'], function(done) {
   var cssFilter = filter("**/*.css", { restore: true });
   var revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
   var indexFilter = filter('**/index.html', { restore: true });
+  var uglifyOptions = {beautify: false};
 
   // Process index.html
   gulp.src(tmpPath + '/*/index.html')
@@ -466,7 +467,7 @@ gulp.task('optimize-api-files:web', ['debug-api-files:web'], function(done) {
 
     // Process JS
     .pipe(jsFilter)
-    .pipe(uglify())             // Minify any javascript sources
+    .pipe(uglify(uglifyOptions)) // Minify any javascript sources
     .pipe(jsFilter.restore)
 
     // Process CSS
@@ -505,6 +506,7 @@ gulp.task('optimize-files:web', ['debug-files:web'], function(done) {
   var jsFilter = filter(["**/*.js", '!**/config.js'], { restore: true });
   var cssFilter = filter("**/*.css", { restore: true });
   var revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
+  var uglifyOptions = {beautify: false};
 
   // Process index.html
   gulp.src(tmpPath + '/index.html')
@@ -512,7 +514,7 @@ gulp.task('optimize-files:web', ['debug-files:web'], function(done) {
 
     // Process JS
     .pipe(jsFilter)
-    .pipe(uglify())             // Minify any javascript sources
+    .pipe(uglify(uglifyOptions))             // Minify any javascript sources
     .pipe(jsFilter.restore)
 
     // Process CSS
