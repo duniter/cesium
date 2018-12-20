@@ -2133,8 +2133,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     checkAuthIdle = function(isAuthResult) {
       isAuthResult = angular.isDefined(isAuthResult) ? isAuthResult : isAuth();
-      const newEnableAuthIdle = isAuthResult && settings.keepAuthIdle > 0 && settings.keepAuthIdle != csSettings.constants.KEEP_AUTH_IDLE_SESSION;
-      const changed = (enableAuthIdle != newEnableAuthIdle);
+      var newEnableAuthIdle = isAuthResult && settings.keepAuthIdle > 0 && settings.keepAuthIdle != csSettings.constants.KEEP_AUTH_IDLE_SESSION;
+      var changed = (enableAuthIdle != newEnableAuthIdle);
 
       // need start/top watching
       if (changed) {
@@ -2159,7 +2159,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       }
 
       // Make sure to store seckey, in the session storage for secret key -fix #372
-      const storeSecKey = isAuthResult && settings.keepAuthIdle == csSettings.constants.KEEP_AUTH_IDLE_SESSION && true;
+      var storeSecKey = isAuthResult && settings.keepAuthIdle == csSettings.constants.KEEP_AUTH_IDLE_SESSION && true;
       if (storeSecKey) {
         sessionStorage.put(constants.STORAGE_SECKEY, CryptoUtils.base58.encode(data.keypair.signSk));
       }
@@ -2247,7 +2247,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       options.restore =  angular.isDefined(options.restore) ? options.restore : (id === 'default');
 
       console.debug('[wallet] Starting...');
-      const now = Date.now();
+      var now = Date.now();
 
       startPromise = $q.all([
           csSettings.ready()

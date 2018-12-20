@@ -243,7 +243,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
 
   .filter('formatFromNowAndDate', function(filterTranslations) {
     return function(input, options) {
-      const m = input && moment.unix(parseInt(input));
+      var m = input && moment.unix(parseInt(input));
       return m && (m.fromNow() + (options && options.separator || ' | ') + m.local().format(filterTranslations.DATE_PATTERN || 'YYYY-MM-DD HH:mm')) || '';
     };
   })
@@ -334,7 +334,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
 
   .filter('medianFromNowAndDate', function(filterTranslations) {
     return function(input, options) {
-      const m = input && moment.unix(parseInt(input)+filterTranslations.MEDIAN_TIME_OFFSET);
+      var m = input && moment.unix(parseInt(input)+filterTranslations.MEDIAN_TIME_OFFSET);
       return m && (m.fromNow() + (options && options.separator || ' | ')  + m.local().format(filterTranslations.DATE_PATTERN || 'YYYY-MM-DD HH:mm')) || '';
     };
   })
