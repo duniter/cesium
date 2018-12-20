@@ -44,14 +44,6 @@ angular.module("cesium.config", [])
 			"port": 443
 		},
 		{
-			"host": "g1.monnaielibreoccitanie.org",
-			"port": 443
-		},
-		{
-			"host": "g1.le-sou.org",
-			"port": 443
-		},
-		{
 			"host": "g1.duniter.org",
 			"port": 443
 		}
@@ -89,7 +81,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "1.2.6",
-	"build": "2018-12-11T16:37:06.721Z",
+	"build": "2018-12-20T10:05:19.381Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
