@@ -84,10 +84,12 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
   // Override defaults
   $scope.formData.name = undefined;
   $scope.motion = UIUtils.motion.default;
+  $scope.entered = false;
 
   $scope.enter = function(e, state) {
     // First enter
-    if ($scope.loading) {
+    if (!$scope.entered) {
+      $scope.entered = true;
       $scope.setParameters({
         showDefault: true,
         showBalance: true
@@ -105,11 +107,20 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
     else {
       // Re-add listeners
       $scope.addListeners();
+      if ($scope.formData.stopped) {
+        $scope.loading = false;
+        $scope.formData.stopped = false;
+        $scope.formData.updatingWalletId = undefined;
+        $scope.updateView();
+      }
     }
   };
   $scope.$on('$ionicView.enter', $scope.enter);
 
   $scope.leave = function() {
+    $scope.formData.stopped = true;
+    $scope.formData.updatingWalletId = undefined;
+    $scope.loading = false;
     $scope.removeListeners();
   };
   $scope.$on('$ionicView.leave', $scope.leave);
@@ -120,7 +131,12 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
 
   $scope.select = function(event, wallet) {
     if (event.isDefaultPrevented()) return;
-    $state.go('app.view_wallet_by_id', {id: wallet.id});
+    if (wallet.isDefault()) {
+      $state.go('app.view_wallet');
+    }
+    else {
+      $state.go('app.view_wallet_by_id', {id: wallet.id});
+    }
   };
 
   $scope.editWallet = function(event, wallet) {
@@ -449,14 +465,15 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
 function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTranslations, csSettings, csCurrency, csWallet, parameters){
   'ngInject';
 
-  var loadWalletWaitTime = 100;
   $scope.loading = true;
   $scope.wallets = null;
   $scope.formData = {
     useRelative: csSettings.data.useRelative,
     showDefault: true,
     showBalance: false,
-    balance: undefined
+    balance: undefined,
+    updatingWalletId: undefined,
+    stopped: false
   };
   $scope.motion = null; // no animation
 
@@ -473,23 +490,30 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
   $scope.load = function(options) {
 
     options = options || {};
-    $scope.loading = !options.silent;
+    $scope.loading = angular.isUndefined(options.silent) || !options.silent;
+    $scope.formData.balance = undefined;
+    $scope.formData.updatingWalletId = undefined;
+    $scope.formData.stopped = false;
 
     // Load currency, and filter translations (need by 'formatAmount' filter)
-    var jobs = [
-      csCurrency.name()
-        .then(function(name) {
-          $scope.currency = name;
-          return filterTranslations.ready();
-        })
-    ];
+    var jobs = [];
+
+    jobs.push(csCurrency.name()
+      .then(function(currency) {
+        $scope.currency = currency;
+        return filterTranslations.ready();
+      }));
 
     // Get children wallets
+    var tempWallets;
     if (!$scope.wallets) {
       jobs.push(
         csWallet.children.all()
           .then(function(children) {
-            $scope.wallets = $scope.formData.showDefault ? [csWallet].concat(children) : children;
+            $scope.wallets = [];
+            tempWallets = $scope.formData.showDefault ? [csWallet].concat(children) : children;
+            UIUtils.loading.hide();
+            $scope.updateView();
           })
       );
     }
@@ -497,7 +521,7 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
     // Prepare load options
     var walletLoadOptions = {
       silent: true,
-      minData: true,
+      minData: !$scope.formData.showBalance,
       sources: $scope.formData.showBalance,
       tx: {
         enable: false
@@ -508,34 +532,43 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
     var loadCounter = 0;
     var now = Date.now();
     var balance = 0;
-    return $q.all(jobs)
+    return (jobs.length ? $q.all(jobs) : $q.when())
       // Load wallet data (apply a timeout between each wallet)
       .then(function() {
         console.debug("[wallets] Loading {0} wallets...".format($scope.wallets.length));
-        return $scope.wallets.reduce(function(res, wallet) {
+        return (tempWallets || $scope.wallets).reduce(function(res, wallet) {
             var skip= !options.refresh && wallet.isDataLoaded(walletLoadOptions);
             if (skip) {
               console.debug("[wallets] Wallet #{0} already loaded. Skipping".format(wallet.id), walletLoadOptions);
-              balance += wallet.data.balance;
-              return res;
+              return res.then(function(){
+                balance += wallet.data.balance;
+                if (tempWallets) {
+                  $scope.wallets.push(wallet);
+                  $scope.updateView();
+                }
+              });
             }
             loadCounter++;
             return res.then(function() {
+              if ($scope.formData.stopped) return; // skip if stopped
               // Loading next wallet, after waiting some time
-              return $timeout(function() {
+                $scope.formData.updatingWalletId = wallet.id;
                 return (!options.refresh ?
                   wallet.loadData(walletLoadOptions) :
                   wallet.refreshData(angular.merge({
                     requirements: wallet.requirements && (wallet.requirements.isMember || wallet.requirements.wasMember || wallet.requirements.pendingMembership)
                   }, walletLoadOptions))
                 ).then(function(walletData) {
+                  if (tempWallets) {
+                    $scope.wallets.push(wallet);
+                    $scope.updateView();
+                  }
                   balance += walletData.balance;
                 })
                   .catch(function(err) {
                     console.error("[wallets] Error while loading data of wallet #{0}".format(wallet.id), err);
                     hasLoadError = true;
                   });
-              }, loadWalletWaitTime);
             });
           }, $q.when());
       })
@@ -547,10 +580,16 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
               $scope.cancel();
             });
         }
+        if ($scope.formData.stopped) {
+          // Make sure to keep all wallets
+          if (tempWallets) $scope.wallets = tempWallets;
+          return;
+        }
         if (loadCounter) {
           console.debug("[wallets] Loaded data of {0} wallet(s) in {1}ms".format(loadCounter, (Date.now() - now)));
         }
         $scope.formData.balance = balance;
+        $scope.formData.updatingWalletId = undefined;
         $scope.loading = false;
         UIUtils.loading.hide();
         $scope.updateView();
@@ -579,6 +618,7 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
     $scope.wallets = null;
     $scope.loading = true;
     $scope.formData.balance = undefined;
+    $scope.formData.updatingWalletId = undefined;
   };
 
   $scope.updateView = function() {
@@ -592,8 +632,8 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
     }
   };
 
-  $scope.doUpdate = function(silent) {
-    if ($scope.loading || !$scope.wallets || !$scope.wallets.length) return $q.when();
+  $scope.doUpdate = function(silent, event) {
+    if ($scope.loading || !$scope.wallets || !$scope.wallets.length || $scope.formData.updatingWalletId) return $q.when();
 
     return $scope.load({silent: silent, refresh: true})
       .then(function() {

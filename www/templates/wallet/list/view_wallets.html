@@ -24,7 +24,7 @@
     <div class="hidden-xs hidden-sm padding text-center">
 
       <button class="button button-stable button-small-padding icon ion-loop ink"
-              ng-click="doUpdate()"
+              ng-click="doUpdate(true)"
               title="{{:locale:'COMMON.BTN_REFRESH' | translate}}">
       </button>
 
@@ -42,32 +42,34 @@
 
     </div>
 
-    <div class="padding-top padding-xs" style="display: block; height: 60px;" ng-if="formData.showBalance">
-      <div class="pull-left" ng-if="!loading && formData.balance">
+    <div class="padding-top padding-xs hidden-xs hidden-sm" style="display: block; height: 60px;">
+      <div class="pull-left">
         <h4>
           <span translate>ACCOUNT.WALLET_LIST.TITLE</span>
           <small class="gray" ng-if="formData.balance">(<span translate>ACCOUNT.WALLET_LIST.TOTAL_DOTS</span>&nbsp;
-          <span ng-bind-html="formData.balance|formatAmount:{useRelative: formData.useRelative, currency: currency}"></span>)</small>
-      </span>
+            <span ng-bind-html="formData.balance|formatAmount:{useRelative: formData.useRelative, currency: currency}"></span>)
+          </small>
+          <ion-spinner class="ion-spinner-small" icon="android" ng-if="loading || formData.updatingWalletId"></ion-spinner>
 
         </h4>
       </div>
     </div>
 
-    <div class="center padding" ng-if="loading">
-      <ion-spinner icon="android"></ion-spinner>
-    </div>
+
 
     <div class="center padding gray" ng-if="!loading && wallets && !wallets.length">
       {{:locale:'ACCOUNT.WALLET_LIST.NO_WALLET'|translate}}
     </div>
 
-    <ion-list ng-if="!loading" class="{{::motion.ionListClass}}">
+    <ion-list ng-if="wallets" class="{{::motion.ionListClass}}">
       <ng-include ng-repeat="wallet in wallets track by wallet.id"
                  src="'templates/wallet/list/item_wallet.html'">
       </ng-include>
     </ion-list>
 
+    <div class="center padding visible-xs visible-sm" ng-if="loading">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
   </ion-content>
 
   <button id="fab-add-wallet"
