@@ -126,6 +126,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
     function sendMessage(message, options) {
       options = options || {};
       var wallet = options.wallet || csWallet;
+      message.issuer = message.issuer || wallet.data.pubkey;
       return wallet.getKeypair()
         .then(function(keypair) {
 
@@ -162,7 +163,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       return esWallet.box.record.pack(message, keypair, recipientFieldName, ['title', 'content'])
       // Send message
         .then(function(message){
-          return esHttp.record.post(boxPath)(message);
+          return esHttp.record.post(boxPath)(message, {pubkey: message.issuer, keypair: keypair});
         });
     }
 
