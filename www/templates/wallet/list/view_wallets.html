@@ -42,11 +42,23 @@
 
     </div>
 
+    <div class="padding-top padding-xs" style="display: block; height: 60px;" ng-if="formData.showBalance">
+      <div class="pull-left" ng-if="!loading && formData.balance">
+        <h4>
+          <span translate>ACCOUNT.WALLET_LIST.TITLE</span>
+          <small class="gray" ng-if="formData.balance">(<span translate>ACCOUNT.WALLET_LIST.TOTAL_DOTS</span>&nbsp;
+          <span ng-bind-html="formData.balance|formatAmount:{useRelative: formData.useRelative, currency: currency}"></span>)</small>
+      </span>
+
+        </h4>
+      </div>
+    </div>
+
     <div class="center padding" ng-if="loading">
       <ion-spinner icon="android"></ion-spinner>
     </div>
 
-    <div class="center padding gray" ng-if="!loading && !wallets.length">
+    <div class="center padding gray" ng-if="!loading && wallets && !wallets.length">
       {{:locale:'ACCOUNT.WALLET_LIST.NO_WALLET'|translate}}
     </div>
 

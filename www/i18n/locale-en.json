@@ -547,6 +547,7 @@
       "BTN_DELETE": "Remove a secondary wallet...",
       "BTN_RENAME": "Rename the wallet",
       "EXPORT_FILENAME": "my_wallets-{{pubkey|formatPubkey}}-{{currency}}.csv",
+      "TOTAL_DOTS": "Total: ",
       "EDIT_POPOVER": {
         "TITLE": "Rename the wallet",
         "HELP": "Fill in the new name",

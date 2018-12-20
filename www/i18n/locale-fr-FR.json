@@ -547,6 +547,7 @@
       "BTN_DELETE": "Retirer un portefeuille secondaire...",
       "BTN_RENAME": "Renommer le portefeuille",
       "EXPORT_FILENAME": "mes_portefeuilles-{{pubkey|formatPubkey}}-{{currency}}.csv",
+      "TOTAL_DOTS": "Total : ",
       "EDIT_POPOVER": {
         "TITLE": "Renommer le portefeuille",
         "HELP": "Renseignez le nouveau nom",

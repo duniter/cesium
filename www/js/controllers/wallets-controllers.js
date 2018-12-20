@@ -89,7 +89,7 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
     // First enter
     if ($scope.loading) {
       $scope.setParameters({
-        showDefault: false,
+        showDefault: true,
         showBalance: true
       });
 
@@ -101,8 +101,18 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
           $scope.showFab('fab-add-wallet');
         });
     }
+    // If already enter
+    else {
+      // Re-add listeners
+      $scope.addListeners();
+    }
   };
   $scope.$on('$ionicView.enter', $scope.enter);
+
+  $scope.leave = function() {
+    $scope.removeListeners();
+  };
+  $scope.$on('$ionicView.leave', $scope.leave);
 
   $scope.cancel = function() {
     $scope.showHome();
@@ -377,12 +387,14 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
 
   // Clean controller data when logout
   $scope.onWalletLogout = function() {
-    console.warn("wallet LOGOUT !!!");
     $scope.resetData();
     $scope.removeListeners();
   };
 
   $scope.addListeners = function() {
+
+    // First remove lod listeners, if any
+    $scope.removeListeners();
 
     $scope.listeners = [
       csWallet.api.data.on.logout($scope, $scope.onWalletLogout)
@@ -437,13 +449,14 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
 function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTranslations, csSettings, csCurrency, csWallet, parameters){
   'ngInject';
 
-  var loadWalletWaitTime = 500;
+  var loadWalletWaitTime = 100;
   $scope.loading = true;
   $scope.wallets = null;
   $scope.formData = {
     useRelative: csSettings.data.useRelative,
     showDefault: true,
-    showBalance: false
+    showBalance: false,
+    balance: undefined
   };
   $scope.motion = null; // no animation
 
@@ -457,8 +470,10 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
     $scope.formData.showBalance = angular.isDefined(parameters.showBalance) ? parameters.showBalance : $scope.formData.showBalance;
   };
 
-  $scope.load = function() {
-    $scope.loading = true;
+  $scope.load = function(options) {
+
+    options = options || {};
+    $scope.loading = !options.silent;
 
     // Load currency, and filter translations (need by 'formatAmount' filter)
     var jobs = [
@@ -480,7 +495,7 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
     }
 
     // Prepare load options
-    var options = {
+    var walletLoadOptions = {
       silent: true,
       minData: true,
       sources: $scope.formData.showBalance,
@@ -492,20 +507,30 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
     var hasLoadError = false;
     var loadCounter = 0;
     var now = Date.now();
+    var balance = 0;
     return $q.all(jobs)
       // Load wallet data (apply a timeout between each wallet)
       .then(function() {
-        console.debug("[wallets] Loading {0} wallets in {1}ms".format(loadCounter, Date.now() - now));
+        console.debug("[wallets] Loading {0} wallets...".format($scope.wallets.length));
         return $scope.wallets.reduce(function(res, wallet) {
-            var loaded = wallet.isDataLoaded(options);
-            if (loaded) {
-              console.debug("[wallets] Wallet #{0} already loaded. Skipping".format(wallet.id), options);
+            var skip= !options.refresh && wallet.isDataLoaded(walletLoadOptions);
+            if (skip) {
+              console.debug("[wallets] Wallet #{0} already loaded. Skipping".format(wallet.id), walletLoadOptions);
+              balance += wallet.data.balance;
               return res;
             }
             loadCounter++;
             return res.then(function() {
+              // Loading next wallet, after waiting some time
               return $timeout(function() {
-                return wallet.loadData(options)
+                return (!options.refresh ?
+                  wallet.loadData(walletLoadOptions) :
+                  wallet.refreshData(angular.merge({
+                    requirements: wallet.requirements && (wallet.requirements.isMember || wallet.requirements.wasMember || wallet.requirements.pendingMembership)
+                  }, walletLoadOptions))
+                ).then(function(walletData) {
+                  balance += walletData.balance;
+                })
                   .catch(function(err) {
                     console.error("[wallets] Error while loading data of wallet #{0}".format(wallet.id), err);
                     hasLoadError = true;
@@ -525,6 +550,7 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
         if (loadCounter) {
           console.debug("[wallets] Loaded data of {0} wallet(s) in {1}ms".format(loadCounter, (Date.now() - now)));
         }
+        $scope.formData.balance = balance;
         $scope.loading = false;
         UIUtils.loading.hide();
         $scope.updateView();
@@ -535,7 +561,7 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
           $scope.cancel();
           throw err;
         }
-        UIUtils.onError('ERROR.LOAD_WALLET_LIST_FAILED')(err);
+        return UIUtils.onError('ERROR.LOAD_WALLET_LIST_FAILED')(err);
       });
   };
   $scope.$on('modal.shown', $scope.load);
@@ -552,6 +578,7 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
   $scope.resetData = function() {
     $scope.wallets = null;
     $scope.loading = true;
+    $scope.formData.balance = undefined;
   };
 
   $scope.updateView = function() {
@@ -568,34 +595,13 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
   $scope.doUpdate = function(silent) {
     if ($scope.loading || !$scope.wallets || !$scope.wallets.length) return $q.when();
 
-    $scope.loading = !silent;
-
-    var options = {
-      silent: true,
-      sources: $scope.formData.showBalance,
-      tx: {
-        enable: false
-      },
-      api: true
-    };
-    return $q.all($scope.wallets.reduce(function(res, wallet, counter) {
-        return res.concat(
-          $timeout(function(){
-            return wallet.refreshData(angular.merge({
-              requirements: wallet.requirements && (wallet.requirements.isMember || wallet.requirements.wasMember || wallet.requirements.pendingMembership)
-            }, options));
-          }, counter * loadWalletWaitTime));
-      }, []))
+    return $scope.load({silent: silent, refresh: true})
       .then(function() {
         $scope.loading = false;
         if (silent) {
           $scope.$broadcast('$$rebind::' + 'rebind'); // force rebind
         }
         $scope.updateView();
-      })
-      .catch(function(err) {
-        $scope.loading = false;
-        UIUtils.onError('ERROR.UPDATE_WALLET_LIST_FAILED')(err);
       });
   };
 
