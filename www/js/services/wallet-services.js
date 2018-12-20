@@ -341,12 +341,12 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     isDataLoaded = function(options) {
       if (options) {
-        if (options.minData) return data.loaded;
+        if (options.minData && !options.sources) return data.loaded;
         if (options.requirements && !data.requirements) return false;
         if (options.tx && options.tx.enable && (!data.tx.fromTime || data.tx.fromTime == 'pending')) return false;
         if (options.sigStock && !data.sigStock) return false;
       }
-      return data.loaded && data.sources;
+      return data.loaded && data.sources && true;
     },
 
     isNeverUsed = function() {
@@ -391,7 +391,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
           // Use session storage for secret key - fix #372
           if (settings.keepAuthIdle == csSettings.constants.KEEP_AUTH_IDLE_SESSION && isAuth()) {
-            jobs.push(sessionStorage.put(constants.STORAGE_SECKEY, CryptoUtils.base58.encode(data.keypair.signSk)));
+            jobs.push(sessionStorage.put(constants.STORAGE_SECKEY, CryptoUtils.util.encode_base58(data.keypair.signSk)));
           }
           else {
             jobs.push(sessionStorage.put(constants.STORAGE_SECKEY, null));
@@ -1064,7 +1064,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       var sources = [];
       var minBase = filterBase;
       var maxBase = filterBase;
-      _.find(data.sources, function(source) {
+      _.find(data.sources || [], function(source) {
         if (!source.consumed && source.base == filterBase){
           sourcesAmount += powBase(source.amount, source.base);
           sources.push(source);
@@ -2161,7 +2161,11 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       // Make sure to store seckey, in the session storage for secret key -fix #372
       var storeSecKey = isAuthResult && settings.keepAuthIdle == csSettings.constants.KEEP_AUTH_IDLE_SESSION && true;
       if (storeSecKey) {
-        sessionStorage.put(constants.STORAGE_SECKEY, CryptoUtils.base58.encode(data.keypair.signSk));
+        sessionStorage.put(constants.STORAGE_SECKEY, CryptoUtils.util.encode_base58(data.keypair.signSk));
+      }
+      // Make sure to clean previous seckey, if exists in session storage
+      else if (changed) {
+        sessionStorage.put(constants.STORAGE_SECKEY, null);
       }
     };
 

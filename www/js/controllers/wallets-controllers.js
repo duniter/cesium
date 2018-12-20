@@ -96,7 +96,7 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
       return $scope.load()
         .then(function() {
           UIUtils.loading.hide();
-          if (!$scope.wallets) return; // user cancel
+          if (!$scope.wallets) return; // user cancel, or error
           $scope.addListeners();
           $scope.showFab('fab-add-wallet');
         });
@@ -489,33 +489,52 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
       },
       api: true
     };
+    var hasLoadError = false;
+    var loadCounter = 0;
+    var now = Date.now();
     return $q.all(jobs)
       // Load wallet data (apply a timeout between each wallet)
       .then(function() {
-        var counter = 0;
-        return $q.all(
-          $scope.wallets.reduce(function(res, wallet){
-            return wallet.isDataLoaded(options) ?
-              res : res.concat(
-              $timeout(function(){
-                return wallet.loadData(options);
-              }, loadWalletWaitTime * counter++));
-          }, [])
-        );
+        console.debug("[wallets] Loading {0} wallets in {1}ms".format(loadCounter, Date.now() - now));
+        return $scope.wallets.reduce(function(res, wallet) {
+            var loaded = wallet.isDataLoaded(options);
+            if (loaded) {
+              console.debug("[wallets] Wallet #{0} already loaded. Skipping".format(wallet.id), options);
+              return res;
+            }
+            loadCounter++;
+            return res.then(function() {
+              return $timeout(function() {
+                return wallet.loadData(options)
+                  .catch(function(err) {
+                    console.error("[wallets] Error while loading data of wallet #{0}".format(wallet.id), err);
+                    hasLoadError = true;
+                  });
+              }, loadWalletWaitTime);
+            });
+          }, $q.when());
       })
       .then(function() {
+        if (hasLoadError) {
+          return UIUtils.alert.error('ERROR.LOAD_WALLET_LIST_FAILED')
+            .then(function() {
+              $scope.resetData();
+              $scope.cancel();
+            });
+        }
+        if (loadCounter) {
+          console.debug("[wallets] Loaded data of {0} wallet(s) in {1}ms".format(loadCounter, (Date.now() - now)));
+        }
         $scope.loading = false;
         UIUtils.loading.hide();
         $scope.updateView();
       })
       .catch(function(err) {
+        $scope.resetData();
         if (err && err === 'CANCELLED') {
-          $scope.loading = true;
           $scope.cancel();
           throw err;
         }
-        $scope.wallets = [];
-        $scope.loading = false;
         UIUtils.onError('ERROR.LOAD_WALLET_LIST_FAILED')(err);
       });
   };
@@ -536,7 +555,7 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
   };
 
   $scope.updateView = function() {
-    if (!$scope.wallets.length) return;
+    if (!$scope.wallets || !$scope.wallets.length) return;
 
     if ($scope.motion) {
       $scope.motion.show({selector: '.list .item.item-wallet', ink: true});
@@ -604,7 +623,7 @@ function PopoverWalletSelectModalController($scope, $controller, UIUtils) {
   });
 
   $scope.updateView = function() {
-    if (!$scope.wallets.length) return;
+    if (!$scope.wallets || !$scope.wallets.length) return;
 
     UIUtils.ink({selector: '.popover-wallets .list .item'});
   };
