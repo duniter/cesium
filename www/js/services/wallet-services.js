@@ -341,7 +341,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     isDataLoaded = function(options) {
       if (options) {
-        if (options.minData && !options.sources) return data.loaded;
+        if (options.minData && !options.sources) return data.loaded && true;
         if (options.requirements && !data.requirements) return false;
         if (options.tx && options.tx.enable && (!data.tx.fromTime || data.tx.fromTime == 'pending')) return false;
         if (options.sigStock && !data.sigStock) return false;

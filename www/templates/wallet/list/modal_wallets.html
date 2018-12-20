@@ -10,11 +10,14 @@
       <ion-spinner icon="android"></ion-spinner>
     </div>
 
-    <div class="center padding gray" ng-if="!loading && !wallets.length">
+    <div class="center padding gray" ng-if="!loading && !wallets.length && !defaultWallet">
       {{:locale:'ACCOUNT.WALLET_LIST.NO_WALLET'|translate}}
     </div>
 
     <ion-list ng-if="!loading" class="{{::motion.ionListClass}}">
+      <ng-include ng-if="defaultWallet" ng-init="wallet = defaultWallet" src="'templates/wallet/list/item_wallet.html'">
+      </ng-include>
+
       <ng-repeat ng-repeat="wallet in wallets track by wallet.id"
                  ng-include="'templates/wallet/list/item_wallet_light.html'">
       </ng-repeat>

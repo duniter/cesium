@@ -57,11 +57,14 @@
 
 
 
-    <div class="center padding gray" ng-if="!loading && wallets && !wallets.length">
+    <div class="center padding gray" ng-if="!loading && wallets && !wallets.length && !defaultWallet">
       {{:locale:'ACCOUNT.WALLET_LIST.NO_WALLET'|translate}}
     </div>
 
-    <ion-list ng-if="wallets" class="{{::motion.ionListClass}}">
+    <ion-list class="{{::motion.ionListClass}}">
+      <ng-include ng-if="defaultWallet" ng-init="wallet = defaultWallet" src="'templates/wallet/list/item_wallet.html'">
+      </ng-include>
+
       <ng-include ng-repeat="wallet in wallets track by wallet.id"
                  src="'templates/wallet/list/item_wallet.html'">
       </ng-include>
