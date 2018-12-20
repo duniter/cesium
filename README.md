@@ -119,7 +119,7 @@ A [development tutorial](doc/fr/development_tutorial-01.md) (in French) is also 
 
 ## License
 
-This software is distributed under [GNU GPLv3](https://raw.github.com/duniter/cesium/master/LICENSE).
+This software is distributed under [GNU AGPL-3.0](https://raw.github.com/duniter/cesium/master/LICENSE).
 
 ## Troubleshooting
 

@@ -98,7 +98,7 @@
    },
    "ABOUT": {
      "TITLE": "A proposito",
-     "LICENSE": "<b>Free/libre software</b> (License GNU GPLv3).",
+     "LICENSE": "<b>Free/libre software</b> (License GNU AGPLv3).",
      "CODE": "Codice sorgente:",
      "DEVELOPERS": "Sviluppatori:",
      "FORUM": "Forum:",
