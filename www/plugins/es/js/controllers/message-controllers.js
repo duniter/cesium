@@ -472,6 +472,7 @@ function ESMessageComposeController($scope, $controller) {
   $scope.$on('$ionicView.enter',$scope.enter);
 
   $scope.cancel = function() {
+    $scope.sending = false;
     $scope.showHome();
   };
 
@@ -480,6 +481,7 @@ function ESMessageComposeController($scope, $controller) {
   };
 
   $scope.closeModal = function() {
+    $scope.sending = false;
     $scope.showHome();
   };
 
@@ -500,6 +502,7 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, csWallet, esHt
   $scope.destPub = null;
   $scope.isResponse = false;
   $scope.enableSelectWallet = true;
+  $scope.sending = false;
 
   $scope.setParameters = function(parameters) {
     if (!parameters) return;
@@ -570,6 +573,7 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, csWallet, esHt
         });
     }
 
+    $scope.sending = true;
     UIUtils.loading.show();
     var data = {
       issuer: wallet.data.pubkey,
@@ -585,7 +589,15 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, csWallet, esHt
         UIUtils.loading.hide();
         $scope.closeModal(id);
       })
-      .catch(UIUtils.onError('MESSAGE.ERROR.SEND_MSG_FAILED'));
+      .catch(function(err) {
+        $scope.sending = false;
+        // silent, if user cancelled;
+        if (err === 'CANCELLED') {
+          UIUtils.loading.hide();
+          return;
+        }
+        UIUtils.onError('MESSAGE.ERROR.SEND_MSG_FAILED')(err);
+      });
   };
 
 
