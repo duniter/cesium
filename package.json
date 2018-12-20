@@ -1,6 +1,6 @@
 {
   "name": "cesium",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "Cesium Wallet for G1 currency",
   "repository": {
     "type": "git",
