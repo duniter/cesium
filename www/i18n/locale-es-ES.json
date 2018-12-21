@@ -446,7 +446,7 @@
   "ACCOUNT": {
     "TITLE": "Mi cuenta",
     "BALANCE": "Saldo",
-    "LAST_TX": "última transacción",
+    "LAST_TX": "última validadas transacción",
     "BALANCE_ACCOUNT": "Saldo de la cuenta",
     "NO_TX": "Ninguna transacción",
     "SHOW_MORE_TX": "Mostrar más",

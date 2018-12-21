@@ -453,7 +453,7 @@
   "ACCOUNT": {
     "TITLE": "My Account",
     "BALANCE": "Balance",
-    "LAST_TX": "Latest transactions",
+    "LAST_TX": "Latest validated transactions",
     "BALANCE_ACCOUNT": "Account balance",
     "NO_TX": "No transaction",
     "SHOW_MORE_TX": "Show more",
