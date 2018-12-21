@@ -106,7 +106,7 @@
   },
   "ABOUT": {
     "TITLE": "À propos",
-    "LICENSE": "Application <b>libre</b> (Licence GNU GPLv3).",
+    "LICENSE": "Application <b>libre</b> (Licence GNU AGPLv3).",
     "LATEST_RELEASE": "Il existe une <b>version plus récente</b> de {{'COMMON.APP_NAME'|translate}} (<b>v{{version}}</b>)",
     "PLEASE_UPDATE": "Veuillez mettre à jour {{'COMMON.APP_NAME'|translate}} (dernière version : <b>v{{version}}</b>)",
     "CODE": "Code source :",
