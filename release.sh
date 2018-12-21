@@ -53,15 +53,29 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   esac
 
   # Load env.sh if exists
-  if [ -f "${DIRNAME}/env.sh" ]; then
+  if [[ -f "${DIRNAME}/env.sh" ]]; then
     source ${DIRNAME}/env.sh
   fi
 
+  # Check the Java version
+  JAVA_VERSION=`java -version 2>&1 | grep "java version" | awk '{print $3}' | tr -d \"`
+  if [[ $? -ne 0 ]]; then
+    echo "No Java JRE 1.8 found in machine. This is required for Android artifacts."
+    exit -1
+  fi
+  JAVA_MINOR_VERSION=`echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[2]}'`
+  if [[ ${JAVA_MINOR_VERSION} -ne 8 ]]; then
+    echo "Require a Java JRE in version 1.8, but found ${JAVA_VERSION}. You can override your default JAVA_HOME in 'env.sh'."
+    exit -1
+  fi
+  echo "Java: $JAVA_VERSION"
+
+
   # force nodejs version to 5
-  if [ -d "$NVM_DIR" ]; then
+  if [[ -d "$NVM_DIR" ]]; then
     . $NVM_DIR/nvm.sh
     nvm use 5
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
       exit -1
     fi
   else
@@ -81,7 +95,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   echo "- Building Android artifact..."
   echo "----------------------------------"
   ionic build android --release
-  if [ $? -ne 0 ]; then
+  if [[ $? -ne 0 ]]; then
     exit -1
   fi
 
@@ -92,7 +106,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   # Update config file
   gulp config --env default
   gulp build:web --release
-  if [ $? -ne 0 ]; then
+  if [[ $? -ne 0 ]]; then
     exit -1
   fi
 
@@ -107,7 +121,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   git commit -m "v$2"
   git tag "v$2"
   git push
-  if [ $? -ne 0 ]; then
+  if [[ $? -ne 0 ]]; then
     exit -1
   fi
 
@@ -125,28 +139,22 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   echo "**********************************"
 
   ./github.sh $1 ''"$description"''
-  if [ $? -ne 0 ]; then
+  if [[ $? -ne 0 ]]; then
       exit -1
   fi
 
   echo "----------------------------------"
-  echo "- Building desktop versions..."
+  echo "- Building desktop artifacts..."
   echo "----------------------------------"
 
-  # Remove old vagrant virtual machines
-  rm -rf ~/.vagrant.d/*
 
   git submodule update --init
   git submodule sync
   cd platforms/desktop
 
-  # Exclude Windows - TODO FIXME (not enough space in BL directories)
-  EXPECTED_ASSETS="cesium-desktop-v$2-linux-x64.deb
-cesium-desktop-v$2-linux-x64.tar.gz"
-  export EXPECTED_ASSETS
-
+  # Build desktop assets
   ./release.sh $2
-  if [ $? -ne 0 ]; then
+  if [[ $? -ne 0 ]]; then
       exit -1
   fi
 
