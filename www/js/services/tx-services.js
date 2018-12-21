@@ -367,7 +367,8 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             data.balance = (balanceWithPending < 0) ? balanceFromSource : balanceWithPending;
 
             // Will add uid (+ plugin will add name, avatar, etc. if enable)
-            return csWot.extendAll((data.tx.history || []).concat(data.tx.validating||[]).concat(data.tx.pendings||[]), 'pubkey')
+            var allTx = (data.tx.history || []).concat(data.tx.validating||[], data.tx.pendings||[], data.tx.errors||[]);
+            return csWot.extendAll(allTx, 'pubkey')
               .then(function() {
                 console.debug('[tx] TX and sources loaded in '+ (Date.now()-now) +'ms');
                 return data;
