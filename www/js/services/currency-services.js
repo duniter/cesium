@@ -98,32 +98,52 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
         });
     }
 
-    function loadCurrentUD() {
+    function loadCurrentUD(res, retryCount) {
       return BMA.blockchain.stats.ud()
-        .then(function(res){
+        .then(function(res) {
           // Special case for currency init
           if (!res.result.blocks.length) {
             data.currentUD = data.parameters ? data.parameters.ud0 : -1;
             return data.currentUD ;
           }
-          else {
-            var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
-            return BMA.blockchain.block({ block: lastBlockWithUD })
-              .then(function(block){
-                data.currentUD = powBase(block.dividend, block.unitbase);
-                return data.currentUD;
-              })
-              .catch(function(err) {
-                console.error("[currency] Unable to load last block with UD, with number {0}".format(lastBlockWithUD));
-                data.currentUD = null;
-                throw err;
-              });
-          }
+          return _safeLoadCurrentUD(res, res.result.blocks.length - 1);
         })
         .catch(function(err) {
           data.currentUD = null;
           throw err;
-        });
+        })
+    }
+
+    /**
+     * Load the last UD, with a workaround if last block with UD is not found in the node
+     * @param res
+     * @param blockIndex
+     * @returns {*}
+     * @private
+     */
+    function _safeLoadCurrentUD(res, blockIndex) {
+      // Special case for currency init
+      if (!res.result.blocks.length || blockIndex < 0) {
+        data.currentUD = data.parameters ? data.parameters.ud0 : -1;
+        return data.currentUD ;
+      }
+      else {
+        var lastBlockWithUD = res.result.blocks[blockIndex];
+        return BMA.blockchain.block({ block: lastBlockWithUD })
+          .then(function(block){
+            data.currentUD = powBase(block.dividend, block.unitbase);
+            return data.currentUD;
+          })
+          .catch(function(err) {
+            console.error("[currency] Unable to load last block with UD, with number {0}".format(lastBlockWithUD));
+            if (blockIndex > 0) {
+              console.error("[currency] Retrying to load UD from a previous block...");
+              return _safeLoadCurrentUD(res, blockIndex-1);
+            }
+            data.currentUD = null;
+            throw err;
+          });
+      }
     }
 
     function getData() {
