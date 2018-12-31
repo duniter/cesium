@@ -108,6 +108,36 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
       });
   }
 
+  function getWalletEventsAsNotifications(options) {
+    options = options || {};
+    var wallet = options.wallet || csWallet;
+
+    if (!wallet.data.events ||!wallet.data.events.length) return [];
+
+    // Add some wallet events as notifications
+    var time = csHttp.date.now() - filterTranslations.MEDIAN_TIME_OFFSET;
+    return (wallet.data.events || []).reduce(function(res, event) {
+      if (event.type != "warn") return res; // Skip NOT warn events
+      var notification = new EsNotification({}, function(self) {
+        if (!self.read) {
+          self.read = true;
+          if (wallet.data.notifications && wallet.data.notifications.warnCount > 0) {
+            wallet.data.notifications.warnCount--;
+          }
+        }
+      });
+      notification.id=event.code;
+      notification.read = false;
+      notification.state = 'app.view_wallet';
+      notification.avatarIcon = 'ion-alert-circled';
+      notification.icon = 'ion-alert-circled assertive';
+      notification.time = time;
+      notification.message = event.message;
+      notification.messageParams = event.messageParams;
+      return res.concat(notification);
+    }, []);
+  }
+
   // Load user notifications
   function loadNotifications(options) {
     options = options || {};
@@ -129,39 +159,16 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
 
     return that.raw.postSearch(request)
       .then(function(res) {
-        if (!res.hits || !res.hits.total) return [];
-        var events;
+        // Get wallet events (as notifications)
+        var walletEvents = getWalletEventsAsNotifications(options);
 
-        // Add wallet events as notifications
-        if (wallet.data.events && wallet.data.events.length) {
-          var time = csHttp.date.now() - filterTranslations.MEDIAN_TIME_OFFSET;
-          events = (wallet.data.events || []).reduce(function(res, event) {
-            if (event.type != "warn") return res;
-            var notification = new EsNotification({}, function(self) {
-              if (!self.read) {
-                self.read = true;
-                if (wallet.data.notifications && wallet.data.notifications.warnCount > 0) {
-                  wallet.data.notifications.warnCount--;
-                }
-              }
-            });
-            notification.id=event.code;
-            notification.read = false;
-            notification.state = 'app.view_wallet';
-            notification.avatarIcon = 'ion-alert-circled';
-            notification.icon = 'ion-alert-circled assertive';
-            notification.time = time;
-            notification.message = event.message;
-            notification.messageParams = event.messageParams;
-            return res.concat(notification);
-          }, []);
-        }
+        if (!res.hits || !res.hits.total) return walletEvents;
 
         var notifications = res.hits.hits.reduce(function(res, hit) {
           var item = new EsNotification(hit._source, markNotificationAsRead);
           item.id = hit._id;
           return res.concat(item);
-        }, events || []);
+        }, walletEvents || []);
 
         return csWot.extendAll(notifications);
       });
