@@ -85,9 +85,17 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
       csSettings.ready(),
       csCurrency.parameters()
         .then(function(parameters) {
+          return parameters && parameters.avgGenTime;
+        })
+        // Make sure to continue even if node is down - Fix #788
+        .catch(function(err) {
+          console.error("[settings] Could not not currency parameters. Using default 'avgGenTime' (300)", err);
+          return {avgGenTime: 300};
+        })
+        .then(function(parameters) {
           _.each($scope.blockValidityWindows, function(blockCount) {
             if (blockCount > 0) {
-              $scope.blockValidityWindowLabels[blockCount].labelParams.time=parameters.avgGenTime * blockCount;
+              $scope.blockValidityWindowLabels[blockCount].labelParams.time= parameters.avgGenTime * blockCount;
             }
           });
         })
@@ -153,7 +161,7 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
     .then(function(newNode) {
       if (newNode.host === $scope.formData.node.host &&
         newNode.port === $scope.formData.node.port &&
-        newNode.useSsl === $scope.formData.node.useSsl) {
+        newNode.useSsl === $scope.formData.node.useSsl && !$scope.formData.node.temporary) {
         return; // same node = nothing to do
       }
       UIUtils.loading.show();
@@ -169,8 +177,8 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
               });
           }
           UIUtils.loading.hide();
-          $scope.formData.node = newNode;
-          delete $scope.formData.temporary;
+          angular.merge($scope.formData.node, newNode);
+          delete $scope.formData.node.temporary;
           BMA.copy(nodeBMA);
           $scope.bma = BMA;
 

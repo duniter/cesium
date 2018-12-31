@@ -199,7 +199,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     angular.merge(data, newData);
 
     // Delete temporary properties, if false
-    if (!data.node.temporary) delete data.node.temporary;
+    if (!newData.node.temporary || !data.node.temporary) delete data.node.temporary;
 
     // Always force the usage of default settings
     // This is a workaround for DEV (TODO: implement edition in settings ?)
