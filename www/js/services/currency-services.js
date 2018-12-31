@@ -98,7 +98,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
         });
     }
 
-    function loadCurrentUD(res, retryCount) {
+    function loadCurrentUD() {
       return BMA.blockchain.stats.ud()
         .then(function(res) {
           // Special case for currency init
@@ -111,7 +111,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
         .catch(function(err) {
           data.currentUD = null;
           throw err;
-        })
+        });
     }
 
     /**
