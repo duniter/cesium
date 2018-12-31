@@ -39,13 +39,14 @@ if (rootdir && !skip) {
     var jsFilter = filter(["**/*.js", "!**/vendor/*", '!**/config.js'], { restore: true });
     var cssFilter = filter("**/*.css", { restore: true });
     var revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
+    var uglifyOptions = {beautify: false};
 
     // Removing unused code for device...
     es.concat(
       gulp.src(indexPath)
         .pipe(useref())      // Concatenate with gulp-useref
         .pipe(jsFilter)
-        .pipe(uglify())             // Minify any javascript sources
+        .pipe(uglify(uglifyOptions))             // Minify any javascript sources
         .pipe(jsFilter.restore)
         .pipe(cssFilter)
         .pipe(csso())               // Minify any CSS sources
