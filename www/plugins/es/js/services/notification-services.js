@@ -108,34 +108,39 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
       });
   }
 
-  function getWalletEventsAsNotifications(options) {
+  function getWalletNotifications(options) {
     options = options || {};
     var wallet = options.wallet || csWallet;
 
-    if (!wallet.data.events ||!wallet.data.events.length) return [];
+    return new Promise(function(resolve) {
+      if (!wallet.data || !wallet.data.events ||!wallet.data.events.length) return resolve([]);
 
-    // Add some wallet events as notifications
-    var time = csHttp.date.now() - filterTranslations.MEDIAN_TIME_OFFSET;
-    return (wallet.data.events || []).reduce(function(res, event) {
-      if (event.type != "warn") return res; // Skip NOT warn events
-      var notification = new EsNotification({}, function(self) {
-        if (!self.read) {
-          self.read = true;
-          if (wallet.data.notifications && wallet.data.notifications.warnCount > 0) {
-            wallet.data.notifications.warnCount--;
+      // Add some wallet events as notifications
+      var time = csHttp.date.now() - filterTranslations.MEDIAN_TIME_OFFSET;
+      var result = (wallet.data.events || []).reduce(function(res, event) {
+        if (event.type != "warn" && event.type != "error") return res; // Keep only warn and error events
+        var notification = new EsNotification({}, function(self) {
+          if (!self.read) {
+            self.read = true;
+            if (wallet.data.notifications && wallet.data.notifications.warnCount > 0) {
+              wallet.data.notifications.warnCount--;
+            }
           }
-        }
-      });
-      notification.id=event.code;
-      notification.read = false;
-      notification.state = 'app.view_wallet';
-      notification.avatarIcon = 'ion-alert-circled';
-      notification.icon = 'ion-alert-circled assertive';
-      notification.time = time;
-      notification.message = event.message;
-      notification.messageParams = event.messageParams;
-      return res.concat(notification);
-    }, []);
+        });
+        notification.id=event.code;
+        notification.read = false;
+        notification.state = 'app.view_wallet';
+        notification.avatarIcon = 'ion-alert-circled';
+        notification.icon = 'ion-alert-circled assertive';
+        notification.time = time;
+        notification.message = event.message;
+        notification.messageParams = event.messageParams;
+        return res.concat(notification);
+      }, []);
+
+      resolve(result);
+    });
+
   }
 
   // Load user notifications
@@ -146,7 +151,6 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
     }
     options.from = options.from || 0;
     options.size = options.size || constants.DEFAULT_LOAD_SIZE;
-    var wallet = options.wallet || csWallet;
     var request = {
       query: createFilterQuery(options.pubkey, options),
       sort : [
@@ -157,18 +161,24 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
       _source: fields.commons
     };
 
-    return that.raw.postSearch(request)
-      .then(function(res) {
-        // Get wallet events (as notifications)
-        var walletEvents = getWalletEventsAsNotifications(options);
+    return $q.all([
+      // Get wallet events (as notifications)
+      getWalletNotifications(options),
 
-        if (!res.hits || !res.hits.total) return walletEvents;
+      // Load notification from ES node
+      that.raw.postSearch(request)
+    ]).then(function(res) {
+
+        var walletNotifs = res[0] || [];
+        res = res[1];
+
+        if (!res.hits || !res.hits.total) return walletNotifs;
 
         var notifications = res.hits.hits.reduce(function(res, hit) {
           var item = new EsNotification(hit._source, markNotificationAsRead);
           item.id = hit._id;
           return res.concat(item);
-        }, walletEvents || []);
+        }, walletNotifs);
 
         return csWot.extendAll(notifications);
       });
