@@ -421,10 +421,10 @@
       "IDLE_WARNING": "You will be logout... {{countdown}}"
     },
     "METHOD": {
-      "SCRYPT_DEFAULT": "Standard salt (default)",
+      "SCRYPT_DEFAULT": "Secret identifier and password",
       "SCRYPT_ADVANCED": "Advanced salt",
       "FILE": "Keychain file",
-      "PUBKEY": "Public key only",
+      "PUBKEY": "Public key or pseudonym",
       "SCAN": "Scan a QR code"
     },
     "SCRYPT": {

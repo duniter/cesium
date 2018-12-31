@@ -421,10 +421,10 @@
       "IDLE_WARNING": "Vous allez être déconnecté... {{countdown}}"
     },
     "METHOD": {
-      "SCRYPT_DEFAULT": "Sallage standard (par défaut)",
+      "SCRYPT_DEFAULT": "Identifiant secret et mot de passe",
       "SCRYPT_ADVANCED": "Sallage avancé",
       "FILE": "Fichier de trousseau",
-      "PUBKEY": "Clé publique seule",
+      "PUBKEY": "Clé publique ou pseudonyme",
       "SCAN": "Scanner un QR code"
     },
     "SCRYPT": {
