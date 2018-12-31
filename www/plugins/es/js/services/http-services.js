@@ -203,7 +203,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       return csHttp.get(that.host, that.port, '/node/summary', that.useSsl)()
         .then(function(json) {
           var software = json && json.duniter && json.duniter.software || 'unknown';
-          if (software == 'duniter4j-elasticsearch') return true;
+          if (software === "cesium-plus-pod" || software === "duniter4j-elasticsearch") return true;
           console.error("[ES] [http] Not a Duniter4j ES node, but a {0} node".format(software));
           return false;
         })
