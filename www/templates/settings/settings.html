@@ -118,6 +118,15 @@
         </label>
       </div>
 
+      <div class="item item-input hidden-xs hidden-sm" ng-class="{'gray': (!formData.useLocalStorage || !formData.rememberMe)}" ng-if="::$root.device.isDesktop()">
+        <div class="input-label">
+          <span class="input-label" translate>SETTINGS.KEYRING_FILE</span>
+          <h4 class="gray text-wrap" ng-bind-html="'SETTINGS.KEYRING_FILE_HELP' | translate"></h4>
+        </div>
+
+        <div class="item-note dark">{{formData.keyringFile}}</div>
+      </div>
+
       <span class="item item-divider" translate>SETTINGS.HISTORY_SETTINGS</span>
 
       <div class="item item-toggle dark">

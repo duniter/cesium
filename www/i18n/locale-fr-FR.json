@@ -113,7 +113,8 @@
     "DEVELOPERS": "Développé par :",
     "FORUM": "Forum :",
     "PLEASE_REPORT_ISSUE": "N'hésitez pas à nous remonter les anomalies rencontrées",
-    "REPORT_ISSUE": "Remonter un problème"
+    "REPORT_ISSUE": "Remonter un problème",
+    "BTN_OPEN_DEV_WINDOW": "Ouvrir la fenêtre de debuggage"
   },
   "HOME": {
     "TITLE": "Cesium",
@@ -151,6 +152,8 @@
       "HOUR": "Après {{value}}h d'inactivité",
       "ALWAYS": "A la fin de la session"
     },
+    "KEYRING_FILE": "Fichier de trousseau",
+    "KEYRING_FILE_HELP": "Permet de vous <b>connecter</b> automatiquement à chaque lancement<br/>et même de vous <b>authentifier</b> (seulement si \"Expiration de l'authentification\" est configurée \"à la fin de la session\").",
     "REMEMBER_ME": "Se souvenir de moi ?",
     "REMEMBER_ME_HELP": "Permet de rester identifié d'une session à l'autre, en conservant localement la clé publique.",
     "PLUGINS_SETTINGS": "Extensions",

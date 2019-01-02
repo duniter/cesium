@@ -209,7 +209,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
         if (!angular.isDefined(cache.isDesktop)) {
           try {
             // Should have NodeJs and NW
-            cache.isDesktop = !exports.enable && !!process && !!App;
+            cache.isDesktop = !exports.enable && !!process && !!nw && !!nw.App;
           } catch (err) {
             cache.isDesktop = false;
           }
@@ -219,6 +219,14 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
 
       exports.isWeb = function() {
         return !exports.enable && !exports.isDesktop();
+      };
+
+      exports.openDevTool = function() {
+        if (exports.isDesktop()) {
+          // Get the current window
+          var win = nw && nw.Window && nw.Window.get();
+          if (win) win.showDevTools();
+        }
       };
 
       exports.ready = function() {

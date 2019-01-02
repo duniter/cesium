@@ -113,7 +113,8 @@
     "DEVELOPERS": "Developers:",
     "FORUM": "Forum:",
     "PLEASE_REPORT_ISSUE": "Please report any issue to us!",
-    "REPORT_ISSUE": "Report an issue"
+    "REPORT_ISSUE": "Report an issue",
+    "BTN_OPEN_DEV_WINDOW": "Open the debug window"
   },
   "HOME": {
     "TITLE": "Cesium",
@@ -151,6 +152,8 @@
       "HOUR": "After {{value}}h of inactivity",
       "ALWAYS": "At the end of the session"
     },
+    "KEYRING_FILE": "Keyring file",
+    "KEYRING_FILE_HELP": "Allow auto-connect at startup, or to authenticate (only if \"Expiration of authentication\" is \"at the end of the session\"",
     "REMEMBER_ME": "Remember me ?",
     "REMEMBER_ME_HELP": "Allows to remain identified from one session to another, keeping the public key locally.",
     "PLUGINS_SETTINGS": "Extensions",
