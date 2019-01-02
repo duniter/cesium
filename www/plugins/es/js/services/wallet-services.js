@@ -1,6 +1,6 @@
 angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'cesium.es.http.services', 'cesium.es.crypto.services'])
 
-  .factory('esWallet', function($q, $rootScope, CryptoUtils, csPlatform, csWallet, esCrypto, esProfile, esHttp) {
+  .factory('esWallet', function($q, $rootScope, $timeout, CryptoUtils, csPlatform, csWallet, esCrypto, esProfile, esHttp) {
     'ngInject';
 
     var

@@ -324,6 +324,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
       .catch(function (err) {
         UIUtils.onError('ERROR.CRYPTO_UNKNOWN_ERROR')(err);
         $scope.computing = false;
+        $scope.autoComputePubkey = false; // Avoid a infinite loop (computePubkey -> onScryptFormChanged -> computePubkey)
         $scope.onScryptFormChanged();
       });
     }, 100);

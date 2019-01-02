@@ -168,7 +168,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       };
       this.util.decode_base58 = function (a) { // TODO : move to abstract factory
         var i;
-        d = that.base58.decode(a);
+        var d = that.base58.decode(a);
         var b = new Uint8Array(d.length);
         for (i = 0; i < d.length; i++) b[i] = d[i];
         return b;
@@ -470,9 +470,9 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       };
       this.util.decode_base58 = function(a) {
         var i;
-        a = that.base58.decode(a);
-        var b = new Uint8Array(a.length);
-        for (i = 0; i < a.length; i++) b[i] = a[i];
+        var d = that.base58.decode(a);
+        var b = new Uint8Array(d.length);
+        for (i = 0; i < d.length; i++) b[i] = d[i];
         return b;
       };
       this.util.decode_base64 = function (a) {

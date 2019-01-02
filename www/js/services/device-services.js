@@ -221,14 +221,6 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
         return !exports.enable && !exports.isDesktop();
       };
 
-      exports.openDevTool = function() {
-        if (exports.isDesktop()) {
-          // Get the current window
-          var win = nw && nw.Window && nw.Window.get();
-          if (win) win.showDevTools();
-        }
-      };
-
       exports.ready = function() {
         if (started) return $q.when();
         return startPromise || exports.start();
