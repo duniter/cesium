@@ -148,7 +148,8 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   echo "----------------------------------"
 
 
-  git submodule update --init
+  #FIXME: ceci empêche d'etre sur le master/origin de cesium-desktop
+  #git submodule update --init
   git submodule sync
   cd platforms/desktop
 
