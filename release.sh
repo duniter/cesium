@@ -54,7 +54,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
 
   # Load env.sh if exists
   if [[ -f "${DIRNAME}/env.sh" ]]; then
-    source ${DIRNAME}/env.sh
+    source ${DIRNAME}/env.sh $*
   fi
 
   # Check the Java version
