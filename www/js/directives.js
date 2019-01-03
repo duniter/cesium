@@ -102,7 +102,11 @@ angular.module('cesium.directives', [])
       link: function(scope, element, attributes, ngModel) {
         if (ngModel) {
           ngModel.$validators.geoPoint = function(value) {
-            return ngModel.$isEmpty(value) || (angular.isDefined(value.lat) && angular.isDefined(value.lon));
+            return ngModel.$isEmpty(value) ||
+              // twice are defined
+              (angular.isDefined(value.lat) && angular.isDefined(value.lon)) ||
+              // or twice are NOT defined (=empty object - can be useful to override data in ES node)
+              (angular.isUndefined(value.lat) && angular.isUndefined(value.lon));
           };
         }
       }
