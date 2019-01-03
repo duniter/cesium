@@ -402,6 +402,7 @@
     "DISTANCE_UNIT": "km",
     "DISTANCE_OPTION": "{{value}} {{'LOCATION.DISTANCE_UNIT'|translate}}",
     "SEARCH_HELP": "Ciudad, País",
+    "PROFILE_POSITION": "Posición del perfil",
     "MODAL": {
       "TITLE": "Búsqueda de dirección",
       "SEARCH_HELP": "Ciudad, País",

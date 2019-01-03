@@ -355,6 +355,7 @@
     "DISTANCE_UNIT": "mi",
     "DISTANCE_OPTION": "{{value}} {{'LOCATION.DISTANCE_UNIT'|translate}}",
     "SEARCH_HELP": "City, Country",
+    "PROFILE_POSITION": "Profile position",
     "MODAL": {
       "TITLE": "Search address",
       "SEARCH_HELP": "City, Country",

@@ -406,6 +406,7 @@
     "DISTANCE_UNIT": "km",
     "DISTANCE_OPTION": "{{value}} {{'LOCATION.DISTANCE_UNIT'|translate}}",
     "SEARCH_HELP": "Code postal, Ville",
+    "PROFILE_POSITION": "Position du profil",
     "MODAL": {
       "TITLE": "Recherche de l'adresse",
       "SEARCH_HELP": "Ville, Code postal, Pays",

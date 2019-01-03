@@ -225,7 +225,7 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
               });
           }
           $scope.search.geoPoint = csWallet.data.profile.geoPoint;
-          $scope.search.location = csWallet.data.profile.city||(csWallet.data.profile.geoPoint ? 'profile position' : undefined);
+          $scope.search.location = csWallet.data.profile.city||(csWallet.data.profile.geoPoint ? $translate.instant('LOCATION.PROFILE_POSITION') : undefined);
         }
       }
 
