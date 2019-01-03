@@ -362,6 +362,7 @@
       "POSITION": "lat/lon : {{lat}} / {{lon}}"
     },
     "ERROR": {
+      "CITY_REQUIRED_IF_STREET": "Required if a street has been filled",
       "REQUIRED_FOR_LOCATION": "Required field to appear on the map",
       "INVALID_FOR_LOCATION": "Unknown address",
       "GEO_LOCATION_FAILED": "Unable to retrieve your current position. Please use the search button.",

@@ -1,5 +1,10 @@
 # Version v1.3.0
 
+# Version v1.3.0
+
 ## Desktop version
 
-- Fix error "Expected buffer" when authenticate - fix #790
+- [enh] Display logs in terminal
+- [enh] Add option `--debug` to show debug logs
+- [fix] Fix error "Expected buffer" when authenticate - fix [#790](https://git.duniter.org/clients/cesium-grp/cesium/issues/790)
+- [fix] Do not try to open Dev tools, when NW is not a SDK version (e.g. production mode)

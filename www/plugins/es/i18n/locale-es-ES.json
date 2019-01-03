@@ -409,6 +409,7 @@
       "POSITION": "Latitud/Longitud : {{lat}} / {{lon}}"
     },
     "ERROR": {
+      "CITY_REQUIRED_IF_STREET": "Requerido si una calle ha sido llenada",
       "REQUIRED_FOR_LOCATION": "Campo obligatorio para aparecer en el mapa",
       "INVALID_FOR_LOCATION": "Dirección desconocida",
       "GEO_LOCATION_FAILED": "No se puede recuperar su ubicación Por favor usa el botón de búsqueda.",

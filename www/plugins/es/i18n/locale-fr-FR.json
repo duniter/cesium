@@ -413,6 +413,7 @@
       "POSITION": "Lat/Lon : {{lat}}/{{lon}}"
     },
     "ERROR": {
+      "CITY_REQUIRED_IF_STREET": "Champ obligatoire (car une rue est saisie)",
       "REQUIRED_FOR_LOCATION": "Champ obligatoire pour apparaître sur la carte",
       "INVALID_FOR_LOCATION": "Adresse inconnue",
       "GEO_LOCATION_FAILED": "Impossible de récupérer votre position. Veuillez utiliser le bouton de recherche.",
