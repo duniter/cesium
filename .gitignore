@@ -15,6 +15,7 @@
 /resources/android/build/release-signing.properties
 /plugins/
 .idea/
+.local/
 /*.iml
 
 /www/lib/*
