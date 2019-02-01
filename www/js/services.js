@@ -1,4 +1,7 @@
 angular.module('cesium.services', [
+  // removeIf(device)
+  'cesium.desktop.services',
+  // endRemoveIf(device)
   'cesium.settings.services',
   'cesium.http.services',
   'cesium.network.services',

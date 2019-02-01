@@ -9,7 +9,6 @@ function Peer(json) {
   });
 
   that.endpoints = that.endpoints || [];
-  that.statusTS = that.statusTS || 0;
 }
 
 
@@ -34,7 +33,7 @@ Peer.prototype.keyID = function () {
 
 Peer.prototype.copyValues = function(to) {
   var obj = this;
-  ["version", "currency", "pub", "endpoints", "hash", "status", "statusTS", "block", "signature"].forEach(function (key) {
+  ["version", "currency", "pub", "endpoints", "hash", "status", "block", "signature"].forEach(function (key) {
     to[key] = obj[key];
   });
 };
@@ -157,4 +156,9 @@ Peer.prototype.isTor = function() {
 Peer.prototype.isWs2p = function() {
   var bma = this.bma || this.getBMA();
   return bma.useWs2p;
+};
+
+Peer.prototype.isBma = function() {
+  var bma = this.bma || this.getBMA();
+  return !bma.useWs2p && !bma.useTor;
 };

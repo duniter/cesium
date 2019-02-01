@@ -20,6 +20,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       OUTPUT_OBJ = 'OBJ\\(([0-9]+)\\)',
       OUTPUT_OBJ_OPERATOR = OUTPUT_OBJ + '[ ]*' + OUTPUT_OPERATOR + '[ ]*' + OUTPUT_OBJ,
       REGEX_ENDPOINT_PARAMS = "( ([a-z_][a-z0-9-_.ğĞ]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))( (.+))?",
+      BLOCK_ATTRIBUTES= ["currency", "issuer", "medianTime", "number", "version", "powMin", "dividend", "membersCount", "hash", "identities", "joiners", "actives", "leavers", "revoked", "excluded", "certifications", "transactions", "unitbase"],
       regexp = {
         USER_ID: "[A-Za-z0-9_-]+",
         CURRENCY: "[A-Za-z0-9_-]+",
@@ -59,7 +60,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         LIMIT_REQUEST_COUNT: 5, // simultaneous async request to a Duniter node
         LIMIT_REQUEST_DELAY: 1000, // time (in second) to wait between to call of a rest request
         regex: regexp, // deprecated
-        regexp: regexp
+        regexp: regexp,
+        BLOCK_QUERY_PARAMS: "?_source=" + BLOCK_ATTRIBUTES.join(',')
       },
       listeners,
       that = this;
@@ -74,7 +76,6 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     if (that.forceUseSsl) {
       console.debug('[BMA] Enable SSL (forced by config or detected in URL)');
     }
-
 
     if (host) {
       init(host, port, useSsl, useCache);
@@ -231,7 +232,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     that.isAlive = function() {
       return csHttp.get(that.host, that.port, '/node/summary', that.useSsl)()
         .then(function(json) {
-          var isDuniter = json && json.duniter && json.duniter.software == 'duniter' && json.duniter.version;
+          var isDuniter = json && json.duniter && json.duniter.software && json.duniter.version && true;
           var isCompatible = isDuniter && csHttp.version.isCompatible(csSettings.data.minVersion, json.duniter.version);
           if (isDuniter && !isCompatible) {
             console.error('[BMA] Uncompatible version [{0}] - expected at least [{1}]'.format(json.duniter.version, csSettings.data.minVersion));
@@ -412,9 +413,9 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       },
       blockchain: {
         parameters: get('/blockchain/parameters', csHttp.cache.LONG),
-        block: get('/blockchain/block/:block', csHttp.cache.SHORT),
-        blocksSlice: get('/blockchain/blocks/:count/:from'),
-        current: get('/blockchain/current'),
+        block: get('/blockchain/block/:block' +  constants.BLOCK_QUERY_PARAMS, csHttp.cache.SHORT),
+        blocksSlice: get('/blockchain/blocks/:count/:from' + constants.BLOCK_QUERY_PARAMS),
+        current: get('/blockchain/current' + constants.BLOCK_QUERY_PARAMS),
         membership: post('/blockchain/membership'),
         stats: {
           ud: get('/blockchain/with/ud', csHttp.cache.SHORT),

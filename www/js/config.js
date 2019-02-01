@@ -35,8 +35,8 @@ angular.module("cesium.config", [])
 		"en": "license/license_g1-en"
 	},
 	"node": {
-		"host": "g1.duniter.org",
-		"port": 443
+		"host": "localhost",
+		"port": 9205
 	},
 	"fallbackNodes": [
 		{

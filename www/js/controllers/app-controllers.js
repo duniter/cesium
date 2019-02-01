@@ -442,6 +442,9 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   ////////////////////////////////////////
 
   $scope.openLink = function($event, uri, options) {
+    $event.stopPropagation();
+    $event.preventDefault();
+
     options = options || {};
 
     // If unable to open, just copy value
@@ -449,8 +452,9 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       return UIUtils.popover.copy($event, uri);
     };
 
-    $event.stopPropagation();
-    return csHttp.uri.open(uri, options);
+    csHttp.uri.open(uri, options);
+
+    return false;
   };
 
   ////////////////////////////////////////

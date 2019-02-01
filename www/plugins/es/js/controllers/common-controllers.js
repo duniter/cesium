@@ -413,7 +413,6 @@ function ESSocialsViewController($scope)  {
   'ngInject';
 
   $scope.openSocial = function(event, social) {
-    event.stopPropagation();
     return $scope.openLink(event, social.url, {
       type: social.type
     });

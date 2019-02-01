@@ -68,7 +68,7 @@ function Ws2pMessage(message) {
         that.pubkey=parts[3];
         that.buid=parts[4];
         that.ws2pid=parts[5];
-        that.sotfware=parts[6];
+        that.software=parts[6];
         that.version=parts[7];
         that.powPrefix=parts[8];
       }

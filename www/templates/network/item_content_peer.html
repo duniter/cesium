@@ -23,9 +23,12 @@
         </h4>
       </div>
       <div class="col col-15 no-padding text-center hidden-xs hidden-sm" ng-if="::expertMode">
-        <div style="min-width: 50px; padding-top: 5px;" title="SSL">
-          <span ng-if=":rebind:peer.isSsl()">
+        <div style="min-width: 50px; padding-top: 5px;" >
+          <span ng-if=":rebind:peer.isSsl()" title="SSL">
             <i class="ion-locked"></i><small class="hidden-md"> SSL</small>
+          </span>
+          <span ng-if=":rebind:peer.isBma()" title="BMA">
+            <i class="ion-cloud"></i><small class="hidden-md"> BMA</small>
           </span>
           <span ng-if=":rebind:peer.isWs2p()"
                 ng-click="showWs2pPopover($event, peer)"

@@ -89,7 +89,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
       .then(function (currency) {
         if (currency) {
           $scope.node = !BMA.node.same(currency.node.host, currency.node.port) ?
-            BMA.instance(currency.node.host, currency.node.port) : BMA;
+            BMA.instance(currency.node.host, currency.node.port, currency.node.wsPort) : BMA;
           if (state && state.stateParams) {
             if (state.stateParams.type && ['mirror', 'member', 'offline'].indexOf(state.stateParams.type) != -1) {
               $scope.search.type = state.stateParams.type;
@@ -549,13 +549,14 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
     if (serverParts.length == 2) {
       node.host = serverParts[0];
       node.port = serverParts[1];
+      node.wsPort = serverParts[2] || serverParts[1];
     }
 
     angular.merge($scope.node,
       useTor ?
         // For TOR, use a web2tor to access the endpoint
-        BMA.lightInstance(node.host + ".to", 443, true/*ssl*/, 60000 /*long timeout*/) :
-        BMA.lightInstance(node.host, node.port, node.useSsl),
+        BMA.lightInstance(node.host + ".to", 443, 443, true/*ssl*/, 60000 /*long timeout*/) :
+        BMA.lightInstance(node.host, node.port, node.wsPort,  node.useSsl),
       node);
 
     $scope.isReachable = !$scope.isHttps || useSsl;

@@ -402,15 +402,16 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
               return res.concat(createPeerEntities(json, ep));
             }, []);
           }
-
-          // if only one bma endpoint: use it and continue
-          ep = endpoints[0];
+          else {
+            // if only one endpoint: use it and continue
+            ep = endpoints[0];
+          }
         }
         peer.bma = ep;
         peer.server = peer.getServer();
         peer.dns = peer.getDns();
-        peer.blockNumber = peer.block.replace(/-.+$/, '');
-        peer.uid = data.uidsByPubkeys[peer.pubkey];
+        peer.blockNumber = peer.block && peer.block.replace(/-.+$/, '');
+        peer.uid = peer.pubkey && data.uidsByPubkeys[peer.pubkey];
         peer.id = peer.keyID();
         return [peer];
       },

@@ -342,6 +342,17 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
         uri = parts.protocol + uri;
       }
 
+      // On desktop, open into external tool
+      if (parts.protocol == 'mailto:'  && Device.isDesktop()) {
+        try {
+          nw.Shell.openExternal(uri);
+          return;
+        }
+        catch(err) {
+          console.error("[http] Failed not open 'mailto:' URI into external tool.");
+        }
+      }
+
       // Check if device is enable, on special tel: or mailto: protocole
       var validProtocol = (parts.protocol == 'mailto:' || parts.protocol == 'tel:') && Device.enable;
       if (!validProtocol) {
@@ -355,15 +366,33 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     // Note: If device enable, then target=_system will use InAppBrowser cordova plugin
     var openTarget = (options.target || (Device.enable ? '_system' : '_blank'));
 
+    // If desktop, try to open into external browser
+    if (openTarget === '_blank' || openTarget === '_system'  && Device.isDesktop()) {
+      try {
+        nw.Shell.openExternal(uri);
+        return;
+      }
+      catch(err) {
+        console.error("[http] Failed not open URI into external browser.");
+      }
+    }
+
     // If desktop, should always open in new window (no tabs)
     var openOptions;
-    if (openTarget == '_blank' && Device.isDesktop()) {
+    if (openTarget === '_blank' && Device.isDesktop()) {
+
+      if (nw && nw.Shell) {
+        nw.Shell.openExternal(uri);
+        return false;
+      }
+      // Override default options
       openOptions= "location=1,titlebar=1,status=1,menubar=1,toolbar=1,resizable=1,scrollbars=1";
       // Add width/height
       if ($window.screen && $window.screen.width && $window.screen.height) {
         openOptions += ",width={0},height={1}".format(Math.trunc($window.screen.width/2), Math.trunc($window.screen.height/2));
       }
     }
+
     var win = $window.open(uri,
       openTarget,
       openOptions);

@@ -10,7 +10,7 @@
 
     <h4>
       <span class="hidden-xs" translate>HOME.WELCOME</span>
-      <span ng-show="!loading" translate-values=":currency:{currency: $root.currency.name}" translate>HOME.MESSAGE</span>
+      <b ng-show="!loading" translate-values=":currency:{currency: $root.currency.name}" translate>HOME.MESSAGE</b>
     </h4>
 
     <div class="center padding" ng-if="loading">
@@ -39,14 +39,9 @@
         {{'COMMON.BTN_HELP_TOUR'|translate}}
       </button>
 
-      <!-- Currency-->
       <button type="button"
-              class="item button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark hidden-sm hidden-xs"
-              ui-sref="app.currency">{{'HOME.BTN_CURRENCY'|translate:$root.currency }}</button>
-
-      <button type="button"
-              class="item button button-block button-positive button-raised icon icon-left ion-locked ink-dark"
-              ui-sref="app.view_wallet" ng-show="!login" translate>COMMON.BTN_LOGIN</button>
+              class="button button-block button-positive button-raised ink-dark"
+              ng-click="showJoinModal()" ng-if="!login" translate>LOGIN.CREATE_FREE_ACCOUNT</button>
 
       <button type="button"
               class="item button button-block button-positive button-raised icon icon-left ion-person ink-dark"
@@ -54,17 +49,17 @@
 
       <button type="button"
               class="item button button-block button-positive button-raised icon icon-left ion-card ink-dark visible-xs"
-              ui-sref="app.view_wallet_tx" ng-show="login" translate>MENU.TRANSACTIONS</button>
+              ui-sref="app.view_wallet_tx" ng-if="login" translate>MENU.TRANSACTIONS</button>
 
       <br class="visible-xs visible-sm"/>
 
       <!-- join link -->
       <div class="text-center no-padding" ng-show="!login">
         <br class="visible-xs visible-sm"/>
-        {{'LOGIN.NO_ACCOUNT_QUESTION'|translate}}
+        {{'LOGIN.HAVE_ACCOUNT_QUESTION'|translate}}
         <b>
-          <a class="assertive hidden-xs hidden-sm" ng-click="showJoinModal()" translate>
-            LOGIN.CREATE_ACCOUNT
+          <a class="assertive hidden-xs hidden-sm" ui-sref="app.view_wallet" translate>
+            COMMON.BTN_LOGIN
           </a>
         </b>
       </div>
@@ -82,8 +77,8 @@
       </div>
 
       <button type="button"
-              class="button button-block button-calm button-raised icon icon-left ion-wand ink-dark visible-xs visible-sm"
-              ng-click="showJoinModal()" ng-if="!login" translate>LOGIN.CREATE_ACCOUNT</button>
+              class="button button-block button-energized-100 button-raised ink visible-xs visible-sm"
+              ui-sref="app.view_wallet" ng-show="!login" translate>COMMON.BTN_LOGIN</button>
       <button type="button"
               class="button button-block button-assertive button-raised icon icon-left ion-wand ink-dark visible-xs visible-sm"
               ng-click="logout()" ng-if="login" translate>COMMON.BTN_LOGOUT</button>
