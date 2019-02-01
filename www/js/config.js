@@ -35,8 +35,8 @@ angular.module("cesium.config", [])
 		"en": "license/license_g1-en"
 	},
 	"node": {
-		"host": "localhost",
-		"port": 9205
+		"host": "g1.duniter.org",
+		"port": 443
 	},
 	"fallbackNodes": [
 		{
@@ -80,8 +80,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "1.3.1",
-	"build": "2019-01-02T15:04:56.647Z",
+	"version": "1.3.2",
+	"build": "2019-02-01T23:06:02.248Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
