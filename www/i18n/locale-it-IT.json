@@ -77,6 +77,12 @@
        "SHARE_ON_FACEBOOK": "Condividere su Facebook",
        "SHARE_ON_DIASPORA": "Condividere su Diaspora*",
        "SHARE_ON_GOOGLEPLUS":"Condividere su Google+"
+     },
+     "FILE": {
+       "DATE" : "Data:",
+       "TYPE" : "Tipo:",
+       "SIZE": "Dimensioni del file:",
+       "VALIDATING": "Validazione in corso..."
      }
    },
    "SYSTEM": {
@@ -88,8 +94,8 @@
      "HOME": "Home",
      "WOT": "Annuario",
      "CURRENCY": "Moneta",
-     "CURRENCIES": "Monete",
      "ACCOUNT": "Mio conto",
+     "WALLETS": "I miei portafogli",
      "TRANSFER": "Trasferire",
      "SCAN": "Scansionare",
      "SETTINGS": "Impostazioni",
@@ -389,7 +395,9 @@
      "PASSWORD_HELP": "Password",
      "PUBKEY_HELP": "Chiave pubblica, pseudonimo",
      "NO_ACCOUNT_QUESTION": "Ancora non hai un conto?",
+     "HAVE_ACCOUNT_QUESTION": "Hai già un account?",
      "CREATE_ACCOUNT": "Creare un conto",
+     "CREATE_FREE_ACCOUNT": "Crea un conto gratuito",
      "FORGOTTEN_ID": "Non ricordi la password?",
      "ASSOCIATED_PUBKEY": "Chiave pubblica:",
      "BTN_METHODS": "Altri metodi",
@@ -422,10 +430,6 @@
        "p": "p (CPU):"
      },
      "FILE": {
-       "DATE" : "Data:",
-       "TYPE" : "Tipo:",
-       "SIZE": "Dimensioni del file:",
-       "VALIDATING": "Validazione in corso...",
        "HELP": "Format del file atteso: <b>.dunikey</b> (type PubSec). Altri formati in sviluppo (EWIF, WIF)."
      }
    },
@@ -808,20 +812,20 @@
    },
   "API" :{
     "COMMON": {
-      "LINK_DOC": "documentation API",
-      "LINK_DOC_HELP": "Documentation pour les développeurs",
-      "LINK_STANDARD_APP": "version classique",
-      "LINK_STANDARD_APP_HELP": "Ouvrir la version classique de {{'COMMON.APP_NAME'|translate}}"
+      "LINK_DOC": "documentazione API",
+      "LINK_DOC_HELP": "Documentazione dello sviluppatore",
+      "LINK_STANDARD_APP": "versione classica",
+      "LINK_STANDARD_APP_HELP": "Apri la versione classica di {{'COMMON.APP_NAME'|translate}}"
     },
     "HOME": {
-      "TITLE": "Documentation API {{'COMMON.APP_NAME'|translate}}",
+      "TITLE": "Documentazione API {{'COMMON.APP_NAME'|translate}}",
       "MESSAGE": "Bienvenue dans la <b>documentation de l'API</b> {{'COMMON.APP_NAME'|translate}}.<br/>Connecter vos sites web à <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> très simplement !",
       "MESSAGE_SHORT": "Connecter vos sites à <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> très simplement !",
       "DOC_HEADER": "Services disponibles :"
     },
     "TRANSFER": {
       "TITLE": "{{'COMMON.APP_NAME'|translate}} - Paiement en ligne",
-      "TITLE_SHORT": "Paiement en ligne",
+      "TITLE_SHORT": "Pagamento online",
       "SUMMARY": "Récapitulatif de la commande :",
       "AMOUNT": "Montant :",
       "NAME": "Nom :",
@@ -841,7 +845,7 @@
         "CANCEL_REDIRECTING": "Paiement annulé.<br/>Redirection vers le site du vendeur..."
       },
       "ERROR": {
-        "TRANSFER_FAILED": "Echec du paiement"
+        "TRANSFER_FAILED": "Mancato pagamento"
       }
     },
     "DOC": {
