@@ -233,7 +233,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
           var size = current.number < $scope.defaultSizeLimit ? current.number : $scope.defaultSizeLimit;
           return $scope.node.blockchain.blocksSlice({count: size, from: current.number-size})
             .then(function(blocks) {
-              blocks && blocks.splice(0,0,current);
+              if (!!blocks) blocks.splice(0,0,current);
               return blocks;
             });
         })
