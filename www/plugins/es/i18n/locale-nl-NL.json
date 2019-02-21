@@ -3,7 +3,7 @@
     "CATEGORY": "Categorie",
     "CATEGORIES": "Categorieën",
     "CATEGORY_SEARCH_HELP": "Zoeken",
-    "LAST_MODIFICATION_DATE": "Vernieuws op ",
+    "LAST_MODIFICATION_DATE": "Vernieuwd op ",
     "SUBMIT_BY": "Ingediend door",
     "BTN_PUBLISH": "Publiceren",
     "BTN_PICTURE_DELETE": "Wissen",
@@ -18,14 +18,14 @@
     }
   },
   "MENU": {
-    "REGISTRY": "Ondernemingen",
+    "REGISTRY": "Pagina's",
     "USER_PROFILE": "Mijn profiel",
     "MESSAGES": "Berichten"
   },
   "ACCOUNT": {
     "NEW": {
       "ORGANIZATION_ACCOUNT": "Ondernemingsrekening",
-      "ORGANIZATION_ACCOUNT_HELP": "Als je een onderneming, vereniging etc. vertegenwoordigd.<br/>Deze rekening zal geen dividend créeren."
+      "ORGANIZATION_ACCOUNT_HELP": "Als je een onderneming, vereniging etc. vertegenwoordigt.<br/>Deze rekening zal geen dividend créeren."
     },
     "EVENT": {
       "MEMBER_WITHOUT_PROFILE": "Vul <a ui-sref=\"app.edit_profile\"je gebruikersprofiel</a> in om sneller een certificering te verkrijgen. Leden zullen een verfifieerbare identiteit eerder vertrouwen."
@@ -33,7 +33,7 @@
   },
   "COMMENTS": {
     "DIVIDER": "Commentaren",
-    "SHOW_MORE_COMMENTS": "Toon eerder commentaren",
+    "SHOW_MORE_COMMENTS": "Toon eerdere commentaren",
     "COMMENT_HELP": "Jouw commentaar, vraag...",
     "COMMENT_HELP_REPLY_TO": "Jouw antwoord...",
     "BTN_SEND": "Verzenden",
@@ -102,7 +102,7 @@
       "USER_NOT_RECIPIENT": "Je bent niet de geadresseerde van dit bericht: het kan niet gelezen worden.",
       "NOT_AUTHENTICATED_MESSAGE": "De authenticiteit van het bericht is onduidelijk of de inhoud is gecorrumpeerd.",
       "REMOVE_MESSAGE_FAILED": "Kan bericht niet wissen.",
-      "MESSAGE_CONTENT_TOO_LONG": "Waarde te land (max {{maxLength}} characters).",
+      "MESSAGE_CONTENT_TOO_LONG": "Waarde te lang (max {{maxLength}} characters).",
       "MARK_AS_READ_FAILED": "Kan bericht niet als gelezen markeren.",
       "LOAD_NOTIFICATIONS_FAILED": "Kan niet alle berichtnotificaties laden.",
       "REMOVE_All_MESSAGES_FAILED": "Kan niet alle berichten wissen.",
@@ -222,14 +222,14 @@
       "ENABLE_CERT_RECEIVED": "Bericht bij validatie van <b>ontvangen certificaties</b>?"
     },
     "CONFIRM": {
-      "ASK_ENABLE_TITLE": "Nieuwe functies",
-      "ASK_ENABLE": "Er zijn nieuwe functies beschikbaar: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-person\"></i> Profile Cesium+</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-android-notifcaitions\"></i> Notifications</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Privé berichten</b>.</ul><br/>Deze zijn <b>uitgeschakeld</b> in je instellingen.<br/><br/>Wil je deze functies <b>inschakelen</b>?"
+      "ASK_ENABLE_TITLE": "Optionele functies",
+      "ASK_ENABLE": "Cesium+ is <b>uitgeschakeld</b> waardoor deze functies niet beschikbaar zijn: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-person\"></i> Gebruikersprofielen</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-android-notifcaitions\"></i> Notificaties</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Privéberichten</b>.</ul><br/><br/>Wil je deze functies <b>inschakelen</b>?"
     }
   },
   "EVENT": {
     "NODE_STARTED": "Je knoop ES API <b>{{params[0]}}</b> is UP",
     "NODE_BMA_DOWN": "Knooppunt <b>{{params[0]}}:{{params[1]}}</b> (gebruikt door je ES API) is <b>onbereikbaar</b>.",
-    "NODE_BMA_UP": "Knooppunt <b>{{p0}}:{{params[1]}}</b> is weer onbereikbaar.",
+    "NODE_BMA_UP": "Knooppunt <b>{{p0}}:{{params[1]}}</b> is weer bereikbaar.",
     "MEMBER_JOIN": "Je bent nu <b>lid</b> van valuta <b>{{params[0]}}</b>!",
     "MEMBER_LEAVE": "Je bent <b>geen lid meer</b> van valuta <b>{{params[0]}}</b>!",
     "MEMBER_ACTIVE": "Je lidmaatschap bij <b>{{params[0]}}</b> is met <b>succes verlengd</b>.",
@@ -245,5 +245,12 @@
       "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> hheeft gereageerd op jouw commentaar op referentie: <b>{{params[2]}}</b>",
       "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> heeft zijn/haar reactie op jouw commentaar bewerkt, op referentie: <b>{{params[2]}}</b>"
     }
+  },
+  "CONFIRM": {
+    "ES_USE_FALLBACK_NODE": "Knooppunt <b>{{old}}</b> onbereikbaar of ongeldig adres.<br/><br/>Tijdelijk knooppunt <b>{{new}}</b> gebruiken?"
+  },
+  "ERROR": {
+    "ES_CONNECTION_ERROR": "Knooppunt <b>{{server}}</b> onbereikbaar of ongeldig adres.<br/><br/>Cesium zal verder weken, <b>zonder de Cesium+ uitbreiding</b> (gebruikersprofielens, privéberichten, kaarten en grafieken).<br/><br/>Controleer je internetverbinding, of verander je knooppunt in <a class=\"positive\" ng-click=\"doQuickFix('settings')\">instellingen</a>.",
+    "ES_MAX_UPLOAD_BODY_SIZE": "De hoveelheid te verzenden gegevens is overschrijdt de serverlimiet.<br/><br/>Probeer het nogmaals na, bijvoorbeeld, het wissen foto's."
   }
 }
