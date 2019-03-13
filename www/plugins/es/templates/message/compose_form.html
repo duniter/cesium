@@ -9,7 +9,10 @@
          ng-class="{'item-input-error': form.$submitted && !formData.destPub}"
          ng-click="showWotLookupModal()">
           <span class="gray" translate>MESSAGE.COMPOSE.TO</span>
-          <span class="badge badge-royal">{{destUid}}{{destPub | formatPubkey}}</span>&nbsp;
+          <span class="badge badge-royal" ng-if="destUid"><i class="ion-person"></i> {{destName||destUid}}</span>&nbsp;
+          <span class="badge badge-stable" ng-if="!destUid && destPub">{{destName}}
+            <span ng-if="!destName"><i class="ion-key"></i>{{destPub | formatPubkey}}</span>
+          </span>&nbsp;
           <i class="gray icon ion-ios-arrow-right"></i>
       </a>
       <div class="form-errors"

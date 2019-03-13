@@ -619,6 +619,7 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, csWallet, esHt
             $scope.destUid = '';
             $scope.destPub = result.pubkey;
           }
+          $scope.destName = result.name || result.uid;
           $scope.formData.destPub = result.pubkey;
           // TODO focus on title field
           //$focus('');
