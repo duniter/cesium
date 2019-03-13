@@ -726,9 +726,10 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         });
     },
 
-    // Generate events from requirements
+    /**
+     * Add user events (generate events from requirements)
+     */
     addEvents = function() {
-      // Add user events
       if (data.requirements.revoked) {
         delete data.requirements.meta.invalid;
         addEvent({type:'info', message: 'ERROR.WALLET_REVOKED', context: 'requirements'});
@@ -737,6 +738,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         delete data.requirements.meta.invalid;
         addEvent({type:'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'requirements'});
       }
+
+      // If not revoked
       else {
         if (!data.isMember && data.requirements.meta.invalid) {
           addEvent({type: 'error', message: 'ERROR.WALLET_INVALID_BLOCK_HASH', context: 'requirements'});
@@ -747,11 +750,13 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           addEvent({type: 'error', message: 'ERROR.WALLET_IDENTITY_EXPIRED', context: 'requirements'});
           console.debug("Identity expired for uid={0}.".format(data.uid));
         }
+        // Pending membership
         else if (data.requirements.pendingMembership) {
           addEvent({type:'pending', message: 'ACCOUNT.WAITING_MEMBERSHIP', context: 'requirements'});
 
-          // Add a warning when out distanced - fix #777
-          if (data.requirements.outdistanced) {
+          // Add a warning when out distanced
+          // (only if has enough certification - fix #808)
+          if (!data.requirements.needCertificationCount && data.requirements.outdistanced) {
             addEvent({type:'warn', message: 'ACCOUNT.OUT_DISTANCED', context: 'requirements'});
           }
         }
