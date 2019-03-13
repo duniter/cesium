@@ -16,9 +16,9 @@
         <div class="padding padding-xs" style="display: block; height: 60px;">
           <div class="pull-left">
             <h4>
-              <span ng-if="enableFilter && search.type=='member'" translate>PEER.MEMBERS</span>
-              <span ng-if="enableFilter && search.type=='mirror'" translate>PEER.MIRRORS</span>
-              <span ng-if="enableFilter && search.type=='offline'" translate>PEER.OFFLINE</span>
+              <span ng-if="enableFilter && search.type=='member'" translate>PEER.MEMBER_PEERS</span>
+              <span ng-if="enableFilter && search.type=='mirror'" translate>PEER.MIRROR_PEERS</span>
+              <span ng-if="enableFilter && search.type=='offline'" translate>PEER.OFFLINE_PEERS</span>
               <span ng-if="!enableFilter || !search.type" translate>PEER.ALL_PEERS</span>
               <span ng-if="search.results.length">({{search.results.length}})</span>
               <ion-spinner ng-if="search.loading" class="icon ion-spinner-small" icon="android"></ion-spinner>
@@ -28,6 +28,15 @@
           <div class="pull-right">
 
             <div class="pull-right" ng-if="enableFilter">
+              <a class="button button-text button-small hidden-xs hidden-sm ink"
+                 ng-class="{'button-text-positive': compactMode}"
+                 ng-click="toggleCompactMode()">
+                <i class="icon ion-navicon"></i>
+                <b class="ion-arrow-down-b" style="position: absolute; top: -2px; left: 4px; font-size: 8px;"></b>
+                <b class="ion-arrow-up-b" style="position: absolute; top: 10px; left: 4px; font-size: 8px;"></b>
+                <span>{{'BLOCKCHAIN.LOOKUP.BTN_COMPACT'|translate}}</span>
+              </a>
+
               <a class="button button-text button-small hidden-xs hidden-sm ink"
                  ng-class="{'button-text-positive': search.type=='member'}"
                  ng-click="toggleSearchType('member')">

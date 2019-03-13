@@ -19,11 +19,11 @@
           <span class="positive" ng-if=":rebind:peer.uid">
             <i class="ion-person"></i> {{:rebind:peer.name || peer.uid}}
           </span>
-          <span class="gray">{{:rebind:peer.dns && (' | ' + peer.server) + (peer.bma.path||'') }}</span>
+          <span class="gray" ng-if=":rebind:!compactMode">{{:rebind:peer.dns && (' | ' + peer.server) + (peer.bma.path||'') }}</span>
         </h4>
       </div>
       <div class="col col-15 no-padding text-center hidden-xs hidden-sm" ng-if="::expertMode">
-        <div style="min-width: 50px; padding-top: 5px;" >
+        <div style="min-width: 50px; padding-top: 5px;" ng-if=":rebind:!compactMode">
           <span ng-if=":rebind:peer.isSsl()" title="SSL">
             <i class="ion-locked"></i><small class="hidden-md"> SSL</small>
           </span>
@@ -60,9 +60,9 @@
       </div>
       <div class="col col-20 no-padding text-center">
         <span id="{{$index === 0 ? helptipPrefix + '-peer-0-block' : ''}}"
-            class="badge" ng-class=":rebind:{'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock, 'ng-hide': !peer.currentNumber }">
+            class="badge" ng-class=":rebind:{'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock, 'ng-hide': !peer.currentNumber && !peer.blockNumber }">
           {{::!expertMode ? ('COMMON.BLOCK'|translate) : '' }}
-          {{:rebind:peer.currentNumber|formatInteger}}</span>
+          {{:rebind:(peer.currentNumber || peer.blockNumber) | formatInteger}}</span>
         <span class="badge badge-secondary" ng-if=":rebind:peer.consensusBlockDelta && expertMode">
           <i class="ion-clock"></i>&nbsp;
           {{:rebind:peer.consensusBlockDelta|formatDurationTime}}</span>

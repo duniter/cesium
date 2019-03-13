@@ -181,6 +181,18 @@
   padding-right: 6px;
 }
 
+.list .item-peer.compacted {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  min-height: 3px !important;
+  max-height: 3px !important;
+  border-bottom: double 1px #ddd !important;
+}
+.list .item-peer.compacted > * {
+  display: none;
+}
+
+
 /**********
    Block items
 **********/

@@ -17,7 +17,7 @@
     <ion-spinner icon="android"></ion-spinner>
   </div>
 
-  <ion-list class="padding padding-xs list-blocks" ng-class="::motion.ionListClass">
+  <ion-list class="padding padding-xs list-blocks {{::motion.ionListClass}}">
     <div class="padding gray" ng-if="!search.loading && !search.results.length" translate>
       BLOCKCHAIN.LOOKUP.NO_BLOCK
     </div>

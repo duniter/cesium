@@ -166,11 +166,11 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       }
 
       if (self.waitDuration >= timeout) {
-        console.debug("[http] Will retry opening websocket later...");
-        self.waitRetryDelay = 2000; // 2 seconds
+        self.waitRetryDelay = self.waitRetryDelay && Math.min(self.waitRetryDelay + 2000, 30000) || 2000; // add 2 seconds, until 30s)
+        console.debug("[http] Will retry websocket [{0}] in {1}s...".format(self.path, Math.round(self.waitRetryDelay/1000)));
       }
-      else {
-        console.debug('[http] Waiting websocket ['+self.path+'] opening...');
+      else if (Math.round(self.waitDuration / 1000) % 10 === 0){
+        console.debug('[http] Waiting websocket ['+self.path+']...');
       }
 
       return $timeout(function(){
@@ -202,7 +202,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
             sockets.push(self);
             self.delegate.openTime = Date.now();
           };
-          self.delegate.onclose = function() {
+          self.delegate.onclose = function(closeEvent) {
 
             // Remove from sockets arrays
             var index = _.findIndex(sockets, function(socket){return socket.path === self.path;});
@@ -217,12 +217,24 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
             // If unexpected close event, reopen the socket (fix #535)
             else {
-              console.debug('[http] Unexpected close of websocket ['+path+'] (open '+ (Date.now() - self.delegate.openTime) +'ms ago): re-opening...');
+              if (self.delegate.openTime) {
+                console.debug('[http] Unexpected close of websocket [{0}] (open {1} ms ago): re-opening...', path, (Date.now() - self.delegate.openTime));
 
-              self.delegate = null;
+                // Force new connection
+                self.delegate = null;
 
-              // Loop, but without the already registered callback
-              _open(self, null, params);
+                // Loop, but without the already registered callback
+                _open(self, null, params);
+              }
+              else if (closeEvent) {
+                console.debug('[http] TODO -- Unexpected close of websocket [{0}]: error code: '.format(path), closeEvent);
+
+                // Force new connection
+                self.delegate = null;
+
+                // Loop, but without the already registered callback
+                _open(self, null, params);
+              }
             }
           };
         });
@@ -472,8 +484,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
   }
 
   function isVersionCompatible(minVersion, actualVersion) {
-    // TODO: add implementation
-    console.debug('[http] TODO: implement check version [{0}] compatible with [{1}]'.format(actualVersion, minVersion));
+    console.debug('[http] Checking actual version [{0}] is compatible with min expected version [{1}]'.format(actualVersion, minVersion));
     return compareVersionNumbers(minVersion, actualVersion) <= 0;
   }
 

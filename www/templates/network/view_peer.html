@@ -121,8 +121,7 @@
         <div class="list no-padding {{::motion.ionListClass}}" ng-if="isReachable">
 
           <div ng-repeat="peer in :rebind:peers track by peer.id"
-               class="item item-peer item-icon-left ink"
-               ng-class="::ionItemClass"
+               class="item item-peer item-icon-left ink {{::ionItemClass}}"
                ng-click="selectPeer(peer)"
                ng-include="'templates/network/item_content_peer.html'">
           </div>

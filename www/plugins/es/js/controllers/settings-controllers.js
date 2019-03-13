@@ -48,7 +48,8 @@ function ESExtendSettingsController ($scope, PluginService) {
 /*
  * Settings extend controller
  */
-function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUtils, Modals, csHttp, csSettings, esHttp, esSettings) {
+function ESPluginSettingsController ($scope, $window, $q,  $translate, $ionicPopup,
+                                     UIUtils, Modals, csHttp, csConfig, csSettings, esHttp, esSettings) {
   'ngInject';
 
   $scope.formData = {};
@@ -93,7 +94,6 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
     node = node || {
         host: $scope.formData.host,
         port: $scope.formData.port && $scope.formData.port != 80 && $scope.formData.port != 443 ? $scope.formData.port : undefined,
-        wsPort: $scope.formData.wsPort && $scope.formData.wsPort != $scope.formData.port ? $scope.formData.wsPort : undefined,
         useSsl: angular.isDefined($scope.formData.useSsl) ?
           $scope.formData.useSsl :
           ($scope.formData.port == 443)
@@ -103,14 +103,13 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
     .then(function(newNode) {
       if (newNode.host == $scope.formData.host &&
         newNode.port == $scope.formData.port &&
-        newNode.wsPort == $scope.formData.wsPort &&
         newNode.useSsl == $scope.formData.useSsl) {
         UIUtils.loading.hide();
         return; // same node = nothing to do
       }
       UIUtils.loading.show();
 
-      var newEsNode = esHttp.instance(newNode.host, newNode.port, newNode.wsPort, newNode.useSsl);
+      var newEsNode = esHttp.instance(newNode.host, newNode.port, newNode.useSsl);
       return newEsNode.isAlive() // ping the node
         .then(function(alive) {
           if (!alive) {
@@ -123,7 +122,6 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
 
           $scope.formData.host = newEsNode.host;
           $scope.formData.port = newEsNode.port;
-          $scope.formData.wsPort = newEsNode.wsPort;
           $scope.formData.useSsl = newEsNode.useSsl;
 
           return esHttp.copy(newEsNode);
@@ -138,13 +136,10 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
 
   // Show node popup
   $scope.showNodePopup = function(node) {
+
     return $q(function(resolve, reject) {
       var parts = [node.host];
-      if (node.wsPort && node.wsPort != (node.port||80)) {
-        parts.push(node.port||80);
-        parts.push(node.wsPort);
-      }
-      else if (node.port && node.port != 80) {
+      if (node.port && node.port != 80) {
         parts.push(node.port);
       }
       $scope.popupData.newNode = parts.join(':');
@@ -187,7 +182,6 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
             resolve({
               host: parts[0],
               port: parts[1] || (useSsl ? 443 : 80),
-              wsPort: parts[2] || parts[1] || (useSsl ? 443 : 80),
               useSsl: useSsl
             });
           });
@@ -196,10 +190,15 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
   };
 
   $scope.showNodeList = function() {
+    // Check if need a filter on SSL node
+    var forceUseSsl = (csConfig.httpsMode === 'true' || csConfig.httpsMode === true || csConfig.httpsMode === 'force') ||
+    ($window.location && $window.location.protocol === 'https:') ? true : false;
+
     $ionicPopup._popupStack[0].responseDeferred.promise.close();
     return Modals.showNetworkLookup({
       enableFilter: true,
-      endpointFilter: esHttp.constants.ES_USER_API_ENDPOINT
+      endpoint: esHttp.constants.ES_USER_API_ENDPOINT,
+      ssl: forceUseSsl ? true: undefined
     })
       .then(function (peer) {
         if (!peer) return;
@@ -212,14 +211,11 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
           return {
             host: (ep.dns ? ep.dns :
                    (peer.hasValid4(ep) ? ep.ipv4 : ep.ipv6)),
-            port: ep.port || 80
+            port: ep.port || 80,
+            useSsl: ep.useSsl || ep.port == 443
           };
       })
       .then(function(newEsNode) {
-        if (!newEsNode) {
-          UIUtils.alert.error('ERROR.INVALID_NODE_SUMMARY');
-          return;
-        }
         $scope.changeEsNode(newEsNode);
       });
   };
@@ -257,7 +253,6 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
   $scope.getServer = function(node) {
     node = node || $scope.formData;
     if (!node.host) return undefined;
-    var server = csHttp.getServer(node.host, node.port);
-    return server + (node.wsPort && node.wsPort != node.port ? ':' + node.wsPort : '');
+    return csHttp.getServer(node.host, node.port);
   };
 }

@@ -324,7 +324,8 @@ function ModalEmailSubscriptionsController($scope, Modals, csSettings, esHttp, c
   $scope.showNetworkLookup = function() {
     return Modals.showNetworkLookup({
       enableFilter: true,
-      endpointFilter: esHttp.constants.ES_USER_API_ENDPOINT
+      endpoint: esHttp.constants.ES_USER_API_ENDPOINT,
+      bma: false
     })
       .then(function (peer) {
         if (peer) {

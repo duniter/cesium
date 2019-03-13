@@ -20,8 +20,8 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
   .controller('SettingsCtrl', SettingsController)
 ;
 
-function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $translate, $ionicPopover,
-                            UIUtils, Modals, BMA, csHttp, csCurrency, csSettings, csPlatform) {
+function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $timeout, $translate, $ionicPopover,
+                            UIUtils, Modals, BMA, csHttp, csConfig, csCurrency, csSettings, csPlatform) {
   'ngInject';
 
   $scope.formData = angular.copy(csSettings.data);
@@ -193,8 +193,16 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
   };
 
   $scope.showNodeList = function() {
+    // Check if need a filter on SSL node
+    var forceUseSsl = (csConfig.httpsMode === 'true' || csConfig.httpsMode === true || csConfig.httpsMode === 'force') ||
+    ($window.location && $window.location.protocol === 'https:') ? true : false;
+
     $ionicPopup._popupStack[0].responseDeferred.promise.close();
-    return Modals.showNetworkLookup({enableFilter: true, type: 'member'})
+    return Modals.showNetworkLookup({
+      enableFilter: true, // enable filter button
+      bma: true, // only BMA node
+      ssl: forceUseSsl ? true : undefined
+    })
       .then(function (peer) {
         if (peer) {
           var bma = peer.getBMA();
@@ -202,7 +210,7 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
             host: (bma.dns ? bma.dns :
                    (peer.hasValid4(bma) ? bma.ipv4 : bma.ipv6)),
             port: bma.port || 80,
-            useSsl: bma.useSsl
+            useSsl: bma.useSsl || bma.port == 443
           };
         }
       })

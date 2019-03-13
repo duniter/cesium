@@ -20,7 +20,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
       excludes: ['timeout', 'cacheTimeMs', 'time', 'login', 'build'],
       plugins: {
         es: {
-          excludes: ['enable', 'host', 'port', 'wsPort', 'fallbackNodes', 'enableGoogleApi', 'googleApiKey'],
+          excludes: ['enable', 'host', 'port', 'fallbackNodes', 'enableGoogleApi', 'googleApiKey'],
           notifications: {
           }
         }

@@ -20,21 +20,28 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       OUTPUT_OBJ = 'OBJ\\(([0-9]+)\\)',
       OUTPUT_OBJ_OPERATOR = OUTPUT_OBJ + '[ ]*' + OUTPUT_OPERATOR + '[ ]*' + OUTPUT_OBJ,
       REGEX_ENDPOINT_PARAMS = "( ([a-z_][a-z0-9-_.ğĞ]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))( (.+))?",
+      api = {
+        BMA: 'BASIC_MERKLED_API',
+        BMAS: 'BMAS',
+        WS2P: 'WS2P',
+        BMATOR: 'BMATOR',
+        WS2PTOR: 'WS2PTOR'
+      },
       regexp = {
         USER_ID: "[A-Za-z0-9_-]+",
         CURRENCY: "[A-Za-z0-9_-]+",
         PUBKEY: pubkey,
-        PUBKEY_WITH_CHECKSUM: "(" + pubkey +")" + ":([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{3})",
+        PUBKEY_WITH_CHECKSUM: "(" + pubkey +"):([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{3})",
         COMMENT: "[ a-zA-Z0-9-_:/;*\\[\\]()?!^\\+=@&~#{}|\\\\<>%.]*",
         INVALID_COMMENT_CHARS: "[^ a-zA-Z0-9-_:/;*\\[\\]()?!^\\+=@&~#{}|\\\\<>%.]*",
         // duniter://[uid]:[pubkey]@[host]:[port]
         URI_WITH_AT: "duniter://(?:([A-Za-z0-9_-]+):)?("+pubkey+"@([a-zA-Z0-9-.]+.[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+)",
         URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/("+pubkey+")(?:/([A-Za-z0-9_-]+))?",
         BMA_ENDPOINT: "BASIC_MERKLED_API" + REGEX_ENDPOINT_PARAMS,
-        BMAS_ENDPOINT: "BMAS" + REGEX_ENDPOINT_PARAMS,
-        WS2P_ENDPOINT: "WS2P ([a-f0-9]{8})"+ REGEX_ENDPOINT_PARAMS,
-        BMATOR_ENDPOINT: "BMATOR ([a-z0-9-_.]*|[0-9.]+|[0-9a-f:]+.onion)(?: ([0-9]+))?",
-        WS2PTOR_ENDPOINT: "WS2PTOR ([a-f0-9]{8}) ([a-z0-9-_.]*|[0-9.]+|[0-9a-f:]+.onion)(?: ([0-9]+))?(?: (.+))?"
+        BMAS_ENDPOINT: api.BMAS + REGEX_ENDPOINT_PARAMS,
+        WS2P_ENDPOINT: api.WS2P + " ([a-f0-9]{8})"+ REGEX_ENDPOINT_PARAMS,
+        BMATOR_ENDPOINT: api.BMATOR + " ([a-z0-9-_.]*|[0-9.]+|[0-9a-f:]+.onion)(?: ([0-9]+))?",
+        WS2PTOR_ENDPOINT: api.WS2PTOR + " ([a-f0-9]{8}) ([a-z0-9-_.]*|[0-9.]+|[0-9a-f:]+.onion)(?: ([0-9]+))?(?: (.+))?"
       },
       errorCodes = {
         REVOCATION_ALREADY_REGISTERED: 1002,
@@ -58,8 +65,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         ROOT_BLOCK_HASH: 'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855',
         LIMIT_REQUEST_COUNT: 5, // simultaneous async request to a Duniter node
         LIMIT_REQUEST_DELAY: 1000, // time (in second) to wait between to call of a rest request
-        regex: regexp, // deprecated
-        regexp: regexp
+        regexp: regexp,
+        api: api
       },
       listeners,
       that = this;
@@ -921,9 +928,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
   var service = new BMA(undefined, undefined, undefined, true);
 
   service.instance = function(host, port, useSsl, useCache) {
-    var bma = new BMA();
-    bma.init(host, port, useSsl, useCache);
-    return bma;
+    return new BMA(host, port, useSsl, useCache);
   };
 
   service.lightInstance = function(host, port, useSsl, timeout) {

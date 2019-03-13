@@ -85,9 +85,7 @@
 
       <div class="col">
 
-
-
-        <div class="list" ng-class="::motion.ionListClass">
+        <div class="list {{::motion.ionListClass}}">
 
           <!-- Errors transactions-->
           <a class="item item-icon-left item-icon-right ink" ng-if="formData.tx.errors && formData.tx.errors.length"

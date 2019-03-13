@@ -135,10 +135,9 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
           useTor: useTor
         };
         var serverParts = state.stateParams.server.split(':');
-        if (serverParts.length == 2 || serverParts.length == 3) {
+        if (serverParts.length == 2) {
           node.host = serverParts[0];
           node.port = serverParts[1];
-          node.wsPort = serverParts[2] || serverParts[1];
         }
 
         if (BMA.node.same(node.host, node.port)) {
@@ -147,8 +146,8 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
         else {
           $scope.node = useTor ?
               // For TOR, use a web2tor to access the endpoint
-              BMA.instance(node.host + ".to", 443, 443, true/*ssl*/, 600000 /*long timeout*/) :
-              BMA.instance(node.host, node.port, node.wsPort, node.useSsl);
+              BMA.instance(node.host + ".to", 443, true/*ssl*/, 600000 /*long timeout*/) :
+              BMA.instance(node.host, node.port, node.useSsl);
           return $scope.node.blockchain.parameters()
             .then(function(json) {
               $scope.currency = json.currency;
@@ -530,10 +529,9 @@ function BlockViewController($scope, $ionicPopover, $state, UIUtils, BMA, csCurr
           useTor: useTor
         };
         var serverParts = state.stateParams.server.split(':');
-        if (serverParts.length == 2 || serverParts.length == 3) {
+        if (serverParts.length == 2) {
           node.host = serverParts[0];
           node.port = serverParts[1];
-          node.wsPort = serverParts[2] || serverParts[1];
         }
 
         if (BMA.node.same(node.host, node.port)) {
@@ -542,8 +540,8 @@ function BlockViewController($scope, $ionicPopover, $state, UIUtils, BMA, csCurr
         else {
           $scope.node = useTor ?
             // For TOR, use a web2tor to access the endpoint
-            BMA.instance(node.host + ".to", 443, 443, true/*ssl*/, 600000 /*long timeout*/) :
-            BMA.instance(node.host, node.port, node.wsPort, node.useSsl);
+            BMA.instance(node.host + ".to", 443, true/*ssl*/, 600000 /*long timeout*/) :
+            BMA.instance(node.host, node.port, node.useSsl);
           return $scope.node.blockchain.parameters()
             .then(function (json) {
               $scope.currency = json.currency;

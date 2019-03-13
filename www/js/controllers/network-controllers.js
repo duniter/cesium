@@ -60,13 +60,17 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
     loading: true,
     type: undefined,
     results: [],
-    endpointFilter: null,
+    endpoint: null,
+    bma: undefined,
+    ssl: undefined,
+    ws2p: undefined,
     sort : undefined,
     asc: true
   };
+  $scope.compactMode = true;
   $scope.listeners = [];
   $scope.helptipPrefix = 'helptip-network';
-  $scope.eanbleLocationHref = true; // can be overrided by sub-controler (e.g. popup)
+  $scope.enableLocationHref = true; // can be overrided by sub-controler (e.g. popup)
 
   $scope.removeListeners = function() {
     if ($scope.listeners.length) {
@@ -89,7 +93,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
       .then(function (currency) {
         if (currency) {
           $scope.node = !BMA.node.same(currency.node.host, currency.node.port) ?
-            BMA.instance(currency.node.host, currency.node.port, currency.node.wsPort) : BMA;
+            BMA.instance(currency.node.host, currency.node.port) : BMA;
           if (state && state.stateParams) {
             if (state.stateParams.type && ['mirror', 'member', 'offline'].indexOf(state.stateParams.type) != -1) {
               $scope.search.type = state.stateParams.type;
@@ -128,7 +132,10 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
       filter: {
         member: (!$scope.search.type || $scope.search.type === 'member'),
         mirror: (!$scope.search.type || $scope.search.type === 'mirror'),
-        endpointFilter : (angular.isDefined($scope.search.endpointFilter) ? $scope.search.endpointFilter : null),
+        endpoint : (angular.isDefined($scope.search.endpoint) ? $scope.search.endpoint : null),
+        bma : $scope.search.bma,
+        ssl : $scope.search.ssl,
+        ws2p : $scope.search.ws2p,
         online: !($scope.search.type && $scope.search.type === 'offline')
       },
       sort: {
@@ -145,24 +152,25 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
   $scope.load = function() {
 
     if ($scope.search.loading){
+      // Start network scan
       csNetwork.start($scope.node, $scope.computeOptions());
 
       // Catch event on new peers
       $scope.refreshing = false;
       $scope.listeners.push(
         csNetwork.api.data.on.changed($scope, function(data){
-        if (!$scope.refreshing) {
-          $scope.refreshing = true;
-          csWot.extendAll(data.peers)
-            .then(function() {
-              // Avoid to refresh if view has been leaving
-              if ($scope.networkStarted) {
-                $scope.updateView(data);
-              }
-              $scope.refreshing = false;
-            });
-        }
-      }));
+          if (!$scope.refreshing) {
+            $scope.refreshing = true;
+            csWot.extendAll(data.peers)
+              .then(function() {
+                // Avoid to refresh if view has been leaving
+                if ($scope.networkStarted) {
+                  $scope.updateView(data);
+                }
+                $scope.refreshing = false;
+              });
+          }
+        }));
     }
 
     // Show help tip
@@ -217,11 +225,11 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
 
   $scope.toggleSearchEndpoint = function(endpoint){
     $scope.hideActionsPopover();
-    if ($scope.search.endpointFilter === endpoint || endpoint === null) {
-      $scope.search.endpointFilter = null;
+    if ($scope.search.endpoint === endpoint || endpoint === null) {
+      $scope.search.endpoint = null;
     }
     else {
-      $scope.search.endpointFilter = endpoint;
+      $scope.search.endpoint = endpoint;
     }
     $scope.sort();
   };
@@ -238,9 +246,19 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
     $scope.sort();
   };
 
+  $scope.toggleCompactMode = function() {
+    $scope.compactMode = !$scope.compactMode;
+    $scope.$broadcast('$$rebind::' + 'rebind'); // force data binding
+  };
+
   $scope.selectPeer = function(peer) {
-    // Skipp offline or WS2P node
-    if (!peer.online || peer.isWs2p()) return;
+    if (peer.compacted && $scope.compactMode) {
+      $scope.toggleCompactMode();
+      return;
+    }
+
+    // Skipp offline or not a BMA peer
+    if (!peer.online || !peer.hasBma()) return;
 
     var stateParams = {server: peer.getServer()};
     if (peer.isSsl()) {
@@ -253,7 +271,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
   };
 
   $scope.$on('csView.action.refresh', function(event, context) {
-    if (context == 'peers') {
+    if (context === 'peers') {
       $scope.refresh();
     }
   });
@@ -288,8 +306,8 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
     }
   };
 
-  $scope.showEndpointsPopover = function($event, peer, endpointFilter) {
-    var endpoints = peer.getEndpoints(endpointFilter);
+  $scope.showEndpointsPopover = function($event, peer, endpoint) {
+    var endpoints = peer.getEndpoints(endpoint);
     endpoints = (endpoints||[]).reduce(function(res, ep) {
         var bma = BMA.node.parseEndPoint(ep);
         return res.concat({
@@ -302,7 +320,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
     UIUtils.popover.show($event, {
       templateUrl: 'templates/network/popover_endpoints.html',
       bindings: {
-        titleKey: 'NETWORK.VIEW.ENDPOINTS.' + endpointFilter,
+        titleKey: 'NETWORK.VIEW.ENDPOINTS.' + endpoint,
         items: endpoints
       }
     });
@@ -374,7 +392,10 @@ function NetworkLookupModalController($scope, $controller, parameters) {
   parameters = parameters || {};
   $scope.enableFilter = angular.isDefined(parameters.enableFilter) ? parameters.enableFilter : true;
   $scope.search.type = angular.isDefined(parameters.type) ? parameters.type : $scope.search.type;
-  $scope.search.endpointFilter = angular.isDefined(parameters.endpointFilter) ? parameters.endpointFilter : $scope.search.endpointFilter;
+  $scope.search.endpoint = angular.isDefined(parameters.endpoint) ? parameters.endpoint : $scope.search.endpoint;
+  $scope.search.bma = angular.isDefined(parameters.bma) ? parameters.bma : $scope.search.bma;
+  $scope.search.ssl = angular.isDefined(parameters.ssl) ? parameters.ssl : $scope.search.ssl;
+  $scope.search.ws2p = angular.isDefined(parameters.ws2p) ? parameters.ws2p : $scope.search.ws2p;
   $scope.expertMode = angular.isDefined(parameters.expertMode) ? parameters.expertMode : $scope.expertMode;
   $scope.ionItemClass = parameters.ionItemClass || 'item-border-large';
   $scope.enableLocationHref = false;
@@ -406,7 +427,7 @@ function NetworkLookupPopoverController($scope, $controller) {
   var parameters = parameters || {};
   $scope.enableFilter = angular.isDefined(parameters.enableFilter) ? parameters.enableFilter : true;
   $scope.search.type = angular.isDefined(parameters.type) ? parameters.type : $scope.search.type;
-  $scope.search.endpointFilter = angular.isDefined(parameters.endpointFilter) ? parameters.endpointFilter : $scope.search.endpointFilter;
+  $scope.search.endpoint = angular.isDefined(parameters.endpoint) ? parameters.endpoint : $scope.search.endpoint;
   $scope.expertMode = angular.isDefined(parameters.expertMode) ? parameters.expertMode : $scope.expertMode;
   $scope.ionItemClass = parameters.ionItemClass || 'item-border-large';
   $scope.helptipPrefix = '';
@@ -552,14 +573,13 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
     if (serverParts.length == 2) {
       node.host = serverParts[0];
       node.port = serverParts[1];
-      node.wsPort = serverParts[2] || serverParts[1];
     }
 
     angular.merge($scope.node,
       useTor ?
         // For TOR, use a web2tor to access the endpoint
-        BMA.lightInstance(node.host + ".to", 443, 443, true/*ssl*/, 60000 /*long timeout*/) :
-        BMA.lightInstance(node.host, node.port, node.wsPort,  node.useSsl),
+        BMA.lightInstance(node.host + ".to", 443, true/*ssl*/, 60000 /*long timeout*/) :
+        BMA.lightInstance(node.host, node.port, node.useSsl),
       node);
 
     $scope.isReachable = !$scope.isHttps || useSsl;
@@ -612,8 +632,9 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
         .then(function(json) {
           var peers = json.peers.map(function (p) {
             var peer = new Peer(p);
-            peer.online = p.status == 'UP';
-            peer.blockNumber = peer.block.replace(/-.+$/, '');
+            peer.online = p.status === 'UP';
+            peer.buid = peer.block;
+            peer.blockNumber = peer.buid && peer.buid.split('-')[0];
             peer.dns = peer.getDns();
             peer.id = peer.keyID();
             peer.server = peer.getServer();

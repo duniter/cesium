@@ -14,7 +14,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     console.debug('[ES] [https] Enable SSL (forced by config or detected in URL)');
   }
 
-  function EsHttp(host, port, wsPort, useSsl) {
+  function EsHttp(host, port, useSsl) {
 
     var
       that = this,
@@ -42,21 +42,19 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     that.started = false;
     that.init = init;
 
-    init(host, port, wsPort, useSsl);
+    init(host, port, useSsl);
 
-    function init(host, port, wsPort, useSsl) {
+    function init(host, port, useSsl) {
       // Use settings as default
       if (!host && csSettings.data) {
         host = host || (csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null);
         port = port || (host ? csSettings.data.plugins.es.port : null);
-        wsPort = wsPort || (host ? csSettings.data.plugins.es.wsPort : null);
         useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443 || csSettings.data.plugins.es.useSsl || forceUseSsl);
       }
 
       that.alive = false;
       that.host = host;
       that.port = port || ((useSsl || forceUseSsl) ? 443 : 80);
-      that.wsPort = wsPort || that.port;
       that.useSsl = angular.isDefined(useSsl) ? useSsl : (that.port == 443 || forceUseSsl);
       that.server = csHttp.getServer(host, port);
     }
@@ -68,15 +66,13 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       var host = data.plugins.es.host;
       var useSsl = data.plugins.es.port == 443 || data.plugins.es.useSsl || forceUseSsl;
       var port = data.plugins.es.port || (useSsl ? 443 : 80);
-      var wsPort = data.plugins.es.wsPort || port;
 
-      return isSameNode(host, port, wsPort, useSsl);
+      return isSameNode(host, port, useSsl);
     }
 
-    function isSameNode(host, port, wsPort, useSsl) {
+    function isSameNode(host, port, useSsl) {
       return (that.host == host) &&
         (that.port == port) &&
-        (!wsPort || that.wsPort == wsPort) &&
         (angular.isUndefined(useSsl) || useSsl == that.useSsl);
     }
 
@@ -134,7 +130,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
     that.copy = function(otherNode) {
       if (that.started) that.stop();
-      that.init(otherNode.host, otherNode.port, otherNode.wsPort, otherNode.useSsl || otherNode.port == 443);
+      that.init(otherNode.host, otherNode.port, otherNode.useSsl || otherNode.port == 443);
       that.data.isTemporary = false; // reset temporary flag
       return that.start(true /*skipInit*/);
     };
@@ -198,7 +194,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       return function() {
         var sock = that.cache.wsByPath[path];
         if (!sock) {
-          sock =  csHttp.ws(that.host, that.wsPort, path, that.useSsl);
+          sock =  csHttp.ws(that.host, that.port, path, that.useSsl);
           that.cache.wsByPath[path] = sock;
         }
         return sock;
@@ -233,8 +229,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       // Remember the default node
       defaultSettingsNode = defaultSettingsNode || {
         host: settings.host,
-        port: settings.port,
-        wsPort: settings.wsPort
+        port: settings.port
       };
 
       var fallbackNode = settings.fallbackNodes && fallbackNodeIndex < settings.fallbackNodes.length && settings.fallbackNodes[fallbackNodeIndex++];
@@ -252,7 +247,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
           that.cleanCache();
 
-          that.init(fallbackNode.host, fallbackNode.port, fallbackNode.wsPort, fallbackNode.useSsl || fallbackNode.port == 443);
+          that.init(fallbackNode.host, fallbackNode.port, fallbackNode.useSsl || fallbackNode.port == 443);
 
           // check is alive then loop
           return that.isAlive().then(that.checkNodeAlive);
@@ -606,11 +601,13 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     function parseEndPoint(endpoint) {
       var matches = regexp.ES_USER_API_ENDPOINT.exec(endpoint);
       if (!matches) return;
+      var port = matches[8] || 80;
       return {
         "dns": matches[2] || '',
         "ipv4": matches[4] || '',
         "ipv6": matches[6] || '',
-        "port": matches[8] || 80
+        "port": port,
+        "useSsl": port == 80 ? false : (port == 443)
       };
     }
 
@@ -680,8 +677,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
   var service = new EsHttp();
 
-  service.instance = function(host, port, wsPort, useSsl) {
-    return new EsHttp(host, port, wsPort, useSsl);
+  service.instance = function(host, port, useSsl) {
+    return new EsHttp(host, port, useSsl)
   };
 
   return service;

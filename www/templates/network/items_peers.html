@@ -1,4 +1,4 @@
-<div ng-class="::motion.ionListClass" class="no-padding">
+<div class="no-padding {{::motion.ionListClass}}">
 
   <div class="item item-text-wrap no-border done in gray no-padding-top no-padding-bottom inline text-italic" ng-if="::isHttps && expertMode">
     <small><i class="icon ion-alert-circled"></i> {{'NETWORK.INFO.ONLY_SSL_PEERS'|translate}}</small>
@@ -26,11 +26,11 @@
   </div>
 
   <div ng-repeat="peer in :rebind:search.results track by peer.id"
-       class="item item-peer item-icon-left ink"
-       ng-class="::ionItemClass"
-       id="{{helptipPrefix}}-peer-{{$index}}"
+       class="item item-peer item-icon-left ink {{::ionItemClass}}"
+       ng-class=":rebind:{'compacted': peer.compacted && compactMode}"
+       id="{{::helptipPrefix}}-peer-{{::$index}}"
        ng-click="selectPeer(peer)"
-       ng-include="'templates/network/item_content_peer.html'">
+       ng-include="::'templates/network/item_content_peer.html'">
   </div>
 
 </div>

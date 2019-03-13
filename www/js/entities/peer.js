@@ -101,7 +101,6 @@ Peer.prototype.hasEndpoint = function(endpoint){
   var endpoints = this.getEndpoints(regExp);
   if (!endpoints.length) return false;
   else return true;
-
 };
 
 Peer.prototype.getDns = function() {
@@ -166,7 +165,6 @@ Peer.prototype.isTor = function() {
   return bma.useTor;
 };
 
-
 Peer.prototype.isWs2p = function() {
   var bma = this.bma || this.getBMA();
   return bma.useWs2p;
@@ -175,4 +173,8 @@ Peer.prototype.isWs2p = function() {
 Peer.prototype.isBma = function() {
   var bma = this.bma || this.getBMA();
   return !bma.useWs2p && !bma.useTor;
+};
+
+Peer.prototype.hasBma = function() {
+  return this.hasEndpoint('(BASIC_MERKLE_API|BMAS|BMATOR)');
 };
