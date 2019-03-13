@@ -130,6 +130,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
         if (sameUrl) event.preventDefault();
       }
     });
+
     // Configures $urlRouter's listener *after* the previous listener
     $urlRouter.listen();
 

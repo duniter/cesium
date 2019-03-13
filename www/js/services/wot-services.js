@@ -684,20 +684,19 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
 
         return $q.all([
             // Get parameters
-            BMA.blockchain.parameters()
+            csCurrency.parameters()
               .then(function(res) {
                 parameters = res;
-
               }),
             // Get current time
-            BMA.blockchain.current()
+            csCurrency.blockchain.current()
               .then(function(current) {
                 medianTime = current.medianTime;
               })
               .catch(function(err){
                 // Special case for currency init (root block not exists): use now
                 if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
-                  medianTime = Math.trunc(Date.now()/1000);
+                  medianTime = moment.utc().unix();
                 }
                 else {
                   throw err;

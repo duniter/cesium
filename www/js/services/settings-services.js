@@ -52,12 +52,21 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     STORAGE_KEY: 'settings', // for version >= v1.1.0
     KEEP_AUTH_IDLE_SESSION: 9999
   },
-  defaultSettings = angular.merge({
+  // Settings that user cannot change himself (only config can override this values)
+  fixedSettings = {
     timeout : 4000,
     cacheTimeMs: 60000, /*1 min*/
     useRelative: false,
     timeWarningExpireMembership: 2592000 * 2 /*=2 mois*/,
     timeWarningExpire: 2592000 * 3 /*=3 mois*/,
+    minVersion: '1.1.0',
+    newIssueUrl: "https://git.duniter.org/clients/cesium-grp/cesium/issues/new",
+    userForumUrl: "https://forum.monnaie-libre.fr",
+    latestReleaseUrl: "https://api.github.com/repos/duniter/cesium/releases/latest",
+    duniterLatestReleaseUrl: "https://api.github.com/repos/duniter/duniter/releases/latest",
+    httpsMode: false
+  },
+  defaultSettings = angular.merge({
     useLocalStorage: true, // override to false if no device
     useLocalStorageEncryption: true,
     walletHistoryTimeSecond: 30 * 24 * 60 * 60 /*30 days*/,
@@ -66,15 +75,9 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     rememberMe: true,
     keepAuthIdle: 10 * 60,
     showUDHistory: true,
-    httpsMode: false,
     expertMode: false,
     decimalCount: 4,
     uiEffects: true,
-    minVersion: '1.1.0',
-    newIssueUrl: "https://git.duniter.org/clients/cesium-grp/cesium/issues/new",
-    userForumUrl: "https://forum.monnaie-libre.fr",
-    latestReleaseUrl: "https://api.github.com/repos/duniter/cesium/releases/latest",
-    duniterLatestReleaseUrl: "https://api.github.com/repos/duniter/duniter/releases/latest",
     blockValidityWindow: 6,
     helptip: {
       enable: true,
@@ -101,7 +104,9 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     locale: {
       id: fixLocaleWithLog(csConfig.defaultLanguage || $translate.use()) // use config locale if set, or browser default
     }
-  }, csConfig),
+  },
+    fixedSettings,
+    csConfig),
 
   data = {},
   previousData,
@@ -201,17 +206,10 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     // Delete temporary properties, if false
     if (!newData.node.temporary || !data.node.temporary) delete data.node.temporary;
 
-    // Always force the usage of default settings
-    // This is a workaround for DEV (TODO: implement edition in settings ?)
-    data.timeWarningExpire = defaultSettings.timeWarningExpire;
-    data.timeWarningExpireMembership = defaultSettings.timeWarningExpireMembership;
-    data.cacheTimeMs = defaultSettings.cacheTimeMs;
-    data.timeout = defaultSettings.timeout;
-    data.minVersion = defaultSettings.minVersion;
-    data.latestReleaseUrl = defaultSettings.latestReleaseUrl;
-    data.duniterLatestReleaseUrl = defaultSettings.duniterLatestReleaseUrl;
-    data.newIssueUrl = defaultSettings.newIssueUrl;
-    data.userForumUrl = defaultSettings.userForumUrl;
+    // Force some fixed settings
+    _.keys(fixedSettings).forEach(function(key) {
+      data[key] = defaultSettings[key]; // This will apply fixed value (override by config.js file)
+    });
 
     // Apply the new locale (only if need)
     // will produce an event cached by onLocaleChange();

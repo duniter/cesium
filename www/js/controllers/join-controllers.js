@@ -135,7 +135,7 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
   $scope.showPassword = false;
   $scope.formData.computing=false;
   $scope.smallscreen = UIUtils.screen.isSmall();
-  $scope.userIdPattern = BMA.constants.regex.USER_ID;
+  $scope.userIdPattern = BMA.constants.regexp.USER_ID;
 
   // Read input parameters
   $scope.currency = parameters.currency;

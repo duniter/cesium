@@ -210,7 +210,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
     $scope.load();
 
     // Update location href
-    if ($scope.eanbleLocationHref) {
+    if ($scope.enableLocationHref) {
       $location.search({type: $scope.search.type}).replace();
     }
   };
@@ -377,7 +377,7 @@ function NetworkLookupModalController($scope, $controller, parameters) {
   $scope.search.endpointFilter = angular.isDefined(parameters.endpointFilter) ? parameters.endpointFilter : $scope.search.endpointFilter;
   $scope.expertMode = angular.isDefined(parameters.expertMode) ? parameters.expertMode : $scope.expertMode;
   $scope.ionItemClass = parameters.ionItemClass || 'item-border-large';
-  $scope.eanbleLocationHref = false;
+  $scope.enableLocationHref = false;
   $scope.helptipPrefix = '';
 
   $scope.selectPeer = function(peer) {
@@ -535,6 +535,9 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
       })
       .then(function(){
         $scope.loading = false;
+      })
+      .catch(function() {
+        $scope.loading = false;
       });
   });
 
@@ -598,7 +601,11 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
         .then(function(json) {
           $scope.node.pubkey = json.pubkey;
           $scope.node.currency = json.currency;
-        }),
+        })
+        .catch(function(err){
+          console.error(err && err.message || err);
+        })
+      ,
 
       // Get known peers
       $scope.node.network.peers()
@@ -634,7 +641,11 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
             $scope.current = json;
           })
       ])
-      .catch(UIUtils.onError(useTor ? "PEER.VIEW.ERROR.LOADING_TOR_NODE_ERROR" : "PEER.VIEW.ERROR.LOADING_NODE_ERROR"));
+      .catch(function(err) {
+        console.error(err && err.message || err);
+        UIUtils.onError(useTor ? "PEER.VIEW.ERROR.LOADING_TOR_NODE_ERROR" : "PEER.VIEW.ERROR.LOADING_NODE_ERROR")(err);
+        throw err;
+      });
   };
 
   $scope.selectPeer = function(peer) {

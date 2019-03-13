@@ -54,7 +54,9 @@
           <span ng-if=":rebind:peer.uid"><i class="ion-lock-combination"></i>{{:rebind:peer.difficulty||'?'}}</span>
           <span ng-if=":rebind:!peer.uid" translate>PEER.MIRROR</span>
         </h3>
-        <h4 class="hidden-sm hidden-xs gray">{{:rebind: peer.version ? ('v'+peer.version) : ''}}</h4>
+        <h4 class="hidden-sm hidden-xs gray">
+          {{:rebind: peer.software !== 'duniter' ? peer.software : ''}}
+          {{:rebind: peer.version ? ('v'+peer.version) : ''}}</h4>
       </div>
       <div class="col col-20 no-padding text-center">
         <span id="{{$index === 0 ? helptipPrefix + '-peer-0-block' : ''}}"

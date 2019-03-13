@@ -653,7 +653,8 @@ function WotLookupModalController($scope, $controller, $focus, csWallet, paramet
   $scope.select = function(identity){
     $scope.closeModal({
       pubkey: identity.pubkey,
-      uid: identity.uid
+      uid: identity.uid,
+      name: identity.name && identity.name.replace(/<\/?em>/ig, '')
     });
   };
 

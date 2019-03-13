@@ -59,7 +59,8 @@ Peer.prototype.json = function() {
 Peer.prototype.getBMA = function() {
   if (this.bma) return this.bma;
   var bma = null;
-  var bmaRegex = this.regex.BMA_REGEXP;
+  var bmaRegex = this.regexp.BMA_REGEXP;
+  var bmasRegex = this.regexp.BMAS_REGEXP;
   this.endpoints.forEach(function(ep){
     var matches = !bma && bmaRegex.exec(ep);
     if (matches) {
@@ -67,7 +68,20 @@ Peer.prototype.getBMA = function() {
         "dns": matches[2] || '',
         "ipv4": matches[4] || '',
         "ipv6": matches[6] || '',
-        "port": matches[8] || 80
+        "port": matches[8] || 80,
+        "useSsl": matches[8] == 443,
+        "useBma": true
+      };
+    }
+    matches = !bma && bmasRegex.exec(ep);
+    if (matches) {
+      bma = {
+        "dns": matches[2] || '',
+        "ipv4": matches[4] || '',
+        "ipv6": matches[6] || '',
+        "port": matches[8] || 80,
+        "useSsl": true,
+        "useBma": true
       };
     }
   });

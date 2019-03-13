@@ -230,10 +230,19 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     that.isAlive = function() {
       return csHttp.get(that.host, that.port, '/node/summary', that.useSsl)()
         .then(function(json) {
-          var isDuniter = json && json.duniter && json.duniter.software && json.duniter.version && true;
-          var isCompatible = isDuniter && csHttp.version.isCompatible(csSettings.data.minVersion, json.duniter.version);
-          if (isDuniter && !isCompatible) {
-            console.error('[BMA] Uncompatible version [{0}] - expected at least [{1}]'.format(json.duniter.version, csSettings.data.minVersion));
+          var software = json && json.duniter && json.duniter.software;
+          var isCompatible = true;
+
+          // Check duniter min version
+          if (software === 'duniter' && json.duniter.version && true) {
+            isCompatible = csHttp.version.isCompatible(csSettings.data.minVersion, json.duniter.version);
+          }
+          // TODO: check other software (DURS, Juniter, etc.)
+          else {
+            console.debug('[BMA] Unknown node software [{0} v{1}]: could not check compatibility.'.format(software || '?', json.duniter.version || '?'));
+          }
+          if (!isCompatible) {
+            console.error('[BMA] Incompatible node [{0} v{1}]: expected at least v{2}'.format(software, json.duniter.version, csSettings.data.minVersion));
           }
           return isCompatible;
         })

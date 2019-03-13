@@ -527,9 +527,11 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
             // Get Version
             jobs.push(peer.api.node.summary()
               .then(function(res){
-                peer.version = res && res.duniter && res.duniter.version;
+                peer.software = res && res.duniter && res.duniter.software || undefined;
+                peer.version = res && res.duniter && res.duniter.version || '?';
               })
               .catch(function() {
+                peer.software = undefined;
                 peer.version = '?'; // continue
               }));
 

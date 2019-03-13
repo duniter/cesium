@@ -238,7 +238,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       $scope.form.amount.$error = $scope.form.amount.$error || {};
       $scope.form.amount.$error.min = true;
     }
-    else if ($scope.form.amount.$error && $scope.form.amount.$error.min){
+    else if ($scope.form.amount && $scope.form.amount.$error && $scope.form.amount.$error.min){
       delete $scope.form.amount.$error.min;
     }
 
@@ -249,7 +249,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       $scope.form.amount.$error = $scope.form.amount.$error || {};
       $scope.form.amount.$error = {max: true};
     }
-    else if ($scope.form.amount.$error && $scope.form.amount.$error.max){
+    else if ($scope.form.amount && $scope.form.amount.$error && $scope.form.amount.$error.max){
       delete $scope.form.amount.$error.max;
     }
 

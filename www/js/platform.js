@@ -382,8 +382,8 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 // Workaround to add "".startsWith() if not present
 if (typeof String.prototype.startsWith !== 'function') {
   console.debug("Adding String.prototype.startsWith() -> was missing on this platform");
-  String.prototype.startsWith = function(prefix) {
-    return this.indexOf(prefix) === 0;
+  String.prototype.startsWith = function(prefix, position) {
+    return this.indexOf(prefix, position) === 0;
   };
 }
 

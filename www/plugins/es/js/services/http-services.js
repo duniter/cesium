@@ -14,12 +14,13 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     console.debug('[ES] [https] Enable SSL (forced by config or detected in URL)');
   }
 
-  function Factory(host, port, wsPort, useSsl) {
+  function EsHttp(host, port, wsPort, useSsl) {
 
     var
       that = this,
       constants = {
-        ES_USER_API_ENDPOINT: 'ES_USER_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))'
+        ES_USER_API_ENDPOINT: 'ES_USER_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))',
+        MAX_UPLOAD_BODY_SIZE: csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.maxUploadBodySize || 2097152 /*=2M*/
       },
       regexp = {
         IMAGE_SRC: exact('data:([A-Za-z//]+);base64,(.+)'),
@@ -138,6 +139,11 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       return that.start(true /*skipInit*/);
     };
 
+    that.byteCount = function (s) {
+      s = (typeof s == 'string') ? s : JSON.stringify(s);
+      return encodeURI(s).split(/%(?:u[0-9A-F]{2})?[0-9A-F]{2}|./).length - 1;
+    };
+
     that.getUrl  = function(path) {
       return csHttp.getUrl(that.host, that.port, path, that.useSsl);
     };
@@ -204,7 +210,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         .then(function(json) {
           var software = json && json.duniter && json.duniter.software || 'unknown';
           if (software === "cesium-plus-pod" || software === "duniter4j-elasticsearch") return true;
-          console.error("[ES] [http] Not a Duniter4j ES node, but a {0} node".format(software));
+          console.error("[ES] [http] Not a Cesium+ Pod, but a {0} node. Please check '/node/summary'".format(software));
           return false;
         })
         .catch(function() {
@@ -383,6 +389,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         // Replace URL in description
         var urls = parseUrlsFromText(content);
         _.forEach(urls, function(url){
+          // Make sure protocol is defined
           var href = (url.startsWith('http://') || url.startsWith('https://')) ? url : ('http://' + url);
           // Redirect URL to the function 'openLink', to open a new window if need (e.g. desktop app)
           var link = '<a on-tap=\"openLink($event, \'{0}\')\" href=\"{1}\" target="_blank">{2}</a>'.format(href, href, truncUrlFilter(url));
@@ -398,9 +405,9 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
         // Replace user tags
         var userTags = parseTagsFromText(content, '@');
-        _.forEach(userTags, function(uid){
-          var link = '<a ui-sref=\"{0}({uid: \'{1}\'})\">@{2}</a>'.format(options.uidState, uid, uid);
-          content = content.replace('@'+uid, link);
+        _.forEach(userTags, function(tag){
+          var link = '<a ui-sref=\"{0}({uid: \'{1}\'})\">@{2}</a>'.format(options.uidState, tag, tag);
+          content = content.replace('@'+tag, link);
         });
       }
       return content;
@@ -468,23 +475,29 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
               fillRecordTags(obj, options.tagFields);
             }
 
-            //console.debug("Will send obj: ", obj);
-            var str = JSON.stringify(obj);
+        var str = JSON.stringify(obj);
 
-            return CryptoUtils.util.hash(str)
-              .then(function(hash) {
-                return CryptoUtils.sign(hash, keypair)
-                  .then(function(signature) {
-                    // Prepend hash+signature
-                    str = '{"hash":"{0}","signature":"{1}",'.format(hash, signature) + str.substring(1);
-                    // Send data
-                    return postRequest(str, params)
-                      .then(function (id){
-                        return id;
-                      });
-                  });
-              });
-          });
+          return CryptoUtils.util.hash(str)
+            .then(function(hash) {
+              return CryptoUtils.sign(hash, keypair)
+                .then(function(signature) {
+                  // Prepend hash+signature
+                  str = '{"hash":"{0}","signature":"{1}",'.format(hash, signature) + str.substring(1);
+                  // Send data
+                  return postRequest(str, params)
+                    .then(function (id){
+                      return id;
+                    })
+                    .catch(function(err) {
+                      var bodyLength = that.byteCount(obj);
+                      if (bodyLength > constants.MAX_UPLOAD_BODY_SIZE) {
+                        throw {message: 'ERROR.ES_MAX_UPLOAD_BODY_SIZE', length: bodyLength};
+                      }
+                      throw err;
+                    });
+                });
+            });
+         });
       };
     }
 
@@ -638,6 +651,10 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         sameAsSettings: isSameNodeAsSettings,
         isFallback: isFallbackNode
       },
+      network: {
+        peering: that.get('/network/peering'),
+        peers: that.get('/network/peers')
+      },
       record: {
         post: postRecord,
         remove: removeRecord
@@ -661,10 +678,10 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
   }
 
 
-  var service = new Factory();
+  var service = new EsHttp();
 
   service.instance = function(host, port, wsPort, useSsl) {
-    return new Factory(host, port, wsPort, useSsl);
+    return new EsHttp(host, port, wsPort, useSsl);
   };
 
   return service;
