@@ -113,8 +113,8 @@
     "BTN_ABOUT": "over",
     "BTN_HELP": "Help",
     "REPORT_ISSUE": "Meld een probleem",
-    "NOT_YOUR_ACCOUNT_QUESTION" : "Je hoeft niet de rekening <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b> in uw bezit?",
-    "BTN_CHANGE_ACCOUNT": "Dit account ontkoppelen",
+    "NOT_YOUR_ACCOUNT_QUESTION" : "Is rekening <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b> niet van jou?",
+    "BTN_CHANGE_ACCOUNT": "Dze rekening ontkoppelen",
     "CONNECTION_ERROR": "Node <b>{{server}}</b> onbereikbaar of ongeldig adres.<br/><br/>Controleer de internetverbinding, of schakel knooppunt <a class=\"positive\" ng-click=\"doQuickFix('settings')\">in parameters</a>."
   },
   "SETTINGS": {
@@ -123,7 +123,7 @@
     "PEER": "Duniter knooppunt adres",
     "PEER_CHANGED_TEMPORARY": "Adres tijdelijk worden gebruikt",
     "USE_LOCAL_STORAGE": "Lokale opslag inschakelen",
-    "USE_LOCAL_STORAGE_HELP": "Slaat uw instellingen",
+    "USE_LOCAL_STORAGE_HELP": "Laat je instellingen opslaan",
     "ENABLE_HELPTIP": "Contextgebonden hulp inschakelen",
     "ENABLE_UI_EFFECTS": "Schakel visuele effecten",
     "HISTORY_SETTINGS": "Mijn rekening",
@@ -266,7 +266,7 @@
     "NO_GIVEN_CERTIFICATION": "Geen uitgegeven certificaties",
     "NOT_MEMBER_PARENTHESIS": "(niet-lid)",
     "IDENTITY_REVOKED_PARENTHESIS": "(ingetrokken identiteit)",
-    "MEMBER_PENDING_REVOCATION_PARENTHESIS": "(en cours de révocation)",
+    "MEMBER_PENDING_REVOCATION_PARENTHESIS": "(intrekking in behandeling)",
     "EXPIRE_IN": "Verloopt",
     "NOT_WRITTEN_EXPIRE_IN": "Uiterlijke<br/>behandeling",
     "EXPIRED": "Verlopen",
@@ -274,9 +274,9 @@
     "SIGNED_ON_BLOCK": "Uitgegeven op block #{{block}}",
     "WRITTEN_ON_BLOCK": "Geschreven op block #{{block}}",
     "GENERAL_DIVIDER": "Algemene informatie",
-    "NOT_MEMBER_ACCOUNT": "Geen lidaccount",
-    "NOT_MEMBER_ACCOUNT_HELP": "Dit is een eenvoudige account zonder te wachten lidmaatschap aanvragen.",
-    "TECHNICAL_DIVIDER": "Technishe informatie",
+    "NOT_MEMBER_ACCOUNT": "Simpele rekening (geen lid)",
+    "NOT_MEMBER_ACCOUNT_HELP": "Dit is een eenvoudige rekening, zonder dat er een aanvraag voor lidmaatschap in de wacht wordt gezet.",
+    "TECHNICAL_DIVIDER": "Technische informatie",
     "BTN_CERTIFY": "Certificeren",
     "BTN_YES_CERTIFY": "Ja, Certificeren",
     "BTN_SELECT_AND_CERTIFY": "Nieuwe certificatie",
@@ -323,10 +323,10 @@
   "LOGIN": {
     "TITLE": "<i class=\"icon ion-locked\"></i> Inloggen",
     "SALT": "Beveiligingszin",
-    "SALT_HELP": "Zin ter beveiliging van uw rekening",
+    "SALT_HELP": "Zin ter beveiliging van je rekening",
     "SHOW_SALT": "Toon de beveiligingszin",
     "PASSWORD": "Wachtwoord",
-    "PASSWORD_HELP": "Wachtwoord ter beveiliging van uw rekening",
+    "PASSWORD_HELP": "Wachtwoord ter beveiliging van je rekening",
     "NO_ACCOUNT_QUESTION": "Nog geen rekening?",
     "CREATE_ACCOUNT": "Open een rekening",
     "FORGOTTEN_ID": "Wachtwoord vergeten?"
@@ -358,7 +358,7 @@
     "BTN_MEMBERSHIP_RENEW_DOTS": "Lidmaatschap verlengen...",
     "BTN_MEMBERSHIP_OUT_DOTS": "Lidmaatschap opzeggen...",
     "BTN_SEND_IDENTITY_DOTS": "Identiteit publiceren...",
-    "BTN_SECURITY_DOTS": "Account en veiligheid...",
+    "BTN_SECURITY_DOTS": "Rekening en veiligheid...",
     "BTN_SHOW_DETAILS": "Tonen technische informatie",
     "BTN_REVOKE": "Deze identiteit<span class='hidden-xs hidden-sm'> definitief</span> opzeggen...",
     "NEW": {
@@ -369,8 +369,8 @@
       "MEMBER_ACCOUNT_HELP": "Als je nog niet als individu geregistreerd bent (één rekening per individu mogelijk).",
       "WALLET_ACCOUNT": "Eenvoudige portefeille",
       "WALLET_ACCOUNT_HELP": "Als je een onderneming, stichting etc. vertegenwoordigd of eenvoudigweg een additionele portefeille nodig hebt. Geen individueel universeel dividend zal door deze rekening gecréeerd worden.",
-      "SALT_WARNING": "Kies een beveiligingszin.<br/>Deze heb je nodig voor ieder verbinding met je account.<br/><br/><b>Zorg dat je deze zin goed onthoud</b>.<br/>Eenmaal verloren, is er geen mogelijkheid om hem te achterhalen!",
-      "PASSWORD_WARNING": "Kies een wachtwoord.<br/>Deze heb je nodig voor ieder verbinding met je account.<br/><br/><b>Zorg dat je dit woord goed onthoud</b>.<br/>Eenmaal verloren, is er geen mogelijkheid om hem te achterhalen!",
+      "SALT_WARNING": "Kies een beveiligingszin.<br/>Deze heb je nodig voor ieder verbinding met je rekening.<br/><br/><b>Zorg dat je deze zin goed onthoud</b>.<br/>Eenmaal verloren, is er geen mogelijkheid om hem te achterhalen!",
+      "PASSWORD_WARNING": "Kies een wachtwoord.<br/>Deze heb je nodig voor ieder verbinding met je rekening.<br/><br/><b>Zorg dat je dit woord goed onthoud</b>.<br/>Eenmaal verloren, is er geen mogelijkheid om hem te achterhalen!",
       "PSEUDO_WARNING": "Kies een pseudoniem.<br/>Het dient om makkelijker gevonden te worden door anderen.<br/><br/>.Gebruik van spaties, komma's en accenten is niet toegestaan.<br/><div class='hidden-xs'><br/>Voorbeeld: <span class='gray'>JulesDeelder, JohanVermeer, etc.</span>",
       "PSEUDO": "Pseudoniem",
       "PSEUDO_HELP": "joe123",
@@ -478,8 +478,8 @@
     "LOAD_PENDING_FAILED": "Unable to load pending registrations.",
     "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "You must <b>be a member</b> in order to perform this action.",
     "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "You must have <b>published your identity</b> in order to perform this action.",
-    "EXISTING_ACCOUNT": "Uw wachtwoord overeenkomen met een bestaande account, de <a ng-click=\"showHelpModal('pubkey')\">publieke sleutel</a> is:",
-    "EXISTING_ACCOUNT_REQUEST": "Gelieve uw wachtwoord wijzigen om een ongebruikte account."
+    "EXISTING_ACCOUNT": "Je gegevens komen overeen met een bestaande rekening, met de <a ng-click=\"showHelpModal('pubkey')\">publieke sleutel</a>:",
+    "EXISTING_ACCOUNT_REQUEST": "Gelieve je gegevens te wijzigen zodat ze met een niet gebruikte rekening overeenkomen."
   },
   "INFO": {
     "POPUP_TITLE": "Informatie",
@@ -499,7 +499,7 @@
     "TRANSFER": "<b>Samenvatting van de overboeking:</b><br/><br/><ul><li> - Van: <b>{{from}}</b></li><li> - Aan: <b>{{to}}</b></li><li> - Bedrag: <b>{{amount}} {{unit}}</b></li><li> - Opmerking: <i>{{comment}}</i></li></ul><br/><b>Weet je zeker dat je deze overboeking wil doen?</b>",
     "MEMBERSHIP_OUT": "<b>Waarschuwing</b>:<br/>Je staat op het punt je lidmaatschap te beëindigen. Dit kan <b>niet ongedaan</b> worden gemaakt.<br/></br/><b>Weet je zeker dat je door wil gaan?</b>",
     "LOGIN_UNUSED_WALLET_TITLE": "Typefout?",
-    "LOGIN_UNUSED_WALLET": "Je bent ingelogged op een rekening die <b>inactief</b> lijkt te zijn.<br/><br/>Als deze rekening niet met de uwe overeenkomt, komt dat waarschijnlijk door een <b>typefout</b> bij het inloggen.<br/><br/><b>Wilt u toch doorgaan met deze rekening?</b>",
+    "LOGIN_UNUSED_WALLET": "Je bent ingelogged op een rekening die <b>inactief</b> lijkt te zijn.<br/><br/>Als deze rekening niet met de jouwe overeenkomt, komt dat waarschijnlijk door een <b>typefout</b> bij het inloggen.<br/><br/><b>Wilt u toch doorgaan met deze rekening?</b>",
     "FIX_IDENTITY": "De pseudoniem <b>{{uid}}</b> zal opnieuw gepubliceerd worden, waarmee de oude verlopen publicatie wordt vervangen.<br/></br/><bWeet je zeker</b> dat je door wil gaan?",
     "FIX_MEMBERSHIP": "Je verzoek to lidmaatschap zal verstuurd worden.<br/></br/><b>Weet je het zeker?</b>",
     "RENEW_MEMBERSHIP": "Je lidmaatschap zal verlengd worden.<br/></br/><b>Weet je het zeker?</b>",
@@ -511,8 +511,8 @@
     "LICENCE": "Ik heb gelezen en geaccepteerd de voorwaarden van de vergunning G1"
   },
   "DOWNLOAD": {
-    "POPUP_TITLE": "<b>Intrekking File</b>",
-    "POPUP_REVOKE_MESSAGE": "Om uw account te beveiligen, het downloaden van de <b>Account intrekking document</b>. U zult indien nodig om uw account (annuleren in het geval van de rekening van diefstal, een verandering van de identifier, een ten onrechte gemaakte account, etc.).<br/><br/><b>Bewaar deze op een veilige plaats.</b>"
+    "POPUP_TITLE": "<b>Intrekkingsdocument</b>",
+    "POPUP_REVOKE_MESSAGE": "Om je rekening te beveiligen, download het <b>rekening intrekkingsdocument</b>. Dit heb je nodig om je rekening op te heffen (in het geval van diefstal, een verandering van ID, een ten onrechte gemaakte rekening, etc.).<br/><br/><b>Bewaar deze op een veilige plaats.</b>"
   },
   "HELP": {
     "TITLE": "Online help",
