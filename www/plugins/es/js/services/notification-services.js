@@ -317,6 +317,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
     data.notifications.time = null;
     // Stop listening notification
     if (wsUserEventCloseFn) {
+      console.debug("[ES] [notification] Closing websocket...");
       wsUserEventCloseFn();
       wsUserEventCloseFn = null;
     }
@@ -395,7 +396,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
             // And display such connectivity errors in UI
             UIUtils.alert.error('ACCOUNT.ERROR.WS_CONNECTION_FAILED');
           });
-        wsUserEventCloseFn = wsUserEvent.close;
+        wsUserEventCloseFn = function() {wsUserEvent.close();};
       });
   }
 
