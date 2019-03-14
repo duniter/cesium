@@ -71,8 +71,7 @@ angular.module('cesium.wallets.controllers', ['cesium.services', 'cesium.currenc
 ;
 
 function WalletListController($scope, $controller, $state, $timeout, $q, $translate, $ionicPopover, $ionicPopup,
-                              ModalUtils,
-                              UIUtils, Modals, csCurrency, csSettings, csWallet){
+                              ModalUtils, UIUtils, Modals, csCurrency, csSettings, csWallet){
   'ngInject';
 
   $scope.settings = csSettings.data;
@@ -175,7 +174,7 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
     if (!wallet) return $q.reject("Missing 'wallet' argument");
 
     // Make sure auth on the main wallet
-    if (!csWallet.isAuth()) {
+    if (!csWallet.isAuth() && csSettings.data.useLocalStorageEncryption) {
       return csWallet.auth({minData: true})
         .then(function() {
           return $scope.addNewWallet(wallet); // loop
@@ -464,7 +463,7 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
   // Detect changes in settings useRelative
   $scope.$watch('settings.useRelative', function(newVal, oldVal) {
     if (!$scope.formData || $scope.loading || (newVal === oldVal)) return;
-    $scope.formData.useRelative = $scope.settings.useRelative;
+    $scope.formData.useRelative = csSettings.data.useRelative;
     $scope.updateView();
   }, true);
 }

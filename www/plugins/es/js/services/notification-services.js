@@ -350,7 +350,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
     // Load unread notifications count
     loadUnreadNotificationsCount(
         data.pubkey, {
-          readTime: data.notifications && data.notifications.readTime || 0,
+          readTime: data.notifications && data.notifications.time || 0,
           excludeCodes: constants.EXCLUDED_CODES
         })
       .then(function(unreadCount) {
@@ -365,7 +365,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
               message: 'COMMON.NOTIFICATION.HAS_UNREAD',
               count: unreadCount,
               state: 'app.view_notifications'
-            }, data.ui || data.name || data.pubkey.substr(0,8));
+            }, data.ui || data.name || data.pubkey && data.pubkey.substr(0,8));
           }, 500);
         }
 

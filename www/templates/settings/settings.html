@@ -74,16 +74,17 @@
         </label>
       </div>
 
-     <!-- <div class="item item-toggle dark item-text-wrap">
+      <!--div class="item item-toggle dark item-text-wrap">
         <div class="input-label" ng-bind-html="'SETTINGS.ENABLE_UI_EFFECTS' | translate">
         </div>
         <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="formData.enableUuiEffects" >
+          <input type="checkbox" ng-model="formData.uiEffects" >
           <div class="track">
             <div class="handle"></div>
           </div>
         </label>
-      </div>-->
+      </div-->
+
       <!-- Allow extension here -->
       <cs-extension-point name="common"></cs-extension-point>
 
@@ -125,6 +126,22 @@
         </div>
 
         <div class="item-note dark">{{formData.keyringFile}}</div>
+      </div>
+
+      <span class="item item-divider">
+        {{'SETTINGS.WALLETS_SETTINGS' | translate}}
+      </span>
+
+      <div class="item item-toggle item-text-wrap dark">
+        <span class="input-label" ng-class="{'gray': !formData.useLocalStorage}" translate>SETTINGS.USE_WALLETS_ENCRYPTION</span>
+        <h4 class="gray" ng-bind-html="'SETTINGS.USE_WALLETS_ENCRYPTION_HELP' | translate">
+        </h4>
+        <label class="toggle toggle-royal">
+          <input type="checkbox" ng-model="formData.useLocalStorageEncryption" ng-disabled="!formData.useLocalStorage">
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
       </div>
 
       <span class="item item-divider" translate>SETTINGS.HISTORY_SETTINGS</span>

@@ -121,9 +121,9 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
     $scope.formData.locale = (csSettings.data.locale && csSettings.data.locale.id && _.findWhere($scope.locales, {id: csSettings.data.locale.id})) ||
       _.findWhere($scope.locales, {id: csSettings.defaultSettings.locale.id});
 
-    $scope.loading = false;
 
-    $timeout(function() {
+    return $timeout(function() {
+      $scope.loading = false;
       // Set Ink
       UIUtils.ink({selector: '.item'});
       $scope.showHelpTip();
@@ -284,14 +284,22 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
     $scope.saving = true;
 
     // Async - to avoid UI lock
-    $timeout(function() {
+    return $timeout(function() {
       // Make sure to format helptip
       $scope.cleanupHelpTip();
 
+      // Applying
       csSettings.apply($scope.formData);
-      csSettings.store();
-      $scope.saving = false;
-    }, 100);
+
+      // Store
+      return csSettings.store();
+
+    }, 100)
+    .then(function() {
+      //return $timeout(function() {
+        $scope.saving = false;
+      //}, 100);
+    });
   };
 
   $scope.onDataChanged = function(oldValue, newValue, scope) {
@@ -305,13 +313,23 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
       }, 500);
     }
 
-    var updated = !angular.equals(oldValue, newValue);
-    if (updated) {
-      //console.debug('Detected settings update: will save it');
+    // Changes from the current scope: save changes
+    if ((scope === $scope) && !angular.equals(oldValue, newValue)) {
       $scope.save();
     }
   };
   $scope.$watch('formData', $scope.onDataChanged, true);
+
+  // Detected changes from outside (e.g. enabling encryption on wallet can be rollback if user cancel auth)
+  csSettings.api.data.on.changed($scope, function(data) {
+    if ($scope.loading || $scope.saving || $scope.pendingSaving) return;
+
+    var updated = !angular.equals(data.useLocalStorageEncryption, $scope.formData.useLocalStorageEncryption);
+    if (updated) {
+      console.debug('[settings] Settings changed (outside the settings page). Reloading...');
+      $scope.load();
+    }
+  });
 
   $scope.getServer = function() {
     if (!$scope.formData.node || !$scope.formData.node.host) return '';

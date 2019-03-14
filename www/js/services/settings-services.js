@@ -68,7 +68,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   },
   defaultSettings = angular.merge({
     useLocalStorage: true, // override to false if no device
-    useLocalStorageEncryption: true,
+    useLocalStorageEncryption: false,
     walletHistoryTimeSecond: 30 * 24 * 60 * 60 /*30 days*/,
     walletHistorySliceSecond: 5 * 24 * 60 * 60 /*download using 5 days slice*/,
     walletHistoryAutoRefresh: true, // override to false if device
@@ -148,7 +148,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     var hasChanged = previousData && !angular.equals(previousData, data);
     previousData = angular.copy(data);
     if (hasChanged) {
-      api.data.raise.changed(data);
+      return api.data.raise.changed(data);
     }
   },
 
@@ -192,7 +192,13 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
       .then(emitChangedEvent);
   },
 
+  /**
+   * Apply new settings (can be partial)
+   * @param newData
+   */
   applyData = function(newData) {
+    if (!newData) return; // skip empty
+
     var localeChanged = false;
     if (newData.locale && newData.locale.id) {
       // Fix previously stored locale (could use bad format)
@@ -200,16 +206,16 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
       localeChanged = !data.locale || newData.locale.id !== data.locale.id || newData.locale.id !== $translate.use();
     }
 
-    // Apply stored settings
+    // Force some fixed settings, before merging
+    _.keys(fixedSettings).forEach(function(key) {
+      newData[key] = defaultSettings[key]; // This will apply fixed value (override by config.js file)
+    });
+
+    // Apply new settings
     angular.merge(data, newData);
 
     // Delete temporary properties, if false
-    if (!newData.node.temporary || !data.node.temporary) delete data.node.temporary;
-
-    // Force some fixed settings
-    _.keys(fixedSettings).forEach(function(key) {
-      data[key] = defaultSettings[key]; // This will apply fixed value (override by config.js file)
-    });
+    if (newData && newData.node && !newData.node.temporary || !data.node.temporary) delete data.node.temporary;
 
     // Apply the new locale (only if need)
     // will produce an event cached by onLocaleChange();

@@ -468,17 +468,17 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       var content; // Init only if used
       var secureContent; // Init only if used
 
-      // Add readTime
-      if (data.notifications && data.notifications.readTime) {
+      // Add time
+      if (data.notifications && data.notifications.time) {
         content = content || {};
         content.notifications = {
-          readTime: data.notifications.readTime
+          time: data.notifications.time
         };
       }
-      if (data.invitations && data.invitations.readTime) {
+      if (data.invitations && data.invitations.time) {
         content = content || {};
         content.invitations = {
-          readTime: data.invitations.readTime
+          time: data.invitations.time
         };
       }
 
@@ -510,7 +510,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
       // Encryption is enable, but user not auth: use the session storage
       // (and keep the local storage value)
-      if (!isAuth()) return sessionStorage.put(storageKey, contentStr||null);
+      if (!isAuth()) {
+        return sessionStorage.put(storageKey, contentStr||null);
+      }
 
       return $q.all([
         // Get a unique nonce
@@ -1924,16 +1926,6 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         if (isAuth()) unauth();
       }, this);
       listeners.push(listener);
-
-      // Delegate start() to the parent wallet
-      /*exports.start = function() {
-        if (started) return $q.when();
-        return parentWallet.start()
-          .then(function() {
-            started = true;
-            startPromise=null;
-          });
-      };*/
     },
 
     createNewChildWallet = function(options) {
@@ -2181,27 +2173,49 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     function onSettingsChanged(allSettings) {
       var newSettings = getWalletSettings(allSettings);
       var hasChanged = !angular.equals(settings, newSettings);
-      if (hasChanged) {
-        var useStorageChanged = !angular.equals(settings.useLocalStorage, newSettings.useLocalStorage) ||
-          !angular.equals(settings.useLocalStorageEncryption, newSettings.useLocalStorageEncryption);
-        var keepAuthIdleChanged = !angular.equals(settings.keepAuthIdle, newSettings.keepAuthIdle);
+      if (!hasChanged) return; // skip
 
-        settings = newSettings;
+      var useEncryptionChanged = !angular.equals(settings.useLocalStorageEncryption, newSettings.useLocalStorageEncryption);
+      var useStorageChanged = !angular.equals(settings.useLocalStorage, newSettings.useLocalStorage) || useEncryptionChanged;
+      var keepAuthIdleChanged = !angular.equals(settings.keepAuthIdle, newSettings.keepAuthIdle);
 
-        if (keepAuthIdleChanged) {
-          checkAuthIdle();
+      settings = newSettings;
+
+      if (keepAuthIdleChanged) {
+        checkAuthIdle();
+      }
+
+      // Local storage option changed
+      if (useStorageChanged) {
+
+        // If disabled, then reset the store
+        if (!settings.useLocalStorage) {
+          resetStore(data.pubkey);
         }
+        // If storage enable
+        else {
+          // Store login data
+          return store()
+            .then(function() {
 
-        if (useStorageChanged) {
-          // Reset stored data
-          if (!settings.useLocalStorage) {
-            resetStore(data.pubkey);
-          }
-          else {
-            // Or stored login data
-            store();
-            storeData();
-          }
+              // Encryption enable: auth before saving data
+              if (data.childrenCount > 0 && useEncryptionChanged && settings.useLocalStorageEncryption) {
+                return auth({minData: true, silent: true})
+                  .catch(function(err){
+                    // user not auth: revert encryption to false
+                    if (err == 'CANCELLED') {
+                      csSettings.apply({useLocalStorageEncryption: false});
+                      return csSettings.store();
+                    }
+                    else {
+                      throw err;
+                    }
+                  });
+              }
+            })
+
+            // Store other data (children wallet, ...)
+            .then(storeData);
         }
       }
     }

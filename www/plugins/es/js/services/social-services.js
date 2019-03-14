@@ -52,7 +52,7 @@ angular.module('cesium.es.social.services', ['cesium.es.crypto.services'])
               urlToMatch = url.substring(0, slashPathIndex);
             }
           }
-          //console.log("match URI, try to match: " + urlToMatch);
+          //console.debug("match URI, try to match: " + urlToMatch);
           _.keys(regexp.socials).forEach(function(key){
             if (regexp.socials[key].test(urlToMatch)) {
               type = key;

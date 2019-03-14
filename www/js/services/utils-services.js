@@ -15,11 +15,12 @@ angular.module('cesium.utils.services', [])
   };
 })
 
-.factory('UIUtils', function($ionicLoading, $ionicPopup, $ionicConfig, $translate, $q, ionicMaterialInk, ionicMaterialMotion, $window, $timeout,
+.factory('UIUtils', function($ionicLoading, $ionicPopup, $ionicConfig, $ionicHistory, $translate, $q,
+                             ionicMaterialInk, ionicMaterialMotion, $window, $timeout,
                              // removeIf(no-device)
                              $cordovaToast,
                              // endRemoveIf(no-device)
-                             $ionicPopover, $state, $rootScope, screenmatch, csSettings) {
+                             $ionicPopover, $state, $rootScope, screenmatch) {
   'ngInject';
 
 
@@ -692,9 +693,10 @@ angular.module('cesium.utils.services', [])
     if (exports.motion.enable === enable) return; // same
     console.debug('[UI] [effects] ' + (enable ? 'Enable' : 'Disable'));
 
+    exports.motion.enable = enable;
     if (enable) {
       $ionicConfig.views.transition('platform');
-      exports.motion = raw.motion;
+      angular.merge(exports.motion, raw.motion);
     }
     else {
       $ionicConfig.views.transition('none');
@@ -702,7 +704,7 @@ angular.module('cesium.utils.services', [])
         class: undefined,
         show: function(){}
       };
-      exports.motion = {
+      angular.merge(exports.motion, {
         enable : false,
         default: nothing,
         fadeSlideIn: nothing,
@@ -714,8 +716,10 @@ angular.module('cesium.utils.services', [])
         fadeIn: nothing,
         toggleOn: toggleOn,
         toggleOff: toggleOff
-      };
+      });
+      $rootScope.motion = nothing;
     }
+    $ionicHistory.clearCache();
   }
 
   raw.motion = {
@@ -783,10 +787,6 @@ angular.module('cesium.utils.services', [])
       });
     }, timeout || 900);
   }
-
-  csSettings.api.data.on.changed($rootScope, function(data) {
-    setEffects(data.uiEffects);
-  });
 
   exports = {
     alert: {
