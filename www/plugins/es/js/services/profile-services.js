@@ -193,15 +193,13 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
         }
         else {
           request.query.constant_score = {
-            filter: {bool: {should: [
-              {terms : {_id : pubkeys}},
-              {bool: {
-                must: [
+            filter: {bool: {
+                should: [
+                  {terms : {"_id^4" : pubkeys}},
                   {match: {title: {query: text, boost: 2}}},
                   {prefix: {title: text}}
                 ]}
-              }
-            ]}}
+            }
           };
 
           if (tags) {
