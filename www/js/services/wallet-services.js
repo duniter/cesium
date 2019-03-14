@@ -808,31 +808,26 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     },
 
     loadSigStock = function() {
-      return $q(function(resolve, reject) {
-        // Get certified by, then count written certification
-        BMA.wot.certifiedBy({pubkey: data.pubkey})
-          .then(function(res){
-            data.sigStock = !res.certifications ? 0 : res.certifications.reduce(function(res, cert) {
-              return cert.written === null ? res : res+1;
-            }, 0);
-            resolve();
-          })
-          .catch(function(err) {
-            if (!!err && err.ucode == BMA.errorCodes.NO_MATCHING_MEMBER) {
-              data.sigStock = 0;
-              resolve(); // not found
-            }
-            /*FIXME: workaround for Duniter issue #1309 */
-            else if (!!err && err.ucode == 1002) {
-              console.warn("[wallet-service] Detecting Duniter issue #1309 ! Applying workaround... ");
-              data.sigStock = 0;
-              resolve(); // not found
-            }
-            else {
-              reject(err);
-            }
-          });
-      });
+      // Get certified by, then count written certification
+      return BMA.wot.certifiedBy({pubkey: data.pubkey})
+        .then(function(res){
+          data.sigStock = !res.certifications ? 0 : res.certifications.reduce(function(res, cert) {
+            return cert.written === null ? res : res+1;
+          }, 0);
+        })
+        .catch(function(err) {
+          if (!!err && err.ucode == BMA.errorCodes.NO_MATCHING_MEMBER) {
+            data.sigStock = 0;
+          }
+          /*FIXME: workaround for Duniter issue #1309 */
+          else if (!!err && err.ucode == 1002) {
+            console.warn("[wallet-service] Detecting Duniter issue #1309 ! Applying workaround... ");
+            data.sigStock = 0;
+          }
+          else {
+            throw err;
+          }
+        });
     },
 
     loadData = function(options) {

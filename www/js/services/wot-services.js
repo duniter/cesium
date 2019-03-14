@@ -454,7 +454,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
 
         return getFunction({ pubkey: pubkey })
           .then(function(res) {
-            return res.certifications.reduce(function (res, cert) {
+            return (res && res.certifications || []).reduce(function (res, cert) {
               // Rappel :
               //   cert.sigDate = blockstamp de l'identité
               //   cert.cert_time.block : block au moment de la certification
@@ -863,15 +863,13 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
         return $q.all([
             csCurrency.blockchain.current(true)
               .then(function(block) {
-                total = block.membersCount;
+                total = block.membersCount || 0;
               }),
             BMA.blockchain.stats.newcomers()
           ])
           .then(function(res) {
             res = res[1];
-            if (!res.result.blocks || !res.result.blocks.length) {
-              return null;
-            }
+            if (!res || !res.result || !res.result.blocks || !res.result.blocks.length) return null; // no result
             var blocks = _.sortBy(res.result.blocks, function (n) {
               return -n;
             });
@@ -886,13 +884,12 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
             // Extension point
             return extendAll(idties, 'pubkey', true/*skipAddUid*/);
           })
-            .then(function(idties) {
-              return {
-                hits: idties,
-                total: total
-              };
-            })
-          ;
+          .then(function(idties) {
+            return {
+              hits: idties,
+              total: total
+            };
+          });
       },
 
 
