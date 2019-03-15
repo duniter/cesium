@@ -147,8 +147,10 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
       .then(function(newName) {
         if (!newName) return;
 
-        // Save changes
-        return csWallet.auth({minData: true})
+        // Auth (if encryption is need)
+        return (csSettings.data.useLocalStorageEncryption ? csWallet.auth({minData: true}) : $q.when())
+
+          // Save changes
           .then(function() {
             wallet.data.localName = newName;
             csWallet.storeData();
@@ -174,7 +176,7 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
     if (!wallet) return $q.reject("Missing 'wallet' argument");
 
     // Make sure auth on the main wallet
-    if (!csWallet.isAuth() && csSettings.data.useLocalStorageEncryption) {
+    if (csSettings.data.useLocalStorageEncryption && !csWallet.isAuth()) {
       return csWallet.auth({minData: true})
         .then(function() {
           return $scope.addNewWallet(wallet); // loop
@@ -259,8 +261,10 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
       .then(function(wallet) {
         if (!wallet || !wallet.id) return;
 
-        // Make sure to auth on the main wallet
-        return csWallet.auth({minData: true})
+        // Auth (if encryption is need))
+        return (csSettings.data.useLocalStorageEncryption ? csWallet.auth({minData: true}) : $q.when())
+
+          // Remove the wallet
           .then(function() {
             csWallet.children.remove(wallet.id);
             UIUtils.loading.hide();
@@ -303,8 +307,9 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
         if (!items || !items.length) return; // User cancel
 
         UIUtils.loading.show();
-        // Make sure to auth on the main wallet
-        return csWallet.auth({minData: true})
+
+        // Auth (if encryption is need)
+        return (csSettings.data.useLocalStorageEncryption ? csWallet.auth({minData: true}) : $q.when())
           .then(function() {
             // Add wallet one after one
             return items.reduce(function(promise, authData){
@@ -705,7 +710,8 @@ function WalletListImportModalController($scope, $timeout, BMA, csWallet) {
 
     $scope.hasContent = angular.isDefined(file) && file !== '';
     $scope.fileData = file.fileData ? file.fileData : '';
-    var isValidFile = $scope.fileData !== '' && ($scope.fileData.type == 'text/csv' || $scope.fileData.type == 'text/plain');
+    var isValidFile = $scope.fileData !== '' &&
+      ($scope.fileData.type == 'text/csv' || $scope.fileData.type == 'text/plain' || 'application/vnd.ms-excel' /*fix issue #810*/);
 
     // Bad file type: invalid file
     if (!isValidFile) {
