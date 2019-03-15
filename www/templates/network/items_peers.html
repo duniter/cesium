@@ -9,11 +9,14 @@
       <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'uid'"></cs-sort-icon>
       {{'COMMON.UID' | translate}} / {{'COMMON.PUBKEY' | translate}}
     </a>
+    <!-- API header -->
     <a class="no-padding dark hidden-md col col-15 col-header"
-       ng-click="toggleSort('api')">
+       ng-click="toggleSort('api')" ng-if="!compactMode">
       <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'api'"></cs-sort-icon>
       {{'PEER.API' | translate}}
     </a>
+    <div class="no-padding dark hidden-md col col-15 col-header" ng-if="compactMode"></div>
+
     <a class="no-padding dark col col-20 col-header"
        ng-click="toggleSort('difficulty')">
       <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'difficulty'"></cs-sort-icon>
