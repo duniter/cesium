@@ -620,8 +620,10 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
 
   // Clean controller data
   $scope.resetData = function() {
+    console.debug("[wallets] Cleaning wallet list");
     $scope.wallets = null;
     $scope.loading = true;
+    $scope.entered = false;
     $scope.formData.balance = undefined;
     $scope.formData.updatingWalletId = undefined;
   };
