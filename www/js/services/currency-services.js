@@ -4,7 +4,12 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
 .factory('csCurrency', function($rootScope, $q, $timeout, BMA, Api, csSettings) {
   'ngInject';
 
-  function factory(id, BMA) {
+  var defaultBMA = BMA;
+
+  function CsCurrency(id, BMA) {
+
+    BMA = BMA || defaultBMA;
+
     var
       constants = {
         // Avoid to many call on well known currencies
@@ -348,7 +353,9 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
     };
   }
 
-  var service = factory('default', BMA);
-  service.instance = factory;
+  var service = new CsCurrency('default');
+  service.instance = function(id, bma) {
+    return new CsCurrency(id, bma);
+  };
   return service;
 });

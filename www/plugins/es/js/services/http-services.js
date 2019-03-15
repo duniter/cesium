@@ -678,7 +678,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
   var service = new EsHttp();
 
   service.instance = function(host, port, useSsl) {
-    return new EsHttp(host, port, useSsl)
+    return new EsHttp(host, port, useSsl);
   };
 
   return service;

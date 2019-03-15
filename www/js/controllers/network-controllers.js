@@ -624,13 +624,12 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
         })
         .catch(function(err){
           console.error(err && err.message || err);
-        })
-      ,
+        }),
 
       // Get known peers
       $scope.node.network.peers()
         .then(function(json) {
-          var peers = json.peers.map(function (p) {
+          var peers = (json && json.peers || []).map(function (p) {
             var peer = new Peer(p);
             peer.online = p.status === 'UP';
             peer.buid = peer.block;

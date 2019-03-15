@@ -8,7 +8,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
   var defaultBMA = BMA;
 
-  function factory(id, BMA) {
+  function CsTx(id, BMA) {
 
     BMA = BMA || defaultBMA;
     var
@@ -454,8 +454,10 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
     };
   }
 
-  var service = factory('default', BMA);
+  var service = new CsTx('default');
 
-  service.instance = factory;
+  service.instance = function(id, bma) {
+    return new CsTx(id, bma);
+  };
   return service;
 });

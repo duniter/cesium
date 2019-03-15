@@ -4,7 +4,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
 .factory('csNetwork', function($rootScope, $q, $interval, $timeout, $window, csConfig, BMA, csHttp, csCurrency, Api) {
   'ngInject';
 
-  function csNetwork(id) {
+  function CsNetwork(id) {
 
     var
       interval,
@@ -843,12 +843,12 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       // api extension
       api: api
     };
-  };
+  }
 
-  var service = csNetwork('default');
+  var service = new CsNetwork('default');
 
   service.instance = function(id) {
-    return new csNetwork(id);
+    return new CsNetwork(id);
   };
 
   return service;
