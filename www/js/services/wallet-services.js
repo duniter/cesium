@@ -1351,7 +1351,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
             _.forEach(secondSlice.sources, function(source) {
               if (source.base < secondSlice.minBase) secondSlice.minBase = source.base;
               if (source.base > secondSlice.maxBase) secondSlice.maxBase = source.base;
-              secondSlice.amount += source.amount;
+              secondSlice.amount += powBase(source.amount, source.base);
             });
 
             // Send inputs second slice (recursive call)
