@@ -11,11 +11,11 @@
     </a>
     <!-- API header -->
     <a class="no-padding dark hidden-md col col-15 col-header"
-       ng-click="toggleSort('api')" ng-if="!compactMode">
+       ng-click="toggleSort('api')" ng-if=":rebind:!compactMode">
       <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'api'"></cs-sort-icon>
       {{'PEER.API' | translate}}
     </a>
-    <div class="no-padding dark hidden-md col col-15 col-header" ng-if="compactMode"></div>
+    <div class="no-padding dark hidden-md col col-15 col-header" ng-if=":rebind:compactMode"></div>
 
     <a class="no-padding dark col col-20 col-header"
        ng-click="toggleSort('difficulty')">
