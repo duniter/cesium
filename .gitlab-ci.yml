@@ -91,6 +91,8 @@ mirror:
   script:
     - mv platforms/web/www public
     - rsync -az -e ssh ./public/ gammanu@1000i100.fr:~/g1.money/dev-cesium
+  after_script:
+    - ssh gammanu@1000i100.fr "~/g1.money/update-cesium.sh"
   only:
     - master
 
