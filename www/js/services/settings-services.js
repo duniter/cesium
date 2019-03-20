@@ -56,7 +56,6 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   fixedSettings = {
     timeout : 4000,
     cacheTimeMs: 60000, /*1 min*/
-    useRelative: false,
     timeWarningExpireMembership: 2592000 * 2 /*=2 mois*/,
     timeWarningExpire: 2592000 * 3 /*=3 mois*/,
     minVersion: '1.1.0',
@@ -67,6 +66,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     httpsMode: false
   },
   defaultSettings = angular.merge({
+    useRelative: false,
     useLocalStorage: true, // override to false if no device
     useLocalStorageEncryption: false,
     walletHistoryTimeSecond: 30 * 24 * 60 * 60 /*30 days*/,
@@ -146,8 +146,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
   emitChangedEvent = function() {
     var hasChanged = previousData && !angular.equals(previousData, data);
-    previousData = angular.copy(data);
     if (hasChanged) {
+      previousData = angular.copy(data);
       return api.data.raise.changed(data);
     }
   },
