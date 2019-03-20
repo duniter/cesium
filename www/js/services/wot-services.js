@@ -134,9 +134,6 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
           identity.meta.sig = identity.meta.sig || identity.sig;
           delete identity.sig;
           blocks.push(identity.meta.number);
-          if (identity.revocationNumber) {
-            blocks.push(identity.revocationNumber);
-          }
         });
 
         // Get identities blocks, to fill self and revocation time
@@ -149,12 +146,6 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
               // Check if self has been done on a valid block
               if (block && identity.meta.number !== 0 && identity.meta.hash !== block.hash) {
                 identity.meta.invalid = true;
-              }
-
-              // Set revocation time
-              if (identity.revocationNumber) {
-                block = _.findWhere(blocks, {number: identity.revocationNumber});
-                identity.revocationTime = block && block.medianTime;
               }
             });
 
@@ -171,12 +162,6 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
               return identities;
             }
             else {
-              // FIXME workaround for issue #1304 ?
-              /*
-               if (identity.revocationNumber) {
-               identity.revocationTime = identity.revocationNumber;
-               return identity;
-               }*/
               throw err;
             }
           });
@@ -278,15 +263,10 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
         };
         return BMA.wot.lookup({ search: pubkey||uid })
           .then(function(res){
-            var blocksToRetrieve = [];
             var identities = res.results.reduce(function(idties, res) {
               return idties.concat(res.uids.reduce(function(uids, idty) {
                 var blockUid = idty.meta.timestamp.split('-', 2);
                 var blockNumber = parseInt(blockUid[0]);
-                blocksToRetrieve.push(blockNumber);
-                if (idty.revoked_on) {
-                  blocksToRetrieve.push(idty.revoked_on);
-                }
                 return uids.concat({
                   uid: idty.uid,
                   pubkey: res.pubkey,
@@ -297,7 +277,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
                     sig: idty.self
                   },
                   revoked: idty.revoked,
-                  revocationNumber: idty.revoked_on
+                  revoked_on: idty.revoked_on
                 });
               }, []));
             }, []);
@@ -613,8 +593,14 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
 
         if (data.requirements.revoked) {
           delete data.requirements.meta.invalid;
-          addEvent(data, {type: 'error', message: 'ERROR.IDENTITY_REVOKED', messageParams: {revocationTime: data.revocationTime}});
-          console.debug("[wot] Identity [{0}] has been revoked".format(data.uid));
+          if (data.requirements.revoked_on) {
+            addEvent(data, {type: 'error', message: 'ERROR.IDENTITY_REVOKED_WITH_TIME', messageParams: {revocationTime: data.requirements.revoked_on}});
+            console.debug("[wot] Identity [{0}] has been revoked on {1}".format(data.uid, data.requirements.revoked_on));
+          }
+          else {
+            addEvent(data, {type: 'error', message: 'ERROR.IDENTITY_REVOKED'});
+            console.debug("[wot] Identity [{0}] has been revoked".format(data.uid));
+          }
         }
         else if (data.requirements.pendingRevocation) {
           delete data.requirements.meta.invalid;
