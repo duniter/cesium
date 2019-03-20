@@ -92,6 +92,12 @@
           <i class="icon ion-home"></i>
           {{:locale:'MENU.HOME'|translate}}
         </ion-item>
+        <ion-item menu-close
+                  ng-if="!login"
+                  class="item-icon-left visible-xs" ui-sref="app.home" active-link="active">
+          <i class="icon ion-home"></i>
+          {{:locale:'MENU.HOME'|translate}}
+        </ion-item>
 
         <a menu-close
            class="item item-icon-left"

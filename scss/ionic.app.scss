@@ -809,9 +809,12 @@ $screen-menu:                     845px;
       }
     }
 
-    .item-menu-disable {
-      color: $dark !important;
-    }
+
+  }
+}
+.menu.menu-left {
+  .item-menu-disable {
+    color: $dark !important;
   }
 }
 
