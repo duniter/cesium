@@ -159,7 +159,7 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
       .then(function() {
         wallet.data.notifications.unreadCount = 0;
         var lastNotification = $scope.search.results[0];
-        wallet.data.notifications.readTime = lastNotification ? lastNotification.time : 0;
+        wallet.data.notifications.time = lastNotification ? lastNotification.time : 0;
         _.forEach($scope.search.results, function (item) {
           if (item.markAsRead && typeof item.markAsRead == 'function') item.markAsRead();
         });
@@ -176,8 +176,8 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
     wallet.data.notifications.unreadCount = 0;
     var lastNotification = $scope.search.results[0];
     var readTime = lastNotification.time ? lastNotification.time : 0;
-    if (readTime && (!wallet.data.notifications.readTime || wallet.data.notifications.readTime != readTime)) {
-      wallet.data.notifications.readTime = readTime;
+    if (readTime && (!wallet.data.notifications.time || wallet.data.notifications.time != readTime)) {
+      wallet.data.notifications.time = readTime;
       wallet.storeData();
     }
   };

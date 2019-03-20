@@ -16,8 +16,8 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
 
   var
     SETTINGS_SAVE_SPEC = {
-      includes: ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'expertMode', 'logoutIdle', 'blockValidityWindow'],
-      excludes: ['timeout', 'cacheTimeMs', 'time', 'login', 'build'],
+      includes: ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'useLocalStorageEncryption', 'expertMode', 'logoutIdle', 'blockValidityWindow'],
+      excludes: ['timeout', 'cacheTimeMs', 'version', 'build', 'minVersion', 'fallbackLanguage'],
       plugins: {
         es: {
           excludes: ['enable', 'host', 'port', 'fallbackNodes', 'enableGoogleApi', 'googleApiKey'],
@@ -27,13 +27,13 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
       },
       wallet: {
         includes: ['alertIfUnusedWallet'],
-        excludes: ['notificationReadTime']
+        excludes: ['notificationReadTime'] // deprecated - should be removed later
       },
       helptip: {
         excludes: ['installDocUrl']
       },
       notifications: {
-        excludes: ['readTime']
+        excludes: ['time', 'warnCount', 'unreadCount']
       }
     },
     defaultSettings = angular.merge({
