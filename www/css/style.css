@@ -148,7 +148,22 @@
 .settings .item-divider {
     background-color: #f5f5f5;
 }
-
+.settings .item .input-label{
+  width: 80%;
+}
+.settings .item-toggle .input-label{
+  display: inline;
+  width: auto;
+  max-width: 50%;
+}
+.settings .item-select .input-label{
+  display: inline;
+  width: auto;
+  max-width: 50%;
+}
+.settings .item .badge {
+  top: 22px;
+}
 .no-margin {
   margin: 0 !important;
 }

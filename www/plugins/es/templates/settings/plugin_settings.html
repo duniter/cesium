@@ -14,9 +14,9 @@
       </label>
     </div>
 
-    <div class="item item-toggle dark">
-      <div ng-class="{'gray': !formData.enable}" class="input-label" translate>ES_SETTINGS.ENABLE_REMOTE_STORAGE</div>
-      <h4 class="gray" ng-bind-html="'ES_SETTINGS.ENABLE_REMOTE_STORAGE_HELP' | translate"></h4>
+    <div class="item item-toggle item-text-wrap dark">
+      <div class="input-label" ng-class="{'gray': !formData.enable}" class="input-label" translate>ES_SETTINGS.ENABLE_REMOTE_STORAGE</div>
+      <h4 class="gray text-wrap" ng-bind-html="'ES_SETTINGS.ENABLE_REMOTE_STORAGE_HELP' | translate"></h4>
       <label class="toggle toggle-royal">
         <input type="checkbox" ng-model="formData.useRemoteStorage" ng-disabled="!formData.enable">
         <div class="track">
@@ -27,10 +27,8 @@
 
     <span class="item item-divider" translate>SETTINGS.NETWORK_SETTINGS</span>
 
-    <div class="item ink" ng-click="formData.enable && changeEsNode()" ng-disabled="!formData.enable">
-      <div class="input-label" ng-class="{'gray': !formData.enable}">
-      {{'ES_SETTINGS.PEER' | translate}}
-      </div>
+    <div class="item ink hidden-xs hidden-sm" ng-click="formData.enable && changeEsNode()" ng-disabled="!formData.enable">
+      <div class="input-label" ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.PEER</div>
 
       <!-- node fallback node -->
       <ng-if ng-if="isFallbackNode">
@@ -43,6 +41,21 @@
 
       <span ng-if="!isFallbackNode" class="item-note" ng-class="{'dark': formData.enable}">{{server}}</span>
     </div>
+    <ion-item class="ink item-icon-right item-text-wrap visible-xs visible-sm" ng-click="formData.enable && changeEsNode()" ng-disabled="!formData.enable">
+      <div class="input-label" ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.PEER</div>
+
+      <!-- node temporary changed -->
+      <ng-if ng-if="isFallbackNode">
+        <h4 class="gray text-wrap assertive" >
+          <b class="ion-alert-circled"></b>
+          <span ng-bind-html="'SETTINGS.PEER_CHANGED_TEMPORARY' | translate "></span>
+        </h4>
+        <div class="badge badge-assertive">{{server}}</div>
+      </ng-if>
+      <div class="badge" ng-class="{'badge-balanced': formData.enable, 'badge-stable': !formData.enable}"
+           ng-if="!isFallbackNode">{{server}}</div>
+      <i class="icon ion-ios-arrow-right"></i>
+    </ion-item>
 
     <span class="item item-divider" translate>ES_SETTINGS.NOTIFICATIONS.DIVIDER</span>
 
