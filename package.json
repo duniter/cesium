@@ -122,7 +122,8 @@
     "cordova-clipboard"
   ],
   "cordovaPlatforms": [
-    "android"
+    "android",
+    "ios"
   ],
   "cordova": {
     "plugins": {

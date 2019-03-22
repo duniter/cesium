@@ -94,6 +94,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   echo "----------------------------------"
   echo "- Building Android artifact..."
   echo "----------------------------------"
+  rm -rf platforms/android/build/outputs/release/*
   ionic build android --release
   if [[ $? -ne 0 ]]; then
     exit -1
