@@ -731,9 +731,9 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
       $scope.loading = true;
       UIUtils.loading.show();
     }
-    var options = {cache: false}; // No cache
-    if ($scope.formData.blockUid) {
-      options.blockUid = $scope.formData.blockUid;
+    var options = {
+      cache: false, // No cache
+      blockUid: $scope.formData.blockUid || undefined
     };
     return $scope.load($scope.formData.pubkey, $scope.formData.uid, options)
       .then(UIUtils.loading.hide);
