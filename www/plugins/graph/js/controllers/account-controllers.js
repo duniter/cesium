@@ -136,7 +136,7 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
 
     var withUD = true;
 
-    return csWot.loadRequirements({pubkey: $scope.formData.pubkey})
+    return csWot.load($scope.formData.pubkey, null/*uid*/, {cache: true})
       .then(function(identity) {
         $scope.identity = identity;
         withUD = $scope.identity.isMember || $scope.identity.wasMember;
