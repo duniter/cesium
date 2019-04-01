@@ -43,7 +43,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wot_identity', {
-        url: "/wot/:pubkey/:uid?action",
+        url: "/wot/:pubkey/:uid?action&block",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_identity.html",
@@ -73,7 +73,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wot_cert', {
-        url: "/wot/:pubkey/:uid/:type",
+        url: "/wot/:pubkey/:uid/:type?block",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
@@ -86,7 +86,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wot_cert_lg', {
-        url: "/wot/cert/lg/:pubkey/:uid",
+        url: "/wot/cert/lg/:pubkey/:uid?block",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
@@ -703,8 +703,8 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
     viewData.enableBack = UIUtils.screen.isSmall() ? true : viewData.enableBack;
   });
 
-  $scope.load = function(pubkey, withCache, uid) {
-    return csWot.load(pubkey, withCache, uid)
+  $scope.load = function(pubkey, uid, options) {
+    return csWot.load(pubkey, uid, options)
       .then(function(identity){
         if (!identity) return UIUtils.onError('ERROR.IDENTITY_NOT_FOUND')().then($scope.showHome);
         $scope.formData = identity;
@@ -731,7 +731,11 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
       $scope.loading = true;
       UIUtils.loading.show();
     }
-    return $scope.load($scope.formData.pubkey, false/*no cache*/, $scope.formData.uid)
+    var options = {cache: false}; // No cache
+    if ($scope.formData.blockUid) {
+      options.blockUid = $scope.formData.blockUid;
+    };
+    return $scope.load($scope.formData.pubkey, $scope.formData.uid, options)
       .then(UIUtils.loading.hide);
   };
 
@@ -853,8 +857,10 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
 
             UIUtils.loading.show();
 
+            var options = {cache: false, blockUid: idty.blockUid};
+
             // load selected identity
-            return csWot.load(idty.pubkey, false /*no cache*/);
+            return csWot.load(idty.pubkey, idty.uid, options);
           })
 
           .then(function (identity) {
@@ -972,35 +978,41 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
   /* -- open screens -- */
 
   $scope.showCertifications = function() {
+    var block = $scope.formData.requirements && $scope.formData.requirements.alternatives && $scope.formData.blockUid || undefined;
     // Warn: do not use a simple link here (a ng-click is mandatory for help tour)
     if (UIUtils.screen.isSmall() ) {
       $state.go('app.wot_cert', {
         pubkey: $scope.formData.pubkey,
         uid: $scope.formData.uid,
-        type: 'received'
+        type: 'received',
+        block: block
       });
     }
     else {
       $state.go('app.wot_cert_lg', {
         pubkey: $scope.formData.pubkey,
-        uid: $scope.formData.uid
+        uid: $scope.formData.uid,
+        block: block
       });
     }
   };
 
   $scope.showGivenCertifications = function() {
+    var block = $scope.formData.requirements && $scope.formData.requirements.alternatives && $scope.formData.blockUid || undefined;
     // Warn: do not use a simple link here (a ng-click is mandatory for help tour)
     if (UIUtils.screen.isSmall() ) {
       $state.go('app.wot_cert', {
         pubkey: $scope.formData.pubkey,
         uid: $scope.formData.uid,
-        type: 'given'
+        type: 'given',
+        block: block
       });
     }
     else {
       $state.go('app.wot_cert_lg', {
         pubkey: $scope.formData.pubkey,
-        uid: $scope.formData.uid
+        uid: $scope.formData.uid,
+        block: block
       });
     }
   };
@@ -1046,12 +1058,17 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
         $scope.removeActionParamInLocationHref(state);
       }
     };
+    var options = {
+      cache: true,
+      blockUid: state.stateParams && state.stateParams.block || undefined
+    };
 
     if (state.stateParams &&
       state.stateParams.pubkey &&
       state.stateParams.pubkey.trim().length > 0) {
       if ($scope.loading) { // load once
-        return $scope.load(state.stateParams.pubkey.trim(), true /*withCache*/, state.stateParams.uid)
+
+        return $scope.load(state.stateParams.pubkey.trim(), state.stateParams.uid, options)
           .then(onLoadSuccess);
       }
     }
@@ -1060,7 +1077,7 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
       state.stateParams.uid &&
       state.stateParams.uid.trim().length > 0) {
       if ($scope.loading) { // load once
-        return $scope.load(null, true /*withCache*/, state.stateParams.uid)
+        return $scope.load(null, state.stateParams.uid, options)
           .then(onLoadSuccess);
       }
     }
@@ -1069,7 +1086,7 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
     else if (csWallet.isLogin()){
 
       if ($scope.loading) {
-        return $scope.load(csWallet.data.pubkey, true /*withCache*/, csWallet.data.uid)
+        return $scope.load(csWallet.data.pubkey, csWallet.data.uid, options)
           .then(onLoadSuccess);
       }
     }
@@ -1096,7 +1113,7 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
   };
 
   $scope.doQuickFix = function(event) {
-    if (event == "showSelectIdentities") {
+    if (event === 'showSelectIdentities') {
       return $scope.showSelectIdentities();
     }
   };
@@ -1112,7 +1129,8 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
       // open the identity
       return $state.go('app.wot_identity', {
         pubkey: res.pubkey,
-        uid: res.uid
+        uid: res.uid,
+        block: res.meta && res.meta.timestamp || res.blockUid
       });
     });
   };
@@ -1239,11 +1257,16 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
 
     // First load
     if ($scope.loading) {
+      var options = {
+        cache: true,
+        blockUid: state.stateParams && state.stateParams.block || undefined
+      };
+
       if (state.stateParams &&
         state.stateParams.pubkey &&
         state.stateParams.pubkey.trim().length > 0) {
 
-        return $scope.load(state.stateParams.pubkey.trim(), true /*withCache*/, state.stateParams.uid)
+        return $scope.load(state.stateParams.pubkey.trim(), state.stateParams.uid, options)
           .then(function () {
             $scope.doMotion();
             $scope.showHelpTip();
@@ -1259,7 +1282,7 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
         if (!wallet.isLogin()) {
           return $scope.showHome();
         }
-        return $scope.load(wallet.data.pubkey, true /*withCache*/, csWallet.data.uid)
+        return $scope.load(wallet.data.pubkey, wallet.data.uid, options)
           .then(function () {
             $scope.doMotion();
             $scope.showHelpTip();
@@ -1278,7 +1301,11 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
 
   // Updating data
   $scope.doUpdate = function() {
-    return $scope.load($scope.formData.pubkey, false /*no cache*/, $scope.formData.uid)
+    var options = {
+      cache: false, // No cache
+      blockUid: $scope.formData.blockUid || undefined
+    };
+    return $scope.load($scope.formData.pubkey, $scope.formData.uid, options)
       .then(function() {
         $scope.doMotion();
         $scope.showHelpTip();
@@ -1374,7 +1401,7 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
 
 
 /**
- * Select identities from a pubkey (yusfull when many self on the same pubkey)
+ * Select identities from a pubkey (useful when many self on the same pubkey)
  * @param $scope
  * @param $q
  * @param csWot

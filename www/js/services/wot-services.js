@@ -630,23 +630,24 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
         }
       },
 
-      loadData = function(pubkey, withCache, uid, force) {
+      loadData = function(pubkey, uid, options) {
 
+        options = options || {};
         var data;
 
-        if (!pubkey && uid && !force) {
+        if (!pubkey && uid && !options.force) {
           return BMA.wot.member.getByUid(uid)
             .then(function(member) {
-              if (member) return loadData(member.pubkey, withCache, member.uid); // recursive call
+              if (member) return loadData(member.pubkey, member.uid, options); // recursive call
               //throw {message: 'NOT_A_MEMBER'};
-              return loadData(pubkey, withCache, uid, true/*force*/);
+              return loadData(pubkey, uid, angular.copy(options, {force: true}));
             });
         }
 
         // Check cached data
         if (pubkey) {
-          data = withCache ? identityCache.get(pubkey) : null;
-          if (data && (!uid || data.uid == uid)) {
+          data = (!angular.isDefined(options.cache) || options.cache) ? identityCache.get(pubkey) : null;
+          if (data && (!uid || data.uid === uid) && (!options.blockUid || data.blockUid === options.blockUid)) {
             console.debug("[wot] Identity " + pubkey.substring(0, 8) + " found in cache");
             return $q.when(data);
           }
@@ -662,9 +663,11 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
             uid: uid
           };
         }
+        if (options.blockUid) {
+          data.blockUid = options.blockUid;
+        }
 
         var now = Date.now();
-
         var parameters;
         var medianTime;
 

@@ -136,7 +136,7 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
 
     var withUD = true;
 
-    return csWot.load($scope.formData.pubkey)
+    return csWot.loadRequirements({pubkey: $scope.formData.pubkey})
       .then(function(identity) {
         $scope.identity = identity;
         withUD = $scope.identity.isMember || $scope.identity.wasMember;
@@ -157,7 +157,7 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
             'COMMON.DATE_MONTH_YEAR_PATTERN']),
 
           // get data
-          gpData.blockchain.movement($scope.formData.currency, angular.copy($scope.formData))
+          gpData.blockchain.movement($scope.formData.currency, angular.copy($scope.formData, {withUD: withUD}))
         ]);
       })
       .then(function(result) {
@@ -168,8 +168,7 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
         if (!result || !result.times) return; // no data
         $scope.times = result.times;
 
-        var formatInteger = $filter('formatInteger');
-        var formatAmount =  $filter('formatDecimal');
+        var formatDecimal =  $filter('formatDecimal');
         $scope.currencySymbol = $filter('currencySymbolNoHtml')($scope.formData.currency, $scope.formData.useRelative);
 
         // Data
@@ -230,7 +229,7 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
                 return data.datasets[tooltipItems.datasetIndex].label +
                   ': ' +
                   (!tooltipItems.yLabel ? '0' :
-                    (formatAmount(tooltipItems.yLabel) + ' ' + $scope.currencySymbol));
+                    (formatDecimal(tooltipItems.yLabel) + ' ' + $scope.currencySymbol));
               }
             }
           }
@@ -323,8 +322,6 @@ function GpAccountSumTxController($scope, $controller, $filter, $state, csTx, gp
   $scope.load = function(e, state) {
     if (!$scope.pubkey) return;
 
-    var formatDecimal = $filter('formatDecimal');
-
     // Load account TX data
     return csTx.load($scope.pubkey, -1)
       .then(function(result) {
@@ -354,7 +351,12 @@ function GpAccountSumTxController($scope, $controller, $filter, $state, csTx, gp
           pubkey: tx.pubkey,
           sum: 0
         };
-      sumByPubkeys[tx.pubkey].sum += Math.abs(tx.amount/100);
+      sumByPubkeys[tx.pubkey].sum += Math.abs(tx.amount);
+    });
+
+    // Divide amount by 100
+    _.each(_.keys(sumByPubkeys), function(pubkey) {
+      sumByPubkeys[pubkey].sum = sumByPubkeys[pubkey].sum / 100;
     });
 
     // Get values (from the map), then sort (desc) on sum

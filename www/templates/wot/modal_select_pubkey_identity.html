@@ -26,6 +26,15 @@
           <span ng-if="::!item.revoked && !item.pendingRevocation && !item.isMember" class="assertive" translate>WOT.NOT_MEMBER_PARENTHESIS</span>
           <span ng-if="::item.revoked || item.pendingRevocation" class="assertive bold" translate>WOT.IDENTITY_REVOKED_PARENTHESIS</span>
           <span ng-if="::item.meta.invalid" class="assertive" translate>ERROR.WOT_PENDING_INVALID_BLOCK_HASH</span>
+
+          <!--<span ng-if="::item.meta.time" class="assertive">{{ item.meta.time|formatDate }}</span>-->
+        </h4>
+
+        <h4 class="dark"
+            ng-if="::item.meta.time">
+          <i class="ion-calendar"></i>
+          <span translate>WOT.REGISTERED_SINCE</span>
+          {{::item.meta.time|medianDate}}
         </h4>
 
         <ng-if ng-if="::!item.revoked && !item.pendingRevocation && (item.certificationCount || item.pendingCertificationCount)">
@@ -35,7 +44,7 @@
                                   parameters="$root.currency.parameters"></cs-badge-certification>
 
           <!-- certification label -->
-          <div class="gray badge badge-secondary" >
+          <div class="gray badge badge-secondary hidden-xs" >
             <span translate>ACCOUNT.CERTIFICATION_COUNT</span>
           </div>
         </ng-if>
