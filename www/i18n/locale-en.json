@@ -17,7 +17,7 @@
     "BTN_YES_CONTINUE": "Yes, Continue",
     "BTN_SHOW": "Show",
     "BTN_SHOW_PUBKEY": "Show key",
-    "BTN_RELATIVE_UNIT": "Use relative unit",
+    "BTN_RELATIVE_UNIT": "Display amounts in UD?",
     "BTN_BACK": "Back",
     "BTN_NEXT": "Next",
     "BTN_IMPORT": "Import",
@@ -131,6 +131,8 @@
   },
   "SETTINGS": {
     "TITLE": "Settings",
+    "DISPLAY_DIVIDER": "Display",
+    "STORAGE_DIVIDER": "Storage",
     "NETWORK_SETTINGS": "Network",
     "PEER": "Duniter peer address",
     "PEER_CHANGED_TEMPORARY": "Address used temporarily",
@@ -147,7 +149,8 @@
     "TX_HISTORY_AUTO_REFRESH_HELP": "Updates the list of operations to each new block.",
     "AUTHENTICATION_SETTINGS": "Authentication",
     "KEEP_AUTH": "Expiration of authentication",
-    "KEEP_AUTH_HELP": "Define when authentication is cleared from memory",
+    "KEEP_AUTH_SHORT": "Expiration",
+    "KEEP_AUTH_HELP": "Define when authentication is cleared from memory.",
     "KEEP_AUTH_OPTION": {
       "NEVER": "After each operation",
       "SECONDS": "After {{value}}s of inactivity",

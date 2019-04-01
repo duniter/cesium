@@ -17,7 +17,7 @@
      "BTN_YES_CONTINUE": "Si, continuare",
      "BTN_SHOW": "Mostrare",
      "BTN_SHOW_PUBKEY": "Mostrare chiave pubblica",
-     "BTN_RELATIVE_UNIT": "Usare unità relativa",
+     "BTN_RELATIVE_UNIT": "Mostra importi in DU?",
      "BTN_BACK": "Indietro",
      "BTN_NEXT": "Avanti",
      "BTN_CANCEL": "Cancellare",
@@ -138,7 +138,8 @@
      "DISPLAY_UD_HISTORY": "Mostrare dividendi prodotti?",
      "AUTHENTICATION_SETTINGS": "Autenticazione",
      "KEEP_AUTH": "Scadenza dell'autenticazione",
-     "KEEP_AUTH_HELP": "Definire quando l'autenticazione verrà eliminata dalla memoria",
+     "KEEP_AUTH_SHORT": "Scadenza",
+     "KEEP_AUTH_HELP": "Definire quando l'autenticazione verrà eliminata dalla memoria.",
      "KEEP_AUTH_OPTION": {
        "NEVER": "Dopo ogni operazione",
        "SECONDS": "Dopo {{value}}s d'inattività",

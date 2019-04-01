@@ -26,18 +26,7 @@
 
     <div class="list item-border-large">
 
-      <div class="item item-toggle dark">
-        <div class="input-label">
-          {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
-        </div>
-        <label class="toggle toggle-royal"
-               id="helptip-settings-btn-unit-relative">
-            <input type="checkbox" ng-model="formData.useRelative">
-            <div class="track">
-                <div class="handle"></div>
-            </div>
-        </label>
-      </div>
+      <span class="item item-divider" translate>SETTINGS.DISPLAY_DIVIDER</span>
 
       <label class="item item-input item-select">
         <div class="input-label">
@@ -49,14 +38,13 @@
         </select>
       </label>
 
-      <div class="item item-text-wrap item-toggle dark">
+      <div class="item item-toggle dark">
         <div class="input-label">
-         {{'SETTINGS.USE_LOCAL_STORAGE' | translate}}
+          {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
         </div>
-        <h4 class="gray" ng-bind-html="'SETTINGS.USE_LOCAL_STORAGE_HELP' | translate">
-        </h4>
-        <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="formData.useLocalStorage" >
+        <label class="toggle toggle-royal"
+               id="helptip-settings-btn-unit-relative">
+          <input type="checkbox" ng-model="formData.useRelative">
           <div class="track">
             <div class="handle"></div>
           </div>
@@ -85,8 +73,25 @@
         </label>
       </div-->
 
+      <span class="item item-divider" translate>SETTINGS.STORAGE_DIVIDER</span>
+
+      <div class="item item-text-wrap item-toggle dark">
+        <div class="input-label">
+          {{'SETTINGS.USE_LOCAL_STORAGE' | translate}}
+        </div>
+        <h4 class="gray" ng-bind-html="'SETTINGS.USE_LOCAL_STORAGE_HELP' | translate">
+        </h4>
+        <label class="toggle toggle-royal">
+          <input type="checkbox" ng-model="formData.useLocalStorage" >
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+
       <!-- Allow extension here -->
       <cs-extension-point name="common"></cs-extension-point>
+
 
       <span class="item item-divider">
         {{'SETTINGS.AUTHENTICATION_SETTINGS' | translate}}
@@ -107,9 +112,9 @@
       </div>
 
       <ion-item class="item-text-wrap item-select">
-        <div class="input-label" translate>SETTINGS.KEEP_AUTH</div>
+        <div class="input-label hidden-xs " translate>SETTINGS.KEEP_AUTH</div>
+        <div class="visible-xs" translate>SETTINGS.KEEP_AUTH_SHORT</div>
         <h4 class="gray text-wrap hidden-xs" ng-bind-html="'SETTINGS.KEEP_AUTH_HELP' | translate"></h4>
-
         <label>
           <select ng-model="formData.keepAuthIdle"
                   ng-options="i as (keepAuthIdleLabels[i].labelKey | translate:keepAuthIdleLabels[i].labelParams ) for i in keepAuthIdles track by i">
