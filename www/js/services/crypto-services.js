@@ -1414,7 +1414,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
               subTitle: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.HELP',
               error: options.error,
               scope: options.scope
-            })
+            });
           })
           .then(function(password) {
             // Timeout is need to force popup to be hide
