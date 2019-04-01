@@ -633,7 +633,8 @@
           "PASSWORD_HELP": "Phrase secrète"
         },
         "ERROR": {
-          "BAD_PASSWORD": "Phrase secrète incorrecte"
+          "BAD_PASSWORD": "Phrase secrète incorrecte",
+          "BAD_CHECKSUM": "Somme de contrôle incorrecte"
         }
       }
     },

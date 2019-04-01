@@ -30,7 +30,7 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
     return exports;
   })
 
-  .factory('localStorage', function($window, $q, sessionStorage) {
+  .factory('localStorage', function($window, $q, $log, sessionStorage) {
     'ngInject';
 
     var
@@ -100,32 +100,48 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
 
     // Get a value from the secure storage
     exports.secure.get = function(key, defaultValue) {
-      var deferred = $q.defer();
-      exports.secure.storage.get(
-        function (value) {
-          if (!value && defaultValue) {
-            deferred.resolve(defaultValue);
-          }
-          else {
-            deferred.resolve(value);
-          }
-        },
-        function (err) { deferred.reject(err); },
-        key);
-      return deferred.promise;
+      return $q(function(resolve, reject) {
+        exports.secure.storage.get(
+          function (value) {
+            if (!value && defaultValue) {
+              resolve(defaultValue);
+            }
+            else {
+              resolve(value);
+            }
+          },
+          function (err) {
+            $log.error(err);
+            resolve(); // Error = not found
+          },
+          key);
+      });
     };
 
     // Set a object to the secure storage
     exports.secure.setObject = function(key, value) {
-      return exports.secure.put(key, value ? JSON.stringify(value) : undefined);
+      $log.debug("[storage] Setting object into secure storage, using key=" + key);
+      return $q(function(resolve, reject){
+        exports.secure.storage.set(
+          resolve,
+          reject,
+          key,
+          value ? JSON.stringify(value) : undefined);
+      });
     };
 
     // Get a object from the secure storage
     exports.secure.getObject = function(key) {
-      return exports.secure.storage.get(key)
-        .then(function(value) {
-          return JSON.parse(value||'null');
-        });
+      $log.debug("[storage] Getting object from secure storage, using key=" + key);
+      return $q(function(resolve, reject){
+        exports.secure.storage.get(
+          function(value) {resolve(JSON.parse(value||'null'));},
+          function(err) {
+            $log.error(err);
+            resolve(); // Error = not found
+          },
+          key);
+      });
     };
 
     function initStandardStorage() {
@@ -196,7 +212,6 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
 
       // Use Cordova secure storage plugin
       if (isDevice) {
-        console.debug("[storage] Starting secure storage...");
         startPromise = initSecureStorage();
       }
 

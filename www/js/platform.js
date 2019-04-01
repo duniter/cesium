@@ -77,12 +77,18 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     IdleProvider.timeout(csConfig.logoutTimeout||15); // display warning during 15s
   })
 
-  .factory('$exceptionHandler', function() {
+  .factory('$exceptionHandler', function($log) {
     'ngInject';
 
+    function stacktrace(f) {
+      return !f ? [] :
+        stacktrace(f.caller).concat([f.toString().split('(')[0].substring(9) + '(' + Array.prototype.slice.call(f.arguments).join(',') + ')']);
+    }
+
     return function(exception, cause) {
-      if (cause) console.error(exception, cause);
-      else console.error(exception);
+      //console.error(stacktrace(arguments.callee.caller));
+      if (cause) $log.error(exception, cause);
+      else $log.error(exception);
     };
   })
 

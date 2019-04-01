@@ -376,6 +376,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
           });
       })
       .then(function(data) {
+        if (!data) return;
         // Parse success: continue
         if (data && data.pubkey) return data;
 

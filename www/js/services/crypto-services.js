@@ -801,11 +801,11 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
 
       // Use Cordova plugin implementation, when exists
       if (isDevice && window.plugins && window.plugins.MiniSodium && crypto && crypto.getRandomValues) {
-        console.debug('[crypto] Loading Cordova MiniSodium implementation...');
+        console.debug('[crypto] Loading \'MiniSodium\' implementation...');
         serviceImpl = new CordovaServiceFactory();
       }
       else {
-        console.debug('[crypto] Loading FullJS implementation...');
+        console.debug('[crypto] Loading \'FullJS\' implementation...');
         serviceImpl = new FullJSServiceFactory();
       }
 
@@ -822,7 +822,6 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
 
     });
 
-
     return service;
   })
 
@@ -831,7 +830,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
      Crypto advanced service for Cesium
    */
 
-  .factory('csCrypto', function($q, $rootScope, CryptoUtils, UIUtils, Modals) {
+  .factory('csCrypto', function($q, $rootScope, $timeout, CryptoUtils, UIUtils, Modals) {
     'ngInject';
 
     function test(regexpContent) {
@@ -989,8 +988,8 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
     function parseWIF_or_EWIF(data_base58, options) {
       options = options || {};
 
-      var data_int8 = CryptoUtils.base58.decode(data_base58);
-      if (data_int8.length != constants.EWIF.DATA_LENGTH && data_int8.length != constants.WIF.DATA_LENGTH) {
+      var data_int8 = data_base58 && CryptoUtils.base58.decode(data_base58);
+      if (!data_int8 || data_int8.length != constants.EWIF.DATA_LENGTH && data_int8.length != constants.WIF.DATA_LENGTH) {
         return $q.reject('Invalid WIF or EWIF format (invalid bytes count).');
       }
 
@@ -1121,13 +1120,13 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
           // Check salt
           var expectedSalt = CryptoUtils.util.crypto_hash_sha256(CryptoUtils.util.crypto_hash_sha256(keypair.signPk)).slice(0,4);
           if(CryptoUtils.util.encode_base58(salt) !== CryptoUtils.util.encode_base58(expectedSalt)) {
-            throw {ucode: errorCodes.BAD_PASSWORD, message: 'ERROR.BAD_PASSWORD'};
+            throw {ucode: errorCodes.BAD_PASSWORD, message: 'ACCOUNT.SECURITY.KEYFILE.ERROR.BAD_PASSWORD'};
           }
 
           // Check checksum
           var expectedChecksum = CryptoUtils.util.crypto_hash_sha256(CryptoUtils.util.crypto_hash_sha256(ewif_int8_no_checksum)).slice(0,2);
           if (CryptoUtils.util.encode_base58(checksum) != CryptoUtils.util.encode_base58(expectedChecksum)) {
-            throw {ucode: errorCodes.BAD_CHECKSUM, message: 'ERROR.BAD_CHECKSUM'};
+            throw {ucode: errorCodes.BAD_CHECKSUM, message: 'ACCOUNT.SECURITY.KEYFILE.ERROR.BAD_CHECKSUM'};
           }
 
           return keypair;
@@ -1408,13 +1407,15 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       options.withSecret = angular.isDefined(options.withSecret) ? options.withSecret : true;
       options.silent = angular.isDefined(options.withSecret) ? options.silent : false;
       options.password = function() {
-        UIUtils.loading.hide();
-        return Modals.showPassword({
-          title: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.TITLE',
-          subTitle: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.HELP',
-          error: options.error,
-          scope: $scope
-        })
+        return UIUtils.loading.hide(100)
+          .then(function() {
+            return Modals.showPassword({
+              title: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.TITLE',
+              subTitle: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.HELP',
+              error: options.error,
+              scope: options.scope
+            })
+          })
           .then(function(password) {
             // Timeout is need to force popup to be hide
             return $timeout(function() {
@@ -1433,8 +1434,8 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
           return res;
         })
         .catch(function(err) {
-          if (err && err == 'CANCELLED') return;
-          if (err && err.ucode == csCrypto.errorCodes.BAD_PASSWORD) {
+          if (err && err === 'CANCELLED') return;
+          if (err && err.ucode == errorCodes.BAD_PASSWORD) {
             // recursive call
             return parseKeyFileData(data, {withSecret: options.withSecret, error: 'ACCOUNT.SECURITY.KEYFILE.ERROR.BAD_PASSWORD'});
           }
