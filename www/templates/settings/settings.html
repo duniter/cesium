@@ -24,222 +24,233 @@
       </button>
     </div>
 
-    <div class="list item-border-large">
+    <div class="row no-padding responsive-sm responsive-md responsive-lg">
 
-      <span class="item item-divider" translate>SETTINGS.DISPLAY_DIVIDER</span>
+      <!-- first column  -->
+      <div class="col col-50 list item-border-large padding-left padding-right no-padding-xs">
 
-      <label class="item item-input item-select">
-        <div class="input-label">
-          {{'COMMON.LANGUAGE' | translate}}
-        </div>
-        <select ng-model="formData.locale"
-                ng-change="changeLanguage(formData.locale.id)"
-                ng-options="l as l.label for l in locales track by l.id">
-        </select>
-      </label>
+        <span class="item item-divider" translate>SETTINGS.DISPLAY_DIVIDER</span>
 
-      <div class="item item-toggle dark">
-        <div class="input-label">
-          {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
-        </div>
-        <label class="toggle toggle-royal"
-               id="helptip-settings-btn-unit-relative">
-          <input type="checkbox" ng-model="formData.useRelative">
-          <div class="track">
-            <div class="handle"></div>
+        <div class="item  item-select">
+          <div class="input-label">
+            {{'COMMON.LANGUAGE' | translate}}
           </div>
-        </label>
-      </div>
-
-      <div class="item item-toggle dark item-text-wrap">
-        <div class="input-label" ng-bind-html="'SETTINGS.ENABLE_HELPTIP' | translate">
-        </div>
-        <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="formData.helptip.enable" >
-          <div class="track">
-            <div class="handle"></div>
-          </div>
-        </label>
-      </div>
-
-      <!--div class="item item-toggle dark item-text-wrap">
-        <div class="input-label" ng-bind-html="'SETTINGS.ENABLE_UI_EFFECTS' | translate">
-        </div>
-        <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="formData.uiEffects" >
-          <div class="track">
-            <div class="handle"></div>
-          </div>
-        </label>
-      </div-->
-
-      <span class="item item-divider" translate>SETTINGS.STORAGE_DIVIDER</span>
-
-      <div class="item item-text-wrap item-toggle dark">
-        <div class="input-label">
-          {{'SETTINGS.USE_LOCAL_STORAGE' | translate}}
-        </div>
-        <h4 class="gray" ng-bind-html="'SETTINGS.USE_LOCAL_STORAGE_HELP' | translate">
-        </h4>
-        <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="formData.useLocalStorage" >
-          <div class="track">
-            <div class="handle"></div>
-          </div>
-        </label>
-      </div>
-
-      <!-- Allow extension here -->
-      <cs-extension-point name="common"></cs-extension-point>
-
-
-      <span class="item item-divider">
-        {{'SETTINGS.AUTHENTICATION_SETTINGS' | translate}}
-      </span>
-
-      <div class="item item-toggle item-text-wrap" >
-        <div class="input-label" ng-class="{'gray': !formData.useLocalStorage}">
-          {{'SETTINGS.REMEMBER_ME' | translate}}
-        </div>
-        <h4 class="gray text-wrap" ng-bind-html="'SETTINGS.REMEMBER_ME_HELP' | translate"></h4>
-
-        <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="formData.rememberMe" ng-disabled="!formData.useLocalStorage">
-          <div class="track">
-            <div class="handle"></div>
-          </div>
-        </label>
-      </div>
-
-      <ion-item class="item-text-wrap item-select">
-        <div class="input-label hidden-xs " translate>SETTINGS.KEEP_AUTH</div>
-        <div class="visible-xs" translate>SETTINGS.KEEP_AUTH_SHORT</div>
-        <h4 class="gray text-wrap hidden-xs" ng-bind-html="'SETTINGS.KEEP_AUTH_HELP' | translate"></h4>
-        <label>
-          <select ng-model="formData.keepAuthIdle"
-                  ng-options="i as (keepAuthIdleLabels[i].labelKey | translate:keepAuthIdleLabels[i].labelParams ) for i in keepAuthIdles track by i">
-          </select>
-        </label>
-      </ion-item>
-
-      <div class="item item-input hidden-xs hidden-sm" ng-class="{'gray': (!formData.useLocalStorage || !formData.rememberMe)}" ng-if="::$root.device.isDesktop()">
-        <div class="input-label">
-          <span class="input-label" translate>SETTINGS.KEYRING_FILE</span>
-          <h4 class="gray text-wrap" ng-bind-html="'SETTINGS.KEYRING_FILE_HELP' | translate"></h4>
+          <label>
+            <select ng-model="formData.locale"
+                    ng-change="changeLanguage(formData.locale.id)"
+                    ng-options="l as l.label for l in locales track by l.id">
+            </select>
+          </label>
         </div>
 
-        <div class="item-note dark">{{formData.keyringFile}}</div>
-      </div>
-
-      <span class="item item-divider">
-        {{'SETTINGS.WALLETS_SETTINGS' | translate}}
-      </span>
-
-      <div class="item item-toggle item-text-wrap dark">
-        <span class="input-label" ng-class="{'gray': !formData.useLocalStorage}" translate>SETTINGS.USE_WALLETS_ENCRYPTION</span>
-        <h4 class="gray text-wrap" ng-bind-html="'SETTINGS.USE_WALLETS_ENCRYPTION_HELP' | translate">
-        </h4>
-        <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="formData.useLocalStorageEncryption" ng-disabled="!formData.useLocalStorage">
-          <div class="track">
-            <div class="handle"></div>
+        <div class="item item-toggle dark">
+          <div class="input-label">
+            {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
           </div>
-        </label>
-      </div>
+          <label class="toggle toggle-royal"
+                 id="helptip-settings-btn-unit-relative">
+            <input type="checkbox" ng-model="formData.useRelative">
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
+        </div>
 
-      <span class="item item-divider" translate>SETTINGS.HISTORY_SETTINGS</span>
-
-      <div class="item item-toggle item-text-wrap dark">
-        <div class="input-label" translate>SETTINGS.DISPLAY_UD_HISTORY</div>
-        <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="formData.showUDHistory" >
-          <div class="track">
-            <div class="handle"></div>
+        <div class="item item-toggle dark item-text-wrap">
+          <div class="input-label" ng-bind-html="'SETTINGS.ENABLE_HELPTIP' | translate">
           </div>
-        </label>
-      </div>
+          <label class="toggle toggle-royal">
+            <input type="checkbox" ng-model="formData.helptip.enable" >
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
+        </div>
 
-      <div class="item item-toggle dark hidden-xs hidden-sm">
-        <div class="input-label" translate>SETTINGS.TX_HISTORY_AUTO_REFRESH</div>
-        <h4 class="gray text-wrap" ng-bind-html="'SETTINGS.TX_HISTORY_AUTO_REFRESH_HELP' | translate"></h4>
-        <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="formData.walletHistoryAutoRefresh" >
-          <div class="track">
-            <div class="handle"></div>
+        <!--div class="item item-toggle dark item-text-wrap">
+          <div class="input-label" ng-bind-html="'SETTINGS.ENABLE_UI_EFFECTS' | translate">
           </div>
-        </label>
-      </div>
+          <label class="toggle toggle-royal">
+            <input type="checkbox" ng-model="formData.uiEffects" >
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
+        </div-->
 
-      <!-- Allow extension here -->
-      <cs-extension-point name="history"></cs-extension-point>
+        <span class="item item-divider" translate>SETTINGS.STORAGE_DIVIDER</span>
 
-      <span class="item item-divider" translate>SETTINGS.NETWORK_SETTINGS</span>
-
-      <!-- Duniter node -->
-      <div class="item ink item-text-wrap hidden-xs hidden-sm" ng-click="changeNode()">
-        <div class="input-label" translate>SETTINGS.PEER</div>
-
-        <!-- node temporary changed -->
-        <ng-if ng-if="formData.node.temporary">
-          <h4 class="gray text-wrap assertive" >
-            <i class="icon ion-alert-circled"></i>
-            <span ng-bind-html="'SETTINGS.PEER_CHANGED_TEMPORARY' | translate "></span>
+        <div class="item item-text-wrap item-toggle dark">
+          <div class="input-label">
+            {{'SETTINGS.USE_LOCAL_STORAGE' | translate}}
+          </div>
+          <h4 class="gray" ng-bind-html="'SETTINGS.USE_LOCAL_STORAGE_HELP' | translate">
           </h4>
-          <div class="item-note assertive text-italic">{{bma.server}}</div>
-        </ng-if>
-
-        <div class="item-note dark" ng-if="!formData.node.temporary">{{bma.server}}</div>
-      </div>
-      <ion-item class="ink item-icon-right visible-xs visible-sm" ng-click="changeNode()">
-        <div class="input-label" translate>SETTINGS.PEER</div>
-
-        <!-- node temporary changed -->
-        <ng-if ng-if="formData.node.temporary">
-          <h4 class="gray text-wrap assertive" >
-            <b class="ion-alert-circled"></b>
-            <span ng-bind-html="'SETTINGS.PEER_CHANGED_TEMPORARY' | translate "></span>
-          </h4>
-          <div class="badge badge-assertive">{{bma.server}}</div>
-        </ng-if>
-        <div class="badge badge-balanced" ng-if="!formData.node.temporary">{{bma.server}}</div>
-        <i class="icon ion-ios-arrow-right"></i>
-      </ion-item>
-
-      <!-- Expert mode ?-->
-      <div class="item item-text-wrap item-toggle dark hidden-xs hidden-sm">
-        <div class="input-label" ng-bind-html="'SETTINGS.EXPERT_MODE' | translate"></div>
-        <h4 class="gray" ng-bind-html="'SETTINGS.EXPERT_MODE_HELP' | translate"></h4>
-        <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="formData.expertMode" >
-          <div class="track">
-            <div class="handle"></div>
-          </div>
-        </label>
-      </div>
-
-      <!-- Block validity window-->
-      <ion-item class="item-text-wrap item-select">
-        <div class="input-label">
-          <div class="hidden-xs" translate>SETTINGS.BLOCK_VALIDITY_WINDOW</div>
-          <div class="visible-xs" translate>SETTINGS.BLOCK_VALIDITY_WINDOW_SHORT</div>
+          <label class="toggle toggle-royal">
+            <input type="checkbox" ng-model="formData.useLocalStorage" >
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
         </div>
-        <h4 class="gray text-wrap hidden-xs" ng-bind-html="'SETTINGS.BLOCK_VALIDITY_WINDOW_HELP' | translate"></h4>
-        <label>
-          <select ng-model="formData.blockValidityWindow"
-                  ng-options="i as (blockValidityWindowLabels[i].labelKey | translate:blockValidityWindowLabels[i].labelParams ) for i in blockValidityWindows track by i">
-          </select>
-        </label>
-      </ion-item>
 
-      <!-- Allow extension here -->
-      <cs-extension-point name="network"></cs-extension-point>
+        <!-- Allow extension here -->
+        <cs-extension-point name="common"></cs-extension-point>
 
-      <span class="item item-divider"
-            ng-if="$root.config.plugins"
-            translate>SETTINGS.PLUGINS_SETTINGS</span>
+        <span class="item item-divider">
+          {{'SETTINGS.AUTHENTICATION_SETTINGS' | translate}}
+        </span>
 
-      <!-- Allow extension here -->
-      <cs-extension-point name="plugins"></cs-extension-point>
+        <div class="item item-toggle item-text-wrap" >
+          <div class="input-label" ng-class="{'gray': !formData.useLocalStorage}">
+            {{'SETTINGS.REMEMBER_ME' | translate}}
+          </div>
+          <h4 class="gray text-wrap" ng-bind-html="'SETTINGS.REMEMBER_ME_HELP' | translate"></h4>
+
+          <label class="toggle toggle-royal">
+            <input type="checkbox" ng-model="formData.rememberMe" ng-disabled="!formData.useLocalStorage">
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
+        </div>
+
+        <ion-item class="item-text-wrap item-select">
+          <div class="input-label hidden-xs " translate>SETTINGS.KEEP_AUTH</div>
+          <div class="visible-xs" translate>SETTINGS.KEEP_AUTH_SHORT</div>
+          <h4 class="gray text-wrap hidden-xs" ng-bind-html="'SETTINGS.KEEP_AUTH_HELP' | translate"></h4>
+          <label>
+            <select ng-model="formData.keepAuthIdle"
+                    ng-options="i as (keepAuthIdleLabels[i].labelKey | translate:keepAuthIdleLabels[i].labelParams ) for i in keepAuthIdles track by i">
+            </select>
+          </label>
+        </ion-item>
+
+        <div class="item item-input hidden-xs hidden-sm" ng-class="{'gray': (!formData.useLocalStorage || !formData.rememberMe)}" ng-if="::$root.device.isDesktop()">
+          <div class="input-label">
+            <span class="input-label" translate>SETTINGS.KEYRING_FILE</span>
+            <h4 class="gray text-wrap" ng-bind-html="'SETTINGS.KEYRING_FILE_HELP' | translate"></h4>
+          </div>
+
+          <div class="item-note dark">{{formData.keyringFile}}</div>
+        </div>
+      </div>
+
+      <!-- second column  -->
+      <div class="col col-50 list item-border-large padding-left padding-right no-padding-xs">
+
+        <span class="item item-divider">
+          {{'SETTINGS.WALLETS_SETTINGS' | translate}}
+        </span>
+
+          <div class="item item-toggle item-text-wrap dark">
+            <span class="input-label" ng-class="{'gray': !formData.useLocalStorage}" translate>SETTINGS.USE_WALLETS_ENCRYPTION</span>
+            <h4 class="gray text-wrap" ng-bind-html="'SETTINGS.USE_WALLETS_ENCRYPTION_HELP' | translate">
+            </h4>
+            <label class="toggle toggle-royal">
+              <input type="checkbox" ng-model="formData.useLocalStorageEncryption" ng-disabled="!formData.useLocalStorage">
+              <div class="track">
+                <div class="handle"></div>
+              </div>
+            </label>
+          </div>
+
+        <span class="item item-divider" translate>SETTINGS.HISTORY_SETTINGS</span>
+
+        <div class="item item-toggle item-text-wrap dark">
+          <div class="input-label" translate>SETTINGS.DISPLAY_UD_HISTORY</div>
+          <label class="toggle toggle-royal">
+            <input type="checkbox" ng-model="formData.showUDHistory" >
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
+        </div>
+
+        <div class="item item-toggle dark hidden-xs hidden-sm">
+          <div class="input-label" translate>SETTINGS.TX_HISTORY_AUTO_REFRESH</div>
+          <h4 class="gray text-wrap" ng-bind-html="'SETTINGS.TX_HISTORY_AUTO_REFRESH_HELP' | translate"></h4>
+          <label class="toggle toggle-royal">
+            <input type="checkbox" ng-model="formData.walletHistoryAutoRefresh" >
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
+        </div>
+
+        <!-- Allow extension here -->
+        <cs-extension-point name="history"></cs-extension-point>
+
+        <span class="item item-divider" translate>SETTINGS.NETWORK_SETTINGS</span>
+
+        <!-- Duniter node -->
+        <div class="item ink item-text-wrap item-icon-right hidden-xs hidden-sm" ng-click="changeNode()">
+          <div class="input-label" translate>SETTINGS.PEER</div>
+
+          <!-- node temporary changed -->
+          <ng-if ng-if="formData.node.temporary">
+            <h4 class="gray text-wrap assertive" >
+              <i class="icon ion-alert-circled"></i>
+              <span ng-bind-html="'SETTINGS.PEER_CHANGED_TEMPORARY' | translate "></span>
+            </h4>
+            <div class="item-note assertive text-italic">{{bma.server}}</div>
+          </ng-if>
+
+          <div class="badge badge-balanced" ng-if="!formData.node.temporary">{{bma.server}}</div>
+          <i class="icon ion-ios-arrow-right"></i>
+        </div>
+        <ion-item class="ink item-icon-right visible-xs visible-sm" ng-click="changeNode()">
+          <div class="input-label" translate>SETTINGS.PEER</div>
+
+          <!-- node temporary changed -->
+          <ng-if ng-if="formData.node.temporary">
+            <h4 class="gray text-wrap assertive" >
+              <b class="ion-alert-circled"></b>
+              <span ng-bind-html="'SETTINGS.PEER_CHANGED_TEMPORARY' | translate "></span>
+            </h4>
+            <div class="badge badge-assertive">{{bma.server}}</div>
+          </ng-if>
+          <div class="badge badge-balanced" ng-if="!formData.node.temporary">{{bma.server}}</div>
+          <i class="icon ion-ios-arrow-right"></i>
+        </ion-item>
+
+        <!-- Expert mode ?-->
+        <div class="item item-text-wrap item-toggle dark hidden-xs hidden-sm">
+          <div class="input-label" ng-bind-html="'SETTINGS.EXPERT_MODE' | translate"></div>
+          <h4 class="gray" ng-bind-html="'SETTINGS.EXPERT_MODE_HELP' | translate"></h4>
+          <label class="toggle toggle-royal">
+            <input type="checkbox" ng-model="formData.expertMode" >
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
+        </div>
+
+        <!-- Block validity window-->
+        <ion-item class="item-text-wrap item-select">
+          <div class="input-label">
+            <div class="hidden-xs" translate>SETTINGS.BLOCK_VALIDITY_WINDOW</div>
+            <div class="visible-xs" translate>SETTINGS.BLOCK_VALIDITY_WINDOW_SHORT</div>
+          </div>
+          <h4 class="gray text-wrap hidden-xs" ng-bind-html="'SETTINGS.BLOCK_VALIDITY_WINDOW_HELP' | translate"></h4>
+          <label>
+            <select ng-model="formData.blockValidityWindow"
+                    ng-options="i as (blockValidityWindowLabels[i].labelKey | translate:blockValidityWindowLabels[i].labelParams ) for i in blockValidityWindows track by i">
+            </select>
+          </label>
+        </ion-item>
+
+        <!-- Allow extension here -->
+        <cs-extension-point name="network"></cs-extension-point>
+
+        <span class="item item-divider"
+              ng-if="$root.config.plugins"
+              translate>SETTINGS.PLUGINS_SETTINGS</span>
+
+        <!-- Allow extension here -->
+        <cs-extension-point name="plugins"></cs-extension-point>
+
+      </div>
     </div>
   </ion-content>
 </ion-view>
