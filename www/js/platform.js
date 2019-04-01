@@ -350,15 +350,16 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       }
 
       // Ionic Platform Grade is not A, disabling views transitions
-      if (ionic.Platform.grade.toLowerCase() != 'a') {
+      if (ionic.Platform.grade.toLowerCase() !== 'a') {
         console.info('[app] Disabling UI effects, because plateform\'s grade is [' + ionic.Platform.grade + ']');
         UIUtils.setEffects(false);
       }
 
       // Status bar style
       if (window.StatusBar) {
+        console.log("[app] Status bar plugin enable");
         // org.apache.cordova.statusbar required
-        StatusBar.styleDefault();
+        window.StatusBar.styleDefault();
       }
 
       // Get latest release
