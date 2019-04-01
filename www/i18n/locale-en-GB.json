@@ -633,7 +633,8 @@
           "PASSWORD_HELP": "Passphrase"
         },
         "ERROR": {
-          "BAD_PASSWORD": "Bad passphrase"
+          "BAD_PASSWORD": "Bad passphrase",
+          "BAD_CHECKSUM": "Bad checksum"
         }
       }
     },

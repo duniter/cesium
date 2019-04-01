@@ -80,13 +80,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
   .factory('$exceptionHandler', function($log) {
     'ngInject';
 
-    function stacktrace(f) {
-      return !f ? [] :
-        stacktrace(f.caller).concat([f.toString().split('(')[0].substring(9) + '(' + Array.prototype.slice.call(f.arguments).join(',') + ')']);
-    }
-
     return function(exception, cause) {
-      //console.error(stacktrace(arguments.callee.caller));
       if (cause) $log.error(exception, cause);
       else $log.error(exception);
     };

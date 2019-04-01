@@ -180,7 +180,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
       block.cleanData(); // Remove unused content (arrays...) and keep items count
 
       //console.debug('[currency] Received new block', block);
-      console.debug('[currency] Received new block [' + block.number + '-' + block.hash + ']');
+      console.debug('[currency] Received new block {' + block.number + '-' + block.hash + '}');
 
       data.currentBlock = block;
       data.currentBlock.receivedAt = moment().utc().unix();
