@@ -354,13 +354,13 @@ function GpAccountSumTxController($scope, $controller, $filter, $state, csTx, gp
       sumByPubkeys[tx.pubkey].sum += Math.abs(tx.amount);
     });
 
-    // Divide amount by 100
-    _.each(_.keys(sumByPubkeys), function(pubkey) {
-      sumByPubkeys[pubkey].sum = sumByPubkeys[pubkey].sum / 100;
-    });
-
     // Get values (from the map), then sort (desc) on sum
     var sumItems = _.sortBy(_.values(sumByPubkeys), 'sum').reverse();
+
+    // Divide total amount by 100
+    _.each(sumItems, function(item) {
+      item.sum = item.sum / 100;
+    });
 
     // Return arrays expected by angular-chart
     return {

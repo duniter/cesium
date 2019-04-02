@@ -17,14 +17,14 @@
                bind-notifier="{ rebind:formData.useRelative, locale:settings.locale.id}">
 
     <ion-refresher pulling-text="{{:locale:'COMMON.BTN_REFRESH' | translate}}"
-                   on-refresh="doUpdate(true)">
+                   on-refresh="doUpdate(true, $event)">
     </ion-refresher>
 
     <!-- Buttons bar-->
     <div class="hidden-xs hidden-sm padding text-center">
 
       <button class="button button-stable button-small-padding icon ion-loop ink"
-              ng-click="doUpdate(true)"
+              ng-click="doUpdate(true, $event)"
               title="{{:locale:'COMMON.BTN_REFRESH' | translate}}">
       </button>
 

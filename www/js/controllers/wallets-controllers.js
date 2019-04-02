@@ -92,7 +92,7 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
       $scope.setParameters({
         showDefault: true,
         showBalance: true,
-        minData: true
+        minData: false
       });
 
       return $scope.load()
@@ -130,13 +130,14 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
   };
 
   $scope.select = function(event, wallet) {
-    if (event.isDefaultPrevented()) return;
+    if (event.isDefaultPrevented() || !wallet || $scope.selectPrevented) return;
     if (wallet.isDefault()) {
       $state.go('app.view_wallet');
     }
     else {
       $state.go('app.view_wallet_by_id', {id: wallet.id});
     }
+    event.preventDefault();
   };
 
   $scope.editWallet = function(event, wallet) {
@@ -564,19 +565,27 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
               if ($scope.formData.stopped) return; // skip if stopped
               // Loading next wallet, after waiting some time
                 $scope.formData.updatingWalletId = wallet.id;
-                return (options.refresh || (walletLoadOptions.sources && !wallet.balance) ?
-                  wallet.refreshData(angular.merge({
-                    requirements: wallet.requirements && (wallet.requirements.isMember || wallet.requirements.wasMember || wallet.requirements.pendingMembership)
-                  }, walletLoadOptions)) :
-                  wallet.loadData(walletLoadOptions)
-                ).then(function(walletData) {
+                var loadPromise;
+                if (options.refresh && wallet.data.loaded) {
+                  var refreshOptions = angular.merge({
+                    // Refresh requirements if member account
+                    requirements: (!wallet.data.requirements.loaded || wallet.data.requirements.isMember || wallet.data.requirements.wasMember || wallet.data.requirements.pendingMembership)
+                  }, walletLoadOptions);
+                  loadPromise = wallet.refreshData(refreshOptions);
+                }
+                else {
+                  loadPromise = wallet.loadData(walletLoadOptions);
+                }
+
+                loadPromise.then(function(walletData) {
                   balance += walletData.balance;
                   $scope.updateWalletView(wallet.id);
                 })
-                  .catch(function(err) {
-                    console.error("[wallets] Error while loading data of wallet #{0}".format(wallet.id), err);
-                    hasLoadError = true;
-                  });
+                .catch(function(err) {
+                  console.error("[wallets] Error while loading data of wallet #{0}".format(wallet.id), err);
+                  hasLoadError = true;
+                });
+                return loadPromise;
             });
           }, $q.when());
       })
@@ -608,13 +617,17 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
         return UIUtils.onError('ERROR.LOAD_WALLET_LIST_FAILED')(err);
       });
   };
-  $scope.$on('modal.shown', $scope.load);
+
+  $scope.$on('modal.shown', function() {
+    $scope.load();
+  });
 
   $scope.cancel = function() {
     $scope.closeModal();
   };
 
-  $scope.select = function($event, wallet) {
+  $scope.select = function(event, wallet) {
+    if (event.isDefaultPrevented() || !wallet || $scope.selectPrevented) return;
     $scope.closeModal(wallet);
   };
 
@@ -653,9 +666,15 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
   $scope.doUpdate = function(silent, event) {
     if ($scope.loading || !$scope.wallets || !$scope.wallets.length || $scope.formData.updatingWalletId) return $q.when();
 
+    $scope.selectPrevented = true;
+    $timeout(function() {
+      $scope.selectPrevented = false;
+    }, 1000);
+
     return $scope.load({silent: silent, refresh: true})
       .then(function() {
         $scope.loading = false;
+        $scope.selectPrevented = false;
         if (silent) {
           $scope.$broadcast('$$rebind::' + 'rebind'); // force rebind
         }
@@ -692,8 +711,8 @@ function PopoverWalletSelectModalController($scope, $controller, UIUtils) {
     UIUtils.ink({selector: '.popover-wallets .list .item'});
   };
 
-  $scope.select = function($event, wallet) {
-    if ($event.preventDefault() || !wallet) return; // no selection
+  $scope.select = function(event, wallet) {
+    if (event.isDefaultPrevented() || !wallet || $scope.selectPrevented) return; // no selection
     $scope.closePopover(wallet);
   };
 }

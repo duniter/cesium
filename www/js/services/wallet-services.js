@@ -342,7 +342,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     isDataLoaded = function(options) {
       if (options) {
         if (options.minData && !options.sources) return data.loaded && true;
-        if (options.requirements && !data.requirements) return false;
+        if (options.requirements && !data.requirements.loaded) return false;
         if (options.tx && options.tx.enable && (!data.tx.fromTime || data.tx.fromTime == 'pending')) return false;
         if (options.sigStock && !data.sigStock) return false;
       }
@@ -936,7 +936,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     loadMinData = function(options) {
       options = options || {};
       options.requirements = angular.isDefined(options.requirements) ? options.requirements :
-        (!data.requirements || angular.isUndefined(data.requirements.needSelf));
+        (!data.requirements.loaded || angular.isUndefined(data.requirements.needSelf));
       if (!options.requirements) {
         return $q.when(data);
       }
@@ -960,7 +960,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         };
 
       // Force some load (requirements) if not already loaded
-      options.requirements = angular.isDefined(options.requirements) ? options.requirements : angular.isDefined(data.requirements.needSelf);
+      options.requirements = angular.isDefined(options.requirements) ? options.requirements : !data.requirements.loaded;
 
       // Force sources when TX enable
       if (angular.isUndefined(options.sources) && options.tx && options.tx.enable) {
@@ -1003,6 +1003,12 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           // API extension (after all other jobs)
           return api.data.raisePromise.load(data)
             .then(function(){
+
+              // Compute if full loaded
+              if (!data.loaded) {
+                data.loaded = data.requirements.loaded && data.sources;
+              }
+
               return data;
             });
         });
@@ -1475,7 +1481,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       if (!uid || !blockUid) {
         throw {message: 'ERROR.WALLET_HAS_NO_SELF'};
       }
-      if (data.requirements && data.requirements.expired) {
+      if (data.requirements.expired) {
         throw {message: 'ERROR.WALLET_IDENTITY_EXPIRED'};
       }
 

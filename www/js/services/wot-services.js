@@ -58,6 +58,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
 
       _resetRequirements = function(data) {
         data.requirements = {
+          loaded: false,
           meta: {},
           needSelf: true,
           needMembership: true,
@@ -118,6 +119,9 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
         requirements.willNeedCertificationCount = (!requirements.needMembership && !requirements.needCertificationCount &&
         (requirements.certificationCount - requirements.willExpireCertificationCount) < currencyParameters.sigQty) ?
           (currencyParameters.sigQty - requirements.certificationCount + requirements.willExpireCertificationCount) : 0;
+
+        // Mark as loaded - need by csWallet.isDataLoaded()
+        requirements.loaded = true;
 
 
         return requirements;
@@ -247,6 +251,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
             if (!!err &&
                 (err.ucode == BMA.errorCodes.NO_MATCHING_MEMBER ||
                  err.ucode == BMA.errorCodes.NO_IDTY_MATCHING_PUB_OR_UID)) {
+              data.requirements.loaded = true;
               return data;
             }
             throw err;
@@ -336,11 +341,11 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
             data.lookup = {};
 
             // Store received certifications (can be usefull later)
-            var certPubkeys = [];
-            data.lookup.certifications = !res.results ? {} : res.results.reduce(function(certsMap, res) {
+            var certPubkeys = {};
+            data.lookup.certifications = (res.results || []).reduce(function(certsMap, res) {
               return res.uids.reduce(function(certsMap, idty) {
                 var idtyFullKey = idty.uid + '-' + (idty.meta ? idty.meta.timestamp : '');
-                certsMap[idtyFullKey] = idty.others.reduce(function(certs, cert) {
+                certsMap[idtyFullKey] = (idty.others||[]).reduce(function(certs, cert) {
                   var certFullKey = idtyFullKey + '-' + cert.pubkey;
                   var result = {
                     pubkey: cert.pubkey,
@@ -372,9 +377,9 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
             }, {});
 
             // Store given certifications
-            certPubkeys = [];
-            data.lookup.givenCertifications = !res.results ? [] : res.results.reduce(function(certs, res) {
-              return res.signed.reduce(function(certs, cert) {
+            certPubkeys = {};
+            data.lookup.givenCertifications = (res.results || []).reduce(function(certs, res) {
+              return (res.signed || []).reduce(function(certs, cert) {
                 var result = {
                   pubkey: cert.pubkey,
                   uid: cert.uid,
@@ -388,14 +393,18 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
                 };
                 if (!certPubkeys[cert.pubkey]) {
                   certPubkeys[cert.pubkey] = result;
-                  // TODO : to not add, but replace the old one
                 }
                 else { // if duplicated cert: keep the most recent
                   if (result.block > certPubkeys[cert.pubkey].block) {
                     certPubkeys[cert.pubkey] = result;
+                    // TODO: Replace the existing one ? May be not, to be able to see renewal
+                    // (see issue #806)
+                    //  If yes (need to replace), check this code works:
+                    //certs.splice(_.findIndex(certs, {pubkey: cert.pubkey}), 1, result);
+                    //return certs;
                   }
                   else {
-                    return certs; // skip this result
+                    return certs; // skip this cert
                   }
                 }
                 return certs.concat(result);
