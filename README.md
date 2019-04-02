@@ -2,68 +2,68 @@
 
 # Cesium
 
-[Unhosted webapp](https://unhosted.org) client for any [Duniter](https://duniter.org) crypto-currency.
+ - [Unhosted webapp](https://unhosted.org) client for any [Duniter](https://duniter.org) crypto-currency.
+ - Manage your wallet, certify your friends, and more ! 
+ - [Web site](https://cesium.app)
 
-Manage your wallet, certify your friends, and more ! 
+## Install
 
+### On desktop computer
 
-## Try it !
-
- - on Ğ1-test currency: https://g1-test.duniter.fr
- - on Ğ1 currency (production use): https://g1.duniter.fr
-
-
-## Installation
-
-### On a desktop computer
+ - Download the [latest release](https://github.com/duniter/cesium/releases/latest)
  
- To use Cesium from your desktop computer :
- 
- - Debian or Windows: 
-    * Download the [latest release](https://github.com/duniter/cesium/releases/latest).
-    * Choose the desktop packaging (`cesium-desktop-vX.Y.Z-*`)
-    * Execute the downloaded file, and follow installation steps;
- - Other operating systems: 
-    * Choose the web packaging (`cesium-vX.Y.Z-web.zip`);
-    * Unpack the archive into a empty folder;
-    * Open the file `index.html` in your web browser;
+ - Then install, depending on your operating system:  
+    * Ubuntu: Double click the `.deb` file
+    * Debian: Run the command `sudo dpkg -i *.deb`
+    * Windows: Double click on the `.exe` file
+    * Mac OSx: Unzip the osx `.zip` file, then drop Cesium into your `Applications` folder 
+    * Other operating systems:  
+       * Unpack the ZIP archive (file `cesium-vX.Y.Z-web.zip`) into an empty folder;
+       * Open the file `index.html` in your web browser;
 
-### On a Yunohost installation
+### On smartphone
 
-There is a [package](https://github.com/duniter/cesium_ynh) for [YunoHost self-hosting distribution](https://yunohost.org).
+ - Android: 
+    * Manual installation: download then install the `.apk` from your smartphone;
+    * [Play Store](https://play.google.com/store/apps/details?id=fr.duniter.cesium);
+ - iOS
+    * Coming soon...;
 
-### On a web server
+### As a web site
 
-#### Installation
+#### First installation
 
 Cesium can be easily installed on most web server : 
 
- - Download the [latest release](https://github.com/duniter/cesium/releases/latest). Choose the web packaging (`cesium-vX.Y.Z-web.zip`); 
- - Unpack in a empty directory;
- - Configure a virtual host, to use previous directory as root. Check the file `index.html` exist in the root directory.
+ - Download the [latest release](https://github.com/duniter/cesium/releases/latest) (file `cesium-vx.y.z-web.zip`); 
+ - Unpack into an empty directory;
+ - Configure the web server engine (e.g. apache, nginx):
+    * Add a new virtual host, that use the directory as `web root`. 
+    * Make sure the file `index.html` exist inside this directory.
 
-For Linux distribution, a installation script could also be used to:
+#### Update to last version
 
- - Download the [latest release](https://github.com/duniter/cesium/releases/latest)
- - Unpack archive into the directory `./cesium`. Existing files will be override.  
+On Linux distributions, an update script can be used to update your Cesium web site:
 
 ```
+cd <CESIUM_WEB_ROOT>
 curl -kL https://git.duniter.org/clients/cesium-grp/cesium/raw/master/install.sh | bash
 ```
 or:
 
 ```
+cd <CESIUM_WEB_ROOT>
 wget -qO- https://git.duniter.org/clients/cesium-grp/cesium/raw/master/install.sh | bash
 ```
 
 
 **Note**: You may need root permission to write files. If so just replace `| bash` with `| sudo bash`.
 
-#### Configuration
+#### Changing default settings 
 
-To change default configuration, on a web server installation:
+To change default configuration, on a Cesium web site:
 
-  - Edit the file `config.js`, and set default properties:
+  - Edit the file `config.js` in the web root directory, and change some properties:
   
 ```js
 angular.module("cesium.config", [])
@@ -80,18 +80,18 @@ angular.module("cesium.config", [])
     "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
   },
   "node": {
-    "host": "gtest.duniter.org",
-    "port": "10900"
+    "host": "g1.duniter.org",
+    "port": "443"
   },
 	"plugins": {
 		"es": {
-			"enable": "false",
-			"host": "data.gtest.duniter.fr",
-			"port": "80"
+			"enable": "true",
+			"host": "g1.data.duniter.fr",
+			"port": "443"
 		}
 	},
-	"version": "0.9.7",
-	"build": "2017-01-17T08:27:57.915Z"
+	"version": "1.3.7",
+	"build": "2019-04-02T08:27:57.915Z"
 });
 ```
 
@@ -99,17 +99,19 @@ angular.module("cesium.config", [])
  
      * set `node.host` and `node.port` to the default node address. 
    
-  - Configure the optional extension for [ElasticSearch Duniter4j node](https://github.com/duniter/duniter4j)
+  - Configure the optional extension for [Cesium+](https://git.duniter.org/clients/cesium-grp/cesium-plus-pod/)
  
-     * set `plugins.es.host` and `plugins.es.port` to the default ES node address.
+     * set `plugins.es.host` and `plugins.es.port` to the default Cesium+ Pod (aka ES) address.
    
      * set `plugins.es.enable` with [true|false] to change the default extension state. 
    
 To learn more about configuration options, see the [detailed documentation](doc/configuration.md).
  
-## Developement
+#### Yunohost package
+    
+There is a [package](https://github.com/duniter/cesium_ynh) for [YunoHost self-hosting distribution](https://yunohost.org).
 
-Wants to compile Cesium ? or contribute ?
+## Contribute
 
 A [Development Guide](doc/development_guide.md) is available to learn :
  - How to install your development environment.
@@ -117,16 +119,10 @@ A [Development Guide](doc/development_guide.md) is available to learn :
  
 A [development tutorial](doc/fr/development_tutorial-01.md) (in French) is also available.
 
+## Donate
+
+To help developers with donation, use the [Cesium Team Ğ1 account](https://g1.duniter.fr#/app/wot/CitdnuQgZ45tNFCagay7Wh12gwwHM8VLej1sWmfHWnQX/) (public key: `CitdnuQgZ45tNFCagay7Wh12gwwHM8VLej1sWmfHWnQX`) 
+
 ## License
 
 This software is distributed under [GNU AGPL-3.0](https://raw.github.com/duniter/cesium/master/LICENSE).
-
-## Troubleshooting
-
-#### I'm having errors on Ubuntu/Debian (desktop version)
-
-Install these dependencies:
-
-```
-sudo apt-get install -y libgconf-2-4
-```
