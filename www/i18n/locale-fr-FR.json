@@ -462,7 +462,7 @@
     "BTN_AUTH": "S'authentifier",
     "GENERAL_HELP": "Veuillez vous authentifier :",
     "EXPECTED_UID_HELP": "Veuillez vous authentifier sur le compte <i class=\"ion-person\"></i> {{uid}} :",
-    "EXPECTED_PUBKEY_HELP": "Veuillez vous authentifier sur le portefeuille <i class=\"ion-key\"></i> {{pubkey|formatPubkey}} :",
+    "EXPECTED_PUBKEY_HELP": "Veuillez vous authentifier sur le portefeuille <br class=\"visible-xs\"/><i class=\"ion-key\"></i> {{pubkey|formatPubkey}} :",
     "SCAN_FORM_HELP": "Scanner le QR code de la <b>clef privée</b> du portefeuille."
   },
   "ACCOUNT": {
