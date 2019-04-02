@@ -227,7 +227,7 @@
       "TAB_WOT": "Red de confianza",
       "TAB_NETWORK": "Red",
       "TAB_BLOCKS": "Bloques",
-      "CURRENCY_SHORT_DESCRIPTION": "{{currency|capitalizar}} es una <b>moneda libre</b>, originada el {{firstBlockTime|formatFromNow}}. Ella cuenta actualmente <b>{{N}} miembros</b>, que producen y recibir un <a ng-click=\"showHelpModal('ud')\">Dividendo universal</a> (DU), cada {{dt|formatPeriod}}.",
+      "CURRENCY_SHORT_DESCRIPTION": "{{currency|abbreviate}} es una <b>moneda libre</b>, originada el {{firstBlockTime|formatFromNow}}. Ella cuenta actualmente <b>{{N}} miembros</b>, que producen y recibir un <a ng-click=\"showHelpModal('ud')\">Dividendo universal</a> (DU), cada {{dt|formatPeriod}}.",
       "NETWORK_RULES_DIVIDER": "Reglas de la red",
       "CURRENCY_NAME": "Nombre de la moneda",
       "MEMBERS": "Cantidad de miembros",
