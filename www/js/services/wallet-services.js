@@ -17,8 +17,6 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     var
     exports,
     constants = {
-      // @Deprecated
-      OLD_STORAGE_KEY: 'CESIUM_DATA',
       STORAGE_PUBKEY: 'pubkey',
       STORAGE_UID: 'uid',
       STORAGE_DATA_PREFIX: 'data-',
@@ -541,12 +539,6 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     },
 
     restore = function() {
-      // Clean old storage,
-      localStorage.get(constants.OLD_STORAGE_KEY)
-        .then(function(res) {
-          if (res && res != "null") localStorage.put(constants.OLD_STORAGE_KEY, null); // remove
-        });
-
       return  $q.all([
           sessionStorage.get(constants.STORAGE_SECKEY),
           localStorage.get(constants.STORAGE_PUBKEY),

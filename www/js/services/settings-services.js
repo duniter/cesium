@@ -48,7 +48,6 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
   var
   constants = {
-    OLD_STORAGE_KEY: 'CESIUM_SETTINGS', // for version < v1.1
     STORAGE_KEY: 'settings', // for version >= v1.1.0
     KEEP_AUTH_IDLE_SESSION: 9999
   },
@@ -225,14 +224,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   restore = function() {
     var now = Date.now();
 
-    return $q.all([
-        localStorage.getObject(constants.OLD_STORAGE_KEY), // for version < v1.1
-        localStorage.getObject(constants.STORAGE_KEY)
-      ])
-        .then(function(res) {
-          // Clean old storage
-          localStorage.put(constants.OLD_STORAGE_KEY, null);
-          var storedData = res[1] || res[0];
+    return localStorage.getObject(constants.STORAGE_KEY)
+        .then(function(storedData) {
           // No settings stored
           if (!storedData) {
             console.debug("[settings] No settings in local storage. Using defaults.");

@@ -81,21 +81,31 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
 
     // Set a value to the secure storage (or remove if value is not defined)
     exports.secure.put = function(key, value) {
-      var deferred = $q.defer();
-      if (angular.isDefined(value)) {
-        exports.secure.storage.set(
-          function (key) { deferred.resolve(); },
-          function (err) { deferred.reject(err); },
-          key, value);
-      }
-      // Remove
-      else {
-        exports.secure.storage.remove(
-          function (key) { deferred.resolve(); },
-          function (err) { deferred.reject(err); },
-          key);
-      }
-      return deferred.promise;
+      return $q(function(resolve, reject) {
+        if (value !== undefined && value !== null) {
+          exports.secure.storage.set(
+            function (key) {
+              resolve();
+            },
+            function (err) {
+              $log.error(err);
+              reject(err);
+            },
+            key, value);
+        }
+        // Remove
+        else {
+          exports.secure.storage.remove(
+            function () {
+              resolve();
+            },
+            function (err) {
+              $log.error(err);
+              resolve(); // Error = not found
+            },
+            key);
+        }
+      });
     };
 
     // Get a value from the secure storage
