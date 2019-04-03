@@ -3,7 +3,7 @@
 ## All build
 
 - [enh] Settings: display options in 2 columns
-- [enh] Display registration date, in multiple identities modal  - fix 817
+- [enh] Display registration date, in multiple identities modal  - fix #817
 - [fix] Detect Duniter local node, at startup  - fix #813
 - [fix] Settings: Change text "Display relative unit?" - fix #807
 
