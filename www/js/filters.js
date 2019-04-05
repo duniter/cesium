@@ -2,7 +2,7 @@
 angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalprecht.translate', 'cesium.translations'
 ])
 
-  .factory('filterTranslations', function($rootScope, $q, csPlatform, csSettings, csCurrency, $translate) {
+  .factory('filterTranslations', function($rootScope, $q, csPlatform, csSettings, csCurrency, $translate, $timeout) {
     'ngInject';
 
     var
@@ -65,7 +65,10 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     };
 
     // Default action
-    that.start();
+    // Must be started with a delay, to allow settings override, before starting platform (need by Cesium API)
+    $timeout(function() {
+      that.start();
+    });
 
     return that;
   })

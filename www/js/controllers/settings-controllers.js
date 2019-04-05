@@ -183,7 +183,7 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
           BMA.copy(nodeBMA);
           $scope.bma = BMA;
 
-          // Start platform is not already started
+          // Restart platform (or start if not already started)
           csPlatform.restart();
 
           // Reset history cache

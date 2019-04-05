@@ -735,7 +735,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
       // If not revoked
       else {
-        if (!data.isMember && data.requirements.meta.invalid) {
+        if (!data.isMember && data.requirements.meta && data.requirements.meta.invalid) {
           addEvent({type: 'error', message: 'ERROR.WALLET_INVALID_BLOCK_HASH', context: 'requirements'});
           console.debug("Invalid membership for uid={0}: block hash changed".format(data.uid));
         }

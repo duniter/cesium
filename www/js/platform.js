@@ -153,7 +153,18 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         .then(function(res) {
           if (!res) return checkBmaNodeAlive(); // Loop
 
-          return $translate('CONFIRM.USE_FALLBACK_NODE', {old: BMA.server, new: newServer})
+          // Force to show port/ssl, if this is the only difference
+          var messageParam = {old: BMA.server, new: newServer};
+          if (messageParam.old === messageParam.new) {
+            if (BMA.port != fallbackNode.port) {
+              messageParam.new += ':' + fallbackNode.port;
+            }
+            else if (BMA.useSsl == false && (fallbackNode.useSsl || fallbackNode.port==443)) {
+              messageParam.new += ' (SSL)';
+            }
+          }
+
+          return $translate('CONFIRM.USE_FALLBACK_NODE', messageParam)
             .then(function(msg) {
               return UIUtils.alert.confirm(msg);
             })
@@ -264,8 +275,8 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         .catch(function(err) {
           startPromise = null;
           started = false;
-          if($state.current.name !== 'app.home') {
-            $state.go('app.home', {error: 'peer'});
+          if($state.current.name !== $rootScope.errorState) {
+            $state.go($rootScope.errorState, {error: 'peer'});
           }
           throw err;
         });
@@ -310,6 +321,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     $rootScope.settings = csSettings.data;
     $rootScope.currency = csCurrency.data;
     $rootScope.device = Device;
+    $rootScope.errorState = 'app.home';
 
     // Compute the root path
     var hashIndex = $window.location.href.indexOf('#');

@@ -143,7 +143,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   },
 
   emitChangedEvent = function() {
-    var hasChanged = previousData && !angular.equals(previousData, data);
+    var hasChanged = angular.isUndefined(previousData) || !angular.equals(previousData, data);
     if (hasChanged) {
       previousData = angular.copy(data);
       return api.data.raise.changed(data);

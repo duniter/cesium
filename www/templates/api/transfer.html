@@ -56,10 +56,11 @@
 
           <div class="item item-icon-left-padding item-tx no-border ">
             <h2 translate>API.TRANSFER.AMOUNT</h2>
-            <div class="badge item-note badge-calm" ng-bind-html="transferData.amount|formatAmount:{useRelative: false, currency: $root.currency.name}"></div>
-            <div class="badge badge-secondary" ng-bind-html="transferData.amount|formatAmount:{useRelative: true, currency: $root.currency.name}"></div>
+            <ion-spinner class="badge item-note" icon="android" ng-show="loading"></ion-spinner>
+            <div class="badge item-note badge-calm ng-hide" ng-show="!loading"  ng-bind-html="transferData.amount|formatAmount:{useRelative: false, currency: currency.name}"></div>
+            <div class="badge badge-secondary ng-hide" ng-show="!loading" ng-bind-html="transferData.amount|formatAmount:{useRelative: true, currency: currency.name, currentUD: currency.currentUD}"></div>
           </div>
-          <div class="item item-icon-left-padding" ng-if="transferData.name">
+          <div class="item item-icon-left-padding" >
             <h2 translate>API.TRANSFER.NAME</h2>
             <div class="badge item-note">
               {{transferData.name}}
@@ -67,7 +68,7 @@
           </div>
           <div class="item item-icon-left-padding item-text-wrap">
             <h2 translate>API.TRANSFER.PUBKEY</h2>
-            <div class="badge">
+            <div class="badge" >
               <span class="hidden-xs"><br class="visible-sm visible-md"/><i class="icon ion-key"> </i>{{transferData.pubkey}}</span>
               <span class="visible-xs" copy-on-click="{{transferData.pubkey}}"><br class="visible-xs"/><i class="icon ion-key"></i> {{transferData.pubkey|formatPubkey}}</span>
             </div>
@@ -76,10 +77,33 @@
           <div class="item item-icon-left-padding">
             <h2 translate>API.TRANSFER.COMMENT</h2>
             <div class="badge item-note">
-              <span class="hidden-xs"><br class="visible-sm visible-md"/>{{transferData.comment}}</span>
-              <span class="visible-xs" copy-on-click="{{transferData.comment}}"><br/>{{transferData.comment}}</span>
+              <span class="hidden-xs"><br class="visible-sm visible-md"/>{{::transferData.comment}}</span>
+              <span class="visible-xs" copy-on-click="{{transferData.comment}}"><br/>{{::transferData.comment}}</span>
             </div>
           </div>
+
+          <div class="item item-icon-left-padding" ng-hide="error">
+            <h2 translate>API.TRANSFER.NODE</h2>
+            <div class="badge item-note" ng-if="!loading">
+              <br class="visible-sm visible-md"/>
+              <i class="icon ion-locked" ng-if="node.useSsl"></i>&nbsp;{{node.server}}
+            </div>
+          </div>
+
+          <div class="center padding animate-fade-in animate-show-hide ng-hide" ng-show="!loading && error">
+            <div class="card card-item padding">
+              <p class="item-content item-text-wrap">
+                <i class="icon ion-android-alert assertive"></i>
+                <span class="dark" trust-as-html="'API.COMMON.CONNECTION_ERROR'|translate:node"></span>
+              </p>
+
+              <!-- Retry -->
+              <button type="button"
+                      class="button button-positive icon icon-left ion-refresh ink"
+                      ng-click="start()">{{'COMMON.BTN_REFRESH'|translate}}</button>
+            </div>
+          </div>
+
           <!-- spacer in small screen -->
           <div class="padding-bottom visible-xs">&nbsp;</div>
         </div>

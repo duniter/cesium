@@ -901,7 +901,8 @@
       "LINK_DOC": "API documentation",
       "LINK_DOC_HELP": "API documentation for developers",
       "LINK_STANDARD_APP": "Standard version",
-      "LINK_STANDARD_APP_HELP": "Open standard version of {{'COMMON.APP_NAME'|translate}}"
+      "LINK_STANDARD_APP_HELP": "Open standard version of {{'COMMON.APP_NAME'|translate}}",
+      "CONNECTION_ERROR": "Peer <b>{{server}}</b> unreachable or invalid address.<br/><br/>Check your Internet connection, or contact the web site administrator."
     },
     "HOME": {
       "TITLE": "{{'COMMON.APP_NAME'|translate}} API Documentation",
@@ -917,6 +918,7 @@
       "NAME": "Name:",
       "PUBKEY": "Public key of the recipient:",
       "COMMENT": "Order reference:",
+      "NODE": "Peer address:",
       "DEMO": {
         "SALT": "demo",
         "PASSWORD": "demo",
@@ -963,6 +965,8 @@
         "PARAM_REDIRECT_URL_HELP": "URL redirection after sending payment, after the payment has been sent. Can contain the following strings, which will be replaced by the values of the transaction: \"{tx}\", \"{hash}\", \"{comment}\", \"{amount}\" and \"{pubkey}\".",
         "PARAM_CANCEL_URL": "URL if cancelled",
         "PARAM_CANCEL_URL_HELP": "URL in case of cancellation.  Can contain the following strings, which will be replaced: \"{comment}\", \"{amount}\" and \"{pubkey}\".",
+        "PARAM_PREFERRED_NODE": "Preferred Duniter peer",
+        "PARAM_PREFERRED_NODE_HELP": "Peer address (URL) to use preferably (\"g1.domain.com:443\" or \"https://g1.domain.com\")",
         "EXAMPLES_HELP": "Examples of integration:",
         "EXAMPLE_BUTTON": "HTML Button",
         "EXAMPLE_BUTTON_DEFAULT_TEXT": "Pay in {{currency|abbreviate}}",

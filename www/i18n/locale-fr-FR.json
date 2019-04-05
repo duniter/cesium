@@ -901,7 +901,8 @@
       "LINK_DOC": "documentation API",
       "LINK_DOC_HELP": "Documentation pour les développeurs",
       "LINK_STANDARD_APP": "version classique",
-      "LINK_STANDARD_APP_HELP": "Ouvrir la version classique de {{'COMMON.APP_NAME'|translate}}"
+      "LINK_STANDARD_APP_HELP": "Ouvrir la version classique de {{'COMMON.APP_NAME'|translate}}",
+      "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connection Internet, ou contacter l'administrateur du site</a>."
     },
     "HOME": {
       "TITLE": "Documentation API {{'COMMON.APP_NAME'|translate}}",
@@ -915,8 +916,9 @@
       "SUMMARY": "Récapitulatif de la commande :",
       "AMOUNT": "Montant :",
       "NAME": "Nom :",
-      "PUBKEY": "Clé publique du destinaire :",
+      "PUBKEY": "Clé publique du destinataire :",
       "COMMENT": "Référence de la commande :",
+      "NODE": "Addresse du nœud :",
       "DEMO": {
         "SALT": "demo",
         "PASSWORD": "demo",
@@ -942,6 +944,7 @@
       "DEMO_DIVIDER": "Tester",
       "DEMO_HELP": "Pour tester ce service, cliquez sur le bouton ci-contre. Le résultat s'affichera en dessous.",
       "DEMO_RESULT": "Résultat retourné par l'appel :",
+      "DEMO_RESULT_PEER": "Nœud Duniter utilisé : ",
       "DEMO_SUCCEED": "<i class=\"icon ion-checkmark\"></i> Succès !",
       "DEMO_CANCELLED": "<i class=\"icon ion-close\"></i> Annulé par l'utilisateur",
       "INTEGRATE_DIVIDER": "Intégrer",
@@ -960,9 +963,11 @@
         "PARAM_NAME": "Nom (du destinataire ou du site web)",
         "PARAM_NAME_HELP": "Le nom du destinataire, ou du site web appellant. Cela peut-etre un nom lisible (\"Mon site en ligne\"), ou encore une pseudo-adresse web (\"MonSite.com\").",
         "PARAM_REDIRECT_URL": "Adresse web de redirection",
-        "PARAM_REDIRECT_URL_HELP": "Adresse web (URL) de redirection, appellé quand le paiement a été envoyé. Peut contenir les chaines suivantes, qui seront remplacée par les valeurs de la transaction : \"{tx}\", \"{hash}\", \"{comment}\", \"{amount}\" et {pubkey}.",
+        "PARAM_REDIRECT_URL_HELP": "Adresse web (URL) de redirection, appellé quand le paiement a été envoyé. Peut contenir les chaines suivantes, qui seront remplacée par les valeurs de la transaction : \"{tx}\", \"{hash}\", \"{comment}\", \"{amount}\", \"{pubkey}\" et \"{node}\".",
         "PARAM_CANCEL_URL": "Adresse web d'annulation",
         "PARAM_CANCEL_URL_HELP": "Adresse web (URL) en cas d'annulation du paiement, par l'utilisateur. Peut contenir les chaines suivantes, qui seront remplacée dynamiquement: \"{comment}\", \"{amount}\" et {pubkey}.",
+        "PARAM_PREFERRED_NODE": "Nœud Duniter préféré",
+        "PARAM_PREFERRED_NODE_HELP": "Adresse (URL) du nœud Duniter à utiliser de préférence (\"g1.domaine.com:443\" ou \"https://g1.domaine.com\").",
         "EXAMPLES_HELP": "Voici des exemples d'intégration :",
         "EXAMPLE_BUTTON": "Bouton HTML",
         "EXAMPLE_BUTTON_DEFAULT_TEXT": "Payer en {{currency|currencySymbol}}",

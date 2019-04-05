@@ -129,8 +129,10 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     }
 
     function closeWs() {
+      if (!that.cache) return;
+
       console.warn('[BMA] Closing all websockets...');
-      _.keys(that.cache.wsByPath).forEach(function(key) {
+      _.keys(that.cache.wsByPath||{}).forEach(function(key) {
         var sock = that.cache.wsByPath[key];
         sock.close();
       });
@@ -397,7 +399,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       node: {
         summary: get('/node/summary', csHttp.cache.LONG),
         same: function(host2, port2) {
-          return host2 == that.host && ((!that.port && !port2) || (that.port == port2||80));
+          return host2 == that.host && ((!that.port && !port2) || (that.port == port2||80)) && (that.useSsl == (port2 && port2 === 443));
         },
         forceUseSsl: that.forceUseSsl
       },
@@ -622,9 +624,12 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     };
 
     exports.copy = function(otherNode) {
-      if (that.started) that.stop();
+      var wasStarted = that.started;
+      // Stop, if need
+      if (wasStarted) that.stop();
       that.init(otherNode.host, otherNode.port, otherNode.useSsl, that.useCache/*keep original value*/);
-      return that.start();
+      // Restart (only if was already started)
+      return wasStarted ? that.start() : $q.when();
     };
 
     exports.wot.member.uids = function() {

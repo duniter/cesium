@@ -43,7 +43,7 @@ function LoginController($scope, $timeout, $controller, csWallet) {
 
 }
 
-function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, csCrypto,
+function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, csCrypto, ionicReady,
                               UIUtils, BMA, Modals, csSettings, Device, parameters) {
   'ngInject';
 
@@ -72,9 +72,12 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
 
   // modal init
   $scope.init = function() {
-    // Should auto-compute pubkey ?
-    $scope.autoComputePubkey = ionic.Platform.grade.toLowerCase()==='a' &&
-      !UIUtils.screen.isSmall();
+
+    ionicReady().then(function(){
+      // Should auto-compute pubkey ?
+      $scope.autoComputePubkey = ionic.Platform.grade.toLowerCase()==='a' &&
+        !UIUtils.screen.isSmall();
+    });
 
     // Init remember me
     $scope.formData.rememberMe = csSettings.data.rememberMe;
