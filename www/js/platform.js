@@ -369,7 +369,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
       // Status bar style
       if (window.StatusBar) {
-        console.log("[app] Status bar plugin enable");
+        console.debug("[app] Status bar plugin enable");
         // org.apache.cordova.statusbar required
         window.StatusBar.styleDefault();
       }

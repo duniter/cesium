@@ -245,6 +245,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
     $scope.loading = true;
     $scope.transferData = {
       amount: undefined,
+      amounts: undefined,
       comment: undefined,
       pubkey: undefined,
       name: undefined,
@@ -259,7 +260,26 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
       if (!$scope.loading) return; // already enter
 
       if (state.stateParams && state.stateParams.amount) {
-        $scope.transferData.amount  = parseFloat(state.stateParams.amount.replace(new RegExp('[.,]'), '.')).toFixed(2) * 100;
+        var amountStr = state.stateParams.amount.trim();
+        var amounts = ((amountStr.indexOf('|') !== -1) && amountStr.split('|'))
+          || ((amountStr.indexOf(' ') !== -1) && amountStr.split(' '))
+          || ((amountStr.indexOf(';') !== -1) && amountStr.split(';'));
+        if (amounts){
+          $scope.transferData.amounts = amounts.reduce(function(res, amountStr) {
+            var amount = normalizeAmount(amountStr);
+            return amount > 0 ? res.concat(amount) : res;
+          }, []);
+          if ($scope.transferData.amounts.length === 1) {
+            $scope.transferData.amount  = $scope.transferData.amounts[0];
+            delete $scope.transferData.amounts;
+          }
+          else {
+            $scope.transferData.amounts.sort();
+          }
+        }
+        else {
+          $scope.transferData.amount  = normalizeAmount(amountStr);
+        }
       }
       if (state.stateParams && state.stateParams.pubkey) {
         $scope.transferData.pubkey = state.stateParams.pubkey;
@@ -362,14 +382,26 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
         ;
     };
 
+    function normalizeAmount(amountStr) {
+      return parseFloat((amountStr||'0').trim().replace(new RegExp('[.,]'), '.')).toFixed(2) * 100;
+    }
+
     function onLogin(authData) {
 
       // User cancelled
       if (!authData) return $scope.onCancel();
 
+      // Make sure amount require fields
+      if (!$scope.transferData.amount || !$scope.transferData.pubkey) {
+        $scope.transferData.error = true;
+        UIUtils.loading.hide();
+        return $q.reject();
+      }
+
       // Avoid multiple click
       if ($scope.sending) return;
       $scope.sending = true;
+      delete $scope.transferData.error;
 
       var wallet = $scope.demo ? csDemoWallet.instance(authData) : csWallet.instance('api', BMA);
 

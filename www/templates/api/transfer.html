@@ -54,12 +54,30 @@
             <p translate>API.TRANSFER.SUMMARY</p>
           </div>
 
-          <div class="item item-icon-left-padding item-tx no-border ">
+          <!-- Amount -->
+          <div class="item item-icon-left-padding item-tx no-border" ng-if="!transferData.amounts">
             <h2 translate>API.TRANSFER.AMOUNT</h2>
             <ion-spinner class="badge item-note" icon="android" ng-show="loading"></ion-spinner>
             <div class="badge item-note badge-calm ng-hide" ng-show="!loading"  ng-bind-html="transferData.amount|formatAmount:{useRelative: false, currency: currency.name}"></div>
-            <div class="badge badge-secondary ng-hide" ng-show="!loading" ng-bind-html="transferData.amount|formatAmount:{useRelative: true, currency: currency.name, currentUD: currency.currentUD}"></div>
+            <!--<div class="badge badge-secondary ng-hide" ng-show="!loading" ng-bind-html="transferData.amount|formatAmount:{useRelative: true, currency: currency.name, currentUD: currency.currentUD}"></div>-->
+            <div class="item-note badge-secondary ng-hide" ng-show="!loading" ng-bind-html="transferData.amount|formatAmount:{useRelative: true, currency: currency.name, currentUD: currency.currentUD}"></div>
           </div>
+          <!-- Amounts -->
+          <label ng-if="transferData.amounts"
+                 class="item item-icon-left-padding item-tx no-border"
+                ng-class="{'item-input item-select': transferData.amounts}">
+            <span class="input-label" translate>API.TRANSFER.AMOUNT</span>
+            <select ng-model="transferData.amount"
+                    required="true"
+                    ng-options="(amount |formatAmount:{useRelative: false, currency: currency.name}) for amount in transferData.amounts">
+            </select>
+            <h3 class="assertive" ng-if="!transferData.amount">
+              <i class="icon ion-alert-circled" ng-if="transferData.error"></i>
+              <span translate>API.TRANSFER.AMOUNTS_HELP</span>
+            </h3>
+            <span class="gray badge-secondary" ng-bind-html="transferData.amount|formatAmount:{useRelative: true, currency: currency.name, currentUD: currency.currentUD}"></span>
+          </label>
+
           <div class="item item-icon-left-padding" >
             <h2 translate>API.TRANSFER.NAME</h2>
             <div class="badge item-note">
