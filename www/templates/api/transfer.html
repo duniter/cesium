@@ -59,7 +59,6 @@
             <h2 translate>API.TRANSFER.AMOUNT</h2>
             <ion-spinner class="badge item-note" icon="android" ng-show="loading"></ion-spinner>
             <div class="badge item-note badge-calm ng-hide" ng-show="!loading"  ng-bind-html="transferData.amount|formatAmount:{useRelative: false, currency: currency.name}"></div>
-            <!--<div class="badge badge-secondary ng-hide" ng-show="!loading" ng-bind-html="transferData.amount|formatAmount:{useRelative: true, currency: currency.name, currentUD: currency.currentUD}"></div>-->
             <div class="item-note badge-secondary ng-hide" ng-show="!loading" ng-bind-html="transferData.amount|formatAmount:{useRelative: true, currency: currency.name, currentUD: currency.currentUD}"></div>
           </div>
           <!-- Amounts -->

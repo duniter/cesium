@@ -967,7 +967,7 @@
         "PARAM_REDIRECT_URL_HELP": "Adresse web (URL) de redirection, appellé quand le paiement a été envoyé. Peut contenir les chaines suivantes, qui seront remplacée par les valeurs de la transaction : \"{tx}\", \"{hash}\", \"{comment}\", \"{amount}\", \"{pubkey}\" et \"{node}\".",
         "PARAM_CANCEL_URL": "Adresse web d'annulation",
         "PARAM_CANCEL_URL_HELP": "Adresse web (URL) en cas d'annulation du paiement, par l'utilisateur. Peut contenir les chaines suivantes, qui seront remplacée dynamiquement: \"{comment}\", \"{amount}\" et {pubkey}.",
-        "PARAM_PREFERRED_NODE": "Nœud Duniter préféré",
+        "PARAM_PREFERRED_NODE": "Adresse du nœud préféré",
         "PARAM_PREFERRED_NODE_HELP": "Adresse (URL) du nœud Duniter à utiliser de préférence (\"g1.domaine.com:443\" ou \"https://g1.domaine.com\").",
         "EXAMPLES_HELP": "Voici des exemples d'intégration :",
         "EXAMPLE_BUTTON": "Bouton HTML",
