@@ -135,6 +135,7 @@
     "STORAGE_DIVIDER": "Stockage",
     "NETWORK_SETTINGS": "Réseau",
     "PEER": "Adresse du nœud Duniter",
+    "PEER_SHORT": "Adresse du nœud",
     "PEER_CHANGED_TEMPORARY": "Adresse utilisée temporairement",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
     "USE_LOCAL_STORAGE_HELP": "Permet de sauvegarder vos paramètres",

@@ -84,8 +84,8 @@
       </div>
     </ion-header-bar>
 
-    <ion-content scroll="false">
-      <ion-list class="list">
+    <ion-content scroll="false" class="scroll-content ionic-scroll" ng-class="{'overflow-scroll': smallscreen, 'scroll-content-false': !smallscreen}">
+      <ion-list class="list" ng-class="{'scroll': smallscreen}">
 
         <!-- Home -->
         <ion-item menu-close class="item-icon-left hidden-xs" ui-sref="app.home" active-link="active">

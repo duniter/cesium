@@ -27,21 +27,17 @@
     <div class="row no-padding responsive-sm responsive-md responsive-lg">
 
       <!-- first column  -->
-      <div class="col col-50 list item-border-large padding-left padding-right no-padding-xs">
+      <div class="col col-50 list item-border-large padding-left padding-right no-padding-xs" style="margin-bottom: 2px;">
 
         <span class="item item-divider" translate>SETTINGS.DISPLAY_DIVIDER</span>
 
-        <div class="item  item-select">
-          <div class="input-label">
-            {{'COMMON.LANGUAGE' | translate}}
-          </div>
-          <label>
-            <select ng-model="formData.locale"
-                    ng-change="changeLanguage(formData.locale.id)"
-                    ng-options="l as l.label for l in locales track by l.id">
-            </select>
-          </label>
-        </div>
+        <label class="item item-input item-select">
+          <div class="input-label" translate>COMMON.LANGUAGE</div>
+          <select ng-model="formData.locale"
+                  ng-change="changeLanguage(formData.locale.id)"
+                  ng-options="l as l.label for l in locales track by l.id">
+          </select>
+        </label>
 
         <div class="item item-toggle dark">
           <div class="input-label">
@@ -115,16 +111,17 @@
           </label>
         </div>
 
-        <ion-item class="item-text-wrap item-select">
-          <div class="input-label hidden-xs " translate>SETTINGS.KEEP_AUTH</div>
-          <div class="visible-xs" translate>SETTINGS.KEEP_AUTH_SHORT</div>
-          <h4 class="gray text-wrap hidden-xs" ng-bind-html="'SETTINGS.KEEP_AUTH_HELP' | translate"></h4>
-          <label>
-            <select ng-model="formData.keepAuthIdle"
-                    ng-options="i as (keepAuthIdleLabels[i].labelKey | translate:keepAuthIdleLabels[i].labelParams ) for i in keepAuthIdles track by i">
-            </select>
-          </label>
-        </ion-item>
+        <label class="item item-input item-select item-text-wrap">
+          <div class="input-label hidden-xs">
+            <span class="hidden-xs" translate>SETTINGS.KEEP_AUTH</span>
+            <h4 class="gray text-wrap hidden-xs" ng-bind-html="'SETTINGS.KEEP_AUTH_HELP' | translate"></h4>
+          </div>
+          <span class="visible-xs" translate>SETTINGS.KEEP_AUTH_SHORT</span>
+
+          <select ng-model="formData.keepAuthIdle"
+                  ng-options="i as (keepAuthIdleLabels[i].labelKey | translate:keepAuthIdleLabels[i].labelParams ) for i in keepAuthIdles track by i">
+          </select>
+        </label>
 
         <div class="item item-input hidden-xs hidden-sm" ng-class="{'gray': (!formData.useLocalStorage || !formData.rememberMe)}" ng-if="::$root.device.isDesktop()">
           <div class="input-label">
@@ -137,7 +134,7 @@
       </div>
 
       <!-- second column  -->
-      <div class="col col-50 list item-border-large padding-left padding-right no-padding-xs">
+      <div class="col col-50 list item-border-large padding-left padding-right no-padding-xs no-margin-xs">
 
         <span class="item item-divider">
           {{'SETTINGS.WALLETS_SETTINGS' | translate}}
@@ -200,7 +197,8 @@
           <i class="icon ion-ios-arrow-right"></i>
         </div>
         <ion-item class="ink item-icon-right visible-xs visible-sm" ng-click="changeNode()">
-          <div class="input-label" translate>SETTINGS.PEER</div>
+          <div class="input-label hidden-xs" translate>SETTINGS.PEER</div>
+          <div class="input-label visible-xs" translate>SETTINGS.PEER_SHORT</div>
 
           <!-- node temporary changed -->
           <ng-if ng-if="formData.node.temporary">
@@ -227,18 +225,16 @@
         </div>
 
         <!-- Block validity window-->
-        <ion-item class="item-text-wrap item-select">
-          <div class="input-label">
-            <div class="hidden-xs" translate>SETTINGS.BLOCK_VALIDITY_WINDOW</div>
-            <div class="visible-xs" translate>SETTINGS.BLOCK_VALIDITY_WINDOW_SHORT</div>
+        <label class="item item-input item-select item-text-wrap">
+          <div class="input-label hidden-xs">
+            <span translate>SETTINGS.BLOCK_VALIDITY_WINDOW</span>
+            <h4 class="gray text-wrap hidden-xs" ng-bind-html="'SETTINGS.BLOCK_VALIDITY_WINDOW_HELP' | translate"></h4>
           </div>
-          <h4 class="gray text-wrap hidden-xs" ng-bind-html="'SETTINGS.BLOCK_VALIDITY_WINDOW_HELP' | translate"></h4>
-          <label>
-            <select ng-model="formData.blockValidityWindow"
-                    ng-options="i as (blockValidityWindowLabels[i].labelKey | translate:blockValidityWindowLabels[i].labelParams ) for i in blockValidityWindows track by i">
-            </select>
-          </label>
-        </ion-item>
+          <div class="input-label visible-xs" translate>SETTINGS.BLOCK_VALIDITY_WINDOW_SHORT</div>
+          <select ng-model="formData.blockValidityWindow"
+                  ng-options="i as (blockValidityWindowLabels[i].labelKey | translate:blockValidityWindowLabels[i].labelParams ) for i in blockValidityWindows track by i">
+          </select>
+        </label>
 
         <!-- Allow extension here -->
         <cs-extension-point name="network"></cs-extension-point>

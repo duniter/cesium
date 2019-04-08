@@ -135,6 +135,7 @@
     "STORAGE_DIVIDER": "Storage",
     "NETWORK_SETTINGS": "Network",
     "PEER": "Duniter peer address",
+    "PEER_SHORT": "Peer address",
     "PEER_CHANGED_TEMPORARY": "Address used temporarily",
     "USE_LOCAL_STORAGE": "Enable local storage",
     "USE_LOCAL_STORAGE_HELP": "Allows you to save your settings",
