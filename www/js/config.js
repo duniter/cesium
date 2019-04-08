@@ -40,11 +40,23 @@ angular.module("cesium.config", [])
 	},
 	"fallbackNodes": [
 		{
-			"host": "g1.duniter.fr",
+			"host": "g1.nordstrom.duniter.org",
 			"port": 443
 		},
 		{
-			"host": "g1.duniter.org",
+			"host": "g1.cgeek.fr",
+			"port": 443
+		},
+		{
+			"host": "g1.monnaielibreoccitanie.org",
+			"port": 443
+		},
+		{
+			"host": "g1.le-sou.org",
+			"port": 443
+		},
+		{
+			"host": "g1.duniter.fr",
 			"port": 443
 		}
 	],
@@ -81,7 +93,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "1.3.10",
-	"build": "2019-04-08T09:09:16.573Z",
+	"build": "2019-04-08T09:48:55.055Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
