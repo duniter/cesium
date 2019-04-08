@@ -19,7 +19,7 @@
       <small class="ion-arrow-down-b"></small>
     </button>
 
-    <button class="button button-positive button-icon button-clear icon ion-android-done visible-xs" ng-click="doLogin()">
+    <button class="button button-positive button-icon button-clear icon ion-android-send visible-xs" ng-click="doLogin()">
     </button>
   </ion-nav-buttons>
 
@@ -49,7 +49,7 @@
         </div>
         <br class="hidden-xs"/>
         <br class="hidden-xs"/>
-        <div class="list padding no-padding-xs light-bg expert-mode">
+        <div class="list padding no-padding-xs light-bg">
           <div class="item">
             <p translate>API.TRANSFER.SUMMARY</p>
           </div>
@@ -61,21 +61,30 @@
             <div class="badge item-note badge-calm ng-hide" ng-show="!loading"  ng-bind-html="transferData.amount|formatAmount:{useRelative: false, currency: currency.name}"></div>
             <div class="item-note badge-secondary ng-hide" ng-show="!loading" ng-bind-html="transferData.amount|formatAmount:{useRelative: true, currency: currency.name, currentUD: currency.currentUD}"></div>
           </div>
+
           <!-- Amounts -->
-          <label ng-if="transferData.amounts"
-                 class="item item-icon-left-padding item-tx no-border"
-                ng-class="{'item-input item-select': transferData.amounts}">
-            <span class="input-label" translate>API.TRANSFER.AMOUNT</span>
+          <ion-item
+                 class="item-icon-left-padding item-input item-select"
+                 ng-class="{ 'item-input-error': form.$submitted && !transferData.amount}">
+            <div class="input-label" translate>API.TRANSFER.AMOUNT</div>
             <select ng-model="transferData.amount"
                     required="true"
                     ng-options="(amount |formatAmount:{useRelative: false, currency: currency.name}) for amount in transferData.amounts">
             </select>
-            <h3 class="assertive" ng-if="!transferData.amount">
-              <i class="icon ion-alert-circled" ng-if="transferData.error"></i>
-              <span translate>API.TRANSFER.AMOUNTS_HELP</span>
-            </h3>
-            <span class="gray badge-secondary" ng-bind-html="transferData.amount|formatAmount:{useRelative: true, currency: currency.name, currentUD: currency.currentUD}"></span>
-          </label>
+            <div class="hidden-xs hidden-sm">
+              <h3 class="assertive" ng-if="!transferData.amount">
+                <i class="icon ion-alert-circled" ng-if="form.$submitted && !transferData.amount"></i>
+                <span translate>API.TRANSFER.AMOUNTS_HELP</span>
+              </h3>
+              <span class="gray badge-secondary " ng-bind-html="transferData.amount|formatAmount:{useRelative: true, currency: currency.name, currentUD: currency.currentUD}"></span>
+            </div>
+          </ion-item>
+          <div class="form-errors"
+               ng-if="form.$submitted && !transferData.amount">
+            <div class="form-error">
+              <span translate="ERROR.FIELD_REQUIRED"></span>
+            </div>
+          </div>
 
           <div class="item item-icon-left-padding" >
             <h2 translate>API.TRANSFER.NAME</h2>

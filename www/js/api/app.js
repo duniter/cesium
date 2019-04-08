@@ -393,7 +393,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
 
       // Make sure amount require fields
       if (!$scope.transferData.amount || !$scope.transferData.pubkey) {
-        $scope.transferData.error = true;
+        $scope.form.$submitted=true;
         UIUtils.loading.hide();
         return $q.reject();
       }
@@ -418,6 +418,8 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
           });
         })
         .then(function(walletData) {
+          if (!walletData) return;
+
           $scope.login = true;
 
           UIUtils.loading.hide();
@@ -495,7 +497,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
           url = url.replace(/\{pubkey\}/g, $scope.transferData.pubkey);
           url = url.replace(/\{hash\}/g, txRes.hash||'');
           url = url.replace(/\{comment\}/g, $scope.transferData.comment||'');
-          url = url.replace(/\{amount\}/g, $scope.transferData.amount.toString());
+          url = url.replace(/\{amount\}/g, $scope.transferData.amount && ($scope.transferData.amount/100).toString() || '');
           url = url.replace(/\{tx\}/g, encodeURI(txRes.tx));
           url = url.replace(/\{node\}/g, encodeURI(BMA.host+':'+BMA.port));
 
@@ -519,7 +521,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
           // Make replacements - fix #548
           url = url.replace(/\{pubkey\}/g, $scope.transferData.pubkey);
           url = url.replace(/\{comment\}/g, $scope.transferData.comment||'');
-          url = url.replace(/\{amount\}/g, $scope.transferData.amount.toString());
+          url = url.replace(/\{amount\}/g, $scope.transferData.amount && ($scope.transferData.amount/100).toString() || '');
 
           return $scope.redirectToUrl(url, 1500);
         });
@@ -545,9 +547,6 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
 
     /* -- methods need by Login controller -- */
 
-    $scope.setForm = function(form) {
-      $scope.form = form;
-    };
     $scope.closeModal = onLogin;
 
   })

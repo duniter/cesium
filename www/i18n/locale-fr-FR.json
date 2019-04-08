@@ -913,12 +913,12 @@
     "TRANSFER": {
       "TITLE": "{{'COMMON.APP_NAME'|translate}} - Paiement en ligne",
       "TITLE_SHORT": "Paiement en ligne",
-      "SUMMARY": "Récapitulatif de la commande :",
+      "SUMMARY": "Récapitulatif du paiement :",
       "AMOUNT": "Montant :",
       "AMOUNTS_HELP": "Veuillez choisir le montant :",
       "NAME": "Nom :",
       "PUBKEY": "Clé publique du destinataire :",
-      "COMMENT": "Référence de la commande :",
+      "COMMENT": "Référence de l'opération :",
       "NODE": "Addresse du nœud :",
       "DEMO": {
         "SALT": "demo",
