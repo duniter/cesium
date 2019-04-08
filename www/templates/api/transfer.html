@@ -55,30 +55,30 @@
           </div>
 
           <!-- Amount -->
-          <div class="item item-icon-left-padding item-tx no-border" ng-if="!transferData.amounts">
+          <div class="item item-icon-left-padding item-tx no-border" ng-if="!transferData.amounts" style="min-height: 56px;">
             <h2 translate>API.TRANSFER.AMOUNT</h2>
             <ion-spinner class="badge item-note" icon="android" ng-show="loading"></ion-spinner>
-            <div class="badge item-note badge-calm ng-hide" ng-show="!loading"  ng-bind-html="transferData.amount|formatAmount:{useRelative: false, currency: currency.name}"></div>
-            <div class="item-note badge-secondary ng-hide" ng-show="!loading" ng-bind-html="transferData.amount|formatAmount:{useRelative: true, currency: currency.name, currentUD: currency.currentUD}"></div>
+            <div class="badge badge-calm ng-hide" ng-show="!loading"  ng-bind-html="transferData.amount|formatAmount:{useRelative: false, currency: currency.name}"></div>
+            <div class="badge badge-secondary ng-hide" ng-show="!loading" ng-bind-html="transferData.amount|formatAmount:{useRelative: true, currency: currency.name, currentUD: currency.currentUD}"></div>
           </div>
 
           <!-- Amounts -->
-          <ion-item
-                 class="item-icon-left-padding item-input item-select"
+          <label ng-if="transferData.amounts"
+                 style="min-height: 58px;"
+                 class="item item-icon-left-padding item-input item-select item-tx no-border"
                  ng-class="{ 'item-input-error': form.$submitted && !transferData.amount}">
-            <div class="input-label" translate>API.TRANSFER.AMOUNT</div>
+            <div class="input-label">
+              <span translate>API.TRANSFER.AMOUNT</span>
+              <h4 class="assertive hidden-xs hidden-sm" ng-if="!transferData.amount">
+                <span translate>API.TRANSFER.AMOUNTS_HELP</span>
+              </h4>
+            </div>
             <select ng-model="transferData.amount"
                     required="true"
                     ng-options="(amount |formatAmount:{useRelative: false, currency: currency.name}) for amount in transferData.amounts">
             </select>
-            <div class="hidden-xs hidden-sm">
-              <h3 class="assertive" ng-if="!transferData.amount">
-                <i class="icon ion-alert-circled" ng-if="form.$submitted && !transferData.amount"></i>
-                <span translate>API.TRANSFER.AMOUNTS_HELP</span>
-              </h3>
-              <span class="gray badge-secondary " ng-bind-html="transferData.amount|formatAmount:{useRelative: true, currency: currency.name, currentUD: currency.currentUD}"></span>
-            </div>
-          </ion-item>
+            <span class="badge badge-secondary ng-hide" ng-show="transferData.amount" ng-bind-html="transferData.amount|formatAmount:{useRelative: true, currency: currency.name, currentUD: currency.currentUD}"></span>
+          </label>
           <div class="form-errors"
                ng-if="form.$submitted && !transferData.amount">
             <div class="form-error">
