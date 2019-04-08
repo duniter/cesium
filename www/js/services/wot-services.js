@@ -60,11 +60,13 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
         data.requirements = {
           loaded: false,
           meta: {},
+          hasSelf: false,
           needSelf: true,
           needMembership: true,
           canMembershipOut: false,
           needRenew: false,
           pendingMembership: false,
+          isMember: false,
           wasMember: false,
           certificationCount: 0,
           needCertifications: false,
@@ -75,11 +77,12 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
         data.blockUid = null;
         data.isMember = false;
         data.sigDate = null;
+        data.hasSelf = false;
       },
 
       _fillRequirements = function(requirements, currencyParameters) {
         // Add useful custom fields
-        requirements.hasSelf = requirements.meta && !!requirements.meta.timestamp;
+        requirements.hasSelf = !!requirements.meta.timestamp;
         requirements.needSelf = !requirements.hasSelf || requirements.meta.invalid;
         requirements.wasMember = angular.isDefined(requirements.wasMember) ? requirements.wasMember : false; // Compat with Duniter 0.9
         requirements.needMembership = (!requirements.revoked && requirements.membershipExpiresIn <= 0 && requirements.membershipPendingExpiresIn <= 0 && !requirements.wasMember);

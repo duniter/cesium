@@ -129,7 +129,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
         return $q(function(resolve, reject) {
 
           var nowInSec = moment().utc().unix();
-          fromTime = fromTime || fromTime || (nowInSec - csSettings.data.walletHistoryTimeSecond);
+          fromTime = fromTime || (nowInSec - csSettings.data.walletHistoryTimeSecond);
           var tx = {
             pendings: [],
             validating: [],
@@ -234,8 +234,8 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                 tx.history.splice(0, tx.validating.length);
               }
 
-              tx.fromTime = fromTime;
-              tx.toTime = tx.history.length ? tx.history[0].time /*=max(tx.time)*/: fromTime;
+              tx.fromTime = fromTime !== 'pending' && fromTime || undefined;
+              tx.toTime = tx.history.length ? tx.history[0].time /*=max(tx.time)*/: tx.fromTime;
 
               resolve(tx);
             })
@@ -277,6 +277,10 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
               addSources(data, res.sources);
             }
             return data;
+          })
+          .catch(function(err) {
+            console.warn("[tx] Error while getting sources...", err);
+            throw err;
           });
       },
 
@@ -377,6 +381,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
     },
 
     loadSources = function(pubkey) {
+      console.debug("[tx] Loading sources for " + pubkey.substring(0,8));
       return loadData(pubkey, 'pending');
     };
 

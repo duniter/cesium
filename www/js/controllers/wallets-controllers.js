@@ -554,7 +554,7 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
         return wallets.reduce(function(res, wallet) {
             var skip= !options.refresh && wallet.isDataLoaded(walletLoadOptions);
             if (skip) {
-              console.debug("[wallets] Wallet #{0} already loaded. Skipping".format(wallet.id), walletLoadOptions);
+              console.debug("[wallets] Wallet #{0} already loaded. Skipping".format(wallet.id));
               return res.then(function(){
                 balance += wallet.data.balance;
                 $scope.updateWalletView(wallet.id);

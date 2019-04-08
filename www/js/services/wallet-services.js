@@ -896,13 +896,19 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       return $q.all([
 
           // Get requirements
-          loadRequirements(),
+          loadRequirements()
+            .then(function(data) {
+              if (data.requirements && (data.requirements.isMember || data.requirements.wasMember)) {
+                // Load sigStock
+                return loadSigStock();
+              }
+              else {
+                data.sigStock = 0;
+              }
+            }),
 
           // Get TX and sources
-          loadTxAndSources(),
-
-          // Load sigStock
-          loadSigStock()
+          loadTxAndSources()
         ])
         .then(function() {
 
@@ -1294,7 +1300,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
             .then(function() {
               // If more money: transfer all to restPub
               if (data.balance > 0 && restPub) {
-                console.debug("[wallet] Wallet has some more money: transfering fund to [{0}]".format(restPub.substring(0,6)));
+                console.debug("[wallet] Wallet has some more money: transfering fund to [{0}]".format(restPub.substring(0,8)));
                 return transfer(restPub, data.balance, undefined/*comments*/, false/*useRelative*/, restPub, block);
               }
             });
