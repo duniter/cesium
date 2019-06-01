@@ -86,6 +86,9 @@
         <splash height="1024" src="resources/ios/splash/Default-Portrait~ipad.png" width="768" />
         <splash height="960" src="resources/ios/splash/Default@2x~iphone.png" width="640" />
         <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
+        <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
+            <string>To scan QRCode</string>
+        </edit-config>
     </platform>
     <engine name="android" spec="^6.2.3" />
     <plugin name="cordova-plugin-camera" spec="^2.4.1" />
@@ -105,4 +108,5 @@
     <plugin name="phonegap-plugin-barcodescanner" spec="git+https://github.com/phonegap/phonegap-plugin-barcodescanner.git">
         <variable name="CAMERA_USAGE_DESCRIPTION" value=" QRCode scan" />
     </plugin>
+    <engine name="ios" spec="~4.5.5" />
 </widget>
