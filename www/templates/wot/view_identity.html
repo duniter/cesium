@@ -3,8 +3,8 @@
   </ion-nav-title>
 
   <ion-content scroll="true"
-               class="refresher-top-bg"
-               ng-class="{'member': !loading && formData.isMember}">
+               class="refresher-light"
+               ng-class="{'member refresher-positive-900-bg': !loading && formData.isMember, 'refresher-dark-100-bg': loading || !formData.isMember}">
 
     <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
                    on-refresh="doUpdate(true)">

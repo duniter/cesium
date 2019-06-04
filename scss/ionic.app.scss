@@ -864,44 +864,6 @@ $screen-menu:                     845px;
   background-image: url('../img/card.png');
 }
 
-/**************
- Item icons
-**************/
-
-.item.item-icon-left > i.avatar:first-child {
-  position: absolute;
-  display: flex;
-  height: 100%;
-  align-items: center;
-  font-size: 16px;
-  left: 16px;
-  top: 8px;
-  max-height: 32px;
-  max-width: 32px;
-}
-
-.item.item-checkbox.item-avatar > i.avatar:first-child,
-.item.item-checkbox.item-avatar > i.item-image:first-child,
-.item.item-checkbox.item-avatar .item-content > i.avatar:first-child,
-.item.item-checkbox.item-avatar .item-content > i.item-image:first-child,
-.item.item-checkbox.item-avatar * > i.avatar:first-child,
-.item.item-checkbox.item-avatar * > i.item-image:first-child,
-.item.item-checkbox.item-avatar * .item-content > i.avatar:first-child,
-.item.item-checkbox.item-avatar * .item-content > i.item-image:first-child {
-  left: 65px;
-}
-
-.item.item-checkbox.item-avatar .item-content,
-.item.item-checkbox .item-content .item-avatar {
-  padding-left: 65px;
-}
-
-@media screen and (max-width: $screen-xs-max) {
-  .item.item-icon-right > i.icon:last-child {
-    right: 1px;
-  }
-}
-
 /* ----
     Popup alert
    ---- */
@@ -933,28 +895,74 @@ $screen-menu:                     845px;
 * 'ion-refresher'
 *******/
 
-// Workaround to control background of 'ion-refresher'
-.refresher-top-bg:before {
-  position: absolute;
-  display: block;
-  top: 0;
-  width: 100%;
-  height: 100px;
-  z-index: -10;
-  content: " ";
+body {
+  // Set default refresher background height (for android)
+  --refresher-bg-height: 100px;
+
+  // Set default refresher background
+  --refresher-background-color: inherit;
+
 }
-.refresher-top-bg .scroll-refresher {
-  z-index: 50;
+
+.refresher-positive-900-bg {
+  --refresher-background-color: $positive-900-bg;
 }
-// Set refresher color (icon and text)
-.refresher-light .scroll-refresher {
-  .ionic-refresher-content {
-    color: $light;
+.refresher-dark-100-bg {
+  --refresher-background-color: $dark-100-bg;
+}
+
+.platform-android {
+  // Workaround to control background of 'ion-refresher'
+  .refresher-positive-900-bg:before,
+  .refresher-dark-100-bg:before {
+    background-color: var(--refresher-background-color);
+    position: absolute;
+    display: block;
+    top: 0;
+    width: 100%;
+    height: var(--refresher-bg-height, 100px);
+    z-index: -10;
+    content: " ";
   }
-  .spinner {
-    stroke: $light;
-    fill: $light;
+
+  .scroll-refresher {
+    z-index: 50;
   }
+}
+.platform-ios {
+  .refresher-positive-900-bg,
+  .refresher-dark-100-bg {
+
+    // use light color for icon and text
+    //@extend .refresher-light;
+
+    background-color: var(--refresher-background-color) !important;
+
+    .scroll {
+      background-color: #fff;
+      bottom: auto;
+      min-height: 100%;
+    }
+  }
+}
+
+// Lighter style for refresher (icon and text)
+.refresher-light {
+  .scroll-refresher {
+    .ionic-refresher-content {
+      color: $light;
+    }
+
+    .spinner {
+      stroke: $light;
+      fill: $light;
+    }
+  }
+}
+
+.refresher-positive-900-bg,
+.refresher-dark-100-bg {
+  @extend .refresher-light;
 }
 
 /******
@@ -962,12 +970,10 @@ $screen-menu:                     845px;
 *******/
 .view-wallet {
 
-  /* set 'ion-refresher' background color */
-  .refresher-top-bg {
-    @extend .refresher-light;
-  }
-  .refresher-top-bg:before {
-    @extend .positive-900-bg;
+  // Set refresher background height (for android)
+  --refresher-bg-height: 200px;
+
+  .hero {
     height: 200px;
   }
 
@@ -1041,7 +1047,6 @@ $screen-menu:                     845px;
 
 }
 
-
 @media screen and (max-width: $screen-sm-max) {
   .view-wallet {
     .qrcode {
@@ -1072,6 +1077,8 @@ $screen-menu:                     845px;
 *******/
 @media screen and (max-width: $screen-sm-max) {
   .view-wallet-tx {
+    --refresher-bg-height: 100px;
+
     .hero {
       height: 100px;
     }
@@ -1079,20 +1086,14 @@ $screen-menu:                     845px;
 }
 @media screen and (min-width: $screen-md) {
   .view-wallet-tx {
+    --refresher-bg-height: 140px;
+
     .hero {
       height: 140px;
     }
   }
 }
 .view-wallet-tx {
-  /* set 'ion-refresher' background color */
-  .refresher-top-bg {
-    @extend .refresher-light;
-  }
-  .refresher-top-bg:before {
-    @extend .positive-900-bg;
-    height: 100px;
-  }
 
   .item-text-wrap {
     white-space: normal !important;
@@ -1133,17 +1134,20 @@ $screen-menu:                     845px;
 *******/
 
 .view-identity {
-  .hero,
-  .refresher-top-bg:before {
-    @extend .dark-bg;
+  // Set refresher background height (for android)
+  --refresher-bg-height: 200px;
+
+  // Default wallet color
+  --refresher-background-color: $dark-100-bg;
+
+  // if member wallet, change wallet color
+  .member {
+    --refresher-background-color: $positive-900-bg;
+  }
+
+  .hero {
     height: 200px;
-  }
-  .member .hero,
-  .member.refresher-top-bg:before {
-    @extend .positive-900-bg;
-  }
-  .refresher-top-bg {
-    @extend .refresher-light;
+    background-color: var(--refresher-background-color);
   }
 
 }
@@ -1238,10 +1242,10 @@ a.underline:hover,
 .animate-fade-slide-in-right .expanded .item,
 .animate-fade-slide-in-right .expanded.item,
 .animate-ripple .expanded .item,
-.animate-ripple .expanded.item
-.card-avatar-small.expanded .item
-.card-avatar-small .expanded .item
-.card-avatar-small.expanded .card.card-comment
+.animate-ripple .expanded.item,
+.card-avatar-small.expanded .item,
+.card-avatar-small .expanded .item,
+.card-avatar-small.expanded .card.card-comment,
 .card-avatar-small .expanded .card.card-comment
 {
   @extend .done;
@@ -1392,13 +1396,66 @@ a.underline:hover,
 .item-avatar.item-icon-right .icon:last-child,
 .item-avatar.item-icon-right .icon-help:last-child,
 .item-avatar.item-icon-right .icon-alert:last-child,
+.item-avatar.item-icon-right.ink .icon.ion-ios-arrow-right,
 .item-avatar.item-icon-right #menu .footer .icon-help:last-child,
 #menu .footer .item-avatar.item-icon-right .icon-help:last-child {
   left: auto;
 }
 
 /**********
-   Item > Other
+   Item > Left icon position
+**********/
+
+.item.item-icon-left > i.avatar:first-child {
+  position: absolute;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  font-size: 16px;
+  left: 16px;
+  top: 8px;
+  max-height: 32px;
+  max-width: 32px;
+}
+
+.item.item-checkbox.item-avatar > i.avatar:first-child,
+.item.item-checkbox.item-avatar > i.item-image:first-child,
+.item.item-checkbox.item-avatar .item-content > i.avatar:first-child,
+.item.item-checkbox.item-avatar .item-content > i.item-image:first-child,
+.item.item-checkbox.item-avatar * > i.avatar:first-child,
+.item.item-checkbox.item-avatar * > i.item-image:first-child,
+.item.item-checkbox.item-avatar * .item-content > i.avatar:first-child,
+.item.item-checkbox.item-avatar * .item-content > i.item-image:first-child {
+  left: 65px;
+}
+
+.item.item-checkbox.item-avatar .item-content,
+.item.item-checkbox .item-content .item-avatar {
+  padding-left: 65px;
+}
+
+/**********
+   Item > Right icon position
+**********/
+
+// Workaround to force the right arrow to stay on the left
+// (because the ink effect, a div.ink-ripple can be the last-child)
+.item-icon-left.item-icon-right.ink .icon.ion-ios-arrow-right {
+  left: auto;
+}
+
+@media screen and (max-width: $screen-xs-max) {
+  // Reduce right space on the right icon
+  .item.item-icon-right > .icon:last-child,
+    // Workaround to force the right arrow to stay on the left
+    // (because the ink effect, a div.ink-ripple can be the last-child)
+  .item.item-icon-right > .icon.ion-ios-arrow-right{
+    right: 1px;
+  }
+}
+
+/**********
+   Item > Other properties
 **********/
 
 .item em {
@@ -2179,8 +2236,8 @@ div[dropzone]:hover {
 /**********
   Wot identity
 **********/
-.hero.dark-bg {
-  background-color: #555;
+.hero.dark-100-bg {
+  background-color: $dark-100-bg;
 }
 .hero.positive-900-bg {
   background-color: $positive-900-bg !important;

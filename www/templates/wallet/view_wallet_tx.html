@@ -12,14 +12,13 @@
     <cs-extension-point name="nav-buttons"></cs-extension-point>
 
     <button class="button button-icon button-clear visible-xs visible-sm"
-            ng-if="enableSelectWallet"
+            ng-if="enableSelectWallet && !loading"
             ng-click="showSelectWalletModal()">
-      <i class="ion-arrow-down-b"></i>
+      <i class=" ion-arrow-down-b"></i>
     </button>
   </ion-nav-buttons>
 
-  <ion-content scroll="true"
-               class="refresher-top-bg refresher-light"
+  <ion-content scroll="true" class="refresher-positive-900-bg"
                bind-notifier="{ rebind:settings.useRelative, locale:settings.locale.id}">
 
     <ion-refresher pulling-text="{{:locale:'COMMON.BTN_REFRESH' | translate}}"

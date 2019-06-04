@@ -14,14 +14,14 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content scroll="true" class="refresher-top-bg refresher-light"
+  <ion-content scroll="true" class="refresher-positive-900-bg"
                bind-notifier="{ rebind:settings.useRelative, locale:$root.settings.locale.id}">
 
     <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
                    on-refresh="doUpdate(true)">
     </ion-refresher>
 
-    <div class="positive-900-bg hero" id="wallet-header"
+    <div class="positive-900-bg hero"
          ng-class="{'hero-qrcode-active': toggleQRCode}">
       <div class="content" ng-if="!loading">
 
