@@ -167,7 +167,7 @@ $screen-lg:                       1200px;
 // ----------------------------------
 // Small devices: Tablets (≥768px)
 // ----------------------------------
-@media screen and (max-width: $screen-sm-max) and (min-width: $screen-sm){
+@media screen and (min-width: $screen-sm) and (max-width: $screen-sm-max) {
     .hidden-sm, .row-header.hidden-sm {
         display: none !important;
         visibility: hidden !important;
@@ -2264,21 +2264,27 @@ div[dropzone]:hover {
 /**********
   join wizard modal
 **********/
-@media screen and (max-width: $screen-sm-max) {
+@media screen and (max-width: $screen-xs-max) {
   .modal iframe.iframe-license {
     width: 100%;
-    height: 78%;
+    height: calc(100% - 104px);
+  }
+}
+@media screen and (min-width: $screen-sm) and (max-width: $screen-sm-max) and (min-height: 600px) {
+  .modal iframe.iframe-license {
+    width: 100%;
+    height: calc(100% - 171px);
   }
 }
 @media screen and (min-width: $screen-md) {
   .modal iframe.iframe-license {
     width: 100%;
-    height: 70%;
+    height: calc(100% - 171px);
   }
 
   .modal.modal-license iframe.iframe-license {
     width: 100%;
-    height: 85% !important;
+    height: calc(100% - 111px) !important;
   }
 }
 
