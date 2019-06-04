@@ -102,7 +102,7 @@ ionic state reset
 ionic run ios
 ```
 
-6. Build binaries :
+6. Build binaries for emulator :
 
 ```bash
 ionic build ios
@@ -111,4 +111,54 @@ ionic build ios
 
 ## Publishing to Apple store
 
-- Follow this steps (section `iOS Publishing`): https://ionicframework.com/docs/v1/guide/publishing.html
+### Pre-requisite
+
+Ensure you have a valid Certificate (with your private key) 
+and Distribution Provisioning Profile associated to it in the OSX Keychain.
+
+See: https://help.apple.com/developer-account/#/devbfa00fef7
+
+### Archive and upload to Apple Store Connect
+
+1. Prepare for iOS in release mode:
+
+```bash
+ionic prepare ios --release --prod
+```
+
+2. Generate archive for iOS generic device
+```bash
+cd platforms/ios
+mkdir build
+xcodebuild -workspace Cesium.xcworkspace -scheme Cesium -sdk iphoneos -configuration AppStoreDistribution archive -archivePath $PWD/build/Cesium.xcarchive
+```
+
+4. Create an `export.plist` file with the following content
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>method</key>
+    <string>app-store</string>
+    <key>teamID</key>
+    <string>YOUR_TEAM_ID</string>
+</dict>
+</plist>
+```
+
+Replace `YOUR_TEAM_ID` by the Team ID associated to your Apple Developer Account (see Membership section on https://developer.apple.com/account/)
+
+3. generate IPA for Apple Store
+```bash
+xcodebuild -exportArchive -archivePath $PWD/build/Cesium.xcarchive -exportOptionsPlist $PWD/export.plist -exportPath $PWD/build
+```
+
+4. Upload to Apple Store Connect:
+```bash
+/Applications/Xcode.app/Contents/Applications/Application\ Loader.app/Contents/Frameworks/ITunesSoftwareService.framework/Support/altool --upload-app -f "CLI.ipa" -u YOUR_APPLE_ID
+```
+
+The prompt for your password, if you use two-factor authentication, you'll need to generate an application specific password for this command (see: https://appleid.apple.com/account/manage)
+
+5. Go to `https://appstoreconnect.apple.com/`, then `My Apps` and publish your App from there.
