@@ -156,7 +156,7 @@ xcodebuild -exportArchive -archivePath $PWD/build/Cesium.xcarchive -exportOption
 
 4. Upload to Apple Store Connect:
 ```bash
-/Applications/Xcode.app/Contents/Applications/Application\ Loader.app/Contents/Frameworks/ITunesSoftwareService.framework/Support/altool --upload-app -f "CLI.ipa" -u YOUR_APPLE_ID
+/Applications/Xcode.app/Contents/Applications/Application\ Loader.app/Contents/Frameworks/ITunesSoftwareService.framework/Support/altool --upload-app -f $PWD/build/Cesium.ipa -u YOUR_APPLE_ID
 ```
 
 The prompt for your password, if you use two-factor authentication, you'll need to generate an application specific password for this command (see: https://appleid.apple.com/account/manage)
