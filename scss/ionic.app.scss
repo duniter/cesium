@@ -716,6 +716,12 @@ $screen-menu:                     845px;
   padding-right: 32px !important;
   line-height: 42px;
 }
+
+.button-fab-bottom-left.has-footer,
+.button-fab-bottom-right.has-footer {
+  bottom: 64px !important;
+}
+
 /* ============
  Home page
 =============== */
@@ -1756,9 +1762,17 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     height: 150px;
     padding-right: 0px !important;
 
+    .platform-ios & {
+      height: 180px;
+    }
+
     .hero {
       height: 150px;
       box-shadow: none; // not need (define in bar-header)
+
+      .platform-ios & {
+        height: 160px;
+      }
 
       .content {
         bottom: 0px;
@@ -1768,6 +1782,10 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 
   #menu .has-header {
     top: 150px;
+
+    .platform-ios & {
+      top: 180px;
+    }
   }
 }
 
