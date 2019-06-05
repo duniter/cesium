@@ -153,7 +153,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   #git submodule update --init
   git submodule sync
 
-  if [[ -d platforms/desktop ]]; then
+  if [[ -d "$DIRNAME/platforms/desktop" ]]; then
     cd platforms/desktop
 
     # Build desktop assets
