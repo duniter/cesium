@@ -607,7 +607,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
         $scope.methodsPopover = popover;
         UIUtils.ink({selector: '.popover-login-methods .item'});
       }
-    })
+    });
   };
 
   $scope.hideMethodsPopover = function() {
