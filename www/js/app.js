@@ -6,9 +6,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate',
   'ngApi', 'angular-cache', 'angular.screenmatch', 'angular.bind.notifier', 'ImageCropper', 'ion-digit-keyboard',
-  // removeIf(device)
-  'FBAngular', // angulmar-fullscreen
-  // endRemoveIf(device)
+  'FBAngular', // = angular-fullscreen
   // removeIf(no-device)
   'ngCordova',
   // endRemoveIf(no-device)

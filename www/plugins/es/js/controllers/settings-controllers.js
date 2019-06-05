@@ -52,6 +52,7 @@ function ESPluginSettingsController ($scope, $window, $q,  $translate, $ionicPop
                                      UIUtils, Modals, csHttp, csConfig, csSettings, esHttp, esSettings) {
   'ngInject';
 
+  $scope.hasWindowNotification = !!("Notification" in window);
   $scope.formData = {};
   $scope.popupData = {}; // need for the node popup
   $scope.loading = true;
@@ -223,8 +224,9 @@ function ESPluginSettingsController ($scope, $window, $q,  $translate, $ionicPop
   $scope.onFormChanged = function() {
     if ($scope.loading) return;
 
-    if ($scope.formData.notifications.emitHtml5 !== (!!("Notification" in window) && Notification.permission === "granted")){
-      Notification.requestPermission(function (permission) {
+    if ($scope.hasWindowNotification &&
+      $scope.formData.notifications.emitHtml5 !== (window.Notification.permission === "granted")){
+      window.Notification.requestPermission(function (permission) {
         // If the user accepts, let's create a notification
         $scope.formData.notifications.emitHtml5 = (permission === "granted"); // revert to false if permission not granted
         $scope.onFormChanged(); // Loop
@@ -240,8 +242,6 @@ function ESPluginSettingsController ($scope, $window, $q,  $translate, $ionicPop
 
     // Fix old settings (unused)
     delete csSettings.data.plugins.es.newNode;
-
-
 
     csSettings.store()
       .then(function() {
