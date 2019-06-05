@@ -149,17 +149,21 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   echo "- Building desktop artifacts..."
   echo "----------------------------------"
 
-
   #FIXME: ceci empêche d'etre sur le master/origin de cesium-desktop
   #git submodule update --init
   git submodule sync
-  cd platforms/desktop
 
-  # Build desktop assets
-  ./release.sh $2
-  if [[ $? -ne 0 ]]; then
-      exit -1
-  fi
+  if [[ -d platforms/desktop ]]; then
+    cd platforms/desktop
+
+    # Build desktop assets
+    ./release.sh $2
+    if [[ $? -ne 0 ]]; then
+        exit -1
+    fi
+  else
+    echo "WARN: platform/desktop not found -> Skipping desktop build!"
+  fi;
 
   # back to nodejs version 5
   cd $DIRNAME
