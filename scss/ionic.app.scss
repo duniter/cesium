@@ -23,12 +23,12 @@ $dark:                            #444 !default;
 //$assertive:                       #94c11f !default;
 //$balanced:                        #94c11f !default;
 
-$light: #fff !default;
-$active: #b2e0ff !default;
-$stable-100-bg: #f2f2f2 !default;
-$stable-900-bg: #e0e0e0 !default;
-$positive-900-bg: #1A237E !default;
-$dark-100-bg: #555 !default;
+$light:                           #fff !default;
+$active:                          #b2e0ff !default;
+$stable-100-bg:                   #f2f2f2 !default;
+$stable-900-bg:                   #e0e0e0 !default;
+$positive-900-bg:                 #1A237E !default;
+$dark-100-bg:                     #555 !default;
 
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
@@ -58,14 +58,14 @@ $cesiumicons-font-path: "../fonts" !default;
 // --------------------------------------------------
 // Responsive: Utility classes
 // --------------------------------------------------
-$screen-xxs-max: 400px;
-$screen-xs: 401px;
-$screen-xs-max: 767px;
-$screen-sm: 768px;
-$screen-sm-max: 991px;
-$screen-md: 992px;
-$screen-md-max: 1199px;
-$screen-lg: 1200px;
+$screen-xxs-max:                  400px;
+$screen-xs:                       401px;
+$screen-xs-max:                   767px;
+$screen-sm:                       768px;
+$screen-sm-max:                   991px;
+$screen-md:                       992px;
+$screen-md-max:                   1199px;
+$screen-lg:                       1200px;
 
 
 // IE10 on Windows Phone 8
@@ -235,7 +235,7 @@ $screen-lg: 1200px;
 
 @media screen and (max-width: $screen-sm-max) {
   body {
-    cursor: url('../img/finger.png'), auto;
+      cursor: url('http://ionicframework.com/img/finger.png'), auto;
   }
 }
 
@@ -370,8 +370,8 @@ $screen-lg: 1200px;
 =============== */
 
 // Resolution for left menu show/hide
-$screen-nomenu-max: 844px;
-$screen-menu: 845px;
+$screen-nomenu-max:               844px;
+$screen-menu:                     845px;
 
 // Screen without left menu
 @media screen and (max-width: $screen-nomenu-max) {
@@ -1683,15 +1683,6 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 @media (min-width: $screen-md) {
   .modal.modal-full-height {
     min-height: 80%;
-
-    .keyboard-up {
-
-      //min-height: 100% !important;
-    }
-  }
-
-  .modal.modal-full-height:has( .keyboard-up) {
-    top: 0 !important;
   }
 }
 
@@ -1907,7 +1898,6 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 @media screen and (min-width: $screen-sm) {
   .menu.menu-left {
 
-
     .item.item-divider {
       min-height: 5px;
       height: 5px;
@@ -1921,7 +1911,6 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 }
 
 @media screen and (min-width: $screen-md) {
-
   .menu.menu-left {
     background-image: url('../../resources/logo/svg/white/logo.large.empty.transparent.svg');
     background-repeat: no-repeat;
@@ -1931,7 +1920,6 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     height: 100%;
   }
 }
-
 
 /**********
    Screen - identity Certifications
