@@ -74,7 +74,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   $scope.login = csWallet.isLogin();
   $scope.auth = csWallet.isAuth();
   $scope.motion = UIUtils.motion.default;
-  $scope.smallscreen = UIUtils.screen.isSmall();
 
   $scope.showHome = function() {
     $ionicHistory.nextViewOptions({
@@ -348,6 +347,12 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         }
       })
       .catch(UIUtils.onError());
+  };
+
+  // Full screen
+  $scope.toggleFullscreen = function() {
+    UIUtils.screen.fullscreen.toggleAll();
+    $scope.fullscreen = UIUtils.screen.fullscreen.isEnabled();
   };
 
   // Do authentification

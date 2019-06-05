@@ -14,7 +14,8 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
     rangeDuration: 'day',
     firstBlockTime: 0,
     scale: 'linear',
-    hide: []
+    hide: [],
+    beginAtZero: true
   };
   $scope.formData.useRelative = false; /*angular.isDefined($scope.formData.useRelative) ?
     $scope.formData.useRelative : csSettings.data.useRelative;*/
@@ -92,6 +93,8 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
   $scope.$on('$ionicParentView.enter', $scope.enter);
 
   $scope.updateLocation = function() {
+    if (!$scope.stateName) return;
+
     $ionicHistory.nextViewOptions({
       disableAnimate: true,
       disableBack: true,
@@ -150,7 +153,7 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
       yAxe.type = scale;
       yAxe.ticks = yAxe.ticks || {};
       if (scale == 'linear') {
-        yAxe.ticks.beginAtZero = true;
+        yAxe.ticks.beginAtZero = angular.isDefined($scope.formData.beginAtZero) ? $scope.formData.beginAtZero : true;
         delete yAxe.ticks.min;
         yAxe.ticks.callback = function(value) {
           return format(value);
@@ -312,22 +315,21 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
   /* -- Popover -- */
 
   $scope.showActionsPopover = function(event) {
-    $scope.hideActionsPopover();
-    $ionicPopover.fromTemplateUrl('plugins/graph/templates/common/popover_range_actions.html', {
-      scope: $scope
-    }).then(function(popover) {
-      $scope.actionsPopover = popover;
-      //Cleanup the popover when we're done with it!
-      $scope.$on('$destroy', function() {
-        $scope.actionsPopover.remove();
-      });
-      $scope.actionsPopover.show(event);
+    UIUtils.popover.show(event, {
+      templateUrl: 'plugins/graph/templates/common/popover_range_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
+        $scope.actionsPopover = popover;
+      }
     });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
+
 }

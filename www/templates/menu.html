@@ -79,7 +79,15 @@
         </div>
         <!-- logout -->
         <a ng-if="login" class="button-icon" ng-click="logout({askConfirm: true})" style="position: absolute; top: 5px; left: 5px; z-index: 999;">
-          <i class="icon stable ion-android-exit"></i>
+          <i class="icon light ion-android-exit"></i>
+        </a>
+        <!-- fullscreen -->
+        <a class="button-icon visible-xs visible-sm"
+           ng-if="!forceFullscreen"
+           ng-click="toggleFullscreen()" style="position: absolute; top: 5px; right: 5px; z-index: 999;">
+          <i class="icon ion-arrow-expand dark"
+             ng-class="{'ion-arrow-shrink': !fullscreen}"
+             ></i>
         </a>
       </div>
     </ion-header-bar>

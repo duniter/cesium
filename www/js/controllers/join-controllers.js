@@ -124,7 +124,9 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
     options: {
       loop: false,
       effect: 'slide',
-      speed: 500
+      speed: 500,
+      pager: false,
+      showPager: false
     }
   };
   $scope.slideBehavior = {};

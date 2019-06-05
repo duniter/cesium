@@ -2,12 +2,12 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width, minimal-ui">
+    <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=yes, width=device-width, minimal-ui">
 
     <title>Cesium</title>
     <link rel="icon" href="img/favicon.ico">
 
-    <meta name="theme-color" content="#1a237e">
+    <meta name="theme-color" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <link rel="apple-touch-icon" href="img/logo_57px.png">
@@ -53,6 +53,14 @@
   <body ng-app="cesium" id="cesium" ng-strict-di="true" window-exit-unauth="true"
         ng-class="{'nobackdrop': $root.tour, 'expert-mode': $root.settings.expertMode}">
 
+    <!-- Enable fullscreen mode on small device (on a web browser) -->
+    <!--removeIf(device)-->
+    <div class="popover-backdrop visible-xs visible-sm"
+         ng-click="enableFullscreen($event)"
+         ng-if="forceFullscreen">
+    </div>
+    <!--endRemoveIf(device)-->
+
     <ion-nav-view>
       <div class="loader">
         <h3 style="text-align: center; padding-top: 25px; "><b>Cesium</b></h3>
@@ -94,6 +102,7 @@
     <script src="lib/ionic/js/angular/ui-leaflet.js"></script>
     <script src="js/vendor/ion-digit-keyboard.min.js"></script>
     <script src="lib/ionic/js/angular/angular-chart.min.js"></script>
+    <script src="lib/ionic/js/angular/angular-fullscreen.js"></script>
 
     <script src="js/vendor/base58.js" async></script>
     <!--removeIf(android)-->

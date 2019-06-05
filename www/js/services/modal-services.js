@@ -1,4 +1,4 @@
-angular.module('cesium.modal.services', [])
+angular.module('cesium.modal.services', ['cesium.utils.services'])
 
 // Useful for modal with no controller
 .controller('EmptyModalCtrl', function () {
@@ -21,7 +21,7 @@ angular.module('cesium.modal.services', [])
   };
 })
 
-.factory('ModalUtils', function($ionicModal, $rootScope, $q, $injector, $controller, $timeout) {
+.factory('ModalUtils', function($ionicModal, $rootScope, $q, $injector, $controller, $timeout, Device) {
   'ngInject';
 
 
@@ -58,6 +58,11 @@ angular.module('cesium.modal.services', [])
 
     $scope.closeModal = function (result) {
       $scope.resolved = true;
+
+      // removeIf(no-device)
+      if (Device.enable) Device.keyboard.close();
+      // endRemoveIf(no-device)
+
       return $scope.modal.remove()
         .then(function() {
           $scope.deferred.resolve(result);
@@ -100,6 +105,12 @@ angular.module('cesium.modal.services', [])
 
     options = options ? options : {} ;
     options.animation = options.animation || 'slide-in-up';
+
+    // var focusFirstInput = false;
+    // // removeIf(device)
+    // focusFirstInput = angular.isDefined(options.focusFirstInput) ? options.focusFirstInput : false;
+    // // endRemoveIf(device)
+    // options.focusFirstInput = focusFirstInput;
 
     // If modal has a controller
     if (controller) {

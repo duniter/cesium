@@ -2207,7 +2207,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
                 return auth({minData: true, silent: true})
                   .catch(function(err){
                     // user not auth: revert encryption to false
-                    if (err == 'CANCELLED') {
+                    if (err === 'CANCELLED') {
                       csSettings.apply({useLocalStorageEncryption: false});
                       return csSettings.store();
                     }

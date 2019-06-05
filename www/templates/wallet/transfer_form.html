@@ -1,34 +1,36 @@
-  <form name="transferForm" novalidate=""
-        ng-submit="doTransfer()">
+<form name="transferForm" novalidate=""
+      ng-submit="doTransfer()">
 
-    <div class="list no-padding-xs" ng-init="setForm(transferForm)">
+  <div class="list no-padding-xs" ng-init="setForm(transferForm)">
 
-      <!-- dest -->
-      <ion-item class="item-icon-right gray ink"
-         ng-class="{'item-input-error': form.$submitted && !formData.destPub}"
-         ng-click="showWotLookupModal()">
-          <span class="gray" translate>TRANSFER.TO</span>
-          <span class="badge badge-royal animate-fade-in animate-show-hide ng-hide" ng-show="destUid" >
+    <!-- dest -->
+    <ion-item class="item-icon-right gray ink"
+              ng-class="{'item-input-error': form.$submitted && !formData.destPub}"
+              tabindex="1"
+              ng-click="showWotLookupModal()">
+      <span class="gray" translate>TRANSFER.TO</span>
+      <span class="badge badge-royal animate-fade-in animate-show-hide ng-hide" ng-show="destUid">
             <i class="ion-person"></i> {{destUid}}
           </span>&nbsp;
-          <span class="badge badge-royal " ng-show="!destUid && formData.destPub">
+      <span class="badge badge-royal " ng-show="!destUid && formData.destPub">
             <i class="ion-key"></i> {{formData.destPub | formatPubkey}}
           </span>
-        <i class="gray icon ion-ios-arrow-right"></i>
-      </ion-item>
-      <div class="form-errors"
-           ng-if="form.$submitted && !formData.destPub">
-        <div class="form-error">
-          <span translate="ERROR.FIELD_REQUIRED"></span>
-        </div>
+      <i class="gray icon ion-ios-arrow-right"></i>
+    </ion-item>
+    <div class="form-errors"
+         ng-if="form.$submitted && !formData.destPub">
+      <div class="form-error">
+        <span translate="ERROR.FIELD_REQUIRED"></span>
       </div>
+    </div>
 
-      <!-- from -->
-      <ion-item class="item-text-wrap ink"
-                ng-class="{'item-icon-right': enableSelectWallet}"
-                ng-click="showSelectWalletModal()">
-        <span class="gray" translate>TRANSFER.FROM</span>
-        <span class="badge animate-fade-in animate-show-hide ng-hide" ng-show="!loading"
+    <!-- from -->
+    <ion-item class="item-text-wrap ink"
+              ng-class="{'item-icon-right': enableSelectWallet}"
+              tabindex="2"
+              ng-click="showSelectWalletModal()">
+      <span class="gray" translate>TRANSFER.FROM</span>
+      <span class="badge animate-fade-in animate-show-hide ng-hide" ng-show="!loading"
             ng-class="{'badge-assertive': (convertedBalance <= 0 || form.amount.$error.max), 'badge-balanced': (convertedBalance > 0 && (!form.amount.$error.max)) }">
             <ion-spinner icon="android" ng-show="!walletData.pubkey"></ion-spinner>
             <span ng-if="walletData.pubkey && !walletData.isMember">
@@ -37,163 +39,175 @@
             <span ng-if="walletData.isMember">
               <i class="ion-person"></i> {{walletData.name||walletData.uid}}&nbsp;&nbsp;
             </span>
-            <span ng-bind-html="walletData.balance|formatAmount:{useRelative: formData.useRelative, currency:currency}"></span>
+            <span
+              ng-bind-html="walletData.balance|formatAmount:{useRelative: formData.useRelative, currency:currency}"></span>
         </span>
 
-        <i class="gray icon ion-ios-arrow-right" ng-if="enableSelectWallet"></i>
-      </ion-item>
+      <i class="gray icon ion-ios-arrow-right" ng-if="enableSelectWallet"></i>
+    </ion-item>
 
-      <!-- Amount -->
-      <ion-item class="item-input item-floating-label item-button-right"
-                ng-class="{'item-input-error': form.$submitted && form.amount.$invalid}">
-        <div class="input-label">
-          <span translate>TRANSFER.AMOUNT</span>
-          (<span ng-bind-html="$root.currency.name | currencySymbol:formData.useRelative"></span>)
-        </div>
-        <input type="text"
-               class="hidden-xs hidden-sm"
-               name="amount"
-               placeholder="{{::'TRANSFER.AMOUNT_HELP' | translate}} ({{$root.currency.name | currencySymbolNoHtml:formData.useRelative}})"
-               ng-model="formData.amount"
-               required
-               number-float>
-
-        <!-- mobile: come OVER the input -->
-        <input type="text"
-               class="visible-xs visible-sm"
-               name="amount"
-               placeholder="{{::'TRANSFER.AMOUNT_HELP' | translate}} ({{$root.currency.name | currencySymbolNoHtml:formData.useRelative}})"
-               ng-model="formData.amount"
-               required
-               number-float>
-        <!-- This div will catch click event, to open digit keyboard -->
-        <div class="block visible-xs visible-sm"
-             style="position:absolute; opacity:0; z-index:100; top: 0; left: 0; height: 100%; width: 100%;"
-             ng-click="showDigitKeyboard()"></div>
-
-        <a class="button button-stable icon ion-arrow-swap gray ink hidden-xs hidden-sm" ng-click="showUnitPopover($event)">
-        </a>
-        <a class="button button-icon gray icon ion-android-more-vertical ink visible-xs visible-sm"
-           style="z-index:110; right: 0px;"
-           ng-click="showUnitPopover($event)">
-        </a>
-      </ion-item>
-      <div class="form-errors"
-           ng-show="form.$submitted && form.amount.$error"
-           ng-messages="form.amount.$error">
-        <div class="form-error" ng-message="required">
-          <span translate="ERROR.FIELD_REQUIRED"></span>
-        </div>
-        <div class="form-error" ng-message="numberFloat">
-          <span translate="ERROR.FIELD_NOT_NUMBER"></span>
-        </div>
-        <div class="form-error" ng-message="numberInt">
-          <span translate="ERROR.FIELD_NOT_INT"></span>
-        </div>
-        <div class="form-error" ng-message="min">
-          <span translate="ERROR.FIELD_MIN" translate-values="{min: minAmount}"></span>
-        </div>
-        <div class="form-error" ng-message="max">
-          <span translate="ERROR.NOT_ENOUGH_CREDIT"></span>
-        </div>
+    <!-- Amount -->
+    <ion-item class="item-input item-floating-label item-button-right"
+              ng-class="{'item-input-error': form.$submitted && form.amount.$invalid}">
+      <div class="input-label">
+        <span translate>TRANSFER.AMOUNT</span>
+        (<span ng-bind-html="$root.currency.name | currencySymbol:formData.useRelative"></span>)
       </div>
+      <input type="text"
+             tabindex="3"
+             class="hidden-xs hidden-sm"
+             name="amount"
+             placeholder="{{::'TRANSFER.AMOUNT_HELP' | translate}} ({{$root.currency.name | currencySymbolNoHtml:formData.useRelative}})"
+             ng-model="formData.amount"
+             required
+             number-float>
+
+      <!-- mobile: come OVER the input -->
+      <input type="text"
+             tabindex="-1"
+             class="visible-xs visible-sm"
+             name="amount"
+             placeholder="{{::'TRANSFER.AMOUNT_HELP' | translate}} ({{$root.currency.name | currencySymbolNoHtml:formData.useRelative}})"
+             ng-model="formData.amount"
+             required
+             number-float>
+      <!-- This div will catch click event, to open digit keyboard -->
+      <div class="block visible-xs visible-sm"
+           style="position:absolute; opacity:0; z-index:100; top: 0; left: 0; height: 100%; width: 100%;"
+           tabindex="4"
+           ng-click="showDigitKeyboard()"></div>
+
+      <a class="button button-stable icon ion-arrow-swap gray ink hidden-xs hidden-sm"
+         tabindex="-1"
+         ng-click="showUnitPopover($event)">
+      </a>
+      <a class="button button-icon gray icon ion-android-more-vertical ink visible-xs visible-sm"
+         style="z-index:110; right: 0px;"
+         ng-click="showUnitPopover($event)">
+      </a>
+    </ion-item>
+    <div class="form-errors"
+         ng-show="form.$submitted && form.amount.$error"
+         ng-messages="form.amount.$error">
+      <div class="form-error" ng-message="required">
+        <span translate="ERROR.FIELD_REQUIRED"></span>
+      </div>
+      <div class="form-error" ng-message="numberFloat">
+        <span translate="ERROR.FIELD_NOT_NUMBER"></span>
+      </div>
+      <div class="form-error" ng-message="numberInt">
+        <span translate="ERROR.FIELD_NOT_INT"></span>
+      </div>
+      <div class="form-error" ng-message="min">
+        <span translate="ERROR.FIELD_MIN" translate-values="{min: minAmount}"></span>
+      </div>
+      <div class="form-error" ng-message="max">
+        <span translate="ERROR.NOT_ENOUGH_CREDIT"></span>
+      </div>
+    </div>
 
 
-      <!-- rest -->
-      <a class="item item-icon-right gray ink"
-         ng-class="{'item-input-error': form.$submitted && !formData.destPub}"
-         ng-click="showWotLookupModal('restPub')"
-         ng-if="formData.all && formData.restAmount">
+    <!-- rest -->
+    <a class="item item-icon-right gray ink"
+       ng-class="{'item-input-error': form.$submitted && !formData.destPub}"
+       ng-click="showWotLookupModal('restPub')"
+       tabindex="5"
+       ng-if="formData.all && formData.restAmount">
         <span class="gray">
           <i translate>TRANSFER.REST</i>
-          <ng-if ng-if="formData.restAmount">(<i ng-bind-html="formData.restAmount|formatAmount:{useRelative: formData.useRelative, currency:currency}"></i>)</ng-if>
+          <ng-if ng-if="formData.restAmount">(<i
+            ng-bind-html="formData.restAmount|formatAmount:{useRelative: formData.useRelative, currency:currency}"></i>)</ng-if>
           <i translate>TRANSFER.REST_TO</i>
         </span>
-        <span class="badge badge-royal animate-fade-in animate-show-hide ng-hide" ng-show="restUid" >
+      <span class="badge badge-royal animate-fade-in animate-show-hide ng-hide" ng-show="restUid">
             <i class="ion-person"></i> {{restUid}}
           </span>&nbsp;
-        <span class="badge badge-royal " ng-show="!restUid && formData.restPub">
+      <span class="badge badge-royal " ng-show="!restUid && formData.restPub">
             <i class="ion-key"></i> {{formData.restPub | formatPubkey}}
           </span>
-        <i class="gray icon ion-ios-arrow-right"></i>
+      <i class="gray icon ion-ios-arrow-right"></i>
+    </a>
+    <div class="form-errors"
+         ng-if="form.$submitted && formData.all && !formData.restPub && formData.restAmount &gt; 0">
+      <div class="form-error">
+        <span translate="ERROR.FIELD_REQUIRED"></span>
+      </div>
+    </div>
+
+    <!-- Enable comment ? -->
+    <div class="pull-right visible-xs visible-sm" ng-if="!formData.useComment">
+      <a class="button button-text button-small ink"
+         tabindex="-1"
+         ng-click="addComment()">
+        <i class="icon ion-plus"></i>
+        <span translate>TRANSFER.BTN_ADD_COMMENT</span>
       </a>
-      <div class="form-errors"
-           ng-if="form.$submitted && formData.all && !formData.restPub && formData.restAmount &gt; 0">
-        <div class="form-error">
-          <span translate="ERROR.FIELD_REQUIRED"></span>
-        </div>
-      </div>
+    </div>
 
-      <!-- Enable comment ? -->
-      <div class="pull-right visible-xs visible-sm" ng-if="!formData.useComment">
-        <a class="button button-text button-small ink"
-           ng-click="addComment()">
-          <i class="icon ion-plus"></i>
-          <span translate>TRANSFER.BTN_ADD_COMMENT</span>
-        </a>
+    <!-- Comment -->
+    <label class="item item-input item-floating-label hidden-xs hidden-sm"
+           ng-class="{'item-input-error': form.$submitted && form.comment.$invalid}">
+      <span class="input-label">{{'TRANSFER.COMMENT' | translate}}</span>
+      <input type="text" placeholder="{{'TRANSFER.COMMENT_HELP' | translate}}"
+             name="comment"
+             tabindex="6"
+             ng-model="formData.comment"
+             ng-maxlength="255"
+             ng-pattern="commentPattern">
+    </label>
+    <label class="item item-input item-floating-label visible-xs visible-sm"
+           ng-if="formData.useComment"
+           ng-class="{'item-input-error': form.$submitted && form.comment.$invalid}">
+      <span class="input-label">{{'TRANSFER.COMMENT' | translate}}</span>
+      <input type="text" placeholder="{{'TRANSFER.COMMENT_HELP' | translate}}"
+             id="{{commentInputId}}"
+             tabindex="7"
+             name="comment"
+             ng-model="formData.comment"
+             ng-model-options="{ debounce: 650 }"
+             ng-maxlength="255"
+             ng-pattern="commentPattern"
+             ng-focus="hideDigitKeyboard()">
+    </label>
+    <div class="form-errors"
+         ng-show="form.comment.$error"
+         ng-messages="form.comment.$error">
+      <div class="form-error" ng-message="maxlength">
+        <span translate="ERROR.FIELD_TOO_LONG"></span>
       </div>
+      <div class="form-error" ng-message="pattern">
+        <span translate="ERROR.FIELD_ACCENT"></span>
+      </div>
+    </div>
 
-      <!-- Comment -->
-      <label class="item item-input item-floating-label hidden-xs hidden-sm"
-             ng-class="{'item-input-error': form.$submitted && form.comment.$invalid}">
-        <span class="input-label">{{'TRANSFER.COMMENT' | translate}}</span>
-        <textarea placeholder="{{'TRANSFER.COMMENT_HELP' | translate}}"
-                  name="comment"
-                  ng-model="formData.comment"
-                  ng-maxlength="255"
-                  ng-pattern="commentPattern">
-        </textarea>
-      </label>
-      <label class="item item-input item-floating-label visible-xs visible-sm"
-             ng-if="formData.useComment"
-             ng-class="{'item-input-error': form.$submitted && form.comment.$invalid}">
-        <span class="input-label">{{'TRANSFER.COMMENT' | translate}}</span>
-        <textarea placeholder="{{'TRANSFER.COMMENT_HELP' | translate}}"
-                  id="{{commentInputId}}"
-                  name="comment"
-                  ng-model="formData.comment"
-                  ng-model-options="{ debounce: 650 }"
-                  ng-maxlength="255"
-                  ng-pattern="commentPattern"
-                  ng-focus="hideDigitKeyboard()">
-        </textarea>
-      </label>
-      <div class="form-errors"
-           ng-show="form.comment.$error"
-           ng-messages="form.comment.$error">
-        <div class="form-error" ng-message="maxlength">
-          <span translate="ERROR.FIELD_TOO_LONG"></span>
-        </div>
-        <div class="form-error" ng-message="pattern">
-          <span translate="ERROR.FIELD_ACCENT"></span>
-        </div>
-      </div>
-
-      <!-- Warn comment is public -->
-      <div class="item item-icon-left item-text-wrap item-no-border hidden-xs hidden-sm">
-        <div class=" animate-fade-in animate-show-hide ng-hide" ng-show="formData.comment && formData.comment.length || form.comment.$invalid">
-          <i class="icon ion-android-alert positive"></i>
-          <h4 class="positive" translate>TRANSFER.WARN_COMMENT_IS_PUBLIC</h4>
-        </div>
-      </div>
-      <div class="item item-icon-left item-text-wrap item-no-border visible-xs visible-sm" ng-if="formData.useComment">
+    <!-- Warn comment is public -->
+    <div class="item item-icon-left item-text-wrap item-no-border hidden-xs hidden-sm">
+      <div class=" animate-fade-in animate-show-hide ng-hide"
+           ng-show="formData.comment && formData.comment.length || form.comment.$invalid">
         <i class="icon ion-android-alert positive"></i>
         <h4 class="positive" translate>TRANSFER.WARN_COMMENT_IS_PUBLIC</h4>
       </div>
-
-
+    </div>
+    <div class="item item-icon-left item-text-wrap item-no-border visible-xs visible-sm" ng-if="formData.useComment">
+      <i class="icon ion-android-alert positive"></i>
+      <h4 class="positive" translate>TRANSFER.WARN_COMMENT_IS_PUBLIC</h4>
     </div>
 
-    <div class="padding hidden-xs text-right">
-      <button class="button button-clear button-dark ink"
-              ng-click="cancel()" type="button" translate>COMMON.BTN_CANCEL
-      </button>
-      <button class="button ink"
-              ng-class="{'button-assertive': formData.all, 'button-positive': !formData.all}"
-              type="submit" translate>
-        TRANSFER.BTN_SEND
-      </button>
-    </div>
-  </form>
+
+  </div>
+
+  <div class="padding hidden-xs text-right">
+    <button class="button button-clear button-dark ink"
+            tabindex="-1"
+            ng-click="cancel()" type="button" translate>COMMON.BTN_CANCEL
+    </button>
+    <button class="button ink"
+            tabindex="8"
+            ng-class="{'button-assertive': formData.all, 'button-positive': !formData.all}"
+            type="submit" translate>
+      TRANSFER.BTN_SEND
+    </button>
+  </div>
+</form>
 
 

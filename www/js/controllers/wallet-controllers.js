@@ -106,7 +106,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         UIUtils.loading.hide(); // loading could have be open (e.g. new account)
       })
       .catch(function(err){
-        if (err == 'CANCELLED') {
+        if (err === 'CANCELLED') {
           $scope.showHome();
         }
       });
@@ -223,7 +223,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         UIUtils.loading.hide();
       })
       .catch(function(err) {
-        if (err == 'CANCELLED') throw err;
+        if (err === 'CANCELLED') throw err;
         if (err && err.ucode != BMA.errorCodes.MEMBERSHIP_ALREADY_SEND) {
           console.error("[wallet] Node: already membership", err);
           UIUtils.loading.hide();
@@ -277,7 +277,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       // Send membership
       .then($scope.doMembershipIn)
       .catch(function(err) {
-        if (err == 'CANCELLED') return;
+        if (err === 'CANCELLED') return;
         if (!wallet.data.uid) {
           UIUtils.onError('ERROR.SEND_IDENTITY_FAILED')(err);
         }
@@ -372,7 +372,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         }
       })
       .catch(function(err){
-        if (err == 'CANCELLED') return;
+        if (err === 'CANCELLED') return;
         UIUtils.loading.hide();
         UIUtils.alert.error(err);
       });
@@ -403,7 +403,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       })
       .then($scope.doMembershipIn)
       .catch(function(err){
-        if (err == 'CANCELLED') return;
+        if (err === 'CANCELLED') return;
         UIUtils.loading.hide();
         UIUtils.alert.error(err);
       });
@@ -436,7 +436,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       })
       .then($scope.doMembershipIn)
       .catch(function(err){
-        if (err == 'CANCELLED') return;
+        if (err === 'CANCELLED') return;
         UIUtils.loading.hide();
         UIUtils.alert.error(err);
       });
@@ -603,27 +603,22 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   /* -- popovers -- */
 
+
   $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('templates/wallet/popover_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'templates/wallet/popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.actionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
-        });
-        $scope.actionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.actionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
 
@@ -738,7 +733,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
         UIUtils.loading.hide(); // loading could have be open (e.g. during login phase)
       })
       .catch(function(err){
-        if (err == 'CANCELLED') {
+        if (err === 'CANCELLED') {
           $scope.showHome();
         }
       });
@@ -957,21 +952,14 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
     }, []);
 
     // Open popover
-    if (!$scope.lockedOutputsPopover) {
-      $ionicPopover.fromTemplateUrl('templates/wallet/tx_locked_outputs_popover.html', {
-        scope: $scope
-      }).then(function(popover) {
-        $scope.lockedOutputsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.lockedOutputsPopover.remove();
-        });
-        $scope.lockedOutputsPopover.show(event);
-      });
-    }
-    else {
-      $scope.lockedOutputsPopover.show(event);
-    }
+    UIUtils.popover.show(event, {
+      templateUrl: 'templates/wallet/tx_locked_outputs_popover.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
+        $scope.actionsPopover = popover;
+      }
+    });
   };
 
   $scope.hideLockedOutputsPopover = function() {
@@ -980,6 +968,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
       if ($scope.popoverData) {
         delete $scope.popoverData.unlockConditions;
       }
+      $scope.lockedOutputsPopover = null;
     }
   };
 
@@ -1314,7 +1303,7 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
         }
       })
       .catch(function(err) {
-        if (err && err == 'CANCELLED') return;
+        if (err && err === 'CANCELLED') return;
         UIUtils.alert.error('ERROR.SALT_OR_PASSWORD_NOT_CONFIRMED', 'ERROR.LOGIN_FAILED');
         return;
       })
@@ -1378,7 +1367,7 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
       })
 
       .catch(function(err){
-        if (err && err == 'CANCELLED') return;
+        if (err && err === 'CANCELLED') return;
         UIUtils.onError('ERROR.DOWNLOAD_REVOCATION_FAILED')(err);
       })
       ;
@@ -1401,7 +1390,7 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
         return $scope.revokeIdentity();
       })
       .catch(function (err) {
-        if (err == 'CANCELLED') return;
+        if (err === 'CANCELLED') return;
         UIUtils.onError('ERROR.REVOCATION_FAILED')(err);
       });
   };

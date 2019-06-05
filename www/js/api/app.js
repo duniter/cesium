@@ -78,29 +78,20 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
     /* -- show/hide locales popup -- */
 
     $scope.showLocalesPopover = function(event) {
-      if (!$scope.localesPopover) {
-        // Fill locales
-        $scope.locales = angular.copy(csSettings.locales);
-
-        $ionicPopover.fromTemplateUrl('templates/api/locales_popover.html', {
-          scope: $scope
-        }).then(function(popover) {
+      UIUtils.popover.show(event, {
+        templateUrl: 'templates/api/locales_popover.html',
+        scope: $scope,
+        autoremove: true,
+        afterShow: function(popover) {
           $scope.localesPopover = popover;
-          //Cleanup the popover when we're done with it!
-          $scope.$on('$destroy', function() {
-            $scope.localesPopover.remove();
-          });
-          $scope.localesPopover.show(event);
-        });
-      }
-      else {
-        $scope.localesPopover.show(event);
-      }
+        }
+      });
     };
 
     $scope.hideLocalesPopover = function() {
       if ($scope.localesPopover) {
         $scope.localesPopover.hide();
+        $scope.localesPopover = null;
       }
     };
   })

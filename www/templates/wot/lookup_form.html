@@ -39,8 +39,8 @@
     </div>
   </div>
 
-  <div class="padding-top padding-xs" style="display: block; height: 60px;"
-    ng-class="::{'hidden-xs': !showResultLabel}">
+  <div class="padding-top padding-xs padding-sm" style="display: block; height: 60px;"
+    ng-class="::{'hidden-xs hidden-sm': !showResultLabel}">
     <div class="pull-left" ng-if="!search.loading && showResultLabel">
       <ng-if ng-if="search.type=='newcomers'">
         <h4 translate>WOT.LOOKUP.NEWCOMERS</h4>
@@ -98,7 +98,7 @@
     </div>
   </div>
 
-  <div class="text-center" ng-if="search.loading">
+  <div class="text-center padding-top" ng-if="search.loading">
     <p class="gray" ng-if="::$root.currency.initPhase" translate>WOT.SEARCH_INIT_PHASE_WARNING</p>
     <ion-spinner icon="android"></ion-spinner>
   </div>

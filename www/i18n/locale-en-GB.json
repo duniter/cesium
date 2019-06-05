@@ -798,6 +798,7 @@
     "POPUP_SECURITY_WARNING_TITLE": "<i class=\"icon ion-alert-circled\"></i> <b>Security warning</b>",
     "CERTIFY_RULES_TITLE_UID": "Certify {{uid}}",
     "CERTIFY_RULES": "<b class=\"assertive\">Don't certify an account</b> if you believe that: <ul><li>1.) the issuers identity might be faked.<li>2.) the issuer already has another certified account.<li>3.) the issuer purposely or carelessly violates rule 1 or 2 (he certifies faked or double accounts).</ul></small><br/>Are you sure you want to certify this identity?",
+    "EXIT_APP": "Close the application ?",
     "TRANSFER": "<b>Transfer summary:</b><br/><br/><ul><li> - From: <b>{{from}}</b></li><li> - To: <b>{{to}}</b></li><li> - Amount: <b>{{amount}} {{unit}}</b></li><li> - Comment: <i>{{comment}}</i></li></ul><br/><b>Are-you sure you want to do this transfer?</b>",
     "TRANSFER_ALL": "<b>Transfer summary:</b><br/><br/><ul><li> - From: <b>{{from}}</b></li><li> - To: <b>{{to}}</b></li><li> - Amount: <b>{{amount}} {{unit}}</b></li><li> - Comment: <i>{{comment}}</i></li><br/><li> - Rest : <b>{{restAmount}} {{unit}}</b> to <b>{{restTo}}</b></li></ul><br/><b>Are-you sure you want to do this transfer?</b>",
     "MEMBERSHIP_OUT": "This operation is <b>irreversible</b>.<br/></br/><b>Are you sure you want to terminate your membership?</b>",

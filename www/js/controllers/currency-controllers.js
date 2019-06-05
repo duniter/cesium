@@ -327,26 +327,20 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
   /* -- popover -- */
 
   $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('templates/currency/popover_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'templates/currency/popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.actionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
-        });
-        $scope.actionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.actionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
 }

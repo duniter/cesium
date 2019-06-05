@@ -9,8 +9,7 @@ angular.module('cesium.graph.currency.controllers', ['chart.js', 'cesium.graph.s
         url: "/parameters/stats",
         views: {
           'tab-parameters': {
-            templateUrl: "plugins/graph/templates/currency/tabs/tab_parameters_stats.html",
-            controller: 'GpCurrencyMonetaryMassCtrl'
+            templateUrl: "plugins/graph/templates/currency/tabs/tab_parameters_stats.html"
           }
         }
       })
@@ -101,7 +100,7 @@ function GpCurrencyViewExtendController($scope, PluginService, UIUtils, esSettin
   });
 }
 
-function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $translate, $ionicPopover, gpColor, gpData, $filter, csSettings) {
+function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $translate, UIUtils, gpColor, gpData, $filter, csSettings) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -289,31 +288,37 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
   /* -- Popover -- */
 
   $scope.showActionsPopover = function(event) {
-    $scope.hideActionsPopover();
-    $ionicPopover.fromTemplateUrl('plugins/graph/templates/currency/popover_monetary_mass_actions.html', {
-      scope: $scope
-    }).then(function(popover) {
-      $scope.actionsPopover = popover;
-      //Cleanup the popover when we're done with it!
-      $scope.$on('$destroy', function() {
-        $scope.actionsPopover.remove();
-      });
-      $scope.actionsPopover.show(event);
+    UIUtils.popover.show(event, {
+      templateUrl: 'plugins/graph/templates/currency/popover_monetary_mass_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
+        $scope.actionsPopover = popover;
+      }
     });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
+
 }
 
 
-function GpCurrencyDUController($scope, $q, $controller, $translate, gpColor, gpData, $filter) {
+function GpCurrencyDUController($scope, $q, $controller, $translate, gpColor, gpData, $filter, UIUtils) {
   'ngInject';
+
+  $scope.formData = {
+    scale: 'linear',
+    beginAtZero: false
+  };
+
   // Initialize the super class and extend it.
   angular.extend(this, $controller('GpCurrencyMonetaryMassCtrl', {$scope: $scope}));
+
 
   $scope.load = function(from, size) {
     from = from || 0;
@@ -377,7 +382,7 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpColor, gp
               {
                 id: 'y-axis-ud',
                 ticks: {
-                  beginAtZero: false
+                  beginAtZero: $scope.formData.beginAtZero
                 }
               }
             ]
@@ -414,6 +419,26 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpColor, gp
       });
 
   };
+
+  /* -- Popover -- */
+  $scope.showActionsPopover = function(event) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'plugins/graph/templates/currency/popover_monetary_mass_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
+        $scope.actionsPopover = popover;
+      }
+    });
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
+    }
+  };
+
 }
 
 
@@ -511,4 +536,6 @@ function GpCurrencyMembersCountController($scope, $controller, $q, $state, $tran
       q: '(_exists_:joiners OR _exists_:leavers OR _exists_:revoked OR _exists_:excluded) AND medianTime:>{0} AND medianTime:<={1}'.format(from, to)
     });
   };
+
+
 }

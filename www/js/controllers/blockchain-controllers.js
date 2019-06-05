@@ -702,29 +702,20 @@ function BlockViewController($scope, $ionicPopover, $state, UIUtils, BMA, csCurr
     $scope.popoverData.unlockConditions = $scope.toUnlockUIArray(output.unlockTree);
 
     // Open popover
-    if (!$scope.unlockConditionPopover) {
-      $ionicPopover.fromTemplateUrl('templates/blockchain/unlock_condition_popover.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'templates/blockchain/unlock_condition_popover.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.unlockConditionPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.unlockConditionPopover.remove();
-        });
-        $scope.unlockConditionPopover.show(event);
-      });
-    }
-    else {
-      $scope.unlockConditionPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideUnlockConditionsPopover = function() {
     if ($scope.unlockConditionPopover) {
       $scope.unlockConditionPopover.hide();
-      if ($scope.popoverData) {
-        delete $scope.popoverData.unlockConditions;
-      }
+      $scope.unlockConditionPopover = null;
     }
   };
 

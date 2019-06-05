@@ -290,26 +290,20 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
   /* -- Popover -- */
 
   $scope.showCertificationActionsPopover = function(event) {
-    if (!$scope.certificationActionsPopover) {
-      $ionicPopover.fromTemplateUrl('plugins/es/templates/wot/popover_certification_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'plugins/es/templates/wot/popover_certification_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.certificationActionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.certificationActionsPopover.remove();
-        });
-        $scope.certificationActionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.certificationActionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideCertificationActionsPopover = function() {
     if ($scope.certificationActionsPopover) {
       $scope.certificationActionsPopover.hide();
+      $scope.certificationActionsPopover = null;
     }
   };
 

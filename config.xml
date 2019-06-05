@@ -24,10 +24,16 @@
     <preference name="DisallowOverscroll" value="true" />
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashScreenDelay" value="4000" />
+    <preference name="KeyboardDisplayRequiresUserAction" value="false" />
     <preference name="xwalkVersion" value="19" />
     <preference name="xwalkMultipleApk" value="false" />
     <preference name="android-minSdkVersion" value="16" />
     <preference name="android-targetSdkVersion" value="26" />
+    <!-- issue #833 -->
+    <preference name="StatusBarOverlaysWebView" value="false" />
+    <preference name="StatusBarBackgroundColor" value="#000" />
+    <preference name="StatusBarStyle" value="lightcontent" />
+
     <allow-navigation href="*" />
     <feature name="StatusBar">
         <param name="ios-package" onload="true" value="CDVStatusBar" />

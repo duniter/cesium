@@ -16,7 +16,7 @@ angular.module('cesium.utils.services', [])
 })
 
 .factory('UIUtils', function($ionicLoading, $ionicPopup, $ionicConfig, $ionicHistory, $translate, $q,
-                             ionicMaterialInk, ionicMaterialMotion, $window, $timeout,
+                             ionicMaterialInk, ionicMaterialMotion, $window, $timeout, Fullscreen,
                              // removeIf(no-device)
                              $cordovaToast,
                              // endRemoveIf(no-device)
@@ -412,7 +412,7 @@ angular.module('cesium.utils.services', [])
 
     options = options || {};
     options.templateUrl = options.templateUrl ? options.templateUrl : 'templates/common/popover_copy.html';
-    options.scope = options.scope || $rootScope;
+    options.scope = options.scope && options.scope || $rootScope;
     options.scope.popovers = options.scope.popovers || {};
     options.autoselect = options.autoselect || false;
     options.bindings = options.bindings || {};
@@ -805,7 +805,8 @@ angular.module('cesium.utils.services', [])
     },
     onError: onError,
     screen: {
-      isSmall: isSmallScreen
+      isSmall: isSmallScreen,
+      fullscreen: Fullscreen
     },
     ink: ionicMaterialInk.displayEffect,
     motion: raw.motion,

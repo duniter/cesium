@@ -3,7 +3,7 @@
 <ng-if ng-if="enable && extensionPoint === 'parameters-actual'" >
 
   <ng-if ng-if="!smallscreen">
-    <div class="item padding-left padding-right no-padding-xs"
+    <div class="item padding-left padding-right no-padding-xs no-padding-sm"
          ng-include="'plugins/graph/templates/currency/graph_monetary_mass.html'"
          ng-controller="GpCurrencyMonetaryMassCtrl"
          ng-init="displayShareAxis=false;">
@@ -29,7 +29,7 @@
 <ng-if ng-if="enable && extensionPoint === 'wot-actual'" >
 
   <ng-if ng-if="!smallscreen">
-    <div class="item padding-left padding-right no-padding-xs"
+    <div class="item padding-left padding-right no-padding-xs no-padding-sm"
          ng-include="'plugins/graph/templates/currency/graph_members_count.html'"
          ng-controller="GpCurrencyMembersCountCtrl">
     </div>
@@ -53,7 +53,7 @@
 <!-- section Wot -->
 <ng-if ng-if="enable && extensionPoint === 'network-actual'" >
 
-  <div class="item padding-left padding-right no-padding-xs"
+  <div class="item padding-left padding-right no-padding-xs no-padding-sm"
        ng-if="!smallscreen"
        ng-include="'plugins/graph/templates/blockchain/graph_block_issuers.html'"
        ng-controller="GpBlockchainIssuersCtrl">

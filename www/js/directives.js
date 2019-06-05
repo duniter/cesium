@@ -114,7 +114,7 @@ angular.module('cesium.directives', [])
   })
 
   // Add a copy-on-click directive
-  .directive('copyOnClick', function ($window, $document, Device, UIUtils) {
+  .directive('copyOnClick', function ($window, Device, UIUtils) {
     'ngInject';
     return {
       restrict: 'A',

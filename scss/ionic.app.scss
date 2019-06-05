@@ -23,12 +23,12 @@ $dark:                            #444 !default;
 //$assertive:                       #94c11f !default;
 //$balanced:                        #94c11f !default;
 
-$light:                           #fff !default;
-$active:                          #b2e0ff !default;
-$stable-100-bg:                   #f2f2f2 !default;
-$stable-900-bg:                   #e0e0e0 !default;
-$positive-900-bg:                 #1A237E !default;
-$dark-100-bg:                     #555 !default;
+$light: #fff !default;
+$active: #b2e0ff !default;
+$stable-100-bg: #f2f2f2 !default;
+$stable-900-bg: #e0e0e0 !default;
+$positive-900-bg: #1A237E !default;
+$dark-100-bg: #555 !default;
 
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
@@ -58,14 +58,14 @@ $cesiumicons-font-path: "../fonts" !default;
 // --------------------------------------------------
 // Responsive: Utility classes
 // --------------------------------------------------
-$screen-xxs-max:                  400px;
-$screen-xs:                       401px;
-$screen-xs-max:                   767px;
-$screen-sm:                       768px;
-$screen-sm-max:                   991px;
-$screen-md:                       992px;
-$screen-md-max:                   1199px;
-$screen-lg:                       1200px;
+$screen-xxs-max: 400px;
+$screen-xs: 401px;
+$screen-xs-max: 767px;
+$screen-sm: 768px;
+$screen-sm-max: 991px;
+$screen-md: 992px;
+$screen-md-max: 1199px;
+$screen-lg: 1200px;
 
 
 // IE10 on Windows Phone 8
@@ -85,7 +85,7 @@ $screen-lg:                       1200px;
 // Smaller device: Phones (<401px)
 // ----------------------------------
 @media screen and (max-width: $screen-xxs-max) {
-  @-ms-viewport{
+  @-ms-viewport {
     width: 320px;
   }
 }
@@ -95,149 +95,154 @@ $screen-lg:                       1200px;
 // ----------------------------------
 @media screen and (max-width: $screen-xs-max) {
   .hidden-xs {
-      display: none !important;
-      visibility: hidden !important;
+    display: none !important;
+    visibility: hidden !important;
   }
 
   .padding-top-xs {
     padding-top: 10px;
   }
 }
+
 @media screen and (min-width: $screen-sm) {
-    .hidden-xs {
-        display: inherit;
-        visibility: visible;
-    }
-    .row.hidden-xs {
-      display: flex !important;
-    }
-    .button.hidden-xs {
-      display: inline-block;
-    }
-    .item-toggle .toggle {
-      right: 32px;
-    }
+  .hidden-xs {
+    display: inherit;
+    visibility: visible;
+  }
+  .row.hidden-xs {
+    display: flex !important;
+  }
+  .button.hidden-xs {
+    display: inline-block;
+  }
 }
+
 @media screen and (max-width: $screen-xs-max) {
-    .visible-xs {
-        display: inherit !important;
-        visibility: visible !important;
-    }
-    .button.visible-xs {
-      display: inline-block !important;
-    }
+  .visible-xs {
+    display: inherit !important;
+    visibility: visible !important;
+  }
+  .button.visible-xs {
+    display: inline-block !important;
+  }
 }
+
 @media screen and (min-width: $screen-sm) {
-    .visible-xs {
-        display: none !important;
-        visibility: hidden !important;
-    }
+  .visible-xs {
+    display: none !important;
+    visibility: hidden !important;
+  }
 }
+
 @media screen and (max-width: $screen-xs-max) {
-    .padding-xs {
-        padding: 16px !important;
-    }
-}
-@media screen and (min-width: $screen-sm) {
-    .padding-xs {
-        padding: inherit;
-    }
-}
-@media screen and (max-width: $screen-xs-max) {
-    .no-padding-xs {
-        padding: 0px !important;
-    }
-}
-@media screen and (min-width: $screen-sm) {
-    .no-padding-xs {
-        padding: inherit;
-    }
-}
-@media screen and (max-width: $screen-xs-max) {
-    .no-margin-xs {
-        margin: 0px !important;
-    }
-}
-@media screen and (min-width: $screen-sm) {
-    .no-margin-xs {
-        margin: inherit;
-    }
+  .padding-xs {
+    padding: 16px !important;
+  }
+  .no-padding-xs {
+    padding: 0px !important;
+  }
+  .no-margin-xs {
+    margin: 0px !important;
+  }
 }
 
 // ----------------------------------
 // Small devices: Tablets (≥768px)
 // ----------------------------------
 @media screen and (min-width: $screen-sm) and (max-width: $screen-sm-max) {
-    .hidden-sm, .row-header.hidden-sm {
-        display: none !important;
-        visibility: hidden !important;
-    }
-    .badge {
-      text-overflow: ellipsis !important;
-      white-space: nowrap;
-      overflow: hidden !important;
-      max-width: 400px !important;
-      display: inline-block !important;
-    }
-    .badge:empty {
-      display: none !important;
-    }
+  .hidden-sm,
+  .row.hidden-sm,
+  .row-header.hidden-sm {
+    display: none !important;
+    visibility: hidden !important;
   }
-@media screen and (min-width: $screen-md) {
-    .hidden-sm {
-        display: inherit;
-        visibility: visible;
-    }
-    .row.hidden-sm {
-      display: flex !important;
-    }
-    .button.hidden-sm {
-      display: flex;
-    }
-    .pull-right,
-    .pull-left {
-      .button.hidden-sm {
-        display: inline-block;
-      }
-    }
-}
-@media screen and (max-width: $screen-xs-max) {
-    .hidden-sm {
-        display: inherit;
-        visibility: visible;
-    }
-}
-@media screen and (max-width: $screen-sm-max) {
-    .visible-sm {
-        display: inherit !important;
-        visibility: visible !important;
-    }
-    .button.visible-sm {
-      display: inline-block !important;
-    }
-}
-@media screen and (min-width: $screen-md) {
-    .visible-sm {
-        display: none;
-        visibility: hidden;
-    }
-}
-@media screen and (max-width: $screen-xs-max) {
-    .visible-sm {
-        display: none;
-        visibility: hidden;
-    }
-}
-@media screen and (max-width: $screen-sm-max) {
-  body {
-      cursor: url('http://ionicframework.com/img/finger.png'), auto;
+  .badge {
+    text-overflow: ellipsis !important;
+    white-space: nowrap;
+    overflow: hidden !important;
+    max-width: 400px !important;
+    display: inline-block !important;
+  }
+  .badge:empty {
+    display: none !important;
+  }
+  .padding-sm {
+    padding: 16px !important;
+  }
+  .no-padding-sm {
+    padding: 0px !important;
+  }
+  .no-margin-sm {
+    margin: 0px !important;
   }
 }
-@media screen and (min-width: $screen-md) {
-  body {
-      cursor: inherit;
-  }
 
+@media screen and (min-width: $screen-sm) {
+  .item-toggle .toggle {
+    right: 32px;
+  }
+}
+
+@media screen and (min-width: $screen-md) {
+  .hidden-sm {
+    display: inherit;
+    visibility: visible;
+  }
+  .row.hidden-sm {
+    display: flex !important;
+  }
+  .button.hidden-sm {
+    display: flex;
+  }
+  .pull-right,
+  .pull-left {
+    .button.hidden-sm {
+      display: inline-block;
+    }
+  }
+}
+
+@media screen and (max-width: $screen-xs-max) {
+  .hidden-sm {
+    display: inherit;
+    visibility: visible;
+  }
+}
+
+@media screen and (max-width: $screen-sm-max) {
+  .visible-sm {
+    display: inherit !important;
+    visibility: visible !important;
+  }
+  .button.visible-sm {
+    display: inline-block !important;
+  }
+}
+
+@media screen and (min-width: $screen-md) {
+  .visible-sm {
+    display: none;
+    visibility: hidden;
+  }
+}
+
+@media screen and (max-width: $screen-xs-max) {
+  .visible-sm {
+    display: none;
+    visibility: hidden;
+  }
+}
+
+@media screen and (max-width: $screen-sm-max) {
+  body {
+    cursor: url('../img/finger.png'), auto;
+  }
+}
+
+@media screen and (min-width: $screen-md) {
+  body {
+    cursor: inherit;
+  }
 }
 
 // ----------------------------------
@@ -245,8 +250,8 @@ $screen-lg:                       1200px;
 // ----------------------------------
 @media screen and (min-width: $screen-md) and (max-width: $screen-md-max) {
   .hidden-md {
-      display: none !important;
-      visibility: hidden !important;
+    display: none !important;
+    visibility: hidden !important;
   }
   .badge {
     text-overflow: ellipsis !important;
@@ -259,34 +264,39 @@ $screen-lg:                       1200px;
     display: none !important;
   }
 }
+
 @media screen and (min-width: $screen-lg) {
   .hidden-md {
-      display: inherit;
-      visibility: visible;
+    display: inherit;
+    visibility: visible;
   }
 }
+
 @media screen and (max-width: $screen-sm-max) {
   .hidden-md {
-      display: inherit;
-      visibility: visible;
+    display: inherit;
+    visibility: visible;
   }
 }
+
 @media screen and (min-width: $screen-md) and (max-width: $screen-md-max) {
   .visible-md {
-      display: inherit !important;
-      visibility: visible !important;
+    display: inherit !important;
+    visibility: visible !important;
   }
 }
+
 @media screen and (min-width: $screen-lg) {
   .visible-md {
-      display: none;
-      visibility: hidden;
+    display: none;
+    visibility: hidden;
   }
 }
+
 @media screen and (max-width: $screen-sm-max) {
   .visible-md {
-      display: none;
-      visibility: hidden;
+    display: none;
+    visibility: hidden;
   }
 }
 
@@ -295,12 +305,12 @@ $screen-lg:                       1200px;
 // ----------------------------------
 @media screen and (min-width: $screen-lg) {
   .hidden-lg {
-      display: none !important;
-      visibility: hidden !important;
+    display: none !important;
+    visibility: hidden !important;
   }
   .visible-lg {
-      display: inherit !important;
-      visibility: visible !important;
+    display: inherit !important;
+    visibility: visible !important;
   }
   .badge {
     text-overflow: ellipsis !important;
@@ -313,28 +323,31 @@ $screen-lg:                       1200px;
     display: none !important;
   }
 }
+
 @media screen and (max-width: $screen-md-max) {
-    .hidden-lg {
-        display: inherit;
-        visibility: visible;
-    }
+  .hidden-lg {
+    display: inherit;
+    visibility: visible;
+  }
 }
+
 @media screen and (max-width: $screen-md-max) {
-    .visible-lg {
-        display: none;
-        visibility: hidden;
-    }
+  .visible-lg {
+    display: none;
+    visibility: hidden;
+  }
 }
 
 @media screen and (max-width: $screen-sm) {
-    .no-padding-xs {
-        padding: inherit;
-    }
+  .no-padding-xs {
+    padding: inherit;
+  }
 }
+
 @media screen and (max-width: $screen-xs-max) {
-    .no-margin-xs {
-        margin: 0px !important;
-    }
+  .no-margin-xs {
+    margin: 0px !important;
+  }
 }
 
 @media screen and (min-width: $screen-md) {
@@ -357,51 +370,53 @@ $screen-lg:                       1200px;
 =============== */
 
 // Resolution for left menu show/hide
-$screen-nomenu-max:               844px;
-$screen-menu:                     845px;
+$screen-nomenu-max: 844px;
+$screen-menu: 845px;
 
 // Screen without left menu
 @media screen and (max-width: $screen-nomenu-max) {
-    .hidden-nomenu {
-        display: none !important;
-        visibility: hidden !important;
-    }
-    .visible-nomenu {
-        display: inherit !important;
-        visibility: visible !important;
-    }
+  .hidden-nomenu {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  .visible-nomenu {
+    display: inherit !important;
+    visibility: visible !important;
+  }
 }
+
 @media screen and (min-width: $screen-menu) {
-    .hidden-nomenu {
-        display: inherit;
-        visibility: visible;
-    }
-    .visible-nomenu {
-        display: none !important;
-        visibility: hidden !important;
-    }
+  .hidden-nomenu {
+    display: inherit;
+    visibility: visible;
+  }
+  .visible-nomenu {
+    display: none !important;
+    visibility: hidden !important;
+  }
 }
 
 // Screen WITH left menu
 @media screen and (min-width: $screen-menu) {
-    .hidden-menu {
-        display: none !important;
-        visibility: hidden !important;
-    }
-    .visible-menu {
-        display: inherit !important;
-        visibility: visible !important;
-    }
+  .hidden-menu {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  .visible-menu {
+    display: inherit !important;
+    visibility: visible !important;
+  }
 }
+
 @media screen and (max-width: $screen-nomenu-max) {
-    .hidden-menu {
-        display: inherit;
-        visibility: visible;
-    }
-    .visible-menu {
-        display: none;
-        visibility: hidden;
-    }
+  .hidden-menu {
+    display: inherit;
+    visibility: visible;
+  }
+  .visible-menu {
+    display: none;
+    visibility: hidden;
+  }
 }
 
 /**********
@@ -446,8 +461,10 @@ $screen-menu:                     845px;
   .bar {
     box-shadow: none !important;
   }
+
   .bar-header {
     height: 20px;
+
     .title {
       font-size: 12px;
       font-weight: bold;
@@ -457,6 +474,7 @@ $screen-menu:                     845px;
       margin: 0px 5px;
       text-align: left;
     }
+
     span {
       @extend .gray;
       font-size: 10px;
@@ -469,12 +487,15 @@ $screen-menu:                     845px;
       display: block;
     }
   }
+
   .has-header {
     top: 20px;
   }
+
   .has-footer {
     bottom: 40px;
   }
+
   .bar-footer {
     color: $positive;
     height: 40px;
@@ -500,13 +521,13 @@ $screen-menu:                     845px;
     input {
       border: 1px solid grey;
       border-radius: 3px;
-      box-shadow: inset 0 1px 1px rgba(0,0,0,0.3);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.3);
     }
 
     input:focus {
       border-color: $positive;
       outline: 0;
-      box-shadow: inset 0 1px 1px rgba(0,0,0,0.3),0 0 8px #08c;
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.3), 0 0 8px #08c;
     }
   }
 
@@ -534,12 +555,15 @@ $screen-menu:                     845px;
       font-size: 14px;
       line-height: 30px;
     }
+
     .pull-right {
       margin-right: 10px;
     }
+
     .pull-left {
       margin-left: 10px;
     }
+
     a {
       font-size: 14px;
       text-decoration: none;
@@ -614,7 +638,6 @@ $screen-menu:                     845px;
 }
 
 
-
 /**********
    Unit popover
 **********/
@@ -647,7 +670,6 @@ $screen-menu:                     845px;
 }
 
 
-
 /* ============
  Buttons
 =============== */
@@ -661,7 +683,7 @@ $screen-menu:                     845px;
 }
 
 // Avoid to have not align button on bar-header
-.bar .buttons.pull-right, .bar .title+.button:last-child, .bar .title+.buttons, .bar>.button+.button:last-child, .bar>.button.pull-right {
+.bar .buttons.pull-right, .bar .title + .button:last-child, .bar .title + .buttons, .bar > .button + .button:last-child, .bar > .button.pull-right {
   top: 0px !important;
 }
 
@@ -695,6 +717,7 @@ $screen-menu:                     845px;
   color: grey !important;
   font-size: 12px;
 }
+
 .button-text.button-small {
   @extend .button-small;
   padding: 5px 2px;
@@ -704,12 +727,15 @@ $screen-menu:                     845px;
 .button-text-positive {
   color: $positive !important;
 }
+
 .button-text-stable {
   color: #b2b2b2 !important;
 }
+
 .button-text-dark {
   @extend .dark;
 }
+
 .popup-buttons .button.icon-right,
 .popup-buttons .button.icon-left {
   padding-left: 32px !important;
@@ -738,6 +764,7 @@ $screen-menu:                     845px;
   text-align: center;
   display: inline-block;
 }
+
 #home .center .button {
   display: inline-block;
 }
@@ -749,9 +776,10 @@ $screen-menu:                     845px;
     background-size: 96px 96px;
   }
   #home .footer {
-    display:none;
+    display: none;
   }
 }
+
 @media screen and (min-width: $screen-sm) and (max-width: $screen-sm-max) {
   #home .logo {
     height: 144px;
@@ -763,6 +791,7 @@ $screen-menu:                     845px;
     margin-top: 20px;
   }
 }
+
 @media screen and (min-width: $screen-md) {
   #home .logo {
     height: 200px;
@@ -777,7 +806,6 @@ $screen-menu:                     845px;
 }
 
 
-
 @media screen and (min-width: $screen-md) {
 
   .circle-bg-dark {
@@ -787,41 +815,6 @@ $screen-menu:                     845px;
     background-size: 1024px 1024px;
   }
 
-  .menu.menu-left {
-    background-image: url('../../resources/logo/svg/white/logo.large.empty.transparent.svg');
-    background-repeat: no-repeat;
-    background-position: -500px -100px;
-    background-size: 1024px 1024px;
-    background-color: whitesmoke;
-    height: 100%;
-
-    .item.active {
-      background-color: $active !important;
-
-      .item-content {
-        background-color: transparent;
-        opacity: 1;
-        color: black;
-      }
-    }
-
-    .item {
-      opacity: 0.75;
-      color: black;
-
-      .item-content {
-        background-color: transparent;
-        opacity: 1;
-      }
-    }
-
-
-  }
-}
-.menu.menu-left {
-  .item-menu-disable {
-    color: $dark !important;
-  }
 }
 
 .gray {
@@ -840,10 +833,12 @@ $screen-menu:                     845px;
   a:hover {
     color: inherit;
   }
+
   a:visited {
     color: inherit;
   }
 }
+
 .item a {
   text-decoration: none;
 }
@@ -874,17 +869,20 @@ $screen-menu:                     845px;
     min-width: 250px !important;
     width: 350px !important;
   }
+
   .popup-head {
     h1, h2, h3, h5, h6, p {
       color: white;
     }
   }
 }
+
 .popup-container.warning {
   .popup-head {
     background-color: $assertive;
   }
 }
+
 .popup-container.confirm {
   .popup-head {
     background-color: $positive;
@@ -907,6 +905,7 @@ body {
 .refresher-positive-900-bg {
   --refresher-background-color: $positive-900-bg;
 }
+
 .refresher-dark-100-bg {
   --refresher-background-color: $dark-100-bg;
 }
@@ -929,6 +928,7 @@ body {
     z-index: 50;
   }
 }
+
 .platform-ios {
   .refresher-positive-900-bg,
   .refresher-dark-100-bg {
@@ -1011,11 +1011,11 @@ body {
     white-space: normal !important;
   }
 
-  .item .comment{
+  .item .comment {
     font-style: italic !important;
   }
 
-  .item h3 .gray{
+  .item h3 .gray {
     font-size: 11px ! important;
   }
 
@@ -1024,7 +1024,7 @@ body {
   }
 
   .item-divider .badge {
-    top:16px !important;
+    top: 16px !important;
   }
 
   .item.item-wallet-event {
@@ -1060,8 +1060,8 @@ body {
     }
 
     .hero.hero-qrcode-active {
-      h1,h2,h3,h4,h5,i {
-        margin-right:200px;
+      h1, h2, h3, h4, h5, i {
+        margin-right: 200px;
       }
     }
   }
@@ -1084,6 +1084,7 @@ body {
     }
   }
 }
+
 @media screen and (min-width: $screen-md) {
   .view-wallet-tx {
     --refresher-bg-height: 140px;
@@ -1093,17 +1094,18 @@ body {
     }
   }
 }
+
 .view-wallet-tx {
 
   .item-text-wrap {
     white-space: normal !important;
   }
 
-  .item .comment{
+  .item .comment {
     font-style: italic !important;
   }
 
-  .item h3 .gray{
+  .item h3 .gray {
     font-size: 11px ! important;
   }
 
@@ -1112,11 +1114,11 @@ body {
   }
 
   .item-divider .badge {
-    top:16px !important;
+    top: 16px !important;
   }
 }
 
-.stable-100-bg{
+.stable-100-bg {
   background-color: $stable-100-bg !important;
 }
 
@@ -1125,7 +1127,7 @@ body {
 *******/
 
 .item-tx .badge-energized {
-  background-color: rgba(255,201,0,0.3);
+  background-color: rgba(255, 201, 0, 0.3);
   color: #888 !important;
 }
 
@@ -1158,7 +1160,7 @@ body {
 
 
 .card .card-header,
-.card .card-header{
+.card .card-header {
   font-size: 90%;
   opacity: 0.8;
   filter: alpha(opacity=80);
@@ -1169,9 +1171,10 @@ body {
 .item.stable-900-bg,
 .item .stable-900-bg,
 .item-complex .item-content .stable-900-bg,
-.item-radio .item-content .stable-900-bg{
+.item-radio .item-content .stable-900-bg {
   background-color: $stable-900-bg !important;
 }
+
 .card .item {
   background: inherit;
 }
@@ -1181,9 +1184,10 @@ body {
 .item.stable-bg,
 .item .stable-bg,
 .item-complex .item-content .stable-bg,
-.item-radio .item-content .stable-bg{
+.item-radio .item-content .stable-bg {
   background-color: $stable !important;
 }
+
 
 .card .card-header {
   padding-top: 5px !important;
@@ -1215,6 +1219,7 @@ body {
     min-height: 45px !important;
 
   }
+
   .card-footer {
     padding-left: 88px;
     overflow: hidden;
@@ -1246,8 +1251,7 @@ a.underline:hover,
 .card-avatar-small.expanded .item,
 .card-avatar-small .expanded .item,
 .card-avatar-small.expanded .card.card-comment,
-.card-avatar-small .expanded .card.card-comment
-{
+.card-avatar-small .expanded .card.card-comment {
   @extend .done;
   @extend .in;
 }
@@ -1271,6 +1275,7 @@ a.underline:hover,
     min-height: 25px !important;
     padding-left: 42px !important;
   }
+
   .card-footer {
     padding-top: 0px;
     padding-left: 42px !important;
@@ -1279,7 +1284,7 @@ a.underline:hover,
 
 
 .gallery .card-gallery,
-.gallery .card.card-gallery{
+.gallery .card.card-gallery {
   margin-bottom: 15px !important;
   float: left;
   display: block;
@@ -1353,7 +1358,7 @@ a.underline:hover,
   min-height: 80px !important;
 }
 
-.item-avatar > i:first-child ,
+.item-avatar > i:first-child,
 .item-avatar > img:first-child,
 .item-avatar i.item-image:first-child,
 .item-avatar img.item-image:first-child,
@@ -1368,7 +1373,7 @@ a.underline:hover,
 .item-avatar-left .item-content > i:first-child,
 .item-avatar-left .item-content > img:first-child,
 .item-avatar-left .item-content i.item-image:first-child,
-.item-avatar-left .item-content img.item-image:first-child  {
+.item-avatar-left .item-content img.item-image:first-child {
   color: #D9D9D9;
   background-color: #f8f8f8;
   border: solid 1px #D9D9D9;
@@ -1381,7 +1386,7 @@ a.underline:hover,
   top: 12px !important;
 }
 
-.item-avatar > .icon:first-child:before ,
+.item-avatar > .icon:first-child:before,
 .item-avatar .icon.item-image:first-child:before,
 .item-avatar .item-content > .icon:first-child:before,
 .item-avatar.item-icon-right .icon:first-child:before,
@@ -1449,7 +1454,7 @@ a.underline:hover,
   .item.item-icon-right > .icon:last-child,
     // Workaround to force the right arrow to stay on the left
     // (because the ink effect, a div.ink-ripple can be the last-child)
-  .item.item-icon-right > .icon.ion-ios-arrow-right{
+  .item.item-icon-right > .icon.ion-ios-arrow-right {
     right: 1px;
   }
 }
@@ -1471,11 +1476,13 @@ a.underline:hover,
       border-bottom: solid 1px #ccc !important;
       margin: 0px;
     }
+
     .item-divider {
       border-top: 0;
     }
   }
 }
+
 .list .item.item-border {
   border-bottom: solid 1px #ccc !important;
 }
@@ -1495,8 +1502,7 @@ a.underline:hover,
   .badge.badge-assertive,
   .badge.badge-royal,
   .badge.badge-calm,
-  .badge.badge-energized
-  {
+  .badge.badge-energized {
     top: 1px !important;
     padding-top: 3px !important;
     padding-bottom: 2px !important;
@@ -1541,6 +1547,7 @@ a.underline:hover,
     top: 6px;
   }
 }
+
 .item-input.item-button-right.item-floating-label {
   input,
   textarea {
@@ -1565,8 +1572,7 @@ a.underline:hover,
  Badge inside an item
 */
 .item.item-icon-right .badge,
-.item.item-button-right .badge
-{
+.item.item-button-right .badge {
   right: 43px;
 }
 
@@ -1596,6 +1602,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   cursor: pointer;
   @extend .badge-assertive;
 }
+
 .badge-editable:hover:before {
   @extend .ion;
   content: $ionicon-var-badge-editable;
@@ -1624,10 +1631,12 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   cursor: pointer;
   @extend .positive;
 }
+
 .text-editable:hover:after {
   @extend .ion;
   content: $ionicon-var-edit;
 }
+
 .item h2 .text-editable:hover:after {
   font-size: 14px;
 }
@@ -1639,6 +1648,53 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 .modal.modal-full-height {
   bottom: 0px;
 }
+
+// Force modal as fullscreen, on xs screen
+@media screen and (max-width: $screen-xs-max) {
+  .modal {
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0px;
+    min-height: 100% !important;
+    width: 100% !important;
+  }
+}
+
+@media screen and (max-width: $screen-sm-max) {
+  .modal {
+    bottom: 0px;
+
+    // Hide swiper on tablet
+    .swiper-pagination {
+      visibility: hidden !important;
+    }
+  }
+  // Force 'full-height' modals to be align on top
+  // Otherwise
+  .modal.modal-full-height {
+    top: 0;
+
+    ion-content.keyboard-up .scroll {
+      min-height: calc(100% + 67px);
+    }
+  }
+}
+
+@media (min-width: $screen-md) {
+  .modal.modal-full-height {
+    min-height: 80%;
+
+    .keyboard-up {
+
+      //min-height: 100% !important;
+    }
+  }
+
+  .modal.modal-full-height:has( .keyboard-up) {
+    top: 0 !important;
+  }
+}
+
 
 .modal.about .bar.bar-header .button + .title {
   left: 0px !important; /* avoid title offset on large screens, if button are 'visible-xs')'*/
@@ -1749,16 +1805,40 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
    Screen - Left Menu
 **********/
 
-#menu .item-button-right > .button,
-.item-button-right .item-content > .button,
-.item-button-right > .buttons,
-.item-button-right .item-content > .buttons {
-  top: 8px !important;
+.menu.menu-left {
+
+  background-color: whitesmoke;
+  .item {
+    opacity: 0.75;
+    color: black;
+  }
+
+  .item-button-right > .button,
+  .item-button-right .item-content > .button,
+  .item-button-right > .buttons,
+  .item-button-right .item-content > .buttons {
+    top: 8px !important;
+  }
+
+  .item.active {
+    background-color: $active !important;
+
+    .item-content {
+      background-color: transparent;
+    }
+  }
+
+  .item-menu-disable {
+    color: $dark !important;
+  }
 }
 
-// very small screens
-@media screen and (max-width: $screen-xxs-max) {
-  #menu {
+
+// Menu on small screens
+@media screen and (max-width: $screen-sm-max) {
+  .menu.menu-left {
+
+    // Compact menu item (reduce height, etc.)
     .item.item-divider {
       min-height: 2px;
       height: 2px;
@@ -1767,13 +1847,13 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     }
 
     .item,
-    .item.item-complex .item-content{
+    .item.item-complex .item-content {
       height: 40px;
       min-height: 40px;
       padding-top: 12px;
     }
 
-    .item.item-complex{
+    .item.item-complex {
       padding-top: 0px;
     }
 
@@ -1783,80 +1863,82 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
       top: 4px;
     }
 
-    .item.active a {
-      background-color: $active !important;
-    }
 
+    // Hide footer on small screen
     ion-content.has-footer {
       bottom: 0px !important; /*ignore footer*/
     }
-  }
 
-}
-
-// other screen
-@media screen and (min-width: $screen-xs) {
-  #menu .item.active a {
-    background-color: $active !important;
-  }
-
-  #menu .item.item-divider {
-    min-height: 5px;
-    height: 5px;
-  }
-
-  #menu .footer a {
-    font-size: 14px ! important;
-    color: grey !important;
-  }
-}
-
-@media screen and (max-width: $screen-sm-max) {
-
-  #menu .bar-header {
-    background-color: $positive-900-bg;
-    color: #fff;
-    height: 150px;
-    padding-right: 0px !important;
-
-    .platform-ios & {
-      height: 180px;
-    }
-
-    .hero {
+    .bar-header {
+      background-color: $positive-900-bg;
+      color: #fff;
       height: 150px;
-      box-shadow: none; // not need (define in bar-header)
+      padding-right: 0px !important;
 
       .platform-ios & {
-        height: 160px;
+        height: 180px;
       }
 
-      .content {
-        bottom: 0px;
+      .hero {
+        height: 150px;
+        box-shadow: none; // not need (define in bar-header)
+
+        .platform-ios & {
+          height: 160px;
+        }
+
+        .content {
+          bottom: 0px;
+        }
       }
     }
-  }
 
-  #menu .has-header {
-    top: 150px;
+    .has-header {
+      top: 150px;
 
-    .platform-ios & {
-      top: 180px;
+      .platform-ios & {
+        top: 180px;
+      }
     }
   }
 }
 
+// Menu for NOT small screens
+@media screen and (min-width: $screen-sm) {
+  .menu.menu-left {
 
-.hero.stable-bg {
-  background-color: #f8f8f8 !important;
+
+    .item.item-divider {
+      min-height: 5px;
+      height: 5px;
+    }
+
+    .footer a {
+      font-size: 14px ! important;
+      color: grey !important;
+    }
+  }
 }
+
+@media screen and (min-width: $screen-md) {
+
+  .menu.menu-left {
+    background-image: url('../../resources/logo/svg/white/logo.large.empty.transparent.svg');
+    background-repeat: no-repeat;
+    background-position: -500px -100px;
+    background-size: 1024px 1024px;
+    background-color: whitesmoke;
+    height: 100%;
+  }
+}
+
 
 /**********
    Screen - identity Certifications
 **********/
 
 .certifications .item-divider .badge {
-  top:16px !important;
+  top: 16px !important;
 }
 
 .certifications-lg .avatar-large {
@@ -1908,7 +1990,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 **********/
 
 .popover-helptip {
-  background-color:rgba(68, 68, 68, 0.85) !important;
+  background-color: rgba(68, 68, 68, 0.85) !important;
   height: auto !important;
 
   .button-close {
@@ -1926,28 +2008,32 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 }
 
 // Empeche les clignotement du backdrop, pendant le feature tour
-.nobackdrop .popover-backdrop.active{
+.nobackdrop .popover-backdrop.active {
   background-color: transparent !important;
 }
 
 .helptip-anchor {
-  display:block;
+  display: block;
   position: absolute;
   width: 100%;
   bottom: 0;
 }
+
 .helptip-anchor-center {
   @extend .helptip-anchor;
   text-align: center;
 }
+
 .helptip-anchor-left {
   @extend .helptip-anchor;
   text-align: left;
 }
+
 .helptip-anchor-right {
   @extend .helptip-anchor;
   text-align: right;
 }
+
 .helptip-anchor a:before,
 .helptip-anchor-left a:before,
 .helptip-anchor-right a:before {
@@ -1960,6 +2046,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     width: auto;
   }
 }
+
 .popover-helptip {
   .icon.icon-left {
     @extend .pull-left;
@@ -1968,6 +2055,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     top: 8px;
     left: 8px;
   }
+
   .icon.icon-right {
     @extend .pull-right;
     font-size: 30px;
@@ -1975,6 +2063,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     top: 8px;
     right: 8px;
   }
+
   .icon.icon-center {
     @extend .pull-right;
     font-size: 30px;
@@ -1984,6 +2073,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     top: 8px;
     height: 0px;
   }
+
   .icon.icon-bottom-right {
     @extend .pull-right;
     font-size: 30px;
@@ -1991,6 +2081,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     bottom: 8px;
     right: 8px;
   }
+
   .icon.icon-bottom-left {
     @extend .pull-left;
     font-size: 30px;
@@ -1998,6 +2089,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     bottom: 8px;
     left: 8px;
   }
+
   .icon.icon-bottom-center {
     @extend .pull-right;
     font-size: 30px;
@@ -2015,15 +2107,18 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 
 .popover.popover-profile {
   height: 200px;
+
   .avatar {
     height: 90px;
     width: 90px;
     left: 20px;
     top: 20px;
   }
+
   .avatar {
     border: solid 1px #D9D9D9;
   }
+
   .bar.bar-footer {
     height: 58px;
 
@@ -2077,10 +2172,11 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     margin-right: 0px;
     padding-right: 0px;
   }
+
   .item-avatar .badge.badge-avatar {
-    position: absolute!important;
-    left: 60px!important;
-    right: inherit!important;
+    position: absolute !important;
+    left: 60px !important;
+    right: inherit !important;
     top: 15px !important;
     margin: 0 !important;
     padding: 0px 4px !important;
@@ -2096,9 +2192,11 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   height: 280px;
   width: 290px;
 }
+
 .popover.popover-login-methods.auth {
   height: 204px;
 }
+
 @media (max-width: $screen-xs-max) {
   .popover.popover-login-methods {
     height: 256px;
@@ -2108,7 +2206,6 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     height: 204px;
   }
 }
-
 
 
 /**********
@@ -2124,13 +2221,13 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 }
 
 
-.row-header{
+.row-header {
   border-bottom: solid 1px #ccc !important;
   margin: 0px;
   min-height: 28px !important;
 }
 
-.col-header{
+.col-header {
   text-align: center;
   display: block !important;
 }
@@ -2159,11 +2256,13 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   line-height: 14px;
   margin: 0;
   padding: 0;
+
   svg {
     height: 14px;
     width: 14px;
   }
 }
+
 .icon-secondary {
   position: absolute;
   height: 100%;
@@ -2193,6 +2292,7 @@ div[dropzone] {
     text-align: left;
   }
 }
+
 div[dropzone]:hover {
   background-color: $stable-100-bg;
 }
@@ -2213,7 +2313,7 @@ div[dropzone]:hover {
 .hero .button-fab-top-right.mini,
 .hero .button-fab-top-left.mini,
 .button-fab-hero.button-fab-top-right.mini,
-.button-fab-hero.button-fab-top-left.mini{
+.button-fab-hero.button-fab-top-left.mini {
   top: 178px !important;
 }
 
@@ -2239,8 +2339,13 @@ div[dropzone]:hover {
 .hero.dark-100-bg {
   background-color: $dark-100-bg;
 }
+
 .hero.positive-900-bg {
   background-color: $positive-900-bg !important;
+}
+
+.hero.stable-bg {
+  background-color: #f8f8f8 !important;
 }
 
 .popover-locked-outputs {
@@ -2264,26 +2369,29 @@ div[dropzone]:hover {
 /**********
   join wizard modal
 **********/
+.modal iframe.iframe-license {
+  width: 100%;
+  height: calc(100% - 171px) !important;
+}
+
 @media screen and (max-width: $screen-xs-max) {
   .modal iframe.iframe-license {
-    width: 100%;
     height: calc(100% - 104px);
   }
 }
+
 @media screen and (min-width: $screen-sm) and (max-width: $screen-sm-max) and (min-height: 600px) {
   .modal iframe.iframe-license {
-    width: 100%;
     height: calc(100% - 171px);
   }
 }
+
 @media screen and (min-width: $screen-md) {
   .modal iframe.iframe-license {
-    width: 100%;
     height: calc(100% - 171px);
   }
 
   .modal.modal-license iframe.iframe-license {
-    width: 100%;
     height: calc(100% - 111px) !important;
   }
 }
@@ -2301,6 +2409,7 @@ div[dropzone]:hover {
     }
   }
 }
+
 @media screen and (max-width: $screen-xs-max) {
   .modal.modal-help {
     .row .col:first-child {
@@ -2355,6 +2464,7 @@ div[dropzone]:hover {
   .button.button-tab:first-child {
     border-top-left-radius: 15px;
   }
+
   .button.button-tab:last-child {
     border-top-right-radius: 15px;
   }

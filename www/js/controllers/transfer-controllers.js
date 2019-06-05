@@ -110,7 +110,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
         {
           decimal: true,
           decimalSeparator: '.',
-          resizeContent: true
+          resizeContent:false
         });
     $scope.digitKeyboardVisible = false;
   }
@@ -169,6 +169,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     // Make to sure to load full wallet data (balance)
     return wallet.login({sources: true, silent: true})
       .then(function(data) {
+        if (!wallet || $scope.$$destroyed) return; // user have cancelled before end of load
         $scope.walletData = data;
         $scope.formData.walletId = wallet.id;
         $scope.onUseRelativeChanged();
@@ -198,7 +199,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
         }
       })
       .catch(function(err){
-        if (err == 'CANCELLED') return $scope.cancel(); // close the modal
+        if (err === 'CANCELLED') return $scope.cancel(); // close the modal
         UIUtils.onError('ERROR.LOGIN_FAILED')(err);
       });
   };
@@ -206,6 +207,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
 
   $scope.cancel = function() {
     $scope.closeModal();
+    wallet = null;
   };
 
   // When changing use relative UD
@@ -370,11 +372,13 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
   $scope.addComment = function() {
     $scope.formData.useComment = true;
     // Focus on comment field
+    // removeIf(device)
     if ($scope.commentInputId) {
       $timeout(function() {
         $focus($scope.commentInputId);
       }, 200);
     }
+    // endRemoveIf(device)
   };
 
   /* -- modals -- */

@@ -6,6 +6,9 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate',
   'ngApi', 'angular-cache', 'angular.screenmatch', 'angular.bind.notifier', 'ImageCropper', 'ion-digit-keyboard',
+  // removeIf(device)
+  'FBAngular', // angulmar-fullscreen
+  // endRemoveIf(device)
   // removeIf(no-device)
   'ngCordova',
   // endRemoveIf(no-device)
@@ -74,7 +77,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
           .catch(function(err) {
             preventStateChange = false;
             // If cancel, redirect to home, if no current state
-            if (err == 'CANCELLED' && !$state.current.name) {
+            if (err === 'CANCELLED' && !$state.current.name) {
               return $state.go('app.home');
             }
           });
@@ -93,7 +96,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
           .catch(function(err) {
             preventStateChange = false;
             // If cancel, redirect to home, if no current state
-            if (err == 'CANCELLED' && !$state.current.name) {
+            if (err === 'CANCELLED' && !$state.current.name) {
               return $state.go('app.home');
             }
           });
@@ -136,5 +139,11 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
 
     // Start plugins eager services
     PluginService.start();
+
+    $rootScope.forceFullscreen = UIUtils.screen.isSmall();
+    $rootScope.enableFullscreen = function() {
+      delete $rootScope.forceFullscreen;
+      UIUtils.screen.fullscreen.all();
+    };
   })
 ;

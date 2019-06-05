@@ -312,7 +312,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     };
   })
 
-  .run(function($rootScope, $translate, $state, $window, $urlRouter, ionicReady,
+  .run(function($rootScope, $state, $window, $urlRouter, ionicReady, $ionicPlatform, $ionicHistory,
                 Device, UIUtils, $ionicConfig, PluginService, csPlatform, csWallet, csSettings, csConfig, csCurrency) {
     'ngInject';
 
@@ -322,6 +322,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     $rootScope.currency = csCurrency.data;
     $rootScope.device = Device;
     $rootScope.errorState = 'app.home';
+    $rootScope.smallscreen = UIUtils.screen.isSmall();
 
     // Compute the root path
     var hashIndex = $window.location.href.indexOf('#');
@@ -370,8 +371,6 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       // Status bar style
       if (window.StatusBar) {
         console.debug("[app] Status bar plugin enable");
-        // org.apache.cordova.statusbar required
-        window.StatusBar.styleDefault();
       }
 
       // Get latest release
@@ -386,9 +385,25 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
           }
         });
 
+      // Prevent BACK button to exit without confirmation
+      $ionicPlatform.registerBackButtonAction(function(event) {
+        if ($ionicHistory.backView()) {
+          return $ionicHistory.goBack();
+        }
+        event.preventDefault();
+        return UIUtils.alert.confirm('CONFIRM.EXIT_APP')
+          .then(function (confirm) {
+            if (!confirm) return; // user cancelled
+            ionic.Platform.exitApp();
+          });
+      }, 100);
+
       // Make sure platform is started
       return csPlatform.ready();
     });
+
+
+
   })
 ;
 

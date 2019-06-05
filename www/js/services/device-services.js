@@ -167,12 +167,13 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
               }, modelScope);
             };
 
+            settings.animation = settings.animation || 'pop';
             settings.action = settings.action || function(number) {
                 setModelValue((getModelValue() ||'') + number);
               };
             if (settings.decimal) {
               settings.decimalSeparator = settings.decimalSeparator || '.';
-              settings.leftButton = settings.leftButton = {
+              settings.leftButton = {
                 html: '<span>.</span>',
                 action: function () {
                   var text = getModelValue() || '';

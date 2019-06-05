@@ -672,50 +672,38 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
   /* -- popovers -- */
 
   $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('plugins/es/templates/registry/lookup_popover_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl :'plugins/es/templates/registry/lookup_popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.actionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
-        });
-        $scope.actionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.actionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.filtersPopover = null;
     }
   };
 
   $scope.showFiltersPopover = function(event) {
-    if (!$scope.filtersPopover) {
-      $ionicPopover.fromTemplateUrl('plugins/es/templates/registry/lookup_popover_filters.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl :'plugins/es/templates/registry/lookup_popover_filters.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.filtersPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.filtersPopover.remove();
-        });
-        $scope.filtersPopover.show(event);
-      });
-    }
-    else {
-      $scope.filtersPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideFiltersPopover = function() {
     if ($scope.filtersPopover) {
       $scope.filtersPopover.hide();
+      $scope.filtersPopover = null;
     }
   };
 
@@ -949,27 +937,22 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
 
   /* -- modals & popover -- */
 
+
   $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('plugins/es/templates/registry/view_popover_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'plugins/es/templates/registry/view_popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.actionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
-        });
-        $scope.actionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.actionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
 

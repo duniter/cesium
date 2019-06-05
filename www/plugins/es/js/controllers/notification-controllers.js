@@ -143,6 +143,8 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
   };
 
   $scope.markAllAsRead = function() {
+    $scope.hideActionsPopover();
+
     // Make sure to be auth before doing this
     if (!wallet.isAuth()) {
       return wallet.auth().then(function(){
@@ -150,8 +152,6 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
         return $scope.markAllAsRead(); // loop
       });
     }
-
-    $scope.hideActionsPopover();
 
     if (!$scope.search.results.length) return;
 
@@ -237,26 +237,20 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
   /* -- Popover -- */
 
   $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('plugins/es/templates/notification/popover_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl :'plugins/es/templates/notification/popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.actionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
-        });
-        $scope.actionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.actionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
 

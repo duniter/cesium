@@ -532,7 +532,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
 
         })
         .catch(function(err) {
-          if (err && err == 'CANCELLED') {
+          if (err && err === 'CANCELLED') {
             $scope.removeKeyFile();
             return;
           }
@@ -597,37 +597,25 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
   };
 
   /* -- popover -- */
-
   $scope.showMethodsPopover = function(event) {
     if (event.defaultPrevented) return;
-    if (!$scope.methodsPopover) {
-
-      $ionicPopover.fromTemplateUrl('templates/login/popover_methods.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl :'templates/login/popover_methods.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.methodsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.methodsPopover.remove();
-        });
-        $scope.methodsPopover.show(event)
-          .then(function() {
-            UIUtils.ink({selector: '.popover-login-methods .item'});
-          });
-      });
-    }
-    else {
-      $scope.methodsPopover.show(event);
-    }
+        UIUtils.ink({selector: '.popover-login-methods .item'});
+      }
+    })
   };
 
   $scope.hideMethodsPopover = function() {
     if ($scope.methodsPopover) {
       $scope.methodsPopover.hide();
+      $scope.methodsPopover = null;
     }
   };
-
-
 
   // Default action
   $scope.init();

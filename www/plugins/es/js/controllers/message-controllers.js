@@ -339,26 +339,20 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
   /* -- Popover -- */
 
   $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('plugins/es/templates/message/lookup_popover_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'plugins/es/templates/message/lookup_popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.actionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
-        });
-        $scope.actionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.actionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
 
@@ -756,33 +750,27 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
   /* -- Popover -- */
 
   $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('plugins/es/templates/message/view_popover_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'plugins/es/templates/message/view_popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.actionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
-        });
-        $scope.actionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.actionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
 
   /* -- Modals -- */
 
   $scope.showReplyModal = function() {
-    var recipientField = ($scope.type == 'inbox') ? 'issuer' : 'recipient';
+    var recipientField = ($scope.type === 'inbox') ? 'issuer' : 'recipient';
     $translate('MESSAGE.REPLY_TITLE_PREFIX')
       .then(function (prefix) {
         var content = $scope.formData.content ? $scope.formData.content.replace(/^/g, ' > ') : null;
