@@ -74,6 +74,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   $scope.login = csWallet.isLogin();
   $scope.auth = csWallet.isAuth();
   $scope.motion = UIUtils.motion.default;
+  $scope.fullscreen = UIUtils.screen.fullscreen.isEnabled();
 
   $scope.showHome = function() {
     $ionicHistory.nextViewOptions({
@@ -348,13 +349,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       })
       .catch(UIUtils.onError());
   };
-
-  // Full screen
-  $scope.toggleFullscreen = function() {
-    UIUtils.screen.fullscreen.toggleAll();
-    $scope.fullscreen = UIUtils.screen.fullscreen.isEnabled();
-  };
-
   // Do authentification
   $scope.doAuth = function(options) {
     var wallet = options && options.wallet || csWallet;
@@ -410,7 +404,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     return Modals.showHelp(parameters);
   };
 
-
   ////////////////////////////////////////
   // Useful popovers
   ////////////////////////////////////////
@@ -444,7 +437,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   ////////////////////////////////////////
-  // Link managment (fix issue #)
+  // Link management (fix issue #)
   ////////////////////////////////////////
 
   $scope.openLink = function($event, uri, options) {
@@ -479,6 +472,34 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     return $scope.motion.show(options);
   };
 
+
+  ////////////////////////////////////////
+  // Fullscreen mode
+  ////////////////////////////////////////
+
+  $scope.askFullscreen = function() {
+    var skip = $scope.fullscreen || !UIUtils.screen.isSmall() || !Device.isWeb();
+    if (skip) return;
+
+    return UIUtils.alert.confirm('CONFIRM.FULLSCREEN', null, {
+      cancelText: 'COMMON.BTN_NO',
+      okText: 'COMMON.BTN_YES'
+    })
+      .then(function(confirm) {
+         if (!confirm) return;
+        $scope.toggleFullscreen();
+      });
+  };
+
+  $scope.toggleFullscreen = function() {
+    $scope.fullscreen = !UIUtils.screen.fullscreen.isEnabled();
+    UIUtils.screen.fullscreen.toggleAll();
+  };
+
+  // removeIf(device)
+  // Ask switching fullscreen
+  $scope.askFullscreen();
+  // endRemoveIf(device)
 }
 
 
