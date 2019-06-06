@@ -1866,16 +1866,16 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
       height: 150px;
       padding-right: 0px !important;
 
-      .platform-ios & {
-        height: 180px;
+      .platform-ios.platform-cordova & {
+        height: calc(env(safe-area-inset-top) + 160px);
       }
 
       .hero {
         height: 150px;
         box-shadow: none; // not need (define in bar-header)
 
-        .platform-ios & {
-          height: 160px;
+        .platform-ios.platform-cordova & {
+          height: calc(env(safe-area-inset-top) + 160px);
         }
 
         .content {
@@ -1887,8 +1887,8 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     .has-header {
       top: 150px;
 
-      .platform-ios & {
-        top: 180px;
+      .platform-ios.platform-cordova & {
+        top: calc(env(safe-area-inset-top) + 160px);
       }
     }
   }
