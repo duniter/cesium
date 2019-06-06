@@ -138,10 +138,5 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     // Start plugins eager services
     PluginService.start();
 
-    $rootScope.forceFullscreen = UIUtils.screen.isSmall();
-    $rootScope.enableFullscreen = function() {
-      delete $rootScope.forceFullscreen;
-      UIUtils.screen.fullscreen.all();
-    };
   })
 ;
