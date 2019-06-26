@@ -4,7 +4,7 @@ angular.module('cesium.graph.common.controllers', ['cesium.services'])
   .controller('GpCurrencyAbstractCtrl', GpCurrencyAbstractController)
 ;
 
-function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHistory, $state, csSettings, csCurrency, esHttp) {
+function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHistory, $state, csSettings, csCurrency, esHttp, UIUtils) {
   'ngInject';
 
   $scope.loading = true;
