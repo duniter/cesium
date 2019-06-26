@@ -123,24 +123,24 @@ Peer.prototype.getPort = function() {
   return bma.port ? bma.port : null;
 };
 
-Peer.prototype.getHost = function() {
-  var bma = this.bma || this.getBMA();
+Peer.prototype.getHost = function(getHost) {
+  bma = getHost || this.bma || this.getBMA();
   return ((bma.port == 443 || bma.useSsl) && bma.dns) ? bma.dns :
     (this.hasValid4(bma) ? bma.ipv4 :
         (bma.dns ? bma.dns :
           (bma.ipv6 ? '[' + bma.ipv6 + ']' :'')));
 };
 
-Peer.prototype.getURL = function() {
-  var bma = this.bma || this.getBMA();
-  var host = this.getHost();
+Peer.prototype.getURL = function(bma) {
+  bma = bma || this.bma || this.getBMA();
+  var host = this.getHost(bma);
   var protocol = (bma.port == 443 || bma.useSsl) ? 'https' : 'http';
   return protocol + '://' + host + (bma.port ? (':' + bma.port) : '');
 };
 
-Peer.prototype.getServer = function() {
-  var bma = this.bma || this.getBMA();
-  var host = this.getHost();
+Peer.prototype.getServer = function(bma) {
+  bma = bma || this.bma || this.getBMA();
+  var host = this.getHost(bma);
   return host + (host && bma.port ? (':' + bma.port) : '');
 };
 

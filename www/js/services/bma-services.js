@@ -556,7 +556,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       };
     };
 
-    exports.node.parseEndPoint = function(endpoint) {
+    exports.node.parseEndPoint = function(endpoint, epPrefix) {
       // Try BMA
       var matches = exports.regexp.BMA_ENDPOINT.exec(endpoint);
       if (matches) {
@@ -621,6 +621,23 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           "useWs2p": true
         };
       }
+
+      // Use generic match
+      if (epPrefix) {
+        matches = exact(epPrefix + REGEX_ENDPOINT_PARAMS).exec(endpoint);
+        if (matches) {
+          return {
+            "dns": matches[2] || '',
+            "ipv4": matches[4] || '',
+            "ipv6": matches[6] || '',
+            "port": matches[8] || 80,
+            "useSsl": matches[8] && matches[8] == 443,
+            "path": matches[10],
+            "useBma": false
+          };
+        }
+      }
+
     };
 
     exports.copy = function(otherNode) {

@@ -300,25 +300,28 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
     }
   };
 
-  $scope.showEndpointsPopover = function($event, peer, endpoint) {
-    var endpoints = peer.getEndpoints(endpoint);
+  $scope.showEndpointsPopover = function($event, peer, endpointName) {
+    $event.preventDefault();
+    $event.stopPropagation();
+
+    var endpoints = peer.getEndpoints(endpointName);
     endpoints = (endpoints||[]).reduce(function(res, ep) {
-        var bma = BMA.node.parseEndPoint(ep);
+        var bma = BMA.node.parseEndPoint(ep) || BMA.node.parseEndPoint(ep, endpointName);
         return res.concat({
           label: 'NETWORK.VIEW.NODE_ADDRESS',
-          value: peer.getServer() + (bma.path||'')
+          value: peer.getServer(bma) + (bma && bma.path||'')
         });
       }, []);
     if (!endpoints.length) return;
 
+    // Call extension points
     UIUtils.popover.show($event, {
       templateUrl: 'templates/network/popover_endpoints.html',
       bindings: {
-        titleKey: 'NETWORK.VIEW.ENDPOINTS.' + endpoint,
+        titleKey: 'NETWORK.VIEW.ENDPOINTS.' + endpointName,
         items: endpoints
       }
     });
-    $event.stopPropagation();
   };
 
   $scope.showWs2pPopover = function($event, peer) {
