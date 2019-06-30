@@ -146,7 +146,7 @@
     "ENABLE_UI_EFFECTS": "Activer les effets visuels",
     "HISTORY_SETTINGS": "Mes opérations",
     "DISPLAY_UD_HISTORY": "Afficher les dividendes produits ?",
-    "TX_HISTORY_AUTO_REFRESH": "Rafraichir automatiquement",
+    "TX_HISTORY_AUTO_REFRESH": "Rafraîchir automatiquement",
     "TX_HISTORY_AUTO_REFRESH_HELP": "Rafraîchit le solde et les opérations automatiquement, à chaque nouveau bloc du réseau.",
     "AUTHENTICATION_SETTINGS": "Authentification",
     "KEEP_AUTH": "Désauthentification automatique",
