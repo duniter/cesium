@@ -92,7 +92,7 @@
     },
     "CONFIRM": {
       "DELETE_ALL_CONFIRMATION": "La suppression des invitations est une <b>opération irréversible</b>.<br/><br/><b>Êtes-vous sûr</b> de vouloir continuer ?",
-      "SEND_INVITATIONS_TO_CERTIFY": "Êtes-vous sûr de vouloir <b>envoyer cette invitation à certfier</b> ?"
+      "SEND_INVITATIONS_TO_CERTIFY": "Êtes-vous sûr de vouloir <b>envoyer cette invitation à certifier</b> ?"
     },
     "INFO": {
       "INVITATION_SENT": "Invitation envoyée"
@@ -170,12 +170,12 @@
     "CONFIRM": {
       "REMOVE": "Êtes-vous sûr de vouloir <b>supprimer ce message</b> ?<br/><br/>Cette opération est irréversible.",
       "REMOVE_ALL" : "Êtes-vous sûr de vouloir <b>supprimer tous les messages</b> ?<br/><br/>Cette opération est irréversible.",
-      "MARK_ALL_AS_READ": "Êtes-vous sûr de vouloir <b>marquer tous les messages comme lu</b> ?",
+      "MARK_ALL_AS_READ": "Êtes-vous sûr de vouloir <b>marquer tous les messages comme lus</b> ?",
       "USER_HAS_NO_PROFILE": "Cette identité n'a aucun profil Cesium+. Il se peut qu'elle n'utilise pas l'extension Cesium+, et <b>ne consultera donc pas votre message</b>.<br/><br/>Êtes-vous sûr de vouloir <b>continuer</b> malgré tout ?"
     },
     "INFO": {
       "MESSAGE_REMOVED": "Message supprimé",
-      "All_MESSAGE_REMOVED": "Tous les messages ont été supprimé",
+      "All_MESSAGE_REMOVED": "Tous les messages ont été supprimés",
       "MESSAGE_SENT": "Message envoyé"
     },
     "ERROR": {
@@ -190,7 +190,7 @@
       "MARK_AS_READ_FAILED": "Impossible de marquer le message comme 'lu'.",
       "LOAD_NOTIFICATIONS_FAILED": "Erreur lors de la récupération des notifications de messages.",
       "REMOVE_All_MESSAGES_FAILED": "Erreur lors de la suppression de tous les messages.",
-      "MARK_ALL_AS_READ_FAILED": "Erreur lors du marquage des message comme lu.",
+      "MARK_ALL_AS_READ_FAILED": "Erreur lors du marquage des messages comme lus.",
       "RECIPIENT_IS_MANDATORY": "Le destinataire est obligatoire."
     }
   },
@@ -221,7 +221,7 @@
     "LOCATION_DIVIDER": "Adresse",
     "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux et site web",
     "TECHNICAL_DIVIDER": "Informations techniques",
-    "CREATED_TIME": "Crée {{creationTime|formatFromNow}}",
+    "CREATED_TIME": "Créé {{creationTime|formatFromNow}}",
     "NOTIFICATIONS": {
       "TITLE": "Invitations"
     },
@@ -240,7 +240,7 @@
       "OPEN_GROUP": "Groupe ouvert",
       "OPEN_GROUP_HELP": "Un groupe ouvert est accessible par n'importe quel membre de la monnaie.",
       "MANAGED_GROUP": "Groupe administré",
-      "MANAGED_GROUP_HELP": "un groupe administré est gérer par des administrateurs et des modérateurs, qui peuvent accepter, refuser ou exclure un membre en son sein.",
+      "MANAGED_GROUP_HELP": "un groupe administré est géré par des administrateurs et des modérateurs, qui peuvent accepter, refuser ou exclure un membre en son sein.",
       "ENUM": {
         "OPEN": "Groupe ouvert",
         "MANAGED": "Groupe administré"
@@ -326,7 +326,7 @@
       "RECORD_DESCRIPTION": "Description",
       "RECORD_DESCRIPTION_HELP": "Description de l'activité",
       "RECORD_ADDRESS": "Rue",
-      "RECORD_ADDRESS_HELP": "Rue, batiment...",
+      "RECORD_ADDRESS_HELP": "Rue, bâtiment...",
       "RECORD_CITY": "Ville",
       "RECORD_CITY_HELP": "Ville",
       "RECORD_SOCIAL_NETWORKS": "Réseaux sociaux et site web",
@@ -340,7 +340,7 @@
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Erreur de chargement de la liste des activités",
       "LOAD_RECORD_FAILED": "Erreur lors du chargement de la page",
-      "LOOKUP_RECORDS_FAILED": "Erreur lors de l'execution de la recherche.",
+      "LOOKUP_RECORDS_FAILED": "Erreur lors de l'exécution de la recherche",
       "REMOVE_RECORD_FAILED": "Erreur de la suppression de la page",
       "SAVE_RECORD_FAILED": "Erreur lors de la sauvegarde",
       "RECORD_NOT_EXISTS": "Page inexistante",
@@ -376,11 +376,11 @@
       "RESULT_HELP": "<b>Voici le résultat</b> tel que visible sur votre profil :"
     },
     "CONFIRM": {
-      "DELETE": "Êtes-vous sur de vouloir <b>supprimer votre profif Cesium+ ?</b><br/><br/>Cette opération est irréversible."
+      "DELETE": "Êtes-vous sûr de vouloir <b>supprimer votre profil Cesium+ ?</b><br/><br/>Cette opération est irréversible."
     },
     "ERROR": {
       "REMOVE_PROFILE_FAILED": "Erreur de suppression du profil",
-      "LOAD_PROFILE_FAILED": "Erreur de chargement du profil utilisateur.",
+      "LOAD_PROFILE_FAILED": "Erreur de chargement du profil utilisateur",
       "SAVE_PROFILE_FAILED": "Erreur lors de la sauvegarde",
       "INVALID_SOCIAL_NETWORK_FORMAT": "Format non pris en compte : veuillez indiquer une adresse valide.<br/><br/>Exemples :<ul><li>- Une page Facebook (https://www.facebook.com/user)</li><li>- Une page web (http://www.monsite.fr)</li><li>- Une adresse email (joe@dalton.com)</li></ul>",
       "IMAGE_RESIZE_FAILED": "Erreur lors du redimensionnement de l'image"
@@ -429,8 +429,8 @@
     "NO_SUBSCRIPTION": "Aucun service utilisé",
     "SUBSCRIPTION_COUNT": "Services / Abonnements",
     "EDIT": {
-      "TITLE": "Services en lignes",
-      "HELP_TEXT": "Gérer ici vos abonnements et autres services en ligne",
+      "TITLE": "Services en ligne",
+      "HELP_TEXT": "Gérez ici vos abonnements et autres services en ligne",
       "PROVIDER": "Prestataire :"
     },
     "TYPE": {
@@ -459,11 +459,11 @@
     }
   },
   "DOCUMENT": {
-    "HASH": "Hash: ",
+    "HASH": "Hash : ",
     "LOOKUP": {
       "TITLE": "Recherche de documents",
       "BTN_ACTIONS": "Actions",
-      "SEARCH_HELP": "issuer:AAA*, time:1508406169",
+      "SEARCH_HELP": "Emetteur:AAA*, temps:1508406169",
       "LAST_DOCUMENTS": "Derniers documents",
       "SHOW_QUERY": "Voir la requête",
       "HIDE_QUERY": "Masquer la requête",
@@ -497,7 +497,7 @@
     "ENABLE_REMOTE_STORAGE": "Activer le stockage distant ?",
     "ENABLE_REMOTE_STORAGE_HELP": "Permet de stockage (chiffré) de vos paramètres sur les noeuds Cesium+",
     "ENABLE_MESSAGE_TOGGLE": "Activer les messages privés ?",
-    "PEER": "Addresse du nœud de données",
+    "PEER": "Adresse du nœud de données",
     "POPUP_PEER": {
       "TITLE" : "Nœud de données",
       "HELP" : "Saisissez l'adresse du nœud que vous voulez utiliser :",
@@ -506,16 +506,16 @@
     "NOTIFICATIONS": {
       "DIVIDER": "Notifications",
       "HELP_TEXT": "Activez les types de notifications que vous souhaitez recevoir :",
-      "ENABLE_TX_SENT": "Notifier les <b>paiement émis</b> ?",
+      "ENABLE_TX_SENT": "Notifier les <b>paiements émis</b> ?",
       "ENABLE_TX_RECEIVED": "Notifier les <b>paiements reçus</b> ?",
       "ENABLE_CERT_SENT": "Notifier les <b>certifications émises</b> ?",
       "ENABLE_CERT_RECEIVED": "Notifier les <b>certifications reçues</b> ?",
       "ENABLE_HTML5_NOTIFICATION": "Avertir à chaque nouvelle notification ?",
-      "ENABLE_HTML5_NOTIFICATION_HELP": "Ouvre une petite fenetre à chaque nouvelle notification."
+      "ENABLE_HTML5_NOTIFICATION_HELP": "Ouvre une petite fenêtre à chaque nouvelle notification."
     },
     "CONFIRM": {
       "ASK_ENABLE_TITLE": "Fonctionnalités optionnelles",
-      "ASK_ENABLE": "L'extension Cesium+ est <b>désactivée</b> dans vos paramètres, rendant inactives les fonctionnalités : <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-person\"></i> Profils Cesium+</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-android-notifications\"></i> Notifications</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Messages privés</b>.<li>&nbsp;&nbsp;<b><i class=\"icon ion-location\"></i> Cartes, etc.</b>.</ul><br/><b>Souhaitez-vous la ré-activer</b> l'extension ?"
+      "ASK_ENABLE": "L'extension Cesium+ est <b>désactivée</b> dans vos paramètres, rendant inactives les fonctionnalités : <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-person\"></i> Profils Cesium+</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-android-notifications\"></i> Notifications</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Messages privés</b>.<li>&nbsp;&nbsp;<b><i class=\"icon ion-location\"></i> Cartes, etc.</b>.</ul><br/><b>Souhaitez-vous ré-activer</b> l'extension ?"
     }
   },
   "ES_WALLET": {
@@ -528,7 +528,7 @@
     "NODE_BMA_DOWN": "Le noeud <b>{{params[0]}}:{{params[1]}}</b> (utilisé par votre noeud ES API) est <b>injoignable</b>.",
     "NODE_BMA_UP": "Le noeud <b>{{params[0]}}:{{params[1]}}</b> est à nouveau accessible.",
     "MEMBER_JOIN": "Vous êtes maintenant <b>membre</b> de la monnaie <b>{{params[0]}}</b> !",
-    "MEMBER_LEAVE": "Vous n'êtes <b>plus membre</b> de la monnaie <b>{{params[0]}}</b>!",
+    "MEMBER_LEAVE": "Vous n'êtes <b>plus membre</b> de la monnaie <b>{{params[0]}}</b> !",
     "MEMBER_EXCLUDE": "Vous n'êtes <b>plus membre</b> de la monnaie <b>{{params[0]}}</b>, faute de non renouvellement ou par manque de certifications.",
     "MEMBER_REVOKE": "La révocation de votre compte a été effectuée. Il ne pourra plus être un compte membre de la monnaie <b>{{params[0]}}</b>.",
     "MEMBER_ACTIVE": "Votre renouvellement d'adhésion à la monnaie <b>{{params[0]}}</b> a été <b>pris en compte</b>.",
@@ -549,7 +549,7 @@
     "ES_USE_FALLBACK_NODE": "Nœud de données <b>{{old}}</b> injoignable ou adresse invalide.<br/><br/>Voulez-vous temporairement utiliser le nœud de données <b>{{new}}</b> ?"
   },
   "ERROR": {
-    "ES_CONNECTION_ERROR": "Nœud de données <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Cesium va continuer à fonctionner, <b>sans l'extension Cesium+</b> (profils utilisateur, messages privés, cartes et graphiques)<br/><br/>Vérifiez votre connection Internet, ou changer de nœud de données dans les <a class=\"positive\" ng-click=\"doQuickFix('settings')\">paramètres de l'extension</a>.",
+    "ES_CONNECTION_ERROR": "Nœud de données <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Cesium va continuer à fonctionner, <b>sans l'extension Cesium+</b> (profils utilisateur, messages privés, cartes et graphiques)<br/><br/>Vérifiez votre connexion Internet, ou changez de nœud de données dans les <a class=\"positive\" ng-click=\"doQuickFix('settings')\">paramètres de l'extension</a>.",
     "ES_MAX_UPLOAD_BODY_SIZE": "Le volume des données à envoyer dépasse la limite fixée par le serveur.<br/>Veuillez ré-essayer après avoir, par exemple, supprimer des photos."
   }
 }
