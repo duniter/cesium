@@ -1,0 +1,113 @@
+{
+  "NETWORK": {
+    "VIEW": {
+      "BTN_GRAPH": "Statistikoj"
+    }
+  },
+  "GRAPH": {
+    "COMMON": {
+      "LINEAR_SCALE" : "Lineara skalo",
+      "LOGARITHMIC_SCALE" : "Logaritma skalo",
+      "BTN_SHOW_STATS": "Vidi la statistikojn",
+      "BTN_SHOW_DETAILED_STATS": "Detalaj statistikoj",
+      "RANGE_DURATION_DIVIDER": "Tempo-unuo:",
+      "RANGE_DURATION": {
+        "HOUR": "Horo",
+        "DAY": "Tago",
+        "MONTH": "Monato"
+      }
+    },
+    "ACCOUNT": {
+      "TITLE": "Statistikoj",
+      "BTN_SHOW_STATS": "Vidi la statistikojn de la konto",
+      "BALANCE_DIVIDER": "Stato de la konto",
+      "BALANCE_TITLE": "Evoluo de la konto {{pubkey|formatPubkey}}",
+      "TX_RECEIVED_LABEL": "Enspezoj",
+      "TX_SENT_LABEL": "Elspezoj",
+      "TX_ACCUMULATION_LABEL": "Bilanco de la spezoj",
+      "UD_LABEL": "UD",
+      "UD_ACCUMULATION_LABEL": "Bilanco de la UD",
+      "BALANCE_LABEL": "Saldo",
+      "WOT_DIVIDER": "Reto de fido",
+      "CERTIFICATION_TITLE": "Nombro de atestaĵoj - {{pubkey|formatPubkey}}",
+      "RECEIVED_CERT_LABEL": "Tuto pri la ricevitaj",
+      "RECEIVED_CERT_DELTA_LABEL": "Vario pri la ricevitaj",
+      "GIVEN_CERT_LABEL": "Tuto pri la senditaj",
+      "GIVEN_CERT_DELTA_LABEL": "Vario pri la senditaj",
+      "INPUT_CHART_TITLE": "Sumo de la enirantaj fluoj, por ĉiu sendinto:",
+      "OUTPUT_CHART_TITLE": "Sumo de la elirantaj fluoj, por ĉiu ricevinto:"
+    },
+    "BLOCKCHAIN": {
+      "TITLE": "Statistikoj",
+      "BLOCKS_ISSUERS_DIVIDER": "Analizo de la kalkul-distribuo",
+      "BLOCKS_ISSUERS_HELP": "<b>{{issuerCount|formatInteger}} membroj</b> kalkulis <b>{{blockCount|formatInteger}} blokojn</b>",
+      "BLOCKS_ISSUERS_TITLE": "Nombro de blokoj kalkulitaj por membro",
+      "BLOCKS_ISSUERS_LABEL": "Nombro de blokoj",
+      "TX_DIVIDER": "Analizo de la spezoj",
+      "TX_AMOUNT_TITLE": "Kvanto de la spezoj",
+      "TX_AMOUNT_PUBKEY_TITLE": "Kvanto de spezoj kalkulitaj de {{issuer | formatPubkey}}",
+      "TX_AMOUNT_LABEL": "Kvanto interŝanĝita",
+      "TX_COUNT_TITLE": "Nombro de spezoj skribitaj",
+      "TX_COUNT_LABEL": "Nombro de spezoj",
+      "TX_AVG_BY_BLOCK": "Meza nombro de spezoj / bloko"
+
+    },
+    "CURRENCY": {
+      "MONETARY_MASS_TITLE": "Evoluo de la mona maso",
+      "MONETARY_MASS_LABEL": "Mona maso",
+      "MONETARY_MASS_SHARE_LABEL": "Mezumo por membro",
+      "UD_TITLE": "Evoluo de la universala dividendo",
+      "MEMBERS_COUNT_TITLE": "Evoluo de la nombro de membroj",
+      "MEMBERS_COUNT_LABEL": "Nombro de membroj"
+    },
+    "PEER": {
+      "VIEW": {
+        "BLOCK_COUNT_LABEL": "Nombro de blokoj kalkulitaj",
+        "BLOCK_COUNT": "{{count}} blokoj",
+        "NO_BLOCK": "Neniu bloko"
+      }
+    },
+    "DOC_STATS": {
+      "TITLE": "Statistikoj pri stokado",
+      "USER": {
+        "TITLE": "Nombro de dokumentoj ligitaj al konto",
+        "USER_PROFILE": "Uzanto-profiloj",
+        "USER_SETTINGS": "Parametroj konservitaj"
+      },
+      "MESSAGE": {
+        "TITLE": "Nombro de dokumentoj ligitaj al komunikado",
+        "MESSAGE_INBOX": "Mesaĝoj en ricevujo",
+        "MESSAGE_OUTBOX": "Senditaj mesaĝoj konservitaj",
+        "INVITATION_CERTIFICATION": "Invitoj atestotaj"
+      },
+      "SOCIAL": {
+        "TITLE": "Nombro de paĝoj aŭ grupoj",
+        "PAGE_COMMENT": "Komentoj",
+        "PAGE_RECORD": "Paĝoj",
+        "GROUP_RECORD": "Grupoj"
+      }
+      "OTHER": {
+        "TITLE": "Aliaj dokumentoj",
+        "HISTORY_DELETE": "Forigoj de dokumentoj"
+      }
+    },
+    "SYNCHRO": {
+      "TITLE": "Statistikoj pri sinkronigoj",
+      "COUNT": {
+        "TITLE": "Kvanto sinkronigita",
+        "INSERTS": "Enmetoj",
+        "UPDATES": "Ĝisdatigoj",
+        "DELETES": "Forigoj"
+      },
+      "PEER": {
+        "TITLE": "Nodoj informpetitaj",
+        "ES_USER_API": "Nodoj pri datenoj de uzantoj",
+        "ES_SUBSCRIPTION_API": "Nodoj pri retaj servoj"
+      },
+      "PERFORMANCE": {
+        "TITLE": "Efikecoj pri efektiviĝo",
+        "DURATION": "Tempo por efektiviĝo (ms)"
+      }
+    }
+  }
+}
