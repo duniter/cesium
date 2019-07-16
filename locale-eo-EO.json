@@ -1,555 +1,76 @@
 {
-  "COMMON": {
-    "CATEGORY": "Kategorio",
-    "CATEGORIES": "Kategorioj",
-    "CATEGORY_SEARCH_HELP": "Serĉado",
-    "LAST_MODIFICATION_DATE": "Ĝisdatigita la",
-    "SUBMIT_BY": "Submetita de",
-    "BTN_PUBLISH": "Publikigi",
-    "BTN_PICTURE_DELETE": "Forigi",
-    "BTN_PICTURE_FAVORISE": "Precipa",
-    "BTN_PICTURE_ROTATE": "Turni",
-    "BTN_ADD_PICTURE": "Aldoni foton",
-    "NOTIFICATION": {
-      "TITLE": "Nova avizo | {{'COMMON.APP_NAME'|translate}}",
-      "HAS_UNREAD": "Vi havas {{count}} avizo{{count>0?'j':''}}n ne legita{{count>0?'j':''}}n"
+  "MAP": {
+    "COMMON": {
+      "SEARCH_DOTS": "Traserĉi...",
+      "BTN_LOCALIZE_ME": "Lokalizi min"
     },
-    "NOTIFICATIONS": {
-      "TITLE": "Avizoj",
-      "MARK_ALL_AS_READ": "Ĉion marki legita",
-      "NO_RESULT": "Neniu avizo",
-      "SHOW_ALL": "Vidi ĉion",
-      "LOAD_NOTIFICATIONS_FAILED": "Malsukceso por ŝarĝi la avizojn"
-    }
-  },
-  "MENU": {
-    "REGISTRY": "Paĝoj",
-    "USER_PROFILE": "Mia profilo",
-    "MESSAGES": "Mesaĝoj",
-    "NOTIFICATIONS": "Avizoj",
-    "INVITATIONS": "Invitoj"
-  },
-  "ACCOUNT": {
-    "NEW": {
-      "ORGANIZATION_ACCOUNT": "Konto por organizaĵo",
-      "ORGANIZATION_ACCOUNT_HELP": "Se vi reprezentas entreprenon, asocion, ktp.<br/>Neniu universala dividendo estos kreita per tiu ĉi konto."
-    },
-    "EVENT": {
-      "MEMBER_WITHOUT_PROFILE": "Vi povas <a ui-sref=\"app.edit_profile\">tajpi vian profilon Cesium+</a> (kromebleco) por disponi pli bonan videblecon por via konto."
-    },
-    "ERROR": {
-      "WS_CONNECTION_FAILED": "Cesium ne povas ricevi la avizojn pro teknika eraro (konekto al la daten-nodo Cesium+).<br/><br/>Se la problemo daŭradas, bonvolu <b>elekti alian daten-nodon</b> ĉe la parametroj Cesium+."
-    }
-  },
-  "WOT": {
-    "BTN_SUGGEST_CERTIFICATIONS_DOTS": "Sugesti identecojn atestotajn...",
-    "BTN_ASK_CERTIFICATIONS_DOTS": "Peti membrojn atesti min...",
-    "BTN_ASK_CERTIFICATION": "Peti atestaĵon",
-    "SUGGEST_CERTIFICATIONS_MODAL": {
-      "TITLE": "Sugesti atestadojn",
-      "HELP": "Selekti viajn sugestojn"
-    },
-    "ASK_CERTIFICATIONS_MODAL": {
-      "TITLE": "Peti atestaĵojn",
-      "HELP": "Selekti la ricevontojn"
-    },
-    "SEARCH": {
-      "DIVIDER_PROFILE": "Kontoj",
-      "DIVIDER_PAGE": "Paĝoj",
-      "DIVIDER_GROUP": "Grupoj"
-    },
-    "CONFIRM": {
-      "SUGGEST_CERTIFICATIONS": "Ĉu vi certas, ke vi volas <b>sendi tiujn sugestojn por atestado</b>?",
-      "ASK_CERTIFICATION": "Ĉu vi certas, ke vi volas <b>sendi atesto-peton</b>?",
-      "ASK_CERTIFICATIONS": "Ĉu vi certas, ke vi volas <b>sendi atesto-peton</b> al tiuj personoj?"
-    }
-  },
-  "INVITATION": {
-    "TITLE": "Invitoj",
-    "NO_RESULT": "Neniu invito atendanta",
-    "BTN_DELETE_ALL": "Forigi ĉiujn invitojn",
-    "BTN_DELETE": "Forigi la inviton",
-    "BTN_NEW_INVITATION": "Nova invito",
-    "ASK_CERTIFICATION": "<a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid}}</a> petas vian atestadon",
-    "SUGGESTION_CERTIFICATION": "<a href=\"#/app/wot/{{::pubkey}}/{{::uid}}\">{{::name||uid}}</a> estas sugestita al vi por atestado",
-    "SUGGESTED_BY": "Sugesto sendita de <a class=\"positive\" href=\"#/app/wot/{{::issuer.pubkey}}/{{::issuer.uid}}\">{{::issuer.name||issuer.uid}}</a>",
-    "NOTIFICATIONS": {
-      "TITLE": "Invitoj"
-    },
-    "LIST": {
-      "TITLE": "Invitoj"
-    },
-    "NEW": {
-      "TITLE": "Nova invito",
-      "RECIPIENTS": "Al",
-      "RECIPIENTS_HELP": "Ricevontoj de la invito",
-      "RECIPIENTS_MODAL_TITLE": "Ricevontoj",
-      "RECIPIENTS_MODAL_HELP": "Bonvolu elekti la ricevontojn:",
-      "SUGGESTION_IDENTITIES": "Sugestoj por atestado",
-      "SUGGESTION_IDENTITIES_HELP": "Atestadoj sugestotaj",
-      "SUGGESTION_IDENTITIES_MODAL_TITLE": "Sugestoj",
-      "SUGGESTION_IDENTITIES_MODAL_HELP": "Bonvolu elekti viajn sugestojn:"
-    },
-    "CONFIRM": {
-      "DELETE_ALL_CONFIRMATION": "La forigo de la invitoj estas <b>neinversigebla ago</b>.<br/><br/><b>Ĉu vi certas</b>, ke vi volas daŭrigi?",
-      "SEND_INVITATIONS_TO_CERTIFY": "Ĉu vi certas, ke vi volas <b>sendi tiun inviton atestotan</b>?"
-    },
-    "INFO": {
-      "INVITATION_SENT": "Invito sendita"
-    },
-    "ERROR": {
-      "LOAD_INVITATIONS_FAILED": "Malsukceso por ŝarĝi la invitojn",
-      "REMOVE_INVITATION_FAILED": "Eraro dum la forigo de la invito",
-      "REMOVE_ALL_INVITATIONS_FAILED": "Eraro dum la forigo de la invitoj",
-      "SEND_INVITATION_FAILED": "Eraro dum la sendo de la invito",
-      "BAD_INVITATION_FORMAT": "<span class=\"assertive\"><i class=\"ion-close-circled\"></i> Invito nelegebla (strukturo nekonata)</span> - sendita de <a ui-sref=\"app.wot_identity({pubkey: '{{::pubkey}}', uid: '{{::uid}}' })\">{{::name||uid}}</a>"
-    }
-  },
-  "COMMENTS": {
-    "DIVIDER": "Komentoj",
-    "SHOW_MORE_COMMENTS": "Afiŝi la antaŭajn komentojn",
-    "COMMENT_HELP": "Via komento, demando, ktp.",
-    "COMMENT_HELP_REPLY_TO": "Via respondo...",
-    "BTN_SEND": "Sendi",
-    "POPOVER_SHARE_TITLE": "Mesaĝo #{{number}}",
-    "REPLY": "Respondi",
-    "REPLY_TO": "Respondo al:",
-    "REPLY_TO_LINK": "Responde al ",
-    "REPLY_TO_DELETED_COMMENT": "Responde al forigita komento",
-    "REPLY_COUNT": "{{replyCount}} respondoj",
-    "DELETED_COMMENT": "Komento forigita",
-    "ERROR": {
-      "FAILED_SAVE_COMMENT": "Eraro dum la konservo de la komento",
-      "FAILED_REMOVE_COMMENT": "Eraro dum la forigo de la komento"
-    }
-  },
-  "MESSAGE": {
-    "REPLY_TITLE_PREFIX": "Resp: ",
-    "FORWARD_TITLE_PREFIX": "Tr: ",
-    "BTN_REPLY": "Respondi",
-    "BTN_COMPOSE": "Nova mesaĝo",
-    "BTN_WRITE": "Skribi",
-    "NO_MESSAGE_INBOX": "Neniu mesaĝo ricevita",
-    "NO_MESSAGE_OUTBOX": "Neniu mesaĝo sendita",
-    "NOTIFICATIONS": {
-      "TITLE": "Mesaĝoj",
-      "MESSAGE_RECEIVED": "Vi <b>ricevis mesaĝon</b><br/>de"
-    },
-    "LIST": {
-      "INBOX": "Ricevujo",
-      "OUTBOX": "Senditaj mesaĝoj",
-      "LAST_INBOX": "Novaj mesaĝoj",
-      "LAST_OUTBOX": "Senditaj mesaĝoj",
-      "BTN_LAST_MESSAGES": "Freŝdataj mesaĝoj",
-      "TITLE": "Mesaĝoj",
-      "SEARCH_HELP": "Serĉado en la mesaĝoj",
-      "POPOVER_ACTIONS": {
-        "TITLE": "Kromaĵoj",
-        "DELETE_ALL": "Forigi ĉiujn mesaĝojn"
+    "NETWORK": {
+      "LOOKUP": {
+        "BTN_MAP": "Mapo",
+        "BTN_MAP_HELP": "Malfermi la mapon pri nodoj"
+      },
+      "VIEW": {
+        "TITLE": "Mapo pri nodoj",
+        "LAYER": {
+          "MEMBER": "Membro-nodoj",
+          "MIRROR": "Spegul-nodoj",
+          "OFFLINE": "Nekonektitaj nodoj"
+        }
       }
     },
-    "COMPOSE": {
-      "TITLE": "Nova mesaĝo",
-      "TITLE_REPLY": "Respondi",
-      "SUB_TITLE": "Nova mesaĝo",
-      "TO": "Al",
-      "OBJECT": "Temo",
-      "OBJECT_HELP": "Temo",
-      "ENCRYPTED_HELP": "Bonvolu noti, ke tiu ĉi mesaĝo estos ĉifrita antaŭ sendo, tiel ke nur la adresato povos legi ĝin, kaj ke li estos certa, ke vi ja estas ties aŭtoro.",
-      "MESSAGE": "Mesaĝo",
-      "MESSAGE_HELP": "Enhavo de la mesaĝo",
-      "CONTENT_CONFIRMATION": "La enhavo de la mesaĝo estas malplena.<br/><br/>Ĉu vi volas tamen sendi la mesaĝon?"
-    },
-    "VIEW": {
-      "TITLE": "Mesaĝo",
-      "SENDER": "Sendita de",
-      "RECIPIENT": "Sendita al",
-      "NO_CONTENT": "Mesaĝo malplena",
-      "DELETE": "Forigi la mesaĝon"
-    },
-    "CONFIRM": {
-      "REMOVE": "Ĉu vi certas, ke vi volas <b>forigi tiun ĉi mesaĝon</b>?<br/><br/>Tiu ago estas neinversigebla.",
-      "REMOVE_ALL" : "Ĉu vi certas, ke vi volas <b>forigi ĉiujn mesaĝojn</b>?<br/><br/>Tiu ago estas neinversigebla.",
-      "MARK_ALL_AS_READ": "Ĉu vi certas, ke vi volas <b>marki ĉiujn mesaĝojn legitaj</b>?",
-      "USER_HAS_NO_PROFILE": "Tiu identeco havas neniun profilon Cesium+. Eblas ke ĝi ne uzas la krom-programon Cesium+, kaj <b>do ne legos vian mesaĝon</b>.<br/><br/>Ĉu vi certas, ke vi volas tamen <b>daŭrigi</b>?"
-    },
-    "INFO": {
-      "MESSAGE_REMOVED": "Mesaĝo forigita",
-      "All_MESSAGE_REMOVED": "Ĉiuj mesaĝoj estis forigitaj",
-      "MESSAGE_SENT": "Mesaĝo sendita"
-    },
-    "ERROR": {
-      "SEND_MSG_FAILED": "Eraro dum la sendo de la mesaĝo.",
-      "LOAD_MESSAGES_FAILED": "Eraro dum la ricevo de la mesaĝoj.",
-      "LOAD_MESSAGE_FAILED": "Eraro dum la ricevo de la mesaĝo.",
-      "MESSAGE_NOT_READABLE": "Legado de la mesaĝo neebla.",
-      "USER_NOT_RECIPIENT": "Vi ne estas la adresato de tiu ĉi mesaĝo: malĉifrado neebla.",
-      "NOT_AUTHENTICATED_MESSAGE": "La aŭtenteco de la mesaĝo estas dubinda aŭ ties enhavo estas difektita.",
-      "REMOVE_MESSAGE_FAILED": "Malsukceso por forigi la mesaĝon",
-      "MESSAGE_CONTENT_TOO_LONG": "Signaro tro longa ({{maxLength}} signoj maksimume).",
-      "MARK_AS_READ_FAILED": "Neeblas marki la mesaĝon 'legita'.",
-      "LOAD_NOTIFICATIONS_FAILED": "Eraro dum la ricevo de la mesaĝo-avizoj.",
-      "REMOVE_All_MESSAGES_FAILED": "Eraro dum la forigo de ĉiuj mesaĝoj.",
-      "MARK_ALL_AS_READ_FAILED": "Eraro por marki la mesaĝojn legitaj.",
-      "RECIPIENT_IS_MANDATORY": "La adresato estas deviga."
-    }
-  },
-  "BLOCKCHAIN": {
-    "LOOKUP": {
-      "SEARCH_HELP": "Numero de bloko, haketo, publika ŝlosilo, ktp.",
-      "POPOVER_FILTER_TITLE": "Filtriloj",
-      "HEADER_MEDIAN_TIME": "Dato / Horo",
-      "HEADER_BLOCK": "Bloko #",
-      "HEADER_ISSUER": "Nodo elsendinta",
-      "BTN_LAST": "Lastaj blokoj",
-      "DISPLAY_QUERY": "Afiŝi la informpeton",
-      "HIDE_QUERY": "Kaŝi la informpeton",
-      "TX_SEARCH_FILTER": {
-        "MEMBER_FLOWS": "<b class=\"ion-person\"></b> Eniroj/eliroj de membroj",
-        "EXISTING_TRANSACTION": "<b class=\"ion-card\"></b> Kun spezoj",
-        "PERIOD": "<b class=\"ion-clock\"></b> Inter <b class=\"gray\">{{params[1]|medianDateShort}}</b> ({{params[1]|medianTime}}) kaj <b class=\"gray\">{{params[2]|medianDateShort}}</b> ({{params[2]|medianTime}})",
-        "ISSUER": "<b class=\"ion-android-desktop\"></b> Kalkulita de <b class=\"ion-key\"></b> {{params[1]|formatPubkey}}",
-        "TX_PUBKEY": "<b class=\"ion-card\"></b> Spezoj koncernantaj <b class=\"ion-key\"></b> {{params[1]|formatPubkey}}"
+    "WOT": {
+      "LOOKUP": {
+        "BTN_MAP": "Mapo",
+        "BTN_MAP_HELP": "Malfermi la mapon pri membroj"
+      },
+      "VIEW": {
+        "TITLE": "Mapo pri membroj",
+        "LAYER": {
+          "MEMBER": "<i class=\"icon ion-person positive\"></i> Membroj",
+          "PENDING": "<i class=\"icon ion-clock energized\"></i> Aliĝoj atendantaj",
+          "WALLET": "<i class=\"icon ion-card gray\"></i> Simplaj monujoj"
+        }
+      },
+      "ERROR": {
+        "LOAD_POSITION_FAILED": "Neeblas ricevi la lokojn afiŝotajn."
       }
     },
-    "ERROR": {
-      "SEARCH_BLOCKS_FAILED": "Eraro dum la serĉado de la blokoj."
-    }
-  },
-  "GROUP": {
-    "GENERAL_DIVIDER": "Ĝeneralaj informoj",
-    "LOCATION_DIVIDER": "Adreso",
-    "SOCIAL_NETWORKS_DIVIDER": "Sociaj retoj kaj retejo",
-    "TECHNICAL_DIVIDER": "Teknikaj informoj",
-    "CREATED_TIME": "Kreita {{creationTime|formatFromNow}}",
-    "NOTIFICATIONS": {
-      "TITLE": "Invitoj"
-    },
-    "LOOKUP": {
-      "TITLE": "Grupoj",
-      "SEARCH_HELP": "Nomo de grupo, vortoj, loko, ktp.",
-      "LAST_RESULTS_LIST": "Novaj grupoj:",
-      "OPEN_RESULTS_LIST": "Malfermitaj grupoj:",
-      "MANAGED_RESULTS_LIST": "Fermitaj grupoj:",
-      "BTN_LAST": "Novaj grupoj",
-      "BTN_NEW": "Mi aldonas grupon"
-    },
-    "TYPE": {
-      "TITLE": "Nova grupo",
-      "SELECT_TYPE": "Tipo de grupo:",
-      "OPEN_GROUP": "Malfermita grupo",
-      "OPEN_GROUP_HELP": "Malfermita grupo estas alirebla de iu ajn membro de la mono.",
-      "MANAGED_GROUP": "Administrita grupo",
-      "MANAGED_GROUP_HELP": "Administrita grupo estas mastrumata de administrantoj kaj moderigantoj, kiuj povas akcepti, rifuzi aŭ eksigi membron.",
-      "ENUM": {
-        "OPEN": "Malfermita grupo",
-        "MANAGED": "Administrita grupo"
+    "REGISTRY": {
+      "LOOKUP": {
+        "BTN_MAP": "Mapo",
+        "BTN_MAP_HELP": "Malfermi la mapon pri paĝoj"
+      },
+      "VIEW": {
+        "TITLE": "Mapo pri paĝoj",
+        "LAYER": {
+          "SHOP": "<i class=\"icon ion-page-shop positive\"></i> Lokaj komercoj",
+          "COMPANY": "<i class=\"icon ion-page-company positive\"></i> Entreprenoj",
+          "ASSOCIATION": "<i class=\"icon ion-page-association energized\"></i> Asocioj",
+          "INSTITUTION": "<i class=\"icon ion-page-institution gray\"></i> Institucioj"
+        }
       }
     },
-    "VIEW": {
-      "POPOVER_SHARE_TITLE": "{{title}}",
-      "MENU_TITLE": "Kromaĵoj",
-      "REMOVE_CONFIRMATION" : "Ĉu vi certas, ke vi volas forigi tiun ĉi grupon?<br/><br/>Tiu ago estas neinversigebla."
-    },
-    "EDIT": {
-      "TITLE": "Grupo",
-      "TITLE_NEW": "Nova grupo",
-      "RECORD_TITLE": "Titolo",
-      "RECORD_TITLE_HELP": "Titolo",
-      "RECORD_DESCRIPTION": "Priskribo",
-      "RECORD_DESCRIPTION_HELP": "Priskribo"
+    "PROFILE": {
+      "MARKER_HELP": "<b>Ŝovu-demetu</b> tiun ĉi markilon por <b>aktualigi<br/> vian lokon</b> sur la mapo, aŭ uzu la serĉo-butonon<br/>super la mapo."
     },
     "ERROR": {
-      "SEARCH_GROUPS_FAILED": "Malsukceso por traserĉi grupojn",
-      "REMOVE_RECORD_FAILED": "Malsukceso por forigi la grupon"
+      "LOCALIZE_ME_FAILED": "Neeblas ricevi vian nunan lokon"
     },
-    "INFO": {
-      "RECORD_REMOVED" : "Grupo forigita"
-    }
-  },
-  "REGISTRY": {
-    "CATEGORY": "Ĉefa agado",
-    "GENERAL_DIVIDER": "Ĝeneralaj informoj",
-    "LOCATION_DIVIDER": "Adreso",
-    "SOCIAL_NETWORKS_DIVIDER": "Sociaj retoj kaj retejo",
-    "TECHNICAL_DIVIDER": "Teknikaj informoj",
-    "BTN_SHOW_WOT": "Personoj",
-    "BTN_SHOW_WOT_HELP": "Traserĉi personojn",
-    "BTN_SHOW_PAGES": "Paĝoj",
-    "BTN_SHOW_PAGES_HELP": "Traserĉi paĝojn",
-    "BTN_NEW": "Krei paĝon",
-    "MY_PAGES": "Miaj paĝoj",
-    "NO_PAGE": "Neniu paĝo",
-    "SEARCH": {
-      "TITLE": "Paĝoj",
-      "SEARCH_HELP": "Kio, Kiu: restoracio, Ĉe Marcelo, ...",
-      "BTN_ADD": "Nova",
-      "BTN_LAST_RECORDS": "Freŝdataj paĝoj",
-      "BTN_ADVANCED_SEARCH": "Sperta serĉado",
-      "BTN_OPTIONS": "Sperta serĉado",
-      "TYPE": "Tipo de paĝo",
-      "LOCATION_HELP": "Kie: Poŝto-kodo, Urbo",
-      "RESULTS": "Rezultoj",
-      "RESULT_COUNT_LOCATION": "{{count}} rezulto{{count>0?'j':''}}, proksime de {{location}}",
-      "RESULT_COUNT": "{{count}} rezulto{{count>0?'j':''}}",
-      "LAST_RECORDS": "Freŝdataj paĝoj",
-      "LAST_RECORD_COUNT_LOCATION": "{{count}} paĝo{{count>0?'j':''}} freŝdata{{count>0?'j':''}}, proksime de {{location}}",
-      "LAST_RECORD_COUNT": "{{count}} paĝo{{count>0?'j':''}} freŝdata{{count>0?'j':''}}",
-      "POPOVER_FILTERS": {
-        "BTN_ADVANCED_SEARCH": "Spertaj kromaĵoj?"
-      }
-    },
-    "VIEW": {
-      "TITLE": "Adresaro",
-      "CATEGORY": "Ĉefa agado:",
-      "LOCATION": "Adreso:",
-      "MENU_TITLE": "Kromaĵoj",
-      "POPOVER_SHARE_TITLE": "{{title}}",
-      "REMOVE_CONFIRMATION" : "Ĉu vi certas, ke vi volas forigi tiun ĉi paĝon?<br/><br/>Tiu ago estas neinversigebla."
-    },
-    "TYPE": {
-      "TITLE": "Tipoj",
-      "SELECT_TYPE": "Tipo de paĝo:",
-      "ENUM": {
-        "SHOP": "Loka komerco",
-        "COMPANY": "Entrepreno",
-        "ASSOCIATION": "Asocio",
-        "INSTITUTION": "Institucio"
-      }
-    },
-    "EDIT": {
-      "TITLE": "Redaktado",
-      "TITLE_NEW": "Nova paĝo",
-      "RECORD_TYPE":"Tipo de paĝo",
-      "RECORD_TITLE": "Nomo",
-      "RECORD_TITLE_HELP": "Nomo",
-      "RECORD_DESCRIPTION": "Priskribo",
-      "RECORD_DESCRIPTION_HELP": "Priskribo de la agado",
-      "RECORD_ADDRESS": "Strato",
-      "RECORD_ADDRESS_HELP": "Strato, konstruaĵo...",
-      "RECORD_CITY": "Urbo",
-      "RECORD_CITY_HELP": "Urbo",
-      "RECORD_SOCIAL_NETWORKS": "Sociaj retoj kaj retejo",
-      "RECORD_PUBKEY": "Publika ŝlosilo",
-      "RECORD_PUBKEY_HELP": "Publika ŝlosilo por ricevi la pagojn"
-    },
-    "WALLET": {
-      "REGISTRY_DIVIDER": "Paĝoj",
-      "REGISTRY_HELP": "La paĝoj listigas agadojn, kiuj akceptas la liberan monon aŭ helpas ĝin: komercoj, entreprenoj, asocioj, institucioj."
-    },
-    "ERROR": {
-      "LOAD_CATEGORY_FAILED": "Malsukceso por ŝarĝi la liston de la agadoj",
-      "LOAD_RECORD_FAILED": "Eraro dum la ŝarĝado de la paĝo",
-      "LOOKUP_RECORDS_FAILED": "Eraro dum la serĉado",
-      "REMOVE_RECORD_FAILED": "Malsukceso por forigi la paĝon",
-      "SAVE_RECORD_FAILED": "Eraro dum la konservado",
-      "RECORD_NOT_EXISTS": "Paĝo neekzistanta",
-      "GEO_LOCATION_NOT_FOUND": "Urbo aŭ poŝto-kodo ne trovita"
-    },
-    "INFO": {
-      "RECORD_REMOVED" : "Paĝo forigita",
-      "RECORD_SAVED": "Paĝo konservita"
-    }
-  },
-  "PROFILE": {
-    "PROFILE_DIVIDER": "Profilo Cesium+",
-    "PROFILE_DIVIDER_HELP": "Temas pri kromaj datenoj, stokitaj ekster la mon-reto.",
-    "NO_PROFILE_DEFINED": "Neniu profilo tajpita",
-    "BTN_ADD": "Tajpi mian profilon",
-    "BTN_EDIT": "Redakti mian profilon",
-    "BTN_DELETE": "Forigi mian profilon",
-    "BTN_REORDER": "Reordigi",
-    "UID": "Pseŭdonimo",
-    "TITLE": "Familia nomo, Persona nomo",
-    "TITLE_HELP": "Familia nomo, Persona nomo",
-    "DESCRIPTION": "Pri mi",
-    "DESCRIPTION_HELP": "Pri mi...",
-    "SOCIAL_HELP": "http://...",
-    "GENERAL_DIVIDER": "Ĝeneralaj informoj",
-    "SOCIAL_NETWORKS_DIVIDER": "Sociaj retoj, retejoj",
-    "TECHNICAL_DIVIDER": "Teknikaj informoj",
-    "MODAL_AVATAR": {
-      "TITLE": "Profil-foto",
-      "SELECT_FILE_HELP": "Bonvolu <b>elekti bildo-dosieron</b>, alklakante la ĉi-suban butonon:",
-      "BTN_SELECT_FILE": "Elekti foton",
-      "RESIZE_HELP": "<b>Rekadri la bildon</b>, laŭbezone. Pluigi klakon sur la bildo ebligas movi ĝin. Alklaku la zonon malsupre maldekstre por zomi.",
-      "RESULT_HELP": "<b>Jen la rezulto</b> tiel videbla ĉe via profilo:"
-    },
-    "CONFIRM": {
-      "DELETE": "Ĉu vi certas, ke vi volas <b>forigi vian profilon Cesium+ ?</b><br/><br/>Tiu ago estas neinversigebla."
-    },
-    "ERROR": {
-      "REMOVE_PROFILE_FAILED": "Malsukceso por forigi la profilon",
-      "LOAD_PROFILE_FAILED": "Malsukceso por ŝarĝi la profilon de la uzanto.",
-      "SAVE_PROFILE_FAILED": "Eraro dum la konservado",
-      "INVALID_SOCIAL_NETWORK_FORMAT": "Strukturo ne rekonata: bonvolu tajpi validan adreson.<br/><br/>Ezemploj:<ul><li>- Facebook-paĝo (https://www.facebook.com/uzanto)</li><li>- Retpaĝo (http://www.miaretejo.net)</li><li>- Retadreso (joe@dalton.com)</li></ul>",
-      "IMAGE_RESIZE_FAILED": "Eraro dum la reformatigo de la bildo"
-    },
-    "INFO": {
-      "PROFILE_REMOVED": "Profilo forigita",
-      "PROFILE_SAVED": "Profilo konservita"
+    "SETTINGS": {
+      "MAP_DIVIDER": "Mapoj",
+      "ENABLE_GOOGLE_API": "Aktivigi la Google-API-servojn?",
+      "ENABLE_GOOGLE_API_HELP": "Ebligas afiŝi sur la <b>mapo pri membroj</b> kontojn kun adreso sed sen iu GPS-lokalizo.",
+      "GOOGLE_API_KEY": "Google-API-ŝlosilo",
+      "BTN_GOOGLE_API": "Ekhavi ŝlosilon",
+      "BTN_GOOGLE_API_WARNING": "Necesigas havi Google-konton",
+      "GOOGLE_API_KEY_PLACEHOLDER": "Ekzemple: AIzaqyAgszvWm0tM81x1sMK_ipDHBI7EowLqR7I"
     },
     "HELP": {
-      "WARNING_PUBLIC_DATA": "La informoj afiŝitaj en via profilo <b>estas publikaj</b>: videblaj inkluzive de la personoj <b>ne konektitaj</b>.<br/>{{'PROFILE.PROFILE_DIVIDER_HELP'|translate}}"
-    }
-  },
-  "LOCATION": {
-    "BTN_GEOLOC_ADDRESS": "Trovi mian adreson surmape",
-    "USE_GEO_POINT": "Aperi sur la mapoj {{'COMMON.APP_NAME'|translate}}?",
-    "LOADING_LOCATION": "Serĉado de la adreso...",
-    "LOCATION_DIVIDER": "Adreso",
-    "ADDRESS": "Strato",
-    "ADDRESS_HELP": "Strato, adres-aldonaĵo...",
-    "CITY": "Urbo",
-    "CITY_HELP": "Poŝto-kodo, Urbo, Lando",
-    "DISTANCE": "Maksimuma distanco ĉirkaŭ la urbo",
-    "DISTANCE_UNIT": "km",
-    "DISTANCE_OPTION": "{{value}} {{'LOCATION.DISTANCE_UNIT'|translate}}",
-    "SEARCH_HELP": "Poŝto-kodo, Urbo",
-    "PROFILE_POSITION": "Loko de la profilo",
-    "MODAL": {
-      "TITLE": "Serĉado de la adreso",
-      "SEARCH_HELP": "Urbo, Poŝto-kodo, Lando",
-      "ALTERNATIVE_RESULT_DIVIDER": "Alternativaj rezultoj por <b>{{address}}</b>:",
-      "POSITION": "Lat/Lon: {{lat}}/{{lon}}"
-    },
-    "ERROR": {
-      "CITY_REQUIRED_IF_STREET": "Deviga kampo (ĉar strato estas tajpita)",
-      "REQUIRED_FOR_LOCATION": "Deviga kampo por aperi sur la mapo",
-      "INVALID_FOR_LOCATION": "Adreso nekonata",
-      "GEO_LOCATION_FAILED": "Neeblas ricevi vian lokiĝon. Bonvolu uzi la serĉo-butonon.",
-      "ADDRESS_LOCATION_FAILED": "Neeblas ricevi la lokon per la adreso"
-    }
-  },
-  "SUBSCRIPTION": {
-    "SUBSCRIPTION_DIVIDER": "Retaj servoj",
-    "SUBSCRIPTION_DIVIDER_HELP": "La retaj servoj proponas pliajn nedevigajn servojn, delegitajn al aliulo.",
-    "BTN_ADD": "Aldoni servon",
-    "BTN_EDIT": "Mastrumi miajn servojn",
-    "NO_SUBSCRIPTION": "Neniu servo uzata",
-    "SUBSCRIPTION_COUNT": "Servoj / Abonoj",
-    "EDIT": {
-      "TITLE": "Retaj servoj",
-      "HELP_TEXT": "Mastrumu ĉi tie viajn abonojn kaj aliajn retajn servojn",
-      "PROVIDER": "Provizanto:"
-    },
-    "TYPE": {
-      "ENUM": {
-        "EMAIL": "Ricevi la avizojn per retmesaĝo"
+      "TIP": {
+        "WOT": "Tiu ĉi mapo afiŝas <b>la profilojn kun loko</b>, ĉu ili rilatas al membro-kontoj aŭ ne.<br/><br/>Nur videblas la profiloj, kies kromaĵo &quot;aperi sur la mapo&quot; estis aktivigita.",
+        "WOT_BTN_LAYERS": "<b>Filtru ĉi tie la afiŝitajn datenojn</b>: membroj, aliĝoj atendantaj, simplaj monujoj, ktp.",
+        "WOT_BTN_SEARCH": "Vi povas <b>efektivigi serĉadon</b> laŭ nomo, publika ŝlosilo aŭ membro-pseŭdonimo."
       }
-    },
-    "CONFIRM": {
-      "DELETE_SUBSCRIPTION": "Ĉu vi certas, ke vi volas <b>forigi tiun abonon</b>?"
-    },
-    "ERROR": {
-      "LOAD_SUBSCRIPTIONS_FAILED": "Eraro dum la ŝarĝo de la retaj servoj",
-      "ADD_SUBSCRIPTION_FAILED": "Malsukceso por sendi la abonon",
-      "UPDATE_SUBSCRIPTION_FAILED": "Malsukceso por ĝisdatigi la abonon",
-      "DELETE_SUBSCRIPTION_FAILED": "Eraro dum la forigo de la abono"
-    },
-    "MODAL_EMAIL": {
-      "TITLE" : "Avizo per retmesaĝo",
-      "HELP" : "Plenigu tiun ĉi formularon por <b>esti avizita per retmesaĝo</b> pri la okazaĵoj ĉe via konto.<br/>Via retadreso estos ĉifrita por esti videbla nur de la servo-provizanto.",
-      "EMAIL_LABEL" : "Via retadreso:",
-      "EMAIL_HELP": "johano.stelaro@esperanto.org",
-      "FREQUENCY_LABEL": "Periodo de la avizoj:",
-      "FREQUENCY_DAILY": "Ĉiutaga",
-      "FREQUENCY_WEEKLY": "Ĉiusemajna",
-      "PROVIDER": "Servo-provizanto:"
     }
-  },
-  "DOCUMENT": {
-    "HASH": "Haketo: ",
-    "LOOKUP": {
-      "TITLE": "Serĉado de dokumentoj",
-      "BTN_ACTIONS": "Agoj",
-      "SEARCH_HELP": "Sendanto:AAA*, tempo:1508406169",
-      "LAST_DOCUMENTS": "Lastaj dokumentoj",
-      "SHOW_QUERY": "Vidi la informpeton",
-      "HIDE_QUERY": "Kaŝi la informpeton",
-      "HEADER_TIME": "Dato/Horo",
-      "HEADER_ISSUER": "Sendanto",
-      "HEADER_RECIPIENT": "Ricevonto",
-      "READ": "Legita",
-      "BTN_REMOVE": "Forigi tiun ĉi dokumenton",
-      "POPOVER_ACTIONS": {
-        "TITLE": "Agoj",
-        "REMOVE_ALL": "Forigi tiujn ĉi dokumentojn..."
-      }
-    },
-    "INFO": {
-      "REMOVED": "Dokumento forigita"
-    },
-    "CONFIRM": {
-      "REMOVE": "Ĉu vi certas, ke vi volas <b>forigi tiun ĉi dokumenton</b>?",
-      "REMOVE_ALL": "Ĉu vi certas, ke vi volas <b>forigi tiujn ĉi dokumentojn</b>?"
-    },
-    "ERROR": {
-      "LOAD_DOCUMENTS_FAILED": "Eraro dum la serĉado de dokumentoj",
-      "REMOVE_FAILED": "Eraro dum la forigo de la dokumento",
-      "REMOVE_ALL_FAILED": "Eraro dum la forigo de la dokumentoj"
-    }
-  },
-  "ES_SETTINGS": {
-    "PLUGIN_NAME": "Cesium+",
-    "PLUGIN_NAME_HELP": "Profiloj, avizoj, privataj mesaĝoj",
-    "ENABLE_TOGGLE": "Aktivigi la krom-programon?",
-    "ENABLE_REMOTE_STORAGE": "Aktivigi la foran stokadon?",
-    "ENABLE_REMOTE_STORAGE_HELP": "Ebligas stoki (ĉifrite) viajn parametrojn ĉe la nodoj Cesium+",
-    "ENABLE_MESSAGE_TOGGLE": "Aktivigi la privatajn mesaĝojn?",
-    "PEER": "Adreso de la daten-nodo",
-    "POPUP_PEER": {
-      "TITLE" : "Daten-nodo",
-      "HELP" : "Tajpu la adreson de la nodo, kiun vi volas uzi:",
-      "PEER_HELP": "servo.domajno.com:port"
-    },
-    "NOTIFICATIONS": {
-      "DIVIDER": "Avizoj",
-      "HELP_TEXT": "Aktivigu la avizo-tipojn, kiujn vi deziras ricevi:",
-      "ENABLE_TX_SENT": "Avizi pri la <b>senditaj pagoj</b>?",
-      "ENABLE_TX_RECEIVED": "Avizi pri la <b>ricevitaj pagoj</b>?",
-      "ENABLE_CERT_SENT": "Avizi pri la <b>senditaj atestaĵoj</b>?",
-      "ENABLE_CERT_RECEIVED": "Avizi pri <b>la ricevitaj atestaĵoj</b>?",
-      "ENABLE_HTML5_NOTIFICATION": "Anonci ĉiun novan avizon?",
-      "ENABLE_HTML5_NOTIFICATION_HELP": "Malfermas fenestreton por ĉiu nova avizo."
-    },
-    "CONFIRM": {
-      "ASK_ENABLE_TITLE": "Kromaj funkcioj",
-      "ASK_ENABLE": "La krom-programo Cesium+ estas <b>malaktivigita</b> ĉe viaj parametroj, kio senaktivigas la funkciojn: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-person\"></i> Profiloj Cesium+</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-android-notifications\"></i> Avizoj</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Privataj mesaĝoj</b>.<li>&nbsp;&nbsp;<b><i class=\"icon ion-location\"></i> Mapoj, ktp.</b>.</ul><br/><b>Ĉu vi deziras reaktivigi</b> la krom-programon?"
-    }
-  },
-  "ES_WALLET": {
-    "ERROR": {
-      "RECIPIENT_IS_MANDATORY": "Adresito estas deviga por la ĉifrado."
-    }
-  },
-  "EVENT": {
-    "NODE_STARTED": "Via nodo ES API <b>{{params[0]}}</b> ekis",
-    "NODE_BMA_DOWN": "La nodo <b>{{params[0]}}:{{params[1]}}</b> (uzata de via nodo ES API) estas <b>neatingebla</b>.",
-    "NODE_BMA_UP": "La nodo <b>{{params[0]}}:{{params[1]}}</b> estas denove alirebla.",
-    "MEMBER_JOIN": "Vi estas nun <b>membro</b> de la mono <b>{{params[0]}}</b>!",
-    "MEMBER_LEAVE": "Vi <b>ne plu estas membro</b> de la mono <b>{{params[0]}}</b>!",
-    "MEMBER_EXCLUDE": "Vi <b>ne plu estas membro</b> de la mono <b>{{params[0]}}</b>, pro ne revalidiĝo aŭ pro manko da atestaĵoj.",
-    "MEMBER_REVOKE": "La nuligo de via konto efektiviĝis. Ĝi ne plu povos esti membro-konto de la mono <b>{{params[0]}}</b>.",
-    "MEMBER_ACTIVE": "La revalidiĝo de via aliĝo al la mono <b>{{params[0]}}</b> estis <b>ricevita</b>.",
-    "TX_SENT": "Via <b>pago</b> al <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> efektiviĝis.",
-    "TX_SENT_MULTI": "Via <b>pago</b> al <b>{{params[1]}}</b> efektiviĝis.",
-    "TX_RECEIVED": "Vi <b>ricevis pagon</b> de <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
-    "TX_RECEIVED_MULTI": "Vi <b>ricevis pagon</b> de <b>{{params[1]}}</b>.",
-    "CERT_SENT": "Via <b>atestado</b> al <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> efektiviĝis.",
-    "CERT_RECEIVED": "Vi <b>ricevis atestaĵon</b> de <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
-    "REGISTRY": {
-      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> komentis vian anoncon: <b>{{params[2]}}</b>",
-      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> modifis sian komenton pri via anonco: <b>{{params[2]}}</b>",
-      "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> respondis al via komento pri la anonco: <b>{{params[2]}}</b>",
-      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> modifis sian respondon al via komento pri la anonco: <b>{{params[2]}}</b>"
-    }
-  },
-  "CONFIRM": {
-    "ES_USE_FALLBACK_NODE": "Daten-nodo <b>{{old}}</b> neatingebla aŭ adreso nevalida.<br/><br/>Ĉu vi volas provizore uzi la daten-nodon <b>{{new}}</b> ?"
-  },
-  "ERROR": {
-    "ES_CONNECTION_ERROR": "Daten-nodo <b>{{server}}</b> neatingebla aŭ adreso nevalida.<br/><br/>Cesium daŭrigos funkcii, <b>sen la krom-programo Cesium+</b> (uzanto-profiloj, privataj mesaĝoj, mapoj kaj grafikoj)<br/><br/>Kontrolu vian ret-konekton, aŭ ŝanĝu daten-nodon ĉe la <a class=\"positive\" ng-click=\"doQuickFix('settings')\">parametroj de la krom-programo</a>.",
-    "ES_MAX_UPLOAD_BODY_SIZE": "La kvanto de datenoj sendotaj superas la limon fiksitan de la servilo.<br/>Bonvolu reprovi post, ekzemple, forigo de la fotoj."
   }
 }
