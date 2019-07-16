@@ -8,6 +8,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   var locales = [
     {id:'en',    label:'English'},
     {id:'en-GB', label:'English (UK)'},
+    {id:'eo-EO', label:'Esperanto'},
     {id:'fr-FR', label:'Français'},
     {id:'nl-NL', label:'Nederlands'},
     {id:'es-ES', label:'Spanish'},
