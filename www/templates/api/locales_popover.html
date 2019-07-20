@@ -5,6 +5,8 @@
       <a  ng-repeat="l in locales track by l.id"
         class="item item-icon-left ink"
          ng-click="changeLanguage(l.id)">
+        <i class="item-image avatar"
+           style="background-image: url(https://www.countryflags.io/{{l.country}}/flat/32.png)"></i>
         {{l.label | translate}}
       </a>
 

@@ -6,13 +6,13 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
   // Define app locales
   var locales = [
-    {id:'en',    label:'English'},
-    {id:'en-GB', label:'English (UK)'},
+    {id:'en',    label:'English', country: 'us'},
+    {id:'en-GB', label:'English (UK)', country: 'gb'},
     {id:'eo-EO', label:'Esperanto'},
-    {id:'fr-FR', label:'Français'},
-    {id:'nl-NL', label:'Nederlands'},
-    {id:'es-ES', label:'Spanish'},
-    {id:'it-IT', label:'Italiano'}
+    {id:'fr-FR', label:'Français' , country: 'fr'},
+    {id:'nl-NL', label:'Nederlands', country: 'nl'},
+    {id:'es-ES', label:'Spanish', country: 'es'},
+    {id:'it-IT', label:'Italiano', country: 'it'}
   ];
   var fallbackLocale = csConfig.fallbackLanguage ? fixLocale(csConfig.fallbackLanguage) : 'en';
 
@@ -201,7 +201,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     var localeChanged = false;
     if (newData.locale && newData.locale.id) {
       // Fix previously stored locale (could use bad format)
-      newData.locale.id = fixLocale(newData.locale.id);
+      var localeId = fixLocale(newData.locale.id);
+      newData.locale = _.findWhere(locales, {id: localeId});
       localeChanged = !data.locale || newData.locale.id !== data.locale.id || newData.locale.id !== $translate.use();
     }
 
@@ -218,7 +219,9 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
     // Apply the new locale (only if need)
     // will produce an event cached by onLocaleChange();
-    if (localeChanged) $translate.use(data.locale.id);
+    if (localeChanged) {
+      $translate.use(data.locale.id);
+    }
 
   },
 

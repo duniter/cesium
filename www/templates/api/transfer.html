@@ -10,12 +10,17 @@
   </ion-nav-title>
 
   <ion-nav-buttons side="right">
-    <!-- locales -->
-    <button class="button button-clear hidden-xs hidden-sm gray icon-left"
+
+    <!-- locales  -->
+    <img ng-if="$root.settings.locale.country"
+         ng-src="https://www.countryflags.io/{{$root.settings.locale.country}}/shiny/32.png"
+         style="padding: 5px 0"
+         ng-click="showLocalesPopover($event)">
+
+    <button class="button button-clear hidden-xs hidden-sm gray"
             style="max-width: 450px !important"
             ng-click="showLocalesPopover($event)">
-      <i class="icon ion-earth" ></i>
-      {{$root.settings.locale.label}}
+      {{$root.settings.locale.label}}&nbsp;
       <small class="ion-arrow-down-b"></small>
     </button>
 

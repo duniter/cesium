@@ -57,9 +57,11 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
     $urlRouterProvider.otherwise('/app/home');
   })
 
-  .controller('ApiCtrl', function ($scope, $state, $translate, $ionicPopover, Modals, csSettings){
+  .controller('ApiCtrl', function ($scope, $state, $translate, $ionicPopover, UIUtils, Modals, csSettings){
     'ngInject';
 
+    // Fill locales
+    $scope.locales = angular.copy(csSettings.locales);
 
     $scope.showAboutModal = function(e) {
       e.preventDefault(); // avoid to open link href
