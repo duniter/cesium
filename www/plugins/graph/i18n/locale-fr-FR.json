@@ -75,8 +75,8 @@
         "USER_SETTINGS": "Paramètres sauvegardés"
       },
       "MESSAGE": {
-        "TITLE": "Nombre de documents lié à la communication",
-        "MESSAGE_INBOX": "Messages en boite de réception",
+        "TITLE": "Nombre de documents liés à la communication",
+        "MESSAGE_INBOX": "Messages en boîte de réception",
         "MESSAGE_OUTBOX": "Messages envoyés sauvegardés",
         "INVITATION_CERTIFICATION": "Invitations à certifier"
       },
@@ -102,11 +102,11 @@
       "PEER": {
         "TITLE": "Noeuds requêtés",
         "ES_USER_API": "Noeuds données utilisateurs",
-        "ES_SUBSCRIPTION_API": "Noeuds services en lignes"
+        "ES_SUBSCRIPTION_API": "Noeuds services en ligne"
       },
       "PERFORMANCE": {
-        "TITLE": "Performances d'execution",
-        "DURATION": "Temps d'execution (ms)"
+        "TITLE": "Performances d'exécution",
+        "DURATION": "Temps d'exécution (ms)"
       }
     }
   }

@@ -13,7 +13,7 @@
         "TITLE": "Carte des noeuds",
         "LAYER": {
           "MEMBER": "Nœuds membre",
-          "MIRROR": "Nœuds mirroir",
+          "MIRROR": "Nœuds miroir",
           "OFFLINE": "Nœuds hors ligne"
         }
       }
@@ -51,7 +51,7 @@
       }
     },
     "PROFILE": {
-      "MARKER_HELP": "<b>Glissez-déposez</b> ce marqueur pour <b>mettre<br/>à jour votre position</b> sur la carte, ou utilisez le bouton<br/>de recherche au dessus de la carte."
+      "MARKER_HELP": "<b>Glissez-déposez</b> ce marqueur pour <b>mettre<br/>à jour votre position</b> sur la carte, ou utilisez le bouton<br/>de recherche au-dessus de la carte."
     },
     "ERROR": {
       "LOCALIZE_ME_FAILED": "Impossible de récupérer votre position actuelle"
@@ -62,13 +62,13 @@
       "ENABLE_GOOGLE_API_HELP": "Permet l'affichage dans la <b>carte des membres</b> des comptes ayant une adresse mais aucun positionnement GPS.",
       "GOOGLE_API_KEY": "Clé d'API Google",
       "BTN_GOOGLE_API": "Obtenir une clé",
-      "BTN_GOOGLE_API_WARNING": "nécessite d'avoir un compte Google",
-      "GOOGLE_API_KEY_PLACEHOLDER": "Exemple: AIzaqyAgszvWm0tM81x1sMK_ipDHBI7EowLqR7I"
+      "BTN_GOOGLE_API_WARNING": "Nécessite d'avoir un compte Google",
+      "GOOGLE_API_KEY_PLACEHOLDER": "Exemple : AIzaqyAgszvWm0tM81x1sMK_ipDHBI7EowLqR7I"
     },
     "HELP": {
       "TIP": {
-        "WOT": "Cette carte affiche <b>les profils ayant une position</b>, qu'ils correspondent à des comptes membre ou non.<br/><br/>Seuls sont visibles les profils dont l'option &quot;apparaitre sur le carte&quot; a été activée.",
-        "WOT_BTN_LAYERS": "<b>Filtrez ici les données affichées</b>: membres, inscriptions en attente, simples portefeuilles, etc.",
+        "WOT": "Cette carte affiche <b>les profils ayant une position</b>, qu'ils correspondent à des comptes membre ou non.<br/><br/>Seuls sont visibles les profils dont l'option &quot;apparaître sur la carte&quot; a été activée.",
+        "WOT_BTN_LAYERS": "<b>Filtrez ici les données affichées</b> : membres, inscriptions en attente, simples portefeuilles, etc.",
         "WOT_BTN_SEARCH": "Vous pouvez <b>effectuer une recherche</b> par nom, clef publique ou pseudonyme de membre."
       }
     }

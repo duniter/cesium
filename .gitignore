@@ -41,4 +41,6 @@
 /www/img/layers*.png
 /www/img/marker*.png
 
-env.sh
+/env.sh
+/npm-debug.log
+/package-lock.json
