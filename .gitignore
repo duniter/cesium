@@ -5,11 +5,9 @@
 /www/lib/robotodraft
 
 /node_modules/
-/platforms/*
-!/platforms/desktop
-/platforms/desktop/*
-!/platforms/android
-/platforms/android/*
+
+/platforms/android/
+/platforms/desktop/
 /resources/android/build/local.properties
 /resources/android/build/Cesium.keystore
 /resources/android/build/release-signing.properties
@@ -41,4 +39,6 @@
 /www/img/layers*.png
 /www/img/marker*.png
 
-env.sh
+/env.sh
+/npm-debug.log
+/package-lock.json

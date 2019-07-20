@@ -1,0 +1,76 @@
+{
+  "MAP": {
+    "COMMON": {
+      "SEARCH_DOTS": "Traserĉi...",
+      "BTN_LOCALIZE_ME": "Lokalizi min"
+    },
+    "NETWORK": {
+      "LOOKUP": {
+        "BTN_MAP": "Mapo",
+        "BTN_MAP_HELP": "Malfermi la mapon pri nodoj"
+      },
+      "VIEW": {
+        "TITLE": "Mapo pri nodoj",
+        "LAYER": {
+          "MEMBER": "Membro-nodoj",
+          "MIRROR": "Spegul-nodoj",
+          "OFFLINE": "Nekonektitaj nodoj"
+        }
+      }
+    },
+    "WOT": {
+      "LOOKUP": {
+        "BTN_MAP": "Mapo",
+        "BTN_MAP_HELP": "Malfermi la mapon pri membroj"
+      },
+      "VIEW": {
+        "TITLE": "Mapo pri membroj",
+        "LAYER": {
+          "MEMBER": "<i class=\"icon ion-person positive\"></i> Membroj",
+          "PENDING": "<i class=\"icon ion-clock energized\"></i> Aliĝoj atendantaj",
+          "WALLET": "<i class=\"icon ion-card gray\"></i> Simplaj monujoj"
+        }
+      },
+      "ERROR": {
+        "LOAD_POSITION_FAILED": "Neeblas ricevi la lokojn afiŝotajn."
+      }
+    },
+    "REGISTRY": {
+      "LOOKUP": {
+        "BTN_MAP": "Mapo",
+        "BTN_MAP_HELP": "Malfermi la mapon pri paĝoj"
+      },
+      "VIEW": {
+        "TITLE": "Mapo pri paĝoj",
+        "LAYER": {
+          "SHOP": "<i class=\"icon ion-page-shop positive\"></i> Lokaj komercoj",
+          "COMPANY": "<i class=\"icon ion-page-company positive\"></i> Entreprenoj",
+          "ASSOCIATION": "<i class=\"icon ion-page-association energized\"></i> Asocioj",
+          "INSTITUTION": "<i class=\"icon ion-page-institution gray\"></i> Institucioj"
+        }
+      }
+    },
+    "PROFILE": {
+      "MARKER_HELP": "<b>Ŝovu-demetu</b> tiun ĉi markilon por <b>aktualigi<br/> vian lokon</b> sur la mapo, aŭ uzu la serĉo-butonon<br/>super la mapo."
+    },
+    "ERROR": {
+      "LOCALIZE_ME_FAILED": "Neeblas ricevi vian nunan lokon"
+    },
+    "SETTINGS": {
+      "MAP_DIVIDER": "Mapoj",
+      "ENABLE_GOOGLE_API": "Aktivigi la Google-API-servojn?",
+      "ENABLE_GOOGLE_API_HELP": "Ebligas afiŝi sur la <b>mapo pri membroj</b> kontojn kun adreso sed sen iu GPS-lokalizo.",
+      "GOOGLE_API_KEY": "Google-API-ŝlosilo",
+      "BTN_GOOGLE_API": "Ekhavi ŝlosilon",
+      "BTN_GOOGLE_API_WARNING": "Necesigas havi Google-konton",
+      "GOOGLE_API_KEY_PLACEHOLDER": "Ekzemple: AIzaqyAgszvWm0tM81x1sMK_ipDHBI7EowLqR7I"
+    },
+    "HELP": {
+      "TIP": {
+        "WOT": "Tiu ĉi mapo afiŝas <b>la profilojn kun loko</b>, ĉu ili rilatas al membro-kontoj aŭ ne.<br/><br/>Nur videblas la profiloj, kies kromaĵo &quot;aperi sur la mapo&quot; estis aktivigita.",
+        "WOT_BTN_LAYERS": "<b>Filtru ĉi tie la afiŝitajn datenojn</b>: membroj, aliĝoj atendantaj, simplaj monujoj, ktp.",
+        "WOT_BTN_SEARCH": "Vi povas <b>efektivigi serĉadon</b> laŭ nomo, publika ŝlosilo aŭ membro-pseŭdonimo."
+      }
+    }
+  }
+}
