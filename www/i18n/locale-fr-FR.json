@@ -46,7 +46,7 @@
     "BTN_MODIFY": "Modifier",
     "CHOOSE_FILE": "Déposez votre fichier <br/>ou cliquez pour le sélectionner",
     "DAYS": "jours",
-    "NO_ACCOUNT_QUESTION": "Pas de encore compte ? Créer-en un gratuitement !",
+    "NO_ACCOUNT_QUESTION": "Pas encore de compte ? Créez-en un gratuitement !",
     "SEARCH_NO_RESULT": "Aucun résultat trouvé",
     "LOADING": "Veuillez patienter...",
     "LOADING_WAIT": "Veuillez patienter...<br/><small>(Attente de disponibilité du noeud)</small>",
@@ -127,7 +127,7 @@
     "REPORT_ISSUE": "anomalie",
     "NOT_YOUR_ACCOUNT_QUESTION" : "Vous n'êtes pas propriétaire du compte <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b> ?",
     "BTN_CHANGE_ACCOUNT": "Déconnecter ce compte",
-    "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connection Internet, ou changer de nœud <a class=\"positive\" ng-click=\"doQuickFix('settings')\">dans les paramètres</a>."
+    "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connexion Internet, ou changer de nœud <a class=\"positive\" ng-click=\"doQuickFix('settings')\">dans les paramètres</a>."
   },
   "SETTINGS": {
     "TITLE": "Paramètres",
@@ -146,7 +146,7 @@
     "ENABLE_UI_EFFECTS": "Activer les effets visuels",
     "HISTORY_SETTINGS": "Mes opérations",
     "DISPLAY_UD_HISTORY": "Afficher les dividendes produits ?",
-    "TX_HISTORY_AUTO_REFRESH": "Rafraichir automatiquement",
+    "TX_HISTORY_AUTO_REFRESH": "Rafraîchir automatiquement",
     "TX_HISTORY_AUTO_REFRESH_HELP": "Rafraîchit le solde et les opérations automatiquement, à chaque nouveau bloc du réseau.",
     "AUTHENTICATION_SETTINGS": "Authentification",
     "KEEP_AUTH": "Désauthentification automatique",
@@ -764,7 +764,7 @@
     "EXISTING_ACCOUNT": "Vos identifiants correspondent à un compte déjà existant, dont la <a ng-click=\"showHelpModal('pubkey')\">clef publique</a> est :",
     "EXISTING_ACCOUNT_REQUEST": "Veuillez modifier vos identifiants afin qu'ils correspondent à un compte non utilisé.",
     "GET_LICENSE_FILE_FAILED": "Récupération du fichier de licence impossible.",
-    "CHECK_NETWORK_CONNECTION": "Aucun nœud ne semble accessible.<br/><br/>Veuillez <b>vérifier votre connection Internet</b>.",
+    "CHECK_NETWORK_CONNECTION": "Aucun nœud ne semble accessible.<br/><br/>Veuillez <b>vérifier votre connexion Internet</b>.",
     "ISSUE_524_TX_FAILED": "Échec du virement.<br/><br/>Un message a été envoyé aux développeurs pour faciliter la résolution du problème. <b>Merci de votre aide</b>.",
     "ADD_SECONDARY_WALLET_FAILED": "Échec de l'ajout du portefeuille secondaire.",
     "UPDATE_WALLET_LIST_FAILED": "Échec du rafraîchissement des portefeuilles secondaires.",
@@ -905,7 +905,7 @@
       "LINK_DOC_HELP": "Documentation pour les développeurs",
       "LINK_STANDARD_APP": "Version classique",
       "LINK_STANDARD_APP_HELP": "Ouvrir la version classique de {{'COMMON.APP_NAME'|translate}}",
-      "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connection Internet, ou contactez l'administrateur du site</a>."
+      "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connexion Internet, ou contactez l'administrateur du site</a>."
     },
     "HOME": {
       "TITLE": "Documentation API {{'COMMON.APP_NAME'|translate}}",
