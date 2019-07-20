@@ -503,10 +503,11 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 }
 
 
-function HomeController($scope, $state, $timeout, $ionicHistory, csPlatform, csCurrency) {
+function HomeController($scope, $state, $timeout, $ionicHistory, $translate, UIUtils, csPlatform, csCurrency, csSettings) {
   'ngInject';
 
   $scope.loading = true;
+  $scope.locales = angular.copy(csSettings.locales);
 
   $scope.enter = function(e, state) {
     if (state && state.stateParams && state.stateParams.error) { // Error query parameter
@@ -555,6 +556,32 @@ function HomeController($scope, $state, $timeout, $ionicHistory, csPlatform, csC
         historyRoot: true
       });
       $state.go('app.settings');
+    }
+  };
+
+  $scope.changeLanguage = function(langKey) {
+    $translate.use(langKey);
+    $scope.hideLocalesPopover();
+    csSettings.data.locale = _.findWhere($scope.locales, {id: langKey});
+  };
+
+  /* -- show/hide locales popup -- */
+
+  $scope.showLocalesPopover = function(event) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'templates/api/locales_popover.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
+        $scope.localesPopover = popover;
+      }
+    });
+  };
+
+  $scope.hideLocalesPopover = function() {
+    if ($scope.localesPopover) {
+      $scope.localesPopover.hide();
+      $scope.localesPopover = null;
     }
   };
 

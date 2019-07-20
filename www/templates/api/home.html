@@ -5,15 +5,11 @@
 
   <ion-nav-buttons side="right">
     <!-- locales  -->
-    <img ng-if="$root.settings.locale.country"
-         ng-src="https://www.countryflags.io/{{$root.settings.locale.country}}/shiny/32.png"
-         style="padding: 5px 0"
-         ng-click="showLocalesPopover($event)">
-
     <button class="button button-clear hidden-xs hidden-sm gray"
-            style="max-width: 450px !important"
-            ng-click="showLocalesPopover($event)">
-      {{$root.settings.locale.label}}&nbsp;
+            ng-click="showLocalesPopover($event)" style="align-content: center">
+      <img ng-if="$root.settings.locale.country"
+           ng-src="https://www.countryflags.io/{{$root.settings.locale.country}}/shiny/32.png">
+      <span ng-if="!$root.settings.locale.country">{{$root.settings.locale.label}}&nbsp;</span>
       <small class="ion-arrow-down-b"></small>
     </button>
   </ion-nav-buttons>
