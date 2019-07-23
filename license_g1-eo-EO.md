@@ -1,8 +1,8 @@
-﻿Licencc Ğ1 - v0.2.8
+Licencc Ğ1 - v0.2.9
 ===================
 
 :dato: 2017-04-04 12:59
-:modifita: 2019-07-20 19:00
+:modifita: 2019-07-14 12:00
 
 **Licenco de la mono kaj promeso de respondeco.**
 
@@ -52,7 +52,7 @@ La 4a°) tamen preferindas al la 4b°), dum la punktoj 1°) 2°) kaj 3°) estas 
 
 Valida 2 monatojn, atestaĵo por nova membro estas definitive aprobita nur se la atestito havas almenaŭ 4 aliajn atestaĵojn fine de tiuj 2 monatoj, alie la enir-procezo devos esti rekomencita.
 
-Por fariĝi nova membro de la RdF Ğ1, necesas do akiri 5 atestaĵojn kaj troviĝi je distanco < 5 rilate al 80% (aŭ pli) el la referencaj membroj de la RdF.
+Por fariĝi nova membro de la RdF Ğ1, necesas do akiri 5 atestaĵojn kaj troviĝi je distanco <= 5 paŝoj de 80% (aŭ pli) el la referencaj membroj de la RdF.
 
 Membro de la RdF Ğ1 estas referenca membro, kiam li/ŝi ricevis kaj sendis almenaŭ Y[N] atestaĵojn, kie N estas la nombro de membroj de la RdF kaj Y[N] = plafono N^(1/5). Ekzemploj:
 
