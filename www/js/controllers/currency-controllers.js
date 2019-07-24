@@ -77,6 +77,7 @@ angular.module('cesium.currency.controllers', ['ngFileSaver', 'cesium.services']
 ;
 
 function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA, UIUtils, csSettings, csCurrency, csNetwork, ModalUtils) {
+  'ngInject';
 
   $scope.formData = {
     useRelative: false, // Override in enter()

@@ -31,8 +31,9 @@ angular.module("cesium.config", [])
 		}
 	},
 	"license": {
-		"fr-FR": "license/license_g1-fr-FR",
-		"en": "license/license_g1-en"
+		"en": "license/license_g1-en",
+    "fr-FR": "license/license_g1-fr-FR",
+    "es-ES": "license/license_g1-es-ES"
 	},
 	"node": {
 		"host": "g1.duniter.org",

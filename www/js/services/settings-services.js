@@ -102,6 +102,11 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     },
     locale: {
       id: fixLocaleWithLog(csConfig.defaultLanguage || $translate.use()) // use config locale if set, or browser default
+    },
+    license: {
+      "en": "license/license_g1-en",
+      "fr-FR": "license/license_g1-fr-FR",
+      "es-ES": "license/license_g1-es-ES"
     }
   },
     fixedSettings,
@@ -249,7 +254,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   getLicenseUrl = function() {
     var locale = data.locale && data.locale.id || csConfig.defaultLanguage || 'en';
     return (csConfig.license) ?
-      (csConfig.license[locale] ? csConfig.license[locale] : csConfig.license[csConfig.defaultLanguage || 'en'] || csConfig.license) : undefined;
+      (csConfig.license[locale] ? csConfig.license[locale] : defaultSettings.license[csConfig.defaultLanguage || 'en'] || csConfig.license) : undefined;
   },
 
   // Detect locale successful changes, then apply to vendor libs
