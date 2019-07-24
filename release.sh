@@ -149,9 +149,9 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   echo "- Building desktop artifacts..."
   echo "----------------------------------"
 
-  #FIXME: ceci empêche d'etre sur le master/origin de cesium-desktop
-  #git submodule update --init
+  git submodule init
   git submodule sync
+  git submodule update --remote --merge
 
   if [[ -d "$DIRNAME/platforms/desktop" ]]; then
     cd platforms/desktop
