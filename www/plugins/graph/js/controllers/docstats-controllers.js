@@ -31,6 +31,7 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
   // Initialize the super class and extend it.
   angular.extend(this, $controller('GpCurrencyAbstractCtrl', {$scope: $scope}));
 
+  $scope.displayRightAxis = true;
   $scope.hiddenDatasets = [];
 
   $scope.chartIdPrefix = 'docstats-chart-';
@@ -44,7 +45,7 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
         {
           key: 'user_profile',
           label: 'GRAPH.DOC_STATS.USER.USER_PROFILE',
-          color: gpColor.rgba.royal(),
+          color: gpColor.rgba.royal(0.7),
           pointHoverBackgroundColor: gpColor.rgba.royal(),
           clickState: {
             name: 'app.document_search',
@@ -60,6 +61,30 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
             name: 'app.document_search',
             params: {index:'user', type: 'settings'}
           }
+        }
+      ]
+    },
+
+    // User delta
+    {
+      id: 'user_delta',
+      title: 'GRAPH.DOC_STATS.USER_DELTA.TITLE',
+      series: [
+        {
+          key: 'user_profile_delta',
+          label: 'GRAPH.DOC_STATS.USER_DELTA.USER_PROFILE',
+          type: 'line',
+          yAxisID: 'y-axis-delta',
+          color: gpColor.rgba.royal(),
+          pointHoverBackgroundColor: gpColor.rgba.royal()
+        },
+        {
+          key: 'user_settings_delta',
+          label: 'GRAPH.DOC_STATS.USER_DELTA.USER_SETTINGS',
+          type: 'line',
+          yAxisID: 'y-axis-delta',
+          color: gpColor.rgba.gray(0.5),
+          pointHoverBackgroundColor: gpColor.rgba.gray()
         }
       ]
     },
@@ -177,8 +202,21 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
       }],
       yAxes: [
         {
-          stacked: true,
-          id: 'y-axis'
+          id: 'y-axis',
+          stacked: true
+        },
+        {
+          id: 'y-axis-delta',
+          stacked: false
+        },
+        {
+          id: 'y-axis-delta-right',
+          stacked: false,
+          display: $scope.displayRightAxis,
+          position: 'right',
+          gridLines: {
+            drawOnChartArea: false
+          }
         }
       ]
     },
@@ -231,9 +269,9 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
 
       // Labels
       var labelPattern = datePatterns[$scope.formData.rangeDuration];
-      $scope.labels = result.times.reduce(function(res, time) {
-        return res.concat(moment.unix(time).local().format(labelPattern));
-      }, []);
+      $scope.labels = _.map(result.times, function(time) {
+        return moment.unix(time).local().format(labelPattern);
+      });
 
       // Update range options with received values
       $scope.updateRange(result.times[0], result.times[result.times.length-1], updateTimePct);
@@ -243,25 +281,36 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
       // For each chart
       _.forEach($scope.charts, function(chart){
 
-        // Data
-        chart.data = [];
-        _.forEach(chart.series, function(serie){
-          chart.data.push(result[serie.key]||[]);
+        // Prepare chart data
+        var usedYAxisIDs = {};
+        chart.data = _.map(chart.series, function(serie) {
+          usedYAxisIDs[serie.yAxisID||'y-axis'] = true;
+          // If 'delta' serie, then compute delta from the source serie
+          if (serie.key.endsWith('_delta')) {
+            var key = serie.key.substring(0, serie.key.length - '_delta'.length);
+            return getDeltaFromValueArray(result[key]) || [];
+          }
+          return result[serie.key]||[];
         });
 
         // Options (with title)
         chart.options = angular.copy($scope.defaultChartOptions);
         chart.options.title.text = translations[chart.title];
 
+        // Remove unused yAxis
+        chart.options.scales.yAxes = chart.options.scales.yAxes.reduce(function(res, yAxe){
+          return usedYAxisIDs[yAxe.id] ? res.concat(yAxe) : res;
+        }, []);
+
         // Series datasets
-        chart.datasetOverride = chart.series.reduce(function(res, serie) {
-          return res.concat({
-            yAxisID: 'y-axis',
+        chart.datasetOverride = _.map(chart.series, function(serie) {
+          return {
+            yAxisID: serie.yAxisID || 'y-axis',
             type: serie.type || 'line',
             label: translations[serie.label],
-            fill: true,
+            fill: serie.type !== 'line',
             borderWidth: 2,
-            pointRadius: 0,
+            pointRadius: serie.type !== 'line' ? 0 : 2,
             pointHitRadius: 4,
             pointHoverRadius: 3,
             borderColor: serie.color,
@@ -270,8 +319,8 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
             pointBorderColor: serie.color,
             pointHoverBackgroundColor: serie.pointHoverBackgroundColor||serie.color,
             pointHoverBorderColor: serie.pointHoverBorderColor||gpColor.rgba.white()
-          });
-        }, []);
+          };
+        });
       });
     });
 
@@ -300,5 +349,14 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
     }
   };
 
+  function getDeltaFromValueArray(values) {
+    if (!values) return undefined;
+    var previousValue;
+    return _.map(values, function(value) {
+      var newValue = (value !== undefined) && (value - (previousValue || value)) || undefined;
+      previousValue = value;
+      return newValue;
+    });
+  }
 
 }

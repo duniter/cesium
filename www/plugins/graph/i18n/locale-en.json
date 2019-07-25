@@ -59,9 +59,14 @@
       }
     },
     "DOC_STATS": {
-      "TITLE": "Data storage statistics",
+      "TITLE": "Data storage statistics (Cesium+)",
       "USER": {
         "TITLE": "Number of documents linked to an account",
+        "USER_PROFILE": "User profiles",
+        "USER_SETTINGS": "Saved settings"
+      },
+      "USER_DELTA": {
+        "TITLE": "Delta / Number of documents linked to an account",
         "USER_PROFILE": "User profiles",
         "USER_SETTINGS": "Saved settings"
       },
