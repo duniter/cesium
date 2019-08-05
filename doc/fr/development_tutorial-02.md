@@ -130,14 +130,23 @@ __Objectif :__  Devenir contributeur officiel, en publiant votre code !
 
 ### Faire un `pull request`
 
-La modification que vous venez de faire correspond en réalité au [ticket gihub #209](https://github.com/duniter/cesium/issues/209).
+Si vous n'avez jamais utilisé git sur votre machine courante, il va d'abord falloir que vous définissiez
+
+1. votre adresse e-mail : `git config --global user.email "votre@email.xyz"`
+2. vos nom et prénom : `git config --global user.name "Prénom NOM"`
+
+La modification que vous venez de faire correspond en réalité au [ticket #209](https://git.duniter.org/clients/cesium-grp/cesium/issues/209).
 Pour lui adjoindre votre modification, et ainsi **devenir officiellement contributeur** de Cesium : 
 
- * Faites un `git commit` pour valider votre code;
- * Puis un `git push` pour envoyer sur votre repo GitHub.
- * Dans github, connectez sur votre compte;
- * Ouvrez votre dépot `Cesium`
- * Cliquer sur `New pull request`, en indiquant dans le titre la référence au ticket : `#209`
+ * Tapez la commande `git add` suivie des noms des fichiers que vous avez modifiés ou, plus simplement `git add *` pour ajouter au commit tous les fichiers modifiés.
+ * Puis faites  un `git commit` pour valider votre code;
+ * Enfin, faites un `git push` pour envoyer sur votre repo GitHub.
+ * Dans GitLab, connectez-vous sur votre compte;
+ * Ouvrez votre dépot `Cesium` via le menu "Projets" > "Your projects" que vous trouverez tout en haut à gauche, dans la barre de navigation.
+ * Dans le menu de gauche, rendez-vous dans "Merge requests", et cliquez sur le bouton "New merge request"
+ * La plupart des champs étant déjà préremplis, il ne vous reste plus qu'à sélectionner la branche source (si vous n'avez pas changé de branche via la ligne de commande git, c'est "master")
+ * Cliquez sur `Compare branches and continue`
+ * Dans le titre la référence au ticket : `#209`
 
 Votre contribution est maintenant visible par les développeurs de Cesium, qui pourront plus facilement intégrer votre code.
 
