@@ -109,6 +109,60 @@
           {{:locale:'MENU.HOME'|translate}}
         </ion-item>
 
+        <!-- USER Section -->
+        <div class="item item-divider"></div>
+
+        <a menu-close
+           class="item item-icon-left"
+           active-link="active"
+           active-link-path-prefix="#/app/account"
+           ui-sref="app.view_wallet"
+           ng-class="{'item-menu-disable': !login}">
+          <i class="icon ion-person"></i>
+          {{:locale:'MENU.ACCOUNT'|translate}}
+        </a>
+        <a id="helptip-menu-btn-account"></a>
+
+        <a menu-close
+           class="item item-icon-left"
+           active-link="active"
+           active-link-path-prefix="#/app/history"
+           ui-sref="app.view_wallet_tx"
+           ng-class="{'item-menu-disable': !login}">
+          <i class="icon ion-card"></i>
+          {{:locale:'MENU.TRANSACTIONS'|translate}}
+        </a>
+        <a id="helptip-menu-btn-tx"></a>
+
+        <a menu-close
+           class="item item-icon-left "
+           active-link="active"
+           active-link-path-prefix="#/app/wallets"
+           ui-sref="app.view_wallets"
+           ng-class="{'item-menu-disable': !login}">
+          <i class="icon ion-card " style="top: -5px; left: 22px; font-size: 18px;"></i>
+          <i class="icon-secondary ion-card" style="top: 22px; left: 19px; font-size: 20px; background-color: white; width:17px; height: 14px;"></i>
+          {{:locale:'MENU.WALLETS'|translate}}
+        </a>
+		  
+        <!-- MAIN Section -->
+        <div class="item item-divider"></div>
+
+        <a menu-close class="item item-icon-left"
+           active-link="active"
+           active-link-path-prefix="#/app/wot"
+           ui-sref="app.wot_lookup.tab_search">
+          <i class="icon ion-person-stalker"></i>
+          {{:locale:'MENU.WOT'|translate}}
+        </a>
+        <a id="helptip-menu-btn-wot"></a>
+
+        <!-- Allow extension here -->
+        <cs-extension-point name="menu-main"></cs-extension-point>
+
+        <!-- POWER USER Section -->
+        <div class="item item-divider"></div>
+		  
         <a menu-close
            class="item item-icon-left"
            active-link="active"
@@ -131,57 +185,8 @@
 
         <!-- Allow extension here -->
         <cs-extension-point name="menu-discover"></cs-extension-point>
-
-        <!-- MAIN Section -->
-        <div class="item item-divider"></div>
-
-        <a menu-close class="item item-icon-left"
-           active-link="active"
-           active-link-path-prefix="#/app/wot"
-           ui-sref="app.wot_lookup.tab_search">
-          <i class="icon ion-person-stalker"></i>
-          {{:locale:'MENU.WOT'|translate}}
-        </a>
-        <a id="helptip-menu-btn-wot"></a>
-
-        <!-- Allow extension here -->
-        <cs-extension-point name="menu-main"></cs-extension-point>
-
-        <!-- USER Section -->
-        <div class="item item-divider"></div>
-
-        <a menu-close
-           class="item item-icon-left"
-           active-link="active"
-           active-link-path-prefix="#/app/account"
-           ui-sref="app.view_wallet"
-           ng-class="{'item-menu-disable': !login}">
-          <i class="icon ion-person"></i>
-          {{:locale:'MENU.ACCOUNT'|translate}}
-        </a>
-        <a id="helptip-menu-btn-account"></a>
-
-        <a menu-close
-           class="item item-icon-left "
-           active-link="active"
-           active-link-path-prefix="#/app/wallets"
-           ui-sref="app.view_wallets"
-           ng-class="{'item-menu-disable': !login}">
-          <i class="icon ion-card " style="top: -5px; left: 22px; font-size: 18px;"></i>
-          <i class="icon-secondary ion-card" style="top: 22px; left: 19px; font-size: 20px; background-color: white; width:17px; height: 14px;"></i>
-          {{:locale:'MENU.WALLETS'|translate}}
-        </a>
-
-        <a menu-close
-           class="item item-icon-left"
-           active-link="active"
-           active-link-path-prefix="#/app/history"
-           ui-sref="app.view_wallet_tx"
-           ng-class="{'item-menu-disable': !login}">
-          <i class="icon ion-card"></i>
-          {{:locale:'MENU.TRANSACTIONS'|translate}}
-        </a>
-        <a id="helptip-menu-btn-tx"></a>
+		  
+		  
 
 
         <div class="item item-divider visible-xs visible-sm"></div>
