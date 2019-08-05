@@ -108,7 +108,22 @@ sudo apt-get install lib32stdc++6 lib32z1
 
 ### Configuration du projet
 
-Dans la ligne de commande (utilisée précédemment pour lancer `ionic serve`) lancer l'instalaltion du projet Cesium pour android :
+Placez-vous dans le dossier dans lequel vous avez installé cesium via la commande `cd` suivie du chemin vers le répertoire idoine.
+
+Vérifiez que vous utilisez bien la version de NodeJs dont Cesium a besoin à l'aide de la commande  
+
+```
+node --version
+```
+
+Si vous n'êtes pas sur une v5.X.X, utilisez la commande 
+
+```
+nvm use 5
+```
+
+Vous pouvez maintenant lancer l'instalaltion du projet Cesium pour Android :
+
 
 ```
 ionic state restore
@@ -116,9 +131,7 @@ ionic state restore
 
 Normalement, cette commande devrait initialiser (entre autre) un répertoire `platforms/android`.
 
-> Pour rappel: vérifier que votre ligne de commande est bien configurée :
-> - Vous devez vous placer dans le répertoire de l'application : `cd cesium`
-> - et fonctionner sous nodeJs v5 : `nvm use 5` (vérifier à l'aide de `node --version`)
+> Cette commande peut prendre un moment à se terminer.
 
 Lancez maintenant la compilation pour Android :
 
