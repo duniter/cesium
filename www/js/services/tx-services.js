@@ -21,7 +21,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           if (tx.block_number || allowPendings) {
             var walletIsIssuer = false;
             var otherIssuer = tx.issuers.reduce(function(issuer, res) {
-              walletIsIssuer = (res === pubkey) ? true : walletIsIssuer;
+              walletIsIssuer = walletIsIssuer || (res === pubkey);
               return issuer + ((res !== pubkey) ? ', ' + res : '');
             }, '');
             if (otherIssuer.length > 0) {
