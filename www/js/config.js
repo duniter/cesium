@@ -13,7 +13,7 @@ angular.module("cesium.config", [])
 	"fallbackLanguage": "en",
 	"rememberMe": true,
 	"showUDHistory": true,
-	"timeout": 10000,
+	"timeout": 40000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
 	"keepAuthIdle": 600,
@@ -93,8 +93,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "1.4.4",
-	"build": "2019-08-26T13:55:42.030Z",
+	"version": "1.4.5",
+	"build": "2019-08-26T14:03:00.819Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
