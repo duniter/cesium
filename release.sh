@@ -5,7 +5,7 @@ branch=`git rev-parse --abbrev-ref HEAD`
 if [[ ! "$branch" = "master" ]];
 then
   echo ">> This script must be run under \`master\` branch"
-  exit -1
+  exit 1
 fi
 
 DIRNAME=`pwd`
@@ -14,7 +14,7 @@ DIRNAME=`pwd`
 current=`grep -oP "version\": \"\d+.\d+.\d+((a|b)[0-9]+)?" package.json | grep -oP "\d+.\d+.\d+((a|b)[0-9]+)?"`
 if [[ "_$current" == "_" ]]; then
   echo "Unable to read the current version in 'package.json'. Please check version format is: x.y.z (x and y should be an integer)."
-  exit -1;
+  exit 1;
 fi
 echo "Current version: $current"
 
@@ -22,7 +22,7 @@ echo "Current version: $current"
 currentAndroid=`grep -oP "android-versionCode=\"[0-9]+\"" config.xml | grep -oP "\d+"`
 if [[ "_$currentAndroid" == "_" ]]; then
   echo "Unable to read the current Android version in 'config.xml'. Please check version format is an integer."
-  exit -1;
+  exit 1;
 fi
 echo "Current Android version: $currentAndroid"
 
@@ -49,25 +49,27 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
       ;;
     *)
       echo "No task given"
-      exit -1
+      exit 1
       ;;
   esac
 
   # Load env.sh if exists
-  if [[ -f "${DIRNAME}/env.sh" ]]; then
-    source ${DIRNAME}/env.sh $*
+  if [[ -f "${DIRNAME}/.local/env.sh" ]]; then
+    echo "Loading .local/env.sh ..."
+    source "${DIRNAME}/.local/env.sh" $*
   fi
 
   # Check the Java version
-  JAVA_VERSION=`java -version 2>&1 | grep "java version" | awk '{print $3}' | tr -d \"`
+  JAVA_VERSION=`java -version 2>&1 | egrep "(java|openjdk) version" | awk '{print $3}' | tr -d \"`
   if [[ $? -ne 0 ]]; then
     echo "No Java JRE 1.8 found in machine. This is required for Android artifacts."
-    exit -1
+    exit 1
   fi
+  JAVA_MAJOR_VERSION=`echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[1]}'`
   JAVA_MINOR_VERSION=`echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[2]}'`
-  if [[ ${JAVA_MINOR_VERSION} -ne 8 ]]; then
-    echo "Require a Java JRE in version 1.8, but found ${JAVA_VERSION}. You can override your default JAVA_HOME in 'env.sh'."
-    exit -1
+  if [[ ${JAVA_MAJOR_VERSION} -ne 1 ]] || [[ ${JAVA_MINOR_VERSION} -ne 8 ]]; then
+    echo "Require a Java JRE in version 1.8, but found ${JAVA_VERSION}. You can override your default JAVA_HOME in '.local/env.sh'."
+    exit 1
   fi
   echo "Java: $JAVA_VERSION"
 
@@ -77,11 +79,11 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
     . $NVM_DIR/nvm.sh
     nvm use 5
     if [[ $? -ne 0 ]]; then
-      exit -1
+      exit 1
     fi
   else
     echo "nvm (Node version manager) not found (directory $NVM_DIR not found). Please install, and retry"
-    exit -1
+    exit 1
   fi
 
   # Update config file
@@ -98,7 +100,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   rm -rf platforms/android/build/outputs/release/*
   ionic build android --release
   if [[ $? -ne 0 ]]; then
-    exit -1
+    exit 1
   fi
 
   echo "----------------------------------"
@@ -109,7 +111,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   gulp config --env default
   gulp build:web --release
   if [[ $? -ne 0 ]]; then
-    exit -1
+    exit 1
   fi
 
   echo "----------------------------------"
@@ -124,7 +126,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   git tag "v$2"
   git push
   if [[ $? -ne 0 ]]; then
-    exit -1
+    exit 1
   fi
 
   # Pause (wait propagation to from git.duniter.org to github)
@@ -142,7 +144,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
 
   ./github.sh $1 ''"$description"''
   if [[ $? -ne 0 ]]; then
-      exit -1
+      exit 1
   fi
 
   echo "----------------------------------"
@@ -159,7 +161,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
     # Build desktop assets
     ./release.sh $2
     if [[ $? -ne 0 ]]; then
-        exit -1
+        exit 1
     fi
   else
     echo "WARN: platform/desktop not found -> Skipping desktop build!"
