@@ -6,8 +6,6 @@
 
 /node_modules/
 
-/platforms/android/
-/platforms/desktop/
 /platforms/ios/
 /resources/android/build/local.properties
 /resources/android/build/Cesium.keystore
