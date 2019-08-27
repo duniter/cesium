@@ -103,6 +103,9 @@
         <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
             <string>To choose a profile picture</string>
         </edit-config>
+	<config-file mode="add" parent="ITSAppUsesNonExemptEncryption" target="*-Info.plist">
+            <false />
+        </config-file>
     </platform>
     <engine name="android" spec="^6.2.3" />
     <engine name="ios" spec="^4.5.5" />
