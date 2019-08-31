@@ -239,7 +239,7 @@
       "TAB_WOT": "Reto de fido",
       "TAB_NETWORK": "Reto",
       "TAB_BLOCKS": "Blokoj",
-      "CURRENCY_SHORT_DESCRIPTION": "{{currency|abbreviate}} estas <b>libera mono</b>, kiu ekis {{firstBlockTime|formatFromNow}}. Ĝi nombras nun <b>{{N}} membrojn</b>, kiuj produktas kaj ricevas <a ng-click=\"showHelpModal('ud')\">Universalan Dividendon</a> (DU), ĉiun {{dt|formatPeriod}}n.",
+      "CURRENCY_SHORT_DESCRIPTION": "{{currency|abbreviate}} estas <b>libera mono</b>, kiu ekis {{firstBlockTime|formatFromNow}}. Ĝi nombras nun <b>{{N}} membrojn</b>, kiuj produktas kaj ricevas <a ng-click=\"showHelpModal('ud')\">Universalan Dividendon</a> (UD), ĉiun {{dt|formatPeriod}}n.",
       "NETWORK_RULES_DIVIDER": "Reguloj de la reto",
       "CURRENCY_NAME": "Nomo de la mono",
       "MEMBERS": "Nombro de membroj",
