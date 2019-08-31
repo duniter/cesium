@@ -103,12 +103,13 @@
         <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
             <string>To choose a profile picture</string>
         </edit-config>
-	<config-file mode="add" parent="ITSAppUsesNonExemptEncryption" target="*-Info.plist">
+        <config-file mode="add" parent="ITSAppUsesNonExemptEncryption" target="*-Info.plist">
             <false />
         </config-file>
     </platform>
     <engine name="android" spec="^6.2.3" />
     <engine name="ios" spec="^4.5.5" />
+    <plugin name="cordova-plugin-ionic-webview" spec="^4.1.1" />
     <plugin name="cordova-plugin-camera" spec="^2.4.1" />
     <plugin name="cordova-plugin-console" spec="^1.0.7" />
     <plugin name="cordova-plugin-device" spec="^1.1.6" />
@@ -123,8 +124,8 @@
     <plugin name="cordova-plugin-whitelist" spec="^1.3.2" />
     <plugin name="cordova-plugin-x-toast" spec="^2.6.0" />
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
-    <plugin name="cordova-plugin-minisodium" spec="git+https://github.com/E-IS/cordova-plugin-minisodium.git"/>
-    <plugin name="phonegap-plugin-barcodescanner" spec="git+https://github.com/phonegap/phonegap-plugin-barcodescanner.git">
+    <plugin name="cordova-plugin-minisodium" spec="https://github.com/E-IS/cordova-plugin-minisodium.git" />
+    <plugin name="phonegap-plugin-barcodescanner" spec="https://github.com/phonegap/phonegap-plugin-barcodescanner.git">
         <variable name="CAMERA_USAGE_DESCRIPTION" value="Scan QRCode" />
     </plugin>
 </widget>

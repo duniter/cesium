@@ -40,6 +40,7 @@
     "cordova-plugin-device": "^1.1.6",
     "cordova-plugin-dialogs": "^1.3.3",
     "cordova-plugin-inappbrowser": "^1.7.1",
+    "cordova-plugin-ionic-webview": "^4.1.1",
     "cordova-plugin-minisodium": "git+https://github.com/E-IS/cordova-plugin-minisodium.git",
     "cordova-plugin-secure-storage": "^2.6.8",
     "cordova-plugin-splashscreen": "^3.2.2",
@@ -123,7 +124,8 @@
     {
       "id": "phonegap-plugin-barcodescanner",
       "locator": "https://github.com/phonegap/phonegap-plugin-barcodescanner.git"
-    }
+    },
+    "cordova-plugin-ionic-webview"
   ],
   "cordovaPlatforms": [
     "android",
@@ -147,7 +149,8 @@
       "ionic-plugin-keyboard": {},
       "phonegap-plugin-barcodescanner": {
         "CAMERA_USAGE_DESCRIPTION": "Scan QRCode"
-      }
+      },
+      "cordova-plugin-ionic-webview": {}
     },
     "platforms": [
       "android",
