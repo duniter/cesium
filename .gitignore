@@ -12,6 +12,7 @@
 /resources/android/build/release-signing.properties
 /plugins/
 .idea/
+.vscode/
 .local/
 /*.iml
 
