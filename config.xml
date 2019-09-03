@@ -108,7 +108,7 @@
         </config-file>
     </platform>
     <engine name="android" spec="^6.4.0" />
-    <engine name="ios" spec="^5.0.1" />
+    <engine name="ios" spec="^5.1.0-dev" />
     <plugin name="cordova-plugin-camera" spec="^2.4.1" />
     <plugin name="cordova-plugin-console" spec="^1.0.7" />
     <plugin name="cordova-plugin-device" spec="^1.1.6" />

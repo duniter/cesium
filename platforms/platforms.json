@@ -1,3 +1,4 @@
 {
-  "ios": "4.5.5"
+  "ios": "https://github.com/bpresles/cordova-ios.git",
+  "android": "6.4.0"
 }
