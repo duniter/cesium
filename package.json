@@ -120,8 +120,7 @@
     {
       "id": "phonegap-plugin-barcodescanner",
       "locator": "https://github.com/phonegap/phonegap-plugin-barcodescanner.git"
-    },
-    "cordova-plugin-ionic-webview"
+    }
   ],
   "cordovaPlatforms": [
     {
@@ -152,8 +151,7 @@
       "ionic-plugin-keyboard": {},
       "phonegap-plugin-barcodescanner": {
         "CAMERA_USAGE_DESCRIPTION": "Scan QRCode"
-      },
-      "cordova-plugin-ionic-webview": {}
+      }
     },
     "platforms": [
       "ios",
