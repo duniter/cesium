@@ -510,6 +510,15 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, UIU
   $scope.locales = angular.copy(csSettings.locales);
 
   $scope.enter = function(e, state) {
+    if (ionic.Platform.isIOS()) {
+      if(window.StatusBar) {
+        // needed to fix Xcode 9 / iOS 11 issue with blank space at bottom of webview
+        // https://github.com/meteor/meteor/issues/9041
+        StatusBar.overlaysWebView(false);
+        StatusBar.overlaysWebView(true);
+      }
+    }
+
     if (state && state.stateParams && state.stateParams.error) { // Error query parameter
       $scope.error = state.stateParams.error;
       $scope.node = csCurrency.data.node;
