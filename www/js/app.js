@@ -148,6 +148,9 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
         }
       }
     });
-
   })
 ;
+
+window.ionic.Platform.ready(function() {
+  angular.bootstrap(document, ['cesium']);
+});
