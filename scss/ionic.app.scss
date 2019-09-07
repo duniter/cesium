@@ -422,6 +422,14 @@ $screen-menu:                     845px;
 /**********
    Fix or extend generic CSS
 **********/
+html, body {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
 .item.item-icon-right.item-select,
 .item.item-icon-right .item-select {
   select {
@@ -1866,7 +1874,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
       padding-right: 0px !important;
 
       .platform-ios.platform-cordova & {
-        height: calc(env(safe-area-inset-top) + 160px);
+        height: calc(env(safe-area-inset-top) + 180px);
       }
 
       .hero {
@@ -1887,7 +1895,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
       top: 150px;
 
       .platform-ios.platform-cordova & {
-        top: calc(env(safe-area-inset-top) + 160px);
+        top: calc(env(safe-area-inset-top) + 180px);
       }
     }
   }
