@@ -1874,16 +1874,13 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
       padding-right: 0px !important;
 
       .platform-ios.platform-cordova & {
-        height: calc(env(safe-area-inset-top) + 180px);
+        height: calc(constant(safe-area-inset-top) + 150px);
+        height: calc(env(safe-area-inset-top) + 150px);
       }
 
       .hero {
         height: 150px;
         box-shadow: none; // not need (define in bar-header)
-
-        .platform-ios.platform-cordova & {
-          height: calc(env(safe-area-inset-top) + 160px);
-        }
 
         .content {
           bottom: 0px;
@@ -1895,7 +1892,8 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
       top: 150px;
 
       .platform-ios.platform-cordova & {
-        top: calc(env(safe-area-inset-top) + 180px);
+        top: calc(constant(safe-area-inset-top) + 150px);
+        top: calc(env(safe-area-inset-top) + 150px);
       }
     }
   }
