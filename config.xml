@@ -64,7 +64,6 @@
     </platform>
     <platform name="ios">
         <preference name="BackupWebStorage" value="local" />
-        <preference name="StatusBarOverlaysWebView" value="true" />
         <icon height="20" src="resources/ios/icon/Icon-App-20x20@1x.png" width="20" />
         <icon height="40" src="resources/ios/icon/Icon-App-20x20@2x.png" width="40" />
         <icon height="60" src="resources/ios/icon/Icon-App-20x20@3x.png" width="60" />

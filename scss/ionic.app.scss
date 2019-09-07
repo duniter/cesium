@@ -422,13 +422,6 @@ $screen-menu:                     845px;
 /**********
    Fix or extend generic CSS
 **********/
-.platform-ios.platform-cordova {
-  .view-container.nav-view-content {
-    height: calc(100% + constant(safe-area-inset-top));
-    height: calc(100% + env(safe-area-inset-top));
-  }
-}
-
 .item.item-icon-right.item-select,
 .item.item-icon-right .item-select {
   select {
@@ -752,11 +745,6 @@ $screen-menu:                     845px;
 .button-fab-bottom-left.has-footer,
 .button-fab-bottom-right.has-footer {
   bottom: 64px !important;
-}
-
-.platform-ios.platform-cordova .button-fab-bottom-right,
-.platform-ios.platform-cordova .button-fab-bottom-left {
-  bottom: 30px;
 }
 
 /* ============
@@ -1878,7 +1866,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
       padding-right: 0px !important;
 
       .platform-ios.platform-cordova & {
-        height: calc(env(safe-area-inset-top) + 180px);
+        height: calc(env(safe-area-inset-top) + 160px);
       }
 
       .hero {
@@ -1899,7 +1887,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
       top: 150px;
 
       .platform-ios.platform-cordova & {
-        top: calc(env(safe-area-inset-top) + 180px);
+        top: calc(env(safe-area-inset-top) + 160px);
       }
     }
   }
