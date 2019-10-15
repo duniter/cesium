@@ -462,6 +462,11 @@ html, body {
   }
 }
 
+// Fix for iOS 11+
+.ios ion-content {
+  pointer-events: auto;
+}
+
 .popover-share {
   height: 110px;
 
