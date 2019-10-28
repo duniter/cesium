@@ -19,11 +19,6 @@ if (rootdir) {
 
     var platform = platforms[x].trim().toLowerCase();
 
-    // Do not remove desktop code for iOS and macOS (support for tablets and desktop macs)
-    if (platform === 'ios' || platform === 'osx') {
-      continue;
-    }
-
     var wwwPath;
     if(platform == 'android') {
       wwwPath = path.join(rootdir, 'platforms', platform, 'assets', 'www');
@@ -42,49 +37,72 @@ if (rootdir) {
 
     var htmlminOptions = {removeComments: true, collapseWhitespace: true};
 
-    // Removing unused code for device...
-    es.concat(
-      // Remove unused HTML tags
-      gulp.src(path.join(wwwPath, 'templates', '**', '*.html'))
-        .pipe(removeCode({device: true}))
-        .pipe(removeCode(platformRemoveCodeOptions))
-        .pipe(removeHtml('.hidden-xs.hidden-sm'))
-        .pipe(removeHtml('.hidden-device'))
-        .pipe(removeHtml('[remove-if][remove-if="device"]'))
-        .pipe(htmlmin(htmlminOptions))
-        .pipe(gulp.dest(wwwPath + '/templates')),
+    // Do not remove desktop code for iOS and macOS (support for tablets and desktop macs)
+    if (platform !== 'ios' && platform !== 'osx') {
+      // Removing unused code for device...
+      es.concat(
+        // Remove unused HTML tags
+        gulp.src(path.join(wwwPath, 'templates', '**', '*.html'))
+          .pipe(removeCode({device: true}))
+          .pipe(removeCode(platformRemoveCodeOptions))
+          .pipe(removeHtml('.hidden-xs.hidden-sm'))
+          .pipe(removeHtml('.hidden-device'))
+          .pipe(removeHtml('[remove-if][remove-if="device"]'))
+          .pipe(htmlmin(htmlminOptions))
+          .pipe(gulp.dest(wwwPath + '/templates')),
 
-      gulp.src(path.join(pluginPath, '**', '*.html'))
-        .pipe(removeCode({device: true}))
-        .pipe(removeCode(platformRemoveCodeOptions))
-        .pipe(removeHtml('.hidden-xs.hidden-sm'))
-        .pipe(removeHtml('.hidden-device'))
-        .pipe(removeHtml('[remove-if][remove-if="device"]'))
-        .pipe(htmlmin(htmlminOptions))
-        .pipe(gulp.dest(pluginPath)),
+        gulp.src(path.join(pluginPath, '**', '*.html'))
+          .pipe(removeCode({device: true}))
+          .pipe(removeCode(platformRemoveCodeOptions))
+          .pipe(removeHtml('.hidden-xs.hidden-sm'))
+          .pipe(removeHtml('.hidden-device'))
+          .pipe(removeHtml('[remove-if][remove-if="device"]'))
+          .pipe(htmlmin(htmlminOptions))
+          .pipe(gulp.dest(pluginPath)),
 
-      gulp.src(path.join(wwwPath, 'index.html'))
-        .pipe(removeCode({device: true}))
-        .pipe(removeCode(platformRemoveCodeOptions))
-        .pipe(removeHtml('.hidden-xs.hidden-sm'))
-        .pipe(removeHtml('.hidden-device'))
-        .pipe(removeHtml('[remove-if][remove-if="device"]'))
-        .pipe(htmlmin(/*no options, to build comments*/))
-        .pipe(gulp.dest(wwwPath)),
+        gulp.src(path.join(wwwPath, 'index.html'))
+          .pipe(removeCode({device: true}))
+          .pipe(removeCode(platformRemoveCodeOptions))
+          .pipe(removeHtml('.hidden-xs.hidden-sm'))
+          .pipe(removeHtml('.hidden-device'))
+          .pipe(removeHtml('[remove-if][remove-if="device"]'))
+          .pipe(htmlmin(/*no options, to build comments*/))
+          .pipe(gulp.dest(wwwPath)),
 
-      // Remove unused JS code + add ng annotations
-      gulp.src(path.join(wwwPath, 'js', '**', '*.js'))
-        .pipe(removeCode({device: true}))
-        .pipe(removeCode(platformRemoveCodeOptions))
-        .pipe(ngAnnotate({single_quotes: true}))
-        .pipe(gulp.dest(wwwPath + '/dist/dist_js/app')),
+        // Remove unused JS code + add ng annotations
+        gulp.src(path.join(wwwPath, 'js', '**', '*.js'))
+          .pipe(removeCode({device: true}))
+          .pipe(removeCode(platformRemoveCodeOptions))
+          .pipe(ngAnnotate({single_quotes: true}))
+          .pipe(gulp.dest(wwwPath + '/dist/dist_js/app')),
 
-      gulp.src([pluginPath + '/js/**/*.js'])
-        .pipe(removeCode({device: true}))
-        .pipe(removeCode(platformRemoveCodeOptions))
-        .pipe(ngAnnotate({single_quotes: true}))
-        .pipe(gulp.dest(wwwPath + '/dist/dist_js/plugins'))
-    );
+        gulp.src([pluginPath + '/js/**/*.js'])
+          .pipe(removeCode({device: true}))
+          .pipe(removeCode(platformRemoveCodeOptions))
+          .pipe(ngAnnotate({single_quotes: true}))
+          .pipe(gulp.dest(wwwPath + '/dist/dist_js/plugins'))
+      );
+    } else {
+      es.concat(
+        gulp.src(path.join(wwwPath, 'templates', '**', '*.html'))
+          .pipe(htmlmin(htmlminOptions))
+          .pipe(gulp.dest(wwwPath + '/templates')),
+
+        gulp.src(path.join(pluginPath, '**', '*.html'))
+          .pipe(htmlmin(htmlminOptions))
+          .pipe(gulp.dest(pluginPath)),
+
+        gulp.src(path.join(wwwPath, 'index.html'))
+          .pipe(gulp.dest(wwwPath)),
+
+        gulp.src(path.join(wwwPath, 'js', '**', '*.js'))
+          .pipe(ngAnnotate({single_quotes: true}))
+          .pipe(gulp.dest(wwwPath + '/dist/dist_js/app')),
+
+        gulp.src([pluginPath + '/js/**/*.js'])
+          .pipe(gulp.dest(wwwPath + '/dist/dist_js/plugins'))
+      );
+    }
   }
 }
 
