@@ -32,6 +32,7 @@
   "dependencies": {
     "cordova": "^9.0.0",
     "cordova-android": "6.4.0",
+    "cordova-clipboard": "^1.3.0",
     "cordova-ios": "git+https://github.com/bpresles/cordova-ios.git#5.1.0",
     "cordova-osx": "^5.0.0",
     "cordova-plugin-camera": "^2.4.1",
@@ -124,7 +125,7 @@
       "locator": "https://github.com/phonegap/phonegap-plugin-barcodescanner.git"
     },
     "cordova-plugin-ionic-keyboard",
-    "cordova-plugin-ionic-webview"
+    "cordova-plugin-ionic-webview@4.1.2"
   ],
   "cordovaPlatforms": [
     {
@@ -140,10 +141,7 @@
   ],
   "cordova": {
     "plugins": {
-      "cordova-plugin-camera": {
-        "CAMERA_USAGE_DESCRIPTION": "Scan QRCode or avatar",
-        "PHOTOLIBRARY_USAGE_DESCRIPTION": "Avatar"
-      },
+      "cordova-plugin-camera": {},
       "cordova-plugin-console": {},
       "cordova-plugin-device": {},
       "cordova-plugin-dialogs": {},
@@ -159,7 +157,11 @@
       "phonegap-plugin-barcodescanner": {
         "CAMERA_USAGE_DESCRIPTION": "Scan QRCode"
       },
-      "cordova-plugin-ionic-webview": {}
+      "ionic-plugin-keyboard": {},
+      "cordova-clipboard": {},
+      "cordova-plugin-ionic-webview": {
+        "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
+      }
     },
     "platforms": [
       "ios",

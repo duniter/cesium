@@ -19,6 +19,11 @@ if (rootdir) {
 
     var platform = platforms[x].trim().toLowerCase();
 
+    // Do not remove desktop code for iOS and macOS (support for tablets and desktop macs)
+    if (platform === 'ios' || platform === 'osx') {
+      continue;
+    }
+
     var wwwPath;
     if(platform == 'android') {
       wwwPath = path.join(rootdir, 'platforms', platform, 'assets', 'www');
@@ -79,8 +84,7 @@ if (rootdir) {
         .pipe(removeCode(platformRemoveCodeOptions))
         .pipe(ngAnnotate({single_quotes: true}))
         .pipe(gulp.dest(wwwPath + '/dist/dist_js/plugins'))
-     );
-
+    );
   }
 }
 

@@ -1,0 +1,32 @@
+{
+  "android": {
+    "debug": {
+      "keystore": "./Cesium.keystore",
+      "storePassword": "Ces1um2020!",
+      "alias": "Cesium",
+      "password": "Ces1um2020!",
+      "keystoreType": "jks"
+    },
+    "release": {
+      "keystore": "./Cesium.keystore",
+      "storePassword": "Ces1um2020!",
+      "alias": "Cesium",
+      "password": "Ces1um2020!",
+      "keystoreType": "jks"
+    }
+  },
+  "ios": {
+    "debug": {
+      "codeSignIdentity": "iPhone Developer",
+      "developmentTeam": "3TH8P5JJ9J",
+      "automaticProvisioning": true,
+      "packageType": "development"
+    },
+    "release": {
+      "codeSignIdentity": "iPhone Developer",
+      "developmentTeam": "3TH8P5JJ9J",
+      "automaticProvisioning": true,
+      "packageType": "app-store"
+    }
+  }
+}
