@@ -47,11 +47,11 @@
     "BTN_ASK_CERTIFICATION": "Peti atestaĵon",
     "SUGGEST_CERTIFICATIONS_MODAL": {
       "TITLE": "Sugesti atestadojn",
-      "HELP": "Selekti viajn sugestojn"
+      "HELP": "Elekti viajn sugestojn"
     },
     "ASK_CERTIFICATIONS_MODAL": {
       "TITLE": "Peti atestaĵojn",
-      "HELP": "Selekti la ricevontojn"
+      "HELP": "Elekti la ricevontojn"
     },
     "SEARCH": {
       "DIVIDER_PROFILE": "Kontoj",
@@ -550,6 +550,6 @@
   },
   "ERROR": {
     "ES_CONNECTION_ERROR": "Daten-nodo <b>{{server}}</b> neatingebla aŭ adreso nevalida.<br/><br/>Cesium daŭrigos funkcii, <b>sen la krom-programo Cesium+</b> (uzanto-profiloj, privataj mesaĝoj, mapoj kaj grafikoj)<br/><br/>Kontrolu vian ret-konekton, aŭ ŝanĝu daten-nodon ĉe la <a class=\"positive\" ng-click=\"doQuickFix('settings')\">parametroj de la krom-programo</a>.",
-    "ES_MAX_UPLOAD_BODY_SIZE": "La kvanto de datenoj sendotaj superas la limon fiksitan de la servilo.<br/>Bonvolu reprovi post, ekzemple, forigo de la fotoj."
+    "ES_MAX_UPLOAD_BODY_SIZE": "La kvanto de datenoj sendotaj superas la limon fiksitan de la servilo.<br/>Bonvolu reprovi post, ekzemple, forigo de fotoj."
   }
 }
