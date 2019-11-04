@@ -1,19 +1,5 @@
 {
   "android": {
-    "debug": {
-      "keystore": "./Cesium.keystore",
-      "storePassword": "Ces1um2020!",
-      "alias": "Cesium",
-      "password": "Ces1um2020!",
-      "keystoreType": "jks"
-    },
-    "release": {
-      "keystore": "./Cesium.keystore",
-      "storePassword": "Ces1um2020!",
-      "alias": "Cesium",
-      "password": "Ces1um2020!",
-      "keystoreType": "jks"
-    }
   },
   "ios": {
     "debug": {
