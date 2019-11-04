@@ -76,7 +76,7 @@ case "$1" in
       echo " - tag: v$current"
       echo " - description: $description"
       result=`curl -H ''"$GITHUT_AUTH"'' -s $REPO_API_URL/releases -d '{"tag_name": "v'"$current"'","target_commitish": "master","name": "'"$current"'","body": "'"$description"'","draft": false,"prerelease": '"$prerelease"'}'`
-      #echo "DEBUG - $result"
+      echo "DEBUG - $result"
       upload_url=`echo "$result" | grep -P "\"upload_url\": \"[^\"]+"  | grep -oP "https://[A-Za-z0-9/.-]+"`
 
       if [[ "_$upload_url" = "_" ]]; then
@@ -87,7 +87,7 @@ case "$1" in
       fi
 
       ###  Sending files
-      echo "Uploading files to ${upload_url}"
+      echo "Uploading files to ${upload_url} ..."
       dirname=$(pwd)
 
       ZIP_FILE="$dirname/platforms/web/build/${PROJECT_NAME}-v$current-web.zip"
