@@ -93,10 +93,10 @@ Vous pouvez installer nvm avec la commande suivante :
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
 ```
 
-Fermez puis rouvrez votre terminal, comme indiqué. Puis, installez Node.js (choisissez la version 5) : 
+Fermez puis rouvrez votre terminal, comme indiqué. Puis, installez Node.js (choisissez la version 6) : 
 
 ```bash
-nvm install 5
+nvm install 6
 ```
 
 Vous aurez alors la dernière version de la branche 5.x de Node.js prête à l'emploi.
@@ -110,7 +110,7 @@ sudo apt-get install build-essential
 
 #### Sous Windows
 
-Pour Windows, téléchargez la version 5 disponible sur le site officiel de Node.js : https://nodejs.org
+Pour Windows, téléchargez la version 6 disponible sur le site officiel de Node.js : https://nodejs.org
 
 Puis lancez l'installeur ainsi téléchargé.
 

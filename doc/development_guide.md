@@ -45,7 +45,7 @@ To build Cesium, you will have to:
 
 > To remind: check that your command line is configured:
 > - You must place yourself in the directory of the application: `cd cesium`
-> - and be configured for NodeJs v5: `nvm use 5` (please check using the command `node --version`)
+> - and be configured for NodeJs v6: `nvm use 6` (please check using the command `node --version`)
 
 
 ## Prepare environment, then compile and launch
