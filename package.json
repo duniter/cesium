@@ -118,7 +118,7 @@
     "cordova-clipboard",
     {
       "id": "cordova-plugin-minisodium",
-      "locator": "https://github.com/bpresles/cordova-plugin-minisodium.git"
+      "locator": "https://github.com/E-IS/cordova-plugin-minisodium.git"
     },
     {
       "id": "phonegap-plugin-barcodescanner",
@@ -131,7 +131,7 @@
     {
       "platform": "ios",
       "version": "5.1.0",
-      "locator": "https://github.com/bpresles/cordova-ios.git#5.1.0"
+      "locator": "https://github.com/E-IS/cordova-ios.git#5.1.0"
     },
     {
       "platform": "android",
