@@ -165,8 +165,8 @@ git submodule init
 git submodule sync
 git submodule update --remote --merge
 
-if [[ -d "$DIRNAME/platforms/desktop" ]]; then
-  cd platforms/desktop
+if [[ -d "${DIRNAME}/platforms/desktop" ]]; then
+  cd ${DIRNAME}/platforms/desktop
 
   # Build desktop assets
   ./release.sh $2
@@ -178,7 +178,7 @@ else
 fi;
 
 # back to nodejs version 6
-cd $DIRNAME
+cd ${DIRNAME}
 nvm use 6
 
 echo "**********************************"

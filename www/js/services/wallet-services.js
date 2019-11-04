@@ -1073,7 +1073,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       _.find(data.sources || [], function(source) {
         if (!source.consumed && source.base === filterBase &&
           // Filter on simple SIG output condition - fix #845
-          BMA.regexp.TX_OUTPUT_SIG.exec(source.condition)
+          BMA.regexp.TX_OUTPUT_SIG.exec(source.conditions)
         ) {
           sourcesAmount += powBase(source.amount, source.base);
           sources.push(source);
