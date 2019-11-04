@@ -65,6 +65,8 @@ angular.module('cesium.modal.services', ['cesium.utils.services'])
 
       return $scope.modal.remove()
         .then(function() {
+          // Workaround modal-open not removed
+          document.body.classList.remove('modal-open');
           $scope.deferred.resolve(result);
           return result;
         });
@@ -94,7 +96,10 @@ angular.module('cesium.modal.services', ['cesium.utils.services'])
 
         $timeout(function() {
           $scope.deferred.resolve();
-          return $scope.modal.remove();
+          return $scope.modal.remove().then(function() {
+            // Workaround modal-open not removed
+            document.body.classList.remove('modal-open');
+          });
         }, ($scope.modal.hideDelay || 320) + 20);
       }
     });

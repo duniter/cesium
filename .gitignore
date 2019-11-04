@@ -6,12 +6,13 @@
 
 /node_modules/
 
-/platforms/ios/
+/platforms/*
 /resources/android/build/local.properties
 /resources/android/build/Cesium.keystore
 /resources/android/build/release-signing.properties
 /plugins/
 .idea/
+.vscode/
 .local/
 /*.iml
 
@@ -41,3 +42,4 @@
 /env.sh
 /npm-debug.log
 /package-lock.json
+/Cesium.keystore
