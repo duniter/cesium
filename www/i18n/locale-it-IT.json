@@ -115,8 +115,8 @@
    },
    "HOME": {
      "TITLE": "Cesium",
-     "MESSAGE": "Benvenuti nell'{{'COMMON.APP_NAME'|translate}} App!",
-     "MESSAGE_CURRENCY": "Scambiate in moneta libera. {{currency|abbreviate}}!",
+     "WELCOME": "Benvenuti nell'{{'COMMON.APP_NAME'|translate}} App!",
+     "MESSAGE": "Scambiate in moneta libera. {{currency|abbreviate}}!",
      "BTN_CURRENCY": "Esplorare la moneta",
      "BTN_ABOUT": "a proposito",
      "BTN_HELP": "Aiuto",
