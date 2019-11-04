@@ -422,6 +422,13 @@ $screen-menu:                     845px;
 /**********
    Fix or extend generic CSS
 **********/
+html, body {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
 
 .item.item-icon-right.item-select,
 .item.item-icon-right .item-select {
@@ -453,6 +460,11 @@ $screen-menu:                     845px;
   .popover-share {
     width: auto;
   }
+}
+
+// Fix for iOS 11+
+.ios ion-content {
+  pointer-events: auto;
 }
 
 .popover-share {
@@ -1611,6 +1623,20 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 /*
  Badge inside toolbar's button
 */
+.platform-ipad {
+  .bar-title {
+    border-color: $button-dark-border;
+    background-color: $dark;
+    background-image: linear-gradient(0deg,$button-dark-border,$button-dark-border 50%,transparent 50%);
+
+    .title {
+      background-color: white;
+      margin-left: 0;
+      margin-right: 0;
+      height: 44px;
+    }
+  }
+}
 
 .bar {
   .badge-button {
@@ -1867,16 +1893,13 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
       padding-right: 0px !important;
 
       .platform-ios.platform-cordova & {
-        height: calc(env(safe-area-inset-top) + 160px);
+        height: calc(constant(safe-area-inset-top) + 150px);
+        height: calc(env(safe-area-inset-top) + 150px);
       }
 
       .hero {
         height: 150px;
         box-shadow: none; // not need (define in bar-header)
-
-        .platform-ios.platform-cordova & {
-          height: calc(env(safe-area-inset-top) + 160px);
-        }
 
         .content {
           bottom: 0px;
@@ -1888,7 +1911,8 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
       top: 150px;
 
       .platform-ios.platform-cordova & {
-        top: calc(env(safe-area-inset-top) + 160px);
+        top: calc(constant(safe-area-inset-top) + 150px);
+        top: calc(env(safe-area-inset-top) + 150px);
       }
     }
   }

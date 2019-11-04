@@ -3,11 +3,11 @@ LABEL maintainer="benoit [dot] lavenier [at] e-is [dot] pro"
 
 ENV DEBIAN_FRONTEND=noninteractive \
     ANDROID_HOME=/opt/android-sdk-linux \
-    NODE_VERSION=5.12.0 \
-    NPM_VERSION=3.8.6 \
+    NODE_VERSION=6.17.1 \
+    NPM_VERSION=6.10.3 \
     IONIC_VERSION=1.7.16 \
     BOWER_VERSION=1.8.0 \
-    CORDOVA_VERSION=6.5.0 \
+    CORDOVA_VERSION=9.0.0 \
     GRADLE_VERSION=4.1 \
     NDK_VERSION=r10e
 

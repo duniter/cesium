@@ -74,10 +74,10 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   echo "Java: $JAVA_VERSION"
 
 
-  # force nodejs version to 5
+  # force nodejs version to 6
   if [[ -d "$NVM_DIR" ]]; then
     . $NVM_DIR/nvm.sh
-    nvm use 5
+    nvm use 6
     if [[ $? -ne 0 ]]; then
       exit 1
     fi
@@ -167,9 +167,9 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
     echo "WARN: platform/desktop not found -> Skipping desktop build!"
   fi;
 
-  # back to nodejs version 5
+  # back to nodejs version 6
   cd $DIRNAME
-  nvm use 5
+  nvm use 6
 
   echo "**********************************"
   echo "* Build release succeed !"
