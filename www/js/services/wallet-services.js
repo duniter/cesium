@@ -22,11 +22,11 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       STORAGE_DATA_PREFIX: 'data-',
       STORAGE_SECKEY: 'seckey',
       /* Need for compat with old currencies (test_net and sou) */
-      TX_VERSION:   csConfig.compatProtocol_0_80 ? 3 : BMA.constants.PROTOCOL_VERSION,
-      IDTY_VERSION: csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION,
-      MS_VERSION:   csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION,
-      CERT_VERSION: csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION,
-      REVOKE_VERSION: csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION,
+      TX_VERSION:   BMA.constants.PROTOCOL_VERSION,
+      IDTY_VERSION: BMA.constants.PROTOCOL_VERSION,
+      MS_VERSION:   BMA.constants.PROTOCOL_VERSION,
+      CERT_VERSION: BMA.constants.PROTOCOL_VERSION,
+      REVOKE_VERSION: BMA.constants.PROTOCOL_VERSION,
       TX_MAX_INPUTS_COUNT: 40 // Allow to get a TX with less than 100 rows (=max row count in Duniter protocol)
     },
     data = {},
@@ -1071,7 +1071,10 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       var minBase = filterBase;
       var maxBase = filterBase;
       _.find(data.sources || [], function(source) {
-        if (!source.consumed && source.base == filterBase){
+        if (!source.consumed && source.base === filterBase
+        // Filter on simple SIG output condition - fix #845
+          && BMA.regexp.TX_OUTPUT_SIG.exec(source.condition)
+        ) {
           sourcesAmount += powBase(source.amount, source.base);
           sources.push(source);
         }
@@ -1122,6 +1125,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           }
           if (!isLogin()){
             throw {message:'ERROR.NEED_LOGIN_FIRST'};
+          }
+          if (destPub === data.pubkey){
+            throw {message:'ERROR.SAME_TX_RECIPIENT'};
           }
           if (!amount) {
             throw {message:'ERROR.AMOUNT_REQUIRED'};

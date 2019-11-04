@@ -737,7 +737,8 @@
      "SAVE_BEFORE_LEAVE_TITLE": "Modifiche non salvate",
      "LOGOUT": "Sei sicuro/a di voler chiudere la sessione?",
      "USE_FALLBACK_NODE": "Peer <b>{{old}}</b> indisponibile o indirizzo errato.<br/><br/>Vuoi utilizzare temporanemante il <b>{{new}}</b> nodo?",
-     "ISSUE_524_SEND_LOG": "La transaction a été rejettée, à cause d'une anomalie connue (ticket #524) mais <b>non reproduite</b>.<br/><br/>Pour nous aider les développeurs à corriger cette erreur, <b>acceptez-vous la transmission de vos logs</b> par message ?<br/><small>(Aucune donnée confidentielle n'est envoyée)</small>."
+     "INVALID_FILE_FORMAT": "Formato file non valido.",
+     "SAME_TX_RECIPIENT": "Il destinatario deve essere diverso dall'emittente."
     },
    "DOWNLOAD": {
      "POPUP_TITLE": "<b>File di cancellazione dell'identità/b>",

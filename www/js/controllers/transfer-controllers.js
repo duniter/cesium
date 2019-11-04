@@ -226,6 +226,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
   };
 
   $scope.onAmountChanged = function() {
+    if ($scope.sending) return; // skip if sending TX
 
     var amount = $scope.formData.amount;
     if (amount && typeof amount === "string") {
@@ -333,12 +334,12 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
             }
           })
           .then(function() {
-            $scope.sending = false;
             UIUtils.loading.hide();
             return $scope.closeModal(true);
           })
           .then(function(res) {
             $timeout(function() {
+              $scope.sending = false;
               UIUtils.toast.show('INFO.TRANSFER_SENT');
             }, 500);
             return res;

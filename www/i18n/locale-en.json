@@ -774,7 +774,8 @@
     "COULD_NOT_ADD_EXISTING_WALLET": "Wallet already existing in the list.",
     "UNKNOWN_WALLET_ID": "Unknown secondary wallet.",
     "RESTORE_WALLET_LIST_FAILED": "Unable to restore the list of wallets.",
-    "INVALID_FILE_FORMAT": "Invalid file format."
+    "INVALID_FILE_FORMAT": "Invalid file format.",
+    "SAME_TX_RECIPIENT": "The recipient must be different from the issuer."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
