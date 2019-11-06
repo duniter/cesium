@@ -161,12 +161,17 @@ echo "----------------------------------"
 echo "- Building desktop artifacts..."
 echo "----------------------------------"
 
-git submodule init
-git submodule sync
-git submodule update --remote --merge
+git submodule init && git submodule sync && git submodule update --remote --merge
+if [[ $? -ne 0 ]]; then
+  echo "Unable to sync git submodule. Could not build desktop version"
+  exit 1
+fi
 
 if [[ -d "${DIRNAME}/platforms/desktop" ]]; then
-  cd ${DIRNAME}/platforms/desktop
+  cd "${DIRNAME}/platforms/desktop"
+
+  # Fetch last updates
+  git fetch origin && git merge origin/master || exit 1
 
   # Build desktop assets
   ./release.sh $2
