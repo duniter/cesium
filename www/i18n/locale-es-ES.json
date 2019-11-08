@@ -713,7 +713,8 @@
     "EXISTING_ACCOUNT_REQUEST": "Por favor, cambie su frase secreta para que coincida con una cuenta sin usar.",
     "GET_LICENSE_FILE_FAILED": "Error al obtener el archivo de licencia",
     "CHECK_NETWORK_CONNECTION": "Ningún nodo parece alcanzable.<br/><br/><b>Compruebe la conexión a Internet</b>.",
-    "INVALID_FILE_FORMAT": "Formato de archivo inválido."
+    "INVALID_FILE_FORMAT": "Formato de archivo inválido.",
+    "SAME_TX_RECIPIENT": "El destinatario debe ser diferente del emisor."
   },
   "INFO": {
     "POPUP_TITLE": "Información",

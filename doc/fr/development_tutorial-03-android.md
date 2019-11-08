@@ -116,10 +116,10 @@ Vérifiez que vous utilisez bien la version de NodeJs dont Cesium a besoin à l'
 node --version
 ```
 
-Si vous n'êtes pas sur une v5.X.X, utilisez la commande 
+Si vous n'êtes pas sur une v6, utilisez la commande 
 
 ```
-nvm use 5
+nvm use 6
 ```
 
 Vous pouvez maintenant lancer l'instalaltion du projet Cesium pour Android :

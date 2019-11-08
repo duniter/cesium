@@ -1,7 +1,9 @@
 {
   "name": "cesium",
-  "version": "1.4.8",
+  "version": "1.4.12",
   "description": "Cesium Wallet for G1 libre currency",
+  "author": "Benoit Lavenier <benoit.lavenier@e-is.pro>",
+  "license": "AGPL-3.0",
   "repository": {
     "type": "git",
     "url": "git@git.duniter.org:clients/cesium/cesium.git"
@@ -22,8 +24,6 @@
     "cordova",
     "crypto-currency"
   ],
-  "author": "Benoit Lavenier <benoit.lavenier@e-is.pro>",
-  "license": "AGPL-3.0",
   "readmeFilename": "README.md",
   "bugs": {
     "url": "https://git.duniter.org/clients/cesium-grp/cesium/issues",
@@ -119,7 +119,7 @@
     "cordova-clipboard",
     {
       "id": "cordova-plugin-minisodium",
-      "locator": "https://github.com/bpresles/cordova-plugin-minisodium.git"
+      "locator": "https://github.com/E-IS/cordova-plugin-minisodium.git"
     },
     {
       "id": "phonegap-plugin-barcodescanner",

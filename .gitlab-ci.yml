@@ -26,7 +26,7 @@ fast-build:
 failsafe-build:
   stage: alt_build
   when: on_failure
-  image: node:5
+  image: node:6
   script:
     - npm install
     - npm run postinstall
@@ -50,7 +50,7 @@ docker-for-fast-build:
   services:
     - docker:dind
   script:
-    - echo 'FROM node:5' > Dockerfile
+    - echo 'FROM node:6' > Dockerfile
     - echo 'WORKDIR /customCache' >> Dockerfile
     - echo 'COPY ./ ./' >> Dockerfile
     - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/before.txt' >> Dockerfile
@@ -66,7 +66,7 @@ docker-for-fast-build:
 
 pages:
   stage: publish
-  image: node:latest
+  image: node:6
   variables:
     GIT_STRATEGY: none
   script:
@@ -99,7 +99,7 @@ mirror:
 
 release-web:
   stage: publish
-  image: node:latest
+  image: node:6
   variables:
     GIT_STRATEGY: none
   script:

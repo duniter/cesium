@@ -8,7 +8,7 @@
     <a class="" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="::tx.uid">
       {{::tx.name||tx.uid}}
     </a>
-    <a class="gray" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="::!tx.uid">
+    <a class="gray" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="::!tx.uid && tx.pubkey">
       <i class="ion-key gray"></i>
       {{::tx.pubkey | formatPubkey}}
       <span ng-if="::tx.name"> - {{::tx.name | truncText:40}}</span>
@@ -38,7 +38,6 @@
 
     <!-- not locked TX -->
     <span ng-if="::!tx.lockedOutputs" class="badge item-note" ng-class="{'badge-calm': tx.amount > 0}">
-      <!--<span class="hidden-xs" ng-if=":rebind:tx.amount>0">+</span>-->
       <span ng-bind-html=":rebind:tx.amount| formatAmount:{currency:$root.currency.name}"></span>
     </span>
 
@@ -47,8 +46,7 @@
        class="badge item-note"
        ng-class="{'badge-calm': tx.amount > 0}"
        ng-click="showLockedOutputsPopover(tx, $event)">
-      <i class="icon ion-locked" ></i>
-      <!--<span class="hidden-xs" ng-if=":rebind:tx.amount>0">+</span>-->
+      <b class="ion-locked" ></b>
       <span ng-bind-html=":rebind:tx.amount| formatAmount:{currency:$root.currency.name}"></span>
     </a>
 

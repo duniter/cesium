@@ -9,11 +9,10 @@ then
 fi
 
 ### Get version to release
-current=`grep -P "version\": \"\d+.\d+.\d+(\w*)" package.json | grep -oP "\d+.\d+.\d+(\w*)"`
-if [[ "_$version" != "_" ]]; then
-  echo "ERROR: Unable to read 'version' in the file 'package.json'."
-  echo " - Make sure the file 'package.json' exists and is readable."
-  exit 1
+current=`grep -P "version\": \"\d+.\d+.\d+(\w*)" package.json | grep -m 1 -oP "\d+.\d+.\d+(\w*)"`
+if [[ "_$current" == "_" ]]; then
+  echo "Unable to read the current version in 'package.json'. Please check version format is: x.y.z (x and y should be an integer)."
+  exit 1;
 fi
 echo "Current version: $current"
 
@@ -53,10 +52,10 @@ case "$1" in
         prerelease="false"
       fi
 
-    description=`echo $2`
-    if [[ "_$description" = "_" ]]; then
-        description="Release v$current"
-    fi
+      description=`echo $2`
+      if [[ "_$description" = "_" ]]; then
+          description="Release v$current"
+      fi
 
       result=`curl -s -H ''"$GITHUT_AUTH"'' "$REPO_API_URL/releases/tags/v$current"`
       release_url=`echo "$result" | grep -P "\"url\": \"[^\"]+" | grep -oP "https://[A-Za-z0-9/.-]+/releases/\d+"`
@@ -87,7 +86,7 @@ case "$1" in
       fi
 
       ###  Sending files
-      echo "Uploading files to ${upload_url}"
+      echo "Uploading files to ${upload_url} ..."
       dirname=$(pwd)
 
       ZIP_FILE="$dirname/platforms/web/build/${PROJECT_NAME}-v$current-web.zip"
