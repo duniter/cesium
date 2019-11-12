@@ -206,6 +206,10 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
         return !!navigator.userAgent.match(/iPhone | iPad | iPod/i) || ionic.Platform.isIOS();
       };
 
+      exports.isOSX = function() {
+        return !!navigator.userAgent.match(/Macintosh/i) || ionic.Platform.is("osx");
+      };
+
       exports.isDesktop = function() {
         if (!angular.isDefined(cache.isDesktop)) {
           try {
@@ -237,7 +241,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
             if (exports.enable){
               exports.camera.enable = !!navigator.camera;
               exports.keyboard.enable = cordova && cordova.plugins && !!cordova.plugins.Keyboard;
-              exports.barcode.enable = cordova && cordova.plugins && !!cordova.plugins.barcodeScanner;
+              exports.barcode.enable = cordova && cordova.plugins && !!cordova.plugins.barcodeScanner && !this.isOSX();
               exports.clipboard.enable = cordova && cordova.plugins && !!cordova.plugins.clipboard;
 
               if (exports.keyboard.enable) {
