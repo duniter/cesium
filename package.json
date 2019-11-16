@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "cordova": "^9.0.0",
-    "cordova-android": "6.4.0",
+    "cordova-android": "^6.4.0",
     "cordova-clipboard": "^1.3.0",
     "cordova-ios": "git+https://github.com/bpresles/cordova-ios.git#5.1.0",
     "cordova-osx": "^5.0.0",
