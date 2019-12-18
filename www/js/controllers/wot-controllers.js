@@ -1038,6 +1038,7 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
   angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
 
   $scope.motion = UIUtils.motion.fadeSlideInRight;
+  $scope.qrcodeId = 'qrcode-wot-' + $scope.$id;
 
   $scope.$on('$ionicView.enter', function(e, state) {
 
@@ -1050,6 +1051,8 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
 
         $scope.removeActionParamInLocationHref(state);
       }
+
+      $scope.showQRCode();
     };
     var options = {
       cache: true,
@@ -1126,6 +1129,32 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
         block: res.meta && res.meta.timestamp || res.blockUid
       });
     });
+  };
+
+  $scope.showQRCode = function(timeout) {
+    if (!$scope.qrcode) {
+      $scope.qrcode = new QRCode(
+        $scope.qrcodeId,
+        {
+          text: $scope.formData.pubkey,
+          width: 200,
+          height: 200,
+          correctLevel: QRCode.CorrectLevel.L
+        });
+      UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
+    }
+    else {
+      $scope.qrcode.clear();
+      $scope.qrcode.makeCode($scope.formData.pubkey);
+      UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
+    }
+  };
+
+  $scope.hideQRCode = function() {
+    if ($scope.qrcode) {
+      $scope.qrcode.clear();
+      UIUtils.motion.toggleOff({selector: '#'+$scope.qrcodeId});
+    }
   };
 }
 

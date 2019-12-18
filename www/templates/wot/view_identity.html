@@ -38,6 +38,11 @@
 
     </div>
 
+    <div ng-attr-id="{{ qrcodeId }}"
+         class="qrcode spin"
+         ng-class="{'active': toggleQRCode}"
+         ng-click="toggleQRCode = !toggleQRCode"></div>
+
     <!-- button bar-->
     <a id="wot-share-anchor-{{::formData.pubkey}}"></a>
     <div class="hidden-xs hidden-sm padding text-center">

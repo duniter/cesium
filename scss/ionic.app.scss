@@ -989,36 +989,6 @@ body {
     height: 200px;
   }
 
-  .qrcode {
-    position: absolute;
-    top: 30px;
-    padding: 3px;
-    background: #fff;
-    width: 90px;
-    max-width: 30%;
-    right: -170px;
-    -webkit-backface-visibility: hidden !important;
-    backface-visibility: hidden !important;
-    -webkit-transition: all 0.5s ease-out !important;
-    transition: all 0.5s ease-out !important;
-
-    img {
-      width: 100%;
-    }
-  }
-
-  .qrcode.on {
-    right: 30px;
-  }
-
-  .qrcode.active {
-    top: 0px !important;
-    right: 0px !important;
-    padding: 10px;
-    width: 200px;
-    max-width: 50%;
-  }
-
   .item-text-wrap {
     white-space: normal !important;
   }
@@ -1059,8 +1029,43 @@ body {
 
 }
 
+
+.view-wallet,
+.view-identity {
+  .qrcode {
+    position: absolute;
+    top: 30px;
+    padding: 3px;
+    background: #fff;
+    width: 90px;
+    max-width: 30%;
+    right: -170px;
+    -webkit-backface-visibility: hidden !important;
+    backface-visibility: hidden !important;
+    -webkit-transition: all 0.5s ease-out !important;
+    transition: all 0.5s ease-out !important;
+
+    img {
+      width: 100%;
+    }
+  }
+
+  .qrcode.on {
+    right: 30px;
+  }
+
+  .qrcode.active {
+    top: 0px !important;
+    right: 0px !important;
+    padding: 10px;
+    width: 200px;
+    max-width: 50%;
+  }
+}
+
 @media screen and (max-width: $screen-sm-max) {
-  .view-wallet {
+  .view-wallet,
+  .view-identity  {
     .qrcode {
       top: 8px;
       width: 60px;
@@ -1075,6 +1080,11 @@ body {
       h1, h2, h3, h4, h5, i {
         margin-right: 200px;
       }
+    }
+  }
+  .view-identity {
+    .qrcode.active {
+      width: 180px;
     }
   }
 }
@@ -1164,7 +1174,9 @@ body {
     background-color: var(--refresher-background-color);
   }
 
+
 }
+
 
 /******
 * Cards
