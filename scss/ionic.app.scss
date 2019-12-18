@@ -915,11 +915,11 @@ body {
 }
 
 .refresher-positive-900-bg {
-  --refresher-background-color: $positive-900-bg;
+  --refresher-background-color: #{$positive-900-bg};
 }
 
 .refresher-dark-100-bg {
-  --refresher-background-color: $dark-100-bg;
+  --refresher-background-color: #{$dark-100-bg};
 }
 
 .platform-android {
@@ -1152,11 +1152,11 @@ body {
   --refresher-bg-height: 200px;
 
   // Default wallet color
-  --refresher-background-color: $dark-100-bg;
+  --refresher-background-color: #{$dark-100-bg};
 
   // if member wallet, change wallet color
   .member {
-    --refresher-background-color: $positive-900-bg;
+    --refresher-background-color: #{$positive-900-bg};
   }
 
   .hero {
