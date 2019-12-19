@@ -127,7 +127,7 @@ cd cesium
 Puis, lancez le téléchargement et l'installation des modules Cesium à l'aide de la commande : 
 
 ```bash
-npm install -g gulp bower@1.8.0 cordova@6.5.0 ionic@1.7.16
+npm install -g gulp bower@1.8.8 cordova@9.0.0 ionic@1.7.16
 ```
 
 Puis pour les dépendances non globales :
@@ -141,7 +141,7 @@ npm install
 Si tout s'est bien passé, vous devriez obtenir une fin d'arborescence dans la console, et l'invité de commande devrait vous avoir rendu la main : 
 
 ```bash
-├── bower@1.7.9 
+├── bower@1.8.8 
 ├─┬ gulp@3.9.1 
 │ ├── archy@1.0.0 
 │ ├─┬ chalk@1.1.3 
