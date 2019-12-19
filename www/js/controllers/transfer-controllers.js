@@ -257,7 +257,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     }
 
     $scope.form.$valid = valid;
-    $scope.form.amount.$invalid = !valid;
+    if ($scope.form.amount) $scope.form.amount.$invalid = !valid;
 
     if (!valid || !$scope.formData.all || !amount) {
       $scope.formData.restAmount = undefined;
