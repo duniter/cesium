@@ -822,7 +822,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         return deferred.promise;
       };
 
-      function load() {
+      this.load = function() {
         var deferred = $q.defer();
         if (!window.plugins || !window.plugins.MiniSodium) {
           deferred.reject("Cordova plugin 'MiniSodium' not found. Please load Full JS implementation instead.");

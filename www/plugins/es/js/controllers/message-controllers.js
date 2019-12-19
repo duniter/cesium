@@ -809,7 +809,7 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
             }
           }, 2000); // 2s
         }
-      })
+      });
   };
   $scope.$on('$ionicView.enter', $scope.enter);
 
