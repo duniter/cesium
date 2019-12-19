@@ -66,7 +66,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       console.debug('[ES] [message] Loading count...');
 
       // Count unread messages
-      countUnreadMessages(data.pubkey)
+      countUnreadMessages(data.pubkey, csWallet)
         .then(function(unreadCount){
           data.messages = data.messages || {};
           data.messages.unreadCount = unreadCount;
@@ -81,8 +81,9 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       return deferred.promise;
     }
 
-    function countUnreadMessages(pubkey) {
-      pubkey = pubkey || (csWallet.isLogin() ? csWallet.data.pubkey : pubkey);
+    function countUnreadMessages(pubkey, wallet) {
+      wallet = wallet || csWallet;
+      pubkey = pubkey || (wallet.isLogin() ? wallet.data.pubkey : pubkey);
       if (!pubkey) {
         throw new Error('no pubkey, and user not connected.');
       }
@@ -105,7 +106,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
     }
 
     // Listen message changes
-    function onNewMessageEvent(event) {
+    function onNewMessageEvent(event, wallet) {
+      wallet = wallet || csWallet;
       console.debug("[ES] [message] detected new message (from notification service)");
 
       var notification = new EsNotification(event);
@@ -115,8 +117,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       csWot.extend(notification, 'issuer')
         .then(function() {
 
-          csWallet.data.messages = csWallet.data.messages || {};
-          csWallet.data.messages.unreadCount++;
+          wallet.data.messages = wallet.data.messages || {};
+          wallet.data.messages.unreadCount++;
 
           // Raise event
           api.data.raise.new(notification);
@@ -168,17 +170,19 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
     }
 
     function loadMessageNotifications(options) {
-      if (!csWallet.isLogin()) {
-        return $q.when([]); // Should never happen
-      }
       options = options || {};
       options.from = options.from || 0;
       options.size = options.size || constants.DEFAULT_LOAD_SIZE;
+      var wallet = options.wallet || csWallet;
+
+      if (!wallet.isLogin()) {
+        return $q.when([]); // Should never happen
+      }
       var request = {
         sort: {
           "time" : "desc"
         },
-        query: {bool: {filter: {term: {recipient: csWallet.data.pubkey}}}},
+        query: {bool: {filter: {term: {recipient: wallet.data.pubkey}}}},
         from: options.from,
         size: options.size,
         _source: fields.notifications
@@ -250,7 +254,9 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       options.filter = angular.isDefined(options.filter) ? options.filter : undefined;
       options.from = options.from || 0;
 
-      var promise = csWallet.auth()
+      var wallet = options.wallet || csWallet;
+
+      var promise = wallet.auth()
         .then(function(walletData) {
 
           // Get encrypted message (with common fields)
@@ -286,8 +292,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
           }
 
           if (options.from === 0 && !options.filter) {
-            csWallet.data.messages = csWallet.data.messages || {};
-            csWallet.data.messages.count = messages.length;
+            wallet.data.messages = wallet.data.messages || {};
+            wallet.data.messages.count = messages.length;
           }
 
           return messages;
@@ -305,8 +311,9 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       options = options || {};
       options.type = options.type || 'inbox';
       options.summary = angular.isDefined(options.summary) ? options.summary : false/*summary not need by default*/;
+      var wallet = options.wallet || csWallet;
 
-      return csWallet.auth()
+      return wallet.auth()
         .then(function(walletData) {
           return raw.getByTypeAndId({id: id, type: options.type})
             .then(function(hit) {
@@ -448,8 +455,9 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
     }
 
     // Mark a message as read
-    function markMessageAsRead(message, type) {
-      type = type || 'inbox';
+    function markMessageAsRead(message, options) {
+      var type = options && options.type || 'inbox';
+      var wallet = options && options.wallet  || csWallet;
       if (message.read) {
         var deferred = $q.defer();
         deferred.resolve();
@@ -457,7 +465,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       }
       message.read = true;
 
-      return csWallet.getKeypair()
+      return wallet.getKeypair()
 
       // Prepare the read_signature to sent
         .then(function(keypair) {
@@ -472,15 +480,16 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
         // Update message count
         .then(function() {
           if (type == 'inbox') {
-            csWallet.data.messages = csWallet.data.messages || {};
-            csWallet.data.messages.unreadCount = csWallet.data.messages.unreadCount ? csWallet.data.messages.unreadCount - 1 : 0;
+            wallet.data.messages = wallet.data.messages || {};
+            wallet.data.messages.unreadCount = wallet.data.messages.unreadCount ? wallet.data.messages.unreadCount - 1 : 0;
           }
         });
     }
 
     // Mark all messages as read
-    function markAllMessageAsRead() {
-      return csWallet.auth()
+    function markAllMessageAsRead(options) {
+      var wallet = options && options.wallet || csWallet;
+      return wallet.auth()
         .then(function(walletData) {
 
           // Get all messages hash
@@ -510,8 +519,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
             })
             .then(function () {
               // update message count
-              csWallet.data.messages = csWallet.data.messages || {};
-              csWallet.data.messages.unreadCount = 0;
+              wallet.data.messages = wallet.data.messages || {};
+              wallet.data.messages.unreadCount = 0;
             });
         });
     }

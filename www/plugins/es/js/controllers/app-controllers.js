@@ -74,7 +74,14 @@ function ESMenuExtendController($scope, $state, $controller, UIUtils, csWallet) 
     return UIUtils.popover.show(event, {
         templateUrl :'plugins/es/templates/notification/popover_notification.html',
         scope: $scope,
-        autoremove: false // reuse popover
+        autoremove: false, // reuse popover
+        // Auto-close if open when un-authenticate
+        afterShow: function(popover) {
+          var listener = csWallet.api.data.on.unauth(popover.scope, function() {
+            popover.scope.closePopover();
+            listener();
+          });
+        }
       });
   };
 
@@ -90,7 +97,14 @@ function ESMenuExtendController($scope, $state, $controller, UIUtils, csWallet) 
     return UIUtils.popover.show(event, {
       templateUrl :'plugins/es/templates/message/popover_message.html',
       scope: $scope,
-      autoremove: false // reuse popover
+      autoremove: false, // reuse popover
+      // Auto-close if open when un-authenticate
+      afterShow: function(popover) {
+        var listener = csWallet.api.data.on.unauth(popover.scope, function() {
+          popover.scope.closePopover();
+          listener();
+        });
+      }
     });
   };
 

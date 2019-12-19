@@ -1,6 +1,6 @@
 angular.module('cesium.es.social.services', ['cesium.es.crypto.services'])
 
-  .factory('SocialUtils', function($filter, $q, CryptoUtils, BMA, csWallet, esCrypto) {
+  .factory('SocialUtils', function($filter, $q, CryptoUtils, BMA, csWallet, esCrypto, $timeout) {
     'ngInject';
 
     function SocialUtils() {

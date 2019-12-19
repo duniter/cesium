@@ -9,7 +9,7 @@
   <ion-item
     class="item item-border-large item-avatar item-icon-right ink"
     ng-repeat="msg in search.results"
-    ui-sref="app.user_view_message({type:type, id:msg.id})">
+    ng-click="select(msg)">
 
     <i ng-if="::!msg.avatar" class="item-image icon" ng-class="{'ion-person': msg.uid, 'ion-email': !msg.uid}"></i>
     <i ng-if="::msg.avatar" class="item-image avatar" style="background-image: url({{::msg.avatar.src}})"></i>
