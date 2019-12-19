@@ -1,12 +1,7 @@
 # Version v1.2.10
 
-## Settings
-- If Duniter node is down, settings cannot be stored locally - fix [#788](https://git.duniter.org/clients/cesium-grp/cesium/issues/788)
+## All platforms
 
-## My account
-- Le nombre de notifications affiché est incorrect - fix [#745](https://git.duniter.org/clients/cesium-grp/cesium/issues/745)
-
-## Cesium+ features
-
-### Settings
-- Allow to use Cesium+ Pod in version v1.1.3+
+- [enh] Cesium+: Add compatibility to Cesium+ Pod v1.1.3+
+- [fix] If Duniter node is down, settings cannot be stored locally - fix [#788](https://git.duniter.org/clients/cesium-grp/cesium/issues/788)
+- [fix] My account: notification count was wrong - fix [#745](https://git.duniter.org/clients/cesium-grp/cesium/issues/745)
