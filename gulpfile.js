@@ -357,9 +357,9 @@ gulp.task('copy-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], functi
     gulp.src('./www/manifest.json')
       .pipe(gulp.dest(tmpPath)),
 
-    // Copy lib/ionic
-    gulp.src('./www/lib/ionic/**/*.*')
-      .pipe(gulp.dest(tmpPath + '/lib/ionic')),
+    // Copy lib
+    gulp.src('./www/lib/**/*.*')
+      .pipe(gulp.dest(tmpPath + '/lib')),
 
     // Copy license into HTML
     gulp.src('./www/license/*.md')
@@ -552,10 +552,8 @@ gulp.task('clean-unused-directories:web', ['clean-unused-files:web'], function()
     tmpPath + '/templates',
     tmpPath + '/js',
     tmpPath + '/dist',
-    tmpPath + '/lib/ionic/scss',
-    tmpPath + '/lib/ionic/css',
-    tmpPath + '/lib/ionic/js',
-    tmpPath + '/lib/ionic/version.json'
+    //tmpPath + '/lib/**/*',
+    //tmpPath + '!/lib/ionic'
   ]);
 });
 

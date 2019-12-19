@@ -52,8 +52,7 @@ $cesiumicons-font-path: "../fonts" !default;
 @import "./icons/cesiumicons";
 
 // Include ion-digit-keyboard
-// FIXME: how to remove style from HTML doc insertion ?
-//@import "www/lib/ion-digit-keyboard/src/ion-digit-keyboard";
+@import "www/lib/ion-digit-keyboard/src/ion-digit-keyboard";
 
 // --------------------------------------------------
 // Responsive: Utility classes

@@ -91,9 +91,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
 
     CryptoAbstractService.prototype.async_load_scrypt = function(on_ready, options) {
       var that = this;
-      if (scrypt_module_factory !== null){
-        on_ready(scrypt_module_factory(options.requested_total_memory));
-      }
+      if (scrypt_module_factory !== null){scrypt_module_factory(on_ready, options);}
       else {$timeout(function(){that.async_load_scrypt(on_ready, options);}, 100);}
     };
 
@@ -116,7 +114,12 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
     };
 
     CryptoAbstractService.prototype.seed_from_signSk = function(signSk) {
-      var that = this;
+      var seed = new Uint8Array(that.constants.SEED_LENGTH);
+      for (var i = 0; i < seed.length; i++) seed[i] = signSk[i];
+      return seed;
+    };
+
+    CryptoAbstractService.prototype.seed_from_signSk = function(signSk) {
       var seed = new Uint8Array(that.constants.SEED_LENGTH);
       for (var i = 0; i < seed.length; i++) seed[i] = signSk[i];
       return seed;
@@ -132,16 +135,6 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         this.crypto.getRandomValues(nonce);
         return $q.when(nonce);
       };
-    }
-    else {
-      // TODO: add a default function ?
-      //CryptoAbstractService.prototype.random_nonce = function() {
-      // var nonce = new Uint8Array(crypto_secretbox_NONCEBYTES);
-      // var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-      // for(var i = 0; i < length; i++) {
-      //   text += possible.charAt(Math.floor(Math.random() * possible.length));
-      // }
-      //}
     }
 
     function FullJSServiceFactory() {
@@ -231,11 +224,33 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
        * Compute the box public key, from a sign public key
        */
       this.box_pk_from_sign = function (signPk) {
-        return $q.when(that.nacl.crypto_box_pk_from_sign_pk(signPk));
+        return $q(function (resolve, reject) {
+          try {
+            var pka = check_injectBytes("box_pk_from_sign", "signPk", signPk, that.nacl.nacl_raw._crypto_sign_publickeybytes());
+            var pk = new Target(that.nacl.nacl_raw._crypto_box_publickeybytes());
+            check("_crypto_sign_ed25519_pk_to_curve25519", that.nacl.nacl_raw._crypto_sign_ed25519_pk_to_curve25519(pk.address, pka));
+            FREE(pka);
+            resolve(pk.extractBytes());
+          }
+          catch (err) {
+            reject(err);
+          }
+        });
       };
 
       this.box_sk_from_sign = function (signSk) {
-        return $q.when(that.nacl.crypto_box_sk_from_sign_sk(signSk));
+        return $q(function (resolve, reject) {
+          try {
+            var ska = check_injectBytes("box_sk_from_sign", "signSk", signSk, that.nacl.nacl_raw._crypto_sign_secretkeybytes());
+            var sk = new Target(that.nacl.nacl_raw._crypto_box_secretkeybytes());
+            that.nacl.nacl_raw._crypto_sign_ed25519_sk_to_curve25519(sk.address, ska);
+            FREE(ska);
+            resolve(sk.extractBytes());
+          }
+          catch (err) {
+            reject(err);
+          }
+        });
       };
 
       /**
@@ -247,17 +262,14 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
             resolve(message);
             return;
           }
-          var messageBin = that.util.decode_utf8(message);
+          var messageBin = that.nacl.encode_utf8(message);
           if (typeof recipientPk === "string") {
             recipientPk = that.util.decode_base58(recipientPk);
           }
 
-          //console.debug('Original message: ' + message);
           try {
             var ciphertextBin = that.nacl.crypto_box(messageBin, nonce, recipientPk, senderSk);
             var ciphertext = that.util.encode_base64(ciphertextBin);
-
-            //console.debug('Encrypted message: ' + ciphertext);
             resolve(ciphertext);
           }
           catch (err) {
@@ -275,17 +287,15 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
             resolve(cypherText);
             return;
           }
+
           var ciphertextBin = that.util.decode_base64(cypherText);
           if (typeof senderPk === "string") {
             senderPk = that.util.decode_base58(senderPk);
           }
 
           try {
-            var message = that.nacl.crypto_box_open(ciphertextBin, nonce, senderPk, recipientSk);
-            that.util.array_to_string(message, function (result) {
-              //console.debug('Decrypted text: ' + result);
-              resolve(result);
-            });
+            var message = crypto_box_open(ciphertextBin, nonce, senderPk, recipientSk);
+            resolve(that.nacl.decode_utf8(message));
           }
           catch (err) {
             reject(err);
@@ -418,7 +428,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
           that.base58 = lib;
           checkAllLibLoaded();
         });
-        this.async_load_base64(function(lib) {
+        that.async_load_base64(function(lib) {
           that.base64 = lib;
           checkAllLibLoaded();
         });
@@ -435,6 +445,84 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         },
         pack: that.box,
         open: that.box_open
+      };
+
+      function check_length(function_name, what, thing, expected_length) {
+        if (thing.length !== expected_length) {
+          throw {message: "nacl." + function_name + " expected " +
+              expected_length + "-byte " + what + " but got length " + thing.length};
+        }
+      }
+
+      function crypto_box_open(ciphertext, nonce, pk, sk) {
+        var c = injectBytes(ciphertext, that.nacl.nacl_raw._crypto_box_boxzerobytes());
+        var na = check_injectBytes("crypto_box_open",
+          "nonce", nonce, that.nacl.nacl_raw._crypto_box_noncebytes());
+        var pka = check_injectBytes("crypto_box_open",
+          "pk", pk, that.nacl.nacl_raw._crypto_box_publickeybytes());
+        var ska = check_injectBytes("crypto_box_open",
+          "sk", sk, that.nacl.nacl_raw._crypto_box_secretkeybytes());
+        var m = new Target(ciphertext.length + that.nacl.nacl_raw._crypto_box_boxzerobytes());
+        check("_crypto_box_open", that.nacl.nacl_raw._crypto_box_open(m.address, c, m.length, 0, na, pka, ska));
+        free_all([c, na, pka, ska]);
+        return m.extractBytes(that.nacl.nacl_raw._crypto_box_zerobytes());
+      }
+
+      function check(function_name, result) {
+        if (result !== 0) {
+          throw {message: "nacl_raw." + function_name + " signalled an error"};
+        }
+      }
+
+      function check_injectBytes(function_name, what, thing, expected_length, leftPadding) {
+        check_length(function_name, what, thing, expected_length);
+        return injectBytes(thing, leftPadding);
+      }
+
+      function injectBytes(bs, leftPadding) {
+        var p = leftPadding || 0;
+        var address = MALLOC(bs.length + p);
+        that.nacl.nacl_raw.HEAPU8.set(bs, address + p);
+        for (var i = address; i < address + p; i++) {
+          that.nacl.nacl_raw.HEAPU8[i] = 0;
+        }
+        return address;
+      }
+
+      function MALLOC(nbytes) {
+        var result = that.nacl.nacl_raw._malloc(nbytes);
+        if (result === 0) {
+          throw {message: "malloc() failed", nbytes: nbytes};
+        }
+        return result;
+      }
+
+      function FREE(pointer) {
+        that.nacl.nacl_raw._free(pointer);
+      }
+
+      function free_all(addresses) {
+        for (var i = 0; i < addresses.length; i++) {
+          FREE(addresses[i]);
+        }
+      }
+
+      function extractBytes(address, length) {
+        var result = new Uint8Array(length);
+        result.set(that.nacl.nacl_raw.HEAPU8.subarray(address, address + length));
+        return result;
+      }
+
+      function Target(length) {
+        this.length = length;
+        this.address = MALLOC(length);
+      }
+
+      Target.prototype.extractBytes = function (offset) {
+        var result = extractBytes(this.address + (offset || 0), this.length - (offset || 0));
+        FREE(this.address);
+        this.address = null;
+        return result;
       };
     }
     FullJSServiceFactory.prototype = new CryptoAbstractService();
@@ -734,7 +822,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         return deferred.promise;
       };
 
-      this.load = function() {
+      function load() {
         var deferred = $q.defer();
         if (!window.plugins || !window.plugins.MiniSodium) {
           deferred.reject("Cordova plugin 'MiniSodium' not found. Please load Full JS implementation instead.");

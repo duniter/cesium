@@ -14,7 +14,7 @@
     "start": "ionic serve",
     "docker:build": "sudo docker build . -t cesium/release",
     "docker:run": "sudo docker run -ti --rm -p 8100:8100 -p 35729:35729 -v .:/cesium:rw cesium/release",
-    "build:web": "config --env default && gulp build:web --release"
+    "build:web": "gulp config --env default && gulp build:web --release"
   },
   "keywords": [
     "duniter",
