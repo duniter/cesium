@@ -67,7 +67,7 @@ function ESMenuExtendController($scope, $state, $controller, UIUtils, csWallet) 
   angular.extend(this, $controller('ESExtensionCtrl', {$scope: $scope}));
 
   $scope.showRegistryLookupView = function() {
-    $state.go(UIUtils.screen.isSmall() ? 'app.registry_lookup': 'app.registry_lookup_lg');
+    $state.go(UIUtils.screen.isSmall() ? 'app.wot_lookup.tab_registry': 'app.registry_lookup_lg');
   };
 
   $scope.showNotificationsPopover = function(event) {

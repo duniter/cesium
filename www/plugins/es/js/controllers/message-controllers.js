@@ -62,7 +62,7 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services'])
         url: "/wallets/:id/message",
         views: {
           'menuContent': {
-            templateUrl: "plugins/es/templates/message/lookup.html"
+            templateUrl: "plugins/es/templates/message/lookup_by_id.html"
           }
         }
       })
@@ -104,7 +104,7 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services'])
       })
 
       .state('app.user_messages_lg_outbox', {
-        url: "/wallets/:id/message/lg/outbox",
+        url: "/user/message/lg/outbox",
         views: {
           'menuContent': {
             templateUrl: "plugins/es/templates/message/lookup_lg.html",
@@ -118,7 +118,7 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services'])
       })
 
       .state('app.user_messages_lg_outbox_by_id', {
-        url: "/user/message/lg/outbox",
+        url: "/wallets/:id/message/lg/outbox",
         views: {
           'menuContent': {
             templateUrl: "plugins/es/templates/message/lookup_lg.html",
@@ -189,6 +189,7 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
 
   var defaultSearchLimit = 40;
   var wallet;
+  var selectPrevented = false;
 
   $scope.search = {
     loading: true,
@@ -205,42 +206,44 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
   $scope.fabButtonNewMessageId = undefined;
 
   $scope.enter = function(s, state) {
-    wallet = (state.stateParams && state.stateParams.id) ? csWallet.children.get(state.stateParams.id) : csWallet;
-    if (!wallet) {
-      UIUtils.alert.error('ERROR.UNKNOWN_WALLET_ID');
-      return $scope.showHome();
+    // First enter
+    if ($scope.search.loading) {
+      wallet = (state.stateParams && state.stateParams.id) ? csWallet.children.get(state.stateParams.id) : csWallet;
+      if (!wallet) {
+        UIUtils.alert.error('ERROR.UNKNOWN_WALLET_ID');
+        return $scope.showHome();
+      }
+
+      $scope.isDefaultWallet = wallet.isDefault();
+      $scope.walletId = wallet.id;
+
+      wallet.auth({minData: true})
+        .then(function() {
+          if (!$scope.entered) {
+            $scope.entered = true;
+            $scope.type = $scope.type || state.stateParams && state.stateParams.type || 'inbox';
+            $scope.load();
+          }
+
+          if ($scope.fabButtonNewMessageId) {
+            $scope.showFab($scope.fabButtonNewMessageId);
+          }
+        })
+        .catch(function(err) {
+          if ('CANCELLED' === err) {
+            $ionicHistory.nextViewOptions({
+              historyRoot: true
+            });
+            $scope.showHome();
+          }
+      });
     }
-
-    $scope.isDefaultWallet = wallet.isDefault();
-    $scope.walletId = wallet.id;
-
-    wallet.auth({minData: true})
-      .then(function() {
-        if (!$scope.entered) {
-          $scope.entered = true;
-          $scope.type = $scope.type || state.stateParams && state.stateParams.type || 'inbox';
-          $scope.load();
-        }
-
-        if ($scope.fabButtonNewMessageId) {
-          $scope.showFab($scope.fabButtonNewMessageId);
-        }
-      })
-      .catch(function(err) {
-        if ('CANCELLED' === err) {
-          $ionicHistory.nextViewOptions({
-            historyRoot: true
-          });
-          $state.go('app.home');
-        }
-    });
+    // Not first entering: refresh the view
+    else {
+      $scope.updateView();
+    }
   };
   $scope.$on('$ionicView.enter', $scope.enter);
-
-
-  $scope.refresh = function(silent) {
-    return $scope.load(undefined, undefined, silent);
-  };
 
   $scope.load = function(from, size, silent) {
 
@@ -279,15 +282,11 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
       });
   };
 
-  $scope.setType = function(type) {
-    $scope.type = type;
-    $scope.load();
-  };
-
   $scope.updateView = function() {
     if ($scope.motion && $scope.motion.ionListClass && $scope.search.results.length) {
       $scope.motion.show({selector: '.view-messages .list .item'});
     }
+    $scope.$broadcast('$$rebind::rebind'); // notifier binder
   };
 
   $scope.showMore = function() {
@@ -332,9 +331,10 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
     UIUtils.alert.confirm('MESSAGE.CONFIRM.REMOVE')
       .then(function(confirm) {
         if (confirm) {
-          esMessage.remove(message.id, $scope.type)
+          esMessage.remove(message.id, $scope.type, {walletId: $scope.walletId})
             .then(function () {
               $scope.search.results.splice(index,1); // remove from messages array
+              $scope.updateView();
               UIUtils.toast.show('MESSAGE.INFO.MESSAGE_REMOVED');
             })
             .catch(UIUtils.onError('MESSAGE.ERROR.REMOVE_MESSAGE_FAILED'));
@@ -349,9 +349,10 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
     UIUtils.alert.confirm('MESSAGE.CONFIRM.REMOVE_ALL')
       .then(function(confirm) {
         if (confirm) {
-          esMessage.removeAll($scope.type)
+          esMessage.removeAll($scope.type, {walletId: $scope.walletId})
             .then(function () {
               $scope.search.results.splice(0,$scope.search.results.length); // reset array
+              $scope.updateView();
               UIUtils.toast.show('MESSAGE.INFO.All_MESSAGE_REMOVED');
             })
             .catch(UIUtils.onError('MESSAGE.ERROR.REMOVE_All_MESSAGES_FAILED'));
@@ -379,13 +380,33 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
     return $scope.load();
   };
 
-  $scope.select = function(message) {
-    if (!wallet || wallet.isDefault()) {
-      $state.go('app.user_view_message', {type: $scope.type, messageId:message.id});
-    }
-    else {
-      $state.go('app.user_view_message_by_id', {type: $scope.type, messageId:message.id, id: $scope.walletId});
-    }
+
+  $scope.refresh = function(silent) {
+    selectPrevented = true; // Will disable select() to open the message
+    return $scope.load(undefined, undefined, silent)
+      .then(function() {
+        selectPrevented = false;
+      })
+      .catch(function() {
+        selectPrevented = false;
+      });
+  };
+
+  $scope.select = function(message, event) {
+    if (event.isDefaultPrevented() || $scope.search.loading || selectPrevented) return; // skip
+
+    // Add a timeout, to be sure the refres action was not called before
+    return $timeout(function() {
+      if (selectPrevented || event.isDefaultPrevented()) return; // skip
+      event.preventDefault();
+
+      if ($scope.walletId === 'default') {
+        return $state.go('app.user_view_message', {type: $scope.type, messageId:message.id});
+      }
+      else {
+        return $state.go('app.user_view_message_by_id', {type: $scope.type, messageId:message.id, id: $scope.walletId});
+      }
+    }, 200);
   };
 
   /* -- Modals -- */
@@ -458,22 +479,23 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
     if (index) {
       $scope.search.results.splice(index,1); // remove from messages array
     }
+    $scope.updateView();
   };
   esMessage.api.data.on.delete($scope, $scope.onMessageDelete);
 
   // Watch user sent message
   $scope.onNewOutboxMessage = function(id) {
-    if ($scope.type != 'outbox') return;
+    if ($scope.type !== 'outbox') return;
     // Add message sent to list
-    $scope.loading = true;
+    $scope.search.loading = true;
     return $timeout(function() {
        // Load the message sent
-        return esMessage.get(id, {type: $scope.type, summary: true});
+        return esMessage.get(id, $scope.type, {summary: true, wallet: wallet});
       }, 500 /*waiting ES propagation*/)
       .then(function(msg) {
         $scope.search.results.splice(0,0,msg);
-        $scope.loading = false;
-        $scope.motion.show({selector: '.view-messages .list .item'});
+        $scope.search.loading = false;
+        $scope.updateView();
       })
       .catch(function() {
         $scope.loading = false;
@@ -483,15 +505,15 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
 
   // Watch received message
   $scope.onNewInboxMessage = function(notification) {
-    if ($scope.type != 'inbox' || !$scope.entered) return;
+    if ($scope.type !== 'inbox' || !$scope.entered || !wallet.isUserPubkey(notification.issuer)) return;
     // Add message sent to list
-    $scope.loading = true;
+    $scope.search.loading = true;
     // Load the the message
-    return esMessage.get(notification.id, {type: $scope.type, summary: true})
+    return esMessage.get(notification.id, $scope.type, {summary: true, wallet: wallet})
       .then(function(msg) {
         $scope.search.results.splice(0,0,msg);
         $scope.search.loading = false;
-        $scope.motion.show({selector: '.view-messages .list .item'});
+        $scope.updateView();
       })
       .catch(function() {
         $scope.search.loading = false;
@@ -764,65 +786,67 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
   });
 
   $scope.enter = function(e, state) {
-    if (!$scope.loading) return; // prevent reload if same id
+    // First enter
+    if ($scope.loading) {
 
-    wallet = (state.stateParams && state.stateParams.id) ? csWallet.children.get(state.stateParams.id) : csWallet;
-    if (!wallet) {
-      UIUtils.alert.error('ERROR.UNKNOWN_WALLET_ID');
-      return $scope.showHome();
+      wallet = (state.stateParams && state.stateParams.id) ? csWallet.children.get(state.stateParams.id) : csWallet;
+      if (!wallet) {
+        UIUtils.alert.error('ERROR.UNKNOWN_WALLET_ID');
+        return $scope.showHome();
+      }
+
+      $scope.isDefaultWallet = wallet.isDefault();
+      $scope.walletId = wallet.id;
+
+      var messageId = state.stateParams && state.stateParams.messageId;
+      $scope.type = state.stateParams.type || 'inbox';
+
+      // No message id: redirect
+      if (angular.isUndefined(messageId)) {
+        $scope.goBack();
+        return;
+      }
+
+      wallet.auth({minData: true})
+        .then(function () {
+          return $scope.load(messageId, $scope.type);
+        })
+        .then(function(message) {
+
+          UIUtils.loading.hide();
+          if (!message) return; // SKip
+
+          $scope.updateView(message);
+          $scope.showFab('fab-view-message-reply');
+
+          // Mark as read
+          if (!message.read) {
+            $timeout(function() {
+              // Message has NOT changed
+              if ($scope.id === message.id) {
+                esMessage.markAsRead(message, {type: $scope.type, wallet: wallet})
+                  .then(function() {
+                    console.debug("[message] marked as read");
+                  })
+                  .catch(UIUtils.onError('MESSAGE.ERROR.MARK_AS_READ_FAILED'));
+              }
+            }, 2000); // 2s
+          }
+        });
     }
-
-    $scope.isDefaultWallet = wallet.isDefault();
-    $scope.walletId = wallet.id;
-
-    var messageId = state.stateParams && state.stateParams.messageId;
-    $scope.type = state.stateParams.type || 'inbox';
-
-    // No message id: redirect
-    if (angular.isUndefined(messageId)) {
-      $state.go('app.user_message');
-      return;
-    }
-
-    wallet.auth({minData: true})
-      .then(function () {
-        return $scope.load(messageId, $scope.type);
-      })
-      .then(function(message) {
-
-        UIUtils.loading.hide();
-        if (!message) return; // SKip
-
-        $scope.updateView(message);
-        $scope.showFab('fab-view-message-reply');
-
-        // Mark as read
-        if (!message.read) {
-          $timeout(function() {
-            // Message has NOT changed
-            if ($scope.id === message.id) {
-              esMessage.markAsRead(message, {type: $scope.type, wallet: wallet})
-                .then(function() {
-                  console.debug("[message] marked as read");
-                })
-                .catch(UIUtils.onError('MESSAGE.ERROR.MARK_AS_READ_FAILED'));
-            }
-          }, 2000); // 2s
-        }
-      });
   };
   $scope.$on('$ionicView.enter', $scope.enter);
 
   $scope.load = function(id, type) {
     type = type || 'inbox';
-    return esMessage.get(id, {type: type, wallet: wallet})
+    return esMessage.get(id, type, {wallet: wallet})
       .catch(UIUtils.onError('MESSAGE.ERROR.LOAD_MESSAGE_FAILED'))
       .then(function(message) {
         if (!message.valid) {
           return UIUtils.alert.error(!$scope.isUserPubkey(message.recipient) ? 'MESSAGE.ERROR.USER_NOT_RECIPIENT' : 'MESSAGE.ERROR.NOT_AUTHENTICATED_MESSAGE',
             'MESSAGE.ERROR.MESSAGE_NOT_READABLE')
             .then(function () {
-              $state.go('app.user_message', {type: type});
+              $scope.goBack(true/*clear cache*/);
             });
         }
         return message;
@@ -845,19 +869,31 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
     UIUtils.alert.confirm('MESSAGE.CONFIRM.REMOVE')
       .then(function(confirm) {
         if (confirm) {
-          return esMessage.remove($scope.id, $scope.type)
+          return esMessage.remove($scope.id, $scope.type, {wallet: wallet})
             .then(function () {
-              $ionicHistory.nextViewOptions({
-                historyRoot: true
-              });
-              $state.go($scope.type == 'inbox' ? 'app.user_message.tab_inbox' : 'app.user_message.tab_outbox',
-                {type: $scope.type}
-              );
+              $scope.goBack(true/*clear page cache*/);
               UIUtils.toast.show('MESSAGE.INFO.MESSAGE_REMOVED');
             })
             .catch(UIUtils.onError('MESSAGE.ERROR.REMOVE_MESSAGE_FAILED'));
         }
       });
+  };
+
+  $scope.goBack = function(clearPageCache) {
+    if (clearPageCache) {
+      $ionicHistory.clearCache($ionicHistory.currentView().stateId); // clear current view
+    }
+    $ionicHistory.nextViewOptions({historyRoot: true});
+    if ($scope.isDefaultWallet) {
+      if ($scope.type) {
+        $state.go('app.user_message.tab_' + $scope.type, {type: $scope.type});
+      }
+    }
+    else {
+      if ($scope.type) {
+        $state.go('app.user_messages_by_id.tab_' + $scope.type, {type: $scope.type, id: $scope.walletId});
+      }
+    }
   };
 
   /* -- Popover -- */
@@ -895,7 +931,7 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
             title: prefix + $scope.formData.title,
             content: content,
             isReply: true,
-            wallet: $scope.walletId
+            walletId: wallet.id
           });
       })
       .then(function(sent) {
@@ -914,6 +950,7 @@ function PopoverMessageController($scope, UIUtils, $state, csWallet, esHttp, esM
   'ngInject';
 
   var defaultSearchLimit = 40;
+  var wallet;
 
   $scope.search = {
     loading : true,
@@ -925,6 +962,15 @@ function PopoverMessageController($scope, UIUtils, $state, csWallet, esHttp, esM
 
   $scope.$on('popover.shown', function() {
     if ($scope.search.loading) {
+      // TODO manage secondary wallets
+      wallet = $scope.walletId && csWallet.children.get($scope.walletId) || csWallet;
+
+      /* -- wallet listeners -- */
+      if (wallet.isDefault()) {
+        wallet.api.data.on.logout($scope, $scope.resetData);
+        esMessage.api.data.on.new($scope, $scope.onNewMessageNotification);
+      }
+
       $scope.load();
     }
   });
@@ -980,13 +1026,22 @@ function PopoverMessageController($scope, UIUtils, $state, csWallet, esHttp, esM
   // Listen notifications changes
   $scope.onNewMessageNotification = function(notification) {
     if ($scope.search.loading || $scope.search.loadingMore) return;
+
+    if (!wallet.isUserPubkey(notification.issuer)) return; // skip
+
+    // Prepend to list
     $scope.search.results.splice(0,0,notification);
     $scope.updateView();
   };
 
   $scope.select = function(notification) {
     if (!notification.read) notification.read = true;
-    $state.go('app.user_view_message', {messageId: notification.id});
+    if ($scope.walletId === 'default') {
+      $state.go('app.user_view_message', {messageId: notification.id});
+    }
+    else {
+      $state.go('app.user_view_message_by_id', {messageId: notification.id, id: $scope.walletId});
+    }
     $scope.closePopover(notification);
   };
 
@@ -1008,7 +1063,7 @@ function PopoverMessageController($scope, UIUtils, $state, csWallet, esHttp, esM
 
     $timeout(function() {
       parameters = parameters || {};
-      parameters.wallet = $scope.walletId;
+      parameters.walletId = wallet.id;
 
       esModals.showMessageCompose(parameters)
         .then(function(id) {
@@ -1019,9 +1074,7 @@ function PopoverMessageController($scope, UIUtils, $state, csWallet, esHttp, esM
 
   /* -- listeners -- */
 
-  csWallet.api.data.on.logout($scope, $scope.resetData);
   esHttp.api.node.on.stop($scope, $scope.resetData);
   esHttp.api.node.on.start($scope, $scope.load);
-  esMessage.api.data.on.new($scope, $scope.onNewMessageNotification);
 
 }

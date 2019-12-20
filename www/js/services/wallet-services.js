@@ -1997,7 +1997,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     },
 
     getChildWalletById = function(id) {
-      return _.find(data.children|| [], function(child) {return child.id == id;});
+      return (id !== 'default') && _.find(data.children|| [], function(child) {return child.id == id;}) || undefined;
     },
 
     getChildWalletByPubkey = function(pubkey) {

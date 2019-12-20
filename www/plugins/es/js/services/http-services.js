@@ -436,17 +436,26 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     function postRecord(path, options) {
       options = options || {};
       var postRequest = that.post(path);
-      return function(record, params) {
+      return function(record, options) {
+        options = options || {};
+        var wallet = options.wallet || (options.walletId && csWallet.children.get(options.walletId))
+          || ((!options.pubkey || csWallet.isUserPubkey(options.pubkey)) && csWallet)
+          || (options.pubkey && csWallet.children.getByPubkey(options.pubkey));
 
-        var wallet = (params && params.wallet || csWallet);
-        params = params || {};
-        params.pubkey = params.pubkey || wallet.data.pubkey;
-        var keypair = params.keypair || wallet.data.keypair;
-        // make sure to hide some params
-        if (params) {
-          delete params.wallet;
-          delete params.keypair;
+        var keypair = options.keypair || wallet && wallet.data && wallet.data.keypair;
+
+        if (!keypair && !wallet) {
+          throw new Error('Missing wallet or keypair, to sign record')
         }
+
+        // Create the POSt request params,
+        // but BEFORE, remove protected options
+        delete options.wallet;
+        delete options.walletId;
+        delete options.keypair;
+        var params = angular.copy(options);
+        params.pubkey = params.pubkey || wallet.data.pubkey;
+
         return (wallet.isAuth() ? $q.when(wallet.data) : wallet.auth({silent: true, minData: true}))
           .then(function() {
             if (options.creationTime && !record.creationTime) {
@@ -499,8 +508,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     function removeRecord(index, type) {
       return function(id, options) {
         options = options || {};
-        var wallet = (options && options.wallet || csWallet);
-        delete options.wallet;
+        var wallet = options.wallet || options.walletId && csWallet.children.get(options.walletId) || csWallet;
         return (wallet.isAuth() ? $q.when(wallet.data) : wallet.auth({silent: true, minData: true}))
           .then(function(walletData) {
 

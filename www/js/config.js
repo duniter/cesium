@@ -12,59 +12,29 @@ angular.module("cesium.config", [])
 	"cacheTimeMs": 300000,
 	"fallbackLanguage": "en",
 	"rememberMe": true,
-	"showUDHistory": true,
-	"timeout": 40000,
+	"timeout": 300000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
-	"keepAuthIdle": 600,
 	"useLocalStorage": true,
 	"useRelative": false,
-	"expertMode": false,
+	"expertMode": true,
 	"decimalCount": 2,
-	"httpsMode": false,
 	"shareBaseUrl": "https://g1.duniter.fr",
 	"helptip": {
-		"enable": true,
+		"enable": false,
 		"installDocUrl": {
 			"fr-FR": "https://duniter.org/fr/wiki/duniter/installer/",
-			"en": "https://duniter.org/en/wiki/duniter/install/"
+			"en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
 		}
 	},
-	"license": {
-		"en": "license/license_g1-en",
-		"fr-FR": "license/license_g1-fr-FR",
-		"es-ES": "license/license_g1-es-ES"
-	},
 	"node": {
-		"host": "g1.duniter.org",
+		"host": "g1-test.duniter.org",
 		"port": 443
 	},
 	"fallbackNodes": [
 		{
-			"host": "g1.nordstrom.duniter.org",
+			"host": "g1-test.cgeek.fr",
 			"port": 443
-		},
-		{
-			"host": "g1.cgeek.fr",
-			"port": 443
-		},
-		{
-			"host": "g1.monnaielibreoccitanie.org",
-			"port": 443
-		},
-		{
-			"host": "g1.le-sou.org",
-			"port": 443
-		},
-		{
-			"host": "g1.duniter.fr",
-			"port": 443
-		}
-	],
-	"developers": [
-		{
-			"name": "Benoit Lavenier",
-			"pubkey": "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE"
 		}
 	],
 	"plugins": {
@@ -72,18 +42,8 @@ angular.module("cesium.config", [])
 			"enable": true,
 			"askEnable": true,
 			"useRemoteStorage": true,
-			"host": "g1.data.duniter.fr",
+			"host": "g1-test.data.duniter.fr",
 			"port": 443,
-			"fallbackNodes": [
-				{
-					"host": "g1.data.le-sou.org",
-					"port": 443
-				},
-				{
-					"host": "g1.data.duniter.fr",
-					"port": 443
-				}
-			],
 			"notifications": {
 				"txSent": true,
 				"txReceived": true,
@@ -94,7 +54,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "1.4.12",
-	"build": "2019-11-16T13:39:37.358Z",
+	"build": "2019-12-19T14:53:37.759Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 

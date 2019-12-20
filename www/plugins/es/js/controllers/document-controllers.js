@@ -147,7 +147,7 @@ function ESDocumentLookupController($scope, $ionicPopover, $location, $timeout,
       });
   };
 
-  $scope.remove = function(index) {
+  $scope.remove = function(index, options) {
     var doc = $scope.search.results[index];
     if (!doc) return;
 

@@ -66,8 +66,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       console.debug('[ES] [message] Loading count...');
 
       // Count unread messages
-      countUnreadMessages(data.pubkey, csWallet)
-        .then(function(unreadCount){
+      countUnreadMessages({pubkey: data.pubkey})
+        .then(function(unreadCount) {
           data.messages = data.messages || {};
           data.messages.unreadCount = unreadCount;
           data.messages.time = time;
@@ -81,11 +81,13 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       return deferred.promise;
     }
 
-    function countUnreadMessages(pubkey, wallet) {
-      wallet = wallet || csWallet;
-      pubkey = pubkey || (wallet.isLogin() ? wallet.data.pubkey : pubkey);
+    function countUnreadMessages(options) {
+      options = options || {};
+      var wallet = options.wallet
+        || (options.walletId && csWallet.children.get(options.walletId)) || csWallet;
+      var pubkey = options.pubkey || (wallet && wallet.data && wallet.data.pubkey);
       if (!pubkey) {
-        throw new Error('no pubkey, and user not connected.');
+        throw new Error('no pubkey or wallet found in options, and user not connected.');
       }
 
       var request = {
@@ -107,12 +109,21 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
 
     // Listen message changes
     function onNewMessageEvent(event, wallet) {
-      wallet = wallet || csWallet;
       console.debug("[ES] [message] detected new message (from notification service)");
 
       var notification = new EsNotification(event);
       notification.issuer = notification.pubkey;
       delete notification.pubkey;
+
+      if (!notification.issuer) return; // Skip if invalid
+
+      // Get the wallet
+      wallet = wallet || (notification.issuer && csWallet.isUserPubkey(notification.issuer) && csWallet)
+      || (notification.issuer && csWallet.children.getByPubkey(notification.issuer));
+
+      if (!wallet) {
+        throw new Error("No wallet for pubkey: {0}".format(notification.issuer.substring(0, 6)))
+      }
 
       csWot.extend(notification, 'issuer')
         .then(function() {
@@ -127,7 +138,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
 
     function sendMessage(message, options) {
       options = options || {};
-      var wallet = options.wallet || csWallet;
+      var wallet = options.wallet || options.walletId && csWallet.children.get(options.walletId) || csWallet;
+      delete options.wallet;
       message.issuer = message.issuer || wallet.data.pubkey;
       return wallet.getKeypair()
         .then(function(keypair) {
@@ -173,7 +185,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       options = options || {};
       options.from = options.from || 0;
       options.size = options.size || constants.DEFAULT_LOAD_SIZE;
-      var wallet = options.wallet || csWallet;
+      var wallet = options.wallet || options.walletId && csWallet.children.get(options.walletId) || csWallet;
+      delete options.wallet;
 
       if (!wallet.isLogin()) {
         return $q.when([]); // Should never happen
@@ -254,7 +267,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       options.filter = angular.isDefined(options.filter) ? options.filter : undefined;
       options.from = options.from || 0;
 
-      var wallet = options.wallet || csWallet;
+      var wallet = options.wallet || options.walletId && csWallet.children.get(options.walletId) || csWallet;
+      delete options.wallet; // avoid error in angular.copy()
 
       var promise = wallet.auth()
         .then(function(walletData) {
@@ -279,12 +293,15 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
           if (messages.length && options.filter){
             var filteredMessages = filterMessages(messages, options.filter);
 
-            // Recursive loop, if need more
+            // Need more messages: iterate again
             if (filteredMessages.length < messages.length) {
               options = angular.copy(options);
               options.from += options.size;
               options.size = messages.length - filteredMessages.length;
-              return loadMessages(options)
+              // put the wallet again, because it has been removed before the angular.copy()
+              // To avoid an error
+              options.wallet = wallet;
+              return loadMessages(options) // Loop
                 .then(function(messages) {
                   return filteredMessages.concat(messages);
                 });
@@ -307,20 +324,20 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       return promise;
     }
 
-    function getAndDecrypt(id, options) {
+    function getAndDecrypt(id, type, options) {
+      var type = type || 'inbox';
       options = options || {};
-      options.type = options.type || 'inbox';
       options.summary = angular.isDefined(options.summary) ? options.summary : false/*summary not need by default*/;
-      var wallet = options.wallet || csWallet;
+      var wallet = options.wallet || (options.walletId && csWallet.children.get(options.walletId)) || csWallet;
 
       return wallet.auth()
         .then(function(walletData) {
-          return raw.getByTypeAndId({id: id, type: options.type})
+          return raw.getByTypeAndId({id: id, type: type})
             .then(function(hit) {
               if (!hit.found) return;
               var msg = hit._source;
               msg.id = hit._id;
-              msg.read = (options.type == 'outbox') || !!msg.read_signature;
+              msg.read = (type == 'outbox') || !!msg.read_signature;
               delete msg.read_signature; // not need anymore
 
               // Decrypt message
@@ -328,7 +345,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
 
               // Add avatar
                 .then(function(){
-                  var avatarField = (options.type == 'inbox') ? 'issuer' : 'recipient';
+                  var avatarField = (type == 'inbox') ? 'issuer' : 'recipient';
                   return csWot.extend(msg, avatarField);
                 });
             });
@@ -404,26 +421,32 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       }
     }
 
-    function removeMessage(id, type) {
+    function removeMessage(id, type, options) {
       type = type || 'inbox';
-      return esHttp.record.remove('message', type)(id)
+
+      var wallet = options.wallet || (options.walletId && csWallet.children.get(options.walletId)) || csWallet;
+
+      return esHttp.record.remove('message', type)(id, {wallet: wallet})
         .then(function(res) {
-          // update message count
-          if (type == 'inbox') {
-            csWallet.data.messages = csWallet.data.messages || {};
-            csWallet.data.messages.count = csWallet.data.messages.count > 0 ? csWallet.data.messages.count-1 : 0;
+          // Update message count
+          if (type === 'inbox') {
+            wallet.data.messages = wallet.data.messages || {};
+            wallet.data.messages.count = wallet.data.messages.count > 0 ? wallet.data.messages.count-1 : 0;
           }
+
           // Raise event
-          api.data.raise.delete(id);
+          if (wallet.isDefault()) {
+            api.data.raise.delete(id);
+          }
 
           return res;
         });
     }
 
-    function removeAllMessages(type) {
+    function removeAllMessages(type, options) {
       type = type || 'inbox';
-
-      return csWallet.auth()
+      var wallet = options && options.walletId && csWallet.children.get(options.walletId) || csWallet;
+      return wallet.auth()
         .then(function(walletData) {
           // Get all message id
           return searchMessages(walletData.pubkey, {type: type, from: 0, size: 1000, _source: false})
@@ -434,7 +457,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
 
               // Remove each messages
               return $q.all(res.reduce(function (res, msg) {
-                return res.concat(esHttp.record.remove('message', type)(msg.id, walletData));
+                return res.concat(esHttp.record.remove('message', type)(msg.id, {wallet: wallet}));
               }, []))
                 .then(function() {
                   return ids;
@@ -442,22 +465,25 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
             })
             .then(function (ids) {
               // update message count
-              if (type == 'inbox') {
-                csWallet.data.messages = csWallet.data.messages || {};
-                csWallet.data.messages.count = 0;
-                csWallet.data.messages.unreadCount = 0;
+              if (type === 'inbox') {
+                wallet.data.messages = wallet.data.messages || {};
+                wallet.data.messages.count = 0;
+                wallet.data.messages.unreadCount = 0;
               }
 
               // Raise events
-              _.forEach(ids, api.data.raise.delete);
+              if (wallet.isDefault()) {
+                _.forEach(ids, api.data.raise.delete);
+              }
             });
         });
     }
 
     // Mark a message as read
     function markMessageAsRead(message, options) {
-      var type = options && options.type || 'inbox';
-      var wallet = options && options.wallet  || csWallet;
+      options = options || {};
+      var wallet = options.wallet || options.walletId && csWallet.children.get(options.walletId) || csWallet;
+      var type = options && options.type || (!wallet.isUserPubkey(message.recipient) ? 'outbox' : 'inbox');
       if (message.read) {
         var deferred = $q.defer();
         deferred.resolve();
@@ -479,7 +505,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
 
         // Update message count
         .then(function() {
-          if (type == 'inbox') {
+          if (type === 'inbox') {
             wallet.data.messages = wallet.data.messages || {};
             wallet.data.messages.unreadCount = wallet.data.messages.unreadCount ? wallet.data.messages.unreadCount - 1 : 0;
           }
@@ -488,7 +514,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
 
     // Mark all messages as read
     function markAllMessageAsRead(options) {
-      var wallet = options && options.wallet || csWallet;
+      options = options || {};
+      var wallet = options.wallet || options.walletId && csWallet.children.get(options.walletId) || csWallet;
       return wallet.auth()
         .then(function(walletData) {
 

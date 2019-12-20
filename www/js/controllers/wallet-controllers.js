@@ -114,7 +114,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   $scope.updateView = function() {
     $scope.motion.show({selector: '#wallet .item'});
-    $scope.$broadcast('$$rebind::' + 'rebind'); // force rebind
+    $scope.$broadcast('$$rebind::rebind'); // force rebind
   };
 
 
@@ -558,7 +558,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       .then(function(done){
         if (done) {
           UIUtils.toast.show('INFO.TRANSFER_SENT');
-          $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
+          $scope.$broadcast('$$rebind::balance'); // force rebind balance
           $scope.motion.show({selector: '.item-pending'});
         }
       });
@@ -645,11 +645,13 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
 
   $scope.showSelectWalletPopover = function(event) {
+
     return csPopovers.showSelectWallet(event, {
-        scope: $scope
-      })
+      parameters: {
+        excludedWalletId: $scope.walletId
+      }})
       .then(function(newWallet) {
-        if (!newWallet || newWallet.id === wallet.id) return;
+        if (!newWallet || newWallet.id === $scope.walletId) return; // nothing changed
         if (newWallet.isDefault()) {
           return $state.go('app.view_wallet');
         }
@@ -691,6 +693,8 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
         UIUtils.alert.error('ERROR.UNKNOWN_WALLET_ID');
         return $scope.showHome();
       }
+
+      $scope.walletId = wallet.id;
 
       $scope.cleanLocationHref(state);
 
@@ -754,8 +758,8 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
   // Update view
   $scope.updateView = function() {
     if (!$scope.formData || $scope.loading) return;
-    $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
-    $scope.$broadcast('$$rebind::' + 'rebind'); // force rebind
+    $scope.$broadcast('$$rebind::balance'); // force rebind balance
+    $scope.$broadcast('$$rebind::rebind'); // force rebind
     $scope.motion.show({selector: '.view-wallet-tx .item', ink: false});
   };
 
@@ -841,7 +845,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
       .then(function(done){
         if (done) {
           UIUtils.toast.show('INFO.TRANSFER_SENT');
-          $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
+          $scope.$broadcast('$$rebind::balance'); // force rebind balance
           $scope.motion.show({selector: '.item-pending'});
         }
       });
@@ -887,8 +891,11 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
     if (!csWallet.children.count()) return;
 
     return Modals.showSelectWallet({
-      showDefault: true,
-      showBalance: false
+      parameters: {
+        showDefault: true,
+        showBalance: false,
+        excludedWalletId: $scope.walletId
+      }
     })
     .then(function(newWallet) {
       if (!newWallet || wallet && newWallet.id === wallet.id) return;

@@ -83,7 +83,7 @@ function ESWotLookupExtendController($scope, $controller, $state) {
       location: location.length ? location : undefined
     };
 
-    $state.go('app.registry_lookup', stateParams);
+    $state.go('app.wot_lookup.tab_registry', stateParams);
   };
 }
 

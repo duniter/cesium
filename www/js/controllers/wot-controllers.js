@@ -1209,8 +1209,8 @@ function WotIdentityTxViewController($scope, $timeout, $q, BMA, csSettings, csWo
 
   // Update view
   $scope.updateView = function() {
-    $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
-    $scope.$broadcast('$$rebind::' + 'rebind'); // force rebind
+    $scope.$broadcast('$$rebind::balance'); // force rebind balance
+    $scope.$broadcast('$$rebind::rebind'); // force rebind
     $scope.motion.show();
   };
 

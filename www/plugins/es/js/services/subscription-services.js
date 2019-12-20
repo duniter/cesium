@@ -81,12 +81,12 @@ angular.module('cesium.es.subscription.services', ['cesium.platform', 'cesium.es
       });
   }
 
-  function addRecord(record, wallet) {
+  function addRecord(record, options) {
     if (!record || !record.type || !record.content || !record.recipient) {
       return $q.reject("Missing arguments 'record' or 'record.type' or 'record.content' or 'record.recipient'");
     }
 
-    wallet = wallet || csWallet;
+    var wallet = options && options.wallet || (options && options.walletId && csWallet.children.get(options.walletId)) || csWallet;
     var issuer = wallet.data.pubkey;
 
     var contentStr = JSON.stringify(record.content);
@@ -115,12 +115,12 @@ angular.module('cesium.es.subscription.services', ['cesium.platform', 'cesium.es
       ;
   }
 
-  function updateRecord(record, wallet) {
+  function updateRecord(record, options) {
     if (!record || !record.content || !record.recipient) {
       return $q.reject("Missing arguments 'record' or 'record.content', or 'record.recipient'");
     }
 
-    wallet = wallet || csWallet;
+    var wallet = options && options.wallet || (options && options.walletId && csWallet.children.get(options.walletId)) || csWallet;
     var issuer = wallet.data.pubkey;
     var contentStr = JSON.stringify(record.content);
 

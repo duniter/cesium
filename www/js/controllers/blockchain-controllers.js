@@ -331,12 +331,12 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 
     $scope.smallscreen = UIUtils.screen.isSmall();
 
+    $scope.$broadcast('$$rebind::rebind'); // notify binder
+
     // Set Motion
     if (res && res.length) {
       $scope.motion.show({selector: '.list-blocks .item-block'});
     }
-
-    $scope.$broadcast('$$rebind::rebind'); // notify binder
   };
 
   $scope.showMore = function() {
