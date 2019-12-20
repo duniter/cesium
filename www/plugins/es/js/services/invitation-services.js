@@ -308,9 +308,9 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
     var now = Date.now();
     console.debug('[ES] [invitation] Deleting all {0} invitations...'.format(type));
 
-    var wallet = (options && options.pubkey && csWallet.children.getByPubkey(options.pubkey))
-      (options && options.walletId && csWallet.children.getByPubkey(options.walletId))
-      || csWallet;
+    var wallet = (options && options.pubkey && csWallet.children.getByPubkey(options.pubkey)) ||
+      (options && options.walletId && csWallet.children.getByPubkey(options.walletId)) ||
+      csWallet;
     var countBeforeDeletion = (wallet.data.invitations && wallet.data.invitations.count) || 0;
     var unreadCountBeforeDeletion = (wallet.data.invitations && wallet.data.invitations.unreadCount) || 0;
 

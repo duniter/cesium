@@ -438,14 +438,14 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       var postRequest = that.post(path);
       return function(record, options) {
         options = options || {};
-        var wallet = options.wallet || (options.walletId && csWallet.children.get(options.walletId))
-          || ((!options.pubkey || csWallet.isUserPubkey(options.pubkey)) && csWallet)
-          || (options.pubkey && csWallet.children.getByPubkey(options.pubkey));
+        var wallet = options.wallet || (options.walletId && csWallet.children.get(options.walletId)) ||
+          ((!options.pubkey || csWallet.isUserPubkey(options.pubkey)) && csWallet) ||
+          (options.pubkey && csWallet.children.getByPubkey(options.pubkey));
 
         var keypair = options.keypair || wallet && wallet.data && wallet.data.keypair;
 
         if (!keypair && !wallet) {
-          throw new Error('Missing wallet or keypair, to sign record')
+          throw new Error('Missing wallet or keypair, to sign record');
         }
 
         // Create the POSt request params,

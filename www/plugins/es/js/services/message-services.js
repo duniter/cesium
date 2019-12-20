@@ -83,8 +83,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
 
     function countUnreadMessages(options) {
       options = options || {};
-      var wallet = options.wallet
-        || (options.walletId && csWallet.children.get(options.walletId)) || csWallet;
+      var wallet = options.wallet ||
+        (options.walletId && csWallet.children.get(options.walletId)) || csWallet;
       var pubkey = options.pubkey || (wallet && wallet.data && wallet.data.pubkey);
       if (!pubkey) {
         throw new Error('no pubkey or wallet found in options, and user not connected.');
@@ -118,11 +118,11 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       if (!notification.issuer) return; // Skip if invalid
 
       // Get the wallet
-      wallet = wallet || (notification.issuer && csWallet.isUserPubkey(notification.issuer) && csWallet)
-      || (notification.issuer && csWallet.children.getByPubkey(notification.issuer));
+      wallet = wallet || (notification.issuer && csWallet.isUserPubkey(notification.issuer) && csWallet) ||
+       (notification.issuer && csWallet.children.getByPubkey(notification.issuer));
 
       if (!wallet) {
-        throw new Error("No wallet for pubkey: {0}".format(notification.issuer.substring(0, 6)))
+        throw new Error("No wallet for pubkey: {0}".format(notification.issuer.substring(0, 6)));
       }
 
       csWot.extend(notification, 'issuer')
@@ -325,7 +325,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
     }
 
     function getAndDecrypt(id, type, options) {
-      var type = type || 'inbox';
+      type = type || 'inbox';
       options = options || {};
       options.summary = angular.isDefined(options.summary) ? options.summary : false/*summary not need by default*/;
       var wallet = options.wallet || (options.walletId && csWallet.children.get(options.walletId)) || csWallet;

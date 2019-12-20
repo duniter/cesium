@@ -94,8 +94,8 @@ function WalletListAbstractController($scope, $q, $timeout, UIUtils, filterTrans
     $scope.formData.showBalance = angular.isDefined(parameters.showBalance) ? parameters.showBalance : $scope.formData.showBalance;
     $scope.formData.minData = angular.isDefined(parameters.minData) ? parameters.minData : $scope.formData.minData;
     $scope.formData.excludedWalletId = parameters.excludedWalletId;
-    $scope.formData.showDefault = (angular.isDefined(parameters.showDefault) ? parameters.showDefault :  $scope.formData.showDefault)
-      && ($scope.formData.excludedWalletId !== 'default');
+    $scope.formData.showDefault = (angular.isDefined(parameters.showDefault) ? parameters.showDefault : $scope.formData.showDefault) &&
+       ($scope.formData.excludedWalletId !== 'default');
 
   };
 
@@ -218,7 +218,7 @@ function WalletListAbstractController($scope, $q, $timeout, UIUtils, filterTrans
   $scope.filterFn = function(parameters) {
     return function(wallet) {
       return !parameters || wallet.id !== parameters.excludedWalletId;
-    }
+    };
   };
 
 
@@ -361,11 +361,11 @@ function WalletListAbstractController($scope, $q, $timeout, UIUtils, filterTrans
   };
 
   $scope.cancel = function() {
-    console.warn("cancel() must be implement by subclass")
+    console.warn("cancel() must be implement by subclass");
   };
 
   $scope.select = function(event, wallet) {
-    console.warn("select() must be implement by subclass")
+    console.warn("select() must be implement by subclass");
   };
 }
 
