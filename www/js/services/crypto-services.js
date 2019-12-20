@@ -257,7 +257,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
           catch(err) {
             reject(err);
           }
-        })
+        });
       };
 
       /**
