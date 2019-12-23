@@ -1137,8 +1137,8 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
         $scope.qrcodeId,
         {
           text: $scope.formData.pubkey,
-          width: 200,
-          height: 200,
+          width: 180,
+          height: 180,
           correctLevel: QRCode.CorrectLevel.L
         });
       UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);

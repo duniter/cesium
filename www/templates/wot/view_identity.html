@@ -23,7 +23,7 @@
         </ng-if>
         <ng-if ng-if=":rebind:!formData.name">
           <h3 class="light" ng-if=":rebind:formData.uid">{{:rebind:formData.uid}}</h3>
-          <h3 class="light" ng-if=":rebind:!formData.uid"><i class="ion-key"></i> {{:rebind:formData.pubkey | formatPubkey}}</h3>
+          <h3 class="light" ng-if=":rebind:!formData.uid"><b class="ion-key"></b> {{:rebind:formData.pubkey | formatPubkey}}</h3>
         </ng-if>
         <h4 class="assertive">
           <ng-if ng-if=":rebind:(formData.name || formData.uid) && !formData.isMember && revoked" translate>WOT.IDENTITY_REVOKED_PARENTHESIS</ng-if>
@@ -110,7 +110,7 @@
             <span translate>WOT.REGISTERED_SINCE</span>
             {{:rebind:formData.sigDate|medianDate}}
           </h5>
-          <span class="badge badge-stable">{{:rebind:formData.uid}}</span>
+          <span class="badge badge-energized">{{:rebind:formData.uid}}</span>
         </ion-item>
 
         <!-- Received certifications count -->

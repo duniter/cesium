@@ -64,6 +64,8 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   $scope.loading = true;
   $scope.settings = csSettings.data;
   $scope.qrcodeId = 'qrcode-wallet-' + $scope.$id;
+  $scope.toggleQRCode = false;
+
 
   var wallet;
 
@@ -485,8 +487,8 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         $scope.qrcodeId,
         {
           text: $scope.formData.pubkey,
-          width: 200,
-          height: 200,
+          width: 180,
+          height: 180,
           correctLevel: QRCode.CorrectLevel.L
         });
       UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
@@ -600,9 +602,28 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       });
   };
 
+  $scope.showSelectWalletModal = function() {
+    if (!csWallet.children.count()) return;
+
+    return Modals.showSelectWallet({
+      parameters: {
+        showDefault: true,
+        showBalance: false,
+        excludedWalletId: $scope.walletId
+      }
+    })
+      .then(function(newWallet) {
+        if (!newWallet || wallet && newWallet.id === wallet.id) return;
+        $scope.removeListeners();
+        $scope.loading = true;
+        wallet = newWallet;
+        console.debug("[transfer] Using wallet {" + wallet.id + "}");
+        $scope.formData = {};
+        return $scope.load();
+      });
+  };
 
   /* -- popovers -- */
-
 
   $scope.showActionsPopover = function(event) {
     UIUtils.popover.show(event, {

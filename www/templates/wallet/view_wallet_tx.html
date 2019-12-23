@@ -2,20 +2,13 @@
           class="view-wallet-tx">
   <ion-nav-title>
     <!-- no title on large screen-->
-    <span class="visible-xs visible-sm" ng-if="!loading && enableSelectWallet">
-      <span ng-if="formData.name || formData.uid">{{formData.name || formData.uid}} </span>
-      <i class="ion-key"></i> {{formData.pubkey|formatPubkey}}
+    <span class="visible-xs visible-sm" translate>
+      MENU.TRANSACTIONS
     </span>
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
     <cs-extension-point name="nav-buttons"></cs-extension-point>
-
-    <button class="button button-icon button-clear visible-xs visible-sm"
-            ng-if="enableSelectWallet && !loading"
-            ng-click="showSelectWalletModal()">
-      <i class=" ion-arrow-down-b"></i>
-    </button>
   </ion-nav-buttons>
 
   <ion-content scroll="true" class="refresher-positive-900-bg"
@@ -27,23 +20,36 @@
 
     <div class="positive-900-bg hero">
       <div class="content" ng-if="!loading">
-        <!-- select wallet button -->
-        <a class="hidden-xs hidden-sm"
-           style="color: lightgray;"
-           ng-if="enableSelectWallet"
-           title="{{:locale:'ACCOUNT.SELECT_WALLET_MODAL.TITLE'|translate}}"
-           ng-click="showSelectWalletPopover($event)">
-          <span ng-if="formData.name || formData.uid">{{formData.name || formData.uid}} </span>
-          <i class="ion-key"></i> {{formData.pubkey|formatPubkey}}
-          <i class="ion-arrow-down-b"></i>
-        </a>
 
         <h1 class="light">
           <span ng-bind-html=":balance:rebind:formData.balance | formatAmount:{currency: $root.currency.name}"></span>
         </h1>
-        <h4 ng-if="!loading && $root.settings.expertMode"
-               style="font-style: italic;">
-          (<span ng-bind-html=":balance:rebind:formData.balance | formatAmount:{useRelative:!$root.settings.useRelative, currency: $root.currency.name}"></span>)
+        <h4>
+          <ng-if ng-if="!loading && $root.settings.expertMode"
+                 style="font-style: italic;">
+            (<span ng-bind-html=":balance:rebind:formData.balance | formatAmount:{useRelative:!$root.settings.useRelative, currency: $root.currency.name}"></span>)
+          </ng-if>
+          <!-- select wallet button -->
+          <ng-if ng-if=":rebind:enableSelectWallet">
+            <a class="hidden-xs hidden-sm"
+               style="color: lightgray;"
+               title="{{:locale:'ACCOUNT.SELECT_WALLET_MODAL.TITLE'|translate}}"
+               ng-click="showSelectWalletPopover($event)">
+              <span ng-if=":rebind:formData.name">{{:rebind:formData.name}}</span>
+              <span ng-if=":rebind:!formData.name && formData.uid">{{:rebind:formData.uid}}</span>
+              <span ng-if=":rebind:!formData.name && !formData.uid"><b class="ion-key"></b> {{:rebind:formData.pubkey | formatPubkey}}</span>
+              <small><b class="ion-arrow-down-b"></b></small>
+            </a>
+            <a class="visible-xs visible-sm"
+               style="color: lightgray;"
+               title="{{:locale:'ACCOUNT.SELECT_WALLET_MODAL.TITLE'|translate}}"
+               ng-click="showSelectWalletModal($event)">
+              <span ng-if=":rebind:formData.name">{{:rebind:formData.name}}</span>
+              <span ng-if=":rebind:!formData.name && formData.uid">{{:rebind:formData.uid}}</span>
+              <span ng-if=":rebind:!formData.name && !formData.uid"><b class="ion-key"></b> {{:rebind:formData.pubkey | formatPubkey}}</span>
+              <small><b class="ion-arrow-down-b"></b></small>
+            </a>
+          </ng-if>
         </h4>
         <div class="helptip-anchor-center">
           <a id="helptip-wallet-balance">&nbsp;</a>

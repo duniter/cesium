@@ -3,13 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width, minimal-ui">
-  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Cesium API</title>
   <link rel="icon" href="../img/favicon.ico">
+
+  <meta name="theme-color" content="black">
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon" href="../img/logo_57px.png">
 
   <!-- build:css dist_css/cesium-api.css -->
   <link rel="stylesheet" type="text/css" href="../css/ionic.app.min.css">
   <link rel="stylesheet" type="text/css" href="../css/style.css">
+  <link rel="stylesheet" type="text/css" href="../lib/angular-image-crop/image-crop-styles.css">
   <!--removeIf(device)-->
   <link rel="stylesheet" type="text/css" href="../css/style-no-device.css">
   <!--endRemoveIf(device)-->
@@ -59,14 +65,14 @@
   <script src="../js/vendor/base58.js" async></script>
   <!--removeIf(android)-->
   <!--removeIf(ios)-->
-  <script src="../js/vendor/nacl_factory.js" async></script>
-  <script src="../js/vendor/scrypt-em.js" async></script>
+  <script src="../lib/js-nacl/lib/nacl_factory.js" async></script>
+  <script src="../lib/js-scrypt/browser/scrypt.js" async></script>
   <script src="../js/vendor/base64.js" async></script>
   <!--endRemoveIf(ios)-->
   <!--endRemoveIf(android)-->
   <!--removeIf(no-device)-->
   <script src="../js/vendor/sha256.min.js" async></script>
-  <script src="../js/vendor/ng-cordova.min.js"></script>
+  <script src="../lib/ngCordova/dist/ng-cordova.min.js"></script>
   <!--endRemoveIf(no-device)-->
 
 <!-- endbuild -->
@@ -92,8 +98,8 @@
 <script src="../dist/dist_js/app/services/wot-services.js"></script>
 <script src="../dist/dist_js/app/services/tx-services.js"></script>
 <script src="../dist/dist_js/app/services/wallet-services.js"></script>
-<script src="../dist/dist_js/app/services/plugin-services.js"></script>
 <script src="../dist/dist_js/app/services/help-services.js"></script>
+<script src="../dist/dist_js/app/services/plugin-services.js"></script>
 <script src="../dist/dist_js/app/services.js"></script>
 <script src="../dist/dist_js/app/api/api-demo-services.js"></script>
 

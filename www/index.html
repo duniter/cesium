@@ -14,7 +14,7 @@
 
     <link rel="manifest" href="manifest.json">
     <!-- build:css dist_css/cesium.css -->
-    <link rel="stylesheet" type="text/css" href="css/ionic.app.min.css">
+    <link rel="stylesheet" type="text/css" href="css/ionic.app.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" type="text/css" href="lib/angular-image-crop/image-crop-styles.css">
     <!-- removeIf(device) -->
@@ -54,9 +54,6 @@
   </head>
   <body id="cesium" ng-strict-di="true" window-exit-unauth="true"
         ng-class="{'nobackdrop': $root.tour, 'expert-mode': $root.settings.expertMode}">
-
-
-
     <ion-nav-view>
       <div class="loader">
         <h3 style="text-align: center; padding-top: 25px; "><b>Cesium</b></h3>
@@ -163,7 +160,6 @@
     <script src="dist/dist_js/app/entities/peer.js"></script>
     <script src="dist/dist_js/app/entities/block.js"></script>
     <script src="dist/dist_js/app/entities/ws2pmessage.js"></script>
-
 
     <!-- controllers -->
     <script src="dist/dist_js/app/controllers/app-controllers.js"></script>

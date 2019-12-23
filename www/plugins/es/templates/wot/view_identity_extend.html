@@ -9,7 +9,8 @@
 <!-- Top fab buttons -->
 <ng-if ng-if=":state:enable && extensionPoint === 'buttons-top-fab'">
   <button id="fab-compose-{{:rebind:formData.uid}}"
-          class="button button-fab button-fab-top-right button-fab-hero mini button-stable spin"
+          class="button button-fab button-fab-top-left button-fab-hero mini button-stable spin"
+          style="left: 88px;"
           ng-click="showNewMessageModal()">
     <i class="icon ion-compose"></i>
   </button>

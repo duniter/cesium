@@ -1,5 +1,5 @@
 
-<div class="item item-avatar item-icon-right item-border-large item-wallet"
+<div class="item item-avatar item-icon-right item-border item-wallet"
      ng-click="select($event, wallet)"
      ng-init="walletData=wallet.data;">
 
@@ -25,7 +25,7 @@
   </h4>
 
   <div class="badge" ng-if="formData.showBalance"
-        ng-class="{'badge-assertive': (walletData.balance <= 0), 'badge-balanced': (walletData.balance > 0) }">
+        ng-class="{'badge-calm': (walletData.balance > 0) }">
     <span ng-bind-html="walletData.balance|formatAmount:{useRelative: formData.useRelative, currency: currency}"></span>
   </div>
 

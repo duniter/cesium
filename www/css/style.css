@@ -226,17 +226,17 @@
 .item-block.item-block-empty {
   min-height: 24px !important;
   max-height: 24px !important;
-  padding-top: 0px;
-  padding-bottom: 0px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .item-block.item-block-empty .badge {
-  padding-top: 0px !important;
+  padding-top: 0 !important;
   top: inherit;
 }
 
 .item-block.item-block-empty .badge.badge-balanced {
-  top: 0px !important;
+  top: 0 !important;
   padding-top: 3px !important;
   padding-bottom: 2px !important;
 }
@@ -244,49 +244,12 @@
 .item-block-empty.compacted {
   min-height: 3px !important;
   max-height: 3px !important;
-  border-bottom: 0px !important;
+  border-bottom: 0 !important;
 }
 
 .item-block.item-block-empty.compacted {
   border-bottom: double 1px #eee !important;
 }
-
-
-/**********
-   TX items
-**********/
-
-.item-tx{
-  border-top: solid 1px lightgray !important;
-  margin-bottom: 4px ;
-  padding-bottom: 6px;
-  padding-top: 8px;
-  margin: 0 !important;
-}
-
-.item-tx .badge{
-  right : 1%;
-  top: 13px;
-}
-
-.item-tx .vertical-center{
-  position: absolute;
-  top: 30%;
-  width: 40%;
-}
-
-.item-tx .width-cup{
-  width: 175px;
-}
-
-.expert-mode .item-tx .item-note {
-  top : 8%;
-}
-
-.expert-mode .item-tx .badge-secondary {
-  top : 52% !important;
-}
-
 
 /**********
    List of wallet

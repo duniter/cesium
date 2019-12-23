@@ -37,7 +37,7 @@
   <div class="col col-10 no-padding">
 
     <!-- not locked TX -->
-    <span ng-if="::!tx.lockedOutputs" class="badge item-note" ng-class="{'badge-calm': tx.amount > 0}">
+    <span ng-if="::!tx.lockedOutputs" class="badge item-note" ng-class="{'badge-calm': tx.amount > 0, 'badge-white': tx.amount <= 0}">
       <span ng-bind-html=":rebind:tx.amount| formatAmount:{currency:$root.currency.name}"></span>
     </span>
 
