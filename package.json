@@ -53,8 +53,8 @@
     "cordova-plugin-x-toast": "^2.7.2",
     "ionic-plugin-keyboard": "^2.2.1",
     "moment": "~2.24.0",
-    "numeral": "1.5.3",
-    "phonegap-plugin-barcodescanner": "phonegap-plugin-barcodescanner"
+    "numeral": "1.5.6",
+    "phonegap-plugin-barcodescanner": "8.1.0"
   },
   "devDependencies": {
     "bower": "^1.8.8",
@@ -140,10 +140,7 @@
   ],
   "cordova": {
     "plugins": {
-      "cordova-plugin-camera": {
-        "CAMERA_USAGE_DESCRIPTION": " ",
-        "PHOTOLIBRARY_USAGE_DESCRIPTION": " "
-      },
+      "cordova-plugin-camera": {},
       "cordova-plugin-console": {},
       "cordova-plugin-device": {},
       "cordova-plugin-dialogs": {},
@@ -157,13 +154,11 @@
       "cordova-plugin-x-toast": {},
       "cordova-plugin-ionic-keyboard": {},
       "phonegap-plugin-barcodescanner": {
-        "CAMERA_USAGE_DESCRIPTION": "Scan QRCode"
+        "CAMERA_USAGE_DESCRIPTION": "To scan QRCode"
       },
       "ionic-plugin-keyboard": {},
       "cordova-clipboard": {},
-      "cordova-plugin-ionic-webview": {
-        "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
-      }
+      "cordova-plugin-ionic-webview": {}
     },
     "platforms": [
       "ios",

@@ -36,7 +36,7 @@
     "angular-fullscreen": "E-IS/angular-fullscreen#1.0.2",
     "leaflet": "0.7.7",
     "moment": "^2.24.0",
-    "numeral": "1.5.3",
+    "numeral": "1.5.6",
     "underscore": "1.8.3",
     "qrcode.js": "davidshimjs/qrcodejs",
     "aes-js": "ricmoo/aes-js#3.1.2",
