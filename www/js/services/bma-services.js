@@ -428,10 +428,10 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         revoke: post('/wot/revoke')
       },
       blockchain: {
-        parameters: get('/blockchain/parameters', csHttp.cache.MONTH),
+        parameters: get('/blockchain/parameters', csHttp.cache.LONG),
         block: get('/blockchain/block/:block', csHttp.cache.SHORT),
         blocksSlice: get('/blockchain/blocks/:count/:from'),
-        current: get('/blockchain/current'),
+        current: get('/blockchain/current', csHttp.cache.SHORT),
         membership: post('/blockchain/membership'),
         stats: {
           ud: get('/blockchain/with/ud', csHttp.cache.MEDIUM),
@@ -442,7 +442,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         }
       },
       tx: {
-        sources: get('/tx/sources/:pubkey'),
+        sources: get('/tx/sources/:pubkey', csHttp.cache.SHORT),
         process: post('/tx/process'),
         history: {
           all: get('/tx/history/:pubkey'),

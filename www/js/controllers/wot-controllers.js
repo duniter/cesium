@@ -1041,7 +1041,6 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
   $scope.qrcodeId = 'qrcode-wot-' + $scope.$id;
 
   $scope.$on('$ionicView.enter', function(e, state) {
-
     var onLoadSuccess = function() {
       $scope.doMotion();
       if (state.stateParams && state.stateParams.action) {
@@ -1074,15 +1073,6 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
       state.stateParams.uid.trim().length > 0) {
       if ($scope.loading) { // load once
         return $scope.load(null, state.stateParams.uid, options)
-          .then(onLoadSuccess);
-      }
-    }
-
-    // Load from wallet pubkey
-    else if (csWallet.isLogin()){
-
-      if ($scope.loading) {
-        return $scope.load(csWallet.data.pubkey, csWallet.data.uid, options)
           .then(onLoadSuccess);
       }
     }

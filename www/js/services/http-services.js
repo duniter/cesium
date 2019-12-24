@@ -101,11 +101,12 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
           responseType: 'json'
         };
         if (autoRefresh) { // redo the request if need
-          config.cache = csCache.get(cachePrefix, maxAge, function (key, value) {
+          config.cache = csCache.get(cachePrefix, maxAge, function (key, value, done) {
               console.debug('[http] Refreshing cache for ['+key+'] ');
               $http.get(key, config)
                 .success(function (data) {
                   config.cache.put(key, data);
+                  if (done) done(key, data);
               });
             });
         }
