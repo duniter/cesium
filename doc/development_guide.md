@@ -9,10 +9,12 @@ To build Cesium, you will have to:
  sudo apt-get install build-essential
 ```
 
-  - Installing [nvm](https://github.com/creationix/nvm)
+  - Installing [nvm](https://github.com/nvm-sh/nvm)
 ```
-  wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+  wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
 ```
+
+If you are using fish shell, there is a [dedicated plugin](https://github.com/jorgebucaran/fish-nvm).
 
 > Then reload your terminal, for instance by executing the commande `bash`
 
