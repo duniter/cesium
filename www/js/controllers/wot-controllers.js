@@ -133,7 +133,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         }
       })
 
-      .state('app.wallet_cert_by_id_lg', {
+      .state('app.wallet_cert_lg_by_id', {
         url: "/wallets/:id/cert/lg",
         views: {
           'menuContent': {

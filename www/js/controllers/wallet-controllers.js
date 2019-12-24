@@ -103,7 +103,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
         $scope.updateView();
         $scope.showQRCode();
-        $scope.showHelpTip();
+        if (wallet.isDefault()) $scope.showHelpTip();
         $scope.addListeners();
         UIUtils.loading.hide(); // loading could have be open (e.g. new account)
       })
@@ -732,7 +732,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
         $scope.loading = false; // very important, to avoid TX to be display before wallet.currentUd is loaded
         $scope.updateView();
         $scope.showFab('fab-transfer');
-        $scope.showHelpTip();
+        if (wallet.isDefault()) $scope.showHelpTip();
         $scope.addListeners();
         UIUtils.loading.hide(); // loading could have be open (e.g. during login phase)
       })
