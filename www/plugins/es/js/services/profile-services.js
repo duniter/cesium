@@ -19,10 +19,10 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
 
     that.raw = {
       getFields: esHttp.get('/user/profile/:id?&_source_exclude=avatar._content&_source=:fields'),
-      get: esHttp.get('/user/profile/:id?&_source_exclude=avatar._content'),
-      getAll: esHttp.get('/user/profile/:id'),
-      search: esHttp.post('/user/profile/_search'),
-      mixedSearch: esHttp.post('/user,page,group/profile,record/_search')
+      get: esHttp.get('/user/profile/:id?&_source_exclude=avatar._content', esHttp.cache.MEDIUM),
+      getAll: esHttp.get('/user/profile/:id', esHttp.cache.MEDIUM),
+      search: esHttp.post('/user/profile/_search', esHttp.cache.MEDIUM),
+      mixedSearch: esHttp.post('/user,page,group/profile,record/_search', esHttp.cache.MEDIUM)
     };
 
     function getAvatarAndName(pubkey) {

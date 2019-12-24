@@ -334,7 +334,7 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
 
     return  csWot.newcomers(offset, size)
       .then(function(res){
-        if ($scope.search.type != 'newcomers') return false; // could have change
+        if ($scope.search.type !== 'newcomers') return false; // could have change
         $scope.doDisplayResult(res && res.hits, offset, size, res && res.total);
         return true;
       })

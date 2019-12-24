@@ -17,6 +17,15 @@ angular.module('cesium.graph.account.controllers', ['chart.js', 'cesium.graph.se
           }
         })
 
+        .extendState('app.view_wallet_tx_by_id', {
+          points: {
+            'buttons': {
+              templateUrl: "plugins/graph/templates/account/view_wallet_tx_extend.html",
+              controller: 'GpExtendCtrl'
+            }
+          }
+        })
+
         .extendState('app.wot_identity', {
           points: {
             'buttons': {
@@ -39,6 +48,18 @@ angular.module('cesium.graph.account.controllers', ['chart.js', 'cesium.graph.se
       $stateProvider
         .state('app.view_wallet_stats', {
           url: "/wallet/stats?t&stepUnit&hide&scale",
+          views: {
+            'menuContent': {
+              templateUrl: "plugins/graph/templates/account/view_stats.html"
+            }
+          },
+          data: {
+            auth: true
+          }
+        })
+
+        .state('app.view_wallet_stats_by_id', {
+          url: "/wallets/:id/stats?t&stepUnit&hide&scale",
           views: {
             'menuContent': {
               templateUrl: "plugins/graph/templates/account/view_stats.html"

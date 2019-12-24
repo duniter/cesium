@@ -2,14 +2,16 @@
 angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services',
   'cesium.settings.services'])
 
-.factory('csWot', function($q, $timeout, BMA, Api, CacheFactory, csConfig, csCurrency, csSettings, csCache) {
+.factory('csWot', function($rootScope, $q, $timeout, BMA, Api, CacheFactory, csConfig, csCurrency, csSettings, csCache) {
   'ngInject';
 
   function factory(id) {
 
     var
       api = new Api(this, "csWot-" + id),
-      identityCache = csCache.get('csWot-idty-', csCache.constants.SHORT),
+      cachePrefix = 'csWot-',
+      identityCache = csCache.get(cachePrefix + 'idty-', csCache.constants.MEDIUM),
+      requirementsCache = csCache.get(cachePrefix + 'requirements-', csCache.constants.MEDIUM),
 
       // Add id, and remove duplicated id
       _addUniqueIds = function(idties) {
@@ -174,8 +176,18 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
           });
       },
 
-      loadRequirements = function(data) {
-        if (!data || (!data.pubkey && !data.uid)) return $q.when(data);
+      loadRequirements = function(inputData, withCache) {
+        if (!inputData || (!inputData.pubkey && !inputData.uid)) return $q.when(inputData);
+
+        var cacheKey =  inputData.pubkey||inputData.uid;
+        var data = (withCache !== false) ? requirementsCache.get(cacheKey) : null;
+        if (data) {
+          console.debug("[wot] Requirements " + cacheKey + " found in cache");
+          // Update data with cache
+          angular.merge(inputData, data);
+          return $q.when(data)
+        }
+        data = {pubkey: inputData.pubkey, uid: inputData.uid};
 
         var now = Date.now();
 
@@ -184,7 +196,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
           csCurrency.get(),
 
           // Get requirements
-          BMA.wot.requirements({pubkey: data.pubkey||data.uid})
+          BMA.wot.requirements({pubkey: data.pubkey||data.uid}, false/*no cache*/)
             .then(function(res) {
               return _fillIdentitiesMeta(res && res.identities);
             })
@@ -244,18 +256,23 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
               });
             }
 
+            /// Save to cache
+            requirementsCache.put(cacheKey, data);
+
+            angular.merge(inputData, data); // Update the input data
+
             console.debug("[wot] Requirements for '{0}' loaded in {1}ms".format((data.pubkey && data.pubkey.substring(0,8))||data.uid, Date.now() - now));
 
-            return data;
+            return inputData;
           })
           .catch(function(err) {
-            _resetRequirements(data);
+            _resetRequirements(inputData);
             // If not a member: continue
             if (!!err &&
                 (err.ucode == BMA.errorCodes.NO_MATCHING_MEMBER ||
                  err.ucode == BMA.errorCodes.NO_IDTY_MATCHING_PUB_OR_UID)) {
-              data.requirements.loaded = true;
-              return data;
+              inputData.requirements.loaded = true;
+              return inputData;
             }
             throw err;
           });
@@ -660,7 +677,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
 
         // Check cached data
         if (pubkey) {
-          data = (!angular.isDefined(options.cache) || options.cache) ? identityCache.get(pubkey) : null;
+          data = (options.cache !== false) ? identityCache.get(pubkey) : null;
           if (data && (!uid || data.uid === uid) && (!options.blockUid || data.blockUid === options.blockUid)) {
             console.debug("[wot] Identity " + pubkey.substring(0, 8) + " found in cache");
             return $q.when(data);
@@ -707,7 +724,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
               }),
 
             // Get requirements
-            loadRequirements(data),
+            loadRequirements(data, options.cache !== false),
 
             // Get identity using lookup
             loadIdentityByLookup(pubkey, uid)
@@ -1160,12 +1177,20 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
         event.messageParams = event.messageParams || {};
         data.events = data.events || [];
         data.events.push(event);
+      },
+
+      cleanCache = function() {
+        console.debug("[wot] Cleaning cache...");
+        csCache.clear(cachePrefix);
       }
     ;
 
     // Register extension points
     api.registerEvent('data', 'load');
     api.registerEvent('data', 'search');
+
+    // Listen if node changed
+    BMA.api.node.on.restart($rootScope, cleanCache, this);
 
     return {
       id: id,

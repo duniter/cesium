@@ -688,12 +688,12 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       return data;
     },
 
-    loadRequirements = function() {
+    loadRequirements = function(withCache) {
       // Clean existing events
       cleanEventsByContext('requirements');
 
       // Get requirements
-      return csWot.loadRequirements(data);
+      return csWot.loadRequirements(data, withCache);
     },
 
     loadTxAndSources = function(fromTime) {
@@ -896,7 +896,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       return $q.all([
 
           // Get requirements
-          loadRequirements()
+          loadRequirements(true)
             .then(function(data) {
               if (data.requirements && (data.requirements.isMember || data.requirements.wasMember)) {
                 // Load sigStock
@@ -973,7 +973,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         cleanEventsByContext('requirements');
 
         jobs.push(
-          loadRequirements()
+          loadRequirements(true)
 
             // Add wallet events
             .then(addEvents)
@@ -1532,7 +1532,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         .then(function () {
           if (!!needToLoadRequirements) {
             // Refresh membership data (if need)
-            return loadRequirements()
+            return loadRequirements(false/*no cache*/)
 
               // Add wallet events
               .then(addEvents);
@@ -1583,7 +1583,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           })
           .then(function() {
             return $timeout(function() {
-              return loadRequirements();
+              return loadRequirements(false /*no cache*/);
             }, 1000); // waiting for node to process membership doc
           })
 
@@ -1838,7 +1838,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         .then(function() {
 
           return $timeout(function() {
-            return loadRequirements();
+            return loadRequirements(false/*no cache*/);
           }, 1000); // waiting for node to process membership doc
         })
 
@@ -1865,7 +1865,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         .then(function(res) {
           if (isLogin()) {
             return $timeout(function () {
-              return loadRequirements();
+              return loadRequirements(false/*no cache*/);
             }, 1000) // waiting for node to process membership doc
 
              // Add wallet events

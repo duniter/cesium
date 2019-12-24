@@ -3,8 +3,10 @@ angular.module('cesium.cache.services', ['angular-cache'])
 .factory('csCache', function($http, $window, csSettings, CacheFactory) {
   'ngInject';
 
+  console.log('')
   var
     constants = {
+      VERY_LONG: 54000000, /*15 days*/
       LONG: 1 * 60  * 60 * 1000 /*1 hour*/,
       MEDIUM: 5  * 60 * 1000 /*5 min*/,
       SHORT: csSettings.defaultSettings.cacheTimeMs // around 1min
@@ -68,7 +70,7 @@ angular.module('cesium.cache.services', ['angular-cache'])
   function clearFromPrefix(cachePrefix) {
     _.forEach(_.keys(cacheNames), function(cacheName) {
       if (cacheName.startsWith(cachePrefix)) {
-        var cache = CacheFactory.get(cacheNames);
+        var cache = CacheFactory.get(cacheName);
         if (cache) {
           cache.removeAll();
         }
@@ -80,10 +82,7 @@ angular.module('cesium.cache.services', ['angular-cache'])
     get: getOrCreateCache,
     clear: clearFromPrefix,
     clearAll: clearAllCaches,
-    constants: {
-      LONG : constants.LONG,
-      SHORT: constants.SHORT
-    }
+    constants: constants
   };
 })
 ;
