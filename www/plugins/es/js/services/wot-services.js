@@ -1,6 +1,6 @@
 angular.module('cesium.es.wot.services', ['ngResource', 'cesium.es.http.services'])
 
-  .factory('esWot', function($q, esHttp, csCache) {
+  .factory('esWot', function($rootScope, $q, esHttp, csCache) {
     'ngInject';
 
     var
