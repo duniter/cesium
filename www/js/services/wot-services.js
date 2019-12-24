@@ -650,9 +650,11 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
         if (!pubkey && uid && !options.force) {
           return BMA.wot.member.getByUid(uid)
             .then(function(member) {
-              if (member) return loadData(member.pubkey, member.uid, options); // recursive call
+              if (member) return loadData(member.pubkey, member.uid, options); // recursive call, with a pubkey
               //throw {message: 'NOT_A_MEMBER'};
-              return loadData(pubkey, uid, angular.copy(options, {force: true}));
+              var options = angular.copy(options || {});
+              options.force = true;
+              return loadData(pubkey, uid, options); // Loop with force=true
             });
         }
 
