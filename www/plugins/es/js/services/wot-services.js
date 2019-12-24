@@ -74,7 +74,15 @@ angular.module('cesium.es.wot.services', ['ngResource', 'cesium.es.http.services
 
             return result;
           });
+      },
+
+      cleanCache = function() {
+        console.debug('[ES] [wot] Clean cache...');
+        csCache.clear(cachePrefix);
       };
+
+    // Listen if node changed
+    esHttp.api.node.on.stop($rootScope, cleanCache, this);
 
     return {
       memberships: loadMemberships

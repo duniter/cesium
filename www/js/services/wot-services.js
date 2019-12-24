@@ -1190,7 +1190,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
     api.registerEvent('data', 'search');
 
     // Listen if node changed
-    BMA.api.node.on.restart($rootScope, cleanCache, this);
+    BMA.api.node.on.stop($rootScope, cleanCache, this);
 
     return {
       id: id,
