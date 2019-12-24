@@ -185,7 +185,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
           console.debug("[wot] Requirements " + cacheKey + " found in cache");
           // Update data with cache
           angular.merge(inputData, data);
-          return $q.when(data)
+          return $q.when(data);
         }
         data = {pubkey: inputData.pubkey, uid: inputData.uid};
 

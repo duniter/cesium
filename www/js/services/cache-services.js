@@ -3,7 +3,6 @@ angular.module('cesium.cache.services', ['angular-cache'])
 .factory('csCache', function($http, $window, csSettings, CacheFactory) {
   'ngInject';
 
-  console.log('')
   var
     constants = {
       VERY_LONG: 54000000, /*15 days*/

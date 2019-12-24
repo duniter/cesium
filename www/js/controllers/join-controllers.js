@@ -395,7 +395,7 @@ function JoinModalController($scope, $state, $interval, $q, $timeout, Device, UI
           var needSelf = angular.isUndefined(parameters.uid) || angular.isUndefined(parameters.blockUid) ||
             (parameters.uid.toUpperCase() !== $scope.formData.pseudo.toUpperCase());
           if (!needSelf) {
-            wallet.setSelf(parameters.uid, parameters.blockUid)
+            wallet.setSelf(parameters.uid, parameters.blockUid);
           }
 
           // Self promise (if need)

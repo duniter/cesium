@@ -198,7 +198,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
           request =  csHttp.post(that.host, that.port, path, that.useSsl);
           that.cache.postByPath[path] = request;
         }
-        return request(obj, params)
+        return request(obj, params);
       };
       return postRequest;
     };
