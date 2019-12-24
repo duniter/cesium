@@ -28,7 +28,7 @@
     <preference name="KeyboardResizeMode" value="ionic" />
     <preference name="xwalkVersion" value="19" />
     <preference name="xwalkMultipleApk" value="false" />
-    <preference name="android-minSdkVersion" value="16" />
+    <preference name="android-minSdkVersion" value="20" />
     <preference name="android-targetSdkVersion" value="28" />
     <preference name="StatusBarOverlaysWebView" value="false" />
     <preference name="StatusBarBackgroundColor" value="#000" />
