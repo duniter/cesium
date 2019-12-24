@@ -1096,7 +1096,7 @@ body {
   .view-wallet,
   .view-identity  {
     .hero.hero-qrcode-active {
-      h1, h2, h3, h4, h5, i {
+      h1, h2, h3, h4, h5, i.avatar {
         margin-right: 200px;
       }
     }
@@ -2357,7 +2357,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 .icon-secondary {
   position: absolute;
   height: 100%;
-  display: block;
+  display: flex;
   align-items: center;
   font-size: 16px;
   left: 25px;

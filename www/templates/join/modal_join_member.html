@@ -136,8 +136,7 @@
               <div class="padding hidden-xs text-right">
                 <button class="button button-clear button-dark ink" ng-click="closeModal()" type="button" translate>COMMON.BTN_CANCEL
                 </button>
-                <button class="button button-calm icon-right ion-chevron-right ink" type="submit"
-                ng-disabled="UIDFound" translate>
+                <button class="button button-calm icon-right ion-chevron-right ink" type="submit" ng-disabled="uiAlreadyUsed" translate>
                   COMMON.BTN_NEXT
                 </button>
               </div>
@@ -148,7 +147,7 @@
 
 
       <!-- STEP 3: salt -->
-      <ion-slide-page>
+      <ion-slide-page ng-if="!formData.pubkey">
         <ion-content class="has-header" scroll="true">
           <form name="saltForm" novalidate="" ng-submit="doNext('saltForm')">
 
@@ -246,7 +245,7 @@
       </ion-slide-page>
 
       <!-- STEP 4: password-->
-      <ion-slide-page>
+      <ion-slide-page ng-if="!formData.pubkey">
         <ion-content class="has-header" scroll="true">
           <form name="passwordForm" novalidate="" ng-submit="doNext('passwordForm')">
 

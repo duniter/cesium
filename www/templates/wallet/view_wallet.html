@@ -49,8 +49,8 @@
            ng-click="showSelectWalletPopover($event)">
             <span ng-if=":rebind:formData.name">{{:rebind:formData.name}}</span>
             <span ng-if=":rebind:!formData.name && formData.uid">{{:rebind:formData.uid}}</span>
-            <span ng-if=":rebind:!formData.name && !formData.uid"><b class="ion-key"></b> {{:rebind:formData.pubkey | formatPubkey}}</span>
-            <small><b class="ion-arrow-down-b"></b></small>
+            <span ng-if=":rebind:!formData.name && !formData.uid"><i class="ion-key"></i> {{:rebind:formData.pubkey | formatPubkey}}</span>
+            <small><i class="ion-arrow-down-b"></i></small>
           </a>
           <a class="visible-xs visible-sm"
              style="color: lightgray;"
@@ -58,8 +58,8 @@
              ng-click="showSelectWalletModal($event)">
             <span ng-if=":rebind:formData.name">{{:rebind:formData.name}}</span>
             <span ng-if=":rebind:!formData.name && formData.uid">{{:rebind:formData.uid}}</span>
-            <span ng-if=":rebind:!formData.name && !formData.uid"><b class="ion-key"></b> {{:rebind:formData.pubkey | formatPubkey}}</span>
-            <small><b class="ion-arrow-down-b"></b></small>
+            <span ng-if=":rebind:!formData.name && !formData.uid"><i class="ion-key"></i> {{:rebind:formData.pubkey | formatPubkey}}</span>
+            <small><i class="ion-arrow-down-b"></i></small>
           </a>
         </h3>
 

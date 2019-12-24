@@ -249,44 +249,23 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       return UIUtils.alert.info("INFO.NOT_NEED_MEMBERSHIP");
     }
 
-    // Select uid (or reuse it)
-    return ((keepSelf && !!$scope.formData.blockUid) ?
-        $q.when($scope.formData.uid) :
-        $scope.showUidPopup())
+    var uid = angular.isDefined($scope.formData.blockUid) && $scope.formData.uid || undefined;
 
-      // Ask user confirmation
-      .then(function(uid) {
-        return UIUtils.alert.confirm("CONFIRM.MEMBERSHIP")
-          .then(function(confirm) {
-            if (!confirm) throw 'CANCELLED';
-            return uid;
-          });
-      })
-
-      // Send self (identity) - if need
-      .then(function (uid) {
-        UIUtils.loading.show();
-
-        // If uid changed, or self blockUid not retrieve : do self() first
-        if (!$scope.formData.blockUid || uid != $scope.formData.uid) {
-          $scope.formData.blockUid = null;
-          $scope.formData.uid = uid;
-
-          return wallet.self(uid, false/*do NOT load membership here*/);
-        }
-      })
-
-      // Send membership
-      .then($scope.doMembershipIn)
-      .catch(function(err) {
-        if (err === 'CANCELLED') return;
-        if (!wallet.data.uid) {
-          UIUtils.onError('ERROR.SEND_IDENTITY_FAILED')(err);
-        }
-        else {
-          UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED')(err);
-        }
-      });
+    // Approve the license
+    return Modals.showJoinMember({
+      uid : uid,
+      blockUid: uid && $scope.formData.blockUid,
+      pubkey: $scope.formData.pubkey
+    })
+    .catch(function(err) {
+      if (err === 'CANCELLED') return;
+      if (!wallet.data.uid) {
+        UIUtils.onError('ERROR.SEND_IDENTITY_FAILED')(err);
+      }
+      else {
+        UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED')(err);
+      }
+    });
   };
 
   // Send membership OUT
@@ -449,16 +428,16 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
    * @param fix
    */
   $scope.doQuickFix = function(event) {
-    if (event == 'renew') {
+    if (event === 'renew') {
       $scope.renewMembership();
     }
-    else if (event == 'membership') {
+    else if (event === 'membership') {
       $scope.membershipIn(true/*keep self*/);
     }
-    else if (event == 'fixMembership') {
-      $scope.fixMembership();
+    else if (event === 'fixMembership') {
+      $scope.fixMembership(false);
     }
-    else if (event == 'fixIdentity') {
+    else if (event === 'fixIdentity') {
       $scope.fixIdentity();
     }
   };
