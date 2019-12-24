@@ -64,6 +64,11 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
       return $q.when();
     };
 
+    exports.standard.remove = function(key, value) {
+      exports.standard.storage.removeItem(key);
+      return $q.when();
+    };
+
     exports.standard.get = function(key, defaultValue) {
       return $q.when(exports.standard.storage[key] || defaultValue);
     };
@@ -165,7 +170,7 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
         });
       }
 
-      // Fallback to session storage (locaStorage could have been disabled on some browser)
+      // Fallback to session storage (localStorage could have been disabled on some browser)
       else {
         console.debug('[storage] Starting {session} storage...');
         // Set standard storage as default

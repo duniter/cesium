@@ -154,7 +154,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 
         if (!that.started) {
           if (!that._startPromise) {
-            console.error('[BMA] Trying to get [{0}] before start()...'.format(path));
+            console.warn('[BMA] Trying to get [{0}] before start(). Waiting...'.format(path));
           }
           return that.ready().then(function() {
             return getRequestFn(params);
@@ -178,7 +178,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
             if (err && err.ucode == exports.errorCodes.HTTP_LIMITATION) {
               // If max number of retry not reach
               if (execCount <= exports.constants.LIMIT_REQUEST_COUNT) {
-                if (execCount == 1) {
+                if (execCount === 1) {
                   console.warn("[BMA] Too many HTTP requests: Will wait then retry...");
                   // Update the loading message (if exists)
                   UIUtils.loading.update({template: "COMMON.LOADING_WAIT"});
@@ -399,7 +399,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       node: {
         summary: get('/node/summary', csHttp.cache.LONG),
         same: function(host2, port2) {
-          return host2 == that.host && ((!that.port && !port2) || (that.port == port2||80)) && (that.useSsl == (port2 && port2 === 443));
+          return host2 === that.host && ((!that.port && !port2) || (that.port == port2||80)) && (that.useSsl == (port2 && port2 === 443));
         },
         forceUseSsl: that.forceUseSsl
       },
@@ -415,34 +415,38 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         }
       },
       wot: {
-        lookup: get('/wot/lookup/:search'),
+        lookup: get('/wot/lookup/:search', csHttp.cache.MEDIUM),
         certifiedBy: get('/wot/certified-by/:pubkey'),
         certifiersOf: get('/wot/certifiers-of/:pubkey'),
         member: {
           all: get('/wot/members', csHttp.cache.LONG),
           pending: get('/wot/pending', csHttp.cache.SHORT)
         },
-        requirements: get('/wot/requirements/:pubkey'),
+        requirements: function(params, withCache) {
+          // No cache by default
+          if (withCache !== true) return exports.raw.requirementsNoCache(params);
+          return exports.raw.requirementsWithCache(params);
+        },
         add: post('/wot/add'),
         certify: post('/wot/certify'),
         revoke: post('/wot/revoke')
       },
       blockchain: {
-        parameters: get('/blockchain/parameters', csHttp.cache.LONG),
+        parameters: get('/blockchain/parameters', csHttp.cache.VERY_LONG),
         block: get('/blockchain/block/:block', csHttp.cache.SHORT),
         blocksSlice: get('/blockchain/blocks/:count/:from'),
-        current: get('/blockchain/current'),
+        current: get('/blockchain/current', csHttp.cache.SHORT),
         membership: post('/blockchain/membership'),
         stats: {
-          ud: get('/blockchain/with/ud', csHttp.cache.SHORT),
+          ud: get('/blockchain/with/ud', csHttp.cache.MEDIUM),
           tx: get('/blockchain/with/tx'),
-          newcomers: get('/blockchain/with/newcomers'),
+          newcomers: get('/blockchain/with/newcomers', csHttp.cache.MEDIUM),
           hardship: get('/blockchain/hardship/:pubkey'),
           difficulties: get('/blockchain/difficulties')
         }
       },
       tx: {
-        sources: get('/tx/sources/:pubkey'),
+        sources: get('/tx/sources/:pubkey', csHttp.cache.SHORT),
         process: post('/tx/process'),
         history: {
           all: get('/tx/history/:pubkey'),
@@ -457,7 +461,10 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       },
       uri: {},
       version: {},
-      raw: {}
+      raw: {
+        requirementsWithCache: get('/wot/requirements/:pubkey', csHttp.cache.LONG),
+        requirementsNoCache: get('/wot/requirements/:pubkey')
+      }
     };
     exports.regex = exports.regexp; // deprecated
 
@@ -642,11 +649,14 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 
     exports.copy = function(otherNode) {
       var wasStarted = that.started;
-      // Stop, if need
-      if (wasStarted) that.stop();
-      that.init(otherNode.host, otherNode.port, otherNode.useSsl, that.useCache/*keep original value*/);
-      // Restart (only if was already started)
-      return wasStarted ? that.start() : $q.when();
+
+      var server = csHttp.getUrl(otherNode.host, otherNode.port, ''/*path*/, otherNode.useSsl);
+      var hasChanged = (server !== that.url);
+      if (hasChanged) {
+        that.init(otherNode.host, otherNode.port, otherNode.useSsl, that.useCache/*keep original value*/);
+        // Restart (only if was already started)
+        return wasStarted ? that.restart() : $q.when();
+      }
     };
 
     exports.wot.member.uids = function() {

@@ -801,7 +801,7 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
       $scope.$broadcast('$recordView.enter', state);
     }
     else {
-      $state.go('app.registry_lookup');
+      $state.go('app.wot_lookup.tab_registry');
     }
   });
 
@@ -843,7 +843,7 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
             $scope.loading = false;
             if (err && err.ucode === 404) {
               UIUtils.toast.show('REGISTRY.ERROR.RECORD_NOT_EXISTS');
-              $state.go('app.registry_lookup');
+              $state.go('app.wot_lookup.tab_registry');
             }
             else {
               UIUtils.onError('REGISTRY.ERROR.LOAD_RECORD_FAILED')(err);

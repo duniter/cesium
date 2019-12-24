@@ -334,7 +334,7 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
 
     return  csWot.newcomers(offset, size)
       .then(function(res){
-        if ($scope.search.type != 'newcomers') return false; // could have change
+        if ($scope.search.type !== 'newcomers') return false; // could have change
         $scope.doDisplayResult(res && res.hits, offset, size, res && res.total);
         return true;
       })
@@ -1038,9 +1038,9 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
   angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
 
   $scope.motion = UIUtils.motion.fadeSlideInRight;
+  $scope.qrcodeId = 'qrcode-wot-' + $scope.$id;
 
   $scope.$on('$ionicView.enter', function(e, state) {
-
     var onLoadSuccess = function() {
       $scope.doMotion();
       if (state.stateParams && state.stateParams.action) {
@@ -1050,6 +1050,8 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
 
         $scope.removeActionParamInLocationHref(state);
       }
+
+      $scope.showQRCode();
     };
     var options = {
       cache: true,
@@ -1071,15 +1073,6 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
       state.stateParams.uid.trim().length > 0) {
       if ($scope.loading) { // load once
         return $scope.load(null, state.stateParams.uid, options)
-          .then(onLoadSuccess);
-      }
-    }
-
-    // Load from wallet pubkey
-    else if (csWallet.isLogin()){
-
-      if ($scope.loading) {
-        return $scope.load(csWallet.data.pubkey, csWallet.data.uid, options)
           .then(onLoadSuccess);
       }
     }
@@ -1126,6 +1119,32 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
         block: res.meta && res.meta.timestamp || res.blockUid
       });
     });
+  };
+
+  $scope.showQRCode = function(timeout) {
+    if (!$scope.qrcode) {
+      $scope.qrcode = new QRCode(
+        $scope.qrcodeId,
+        {
+          text: $scope.formData.pubkey,
+          width: 180,
+          height: 180,
+          correctLevel: QRCode.CorrectLevel.L
+        });
+      UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
+    }
+    else {
+      $scope.qrcode.clear();
+      $scope.qrcode.makeCode($scope.formData.pubkey);
+      UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
+    }
+  };
+
+  $scope.hideQRCode = function() {
+    if ($scope.qrcode) {
+      $scope.qrcode.clear();
+      UIUtils.motion.toggleOff({selector: '#'+$scope.qrcodeId});
+    }
   };
 }
 
@@ -1180,8 +1199,8 @@ function WotIdentityTxViewController($scope, $timeout, $q, BMA, csSettings, csWo
 
   // Update view
   $scope.updateView = function() {
-    $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
-    $scope.$broadcast('$$rebind::' + 'rebind'); // force rebind
+    $scope.$broadcast('$$rebind::balance'); // force rebind balance
+    $scope.$broadcast('$$rebind::rebind'); // force rebind
     $scope.motion.show();
   };
 

@@ -264,20 +264,30 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
     // config moment lib
     try {
-      moment.locale(locale.substr(0,2));
+      moment.locale(locale.toLowerCase());
     }
     catch(err) {
-      moment.locale('en');
-      console.warn('[settings] Unknown local for moment lib. Using default [en]');
+      try {
+        moment.locale(locale.substr(0,2));
+      }
+      catch(err) {
+        moment.locale('en-gb');
+        console.warn('[settings] Unknown local for moment lib. Using default [en]');
+      }
     }
 
     // config numeral lib
     try {
-      numeral.language(locale.substr(0,2));
+      numeral.language(locale.toLowerCase());
     }
     catch(err) {
-      numeral.language('en');
-      console.warn('[settings] Unknown local for numeral lib. Using default [en]');
+      try {
+        numeral.language(locale.substring(0, 2));
+      }
+      catch(err) {
+        numeral.language('en-gb');
+        console.warn('[settings] Unknown local for numeral lib. Using default [en]');
+      }
     }
 
     // Emit event

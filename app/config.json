@@ -259,6 +259,10 @@
       {
         "host": "g1-test.cgeek.fr",
         "port": 443
+      },
+      {
+        "host": "gtest.jytou.fr",
+        "port": 443
       }
     ],
     "plugins":{

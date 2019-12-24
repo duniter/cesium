@@ -52,8 +52,7 @@ $cesiumicons-font-path: "../fonts" !default;
 @import "./icons/cesiumicons";
 
 // Include ion-digit-keyboard
-// FIXME: how to remove style from HTML doc insertion ?
-//@import "www/lib/ion-digit-keyboard/src/ion-digit-keyboard";
+@import "www/lib/ion-digit-keyboard/src/ion-digit-keyboard";
 
 // --------------------------------------------------
 // Responsive: Utility classes
@@ -490,7 +489,6 @@ html, body {
     span {
       @extend .gray;
       font-size: 10px;
-      margin: 5px;
       height: 20px;
       position: absolute;
       right: 0;
@@ -544,7 +542,7 @@ html, body {
   }
 
   .list .item {
-    border-bottom: 0px !important;
+    border-bottom: 0 !important;
   }
 }
 
@@ -552,8 +550,6 @@ html, body {
 /**********
    Notifications popover
 **********/
-
-
 .popover-light,
 .popover-notification {
 
@@ -633,6 +629,15 @@ html, body {
 .popover-network,
 .popover-peer-info {
   width: 420px;
+}
+
+.popover-wallets {
+  .item-avatar {
+    padding-left: 95px !important;
+    .icon:last-child {
+      display: none;
+    }
+  }
 }
 
 /**********
@@ -915,11 +920,11 @@ body {
 }
 
 .refresher-positive-900-bg {
-  --refresher-background-color: $positive-900-bg;
+  --refresher-background-color: #{$positive-900-bg};
 }
 
 .refresher-dark-100-bg {
-  --refresher-background-color: $dark-100-bg;
+  --refresher-background-color: #{$dark-100-bg};
 }
 
 .platform-android {
@@ -987,36 +992,11 @@ body {
 
   .hero {
     height: 200px;
-  }
 
-  .qrcode {
-    position: absolute;
-    top: 30px;
-    padding: 3px;
-    background: #fff;
-    width: 90px;
-    max-width: 30%;
-    right: -170px;
-    -webkit-backface-visibility: hidden !important;
-    backface-visibility: hidden !important;
-    -webkit-transition: all 0.5s ease-out !important;
-    transition: all 0.5s ease-out !important;
-
-    img {
-      width: 100%;
+    h4:after {
+      content: ' ';
+      display: inline-block;
     }
-  }
-
-  .qrcode.on {
-    right: 30px;
-  }
-
-  .qrcode.active {
-    top: 0px !important;
-    right: 0px !important;
-    padding: 10px;
-    width: 200px;
-    max-width: 50%;
   }
 
   .item-text-wrap {
@@ -1059,20 +1039,64 @@ body {
 
 }
 
+/* --
+  QR code
+-- */
+
+.view-wallet,
+.view-identity {
+  .qrcode {
+    position: absolute;
+    display: block;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    background: #fff;
+    z-index: 1;
+    -webkit-backface-visibility: hidden !important;
+    backface-visibility: hidden !important;
+    -webkit-transition: all 0.5s ease-out !important;
+    transition: all 0.5s ease-out !important;
+    overflow: hidden;
+    img {
+      display: float;
+      float: right;
+      width: 0;
+      height: 0;
+      z-index: 1;
+      transition: all 0.5s ease-out !important;
+    }
+  }
+
+  .qrcode.on {
+    width: 50px;
+    height: 50px;
+    padding: 3px;
+    margin: 7px;
+    img {
+      width: 44px;
+      height: 44px;
+    }
+  }
+
+  .qrcode.on.active {
+    margin: 0 !important;
+    padding: 10px;
+    width: 200px;
+    height: 200px;
+    img {
+      width: 180px;
+      height: 180px;
+    }
+  }
+}
+
 @media screen and (max-width: $screen-sm-max) {
-  .view-wallet {
-    .qrcode {
-      top: 8px;
-      width: 60px;
-      max-width: 30%;
-    }
-
-    .qrcode.on {
-      right: 8px;
-    }
-
+  .view-wallet,
+  .view-identity  {
     .hero.hero-qrcode-active {
-      h1, h2, h3, h4, h5, i {
+      h1, h2, h3, h4, h5, i.avatar {
         margin-right: 200px;
       }
     }
@@ -1138,10 +1162,47 @@ body {
 * TX view (wallet or identity)
 *******/
 
-.item-tx .badge-energized {
-  background-color: rgba(255, 201, 0, 0.3);
-  color: #888 !important;
+.item-tx{
+  border-top: solid 1px lightgray !important;
+  padding-bottom: 6px;
+  padding-top: 8px;
+  margin: 0 !important;
+
+
+  .badge-energized {
+    background-color: rgba(255, 201, 0, 0.3);
+    color: #888 !important;
+  }
+  .badge {
+    right : 1% !important;
+    top: 13px;
+  }
+  .badge-white {
+    background-color: white; // Fix issue #847
+  }
+
+  .vertical-center{
+    position: absolute;
+    top: 30%;
+    width: 40%;
+  }
+
+  .width-cup{
+    width: 175px;
+  }
 }
+
+
+
+.expert-mode .item-tx {
+  .item-note {
+    top : 8%;
+  }
+  .badge-secondary {
+    top : calc(8% + 23px) !important;
+  }
+}
+
 
 /******
 * Identity view
@@ -1152,11 +1213,11 @@ body {
   --refresher-bg-height: 200px;
 
   // Default wallet color
-  --refresher-background-color: $dark-100-bg;
+  --refresher-background-color: #{$dark-100-bg};
 
   // if member wallet, change wallet color
   .member {
-    --refresher-background-color: $positive-900-bg;
+    --refresher-background-color: #{$positive-900-bg};
   }
 
   .hero {
@@ -1164,7 +1225,9 @@ body {
     background-color: var(--refresher-background-color);
   }
 
+
 }
+
 
 /******
 * Cards
@@ -1229,7 +1292,7 @@ body {
     padding-top: 10px;
     padding-bottom: 2px;
     min-height: 45px !important;
-
+    margin-bottom: 1px;
   }
 
   .card-footer {
@@ -1479,14 +1542,22 @@ a.underline:hover,
   font-weight: bold !important;
 }
 
+@media screen and (max-width: $screen-sm-max) {
+  .item .badge {
+    right: 16px;
+  }
+}
+
+
 @media screen and (min-width: $screen-md) {
   .list .item.item-border-large {
+    margin-bottom: 1px;
     border-bottom: solid 1px #ccc !important;
   }
   .list.item-border-large {
     .item {
       border-bottom: solid 1px #ccc !important;
-      margin: 0px;
+      margin: 0px 0px 1px;
     }
 
     .item-divider {
@@ -1497,6 +1568,7 @@ a.underline:hover,
 
 .list .item.item-border {
   border-bottom: solid 1px #ccc !important;
+  margin-bottom: 1px;
 }
 
 .list .item.item-small-height {
@@ -1596,10 +1668,13 @@ a.underline:hover,
     max-width: 300px !important;
     display: block !important;
   }
+
   .badge:empty {
     display: none !important;
   }
-  .item .badge {
+
+  .item.item-button-right .badge,
+  .item.item-icon-right .badge {
     right: 26px !important;
   }
 }
@@ -1641,7 +1716,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 .bar {
   .badge-button {
     margin: 0 !important;
-    padding: 0px 4px !important;
+    padding: 0 4px !important;
     font-size: 10px;
     position: absolute !important;
     top: 5px;
@@ -1918,6 +1993,10 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   }
 }
 
+/**********
+   Menu
+**********/
+
 // Menu for NOT small screens
 @media screen and (min-width: $screen-sm) {
   .menu.menu-left {
@@ -2181,8 +2260,8 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     font-style: italic;
     top: 37px;
     font-weight: normal !important;
-    margin-right: 0px;
-    padding-right: 0px;
+    margin-right: 0;
+    padding: 3px 8px;
   }
 
   .item-avatar .badge.badge-avatar {
@@ -2191,7 +2270,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     right: inherit !important;
     top: 15px !important;
     margin: 0 !important;
-    padding: 0px 4px !important;
+    padding: 0 4px !important;
     font-size: 10px;
   }
 }

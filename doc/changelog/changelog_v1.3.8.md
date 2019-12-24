@@ -1,6 +1,6 @@
 # Version v1.3.8
 
-## All build
+## All platforms
 
 - [enh] Settings: display options in 2 columns
 - [enh] Display registration date, in multiple identities modal  - fix [#817](https://git.duniter.org/clients/cesium-grp/cesium/issues/817)

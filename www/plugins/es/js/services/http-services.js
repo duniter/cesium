@@ -4,7 +4,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
  * Elastic Search Http
  */
 .factory('esHttp', function($q, $timeout, $rootScope, $state, $sce, $translate, $window, $filter,
-                            CryptoUtils, UIUtils, csHttp, csConfig, csSettings, BMA, csWallet, csPlatform, Api) {
+                            CryptoUtils, UIUtils, csHttp, csConfig, csSettings, csCache, BMA, csWallet, csPlatform, Api) {
   'ngInject';
 
   // Allow to force SSL connection with port different from 443
@@ -14,10 +14,11 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     console.debug('[ES] [https] Enable SSL (forced by config or detected in URL)');
   }
 
-  function EsHttp(host, port, useSsl) {
+  function EsHttp(host, port, useSsl, useCache) {
 
     var
       that = this,
+      cachePrefix = 'esHttp-',
       constants = {
         ES_USER_API_ENDPOINT: 'ES_USER_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))',
         MAX_UPLOAD_BODY_SIZE: csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.maxUploadBodySize || 2097152 /*=2M*/
@@ -42,9 +43,10 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     that.started = false;
     that.init = init;
 
-    init(host, port, useSsl);
+    init(host, port, useSsl, useCache);
+    that.useCache = angular.isDefined(useCache) ? useCache : false; // need here because used in get() function
 
-    function init(host, port, useSsl) {
+    function init(host, port, useSsl, useCache) {
       // Use settings as default
       if (!host && csSettings.data) {
         host = host || (csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null);
@@ -56,6 +58,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       that.host = host;
       that.port = port || ((useSsl || forceUseSsl) ? 443 : 80);
       that.useSsl = angular.isDefined(useSsl) ? useSsl : (that.port == 443 || forceUseSsl);
+
       that.server = csHttp.getServer(host, port);
     }
 
@@ -126,6 +129,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         sock.close();
       });
       that.cache = _emptyCache();
+
+      csCache.clear(cachePrefix);
     };
 
     that.copy = function(otherNode) {
@@ -144,28 +149,36 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       return csHttp.getUrl(that.host, that.port, path, that.useSsl);
     };
 
-    that.get = function (path) {
+    that.get = function (path, cacheTime) {
 
-      var getRequest = function(params) {
+      cacheTime = that.useCache && cacheTime;
+      var cacheKey = path + (cacheTime ? ('#'+cacheTime) : '');
+
+      var getRequestFn = function(params) {
         if (!that.started) {
           if (!that._startPromise) {
-            console.error('[ES] [http] Trying to get [{0}] before start()...'.format(path));
+            console.error('[ES] [http] Trying to get [{0}] before start(). Waiting...'.format(path));
           }
           return that.ready().then(function(start) {
             if (!start) return $q.reject('ERROR.ES_CONNECTION_ERROR');
-            return getRequest(params); // loop
+            return getRequestFn(params); // loop
           });
         }
 
-        var request = that.cache.getByPath[path];
+        var request = that.cache.getByPath[cacheKey];
         if (!request) {
-          request =  csHttp.get(that.host, that.port, path, that.useSsl);
-          that.cache.getByPath[path] = request;
+          if (cacheTime) {
+            request =  csHttp.getWithCache(that.host, that.port, path, that.useSsl, cacheTime, null, null, cachePrefix);
+          }
+          else {
+            request =  csHttp.get(that.host, that.port, path, that.useSsl);
+          }
+          that.cache.getByPath[cacheKey] = request;
         }
         return request(params);
       };
 
-      return getRequest;
+      return getRequestFn;
     };
 
     that.post = function(path) {
@@ -185,7 +198,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
           request =  csHttp.post(that.host, that.port, path, that.useSsl);
           that.cache.postByPath[path] = request;
         }
-        return request(obj, params);
+        return request(obj, params)
       };
       return postRequest;
     };
@@ -436,17 +449,26 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     function postRecord(path, options) {
       options = options || {};
       var postRequest = that.post(path);
-      return function(record, params) {
+      return function(record, options) {
+        options = options || {};
+        var wallet = options.wallet || (options.walletId && csWallet.children.get(options.walletId)) ||
+          ((!options.pubkey || csWallet.isUserPubkey(options.pubkey)) && csWallet) ||
+          (options.pubkey && csWallet.children.getByPubkey(options.pubkey));
 
-        var wallet = (params && params.wallet || csWallet);
-        params = params || {};
-        params.pubkey = params.pubkey || wallet.data.pubkey;
-        var keypair = params.keypair || wallet.data.keypair;
-        // make sure to hide some params
-        if (params) {
-          delete params.wallet;
-          delete params.keypair;
+        var keypair = options.keypair || wallet && wallet.data && wallet.data.keypair;
+
+        if (!keypair && !wallet) {
+          throw new Error('Missing wallet or keypair, to sign record');
         }
+
+        // Create the POSt request params,
+        // but BEFORE, remove protected options
+        delete options.wallet;
+        delete options.walletId;
+        delete options.keypair;
+        var params = angular.copy(options);
+        params.pubkey = params.pubkey || wallet.data.pubkey;
+
         return (wallet.isAuth() ? $q.when(wallet.data) : wallet.auth({silent: true, minData: true}))
           .then(function() {
             if (options.creationTime && !record.creationTime) {
@@ -481,6 +503,10 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
                   // Send data
                   return postRequest(str, params)
                     .then(function (id){
+
+                      // Clear cache
+                      csCache.clear(cachePrefix);
+
                       return id;
                     })
                     .catch(function(err) {
@@ -499,8 +525,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     function removeRecord(index, type) {
       return function(id, options) {
         options = options || {};
-        var wallet = (options && options.wallet || csWallet);
-        delete options.wallet;
+        var wallet = options.wallet || options.walletId && csWallet.children.get(options.walletId) || csWallet;
         return (wallet.isAuth() ? $q.when(wallet.data) : wallet.auth({silent: true, minData: true}))
           .then(function(walletData) {
 
@@ -668,6 +693,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         parseAsHtml: parseAsHtml,
         findObjectInTree: findObjectInTree
       },
+      cache: csHttp.cache,
       constants: constants
     };
     exports.constants.regexp = regexp;
@@ -675,10 +701,10 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
   }
 
 
-  var service = new EsHttp();
+  var service = new EsHttp(undefined, undefined, undefined, true);
 
-  service.instance = function(host, port, useSsl) {
-    return new EsHttp(host, port, useSsl);
+  service.instance = function(host, port, useSsl, useCache) {
+    return new EsHttp(host, port, useSsl, useCache);
   };
 
   return service;

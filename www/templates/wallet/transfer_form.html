@@ -55,6 +55,7 @@
       </div>
       <input type="text"
              tabindex="3"
+             autocomplete="off"
              class="hidden-xs hidden-sm"
              name="amount"
              placeholder="{{::'TRANSFER.AMOUNT_HELP' | translate}} ({{$root.currency.name | currencySymbolNoHtml:formData.useRelative}})"
@@ -65,6 +66,7 @@
       <!-- mobile: come OVER the input -->
       <input type="text"
              tabindex="-1"
+             autocomplete="off"
              class="visible-xs visible-sm"
              name="amount"
              placeholder="{{::'TRANSFER.AMOUNT_HELP' | translate}} ({{$root.currency.name | currencySymbolNoHtml:formData.useRelative}})"
@@ -151,6 +153,7 @@
       <input type="text" placeholder="{{'TRANSFER.COMMENT_HELP' | translate}}"
              name="comment"
              tabindex="6"
+             autocomplete="off"
              ng-model="formData.comment"
              ng-maxlength="255"
              ng-pattern="commentPattern">
@@ -163,6 +166,7 @@
              id="{{commentInputId}}"
              tabindex="7"
              name="comment"
+             autocomplete="off"
              ng-model="formData.comment"
              ng-model-options="{ debounce: 650 }"
              ng-maxlength="255"

@@ -25,7 +25,7 @@ If you are using fish shell, there is a [dedicated plugin](https://github.com/jo
       
   - Installing node.js build tools:
 ```
-   npm install -g gulp bower@1.8.0 cordova@9.0.0 ionic@1.7.16
+   npm install -g gulp bower cordova ionic@1.7.16
 ```
    
 ## Get the source code and dependencies

@@ -7,7 +7,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
   var
     sockets = [],
-    cachePrefix = 'csHttp'
+    cachePrefix = 'csHttp-'
   ;
 
   if (!timeout) {
@@ -48,14 +48,14 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
   function prepare(url, params, config, callback) {
     var pkeys = [], queryParams = {}, newUri = url;
-    if (typeof params == 'object') {
+    if (typeof params === 'object') {
       pkeys = _.keys(params);
     }
 
     _.forEach(pkeys, function(pkey){
       var prevURI = newUri;
       newUri = newUri.replace(':' + pkey, params[pkey]);
-      if (prevURI == newUri) {
+      if (prevURI === newUri) {
         queryParams[pkey] = params[pkey];
       }
     });
@@ -89,7 +89,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     };
   }
 
-  function getResourceWithCache(host, port, path, useSsl, maxAge, autoRefresh, forcedTimeout) {
+  function getResourceWithCache(host, port, path, useSsl, maxAge, autoRefresh, forcedTimeout, cachePrefix) {
     var url = getUrl(host, port, path, useSsl);
     maxAge = maxAge || csCache.constants.LONG;
     //console.debug('[http] will cache ['+url+'] ' + maxAge + 'ms' + (autoRefresh ? ' with auto-refresh' : ''));
@@ -101,11 +101,12 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
           responseType: 'json'
         };
         if (autoRefresh) { // redo the request if need
-          config.cache = csCache.get(cachePrefix, maxAge, function (key, value) {
+          config.cache = csCache.get(cachePrefix, maxAge, function (key, value, done) {
               console.debug('[http] Refreshing cache for ['+key+'] ');
               $http.get(key, config)
                 .success(function (data) {
                   config.cache.put(key, data);
+                  if (done) done(key, data);
               });
             });
         }

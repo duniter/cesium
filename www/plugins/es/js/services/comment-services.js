@@ -167,8 +167,11 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.services',
           if (index === -1) return;
           data.result.splice(index, 1);
           delete data.mapById[comment.id];
+
+          var wallet = !csWallet.isUserPubkey(comment.issuer) ? csWallet.children.getByPubkey(comment.issuer) : csWallet;
+
           // Send deletion request
-          if (csWallet.isUserPubkey(comment.issuer)) {
+          if (wallet) {
             return exports.raw.remove(comment.id)
               .catch(function(err){
                 console.error(err);
@@ -176,7 +179,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.services',
               });
           }
           else {
-            return $q.reject("User is not the comment issuer");
+            return $q.reject("No wallet found corresponding to the comment issuer");
           }
         };
       };

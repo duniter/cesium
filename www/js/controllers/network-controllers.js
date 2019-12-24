@@ -179,16 +179,16 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
 
   $scope.updateView = function(data) {
     console.debug("[peers] Updating UI");
-    $scope.$broadcast('$$rebind::' + 'rebind'); // force data binding
+    $scope.$broadcast('$$rebind::rebind'); // force data binding
     $scope.search.results = data.peers;
     $scope.search.memberPeersCount = data.memberPeersCount;
     // Always tru if network not started (e.g. after leave+renter the view)
     $scope.search.loading = !$scope.networkStarted || csNetwork.isBusy();
+    if (!$scope.loading) {
+      $scope.$broadcast('$$rebind::rebind'); // force data binding
+    }
     if ($scope.motion && $scope.search.results && $scope.search.results.length > 0) {
       $scope.motion.show({selector: '.item-peer'});
-    }
-    if (!$scope.loading) {
-      $scope.$broadcast('$$rebind::' + 'rebind'); // force data binding
     }
   };
 
@@ -248,7 +248,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
 
   $scope.toggleCompactMode = function() {
     $scope.compactMode = !$scope.compactMode;
-    $scope.$broadcast('$$rebind::' + 'rebind'); // force data binding
+    $scope.$broadcast('$$rebind::rebind'); // force data binding
   };
 
   $scope.selectPeer = function(peer) {
@@ -506,7 +506,7 @@ function PeerInfoPopoverController($scope, $q, csSettings, csCurrency, csHttp, B
           $scope.formData.hasNewRelease = false;
         }
         $scope.loading = false;
-        $scope.$broadcast('$$rebind::' + 'rebind'); // force data binding
+        $scope.$broadcast('$$rebind::rebind'); // force data binding
       });
   };
 

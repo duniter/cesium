@@ -164,19 +164,21 @@ angular.module('cesium.es.document.services', ['ngResource', 'cesium.platform', 
         });
     }
 
-    function remove(document) {
+    function remove(document, options) {
       if (!document || !document.index || !document.type || !document.id) return $q.reject('Could not remove document: missing mandatory fields');
-      return esHttp.record.remove(document.index, document.type)(document.id);
+      return esHttp.record.remove(document.index, document.type)(document.id, options);
     }
 
-    function removeAll(documents) {
+    function removeAll(documents, options) {
       if (!documents || !documents.length) return;
 
-      return csWallet.auth()
-        .then(function(walletData) {
+      var wallet = options && options.walletId && csWallet.children.get(options.walletId) || csWallet;
+
+      return wallet.auth() // Auth once
+        .then(function() {
           // Remove each doc
           return $q.all(documents.reduce(function (res, doc) {
-            return res.concat(esHttp.record.remove(doc.index, doc.type)(doc.id, walletData));
+            return res.concat(esHttp.record.remove(doc.index, doc.type)(doc.id, {wallet: wallet}));
           }, []));
         });
     }

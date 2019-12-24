@@ -414,13 +414,13 @@ La communauté AngularJS est très active : de nombreux plugins, de tous genres,
 Généralement, installer un nouveau plugin AngularJS est très simple. Il suffit d'executer la commande suivante pour que le téléchargement de la librairie soit fait : 
  
 ```bash
- > bower install <nom_du_plugin_AngularJS>
+ > bower install ---save <nom_du_plugin_AngularJS>
 ```
 
-Le chemin de la librairie installée doit ensuite être ajouté à la main, dans le fichier `www/index.html` : 
+Le chemin de la librairie installée doit ensuite être ajouté à la main, dans le fichier `www/index.html`. Par exemple: : 
 
 ```html
-<script src="lib/ionic/js/angular/angular-file-saver.bundle.js"></script>
+<script src="lib/angular-file-saver/dist/dist/angular-file-saver.bundle.js"></script>
 ```
 
 ### 5 minutes de dev : Top chrono !

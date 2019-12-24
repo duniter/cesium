@@ -10,7 +10,7 @@
                    on-refresh="doUpdate(true)">
     </ion-refresher>
 
-    <div class="hero">
+    <div class="hero" ng-class="{'hero-qrcode-active': toggleQRCode}">
       <div class="content" ng-if="!loading">
         <i class="avatar"
            ng-if=":rebind:!formData.avatar"
@@ -37,6 +37,11 @@
 
 
     </div>
+
+    <div ng-attr-id="{{ qrcodeId }}"
+         class="qrcode spin"
+         ng-class="{'active': toggleQRCode}"
+         ng-click="toggleQRCode = !toggleQRCode"></div>
 
     <!-- button bar-->
     <a id="wot-share-anchor-{{::formData.pubkey}}"></a>
@@ -105,7 +110,7 @@
             <span translate>WOT.REGISTERED_SINCE</span>
             {{:rebind:formData.sigDate|medianDate}}
           </h5>
-          <span class="badge badge-stable">{{:rebind:formData.uid}}</span>
+          <span class="badge badge-energized">{{:rebind:formData.uid}}</span>
         </ion-item>
 
         <!-- Received certifications count -->

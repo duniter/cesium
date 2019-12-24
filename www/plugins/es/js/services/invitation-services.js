@@ -275,42 +275,47 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
       });
   }
 
-  function deleteInvitation(invitation) {
+  function deleteInvitation(invitation, options) {
     if (!invitation || !invitation.id) throw 'Invalid invitation (empty or without id). Could not delete.';
     var type = invitation.type || 'certification';
-    return that.raw[type].remove(invitation.id)
+    var wallet = options && options.walletId && csWallet.children.get(options.walletId) || csWallet;
+    return that.raw[type].remove(invitation.id, {wallet: wallet})
       .then(function() {
         // Always reset unread count
-        csWallet.data.invitations.unreadCount = 0;
+        wallet.data.invitations.unreadCount = 0;
 
-        if (!csWallet.data.invitations || !csWallet.data.invitations.list) return;
+        if (!wallet.data.invitations || !wallet.data.invitations.list) return;
 
         // Remove form list
-        csWallet.data.invitations.list.splice(csWallet.data.invitations.list.indexOf(invitation), 1);
+        wallet.data.invitations.list.splice(wallet.data.invitations.list.indexOf(invitation), 1);
       });
   }
 
-  function deleteInvitationsByIds(ids, type) {
+  function deleteInvitationsByIds(ids, type, options) {
     if (!ids || !ids.length) return $q.when();
     type = type || 'certification';
     return $q.all(
         ids.reduce(function(res, id) {
-          return res.concat(that.raw[type].remove(id));
+          return res.concat(that.raw[type].remove(id, options));
         }, [])
       );
   }
 
-  function deleteAllInvitations(pubkey, type) {
-    pubkey = pubkey || csWallet.data.pubkey;
+  function deleteAllInvitationsByPubkey(type, options) {
+
     type = type || 'certification';
 
-    console.debug('[ES] [invitation] Deleting all invitations...');
     var now = Date.now();
-    var countBeforeDeletion = (csWallet.data.invitations && csWallet.data.invitations.count) || 0;
-    var unreadCountBeforeDeletion = (csWallet.data.invitations && csWallet.data.invitations.unreadCount) || 0;
+    console.debug('[ES] [invitation] Deleting all {0} invitations...'.format(type));
+
+    var wallet = (options && options.pubkey && csWallet.children.getByPubkey(options.pubkey)) ||
+      (options && options.walletId && csWallet.children.getByPubkey(options.walletId)) ||
+      csWallet;
+    var countBeforeDeletion = (wallet.data.invitations && wallet.data.invitations.count) || 0;
+    var unreadCountBeforeDeletion = (wallet.data.invitations && wallet.data.invitations.unreadCount) || 0;
 
     // Get invitation ids
-    return that.raw[type].getIds({pubkey: pubkey})
+    return that.raw[type].getIds({pubkey: wallet.data.pubkey})
       .then(function(res) {
         if (!res || !res.hits || !res.hits.total) return;
         var ids = res.hits.hits.reduce(function (res, hit) {
@@ -318,26 +323,26 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
         }, []);
 
         // Do deletion by ids
-        return deleteInvitationsByIds(ids, type)
+        return deleteInvitationsByIds(ids, type, {walletId: wallet.id})
           .then(function() {
             // Update wallet count
-            csWallet.data.invitations = csWallet.data.invitations || {};
+            wallet.data.invitations = wallet.data.invitations || {};
             // Decrement count (warning: could have received new invitations during deletion execution)
-            if (csWallet.data.invitations.count >= countBeforeDeletion) {
-              csWallet.data.invitations.count -= countBeforeDeletion || 0;
+            if (wallet.data.invitations.count >= countBeforeDeletion) {
+              wallet.data.invitations.count -= countBeforeDeletion || 0;
             }
             else {
-              csWallet.data.invitations.count = 0;
+              wallet.data.invitations.count = 0;
             }
             // Decrement count (warning: could have received new invitations during deletion execution)
-            if (csWallet.data.invitations.unreadCount >= unreadCountBeforeDeletion) {
-              csWallet.data.invitations.unreadCount -= unreadCountBeforeDeletion || 0;
+            if (wallet.data.invitations.unreadCount >= unreadCountBeforeDeletion) {
+              wallet.data.invitations.unreadCount -= unreadCountBeforeDeletion || 0;
             }
             else {
-              csWallet.data.invitations.unreadCount = 0;
+              wallet.data.invitations.unreadCount = 0;
             }
 
-            console.debug('[ES] [invitation] All invitations deleted in {0}ms'.format(Date.now()-now));
+            console.debug('[ES] [invitation] All {0} invitations deleted in {1}ms'.format(type, Date.now()-now));
           });
       });
   }
@@ -397,7 +402,7 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
   that.send = sendInvitation;
   that.delete = deleteInvitation;
   that.deleteByIds = deleteInvitationsByIds;
-  that.deleteAll = deleteAllInvitations;
+  that.deleteAll = deleteAllInvitationsByPubkey;
 
   that.constants = constants;
 

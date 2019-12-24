@@ -412,10 +412,9 @@ angular.module('cesium.utils.services', [])
 
     options = options || {};
     options.templateUrl = options.templateUrl ? options.templateUrl : 'templates/common/popover_copy.html';
-    options.scope = options.scope && options.scope || $rootScope;
+    options.scope = options.scope || $rootScope;
     options.scope.popovers = options.scope.popovers || {};
     options.autoselect = options.autoselect || false;
-    options.bindings = options.bindings || {};
     options.autoremove = angular.isDefined(options.autoremove) ? options.autoremove : true;
     options.backdropClickToClose = angular.isDefined(options.backdropClickToClose) ? options.backdropClickToClose : true;
     options.focusFirstInput = angular.isDefined(options.focusFirstInput) ? options.focusFirstInput : false;
@@ -426,7 +425,9 @@ angular.module('cesium.utils.services', [])
       popover.deferred=deferred;
       popover.options=options;
       // Fill the popover scope
-      angular.merge(popover.scope, options.bindings);
+      if (options.bindings) {
+        angular.merge(popover.scope, options.bindings);
+      }
       $timeout(function() { // This is need for Firefox
         popover.show(event)
           .then(function() {

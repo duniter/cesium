@@ -31,9 +31,9 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
         block: {},
         raw: {
           block: {
-            search: esHttp.post('/:currency/block/_search'),
+            search: esHttp.post('/:currency/block/_search', esHttp.cache.SHORT),
             searchText: esHttp.get('/:currency/block/_search?q=:text'),
-            get: esHttp.get('/:currency/block/:number/_source')
+            get: esHttp.get('/:currency/block/:number/_source', esHttp.cache.SHORT)
           }
         },
         regexp: {

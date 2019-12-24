@@ -1,16 +1,23 @@
 angular.module('cesium.es.wot.services', ['ngResource', 'cesium.es.http.services'])
 
-  .factory('esWot', function($q, esHttp) {
+  .factory('esWot', function($q, esHttp, csCache) {
     'ngInject';
 
     var
+      cachePrefix = 'esWot-',
+      membershipsCache = csCache.get(cachePrefix + 'memberships-', csCache.constants.MEDIUM),
       raw = {
           user: {
-            event: esHttp.post('/user/event/_search?pretty')
+            event: esHttp.post('/user/event/_search')
           }
         },
 
-      loadMemberships = function(pubkey) {
+
+      loadMemberships = function(pubkey, options) {
+        options = options || {};
+
+        var result = (options.cache !== false) ? membershipsCache.get(pubkey) : null;
+        if (result) return $q.when(result);
 
         // Get user events on membership state
         var request = {
@@ -62,9 +69,20 @@ angular.module('cesium.es.wot.services', ['ngResource', 'cesium.es.http.services
               });
             }
 
+            // Put in the cache
+            membershipsCache.put(pubkey, result);
+
             return result;
           });
+      },
+
+      cleanCache = function() {
+        console.debug('[ES] [wot] Clean cache...');
+        csCache.clear(cachePrefix);
       };
+
+    // Listen if node changed
+    esHttp.api.node.on.stop($rootScope, cleanCache, this);
 
     return {
       memberships: loadMemberships

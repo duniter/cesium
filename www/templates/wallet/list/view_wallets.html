@@ -62,9 +62,12 @@
     </div>
 
     <ion-list class="{{::motion.ionListClass}}">
+
+      <!-- default wallet -->
       <ng-include ng-if="defaultWallet" ng-init="wallet = defaultWallet" src="'templates/wallet/list/item_wallet.html'">
       </ng-include>
 
+      <!-- children wallets -->
       <ng-include ng-repeat="wallet in wallets track by wallet.id"
                  src="'templates/wallet/list/item_wallet.html'">
       </ng-include>

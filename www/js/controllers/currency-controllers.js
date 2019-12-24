@@ -235,7 +235,7 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
 
       console.debug("[currency] Parameters loaded in " + (Date.now() - now) + 'ms' );
       $scope.loading = false;
-      $scope.$broadcast('$$rebind::' + 'rebind'); // force bind of currency name
+      $scope.$broadcast('$$rebind::rebind'); // force bind of currency name
 
       // Set Ink
       UIUtils.ink();

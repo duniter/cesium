@@ -72,6 +72,8 @@ function ESViewEditProfileController($scope, $q, $timeout, $state, $focus, $tran
       return $scope.showHome();
     }
 
+    $scope.walletId = wallet.id;
+
     return wallet.auth({
         minData: true
       })
@@ -395,9 +397,7 @@ function ESViewEditProfileController($scope, $q, $timeout, $state, $focus, $tran
                 // removeIf(no-device)
                 UIUtils.loading.show();
                 // endRemoveIf(no-device)
-                return esProfile.remove(walletData.pubkey, {
-                    wallet: wallet
-                  })
+                return esProfile.remove(walletData.pubkey, {wallet: wallet})
                   .then(function () {
                     if (wallet.isDefault()) {
                       walletData.name=null; // keep local name, on children wallets

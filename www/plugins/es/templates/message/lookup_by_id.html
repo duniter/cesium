@@ -1,0 +1,17 @@
+<ion-view left-buttons="leftButtons" class="view-messages">
+
+  <ion-tabs class="tabs-positive tabs-icon-top">
+
+    <ion-tab title="{{'MESSAGE.LIST.INBOX'|translate}}" icon="ion-archive"
+      ui-sref="app.user_messages_by_id.tab_inbox">
+      <ion-nav-view name="tab_inbox"></ion-nav-view>
+    </ion-tab>
+
+    <ion-tab title="{{'MESSAGE.LIST.OUTBOX'|translate}}" icon="ion-paper-airplane"
+             ui-sref="app.user_messages_by_id.tab_outbox">
+      <ion-nav-view name="tab_outbox"></ion-nav-view>
+    </ion-tab>
+
+  </ion-tabs>
+
+</ion-view>
