@@ -1,12 +1,10 @@
 # Specifies intentionally untracked files to ignore when using Git
 # http://git-scm.com/docs/gitignore
 
-/www/lib/ionic-material
-/www/lib/robotodraft
-
 /node_modules/
-
 /platforms/*
+!/platforms/desktop
+!/platforms/android
 /resources/android/build/local.properties
 /resources/android/build/Cesium.keystore
 /resources/android/build/release-signing.properties
@@ -14,16 +12,17 @@
 .idea/
 .vscode/
 .local/
+.directory
 /*.iml
 
-/www/lib/*
-!/www/lib/ionic
+/www/lib/
 /www/js/config.js
 /www/dist
 /hooks/playstore-config.json
-
-.directory
-/www/js/config.js
+/hooks/minify-conf.json
+/hooks/uglify-config.json
+/hooks/after_prepare/ionic-minify.js
+/hooks/after_prepare/uglify.js
 
 # Generated CSS
 /www/css/ionic.app.css
@@ -39,7 +38,6 @@
 /www/img/layers*.png
 /www/img/marker*.png
 
-/env.sh
 /npm-debug.log
 /package-lock.json
-/Cesium.keystore
+/yarn.lock
