@@ -58,7 +58,7 @@
              autocomplete="off"
              class="hidden-xs hidden-sm"
              name="amount"
-             placeholder="{{::'TRANSFER.AMOUNT_HELP' | translate}} ({{$root.currency.name | currencySymbolNoHtml:formData.useRelative}})"
+             placeholder="{{::'TRANSFER.AMOUNT_HELP' | translate}}"
              ng-model="formData.amount"
              required
              number-float>
@@ -69,7 +69,7 @@
              autocomplete="off"
              class="visible-xs visible-sm"
              name="amount"
-             placeholder="{{::'TRANSFER.AMOUNT_HELP' | translate}} ({{$root.currency.name | currencySymbolNoHtml:formData.useRelative}})"
+             placeholder="{{::'TRANSFER.AMOUNT_HELP' | translate}}"
              ng-model="formData.amount"
              required
              number-float>
@@ -79,14 +79,14 @@
            tabindex="4"
            ng-click="showDigitKeyboard()"></div>
 
-      <a class="button button-stable icon ion-arrow-swap gray ink hidden-xs hidden-sm"
-         tabindex="-1"
+      <a class="button button-clear button-stable dark ink"
+         tabindex="-1"  style="z-index:110; padding: 0px 16px;"
          ng-click="showUnitPopover($event)">
+        <span ng-bind-html="$root.currency.name | currencySymbol:formData.useRelative">
+        </span>
+        &nbsp;<b class="ion-arrow-down-b" style="font-size: 12pt;"></b>
       </a>
-      <a class="button button-icon gray icon ion-android-more-vertical ink visible-xs visible-sm"
-         style="z-index:110; right: 0px;"
-         ng-click="showUnitPopover($event)">
-      </a>
+
     </ion-item>
     <div class="form-errors"
          ng-show="form.$submitted && form.amount.$error"
