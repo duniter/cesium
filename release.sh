@@ -130,7 +130,7 @@ echo "- Executing git push, with tag: v$2"
 echo "----------------------------------"
 
 # Commit
-cd $DIRNAME
+cd ${DIRNAME}
 git reset HEAD
 git add package.json config.xml install.sh www/js/config.js www/manifest.json
 git commit -m "v$2"
@@ -168,8 +168,8 @@ if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
-if [[ -d "${DIRNAME}/platforms/desktop" ]]; then
-  cd "${DIRNAME}/platforms/desktop"
+if [[ -d "${DIRNAME}/dist/desktop" ]]; then
+  cd "${DIRNAME}/dist/desktop"
 
   # Fetch last updates
   git fetch origin && git merge origin/master || exit 1
@@ -180,7 +180,8 @@ if [[ -d "${DIRNAME}/platforms/desktop" ]]; then
       exit 1
   fi
 else
-  echo "WARN: platform/desktop not found -> Skipping desktop build!"
+  echo "ERROR: dist/desktop not found -> Make sure git submodule has been init!"
+  exit 1
 fi;
 
 # back to nodejs version 6
