@@ -526,15 +526,18 @@ gulp.task('clean-unused-files:web', ['optimize-files:web'], function(done) {
 
 gulp.task('clean-unused-directories:web', ['clean-unused-files:web'], function() {
   var tmpPath = './dist/web/www';
-  return del([
+  return del.sync([
     tmpPath + '/css',
     tmpPath + '/templates',
     tmpPath + '/js',
     tmpPath + '/dist',
     tmpPath + '/lib/*',
-    tmpPath + '!/lib/robotodraft',
+    '!' + tmpPath + '/lib/ionic',
+    '!' + tmpPath + '/lib/robotodraft',
+    tmpPath + '/lib/ionic/*',
+    '!' + tmpPath + '/lib/ionic/fonts',
     tmpPath + '/lib/robotodraft/*',
-    tmpPath + '!/lib/robotodraft/fonts'
+    '!' + tmpPath + '/lib/robotodraft/fonts'
   ]);
 });
 
@@ -557,7 +560,7 @@ gulp.task('zip:web', ['clean-unused-directories:web'], function() {
 
 gulp.task('build:web', ['zip:web'], function() {
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
-  log(colors.green("Build for web created at: 'plateforms/web/build/cesium-v" + version + "-web.zip'"));
+  log(colors.green("Build for web created at: 'dist/web/build/cesium-v" + version + "-web.zip'"));
   return del(['tmp']);
 });
 
