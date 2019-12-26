@@ -1072,10 +1072,10 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
               bindings: {
                 content: 'HELP.TIP.SETTINGS_CHANGE_UNIT',
                 contentParams: contentParams,
-                icon: {
+                icon: UIUtils.screen.isSmall() ? {
                   position: 'right',
                   style: 'margin-right: 60px'
-                },
+                } : {position: 'center'},
                 hasNext: hasNext
               },
               timeout: 1000
@@ -1105,11 +1105,12 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
     if (csWallet.isLogin()) {
       return $state.go('app.view_wallet')
         .then(function(){
-          return $scope.showHelpTip('helptip-wallet-certifications', {
+          return $scope.showHelpTip('helptip-wallet-pubkey', {
             bindings: {
               content: 'HELP.TIP.END_LOGIN',
               hasNext: false
-            }
+            },
+            timeout: 1200
           });
         });
     }
