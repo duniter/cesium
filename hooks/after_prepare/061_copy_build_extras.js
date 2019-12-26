@@ -16,7 +16,7 @@ if (rootdir) {
     try {
       var platform = platforms[x].trim().toLowerCase();
 
-      if (platform == 'android') {
+      if (platform === 'android') {
         var build_dir = rootdir + '/resources/android/build';
         var android_dir = rootdir + '/platforms/android';
         var build_files = build_dir + '/**/*.*';

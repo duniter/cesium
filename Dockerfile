@@ -1,4 +1,4 @@
-FROM     ubuntu:18.04
+FROM     ubuntu:16.04
 LABEL maintainer="benoit [dot] lavenier [at] e-is [dot] pro"
 
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -14,21 +14,26 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 # Install basics
 RUN apt-get update &&  \
-    apt-get install -y git wget curl unzip build-essential ruby ruby-dev ruby-ffi gcc make && \
+    apt-get install -y git wget curl unzip build-essential ruby ruby-dev ruby-ffi gcc make python && \
     curl --retry 3 -SLO "http://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" && \
     tar -xzf "node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local --strip-components=1 && \
-    rm "node-v$NODE_VERSION-linux-x64.tar.gz" && \
-    npm install -g npm@"$NPM_VERSION" && \
+    rm "node-v$NODE_VERSION-linux-x64.tar.gz"
+
+# Install global nodeJS dependencies
+RUN npm install -g npm@"$NPM_VERSION" && \
     npm install -g yarn gulp@"$GULP_VERSION" cordova@"$CORDOVA_VERSION" ionic@"$IONIC_VERSION" && \
     npm cache clear --force
 
-# install python-software-properties (so you can do add-apt-repository)
+# Install global nodeJS dependencies
+RUN yarn install node-sass@3.13.1
+
+# Install Java
 RUN apt-get update && apt-get install -y -q python-software-properties software-properties-common  && \
     add-apt-repository ppa:webupd8team/java -y && \
     echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && \
     apt-get update && apt-get -y install oracle-java8-installer
 
-#ANDROID STUFF
+# ANDROID STUFF
 RUN echo ANDROID_HOME="${ANDROID_HOME}" >> /etc/environment && \
     dpkg --add-architecture i386 && \
     apt-get update && \
@@ -72,7 +77,7 @@ RUN unzip ${ANDROID_HOME}/temp/*.zip -d ${ANDROID_HOME}
 #    git config --global user.name "User Name" && \
 RUN git clone git@git.duniter.org:clients/cesium-grp/cesium.git && \
     cd cesium && \
-    yarn
+    yarn install --ignore-engines
 
 # Restore cordova platforms
 RUN cd cesium && \

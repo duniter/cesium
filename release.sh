@@ -114,6 +114,7 @@ if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
+
 echo "----------------------------------"
 echo "- Building web artifact..."
 echo "----------------------------------"
@@ -133,15 +134,25 @@ echo "----------------------------------"
 cd ${DIRNAME}
 git reset HEAD
 git add package.json config.xml install.sh www/js/config.js www/manifest.json
-git commit -m "v$2"
-git tag "v$2"
-git push
+if [[ $? -ne 0 ]]; then
+  exit 1
+fi
+git commit -m "v$2" && git tag "v$2" && git push
+if [[ $? -ne 0 ]]; then
+  exit 1
+fi
+
+# Commit android project
+cd ${DIRNAME}/platforms/android
+git reset HEAD
+git add -A
+git commit -m "v$2" && git tag "v$2" && git push
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
 # Pause (wait propagation to from git.duniter.org to github)
-echo " Waiting 30s, for propagation to github..."
+echo " Waiting 40s, for propagation to github..."
 sleep 40s
 
 description="$4"

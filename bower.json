@@ -15,7 +15,7 @@
     "angular-image-crop": "^2.0.0",
     "angular-ui-router": "^0.2.18",
     "angular-cache": "^4.6.0",
-    "angular-idle": "^1.3.2",
+    "ng-idle": "moribvndvs/ng-idle#^1.3.2",
     "chart.js": "2.9.3",
     "leaflet.awesome-markers": "2.0.2",
     "leaflet-search": "2.7.2",

@@ -29,7 +29,10 @@ var gulp = require('gulp'),
   htmlmin = require('gulp-htmlmin'),
   jshint = require('gulp-jshint'),
   markdown = require('gulp-markdown'),
-  sourcemaps = require('gulp-sourcemaps');
+  sourcemaps = require('gulp-sourcemaps'),
+
+  log = require('fancy-log'),
+  colors = require('ansi-colors');
 
 var paths = {
   sass: ['./scss/**/*.scss'],
@@ -131,11 +134,11 @@ gulp.task('config', function (done) {
   var config = allConfig[env];
 
   if(!config) {
-    gutil.log(gutil.colors.red("=> Could not load `" + env + "` environment!"));
+    log(colors.red("=> Could not load `" + env + "` environment!"));
     process.exit(1);
   }
 
-  gutil.log(gutil.colors.green("Building `www/js/config.js` for `" + env + "` environment..."));
+  log(colors.green("Building `www/js/config.js` for `" + env + "` environment..."));
 
   var project = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
   config['version'] = project.version;
@@ -202,7 +205,7 @@ gulp.task('license_md', function (done) {
 
 
 gulp.task('debug_file', function(done) {
-  gutil.log(gutil.colors.green("Building `www/debug.html`..."));
+  log(colors.green("Building `www/debug.html`..."));
 
   return gulp.src(['www/index.html'])
     .pipe(replace('dist/dist_js/app/', 'js/'))
@@ -554,7 +557,7 @@ gulp.task('zip:web', ['clean-unused-directories:web'], function() {
 
 gulp.task('build:web', ['zip:web'], function() {
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
-  gutil.log(gutil.colors.green("Build for web created at: 'plateforms/web/build/cesium-v" + version + "-web.zip'"));
+  log(colors.green("Build for web created at: 'plateforms/web/build/cesium-v" + version + "-web.zip'"));
   return del(['tmp']);
 });
 
