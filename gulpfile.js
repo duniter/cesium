@@ -1,41 +1,35 @@
 'use strict';
 
-var gulp = require('gulp');
-var gutil = require('gulp-util');
-var bower = require('bower');
-var concat = require('gulp-concat');
-var path = require("path");
-var sass = require('gulp-sass');
-var cleanCss = require('gulp-clean-css');
-var base64 = require('gulp-base64');
-var rename = require('gulp-rename');
-var sh = require('shelljs');
-var ngConstant = require('gulp-ng-constant');
-var fs = require("fs");
-var argv = require('yargs').argv;
-var header = require('gulp-header');
-var footer = require('gulp-footer');
-var removeCode = require('gulp-remove-code');
-var removeHtml = require('gulp-html-remove');
-var templateCache = require('gulp-angular-templatecache');
-var ngTranslate = require('gulp-angular-translate');
-var ngAnnotate = require('gulp-ng-annotate');
-var es = require('event-stream');
-var zip = require('gulp-zip');
-var del = require('del');
-var useref = require('gulp-useref');
-var filter = require('gulp-filter');
-var uglify = require('gulp-uglify');
-var csso = require('gulp-csso');
-var replace = require('gulp-replace');
-var rev = require('gulp-rev');
-var revReplace = require('gulp-rev-replace');
-var clean = require('gulp-clean');
-var htmlmin = require('gulp-htmlmin');
-var jshint = require('gulp-jshint');
-var sourcemaps = require('gulp-sourcemaps');
-var concatCss = require('gulp-concat-css');
-var markdown = require('gulp-markdown');
+var gulp = require('gulp'),
+  sass = require('gulp-sass'),
+  cleanCss = require('gulp-clean-css'),
+  base64 = require('gulp-base64'),
+  rename = require('gulp-rename'),
+  ngConstant = require('gulp-ng-constant'),
+  fs = require("fs"),
+  argv = require('yargs').argv,
+  header = require('gulp-header'),
+  footer = require('gulp-footer'),
+  removeCode = require('gulp-remove-code'),
+  removeHtml = require('gulp-html-remove'),
+  templateCache = require('gulp-angular-templatecache'),
+  ngTranslate = require('gulp-angular-translate'),
+  ngAnnotate = require('gulp-ng-annotate'),
+  es = require('event-stream'),
+  zip = require('gulp-zip'),
+  del = require('del'),
+  useref = require('gulp-useref'),
+  filter = require('gulp-filter'),
+  uglify = require('gulp-uglify'),
+  csso = require('gulp-csso'),
+  replace = require('gulp-replace'),
+  rev = require('gulp-rev'),
+  revReplace = require('gulp-rev-replace'),
+  clean = require('gulp-clean'),
+  htmlmin = require('gulp-htmlmin'),
+  jshint = require('gulp-jshint'),
+  markdown = require('gulp-markdown'),
+  sourcemaps = require('gulp-sourcemaps');
 
 var paths = {
   sass: ['./scss/**/*.scss'],
@@ -51,7 +45,8 @@ var paths = {
   license_md: ['./www/license/*.md']
 };
 
-gulp.task('serve:before', ['sass',
+gulp.task('serve:before', [
+  'sass',
   'templatecache',
   'ng_annotate',
   'ng_translate',
@@ -60,6 +55,19 @@ gulp.task('serve:before', ['sass',
   'ng_translate_plugin',
   'css_plugin',
   'license_md']);
+
+gulp.task('watch', function() {
+  gulp.watch(paths.sass, ['sass']);
+  gulp.watch(paths.templatecache, ['templatecache']);
+  gulp.watch(paths.ng_annotate, ['ng_annotate']);
+  gulp.watch(paths.ng_translate, ['ng_translate']);
+  // plugins:
+  gulp.watch(paths.templatecache_plugin, ['templatecache_plugin']);
+  gulp.watch(paths.ng_annotate_plugin, ['ng_annotate_plugin']);
+  gulp.watch(paths.ng_translate_plugin, ['ng_translate_plugin']);
+  gulp.watch(paths.css_plugin, ['css_plugin']);
+  gulp.watch(paths.license_md, ['license_md']);
+});
 
 gulp.task('default', ['config', 'serve:before']);
 
@@ -74,6 +82,7 @@ gulp.task('sass', ['sass-images'], function(done) {
   es.concat(
     // Default App style
     gulp.src('./scss/ionic.app.scss')
+
       .pipe(sass()).on('error', sass.logError)
       .pipe(base64({
               baseDir: "./www/css",
@@ -112,39 +121,6 @@ gulp.task('sass', ['sass-images'], function(done) {
       .pipe(gulp.dest('./www/css/'))
   )
   .on('end', done);
-});
-
-gulp.task('watch', function() {
-  gulp.watch(paths.sass, ['sass']);
-  gulp.watch(paths.templatecache, ['templatecache']);
-  gulp.watch(paths.ng_annotate, ['ng_annotate']);
-  gulp.watch(paths.ng_translate, ['ng_translate']);
-  // plugins:
-  gulp.watch(paths.templatecache_plugin, ['templatecache_plugin']);
-  gulp.watch(paths.ng_annotate_plugin, ['ng_annotate_plugin']);
-  gulp.watch(paths.ng_translate_plugin, ['ng_translate_plugin']);
-  gulp.watch(paths.css_plugin, ['css_plugin']);
-  gulp.watch(paths.license_md, ['license_md']);
-});
-
-gulp.task('install', ['git-check'], function() {
-  return bower.commands.install()
-    .on('log', function(data) {
-      gutil.log('bower', gutil.colors.cyan(data.id), data.message);
-    });
-});
-
-gulp.task('git-check', function(done) {
-  if (!sh.which('git')) {
-    console.log(
-      '  ' + gutil.colors.red('Git is not installed.'),
-      '\n  Git, the version control system, is required to download Ionic.',
-      '\n  Download git here:', gutil.colors.cyan('http://git-scm.com/downloads') + '.',
-      '\n  Once git is installed, run \'' + gutil.colors.cyan('gulp install') + '\' again.'
-    );
-    process.exit(1);
-  }
-  done();
 });
 
 gulp.task('config', function (done) {
@@ -282,13 +258,13 @@ gulp.task('clean:tmp', function() {
 
 gulp.task('clean:web', function() {
   return del([
-      './platforms/web/www',
-      './platforms/web/build'
+      './dist/web/www',
+      './dist/web/build'
     ]);
 });
 
 gulp.task('copy-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], function(done) {
-  var tmpPath = './platforms/web/www';
+  var tmpPath = './dist/web/www';
   es.concat(
     // Copy Js (and remove unused code)
     gulp.src('./www/js/**/*.js')
@@ -379,7 +355,7 @@ gulp.task('copy-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], functi
 });
 
 gulp.task('templatecache:web', ['copy-files:web'], function (done) {
-  var tmpPath = './platforms/web/www';
+  var tmpPath = './dist/web/www';
   gulp.src(tmpPath + '/templates/**/*.html')
     .pipe(templateCache({
       standalone:true,
@@ -391,7 +367,7 @@ gulp.task('templatecache:web', ['copy-files:web'], function (done) {
 });
 
 gulp.task('ng_annotate:web', ['templatecache:web'], function (done) {
-  var tmpPath = './platforms/web/www';
+  var tmpPath = './dist/web/www';
   var jsFilter = filter(["**/*.js", "!**/vendor/*"]);
 
   gulp.src(tmpPath + '/js/**/*.js')
@@ -402,7 +378,7 @@ gulp.task('ng_annotate:web', ['templatecache:web'], function (done) {
 });
 
 gulp.task('copy-plugin-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], function(done) {
-  var tmpPath = './platforms/web/www';
+  var tmpPath = './dist/web/www';
   es.concat(
     // Transform i18n into JS
     gulp.src(paths.ng_translate_plugin)
@@ -417,7 +393,7 @@ gulp.task('copy-plugin-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'],
 });
 
 gulp.task('templatecache-plugin:web', ['copy-plugin-files:web'], function (done) {
-  var tmpPath = './platforms/web/www';
+  var tmpPath = './dist/web/www';
   gulp.src(paths.templatecache_plugin)
     .pipe(templateCache({
       standalone:true,
@@ -429,7 +405,7 @@ gulp.task('templatecache-plugin:web', ['copy-plugin-files:web'], function (done)
 });
 
 gulp.task('ng_annotate-plugin:web', ['templatecache-plugin:web'], function (done) {
-  var tmpPath = './platforms/web/www';
+  var tmpPath = './dist/web/www';
   gulp.src(paths.ng_annotate_plugin)
     .pipe(ngAnnotate({single_quotes: true}))
     .pipe(gulp.dest(tmpPath + '/dist/dist_js/plugins'))
@@ -437,7 +413,7 @@ gulp.task('ng_annotate-plugin:web', ['templatecache-plugin:web'], function (done
 });
 
 gulp.task('debug-api-files:web', ['ng_annotate:web', 'ng_annotate-plugin:web'], function(done) {
-  var tmpPath = './platforms/web/www';
+  var tmpPath = './dist/web/www';
   var debugFilter = filter('**/debug.html', { restore: true });
 
   gulp.src(tmpPath + '/*/debug.html')
@@ -454,12 +430,12 @@ gulp.task('debug-api-files:web', ['ng_annotate:web', 'ng_annotate-plugin:web'], 
 });
 
 gulp.task('optimize-api-files:web', ['debug-api-files:web'], function(done) {
-  var tmpPath = './platforms/web/www';
+  var tmpPath = './dist/web/www';
   var jsFilter = filter(["**/*.js", '!**/config.js'], { restore: true });
   var cssFilter = filter("**/*.css", { restore: true });
   var revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
   var indexFilter = filter('**/index.html', { restore: true });
-  var uglifyOptions = {beautify: false, max_line_len: 120000};;
+  var uglifyOptions = {beautify: false, max_line_len: 120000};
 
   // Process index.html
   gulp.src(tmpPath + '/*/index.html')
@@ -494,7 +470,7 @@ gulp.task('optimize-api-files:web', ['debug-api-files:web'], function(done) {
 });
 
 gulp.task('debug-files:web', ['optimize-api-files:web'], function(done) {
-  var tmpPath = './platforms/web/www';
+  var tmpPath = './dist/web/www';
   gulp.src(tmpPath + '/debug.html')
     .pipe(useref())             // Concatenate with gulp-useref
     .pipe(gulp.dest(tmpPath))
@@ -502,7 +478,7 @@ gulp.task('debug-files:web', ['optimize-api-files:web'], function(done) {
 });
 
 gulp.task('optimize-files:web', ['debug-files:web'], function(done) {
-  var tmpPath = './platforms/web/www';
+  var tmpPath = './dist/web/www';
   var jsFilter = filter(["**/*.js", '!**/config.js'], { restore: true });
   var cssFilter = filter("**/*.css", { restore: true });
   var revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
@@ -533,7 +509,7 @@ gulp.task('optimize-files:web', ['debug-files:web'], function(done) {
 });
 
 gulp.task('clean-unused-files:web', ['optimize-files:web'], function(done) {
-  var tmpPath = './platforms/web/www';
+  var tmpPath = './dist/web/www';
 
   es.concat(
     gulp.src(tmpPath + '/js/**/*.js', {read: false})
@@ -546,19 +522,21 @@ gulp.task('clean-unused-files:web', ['optimize-files:web'], function(done) {
 });
 
 gulp.task('clean-unused-directories:web', ['clean-unused-files:web'], function() {
-  var tmpPath = './platforms/web/www';
+  var tmpPath = './dist/web/www';
   return del([
     tmpPath + '/css',
     tmpPath + '/templates',
     tmpPath + '/js',
     tmpPath + '/dist',
-    //tmpPath + '/lib/**/*',
-    //tmpPath + '!/lib/ionic'
+    tmpPath + '/lib/*',
+    tmpPath + '!/lib/robotodraft',
+    tmpPath + '/lib/robotodraft/*',
+    tmpPath + '!/lib/robotodraft/fonts'
   ]);
 });
 
 gulp.task('zip:web', ['clean-unused-directories:web'], function() {
-  var tmpPath = './platforms/web/www';
+  var tmpPath = './dist/web/www';
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
   var txtFilter = filter(["**/*.txt"], { restore: true });
 
@@ -571,10 +549,10 @@ gulp.task('zip:web', ['clean-unused-directories:web'], function() {
 
     .pipe(zip('cesium-v'+version+'-web.zip'))
 
-    .pipe(gulp.dest('./platforms/web/build'));
+    .pipe(gulp.dest('./dist/web/build'));
 });
 
-gulp.task('build:web', ['git-check', 'zip:web'], function() {
+gulp.task('build:web', ['zip:web'], function() {
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
   gutil.log(gutil.colors.green("Build for web created at: 'plateforms/web/build/cesium-v" + version + "-web.zip'"));
   return del(['tmp']);

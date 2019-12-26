@@ -25,7 +25,7 @@ If you are using fish shell, there is a [dedicated plugin](https://github.com/jo
       
   - Installing node.js build tools:
 ```
-   npm install -g gulp bower cordova ionic@1.7.16
+   npm install -g yarn gulp cordova ionic@1.7.16
 ```
    
 ## Get the source code and dependencies
@@ -34,7 +34,7 @@ If you are using fish shell, there is a [dedicated plugin](https://github.com/jo
 ```
   git clone git@git.duniter.org:clients/cesium-grp/cesium.git
   cd cesium
-  npm install
+  yarn
 ```
 
   - Installing Cordova plugins (need for platforms specific builds)   

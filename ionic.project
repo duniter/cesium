@@ -2,10 +2,8 @@
   "name": "Cesium",
   "app_id": "",
   "watchPatterns": [
-    "www/**/*",
-    "!www/dist/**/*",
-    "!www/lib/**/*",
-    "!www/css/*.app.css"
+    "www/dist/**/*",
+    "www/css/*.css"
   ],
   "gulpStartupTasks": [
     "serve:before",
