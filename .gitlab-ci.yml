@@ -13,12 +13,12 @@ fast-build:
   script:
     - node ./node_modules/gulp/bin/gulp build:web
   after_script:
-    - ls -la platforms/web/
-    - du -csh platforms/web/
+    - ls -la dist/web/
+    - du -csh dist/web/
   artifacts:
     untracked: true
     paths:
-      - platforms/web
+      - dist/web
     expire_in: 60 minutes
   only:
     - master
@@ -28,14 +28,13 @@ failsafe-build:
   when: on_failure
   image: node:6
   script:
-    - npm install
-    - npm run postinstall
-#    - node ./node_modules/gulp/bin/gulp config --env default_fr
+    - yarn
+    - node ./node_modules/gulp/bin/gulp config --env default
     - node ./node_modules/gulp/bin/gulp build:web
   artifacts:
     untracked: true
     paths:
-      - platforms/web
+      - dist/web
     expire_in: 60 minutes
   only:
     - master
@@ -54,8 +53,7 @@ docker-for-fast-build:
     - echo 'WORKDIR /customCache' >> Dockerfile
     - echo 'COPY ./ ./' >> Dockerfile
     - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/before.txt' >> Dockerfile
-    - echo 'RUN npm install' >> Dockerfile
-    - echo 'RUN npm run postinstall' >> Dockerfile
+    - echo 'RUN yarn' >> Dockerfile
     - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/after.txt' >> Dockerfile
     - echo 'WORKDIR /build' >> Dockerfile
     - echo "RUN diff /before.txt /after.txt || true" >> Dockerfile
@@ -71,7 +69,7 @@ pages:
     GIT_STRATEGY: none
   script:
     - ls -la public || true
-    - mv platforms/web/www public
+    - mv dist/web/www public
   artifacts:
     untracked: true
     paths:
@@ -89,7 +87,7 @@ mirror:
       [[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" >
       ~/.ssh/config
   script:
-    - mv platforms/web/www public
+    - mv dist/web/www public
     - rsync -az -e ssh ./public/ gammanu@1000i100.fr:~/g1.money/dev-cesium
   after_script:
     - ssh gammanu@1000i100.fr "~/g1.money/update-cesium.sh"
@@ -104,7 +102,7 @@ release-web:
     GIT_STRATEGY: none
   script:
     - ls -la www || true
-    - mv platforms/web/www www
+    - mv dist/web/www www
   artifacts:
     untracked: true
     paths:
