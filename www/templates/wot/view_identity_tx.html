@@ -2,7 +2,7 @@
   <ion-nav-title>
     <span class="visible-xs visible-sm" ng-if="!loading">
       <span ng-if="formData.name || formData.uid">{{formData.name || formData.uid}} </span>
-      <i class="ion-key"></i> {{formData.pubkey|formatPubkey}}
+      <span ng-if="!formData.name && !formData.uid"><i class="ion-key"></i> {{formData.pubkey|formatPubkey}}</span>
     </span>
     <span class="hidden-xs hidden-sm"
           ng-if="!loading">
