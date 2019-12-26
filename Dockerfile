@@ -1,15 +1,16 @@
-FROM     ubuntu:16.04
+FROM     ubuntu:18.04
 LABEL maintainer="benoit [dot] lavenier [at] e-is [dot] pro"
 
 ENV DEBIAN_FRONTEND=noninteractive \
     ANDROID_HOME=/opt/android-sdk-linux \
     NODE_VERSION=6.17.1 \
-    NPM_VERSION=6.10.3 \
+    NPM_VERSION=6.13.4 \
     IONIC_VERSION=1.7.16 \
-    BOWER_VERSION=1.8.0 \
+    BOWER_VERSION=1.8.8 \
     CORDOVA_VERSION=9.0.0 \
     GRADLE_VERSION=4.1 \
-    NDK_VERSION=r10e
+    ANDROID_NDK_VERSION=r19c \
+    ANDROID_SDK_VERSION=r29.0.0
 
 # Install basics
 RUN apt-get update &&  \
@@ -38,26 +39,26 @@ RUN echo ANDROID_HOME="${ANDROID_HOME}" >> /etc/environment && \
 
 # Install Android SDK
 RUN cd /opt && \
-    wget --output-document=android-sdk.tgz --quiet http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz && \
+    wget --output-document=android-sdk.tgz --quiet http://dl.google.com/android/android-sdk_${ANDROID_SDK_VERSION}-linux.tgz && \
     tar xzf android-sdk.tgz && \
     rm -f android-sdk.tgz && \
     chown -R root. /opt
 
 RUN cd /opt/ && \
-  wget --output-document=android-ndk.zip --quiet  https://dl.google.com/android/repository/android-ndk-$NDK_VERSION-linux-x86_64.zip && \
+  wget --output-document=android-ndk.zip --quiet  https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip && \
   unzip android-ndk.zip && \
   rm android-ndk.zip && \
   chown -R root. /opt
 
 # Install Gradle
-RUN wget https://services.gradle.org/distributions/gradle-"$GRADLE_VERSION"-bin.zip && \
+RUN wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip && \
     mkdir /opt/gradle && \
-    unzip -d /opt/gradle gradle-"$GRADLE_VERSION"-bin.zip && \
-    rm -rf gradle-"$GRADLE_VERSION"-bin.zip
+    unzip -d /opt/gradle gradle-${GRADLE_VERSION}-bin.zip && \
+    rm -rf gradle-${GRADLE_VERSION}-bin.zip
 
 # Setup environment
 
-ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:/opt/tools:/opt/gradle/gradle-"$GRADLE_VERSION"/bin
+ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:/opt/tools:/opt/gradle/gradle-${GRADLE_VERSION}/bin
 
 # Install sdk elements
 COPY resources/android/build/tools /opt/tools
@@ -82,4 +83,4 @@ RUN cd cesium && \
 
 WORKDIR cesium
 EXPOSE 8100 35729
-CMD ["ionic", "serve"]
+CMD ["npm", "start"]

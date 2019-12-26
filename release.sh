@@ -1,5 +1,8 @@
 #!/bin/bash
 
+DIRNAME=$(dirname "$0")
+cd $DIRNAME
+
 ### Control that the script is run on `dev` branch
 branch=`git rev-parse --abbrev-ref HEAD`
 if [[ ! "$branch" = "master" ]];
@@ -7,8 +10,6 @@ then
   echo ">> This script must be run under \`master\` branch"
   exit 1
 fi
-
-DIRNAME=`pwd`
 
 ### Get current version (package.json)
 current=`grep -oP "version\": \"\d+.\d+.\d+((a|b)[0-9]+)?" package.json | grep -m 1 -oP "\d+.\d+.\d+((a|b)[0-9]+)?"`
