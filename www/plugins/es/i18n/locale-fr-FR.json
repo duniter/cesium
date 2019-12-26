@@ -35,7 +35,7 @@
       "ORGANIZATION_ACCOUNT_HELP": "Si vous représentez une entreprise, une association, etc.<br/>Aucun dividende universel ne sera créé par ce compte."
     },
     "EVENT": {
-      "MEMBER_WITHOUT_PROFILE": "Vous pouvez <a ui-sref=\"app.edit_profile\">saisir votre profil Cesium+</a> (optionnel) pour offrir une meilleure visibilité de votre compte."
+      "MEMBER_WITHOUT_PROFILE": "Vous pouvez <a ui-sref=\"app.edit_profile\">saisir votre profil Cesium+</a> (optionnel) pour offrir une meilleure visibilité de votre compte. Ce profil sera stocké dans <b>un annuaire indépendant</b> de la monnaie, mais décentralisé."
     },
     "ERROR": {
       "WS_CONNECTION_FAILED": "Cesium ne peut pas recevoir les notifications, à cause d'une erreur technique (connexion au noeud de données Cesium+).<br/><br/>Si le problème persiste, veuillez <b>choisir un autre noeud de données</b> dans les paramètres Cesium+."

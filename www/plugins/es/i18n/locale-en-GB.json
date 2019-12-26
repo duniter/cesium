@@ -35,7 +35,7 @@
       "ORGANIZATION_ACCOUNT_HELP": "If you represent a company, association, etc.<br/>No universal dividend will be created by this account."
     },
     "EVENT": {
-      "MEMBER_WITHOUT_PROFILE": "You can <a ui-sref=\"app.edit_profile\">fill your Cesium+ profile</a> (optional) to provide better visibility of your account."
+      "MEMBER_WITHOUT_PROFILE": "You can <a ui-sref=\"app.edit_profile\">fill your Cesium+ profile</a> (optional) to provide better visibility of your account. This profile will be stored in <b>a directory independent</b> of the currency, but decentralized."
     },
     "ERROR": {
       "WS_CONNECTION_FAILED": "Cesium can not receive notifications because of a technical error (connection to the Cesium + data node).<br/><br/>If the problem persists, please <b>choose another data node</b> in Cesium+ settings."
