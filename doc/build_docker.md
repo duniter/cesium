@@ -7,12 +7,6 @@
  sudo docker build . -t cesium/release
 ```
 
-or with interactive bash 
-
-```bash
- sudo docker build . -ti cesium/release bash
-```
-
 ## Run
 
 ```bash

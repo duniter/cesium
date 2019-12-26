@@ -6,9 +6,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
     NODE_VERSION=6.17.1 \
     NPM_VERSION=6.13.4 \
     IONIC_VERSION=1.7.16 \
-    BOWER_VERSION=1.8.8 \
     CORDOVA_VERSION=9.0.0 \
     GRADLE_VERSION=4.1 \
+    GULP_VERSION=2.2.0 \
     ANDROID_NDK_VERSION=r19c \
     ANDROID_SDK_VERSION=r29.0.0
 
@@ -19,7 +19,7 @@ RUN apt-get update &&  \
     tar -xzf "node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local --strip-components=1 && \
     rm "node-v$NODE_VERSION-linux-x64.tar.gz" && \
     npm install -g npm@"$NPM_VERSION" && \
-    npm install -g bower@"$BOWER_VERSION" cordova@"$CORDOVA_VERSION" ionic@"$IONIC_VERSION" && \
+    npm install -g yarn gulp@"$GULP_VERSION" cordova@"$CORDOVA_VERSION" ionic@"$IONIC_VERSION" && \
     npm cache clear --force
 
 # install python-software-properties (so you can do add-apt-repository)
@@ -39,26 +39,26 @@ RUN echo ANDROID_HOME="${ANDROID_HOME}" >> /etc/environment && \
 
 # Install Android SDK
 RUN cd /opt && \
-    wget --output-document=android-sdk.tgz --quiet http://dl.google.com/android/android-sdk_${ANDROID_SDK_VERSION}-linux.tgz && \
+    wget --output-document=android-sdk.tgz --quiet http://dl.google.com/android/android-sdk_"$ANDROID_SDK_VERSION"-linux.tgz && \
     tar xzf android-sdk.tgz && \
     rm -f android-sdk.tgz && \
     chown -R root. /opt
 
 RUN cd /opt/ && \
-  wget --output-document=android-ndk.zip --quiet  https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip && \
+  wget --output-document=android-ndk.zip --quiet  https://dl.google.com/android/repository/android-ndk-"$ANDROID_NDK_VERSION"-linux-x86_64.zip && \
   unzip android-ndk.zip && \
   rm android-ndk.zip && \
   chown -R root. /opt
 
 # Install Gradle
-RUN wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip && \
+RUN wget https://services.gradle.org/distributions/gradle-"$GRADLE_VERSION"-bin.zip && \
     mkdir /opt/gradle && \
-    unzip -d /opt/gradle gradle-${GRADLE_VERSION}-bin.zip && \
-    rm -rf gradle-${GRADLE_VERSION}-bin.zip
+    unzip -d /opt/gradle gradle-"$GRADLE_VERSION"-bin.zip && \
+    rm -rf gradle-$"GRADLE_VERSION"-bin.zip
 
 # Setup environment
 
-ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:/opt/tools:/opt/gradle/gradle-${GRADLE_VERSION}/bin
+ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:/opt/tools:/opt/gradle/gradle-"$GRADLE_VERSION"/bin
 
 # Install sdk elements
 COPY resources/android/build/tools /opt/tools
@@ -72,7 +72,7 @@ RUN unzip ${ANDROID_HOME}/temp/*.zip -d ${ANDROID_HOME}
 #    git config --global user.name "User Name" && \
 RUN git clone git@git.duniter.org:clients/cesium-grp/cesium.git && \
     cd cesium && \
-    npm install
+    yarn
 
 # Restore cordova platforms
 RUN cd cesium && \
@@ -83,4 +83,4 @@ RUN cd cesium && \
 
 WORKDIR cesium
 EXPOSE 8100 35729
-CMD ["npm", "start"]
+CMD ["ionic", "serve"]
