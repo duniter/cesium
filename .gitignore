@@ -18,6 +18,7 @@
 /www/lib/
 /www/js/config.js
 /www/dist
+/dist/web
 /hooks/playstore-config.json
 /hooks/minify-conf.json
 /hooks/uglify-config.json
