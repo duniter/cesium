@@ -6,7 +6,7 @@
 !/platforms/desktop
 !/platforms/android
 /resources/android/build/local.properties
-/resources/android/build/Cesium.keystore
+/resources/android/build/*.keystore
 /resources/android/build/release-signing.properties
 /plugins/
 .idea/
@@ -14,16 +14,22 @@
 .local/
 .directory
 /*.iml
+/npm-debug.log
+/package-lock.json
+/yarn-error.log
 
-/www/lib/
-/www/js/config.js
-/www/dist
+
 /dist/web
+
 /hooks/playstore-config.json
 /hooks/minify-conf.json
 /hooks/uglify-config.json
 /hooks/after_prepare/ionic-minify.js
 /hooks/after_prepare/uglify.js
+
+/www/js/config.js
+/www/dist
+/www/lib
 
 # Generated CSS
 /www/css/ionic.app.css
@@ -38,8 +44,6 @@
 /www/css/leaflet.app.min.css
 /www/img/layers*.png
 /www/img/marker*.png
+/www/img/loader.gif
 /www/img/search-icon.png
-
-/npm-debug.log
-/package-lock.json
-/yarn-error.log
+/www/img/search-icon-mobile.png

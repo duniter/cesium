@@ -7,7 +7,9 @@ if [[ "_" == "_${PROJECT_DIR}" ]]; then
   export PROJECT_DIR
 fi;
 
+# Preparing Android environment
 cd ${PROJECT_DIR}
+. ${PROJECT_DIR}/scripts/env-global.sh
 
 ### Control that the script is run on `dev` branch
 branch=$(git rev-parse --abbrev-ref HEAD)
@@ -30,6 +32,7 @@ PROJECT_NAME=cesium
 REPO="duniter/cesium"
 REPO_API_URL="https://api.github.com/repos/${REPO}"
 REPO_PUBLIC_URL="https://github.com/${REPO}"
+
 
 ###  get auth token
 GITHUB_TOKEN=$(cat ~/.config/${PROJECT_NAME}/.github)
@@ -98,22 +101,25 @@ case "$1" in
       echo "Uploading files to ${upload_url} ..."
       dirname=$(pwd)
 
-      ZIP_FILE="$dirname/dist/web/build/${PROJECT_NAME}-v$current-web.zip"
+      ZIP_FILE="${WEB_OUTPUT}/${PROJECT_NAME}-v$current-web.zip"
       if [[ -f "${ZIP_FILE}" ]]; then
         result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/zip' -T "${ZIP_FILE}" "${upload_url}?name=${PROJECT_NAME}-v${current}-web.zip")
         browser_download_url=$(echo "$result" | grep -P "\"browser_download_url\":[ ]?\"[^\"]+" | grep -oP "\"browser_download_url\":[ ]?\"[^\"]+"  | grep -oP "https://[A-Za-z0-9/.-]+")
         ZIP_SHA256=$(sha256sum "${ZIP_FILE}")
-        echo " - ${browser_download_url}  | SHA256 Checksum: ${ZIP_SHA256}"
+        echo " - ${browser_download_url}  | Checksum: ${ZIP_SHA256}"
       else
         echo " - ERROR: Web release (ZIP) not found! Skipping."
       fi
 
-      APK_FILE="${dirname}/platforms/android/build/outputs/apk/release/android-release.apk"
+      APK_FILE="${ANDROID_OUTPUT_APK_RELEASE}/android-release.apk"
       if [[ -f "${APK_FILE}" ]]; then
-        result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/vnd.android.package-archive' -T "${APK_FILE}" "${upload_url}?name=${PROJECT_NAME}-v${current}-android.apk")
+        mkdir -p ${PROJECT_DIR}/dist/android
+        cp ${APK_FILE} ${PROJECT_DIR}/dist/android/${PROJECT_NAME}-v${current}-android.apk
+        APK_FILE="${PROJECT_DIR}/dist/android/${PROJECT_NAME}-v${current}-android.apk"
+        result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/vnd.android.package-archive' -T "${APK_FILE}" "${upload_url}")
         browser_download_url=$(echo "$result" | grep -P "\"browser_download_url\":[ ]?\"[^\"]+" | grep -oP "\"browser_download_url\":[ ]?\"[^\"]+"  | grep -oP "https://[A-Za-z0-9/.-]+")
         APK_SHA256=$(sha256sum "${APK_FILE}")
-        echo " - ${browser_download_url}  | SHA256 Checksum: ${APK_SHA256}"
+        echo " - ${browser_download_url}  | Checksum: ${APK_SHA256}"
       else
         echo "- ERROR: Android release (APK) not found! Skipping."
       fi

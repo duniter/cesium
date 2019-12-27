@@ -9,7 +9,6 @@ fi;
 
 cd ${PROJECT_DIR}
 
-
 ### Control that the script is run on `dev` branch
 branch=$(git rev-parse --abbrev-ref HEAD)
 if [[ ! "$branch" == "master" ]];
@@ -78,20 +77,15 @@ if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
-
 echo "----------------------------------"
 echo "- Compiling sources..."
 echo "----------------------------------"
-# Update config file
-gulp config --env default_fr
 # Compile
-gulp build
+gulp config build --env default_fr
 
 echo "----------------------------------"
 echo "- Building Android artifact..."
 echo "----------------------------------"
-
-
 . scripts/build-android.sh --release
 if [[ $? -ne 0 ]]; then
   exit 1
@@ -101,10 +95,7 @@ fi
 echo "----------------------------------"
 echo "- Building web artifact..."
 echo "----------------------------------"
-
-# Update config file
-gulp config --env default
-gulp webBuild --release
+gulp config webBuild --env default --release
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
@@ -120,7 +111,7 @@ git add package.json config.xml install.sh www/js/config.js www/manifest.json
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
-git commit -m "v$2" && git tag "v$2" && git push
+git commit -m "v$2" && git tag -f "v$2" && git push
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
