@@ -1,6 +1,6 @@
 [submodule "dist/desktop"]
 	path = dist/desktop
 	url = git@git.duniter.org:clients/cesium-grp/cesium-desktop.git
-[submodule "android"]
-	path = platforms/android
-	url = git@git.duniter.org:clients/cesium-grp/cesium-android.git
+#[submodule "android"]
+#	path = platforms/android
+#	url = git@git.duniter.org:clients/cesium-grp/cesium-android.git
