@@ -77,11 +77,18 @@ if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
+cd ${PROJECT_DIR}
+git submodule init && git submodule sync && git submodule update --remote --merge
+if [[ $? -ne 0 ]]; then
+  echo "Unable to sync git submodule. Could not build desktop version"
+  exit 1
+fi
+
 echo "----------------------------------"
 echo "- Compiling sources..."
 echo "----------------------------------"
-# Compile
 gulp config build --env default_fr
+
 
 echo "----------------------------------"
 echo "- Building Android artifact..."
@@ -96,6 +103,7 @@ if [[ -f "${APK_RELEASE_FILE}" ]]; then
   cp ${APK_RELEASE_FILE} ${DIST_ANDROID}/${PROJECT_NAME}-v${current}-android.apk
 fi;
 
+
 echo "----------------------------------"
 echo "- Building web artifact..."
 echo "----------------------------------"
@@ -103,6 +111,7 @@ gulp config webBuild --env default --release
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
+
 
 echo "----------------------------------"
 echo "- Executing git push, with tag: v$2"
@@ -127,13 +136,15 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # Commit android project
-#cd ${PROJECT_DIR}/platforms/android
-#git reset HEAD
-#git add -A
-#git commit -m "v$2" && git tag "v$2" && git push
-#if [[ $? -ne 0 ]]; then
-#  exit 1
-#fi
+cd ${PROJECT_DIR}/platforms/android
+git reset HEAD
+git add -A
+git commit -m "v$2"
+git tag -f -a "v$2" -m "${description}"
+git push origin "v$2"
+if [[ $? -ne 0 ]]; then
+  exit 1
+fi
 
 echo "**********************************"
 echo "* Uploading artifacts to Github..."
@@ -152,11 +163,6 @@ echo "----------------------------------"
 echo "- Building desktop artifacts..."
 echo "----------------------------------"
 
-git submodule init && git submodule sync && git submodule update --remote --merge
-if [[ $? -ne 0 ]]; then
-  echo "Unable to sync git submodule. Could not build desktop version"
-  exit 1
-fi
 
 if [[ -d "${PROJECT_DIR}/dist/desktop" ]]; then
   cd "${PROJECT_DIR}/dist/desktop"
