@@ -21,7 +21,7 @@ foldersToProcess.forEach(function(folder) {
 });
 
 function processFiles(dir, callback) {
-    var errorCount = 0;
+    let errorCount = 0;
     fs.readdir(dir, function(err, list) {
         if (err) {
             console.log('processFiles err: ' + err);

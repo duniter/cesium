@@ -1,23 +1,23 @@
 #!/usr/bin/env node
 "use strict";
-var gulp = require('gulp');
-var path = require("path");
-var replace = require('gulp-replace');
+const gulp = require('gulp');
+const path = require("path");
+const replace = require('gulp-replace');
 
-var rootdir = process.argv[2];
+const rootdir = process.argv[2];
 
 if (rootdir) {
 
   // go through each of the platform directories that have been prepared
-  var platforms = (process.env.CORDOVA_PLATFORMS ? process.env.CORDOVA_PLATFORMS.split(',') : []);
+  const platforms = (process.env.CORDOVA_PLATFORMS ? process.env.CORDOVA_PLATFORMS.split(',') : []);
 
-  for(var x=0; x<platforms.length; x++) {
+  for(let x=0; x<platforms.length; x++) {
 
-    var platform = platforms[x].trim().toLowerCase();
+    let platform = platforms[x].trim().toLowerCase();
 
     if(platform == 'android') {
-      var platformPath = path.join(rootdir, 'platforms', platform);
-      var androidManifestFile = path.join(platformPath, 'AndroidManifest.xml');
+      let platformPath = path.join(rootdir, 'platforms', platform);
+      let androidManifestFile = path.join(platformPath, 'AndroidManifest.xml');
 
       // Clean unused directories
       console.log('-----------------------------------------');

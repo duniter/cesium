@@ -1,32 +1,32 @@
 #!/usr/bin/env node
 "use strict";
-var gulp = require('gulp');
-var path = require("path");
-var es = require('event-stream');
-var rootdir = process.argv[2];
-var ngTranslate = require('gulp-angular-translate');
+const gulp = require('gulp');
+const path = require("path");
+const merge = require('merge2');
+const rootdir = process.argv[2];
+const ngTranslate = require('gulp-angular-translate');
 
 if (rootdir) {
 
   // go through each of the platform directories that have been prepared
-  var platforms = (process.env.CORDOVA_PLATFORMS ? process.env.CORDOVA_PLATFORMS.split(',') : []);
+  const platforms = (process.env.CORDOVA_PLATFORMS ? process.env.CORDOVA_PLATFORMS.split(',') : []);
 
-  for(var x=0; x<platforms.length; x++) {
+  for(let x=0; x<platforms.length; x++) {
 
-    var platform = platforms[x].trim().toLowerCase();
+    let platform = platforms[x].trim().toLowerCase();
 
-    var wwwPath;
-    if(platform == 'android') {
+    let wwwPath;
+    if(platform === 'android') {
       wwwPath = path.join(rootdir, 'platforms', platform, 'assets', 'www');
     } else {
       wwwPath = path.join(rootdir, 'platforms', platform, 'www');
     }
 
-    var distJsPath = path.join(wwwPath, 'dist', 'dist_js', 'app');
-    var pluginDistJsPath = path.join(wwwPath, 'dist', 'dist_js', 'plugins');
+    let distJsPath = path.join(wwwPath, 'dist', 'dist_js', 'app');
+    let pluginDistJsPath = path.join(wwwPath, 'dist', 'dist_js', 'plugins');
 
     // Concat templates into a JS
-    es.concat(
+    merge(
       gulp.src(wwwPath + '/i18n/locale-*.json')
         .pipe(ngTranslate({standalone:true, module: 'cesium.translations'}))
         .pipe(gulp.dest(distJsPath)),

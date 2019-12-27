@@ -38,6 +38,7 @@
 /www/css/leaflet.app.min.css
 /www/img/layers*.png
 /www/img/marker*.png
+/www/img/search-icon.png
 
 /npm-debug.log
 /package-lock.json

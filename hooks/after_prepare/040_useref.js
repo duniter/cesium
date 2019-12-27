@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 "use strict";
-var gulp = require('gulp');
-var path = require("path");
-var es = require('event-stream');
-var useref = require('gulp-useref');
-var filter = require('gulp-filter');
-var uglify = require('gulp-uglify');
-var csso = require('gulp-csso');
-var rev = require('gulp-rev');
-var revReplace = require('gulp-rev-replace');
+const gulp = require('gulp');
+const path = require("path");
+const es = require('event-stream');
+const useref = require('gulp-useref');
+const filter = require('gulp-filter');
+const uglify = require('gulp-uglify');
+const csso = require('gulp-csso');
+const rev = require('gulp-rev');
+const revReplace = require('gulp-rev-replace');
 
-var cmd = process.env.CORDOVA_CMDLINE;
-var rootdir = process.argv[2];
+const cmd = process.env.CORDOVA_CMDLINE;
+const rootdir = process.argv[2];
 
-var skip = true;
+let skip = true;
 if (cmd.indexOf("--release") > -1 || cmd.indexOf("--useref") > -1) {
     skip = false;
 }
@@ -21,32 +21,45 @@ if (cmd.indexOf("--release") > -1 || cmd.indexOf("--useref") > -1) {
 if (rootdir && !skip) {
 
   // go through each of the platform directories that have been prepared
-  var platforms = (process.env.CORDOVA_PLATFORMS ? process.env.CORDOVA_PLATFORMS.split(',') : []);
+  const platforms = (process.env.CORDOVA_PLATFORMS ? process.env.CORDOVA_PLATFORMS.split(',') : []);
 
-  for(var x=0; x<platforms.length; x++) {
+  for(let x=0; x<platforms.length; x++) {
 
-    var platform = platforms[x].trim().toLowerCase();
+    let platform = platforms[x].trim().toLowerCase();
 
-    var wwwPath;
-    if(platform == 'android') {
+    let wwwPath;
+    if(platform === 'android') {
       wwwPath = path.join(rootdir, 'platforms', platform, 'assets', 'www');
     } else {
       wwwPath = path.join(rootdir, 'platforms', platform, 'www');
     }
 
-    var indexPath = path.join(wwwPath, 'index.html');
+    let indexPath = path.join(wwwPath, 'index.html');
 
-    var jsFilter = filter(["**/*.js", "!**/vendor/*", '!**/config.js'], { restore: true });
-    var cssFilter = filter("**/*.css", { restore: true });
-    var revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
-    var uglifyOptions = {beautify: false};
+    const jsFilter = filter(["**/*.js", "!**/vendor/*", '!**/config.js'], { restore: true });
+    const cssFilter = filter("**/*.css", { restore: true });
+    const revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
+    const uglifyOptions = {
+      toplevel: true,
+      compress: {
+        global_defs: {
+          "@console.log": "alert"
+        },
+        passes: 2
+      },
+      output: {
+        beautify: false,
+        preamble: "/* uglified */",
+        max_line_len: 120000
+      }
+    };
 
     // Removing unused code for device...
     es.concat(
       gulp.src(indexPath)
         .pipe(useref())      // Concatenate with gulp-useref
         .pipe(jsFilter)
-        .pipe(uglify(uglifyOptions))             // Minify any javascript sources
+        .pipe(uglify(uglifyOptions.output)) // Minify any javascript sources
         .pipe(jsFilter.restore)
         .pipe(cssFilter)
         .pipe(csso())               // Minify any CSS sources

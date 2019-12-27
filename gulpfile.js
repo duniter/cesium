@@ -1,9 +1,9 @@
 'use strict';
 
-var gulp = require('gulp'),
+const gulp = require('gulp'),
   sass = require('gulp-sass'),
   cleanCss = require('gulp-clean-css'),
-  base64 = require('gulp-base64'),
+  base64 = require('gulp-base64-v2'),
   rename = require('gulp-rename'),
   ngConstant = require('gulp-ng-constant'),
   fs = require("fs"),
@@ -21,6 +21,7 @@ var gulp = require('gulp'),
   useref = require('gulp-useref'),
   filter = require('gulp-filter'),
   uglify = require('gulp-uglify'),
+  concat = require('gulp-concat'),
   csso = require('gulp-csso'),
   replace = require('gulp-replace'),
   rev = require('gulp-rev'),
@@ -30,75 +31,218 @@ var gulp = require('gulp'),
   jshint = require('gulp-jshint'),
   markdown = require('gulp-markdown'),
   sourcemaps = require('gulp-sourcemaps'),
-
   log = require('fancy-log'),
+  merge = require('merge2'),
   colors = require('ansi-colors');
 
-var paths = {
-  sass: ['./scss/**/*.scss'],
+const paths = {
+  license_md: ['./www/license/*.md'],
+  sass: ['./scss/ionic.app.scss'],
   config: ['./app/config.json'],
   templatecache: ['./www/templates/**/*.html'],
   ng_translate: ['./www/i18n/locale-*.json'],
   ng_annotate: ['./www/js/**/*.js', '!./www/js/vendor/*.js'],
   // plugins:
+  leafletSass: ['./scss/leaflet.app.scss'],
+  css_plugin: ['./www/plugins/*/css/**/*.css'],
   templatecache_plugin: ['./www/plugins/*/templates/**/*.html'],
   ng_translate_plugin: ['./www/plugins/*/i18n/locale-*.json'],
-  ng_annotate_plugin: ['./www/plugins/*/**/*.js', '!./www/plugins/*/js/vendor/*.js'],
-  css_plugin: ['./www/plugins/*/css/**/*.css'],
-  license_md: ['./www/license/*.md']
+  ng_annotate_plugin: ['./www/plugins/*/**/*.js', '!./www/plugins/*/js/vendor/*.js']
 };
 
-gulp.task('serve:before', [
-  'sass',
-  'templatecache',
-  'ng_annotate',
-  'ng_translate',
-  'templatecache_plugin',
-  'ng_annotate_plugin',
-  'ng_translate_plugin',
-  'css_plugin',
-  'license_md']);
 
-gulp.task('watch', function() {
-  gulp.watch(paths.sass, ['sass']);
-  gulp.watch(paths.templatecache, ['templatecache']);
-  gulp.watch(paths.ng_annotate, ['ng_annotate']);
-  gulp.watch(paths.ng_translate, ['ng_translate']);
-  // plugins:
-  gulp.watch(paths.templatecache_plugin, ['templatecache_plugin']);
-  gulp.watch(paths.ng_annotate_plugin, ['ng_annotate_plugin']);
-  gulp.watch(paths.ng_translate_plugin, ['ng_translate_plugin']);
-  gulp.watch(paths.css_plugin, ['css_plugin']);
-  gulp.watch(paths.license_md, ['license_md']);
-});
 
-gulp.task('default', ['config', 'serve:before']);
+function appAndPluginWatch(done) {
 
-gulp.task('sass-images', function (done) {
-  gulp.src('./scss/leaflet/images/**/*.*')
-    .pipe(gulp.dest('./www/img/'))
-    .on('end', done);
-});
+  log(colors.green('Watching source files...'));
+  const watchDone = () => {};
 
-gulp.task('sass', ['sass-images'], function(done) {
+  // Licenses
+  gulp.watch(paths.license_md, () => appLicense(watchDone));
 
-  es.concat(
-    // Default App style
-    gulp.src('./scss/ionic.app.scss')
+  // App
+  gulp.watch(paths.sass, () => appSass(watchDone));
+  gulp.watch(paths.templatecache, () => appNgTemplate(watchDone));
+  gulp.watch(paths.ng_annotate, (event) => appNgAnnotate(watchDone, event));
+  gulp.watch(paths.ng_translate, () => appNgTranslate(watchDone));
+  // Plugins
+  gulp.watch(paths.templatecache_plugin, () => pluginNgTemplate(watchDone));
+  gulp.watch(paths.ng_annotate_plugin, () => pluginNgAnnotate(watchDone, event));
+  gulp.watch(paths.ng_translate_plugin, (event) => pluginNgTranslate(watchDone));
+  gulp.watch(paths.css_plugin.concat(paths.leafletSass), () => pluginSass(watchDone));
 
-      .pipe(sass()).on('error', sass.logError)
-      .pipe(base64({
-              baseDir: "./www/css",
-              extensions: ['svg', 'png', 'gif', /\.jpg#datauri$/i],
-              maxImageSize: 14 * 1024
-            }))
-      .pipe(gulp.dest('./www/css/'))
-      .pipe(cleanCss({
-        keepSpecialComments: 0
-       }))
-      .pipe(sourcemaps.write())
-      .pipe(rename({ extname: '.min.css' }))
-      .pipe(gulp.dest('./www/css/')),
+  done();
+}
+
+
+/**
+ * Generate App CSS (using SASS)
+ * @returns {*}
+ */
+function appSass() {
+  log(colors.green('Building App Sass...'));
+
+  // Default App style
+  return gulp.src('./scss/ionic.app.scss')
+
+    .pipe(sass()).on('error', sass.logError)
+    .pipe(base64({
+      baseDir: "./www/css",
+      extensions: ['svg', 'png', 'gif', /\.jpg#datauri$/i],
+      maxImageSize: 14 * 1024
+    }))
+    .pipe(gulp.dest('./www/css/'))
+    .pipe(cleanCss({
+      keepSpecialComments: 0
+    }))
+    .pipe(sourcemaps.write())
+    .pipe(rename({ extname: '.min.css' }))
+    .pipe(gulp.dest('./www/css/'));
+}
+
+function appConfig() {
+  const allConfig = JSON.parse(fs.readFileSync('./app/config.json', 'utf8'));
+
+  // Determine which environment to use when building config.
+  const env = argv.env || 'default';
+  const config = allConfig[env];
+
+  if(!config) {
+    throw new Error(colors.red("=> Could not load `" + env + "` environment!"));
+  }
+
+  log(colors.green("Building App config at `www/js/config.js` for `" + env + "` environment..."));
+
+  const project = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+  config['version'] = project.version;
+  config['build'] = (new Date()).toJSON();
+  config['newIssueUrl'] = project.bugs.new;
+
+  return ngConstant({
+    name: 'cesium.config',
+    constants: {"csConfig": config},
+    stream: true,
+    dest: 'config.js'
+  })
+    // Add a warning header
+    .pipe(header("/******\n* !! WARNING: This is a generated file !!\n*\n* PLEASE DO NOT MODIFY DIRECTLY\n*\n* => Changes should be done on file 'app/config.json'.\n******/\n\n"))
+    // Writes into file www/js/config.js
+    .pipe(rename('config.js'))
+    .pipe(gulp.dest('www/js'));
+}
+
+function appNgTemplate() {
+  log(colors.green('Building App template file...'));
+
+  return gulp.src(paths.templatecache)
+    .pipe(templateCache({
+      standalone: true,
+      module:"cesium.templates",
+      root: "templates/"
+    }))
+    .pipe(gulp.dest('./www/dist/dist_js/app'));
+}
+
+function appNgAnnotate(done, changes) {
+
+  // If watch, apply only on changes files
+  if (changes && changes.type === 'changed' && changes.path && changes.path.indexOf('/www/js/') !== -1) {
+    let path = changes.path.substring(changes.path.indexOf('/www/js') + 7);
+    path = path.substring(0, path.lastIndexOf('/'));
+    return gulp.src(changes.path)
+      .pipe(ngAnnotate({single_quotes: true}))
+      .pipe(gulp.dest('./www/dist/dist_js/app' + path));
+  }
+
+  log(colors.green('Building JS files...'));
+  return gulp.src(paths.ng_annotate)
+    .pipe(ngAnnotate({single_quotes: true}))
+    .pipe(gulp.dest('./www/dist/dist_js/app'));
+}
+
+function appNgTranslate() {
+  log(colors.green('Building App translation file...'));
+
+  return gulp.src('www/i18n/locale-*.json')
+    .pipe(ngTranslate({standalone:true, module: 'cesium.translations'}))
+    .pipe(gulp.dest('www/dist/dist_js/app'));
+}
+
+function appLicense() {
+  log(colors.green('Building License files...'));
+
+  return es.concat(
+    // Copy license into HTML
+    gulp.src(paths.license_md)
+      .pipe(markdown())
+      .pipe(header('<html><header><meta charset="utf-8"></header><body>'))
+      .pipe(footer('</body></html>'))
+      .pipe(gulp.dest('www/license')),
+
+    // Copy license into txt
+    gulp.src(paths.license_md)
+      .pipe(header('\ufeff')) // Need BOM character for UTF-8 files
+      .pipe(rename({ extname: '.txt' }))
+      .pipe(gulp.dest('www/license'))
+  );
+}
+
+/* -- Plugins -- */
+
+function pluginNgTemplate() {
+  log(colors.green('Building Plugins template file...'));
+
+  return gulp.src(paths.templatecache_plugin)
+    .pipe(templateCache({
+      standalone:true,
+      module:"cesium.plugins.templates",
+      root: "plugins/"
+    }))
+    .pipe(gulp.dest('./www/dist/dist_js/plugins'));
+}
+
+function pluginNgAnnotate(done, event) {
+
+  // If watch, apply only on changes files
+  if (event && event.type === 'changed' && event.path && event.path.indexOf('/www/js/') !== -1) {
+    let path = event.path.substring(event.path.indexOf('/www/js') + 7);
+    path = path.substring(0, path.lastIndexOf('/'));
+    return gulp.src(event.path)
+      .pipe(ngAnnotate({single_quotes: true}))
+      .pipe(gulp.dest('./www/dist/dist_js/app' + path));
+  }
+
+  log(colors.green('Building Plugins JS file...'));
+  return gulp.src(paths.ng_annotate_plugin)
+    .pipe(ngAnnotate({single_quotes: true}))
+    .pipe(gulp.dest('./www/dist/dist_js/plugins'));
+}
+
+function pluginNgTranslate() {
+  log(colors.green('Building Plugins translation file...'));
+
+  return gulp.src(paths.ng_translate_plugin)
+    .pipe(ngTranslate({standalone:true, module: 'cesium.plugins.translations'}))
+    .pipe(gulp.dest('www/dist/dist_js/plugins'));
+}
+
+function pluginSass() {
+  log(colors.green('Building Plugins Sass...'));
+
+  return es.concat(
+
+    // Copy plugins CSS
+    gulp.src(paths.css_plugin)
+      .pipe(gulp.dest('www/dist/dist_css/plugins')),
+
+    // Leaflet images
+    gulp.src(['scss/leaflet/images/*.*',
+      'www/lib/leaflet/dist/images/*.*',
+      'www/lib/leaflet-search/images/*.*',
+      '!www/lib/leaflet-search/images/back.png',
+      '!www/lib/leaflet-search/images/leaflet-search.jpg',
+      'www/lib/leaflet.awesome-markers/dist/images/*.*'])
+      .pipe(gulp.dest('./www/img/')),
 
     // Leaflet App style
     gulp.src('./scss/leaflet.app.scss')
@@ -112,8 +256,7 @@ gulp.task('sass', ['sass-images'], function(done) {
       .pipe(base64({
         baseDir: "./www/css/",
         extensions: ['png', 'gif', /\.jpg#datauri$/i],
-        maxImageSize: 14 * 1024,
-        deleteAfterEncoding: true
+        maxImageSize: 14 * 1024
       }))
       .pipe(gulp.dest('./www/css/'))
       .pipe(cleanCss({
@@ -122,153 +265,25 @@ gulp.task('sass', ['sass-images'], function(done) {
       .pipe(sourcemaps.write())
       .pipe(rename({ extname: '.min.css' }))
       .pipe(gulp.dest('./www/css/'))
-  )
-  .on('end', done);
-});
+  );
+}
 
-gulp.task('config', function (done) {
-  var allConfig = JSON.parse(fs.readFileSync('./app/config.json', 'utf8'));
+/* --------------------------------------------------------------------------
+   -- Build the web (ZIP) artifact
+   --------------------------------------------------------------------------*/
 
-  // Determine which environment to use when building config.
-  var env = argv.env || 'default';
-  var config = allConfig[env];
-
-  if(!config) {
-    log(colors.red("=> Could not load `" + env + "` environment!"));
-    process.exit(1);
-  }
-
-  log(colors.green("Building `www/js/config.js` for `" + env + "` environment..."));
-
-  var project = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
-  config['version'] = project.version;
-  config['build'] = (new Date()).toJSON();
-  config['newIssueUrl'] = project.bugs.new;
-
-  ngConstant({
-      name: 'cesium.config',
-      constants: {"csConfig": config},
-      stream: true,
-      dest: 'config.js'
-    })
-    // Add a warning header
-    .pipe(header("/******\n* !! WARNING: This is a generated file !!\n*\n* PLEASE DO NOT MODIFY DIRECTLY\n*\n* => Changes should be done on file 'app/config.json'.\n******/\n\n"))
-    // Writes into file www/js/config.js
-    .pipe(rename('config.js'))
-    .pipe(gulp.dest('www/js'))
-    .on('end', done);
-});
-
-gulp.task('templatecache', function (done) {
-  gulp.src(paths.templatecache)
-    .pipe(templateCache({
-      standalone:true,
-      module:"cesium.templates",
-      root: "templates/"
-     }))
-    .pipe(gulp.dest('./www/dist/dist_js/app'))
-    .on('end', done);
-});
-
-gulp.task('ng_annotate', function (done) {
-  gulp.src(paths.ng_annotate)
-    .pipe(ngAnnotate({single_quotes: true}))
-    .pipe(gulp.dest('./www/dist/dist_js/app'))
-    .on('end', done);
-});
-
-gulp.task('ng_translate', function(done) {
-  gulp.src('www/i18n/locale-*.json')
-    .pipe(ngTranslate({standalone:true, module: 'cesium.translations'}))
-    .pipe(gulp.dest('www/dist/dist_js/app'))
-    .on('end', done);
-});
-
-
-gulp.task('license_md', function (done) {
-  es.concat(
-    // Copy license into HTML
-    gulp.src(paths.license_md)
-      .pipe(markdown())
-      .pipe(header('<html><header><meta charset="utf-8"></header><body>'))
-      .pipe(footer('</body></html>'))
-      .pipe(gulp.dest('www/license')),
-
-    // Copy license into txt
-    gulp.src(paths.license_md)
-      .pipe(header('\ufeff')) // Need BOM character for UTF-8 files
-      .pipe(rename({ extname: '.txt' }))
-      .pipe(gulp.dest('www/license'))
-  )
-    .on('end', done);
-});
-
-
-gulp.task('debug_file', function(done) {
-  log(colors.green("Building `www/debug.html`..."));
-
-  return gulp.src(['www/index.html'])
-    .pipe(replace('dist/dist_js/app/', 'js/'))
-    .pipe(replace('dist/dist_js/plugins/', 'plugins/'))
-    // Restore some generate files
-    .pipe(replace('js/templates.js', 'dist/dist_js/app/templates.js'))
-    .pipe(replace('js/translations.js', 'dist/dist_js/app/translations.js'))
-    .pipe(replace('plugins/templates.js', 'dist/dist_js/plugins/templates.js'))
-    .pipe(replace('plugins/translations.js', 'dist/dist_js/plugins/translations.js'))
-    .pipe(replace('ng-strict-di', ''))
-    .pipe(rename('debug.html'))
-    .pipe(gulp.dest('www'))
-    .on('end', done);
-});
-
-/* -- Plugins -- */
-
-gulp.task('templatecache_plugin', function (done) {
-  gulp.src(paths.templatecache_plugin)
-    .pipe(templateCache({
-      standalone:true,
-      module:"cesium.plugins.templates",
-      root: "plugins/"
-     }))
-    .pipe(gulp.dest('./www/dist/dist_js/plugins'))
-    .on('end', done);
-});
-
-gulp.task('ng_annotate_plugin', function (done) {
-  gulp.src(paths.ng_annotate_plugin)
-    .pipe(ngAnnotate({single_quotes: true}))
-    .pipe(gulp.dest('./www/dist/dist_js/plugins'))
-    .on('end', done);
-});
-
-gulp.task('ng_translate_plugin', function(done) {
-  gulp.src(paths.ng_translate_plugin)
-    .pipe(ngTranslate({standalone:true, module: 'cesium.plugins.translations'}))
-    .pipe(gulp.dest('www/dist/dist_js/plugins'))
-    .on('end', done);
-});
-
-gulp.task('css_plugin', function (done) {
-  gulp.src(paths.css_plugin)
-    .pipe(gulp.dest('./www/dist/dist_css/plugins'))
-    .on('end', done);
-});
-
-/* -- Web dist build -- */
-gulp.task('clean:tmp', function() {
-  return del(['tmp']);
-});
-
-gulp.task('clean:web', function() {
+function webClean() {
   return del([
-      './dist/web/www',
-      './dist/web/build'
-    ]);
-});
+    './dist/web/www',
+    './dist/web/build'
+  ]);
+}
 
-gulp.task('copy-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], function(done) {
+function webCopyFiles() {
+  log(colors.green('Preparing dist/web files...'));
+
   var tmpPath = './dist/web/www';
-  es.concat(
+  return es.concat(
     // Copy Js (and remove unused code)
     gulp.src('./www/js/**/*.js')
       .pipe(removeCode({"no-device": true}))
@@ -352,74 +367,122 @@ gulp.task('copy-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], functi
       .pipe(header('\ufeff')) // Need BOM character for UTF-8 files
       .pipe(rename({ extname: '.txt' }))
       .pipe(gulp.dest(tmpPath + '/license'))
+  );
+}
 
-  )
-  .on('end', done);
-});
-
-gulp.task('templatecache:web', ['copy-files:web'], function (done) {
+function webNgTemplate() {
   var tmpPath = './dist/web/www';
-  gulp.src(tmpPath + '/templates/**/*.html')
+  return gulp.src(tmpPath + '/templates/**/*.html')
     .pipe(templateCache({
       standalone:true,
       module:"cesium.templates",
       root: "templates/"
-     }))
-    .pipe(gulp.dest(tmpPath + '/js'))
-    .on('end', done);
-});
+    }))
+    .pipe(gulp.dest(tmpPath + '/dist/dist_js/app'));
+}
 
-gulp.task('ng_annotate:web', ['templatecache:web'], function (done) {
+function webNgAnnotate() {
   var tmpPath = './dist/web/www';
   var jsFilter = filter(["**/*.js", "!**/vendor/*"]);
 
-  gulp.src(tmpPath + '/js/**/*.js')
+  return gulp.src(tmpPath + '/js/**/*.js')
     .pipe(jsFilter)
     .pipe(ngAnnotate({single_quotes: true}))
-    .pipe(gulp.dest(tmpPath + '/dist/dist_js/app'))
-    .on('end', done);
-});
+    .pipe(gulp.dest(tmpPath + '/dist/dist_js/app'));
+}
 
-gulp.task('copy-plugin-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], function(done) {
+function webPluginCopyFiles() {
   var tmpPath = './dist/web/www';
-  es.concat(
+  return es.concat(
     // Transform i18n into JS
     gulp.src(paths.ng_translate_plugin)
-        .pipe(ngTranslate({standalone:true, module: 'cesium.plugins.translations'}))
-        .pipe(gulp.dest(tmpPath + '/dist/dist_js/plugins')),
+      .pipe(ngTranslate({standalone:true, module: 'cesium.plugins.translations'}))
+      .pipe(gulp.dest(tmpPath + '/dist/dist_js/plugins')),
 
     // Copy CSS
     gulp.src(paths.css_plugin)
-        .pipe(gulp.dest(tmpPath + '/dist/dist_css/plugins'))
-  )
-  .on('end', done);
-});
+      .pipe(gulp.dest(tmpPath + '/dist/dist_css/plugins'))
+  );
+}
 
-gulp.task('templatecache-plugin:web', ['copy-plugin-files:web'], function (done) {
+function webPluginNgTemplate() {
   var tmpPath = './dist/web/www';
-  gulp.src(paths.templatecache_plugin)
+  return gulp.src(paths.templatecache_plugin)
     .pipe(templateCache({
       standalone:true,
       module:"cesium.plugins.templates",
       root: "plugins/"
-     }))
-    .pipe(gulp.dest(tmpPath + '/dist/dist_js/plugins'))
-    .on('end', done);
-});
+    }))
+    .pipe(gulp.dest(tmpPath + '/dist/dist_js/plugins'));
+}
 
-gulp.task('ng_annotate-plugin:web', ['templatecache-plugin:web'], function (done) {
+function webPluginNgAnnotate() {
   var tmpPath = './dist/web/www';
-  gulp.src(paths.ng_annotate_plugin)
+  return gulp.src(paths.ng_annotate_plugin)
     .pipe(ngAnnotate({single_quotes: true}))
-    .pipe(gulp.dest(tmpPath + '/dist/dist_js/plugins'))
-    .on('end', done);
-});
+    .pipe(gulp.dest(tmpPath + '/dist/dist_js/plugins'));
+}
 
-gulp.task('debug-api-files:web', ['ng_annotate:web', 'ng_annotate-plugin:web'], function(done) {
+function webDebugFile() {
+  log(colors.green('Building debug.html file...'));
+  const tmpPath = './dist/web/www';
+  return gulp.src(tmpPath + '/debug.html')
+    .pipe(useref())             // Concatenate with gulp-useref
+    .pipe(gulp.dest(tmpPath));
+}
+
+function webUglify() {
+  log(colors.green('Optimizing JS and CSS files...'));
+
+  const wwwPath = './dist/web/www';
+  const jsFilter = filter(["**/*.js", '!**/config.js'], { restore: true });
+  const cssFilter = filter("**/*.css", { restore: true });
+  const revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
+  const uglifyOptions = {
+    toplevel: true,
+    compress: {
+      global_defs: {
+        "@console.log": "alert"
+      },
+      passes: 2
+    },
+    output: {
+      beautify: false,
+      preamble: "/* uglified */",
+      max_line_len: 120000
+    }
+  };
+
+  // Process index.html
+  return gulp.src(wwwPath + '/index.html')
+    .pipe(useref())             // Concatenate with gulp-useref
+
+    // Process JS
+    .pipe(jsFilter)
+    .pipe(uglify(uglifyOptions.output))             // Minify any javascript sources
+    .pipe(jsFilter.restore)
+
+    // Process CSS
+    .pipe(cssFilter)
+    .pipe(csso())               // Minify any CSS sources
+    .pipe(cssFilter.restore)
+
+    // Add revision to filename  (but not index.html and config.js)
+    .pipe(revFilesFilter)
+    .pipe(rev())                // Rename the concatenated files
+    .pipe(revFilesFilter.restore)
+
+    .pipe(revReplace())         // Substitute in new filenames
+    .pipe(gulp.dest(wwwPath));
+}
+
+function webApiDebugFile() {
+  log(colors.green('API: Building debug.html...'));
+
   var tmpPath = './dist/web/www';
   var debugFilter = filter('**/debug.html', { restore: true });
 
-  gulp.src(tmpPath + '/*/debug.html')
+  return gulp.src(tmpPath + '/*/debug.html')
     .pipe(useref())             // Concatenate with gulp-useref
 
     .pipe(debugFilter)
@@ -428,25 +491,38 @@ gulp.task('debug-api-files:web', ['ng_annotate:web', 'ng_annotate-plugin:web'], 
     .pipe(replace("config.js", "../config.js"))
     .pipe(debugFilter.restore)
 
-    .pipe(gulp.dest(tmpPath))
-    .on('end', done);
-});
+    .pipe(gulp.dest(tmpPath));
+}
 
-gulp.task('optimize-api-files:web', ['debug-api-files:web'], function(done) {
-  var tmpPath = './dist/web/www';
-  var jsFilter = filter(["**/*.js", '!**/config.js'], { restore: true });
-  var cssFilter = filter("**/*.css", { restore: true });
-  var revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
-  var indexFilter = filter('**/index.html', { restore: true });
-  var uglifyOptions = {beautify: false, max_line_len: 120000};
+function webApiUglify() {
+  log(colors.green('API: Optimizing JS and CSS files...'));
+  const tmpPath = './dist/web/www';
+  const jsFilter = filter(["**/*.js", '!**/config.js'], { restore: true });
+  const cssFilter = filter("**/*.css", { restore: true });
+  const revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
+  const indexFilter = filter('**/index.html', { restore: true });
+  const uglifyOptions = {
+    toplevel: true,
+    compress: {
+      global_defs: {
+        "@console.log": "alert"
+      },
+      passes: 2
+    },
+    output: {
+      beautify: false,
+      preamble: "/* uglified */",
+      max_line_len: 120000
+    }
+  };
 
-  // Process index.html
-  gulp.src(tmpPath + '/*/index.html')
+  // Process api/index.html
+  return gulp.src(tmpPath + '/*/index.html')
     .pipe(useref())             // Concatenate with gulp-useref
 
     // Process JS
     .pipe(jsFilter)
-    .pipe(uglify(uglifyOptions)) // Minify any javascript sources
+    .pipe(uglify(uglifyOptions.output)) // Minify any javascript sources
     .pipe(jsFilter.restore)
 
     // Process CSS
@@ -467,84 +543,50 @@ gulp.task('optimize-api-files:web', ['debug-api-files:web'], function(done) {
     .pipe(replace("config.js", "../config.js"))
     .pipe(indexFilter.restore)
 
-    .pipe(gulp.dest(tmpPath))
-    .on('end', done);
+    .pipe(gulp.dest(tmpPath));
+}
 
-});
+function webCleanUnusedFiles() {
+  log(colors.green('Clean unused files...'));
 
-gulp.task('debug-files:web', ['optimize-api-files:web'], function(done) {
-  var tmpPath = './dist/web/www';
-  gulp.src(tmpPath + '/debug.html')
-    .pipe(useref())             // Concatenate with gulp-useref
-    .pipe(gulp.dest(tmpPath))
-    .on('end', done);
-});
+  const wwwPath = './dist/web/www';
 
-gulp.task('optimize-files:web', ['debug-files:web'], function(done) {
-  var tmpPath = './dist/web/www';
-  var jsFilter = filter(["**/*.js", '!**/config.js'], { restore: true });
-  var cssFilter = filter("**/*.css", { restore: true });
-  var revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
-  var uglifyOptions = {beautify: false, max_line_len: 120000};
-
-  // Process index.html
-  gulp.src(tmpPath + '/index.html')
-    .pipe(useref())             // Concatenate with gulp-useref
-
-    // Process JS
-    .pipe(jsFilter)
-    .pipe(uglify(uglifyOptions))             // Minify any javascript sources
-    .pipe(jsFilter.restore)
-
-    // Process CSS
-    .pipe(cssFilter)
-    .pipe(csso())               // Minify any CSS sources
-    .pipe(cssFilter.restore)
-
-    // Add revision to filename  (but not index.html and config.js)
-    .pipe(revFilesFilter)
-    .pipe(rev())                // Rename the concatenated files
-    .pipe(revFilesFilter.restore)
-
-    .pipe(revReplace())         // Substitute in new filenames
-    .pipe(gulp.dest(tmpPath))
-    .on('end', done);
-});
-
-gulp.task('clean-unused-files:web', ['optimize-files:web'], function(done) {
-  var tmpPath = './dist/web/www';
-
-  es.concat(
-    gulp.src(tmpPath + '/js/**/*.js', {read: false})
+  return es.concat(
+    // Clean JS
+    gulp.src(wwwPath + '/js/**/*.js', {read: false})
       .pipe(clean()),
 
-    gulp.src(tmpPath + '/css/**/*.css', {read: false})
+    // Clean css
+    gulp.src(wwwPath + '/css/**/*.css', {read: false})
       .pipe(clean())
-  )
-  .on ('end', done);
-});
+  );
+}
 
-gulp.task('clean-unused-directories:web', ['clean-unused-files:web'], function() {
-  var tmpPath = './dist/web/www';
+
+function webCleanUnusedDirectories() {
+  log(colors.green('Clean unused directories...'));
+
+  // Clean dir
+  const wwwPath = './dist/web/www';
   return del.sync([
-    tmpPath + '/css',
-    tmpPath + '/templates',
-    tmpPath + '/js',
-    tmpPath + '/dist',
-    tmpPath + '/lib/*',
-    '!' + tmpPath + '/lib/ionic',
-    '!' + tmpPath + '/lib/robotodraft',
-    tmpPath + '/lib/ionic/*',
-    '!' + tmpPath + '/lib/ionic/fonts',
-    tmpPath + '/lib/robotodraft/*',
-    '!' + tmpPath + '/lib/robotodraft/fonts'
-  ]);
-});
+      wwwPath + '/css',
+      wwwPath + '/templates',
+      wwwPath + '/js',
+      wwwPath + '/dist',
+      wwwPath + '/lib/*',
+      '!' + wwwPath + '/lib/ionic',
+      '!' + wwwPath + '/lib/robotodraft',
+      wwwPath + '/lib/ionic/*',
+      '!' + wwwPath + '/lib/ionic/fonts',
+      wwwPath + '/lib/robotodraft/*',
+      '!' + wwwPath + '/lib/robotodraft/fonts'
+    ]);
+}
 
-gulp.task('zip:web', ['clean-unused-directories:web'], function() {
-  var tmpPath = './dist/web/www';
-  var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
-  var txtFilter = filter(["**/*.txt"], { restore: true });
+function webZip() {
+  const tmpPath = './dist/web/www';
+  const version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+  const txtFilter = filter(["**/*.txt"], { restore: true });
 
   return gulp.src(tmpPath + '/**/*.*')
 
@@ -556,11 +598,66 @@ gulp.task('zip:web', ['clean-unused-directories:web'], function() {
     .pipe(zip('cesium-v'+version+'-web.zip'))
 
     .pipe(gulp.dest('./dist/web/build'));
-});
+}
 
-gulp.task('build:web', ['zip:web'], function() {
+function webBuildSuccess(done) {
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
   log(colors.green("Build for web created at: 'dist/web/build/cesium-v" + version + "-web.zip'"));
-  return del(['tmp']);
-});
+  done();
+}
+
+/* --------------------------------------------------------------------------
+   -- Define gulp public tasks
+   --------------------------------------------------------------------------*/
+
+gulp.task('appSass', [], appSass);
+gulp.task('appNgTemplate', [], appNgTemplate);
+gulp.task('appNgAnnotate', [], appNgAnnotate);
+gulp.task('appNgTranslate', [], appNgTranslate);
+gulp.task('app', ['appSass', 'appNgTemplate', 'appNgAnnotate', 'appNgTranslate']);
+
+gulp.task('pluginSass', [], pluginSass);
+gulp.task('pluginNgTemplate', [], pluginNgTemplate);
+gulp.task('pluginNgAnnotate', [], pluginNgAnnotate);
+gulp.task('pluginNgTranslate', [], pluginNgTranslate);
+gulp.task('plugin', ['pluginSass', 'pluginNgTemplate', 'pluginNgAnnotate', 'pluginNgTranslate']);
+
+gulp.task('config', [], appConfig);
+gulp.task('license', [], appLicense);
+gulp.task('translate', ['appNgTranslate', 'pluginNgTranslate']);
+gulp.task('template', ['appNgTemplate', 'pluginNgTemplate']);
+gulp.task('annotate', ['appNgAnnotate', 'pluginNgAnnotate']);
+gulp.task('watch', [], appAndPluginWatch);
+
+
+gulp.task('build', [
+  'license',
+  'sass',
+  'app',
+  'plugin'
+]);
+
+gulp.task('ionic:serve:before', ['build', 'watch']);
+gulp.task('sass', ['config', 'build']);
+gulp.task('default', ['config', 'build']);
+
+gulp.task('webClean', [], webClean);
+gulp.task('webCopyFiles', ['config', 'sass', 'webClean'], webCopyFiles);
+gulp.task('webNgTemplate', ['webCopyFiles'], webNgTemplate);
+gulp.task('webNgAnnotate', ['webNgTemplate'], webNgAnnotate);
+
+gulp.task('webPluginCopyFiles', ['webNgAnnotate'], webPluginCopyFiles);
+gulp.task('webPluginNgTemplate', ['webPluginCopyFiles'], webPluginNgTemplate);
+gulp.task('webPluginNgAnnotate', ['webPluginNgTemplate'],  webPluginNgAnnotate);
+
+gulp.task('webDebugFile', ['webPluginNgAnnotate'], webDebugFile);
+gulp.task('webUglify', ['webDebugFile'], webUglify);
+gulp.task('webApiDebugFile', ['webUglify'], webApiDebugFile);
+gulp.task('webApiUglify', ['webApiDebugFile'], webApiUglify);
+
+gulp.task('webCleanUnusedFiles', ['webApiUglify'], webCleanUnusedFiles);
+gulp.task('webCleanUnusedDirectories', ['webCleanUnusedFiles'], webCleanUnusedDirectories);
+gulp.task('webZip', ['webCleanUnusedDirectories'], webZip);
+
+gulp.task('webBuild', ['webZip'], webBuildSuccess);
 

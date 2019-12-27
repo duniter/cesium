@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 "use strict";
-var gulp = require('gulp');
-var path = require("path");
-var del = require('del');
+const gulp = require('gulp');
+const path = require("path");
+const del = require('del');
 
-var cmd = process.env.CORDOVA_CMDLINE;
-var rootdir = process.argv[2];
+const cmd = process.env.CORDOVA_CMDLINE;
+const rootdir = process.argv[2];
 
-var skip = true;
+let skip = true;
 if (cmd.indexOf("--release") > -1 || cmd.indexOf("--useref") > -1) {
     skip = false;
 }
@@ -15,13 +15,13 @@ if (cmd.indexOf("--release") > -1 || cmd.indexOf("--useref") > -1) {
 if (rootdir && !skip) {
 
   // go through each of the platform directories that have been prepared
-  var platforms = (process.env.CORDOVA_PLATFORMS ? process.env.CORDOVA_PLATFORMS.split(',') : []);
+  const platforms = (process.env.CORDOVA_PLATFORMS ? process.env.CORDOVA_PLATFORMS.split(',') : []);
 
-  for(var x=0; x<platforms.length; x++) {
+  for(let x=0; x<platforms.length; x++) {
 
-    var platform = platforms[x].trim().toLowerCase();
+    let platform = platforms[x].trim().toLowerCase();
 
-    var wwwPath;
+    let wwwPath;
     if(platform === 'android') {
       wwwPath = path.join(rootdir, 'platforms', platform, 'assets', 'www');
     } else {
@@ -29,7 +29,7 @@ if (rootdir && !skip) {
     }
 
     // Log
-    //console.log('['+process.mainModule.filename+'] Cleaning unused directories');
+    console.log('['+process.mainModule.filename+'] Cleaning unused directories');
 
     // Clean unused directories
     del.sync([
