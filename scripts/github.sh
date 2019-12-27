@@ -101,24 +101,23 @@ case "$1" in
       echo "Uploading files to ${upload_url} ..."
       dirname=$(pwd)
 
-      ZIP_FILE="${WEB_OUTPUT}/${PROJECT_NAME}-v$current-web.zip"
+      ZIP_BASENAME="${PROJECT_NAME}-v$current-web.zip"
+      ZIP_FILE="${DIST_WEB}/${ZIP_BASENAME}"
       if [[ -f "${ZIP_FILE}" ]]; then
-        result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/zip' -T "${ZIP_FILE}" "${upload_url}?name=${PROJECT_NAME}-v${current}-web.zip")
+        result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/zip' -T "${ZIP_FILE}" "${upload_url}?name=${ZIP_BASENAME}")
         browser_download_url=$(echo "$result" | grep -P "\"browser_download_url\":[ ]?\"[^\"]+" | grep -oP "\"browser_download_url\":[ ]?\"[^\"]+"  | grep -oP "https://[A-Za-z0-9/.-]+")
-        ZIP_SHA256=$(sha256sum "${ZIP_FILE}")
+        ZIP_SHA256=$(cd ${WEB_OUTPUT} && sha256sum "${PROJECT_NAME}-v${current}-web.zip")
         echo " - ${browser_download_url}  | Checksum: ${ZIP_SHA256}"
       else
         echo " - ERROR: Web release (ZIP) not found! Skipping."
       fi
 
-      APK_FILE="${ANDROID_OUTPUT_APK_RELEASE}/android-release.apk"
+      APK_BASENAME="${PROJECT_NAME}-v${current}-android.apk"
+      APK_FILE="${DIST_ANDROID}/${APK_BASENAME}"
       if [[ -f "${APK_FILE}" ]]; then
-        mkdir -p ${PROJECT_DIR}/dist/android
-        cp ${APK_FILE} ${PROJECT_DIR}/dist/android/${PROJECT_NAME}-v${current}-android.apk
-        APK_FILE="${PROJECT_DIR}/dist/android/${PROJECT_NAME}-v${current}-android.apk"
-        result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/vnd.android.package-archive' -T "${APK_FILE}" "${upload_url}")
+        result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/vnd.android.package-archive' -T "${APK_FILE}" "${upload_url}?name=${APK_BASENAME}")
         browser_download_url=$(echo "$result" | grep -P "\"browser_download_url\":[ ]?\"[^\"]+" | grep -oP "\"browser_download_url\":[ ]?\"[^\"]+"  | grep -oP "https://[A-Za-z0-9/.-]+")
-        APK_SHA256=$(sha256sum "${APK_FILE}")
+        APK_SHA256=$(cd ${DIST_ANDROID} && sha256sum "${APK_BASENAME}")
         echo " - ${browser_download_url}  | Checksum: ${APK_SHA256}"
       else
         echo "- ERROR: Android release (APK) not found! Skipping."

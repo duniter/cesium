@@ -90,7 +90,11 @@ echo "----------------------------------"
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
-
+APK_RELEASE_FILE="${ANDROID_OUTPUT_APK_RELEASE}/android-release.apk"
+if [[ -f "${APK_RELEASE_FILE}" ]]; then
+  mkdir -p ${DIST_ANDROID}
+  cp ${APK_RELEASE_FILE} ${DIST_ANDROID}/${PROJECT_NAME}-v${current}-android.apk
+fi;
 
 echo "----------------------------------"
 echo "- Building web artifact..."
@@ -117,14 +121,17 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # Commit android project
-cd ${PROJECT_DIR}/platforms/android
-git reset HEAD
-git add -A
-git commit -m "v$2" && git tag "v$2" && git push
-if [[ $? -ne 0 ]]; then
-  exit 1
-fi
+#cd ${PROJECT_DIR}/platforms/android
+#git reset HEAD
+#git add -A
+#git commit -m "v$2" && git tag "v$2" && git push
+#if [[ $? -ne 0 ]]; then
+#  exit 1
+#fi
 
+echo "**********************************"
+echo "* Uploading artifacts to Github..."
+echo "**********************************"
 # Pause (wait propagation to from git.duniter.org to github)
 echo " Waiting 40s, for propagation to github..."
 sleep 40s
@@ -133,10 +140,6 @@ description="$4"
 if [[ "_$description" == "_" ]]; then
    description="Release v$2"
 fi
-
-echo "**********************************"
-echo "* Uploading artifacts to Github..."
-echo "**********************************"
 
 ./github.sh $1 ''"$description"''
 if [[ $? -ne 0 ]]; then
