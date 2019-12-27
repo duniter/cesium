@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # Get to the root project
 if [[ "_" == "_${PROJECT_DIR}" ]]; then
   SCRIPT_DIR=$(dirname $0)
@@ -15,6 +16,10 @@ fi
 cd ${PROJECT_DIR}
 
 # Run the build
-echo "Running cordova build..."
-ionic cordova build android --warning-mode=none --color
+echo "Cleaning previous android APK files..."
+rm -rf ${ANDROID_OUTPUT_APK_DEBUG}/*.apk
+rm -rf ${ANDROID_OUTPUT_APK_RELEASE}/*.apk
+
+echo "Running cordova build android..."
+ionic cordova build android --warning-mode=none --color $*
 #ionic cordova build android --warning-mode=none --color --verbose

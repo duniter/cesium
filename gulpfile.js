@@ -21,7 +21,6 @@ const gulp = require('gulp'),
   useref = require('gulp-useref'),
   filter = require('gulp-filter'),
   uglify = require('gulp-uglify'),
-  concat = require('gulp-concat'),
   csso = require('gulp-csso'),
   replace = require('gulp-replace'),
   rev = require('gulp-rev'),
@@ -637,9 +636,9 @@ gulp.task('build', [
   'plugin'
 ]);
 
-gulp.task('ionic:serve:before', ['build', 'watch']);
-gulp.task('sass', ['config', 'build']);
-gulp.task('default', ['config', 'build']);
+gulp.task('ionic:serve:before', ['build', 'watch'], done => done());
+gulp.task('sass', ['license', 'appSass', 'pluginSass'], done => done());
+gulp.task('default', ['config', 'build'], done => done());
 
 gulp.task('webClean', [], webClean);
 gulp.task('webCopyFiles', ['config', 'sass', 'webClean'], webCopyFiles);
