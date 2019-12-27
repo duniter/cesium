@@ -107,8 +107,6 @@ fi
 echo "----------------------------------"
 echo "- Executing git push, with tag: v$2"
 echo "----------------------------------"
-
-
 description="$4"
 if [[ "_$description" == "_" ]]; then
    description="Release v$2"
