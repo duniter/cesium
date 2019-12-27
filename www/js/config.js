@@ -94,7 +94,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "1.4.15",
-	"build": "2019-12-27T19:41:08.288Z",
+	"build": "2019-12-27T19:43:48.157Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
