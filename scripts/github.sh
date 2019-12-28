@@ -27,13 +27,6 @@ if [[ "_$current" == "_" ]]; then
 fi
 echo "Current version: $current"
 
-### Get repo URL
-PROJECT_NAME=cesium
-REPO="duniter/cesium"
-REPO_API_URL="https://api.github.com/repos/${REPO}"
-REPO_PUBLIC_URL="https://github.com/${REPO}"
-
-
 ###  get auth token
 GITHUB_TOKEN=$(cat ~/.config/${PROJECT_NAME}/.github)
 if [[ "_$GITHUB_TOKEN" != "_" ]]; then

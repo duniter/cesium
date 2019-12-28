@@ -14,6 +14,12 @@ if [[ ! -f "${PROJECT_DIR}/package.json" ]]; then
 fi;
 
 echo "Preparing project environment.."
+
+PROJECT_NAME="cesium"
+REPO="duniter/cesium"
+REPO_API_URL="https://api.github.com/repos/${REPO}"
+REPO_PUBLIC_URL="https://github.com/${REPO}"
+
 NODEJS_VERSION=10
 
 ANDROID_NDK_VERSION=r19c
@@ -129,4 +135,15 @@ if [[ ! -d "${PROJECT_DIR}/node_modules" ]]; then
     echo "Installing project dependencies..."
     cd ${PROJECT_DIR}
     yarn
+fi
+
+# Install project submodules
+if [[ ! -d "${PROJECT_DIR}/platforms/android" || ! -d "${PROJECT_DIR}/dist/desktop" ]]; then
+  echo "Installing project submodules..."
+  cd ${PROJECT_DIR}
+  git submodule init && git submodule sync && git submodule update --remote --merge
+  if [[ $? -ne 0 ]]; then
+    echo "Unable to sync git submodule. Will not be able to build android and desktop artifacts!"
+    exit 1
+  fi
 fi

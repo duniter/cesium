@@ -77,41 +77,41 @@ if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
-cd ${PROJECT_DIR}
-git submodule init && git submodule sync && git submodule update --remote --merge
-if [[ $? -ne 0 ]]; then
-  echo "Unable to sync git submodule. Could not build desktop version"
-  exit 1
-fi
-
 echo "----------------------------------"
 echo "- Compiling sources..."
 echo "----------------------------------"
-gulp config build --env default_fr
-
+cd ${PROJECT_DIR} || exit 1
+gulp config build --env default_fr || exit 1
 
 echo "----------------------------------"
 echo "- Building Android artifact..."
 echo "----------------------------------"
+mkdir -p ${DIST_ANDROID} || exit 1
+rm -rf ${DIST_ANDROID}/*.apk || exit 1
 . scripts/build-android.sh --release
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
 APK_RELEASE_FILE="${ANDROID_OUTPUT_APK_RELEASE}/android-release.apk"
 if [[ -f "${APK_RELEASE_FILE}" ]]; then
-  mkdir -p ${DIST_ANDROID}
-  cp ${APK_RELEASE_FILE} ${DIST_ANDROID}/${PROJECT_NAME}-v${current}-android.apk
+  mkdir -p ${DIST_ANDROID} || exit 1
+  cp ${APK_RELEASE_FILE} ${DIST_ANDROID}/${PROJECT_NAME}-v$2-android.apk || exit 1
 fi;
-
 
 echo "----------------------------------"
 echo "- Building web artifact..."
 echo "----------------------------------"
-gulp config webBuild --env default --release
+cd ${PROJECT_DIR} || exit 1
+gulp config --env default
+gulp webBuild --release
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
-
+DIST_WEB_FILE="${DIST_WEB}/${PROJECT_NAME}-v$2-web.zip"
+if [[ ! -f "${DIST_WEB_FILE}" ]]; then
+  echo "ERROR: Missing web artifact at ${DIST_WEB_FILE}"
+  exit 1
+fi;
 
 echo "----------------------------------"
 echo "- Executing git push, with tag: v$2"
@@ -122,7 +122,7 @@ if [[ "_$description" == "_" ]]; then
 fi
 
 # Commit
-cd ${PROJECT_DIR}
+cd ${PROJECT_DIR} || exit 1
 git reset HEAD
 git add package.json config.xml install.sh www/js/config.js www/manifest.json
 if [[ $? -ne 0 ]]; then
@@ -131,6 +131,7 @@ fi
 git commit -m "v$2"
 git tag -f -a "v$2" -m "${description}"
 git push origin "v$2"
+git push
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
@@ -142,6 +143,7 @@ git add -A
 git commit -m "v$2"
 git tag -f -a "v$2" -m "${description}"
 git push origin "v$2"
+git push
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
@@ -153,8 +155,7 @@ echo "**********************************"
 echo " Waiting 40s, for propagation to github..."
 sleep 40s
 
-
-./github.sh $1 ''"$description"''
+. ${PROJECT_DIR}/scripts/github.sh $1 ''"$description"''
 if [[ $? -ne 0 ]]; then
     exit 1
 fi
@@ -180,7 +181,7 @@ else
   exit 1
 fi;
 
-# back to nodejs version 6
+# Back to nodejs
 cd ${PROJECT_DIR}
 nvm use ${NODEJS_VERSION}
 
