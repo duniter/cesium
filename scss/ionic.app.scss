@@ -1942,7 +1942,12 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     .item.item-complex .item-content {
       height: 40px;
       min-height: 40px;
-      padding-top: 12px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+
+      .badge {
+        top: 9px;
+      }
     }
 
     .item.item-complex {
