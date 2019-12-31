@@ -11,7 +11,7 @@
   "scripts": {
     "clean": "trash www/dist/** platforms/web platforms/**/*.apk  platforms/desktop/**/*.deb",
     "postinstall": "node -e \"try { require('fs').symlinkSync(require('path').resolve('node_modules/@bower_components'), 'www/lib', 'junction') } catch (e) { }\" && rm -f hooks/minify-conf.json hooks/uglify-config.json hooks/after_prepare/ionic-minify.js  hooks/after_prepare/uglify.js",
-    "install-platforms": "ionic state restore",
+    "install-platforms": "ionic cordova prepare",
     "start": "ionic serve",
     "docker:build": "sudo docker build . -t cesium/release",
     "docker:run": "sudo docker run -ti --rm -p 8100:8100 -p 35729:35729 -v .:/cesium:rw cesium/release",
