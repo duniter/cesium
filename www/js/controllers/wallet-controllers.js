@@ -494,7 +494,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       });
     }
     else {
-      $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert_by_id' : 'app.wallet_cert_by_id_lg', {
+      $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert_by_id' : 'app.wallet_cert_lg_by_id', {
         id: $scope.walletId,
         type: 'received'
       });
@@ -509,7 +509,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       });
     }
     else {
-      $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert_by_id' : 'app.wallet_cert_by_id_lg', {
+      $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert_by_id' : 'app.wallet_cert_lg_by_id', {
         id: $scope.walletId,
         type: 'given'
       });
