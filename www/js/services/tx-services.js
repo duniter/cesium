@@ -18,7 +18,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
         if (!txArray || !txArray.length) return; // Skip if empty
 
         _.forEach(txArray, function(tx) {
-          if (tx.block_number || allowPendings) {
+          if (tx.block_number !== null || allowPendings) {
             var walletIsIssuer = false;
             var otherIssuer = tx.issuers.reduce(function(issuer, res) {
               walletIsIssuer = walletIsIssuer || (res === pubkey);
@@ -30,7 +30,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             var otherReceiver;
             var outputBase;
             var sources = [];
-            var lockedOutputs;
+            let lockedOutputs;
             var amount = tx.outputs.reduce(function(sum, output, noffset) {
               // FIXME duniter v1.4.13
               var outputArray = (typeof output == 'string') ? output.split(':',3) : [output.amount,output.base,output.conditions];
@@ -42,7 +42,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
               // Simple unlock condition
               if (sigMatches) {
                 var outputPubkey = sigMatches[1];
-                if (outputPubkey == pubkey) { // output is for the wallet
+                if (outputPubkey === pubkey) { // output is for the wallet
                   if (!walletIsIssuer) {
                     return sum + outputAmount;
                   }
@@ -54,7 +54,8 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                       type: 'T',
                       identifier: tx.hash,
                       noffset: noffset,
-                      consumed: false
+                      consumed: false,
+                      conditions: outputCondition
                     });
                   }
                 }
@@ -69,20 +70,19 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
               }
 
               // Complex unlock condition, on the issuer pubkey
-              else if (outputCondition.indexOf('SIG('+pubkey+')') != -1) {
+              else if (outputCondition.indexOf('SIG('+pubkey+')') !== -1) {
                 var lockedOutput = BMA.tx.parseUnlockCondition(outputCondition);
                 if (lockedOutput) {
                   // Add a source
-                  // FIXME: should be uncomment when filtering source on transfer()
-                  /*sources.push(angular.merge({
+                  sources.push(angular.merge({
                    amount: parseInt(outputArray[0]),
                    base: outputBase,
                    type: 'T',
                    identifier: tx.hash,
                    noffset: noffset,
+                   conditions: outputCondition,
                    consumed: false
                    }, lockedOutput));
-                   */
                   lockedOutput.amount = outputAmount;
                   lockedOutputs = lockedOutputs || [];
                   lockedOutputs.push(lockedOutput);
@@ -99,8 +99,8 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
             // Avoid duplicated tx, or tx to him self
             var txKey = amount + ':' + tx.hash + ':' + time;
-            if (!processedTxMap[txKey] && amount !== 0) {
-              processedTxMap[txKey] = true;
+            if (!processedTxMap[txKey]) {
+              processedTxMap[txKey] = true; // Mark as processed
               var newTx = {
                 time: time,
                 amount: amount,
@@ -137,10 +137,8 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             errors: []
           };
 
-          var processedTxMap = {};
-          var _reduceTx = function (res) {
-            _reduceTxAndPush(pubkey, res.history.sent, tx.history, processedTxMap);
-            _reduceTxAndPush(pubkey, res.history.received, tx.history, processedTxMap);
+          const processedTxMap = {};
+          const _reducePendingTx = function (res) {
             _reduceTxAndPush(pubkey, res.history.sending, tx.pendings, processedTxMap, true /*allow pendings*/);
             _reduceTxAndPush(pubkey, res.history.pending, tx.pendings, processedTxMap, true /*allow pendings*/);
           };
@@ -151,24 +149,29 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
             // get pending tx
             BMA.tx.history.pending({pubkey: pubkey})
-              .then(_reduceTx)
+              .then(_reducePendingTx)
           ];
 
           // get TX history since
           if (fromTime !== 'pending') {
+            const _reduceTx = function (res) {
+              _reduceTxAndPush(pubkey, res.history.sent, tx.history, processedTxMap, false);
+              _reduceTxAndPush(pubkey, res.history.received, tx.history, processedTxMap, false);
+            };
 
             // get TX from a given time
             if (fromTime > 0) {
               // Use slice, to be able to cache requests result
-              var sliceTime = csSettings.data.walletHistorySliceSecond;
+              const sliceTime = csSettings.data.walletHistorySliceSecond;
               fromTime = fromTime - (fromTime % sliceTime);
               for(var i = fromTime; i - sliceTime < nowInSec; i += sliceTime)  {
-                jobs.push(BMA.tx.history.times({pubkey: pubkey, from: i, to: i+sliceTime-1})
+                jobs.push(BMA.tx.history.times({pubkey: pubkey, from: i, to: i+sliceTime-1}, true /*with cache*/)
                   .then(_reduceTx)
                 );
               }
 
-              jobs.push(BMA.tx.history.timesNoCache({pubkey: pubkey, from: nowInSec - (nowInSec % sliceTime), to: nowInSec+999999999})
+              // Last slide: no cache
+              jobs.push(BMA.tx.history.times({pubkey: pubkey, from: nowInSec - (nowInSec % sliceTime), to: nowInSec+999999999}, false/*no cache*/)
                 .then(_reduceTx));
             }
 
@@ -226,13 +229,11 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
               tx.history.sort(function(tx1, tx2) {
                 return (tx2.time - tx1.time);
               });
-              tx.validating = tx.history.filter(function(tx) {
-                return (tx.block_number > current.number - csSettings.data.blockValidityWindow);
+              const firstValidatedTxIndex = tx.history.findIndex((tx) => {
+                return (tx.block_number <= current.number - csSettings.data.blockValidityWindow);
               });
               // remove validating from history
-              if (tx.validating.length) {
-                tx.history.splice(0, tx.validating.length);
-              }
+              tx.validating = firstValidatedTxIndex > 0 ? tx.history.splice(0, firstValidatedTxIndex) : [];
 
               tx.fromTime = fromTime !== 'pending' && fromTime || undefined;
               tx.toTime = tx.history.length ? tx.history[0].time /*=max(tx.time)*/: tx.fromTime;
@@ -314,7 +315,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                 // TODO get sources from the issuer ?
               }
               else {
-                _.forEach(tx.inputs, function(input) {
+                _.find(tx.inputs, function(input) {
                   var inputKey = input.split(':').slice(2).join(':');
                   var srcIndex = data.sourcesIndexByKey[inputKey];
                   if (angular.isDefined(srcIndex)) {
@@ -322,7 +323,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                   }
                   else {
                     valid = false;
-                    return false; // break
+                    return true; // break
                   }
                 });
                 if (tx.sources) { // add source output
@@ -377,6 +378,10 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                 console.debug('[tx] TX and sources loaded in '+ (Date.now()-now) +'ms');
                 return data;
               });
+          })
+          .catch(function(err) {
+            console.warn("[tx] Error while getting sources and tx...", err);
+            throw err;
           });
     },
 

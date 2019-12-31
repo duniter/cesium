@@ -1,7 +1,7 @@
 
 angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
-.factory('csSettings', function($rootScope, $q, Api, localStorage, $translate, csConfig) {
+.factory('csSettings', function($rootScope, $q, $window, Api, localStorage, $translate, csConfig) {
   'ngInject';
 
   // Define app locales
@@ -41,7 +41,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   // Convert browser locale to app locale (fix #140)
   function fixLocaleWithLog (locale) {
     var fixedLocale = fixLocale(locale);
-    if (locale != fixedLocale) {
+    if (locale !== fixedLocale) {
       console.debug('[settings] Fix locale [{0}] -> [{1}]'.format(locale, fixedLocale));
     }
     return fixedLocale;
@@ -67,7 +67,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   },
   defaultSettings = angular.merge({
     useRelative: false,
-    useLocalStorage: true, // override to false if no device
+    useLocalStorage: !!$window.localStorage, // override to false if no device
     useLocalStorageEncryption: false,
     walletHistoryTimeSecond: 30 * 24 * 60 * 60 /*30 days*/,
     walletHistorySliceSecond: 5 * 24 * 60 * 60 /*download using 5 days slice*/,

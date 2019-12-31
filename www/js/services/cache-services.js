@@ -16,9 +16,9 @@ angular.module('cesium.cache.services', ['angular-cache'])
   function getOrCreateCache(prefix, maxAge, onExpire){
     prefix = prefix || 'csCache-';
     maxAge = maxAge || constants.SHORT;
-    var cacheName = prefix + maxAge;
+    var cacheName = prefix + (maxAge / 1000);
 
-    // FIXME : enable this when cache is cleaning on rollback
+    // FIXME: enable this when cache is cleaning on rollback
     var storageMode = csSettings.data.useLocalStorage && $window.localStorage ? 'localStorage' : 'memory';
 
     if (!onExpire) {

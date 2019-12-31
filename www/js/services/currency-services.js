@@ -268,7 +268,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
           var now = moment().utc().unix();
 
           if (cache) {
-            if (currentBlock && (now - currentBlock.receivedAt) < 60/*1min*/) {
+            if (currentBlock && currentBlock.receivedAt && (now - currentBlock.receivedAt) < 60/*1min*/) {
               //console.debug('[currency] Use current block #'+ currentBlock.number +' from cache (age='+ (now - currentBlock.receivedAt) + 's)');
               return currentBlock;
             }
@@ -283,7 +283,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
             .catch(function(err){
               // Special case for currency init (root block not exists): use fixed values
               if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
-                return {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH, medianTime: moment().utc().unix()};
+                return {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH, medianTime: now};
               }
               throw err;
             })

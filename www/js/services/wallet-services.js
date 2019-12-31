@@ -120,6 +120,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     addSource = function(src, sources, sourcesIndexByKey) {
       var srcKey = src.type+':'+src.identifier+':'+src.noffset;
       if (angular.isUndefined(sourcesIndexByKey[srcKey])) {
+        if (!src.conditions) {
+          console.warn("Trying to add a source without output condition !", src);
+        }
         sources.push(src);
         sourcesIndexByKey[srcKey] = sources.length - 1;
       }
@@ -341,7 +344,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       if (options) {
         if (options.minData && !options.sources) return data.loaded && true;
         if (options.requirements && !data.requirements.loaded) return false;
-        if (options.tx && options.tx.enable && (!data.tx.fromTime || data.tx.fromTime == 'pending')) return false;
+        if (options.tx && options.tx.enable && (!data.tx.fromTime || data.tx.fromTime === 'pending')) return false;
         if (options.sigStock && !data.sigStock) return false;
       }
       return data.loaded && data.sources && true;
@@ -357,14 +360,18 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
          !data.requirements.needSelf ||
          data.requirements.wasMember ||
 
+         // Check sources
+        (data.sources && data.sources.length > 0) ||
+
          // Check TX history
-         data.tx.history.length ||
-         data.tx.pendings.length ||
+         data.tx.history.length > 0 ||
+         data.tx.validating.length > 0 ||
+         data.tx.pendings.length > 0 ||
 
          // Check extended data (name+avatar)
-         data.localName ||
-         data.name ||
-         data.avatar
+         !!data.localName ||
+         !!data.name ||
+         !!data.avatar
         );
     },
 
@@ -851,7 +858,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         // Warn if wallet has been never used - see #167
         .then(function() {
           var unused = isNeverUsed();
-          var showAlert = alertIfUnusedWallet && !isNew() && angular.isDefined(unused) && unused;
+          var showAlert = alertIfUnusedWallet && !isNew() && unused === true;
           if (!showAlert) return true;
           return UIUtils.loading.hide()
             .then(function() {
@@ -890,7 +897,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         });
     },
 
-    loadFullData = function() {
+    loadFullData = function(fromTime) {
       data.loaded = false;
 
       return $q.all([
@@ -907,8 +914,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
               }
             }),
 
-          // Get TX and sources
-          loadTxAndSources()
+          // Get TX and sources (only pending by default)
+          loadTxAndSources(fromTime || 'pending')
         ])
         .then(function() {
 
@@ -951,7 +958,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           sources: true,
           tx: {
             enable: true,
-            fromTime: data.tx ? data.tx.fromTime : undefined // keep previous time
+            fromTime: data.tx && data.tx.fromTime !== 'pending' ? data.tx.fromTime : undefined // keep previous time
           },
           sigStock: true,
           api: true
@@ -986,8 +993,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       }
 
       else if (options.sources && (options.tx && !options.tx.enable)) {
-        // Get sources (no TX)
-        jobs.push(loadSources());
+        // Get sources and only pending TX (and NOT the TX history)
+        jobs.push(loadTxAndSources('pending'));
       }
 
       // Load sigStock
@@ -1425,7 +1432,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
               type: 'T',
               noffset: outputOffset,
               amount: outputAmount,
-              base: outputBase
+              base: outputBase,
+              conditions: 'SIG('+restPub+')',
+              consumed: false
             });
           }
           outputOffset++;

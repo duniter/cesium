@@ -246,7 +246,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           if (software === 'duniter' && json.duniter.version && true) {
             isCompatible = csHttp.version.isCompatible(csSettings.data.minVersion, json.duniter.version);
           }
-          // TODO: check other software (DURS, Juniter, etc.)
+          // TODO: check version of other software (DURS, Juniter, etc.)
           else {
             console.debug('[BMA] Unknown node software [{0} v{1}]: could not check compatibility.'.format(software || '?', json.duniter.version || '?'));
           }
@@ -424,8 +424,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         },
         requirements: function(params, withCache) {
           // No cache by default
-          if (withCache !== true) return exports.raw.requirementsNoCache(params);
-          return exports.raw.requirementsWithCache(params);
+          if (withCache !== true) return exports.raw.wot.requirements(params);
+          return exports.raw.wot.requirementsWithCache(params);
         },
         add: post('/wot/add'),
         certify: post('/wot/certify'),
@@ -449,9 +449,27 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         sources: get('/tx/sources/:pubkey', csHttp.cache.SHORT),
         process: post('/tx/process'),
         history: {
-          all: get('/tx/history/:pubkey'),
-          times: get('/tx/history/:pubkey/times/:from/:to', csHttp.cache.LONG),
-          timesNoCache: get('/tx/history/:pubkey/times/:from/:to'),
+          all: function(params) {
+            return exports.raw.tx.history.all(params)
+              .then(res => {
+                res.history = res.history || {};
+                // Clean sending and pendings, because already returned by tx/history/:pubkey/pending
+                res.history.sending = [];
+                res.history.pendings = [];
+                return res;
+              });
+          },
+          times: function(params, withCache) {
+            // No cache by default
+            return ((withCache !== true) ? exports.raw.tx.history.times(params) : exports.raw.tx.history.timesWithCache(params))
+              .then(res => {
+                res.history = res.history || {};
+                // Clean sending and pendings, because already returned by tx/history/:pubkey/pending
+                res.history.sending = [];
+                res.history.pendings = [];
+                return res;
+              });
+          },
           blocks: get('/tx/history/:pubkey/blocks/:from/:to', csHttp.cache.LONG),
           pending: get('/tx/history/:pubkey/pending')
         }
@@ -462,11 +480,19 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       uri: {},
       version: {},
       raw: {
-        requirementsWithCache: get('/wot/requirements/:pubkey', csHttp.cache.LONG),
-        requirementsNoCache: get('/wot/requirements/:pubkey')
+        wot: {
+          requirementsWithCache: get('/wot/requirements/:pubkey', csHttp.cache.LONG),
+          requirements: get('/wot/requirements/:pubkey')
+        },
+        tx: {
+          history: {
+            timesWithCache: get('/tx/history/:pubkey/times/:from/:to', csHttp.cache.LONG),
+            times: get('/tx/history/:pubkey/times/:from/:to'),
+            all: get('/tx/history/:pubkey')
+          }
+        },
       }
     };
-    exports.regex = exports.regexp; // deprecated
 
     exports.tx.parseUnlockCondition = function(unlockCondition) {
 
@@ -917,7 +943,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       csHttp.getWithCache(duniterLatestReleaseUrl.host,
         duniterLatestReleaseUrl.port,
         "/" + duniterLatestReleaseUrl.pathname,
-        /*useSsl*/ (duniterLatestReleaseUrl.port == 443 || duniterLatestReleaseUrl.protocol == 'https:' || that.forceUseSsl),
+        /*useSsl*/ (+(duniterLatestReleaseUrl.port) === 443 || duniterLatestReleaseUrl.protocol === 'https:' || that.forceUseSsl),
         csHttp.cache.LONG
       ) :
       // No URL define: use a fake function
