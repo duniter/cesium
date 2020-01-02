@@ -26,7 +26,7 @@ ANDROID_NDK_VERSION=r19c
 ANDROID_SDK_VERSION=r29.0.0
 ANDROID_SDK_TOOLS_VERSION=4333796
 ANDROID_SDK_ROOT=/usr/lib/android-sdk
-ANDROID_SDK_TOOLS_ROOT=${ANDROID_SDK_ROOT}/build-tools
+ANDROID_SDK_TOOLS_ROOT=${ANDROID_SDK_ROOT}/tools
 ANDROID_OUTPUT_APK=${PROJECT_DIR}/platforms/android/build/outputs/apk
 ANDROID_OUTPUT_APK_DEBUG=${ANDROID_OUTPUT_APK}/debug
 ANDROID_OUTPUT_APK_RELEASE=${ANDROID_OUTPUT_APK}/release
@@ -38,6 +38,9 @@ DIST_ANDROID=${PROJECT_DIR}/dist/android
 
 GRADLE_VERSION=4.10.3
 CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL=https\://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-all.zip
+
+# Export Android SDK tools to path
+export PATH=${ANDROID_SDK_TOOLS_ROOT}/bin:$PATH
 
 # Override with a local file, if any
 if [[ -f "${PROJECT_DIR}/.local/env.sh" ]]; then

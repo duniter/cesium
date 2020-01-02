@@ -252,7 +252,7 @@
       }
     },
     "node": {
-      "host": "g1-test.duniter.org",
+      "host": "gtest.jytou.fr",
       "port": 443
     },
     "fallbackNodes": [
@@ -262,6 +262,10 @@
       },
       {
         "host": "gtest.jytou.fr",
+        "port": 443
+      },
+      {
+        "host": "g1-test.duniter.org",
         "port": 443
       }
     ],

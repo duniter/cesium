@@ -3,7 +3,7 @@
 # Get to the root project
 if [[ "_" == "_${PROJECT_DIR}" ]]; then
   SCRIPT_DIR=$(dirname $0)
-  PROJECT_DIR=$(cd ${SCRIPT_DIR}/.. && pwd)
+  PROJECT_DIR=$(cd "${SCRIPT_DIR}/.." && pwd)
   export PROJECT_DIR
 fi;
 
@@ -25,7 +25,17 @@ echo " - using Gradle: ${CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL}"
 echo " - using Java: ${JAVA_HOME}"
 echo " - project dir: ${PROJECT_DIR}"
 
-cd ${PROJECT_DIR}
+
+# Prepare Android SDK tools
+if [[ ! -d "${ANDROID_SDK_TOOLS_ROOT}" ]]; then
+  cd "${PROJECT_DIR}/scripts"
+  ./install-android-sdk-tools.sh
+  if [[ $? -ne 0 ]]; then
+    exit 1
+  fi
+fi
+
+cd "${PROJECT_DIR}"
 
 # Prepare Android platform
 if [[ ! -d "${PROJECT_DIR}/platforms/android" ]]; then
