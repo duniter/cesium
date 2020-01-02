@@ -11,7 +11,7 @@ fast-build:
     - cp -rf /customCache/www ./
     - cp -rf /customCache/hooks ./
   script:
-    - node ./node_modules/gulp/bin/gulp build:web
+    - node ./node_modules/gulp/bin/gulp webBuild
   after_script:
     - ls -la dist/web/
     - du -csh dist/web/
@@ -30,7 +30,7 @@ failsafe-build:
   script:
     - yarn
     - node ./node_modules/gulp/bin/gulp config --env default
-    - node ./node_modules/gulp/bin/gulp build:web
+    - node ./node_modules/gulp/bin/gulp webBuild
   artifacts:
     untracked: true
     paths:
