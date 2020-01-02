@@ -26,7 +26,7 @@ fast-build:
 failsafe-build:
   stage: alt_build
   when: on_failure
-  image: node:6
+  image: node:10
   script:
     - yarn
     - node ./node_modules/gulp/bin/gulp config --env default
@@ -49,7 +49,7 @@ docker-for-fast-build:
   services:
     - docker:dind
   script:
-    - echo 'FROM node:6' > Dockerfile
+    - echo 'FROM node:10' > Dockerfile
     - echo 'WORKDIR /customCache' >> Dockerfile
     - echo 'COPY ./ ./' >> Dockerfile
     - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/before.txt' >> Dockerfile
@@ -64,7 +64,7 @@ docker-for-fast-build:
 
 pages:
   stage: publish
-  image: node:6
+  image: node:10
   variables:
     GIT_STRATEGY: none
   script:
@@ -97,7 +97,7 @@ mirror:
 
 release-web:
   stage: publish
-  image: node:6
+  image: node:10
   variables:
     GIT_STRATEGY: none
   script:
