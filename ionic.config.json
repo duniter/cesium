@@ -1,18 +1,11 @@
 {
   "name": "Cesium",
+  "type": "ionic1",
+  "integrations": {
+    "cordova": {}
+  },
   "watchPatterns": [
     "www/dist/**/*",
     "www/css/*.css"
-  ],
-  "defaultBrowser": "chrome",
-  "browsers": [
-    {
-      "platform": "android",
-      "browser": "crosswalk",
-      "version": "12.41.296.5"
-    }
-  ],
-  "integrations": {
-    "cordova": {}
-  }
+  ]
 }
