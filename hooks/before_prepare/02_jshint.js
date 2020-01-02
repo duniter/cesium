@@ -1,30 +1,37 @@
 #!/usr/bin/env node
 
-var fs = require('fs');
-var path = require('path');
-var jshint = require('jshint').JSHINT;
-var async = require('async');
+const fs = require('fs'),
+ path = require('path'),
+ jshint = require('jshint').JSHINT,
+ async = require('async'),
+ log = require('fancy-log'),
+ colors = require('ansi-colors'),
+ glob = require("glob");
 
-var foldersToProcess = [
-    'js',
-    'js/controllers',
-    'js/entities',
-    'js/services',
-    'plugins/es/js',
-    'plugins/es/js/controllers',
-    'plugins/es/js/entities',
-    'plugins/es/js/services'
-];
 
-foldersToProcess.forEach(function(folder) {
-    processFiles("www/" + folder);
-});
+// Get folders, from files
+const jsFolders =  glob.sync("www/**/*.js", {nonull: true})
+  // Map to file's folder
+  .map(file => file.substring(0, file.lastIndexOf('/')))
+  // Reduce to a map of folders
+  .reduce((res, folder) => {
 
-function processFiles(dir, callback) {
+    if (folder.indexOf('www/dist/') !== -1 || // Exclude dist js
+      folder.indexOf('/plugins/rml') !== -1 || // Exclude plugin tutorial
+      folder.indexOf('/vendor') // exclude vendor libs
+    ) return res;
+    res[folder] = res[folder] || true;
+    return res;
+  }, {});
+
+// Process each folder with Js file
+Object.keys(jsFolders).forEach(folder => processFiles(folder));
+
+function processFiles(dir) {
     let errorCount = 0;
     fs.readdir(dir, function(err, list) {
         if (err) {
-            console.log('processFiles err: ' + err);
+            log(colors.red('processFiles err: ' + err));
             return;
         }
         async.eachSeries(list, function(file, innercallback) {
@@ -54,26 +61,23 @@ function processFiles(dir, callback) {
 }
 
 function lintFile(file, callback) {
-    console.log("Linting '" + file + "'");
-    fs.readFile(file, function(err, data) {
+    //log(colors.grey(`Linting ${colors.bold(file)}...`));
+    fs.readFile(file, (err, data) => {
         if(err) {
-            console.error('Error: ' + err);
+            log(colors.red('Error: ' + err));
             return;
         }
         if(jshint(data.toString())) {
-            //console.log('File ' + file + ' has no errors.');
-            //console.log('-----------------------------------------');
             callback(false);
         } else {
-            console.error("Errors in file '" + file + "':");
-            var out = jshint.data(),
-            errors = out.errors;
-            for(var j = 0; j < errors.length; j++) {
-                console.error( " Line " + errors[j].line + ':' + errors[j].character + ' -> ' + errors[j].reason + ' -> ' +
-errors[j].evidence);
-            }
-            console.log('-----------------------------------------');
-            callback(true);
+          const out = jshint.data(),
+          errors = out.errors;
+          for(let j = 0; j < errors.length; j++) {
+            log(colors.red(`${colors.bold(file)}:${colors.bold(errors[j].line)} -> ${colors.bold(errors[j].evidence.trim())}`));
+            log(colors.red(` ${errors[j].reason}`));
+          }
+          log('-----------------------------------------');
+          callback(true);
         }
     });
 }

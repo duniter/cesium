@@ -451,7 +451,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         history: {
           all: function(params) {
             return exports.raw.tx.history.all(params)
-              .then(res => {
+              .then(function(res) {
                 res.history = res.history || {};
                 // Clean sending and pendings, because already returned by tx/history/:pubkey/pending
                 res.history.sending = [];
@@ -462,7 +462,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           times: function(params, withCache) {
             // No cache by default
             return ((withCache !== true) ? exports.raw.tx.history.times(params) : exports.raw.tx.history.timesWithCache(params))
-              .then(res => {
+              .then(function(res) {
                 res.history = res.history || {};
                 // Clean sending and pendings, because already returned by tx/history/:pubkey/pending
                 res.history.sending = [];

@@ -83,7 +83,10 @@ angular.module('cesium.map.registry.services', ['cesium.services'])
     }*/
 
     var search = mixedSearch ? that.raw.profile.mixedSearch : that.raw.profile.search;
-
+    var processSearchResult = function(res) {
+      if (!res.hits || !res.hits.hits.length) return $q.when([]);
+      return processLoadHits(options, res);
+    };
     return search(request)
       .then(function(res) {
         if (!res.hits || !res.hits.total) return [];
@@ -95,11 +98,9 @@ angular.module('cesium.map.registry.services', ['cesium.services'])
         // Additional slice requests
         request.from += request.size;
         while (request.from < res.hits.total) {
-          jobs.push(search(angular.copy(request))
-            .then(function(res) {
-              if (!res.hits || !res.hits.hits.length) return [];
-              return processLoadHits(options, res);
-            }));
+          jobs.push(
+            search(angular.copy(request)).then(processSearchResult)
+          );
           request.from += request.size;
         }
         return $q.all(jobs)
@@ -112,7 +113,6 @@ angular.module('cesium.map.registry.services', ['cesium.services'])
   }
 
   function processLoadHits(options, res) {
-
     // Transform hits
     var commaRegexp = new RegExp('[,]');
     var searchAddressItems = [];

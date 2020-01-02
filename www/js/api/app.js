@@ -255,10 +255,10 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
 
       if (state.stateParams && state.stateParams.amount) {
         var amountStr = state.stateParams.amount.trim();
-        var amounts = ((amountStr.indexOf('|') !== -1) && amountStr.split('|'))
-          || ((amountStr.indexOf(' ') !== -1) && amountStr.split(' '))
-          || ((amountStr.indexOf(';') !== -1) && amountStr.split(';'));
-        if (amounts){
+        var amounts = ((amountStr.indexOf('|') !== -1) && amountStr.split('|')) ||
+          ((amountStr.indexOf(' ') !== -1) && amountStr.split(' ')) ||
+          ((amountStr.indexOf(';') !== -1) && amountStr.split(';'));
+        if (amounts) {
           $scope.transferData.amounts = amounts.reduce(function(res, amountStr) {
             var amount = normalizeAmount(amountStr);
             return amount > 0 ? res.concat(amount) : res;

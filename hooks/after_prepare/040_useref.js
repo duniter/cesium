@@ -5,7 +5,7 @@ const path = require("path");
 const es = require('event-stream');
 const useref = require('gulp-useref');
 const filter = require('gulp-filter');
-const uglify = require('gulp-uglify');
+const uglify = require('gulp-uglify-es').default;
 const csso = require('gulp-csso');
 const rev = require('gulp-rev');
 const revReplace = require('gulp-rev-replace');
@@ -49,7 +49,7 @@ if (rootdir && !skip) {
       },
       output: {
         beautify: false,
-        preamble: "/* uglified */",
+        preamble: "/* minified */",
         max_line_len: 120000
       }
     };
@@ -59,7 +59,7 @@ if (rootdir && !skip) {
       gulp.src(indexPath)
         .pipe(useref())      // Concatenate with gulp-useref
         .pipe(jsFilter)
-        .pipe(uglify(uglifyOptions.output)) // Minify any javascript sources
+        .pipe(uglify(uglifyOptions)) // Minify any javascript sources
         .pipe(jsFilter.restore)
         .pipe(cssFilter)
         .pipe(csso())               // Minify any CSS sources

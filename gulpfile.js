@@ -20,7 +20,7 @@ const gulp = require('gulp'),
   del = require('del'),
   useref = require('gulp-useref'),
   filter = require('gulp-filter'),
-  uglify = require('gulp-uglify'),
+  uglify = require('gulp-uglify-es').default,
   csso = require('gulp-csso'),
   replace = require('gulp-replace'),
   rev = require('gulp-rev'),
@@ -31,7 +31,6 @@ const gulp = require('gulp'),
   markdown = require('gulp-markdown'),
   sourcemaps = require('gulp-sourcemaps'),
   log = require('fancy-log'),
-  merge = require('merge2'),
   colors = require('ansi-colors');
 
 const paths = {
@@ -282,7 +281,7 @@ function webCopyFiles() {
   log(colors.green('Preparing dist/web files...'));
 
   var tmpPath = './dist/web/www';
-  return es.concat(
+  return es.merge(
     // Copy Js (and remove unused code)
     gulp.src('./www/js/**/*.js')
       .pipe(removeCode({"no-device": true}))
@@ -392,7 +391,21 @@ function webNgAnnotate() {
 
 function webPluginCopyFiles() {
   var tmpPath = './dist/web/www';
-  return es.concat(
+  return es.merge(
+    // Copy Js (and remove unused code)
+    gulp.src('./www/plugins/**/*.js')
+      .pipe(removeCode({"no-device": true}))
+      .pipe(jshint())
+      .pipe(gulp.dest(tmpPath + '/plugins')),
+
+    // Copy HTML templates (and remove unused code)
+    gulp.src('./www/plugins/**/*.html')
+      .pipe(removeCode({"no-device": true}))
+      .pipe(removeHtml('.hidden-no-device'))
+      .pipe(removeHtml('[remove-if][remove-if="no-device"]'))
+      .pipe(htmlmin())
+      .pipe(gulp.dest(tmpPath + '/plugins')),
+
     // Transform i18n into JS
     gulp.src(paths.ng_translate_plugin)
       .pipe(ngTranslate({standalone:true, module: 'cesium.plugins.translations'}))
@@ -406,7 +419,7 @@ function webPluginCopyFiles() {
 
 function webPluginNgTemplate() {
   var tmpPath = './dist/web/www';
-  return gulp.src(paths.templatecache_plugin)
+  return gulp.src(tmpPath + '/plugins/**/*.html')
     .pipe(templateCache({
       standalone:true,
       module:"cesium.plugins.templates",
@@ -417,7 +430,7 @@ function webPluginNgTemplate() {
 
 function webPluginNgAnnotate() {
   var tmpPath = './dist/web/www';
-  return gulp.src(paths.ng_annotate_plugin)
+  return gulp.src(tmpPath + '/plugins/**/*.js')
     .pipe(ngAnnotate({single_quotes: true}))
     .pipe(gulp.dest(tmpPath + '/dist/dist_js/plugins'));
 }
@@ -439,6 +452,7 @@ function webUglify() {
   const revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
   const uglifyOptions = {
     toplevel: true,
+    warnings: true,
     compress: {
       global_defs: {
         "@console.log": "alert"
@@ -447,7 +461,7 @@ function webUglify() {
     },
     output: {
       beautify: false,
-      preamble: "/* uglified */",
+      preamble: "/* minified */",
       max_line_len: 120000
     }
   };
@@ -458,7 +472,7 @@ function webUglify() {
 
     // Process JS
     .pipe(jsFilter)
-    .pipe(uglify(uglifyOptions.output))             // Minify any javascript sources
+    .pipe(uglify(uglifyOptions)) // Minify javascript files
     .pipe(jsFilter.restore)
 
     // Process CSS
@@ -502,6 +516,7 @@ function webApiUglify() {
   const indexFilter = filter('**/index.html', { restore: true });
   const uglifyOptions = {
     toplevel: true,
+    warnings: true,
     compress: {
       global_defs: {
         "@console.log": "alert"
@@ -510,7 +525,7 @@ function webApiUglify() {
     },
     output: {
       beautify: false,
-      preamble: "/* uglified */",
+      preamble: "/* minified */",
       max_line_len: 120000
     }
   };
@@ -521,7 +536,7 @@ function webApiUglify() {
 
     // Process JS
     .pipe(jsFilter)
-    .pipe(uglify(uglifyOptions.output)) // Minify any javascript sources
+    .pipe(uglify(uglifyOptions)) // Minify any javascript sources
     .pipe(jsFilter.restore)
 
     // Process CSS
@@ -659,4 +674,6 @@ gulp.task('webCleanUnusedDirectories', ['webCleanUnusedFiles'], webCleanUnusedDi
 gulp.task('webZip', ['webCleanUnusedDirectories'], webZip);
 
 gulp.task('webBuild', ['webZip'], webBuildSuccess);
+
+gulp.task('build:web', ['webZip'], webBuildSuccess); // @deprecated
 

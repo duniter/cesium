@@ -30,7 +30,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             var otherReceiver;
             var outputBase;
             var sources = [];
-            let lockedOutputs;
+            var lockedOutputs;
             var amount = tx.outputs.reduce(function(sum, output, noffset) {
               // FIXME duniter v1.4.13
               var outputArray = (typeof output == 'string') ? output.split(':',3) : [output.amount,output.base,output.conditions];
@@ -137,8 +137,8 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             errors: []
           };
 
-          const processedTxMap = {};
-          const _reducePendingTx = function (res) {
+          var processedTxMap = {};
+          var _reducePendingTx = function (res) {
             _reduceTxAndPush(pubkey, res.history.sending, tx.pendings, processedTxMap, true /*allow pendings*/);
             _reduceTxAndPush(pubkey, res.history.pending, tx.pendings, processedTxMap, true /*allow pendings*/);
           };
@@ -154,7 +154,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
           // get TX history since
           if (fromTime !== 'pending') {
-            const _reduceTx = function (res) {
+            var _reduceTx = function (res) {
               _reduceTxAndPush(pubkey, res.history.sent, tx.history, processedTxMap, false);
               _reduceTxAndPush(pubkey, res.history.received, tx.history, processedTxMap, false);
             };
@@ -162,7 +162,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             // get TX from a given time
             if (fromTime > 0) {
               // Use slice, to be able to cache requests result
-              const sliceTime = csSettings.data.walletHistorySliceSecond;
+              var sliceTime = csSettings.data.walletHistorySliceSecond;
               fromTime = fromTime - (fromTime % sliceTime);
               for(var i = fromTime; i - sliceTime < nowInSec; i += sliceTime)  {
                 jobs.push(BMA.tx.history.times({pubkey: pubkey, from: i, to: i+sliceTime-1}, true /*with cache*/)
@@ -229,7 +229,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
               tx.history.sort(function(tx1, tx2) {
                 return (tx2.time - tx1.time);
               });
-              const firstValidatedTxIndex = tx.history.findIndex((tx) => {
+              var firstValidatedTxIndex = tx.history.findIndex(function(tx){
                 return (tx.block_number <= current.number - csSettings.data.blockValidityWindow);
               });
               // remove validating from history
