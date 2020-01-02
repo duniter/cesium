@@ -24,9 +24,8 @@ NODEJS_VERSION=10
 
 ANDROID_NDK_VERSION=r19c
 ANDROID_SDK_VERSION=r29.0.0
-ANDROID_SDK_TOOLS_VERSION=4333796
 ANDROID_SDK_ROOT=/usr/lib/android-sdk
-ANDROID_SDK_TOOLS_ROOT=${ANDROID_SDK_ROOT}/tools
+ANDROID_SDK_TOOLS_VERSION=4333796
 ANDROID_OUTPUT_APK=${PROJECT_DIR}/platforms/android/build/outputs/apk
 ANDROID_OUTPUT_APK_DEBUG=${ANDROID_OUTPUT_APK}/debug
 ANDROID_OUTPUT_APK_RELEASE=${ANDROID_OUTPUT_APK}/release
@@ -37,6 +36,7 @@ DIST_ANDROID=${PROJECT_DIR}/dist/android
 #JAVA_HOME=
 
 GRADLE_VERSION=4.10.3
+GRADLE_HOME=${HOME}/.gradle/${GRADLE_VERSION}
 CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL=https\://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-all.zip
 
 
@@ -74,10 +74,10 @@ if [[ "_" == "_${JAVA_HOME}" ]]; then
 fi
 
 # Check Android SDK root path
-DEFAULT_ANDROID_SDK_ROOT=$(test -d ~/Android/Sdk && cd ~/Android/Sdk && pwd)
+DEFAULT_ANDROID_SDK_ROOT="${HOME}/Android/Sdk"
 if [[ "_" == "_${ANDROID_SDK_ROOT}" ]]; then
   if [[ -d "${DEFAULT_ANDROID_SDK_ROOT}" ]]; then
-    ANDROID_SDK_ROOT="${DEFAULT_ANDROID_SDK_ROOT}"
+    export ANDROID_SDK_ROOT="${DEFAULT_ANDROID_SDK_ROOT}"
   else
     echo "Please set env variable ANDROID_SDK_ROOT"
     exit 1
@@ -85,7 +85,7 @@ if [[ "_" == "_${ANDROID_SDK_ROOT}" ]]; then
 fi
 if [[ ! -d "${ANDROID_SDK_ROOT}" ]]; then
   if [[ ! -d "${ANDROID_SDK_ROOT}" ]]; then
-    ANDROID_SDK_ROOT="${DEFAULT_ANDROID_SDK_ROOT}"
+    export ANDROID_SDK_ROOT="${DEFAULT_ANDROID_SDK_ROOT}"
   else
     echo "Invalid path for ANDROID_SDK_ROOT: ${ANDROID_SDK_ROOT} is not a directory"
     exit 1
@@ -93,15 +93,17 @@ if [[ ! -d "${ANDROID_SDK_ROOT}" ]]; then
 fi
 
 # Export Android SDK tools to path
-if [[ -d "${ANDROID_SDK_TOOLS_ROOT}/bin" ]]; then
-  export PATH=${ANDROID_SDK_TOOLS_ROOT}/bin:$PATH
-fi
+ANDROID_SDK_TOOLS_ROOT=${ANDROID_SDK_ROOT}/tools
+PATH=${ANDROID_SDK_TOOLS_ROOT}/bin:${GRADLE_HOME}/bin:$PATH
 
 # Export useful variables
-export PROJECT_DIR \
+export PATH \
+  PROJECT_DIR \
   JAVA_HOME \
   ANDROID_SDK_ROOT \
+  ANDROID_SDK_TOOLS_ROOT \
   CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL
+
 
 # Node JS
 export NVM_DIR="$HOME/.nvm"
