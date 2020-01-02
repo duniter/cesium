@@ -11,6 +11,8 @@ if [[ ! -d "${ANDROID_SDK_TOOLS_ROOT}/bin" ]]; then
   test -e "${ANDROID_SDK_TOOLS_ROOT}" && rm "sdk-tools-linux-${ANDROID_SDK_TOOLS_VERSION}.zip"
 fi
 
+export PATH=${ANDROID_SDK_TOOLS_ROOT}/bin:$PATH
+
 mkdir -p ${ANDROID_SDK_ROOT}/licenses
 echo 8933bad161af4178b1185d1a37fbf41ea5269c55 > ${ANDROID_SDK_ROOT}/licenses/android-sdk-license
 echo 601085b94cd77f0b54ff86406957099ebe79c4d6 > ${ANDROID_SDK_ROOT}/licenses/android-googletv-license

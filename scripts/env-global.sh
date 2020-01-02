@@ -39,8 +39,6 @@ DIST_ANDROID=${PROJECT_DIR}/dist/android
 GRADLE_VERSION=4.10.3
 CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL=https\://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-all.zip
 
-# Export Android SDK tools to path
-export PATH=${ANDROID_SDK_TOOLS_ROOT}/bin:$PATH
 
 # Override with a local file, if any
 if [[ -f "${PROJECT_DIR}/.local/env.sh" ]]; then
@@ -75,14 +73,28 @@ if [[ "_" == "_${JAVA_HOME}" ]]; then
   fi
 fi
 
-# Checking Android SDK
+# Check Android SDK root path
+DEFAULT_ANDROID_SDK_ROOT=$(test -d ~/Android/Sdk && cd ~/Android/Sdk && pwd)
 if [[ "_" == "_${ANDROID_SDK_ROOT}" ]]; then
-  echo "Please set env variable ANDROID_SDK_ROOT "
-  exit 1
+  if [[ -d "${DEFAULT_ANDROID_SDK_ROOT}" ]]; then
+    ANDROID_SDK_ROOT="${DEFAULT_ANDROID_SDK_ROOT}"
+  else
+    echo "Please set env variable ANDROID_SDK_ROOT"
+    exit 1
+  fi
 fi
 if [[ ! -d "${ANDROID_SDK_ROOT}" ]]; then
-  echo "Invalid path for ANDROID_SDK_ROOT: ${ANDROID_SDK_ROOT} is not a directory"
-  exit 1
+  if [[ ! -d "${ANDROID_SDK_ROOT}" ]]; then
+    ANDROID_SDK_ROOT="${DEFAULT_ANDROID_SDK_ROOT}"
+  else
+    echo "Invalid path for ANDROID_SDK_ROOT: ${ANDROID_SDK_ROOT} is not a directory"
+    exit 1
+  fi
+fi
+
+# Export Android SDK tools to path
+if [[ -d "${ANDROID_SDK_TOOLS_ROOT}/bin" ]]; then
+  export PATH=${ANDROID_SDK_TOOLS_ROOT}/bin:$PATH
 fi
 
 # Export useful variables
