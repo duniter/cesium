@@ -41,10 +41,6 @@ angular.module("cesium.config", [])
 	},
 	"fallbackNodes": [
 		{
-			"host": "g1.nordstrom.duniter.org",
-			"port": 443
-		},
-		{
 			"host": "g1.cgeek.fr",
 			"port": 443
 		},
@@ -93,8 +89,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "1.4.20",
-	"build": "2020-01-03T23:30:01.603Z",
+	"version": "1.5.1",
+	"build": "2020-01-03T23:48:34.127Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 

@@ -15,7 +15,7 @@ if [ "_$CESIUM_DIR" = "_" ]; then
 fi
 
 latest_version() {
-  echo "v1.4.20" #lastest
+  echo "v1.5.1" #lastest
 }
 
 api_release_url() {
