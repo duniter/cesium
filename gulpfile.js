@@ -565,12 +565,16 @@ function webCleanUnusedFiles() {
   const wwwPath = './dist/web/www';
 
   return es.concat(
-    // Clean JS
+    // Clean core JS + CSS
     gulp.src(wwwPath + '/js/**/*.js', {read: false})
       .pipe(clean()),
-
-    // Clean css
     gulp.src(wwwPath + '/css/**/*.css', {read: false})
+      .pipe(clean()),
+
+    // Clean plugins JS + CSS
+    gulp.src(wwwPath + '/plugins/**/*.js', {read: false})
+      .pipe(clean()),
+    gulp.src(wwwPath + '/plugins/**/*.css', {read: false})
       .pipe(clean())
   );
 }
@@ -585,6 +589,7 @@ function webCleanUnusedDirectories() {
       wwwPath + '/css',
       wwwPath + '/templates',
       wwwPath + '/js',
+      wwwPath + '/plugins',
       wwwPath + '/dist',
       wwwPath + '/lib/*',
       '!' + wwwPath + '/lib/ionic',
