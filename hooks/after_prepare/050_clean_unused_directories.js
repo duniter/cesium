@@ -9,7 +9,7 @@ const rootdir = process.argv[2];
 
 let skip = true;
 if (cmd.indexOf("--release") > -1 || cmd.indexOf("--useref") > -1) {
-    skip = false;
+  skip = false;
 }
 
 if (rootdir && !skip) {
@@ -55,7 +55,7 @@ if (rootdir && !skip) {
       // ...and keep Robotodraft fonts directory
       '!'+path.join(wwwPath, 'lib', 'robotdraft'),
       path.join(wwwPath, 'lib', 'robotdraft', '*'),
-      '!'+path.join(wwwPath, 'lib', 'robotdraft', 'fonts'),
+      '!'+path.join(wwwPath, 'lib', 'robotdraft', 'fonts')
     ]);
   }
 }

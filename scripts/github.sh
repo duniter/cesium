@@ -99,7 +99,7 @@ case "$1" in
       if [[ -f "${ZIP_FILE}" ]]; then
         result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/zip' -T "${ZIP_FILE}" "${upload_url}?name=${ZIP_BASENAME}")
         browser_download_url=$(echo "$result" | grep -P "\"browser_download_url\":[ ]?\"[^\"]+" | grep -oP "\"browser_download_url\":[ ]?\"[^\"]+"  | grep -oP "https://[A-Za-z0-9/.-]+")
-        ZIP_SHA256=$(cd ${WEB_OUTPUT} && sha256sum "${PROJECT_NAME}-v${current}-web.zip")
+        ZIP_SHA256=$(cd ${DIST_WEB} && sha256sum "${ZIP_BASENAME}")
         echo " - ${browser_download_url}  | Checksum: ${ZIP_SHA256}"
       else
         echo " - ERROR: Web release (ZIP) not found! Skipping."
@@ -115,6 +115,13 @@ case "$1" in
       else
         echo "- ERROR: Android release (APK) not found! Skipping."
       fi
+
+      # Send Checksum file
+      SHA_BASENAME=${PROJECT_NAME}-v$current.sha
+      SHA_FILE=${PROJECT_DIR}/dist/${SHA_BASENAME}
+      echo "${ZIP_SHA256}\n" > ${SHA_FILE}
+      echo "${APK_SHA256}\n" >> ${SHA_FILE}
+      result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: text/plain' -T "${SHA_FILE}" "${upload_url}?name=${SHA_BASENAME}")
 
       echo "-----------------------------------------"
       echo "Successfully uploading files !"
