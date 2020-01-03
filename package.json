@@ -184,7 +184,8 @@
     "plugins": {
       "cordova-plugin-camera": {
         "CAMERA_USAGE_DESCRIPTION": "Add picture to the user profile",
-        "PHOTOLIBRARY_USAGE_DESCRIPTION": "Take a picture for the user profile"},
+        "PHOTOLIBRARY_USAGE_DESCRIPTION": "Take a picture for the user profile"
+      },
       "cordova-plugin-console": {},
       "cordova-plugin-device": {},
       "cordova-plugin-dialogs": {},
