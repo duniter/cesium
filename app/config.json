@@ -32,10 +32,6 @@
     },
     "fallbackNodes": [
       {
-        "host": "g1.nordstrom.duniter.org",
-        "port": 443
-      },
-      {
         "host": "g1.cgeek.fr",
         "port": 443
       },
