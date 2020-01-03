@@ -312,7 +312,7 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
       $scope.$on('$csExtension.motion', function(event) {
         var canCompose = !!$scope.formData.profile;
         if (canCompose) {
-          $scope.showFab('fab-compose-' + $scope.formData.uid);
+          $scope.showFab('fab-compose-' + $scope.formData.pubkey);
         }
       });
   }
