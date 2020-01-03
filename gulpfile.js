@@ -53,21 +53,20 @@ const paths = {
 function appAndPluginWatch(done) {
 
   log(colors.green('Watching source files...'));
-  const watchDone = () => {};
 
   // Licenses
-  gulp.watch(paths.license_md, () => appLicense(watchDone));
+  gulp.watch(paths.license_md, () => appLicense());
 
   // App
-  gulp.watch(paths.sass, () => appSass(watchDone));
-  gulp.watch(paths.templatecache, () => appNgTemplate(watchDone));
-  gulp.watch(paths.ng_annotate, (event) => appNgAnnotate(watchDone, event));
-  gulp.watch(paths.ng_translate, () => appNgTranslate(watchDone));
+  gulp.watch(paths.sass, () => appSass());
+  gulp.watch(paths.templatecache, () => appNgTemplate());
+  gulp.watch(paths.ng_annotate, (event) => appNgAnnotate(event));
+  gulp.watch(paths.ng_translate, () => appNgTranslate());
   // Plugins
-  gulp.watch(paths.templatecache_plugin, () => pluginNgTemplate(watchDone));
-  gulp.watch(paths.ng_annotate_plugin, () => pluginNgAnnotate(watchDone, event));
-  gulp.watch(paths.ng_translate_plugin, (event) => pluginNgTranslate(watchDone));
-  gulp.watch(paths.css_plugin.concat(paths.leafletSass), () => pluginSass(watchDone));
+  gulp.watch(paths.templatecache_plugin, () => pluginNgTemplate());
+  gulp.watch(paths.ng_annotate_plugin, (event) => pluginNgAnnotate(event));
+  gulp.watch(paths.ng_translate_plugin, () => pluginNgTranslate());
+  gulp.watch(paths.css_plugin.concat(paths.leafletSass), () => pluginSass());
 
   done();
 }
@@ -141,7 +140,7 @@ function appNgTemplate() {
     .pipe(gulp.dest('./www/dist/dist_js/app'));
 }
 
-function appNgAnnotate(done, changes) {
+function appNgAnnotate(changes) {
 
   // If watch, apply only on changes files
   if (changes && changes.type === 'changed' && changes.path && changes.path.indexOf('/www/js/') !== -1) {
@@ -199,7 +198,7 @@ function pluginNgTemplate() {
     .pipe(gulp.dest('./www/dist/dist_js/plugins'));
 }
 
-function pluginNgAnnotate(done, event) {
+function pluginNgAnnotate(event) {
 
   // If watch, apply only on changes files
   if (event && event.type === 'changed' && event.path && event.path.indexOf('/www/js/') !== -1) {

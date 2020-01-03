@@ -5,6 +5,8 @@
     "cordova": {}
   },
   "watchPatterns": [
+    "www/index.html",
+    "www/api/index.html",
     "www/dist/**/*",
     "www/css/*.css"
   ]
