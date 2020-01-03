@@ -682,7 +682,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         }
 
         // Raise event on new main block
-        if (updateMainBuid && mainBlock.buid && (!data.mainBlock || data.mainBlock.buid !== mainBlock.buid)) {
+        if (updateMainBuid && mainBlock && mainBlock.buid && (!data.mainBlock || data.mainBlock.buid !== mainBlock.buid)) {
           data.mainBlock = mainBlock;
           api.data.raise.mainBlockChanged(mainBlock);
         }

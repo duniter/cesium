@@ -1,8 +1,19 @@
-<!-- Buttons section -->
-<ng-if ng-if=":state:enable">
+<!-- Network: buttons section -->
+<ng-if ng-if=":state:enable && extensionPoint === 'network-buttons'">
+  <a class="button button-text button-small hidden-xs hidden-sm ink"
+     title="{{'NETWORK.VIEW.ENDPOINTS.ES_USER_API'|translate}}"
+     ui-sref="app.es_network" >
+    <i class="icon ion-image"></i>
+    <span>{{'ES_SETTINGS.PLUGIN_NAME'|translate}}</span>
+  </a>
+</ng-if>
+
+<!-- Blockchain: buttons section -->
+<ng-if ng-if=":state:enable && extensionPoint === 'blockchain-buttons'">
   <a class="button button-text button-small ink"
      ui-sref="app.blockchain_search" >
     <i class="icon ion-android-search"></i>
     <span>{{'COMMON.BTN_SEARCH'|translate}}</span>
   </a>
 </ng-if>
+

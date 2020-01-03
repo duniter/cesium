@@ -8,7 +8,11 @@ angular.module('cesium.es.network.controllers', ['cesium.es.services'])
   if (enable) {
     PluginServiceProvider.extendState('app.network', {
       points: {
-        'buttons': {
+        'network-buttons': {
+          templateUrl: "plugins/es/templates/network/view_network_extend.html",
+          controller: 'ESExtensionCtrl'
+        },
+        'blockchain-buttons': {
           templateUrl: "plugins/es/templates/network/view_network_extend.html",
           controller: 'ESExtensionCtrl'
         }
