@@ -117,10 +117,10 @@ case "$1" in
       fi
 
       # Send Checksum file
-      SHA_BASENAME=${PROJECT_NAME}-v$current.sha
+      SHA_BASENAME=${PROJECT_NAME}-v$current.sha256
       SHA_FILE=${PROJECT_DIR}/dist/${SHA_BASENAME}
-      echo "${ZIP_SHA256}\n" > ${SHA_FILE}
-      echo "${APK_SHA256}\n" >> ${SHA_FILE}
+      echo "${ZIP_SHA256}" > ${SHA_FILE}
+      echo "${APK_SHA256}" >> ${SHA_FILE}
       result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: text/plain' -T "${SHA_FILE}" "${upload_url}?name=${SHA_BASENAME}")
 
       echo "-----------------------------------------"

@@ -88,15 +88,19 @@ echo "- Building Android artifact..."
 echo "----------------------------------"
 mkdir -p ${DIST_ANDROID} || exit 1
 rm -rf ${DIST_ANDROID}/*.apk || exit 1
+rm -rf ${ANDROID_OUTPUT_APK_RELEASE}/*.apk || exit 1
 . scripts/build-android.sh --release
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
 APK_RELEASE_FILE="${ANDROID_OUTPUT_APK_RELEASE}/android-release.apk"
-if [[ -f "${APK_RELEASE_FILE}" ]]; then
-  mkdir -p ${DIST_ANDROID} || exit 1
-  cp ${APK_RELEASE_FILE} ${DIST_ANDROID}/${PROJECT_NAME}-v$2-android.apk || exit 1
-fi;
+if [[ ! -f "${APK_RELEASE_FILE}" ]]; then
+  echo "ERROR: Missing android artifact at ${APK_RELEASE_FILE}"
+  exit 1
+fi
+mkdir -p ${DIST_ANDROID} || exit 1
+cp ${APK_RELEASE_FILE} "${DIST_ANDROID}/${PROJECT_NAME}-v$2-android.apk" || exit 1
+
 
 echo "----------------------------------"
 echo "- Building web artifact..."
