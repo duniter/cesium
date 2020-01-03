@@ -42,7 +42,7 @@ if [[ ! -d "${ANDROID_SDK_TOOLS_ROOT}" ]]; then
 fi
 
 # Install Gradle
-if [[ ! -d "${GRADLE_HOME}" ]]; then
+if [[ "_" == "_$(which gradle)" && ! -d "${GRADLE_HOME}" ]]; then
   cd "${PROJECT_DIR}/scripts"
   echo "Installing gradle...  ${GRADLE_HOME}"
   test -e "gradle-${GRADLE_VERSION}-all.zip" || wget -kL ${CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL}
