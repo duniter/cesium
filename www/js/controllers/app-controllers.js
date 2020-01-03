@@ -559,8 +559,8 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, UIU
    * Catch click for quick fix
    * @param event
    */
-  $scope.doQuickFix = function(event) {
-    if (event == 'settings') {
+  $scope.doQuickFix = function(action) {
+    if (action === 'settings') {
       $ionicHistory.nextViewOptions({
         historyRoot: true
       });

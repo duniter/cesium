@@ -81,22 +81,22 @@
 }
 
 .row-record .col-text-wrap {
-    padding: 0;
-    margin: 0;
+  padding: 0;
+  margin: 0;
 }
 .row-record .col .text-wrap {
-    height: 70px;
-    white-space: normal;
-    position: relative;
-    word-wrap: break-word !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis;
-    -o-text-overflow: ellipsis;
-    -webkit-hyphens: auto;
-    -moz-hyphens: auto;
-    -ms-hyphens: auto;
-    -o-hyphens: auto;
-    hyphens: auto;
+  height: 70px;
+  white-space: normal;
+  position: relative;
+  word-wrap: break-word !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  -o-hyphens: auto;
+  hyphens: auto;
 }
 
 /* Source: See doc: http://stackoverflow.com/questions/15814346 */
@@ -242,6 +242,20 @@
   background-color: #b2e0ff;
 }
 
+
+/**********
+   Document
+**********/
+
+.item-document.compacted {
+  min-height: 16px !important;
+  max-height: 16px !important;
+  border-bottom: 0 !important;
+}
+
+.item-document.compacted .col{
+  padding-top: 1px;
+}
 
 /**********
    Add specific Icons

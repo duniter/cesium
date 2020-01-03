@@ -1,0 +1,41 @@
+<ion-item id="doc-{{::doc.id}}"
+          class="item item-document item-icon-left ink {{::ionItemClass}} no-padding-top no-padding-bottom"
+          ng-class="{'compacted': compactMode}"
+          ng-click="selectDocument($event, doc)">
+
+  <i ng-show=":rebind:!compactMode" ng-if=":rebind:doc.avatar" class="avatar" style="background-image: url({{:rebind:doc.avatar.src}})"></i>
+  <i ng-show=":rebind:!compactMode" ng-if=":rebind:!doc.avatar" class="icon ion-person stable"></i>
+
+  <div class="row no-padding">
+    <div class="col">
+      <h4 ng-if=":rebind:doc.title">
+        <i class="ion-person gray"></i>
+        <span class="dark">
+         {{:rebind:doc.title}}
+        </span>
+        <span class="gray" >
+          {{:rebind:'DOCUMENT.LOOKUP.HAS_REGISTERED'|translate}}
+        </span>
+      </h4>
+      <h4>
+        <span class="dark" ng-if=":rebind:doc.city">
+          <i class="ion-location"></i> {{:rebind:doc.city}}
+        </span>
+        <span class="gray">
+          <i class="ion-clock"></i> {{:rebind:doc.time|formatDate}}
+        </span>
+      </h4>
+    </div>
+
+    <div class="col" ng-if=":rebind:!compactMode">
+      <a
+        ng-if=":rebind:login && doc.pubkey==walletData.pubkey"
+        ng-click="remove($event, $index)"
+        class="gray pull-right"
+         title="{{'DOCUMENT.LOOKUP.BTN_REMOVE'|translate}}">
+        <i class="ion-trash-a"></i>
+      </a>
+    </div>
+
+  </div>
+</ion-item>

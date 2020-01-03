@@ -1,0 +1,86 @@
+<ion-popover-view class="fit hidden-xs hidden-sm popover-notification popover-peer-info"
+                  ng-controller="PeerInfoPopoverCtrl">
+  <ion-header-bar class="stable-bg block">
+    <div class="title">
+      {{'PEER.VIEW.TITLE'|translate}}
+    </div>
+  </ion-header-bar>
+  <ion-content  scroll="true" >
+    <div class="center padding" ng-if="loading">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
+
+    <div class="list no-padding" ng-if="!loading">
+
+      <div class="item" ng-if=":rebind:formData.software">
+        <i class="ion-outlet"></i>
+        {{'NETWORK.VIEW.SOFTWARE'|translate}}
+        <div class="badge"
+             ng-class=":rebind:{'badge-energized': formData.isPreRelease, 'badge-assertive': formData.hasNewRelease }">
+          {{formData.software}} v{{:rebind:formData.version}}
+        </div>
+        <div class="gray badge badge-secondary" ng-if="formData.isPreRelease">
+          <i class="ion-alert-circled"></i>
+          <span ng-bind-html="'NETWORK.VIEW.WARN_PRE_RELEASE'|translate: formData.latestRelease"></span>
+        </div>
+        <div class="gray badge badge-secondary" ng-if="formData.hasNewRelease">
+          <i class="ion-alert-circled"></i>
+          <span ng-bind-html="'NETWORK.VIEW.WARN_NEW_RELEASE'|translate: formData.latestRelease"></span>
+        </div>
+      </div>
+
+      <div class="item">
+        <i class="ion-locked"></i>
+        {{'NETWORK.VIEW.ENDPOINTS.BMAS'|translate}}
+        <div class="badge badge-balanced" ng-if=":rebind:formData.useSsl" translate>COMMON.BTN_YES</div>
+        <div class="badge badge-assertive" ng-if=":rebind:!formData.useSsl" translate>COMMON.BTN_NO</div>
+      </div>
+
+      <div class="item">
+        <i class="ion-cube"></i>
+        {{'BLOCKCHAIN.VIEW.TITLE_CURRENT'|translate}}
+        <div class="badge badge-balanced">
+          {{:rebind:formData.number | formatInteger}}
+        </div>
+      </div>
+
+      <div class="item">
+          <i class="ion-clock"></i>
+          {{'CURRENCY.VIEW.MEDIAN_TIME'|translate}}
+        <div class="badge dark">
+          {{:rebind:formData.medianTime | medianDate}}
+        </div>
+      </div>
+
+      <div class="item">
+        <i class="ion-lock-combination"></i>
+        {{'CURRENCY.VIEW.POW_MIN'|translate}}
+        <div class="badge dark">
+          {{:rebind:formData.powMin | formatInteger}}
+        </div>
+      </div>
+
+      <!-- Allow extension here -->
+      <cs-extension-point name="default"></cs-extension-point>
+
+    </div>
+  </ion-content>
+
+  <ion-footer-bar class="stable-bg block">
+    <!-- settings -->
+    <div class="pull-left">
+      <a class="positive"
+         ui-sref="app.settings"
+         ng-click="closePopover()"
+         translate>MENU.SETTINGS</a>
+    </div>
+
+    <!-- show all -->
+    <div class="pull-right">
+      <a class="positive"
+         ui-sref="app.view_es_peer"
+         ng-click="closePopover()"
+         translate>PEER.BTN_SHOW_PEER</a>
+    </div>
+  </ion-footer-bar>
+</ion-popover-view>

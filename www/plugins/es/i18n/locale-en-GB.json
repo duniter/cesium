@@ -413,6 +413,7 @@
       "TITLE": "Document search",
       "BTN_ACTIONS": "Actions",
       "SEARCH_HELP": "issuer:AAA*, time:1508406169",
+      "LAST_DOCUMENTS_DOTS": "Last documents:",
       "LAST_DOCUMENTS": "Last documents",
       "SHOW_QUERY": "Show query",
       "HIDE_QUERY": "Hide query",
@@ -421,6 +422,8 @@
       "HEADER_RECIPIENT": "Recipient",
       "READ": "Read",
       "BTN_REMOVE": "Delete this document",
+      "BTN_COMPACT": "Compact",
+      "HAS_REGISTERED": "create or edit his profile",
       "POPOVER_ACTIONS": {
         "TITLE": "Actions",
         "REMOVE_ALL": "Delete these documents..."
@@ -470,6 +473,13 @@
   "ES_WALLET": {
     "ERROR": {
       "RECIPIENT_IS_MANDATORY": "A recipient is required for encryption."
+    },
+    "ES_PEER": {
+      "NAME": "Name",
+      "DOCUMENTS": "Documents",
+      "SOFTWARE": "Software",
+      "DOCUMENT_COUNT": "Number of documents",
+      "EMAIL_SUBSCRIPTION_COUNT": "{{emailSubscription}} subscribers to email notification"
     }
   },
   "EVENT": {

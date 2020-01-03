@@ -17,14 +17,10 @@
 /package-lock.json
 /yarn-error.log
 
+/dist/web
+/dist/android
 
-/dist/*
-!/dist/desktop
-
-/hooks/playstore-config.json
-/hooks/minify-conf.json
 /hooks/uglify-config.json
-/hooks/after_prepare/ionic-minify.js
 /hooks/after_prepare/uglify.js
 
 /www/js/config.js

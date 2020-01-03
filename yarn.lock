@@ -12,6 +12,10 @@
   version "0.1.2"
   resolved "https://codeload.github.com/VivekKhandre/Leaflet.FeatureGroup.SubGroup/tar.gz/2ec699f11e1b6a8fa2596a1bb2b7a144d162c6d6"
 
+"@bower_components/Leaflet.awesome-markers@lvoogdt/Leaflet.awesome-markers#2.0.2":
+  version "0.0.0"
+  resolved "https://codeload.github.com/lvoogdt/Leaflet.awesome-markers/tar.gz/bfac1eb6f7896072d690bde57c1fb5002961a99a"
+
 "@bower_components/aes-js@ricmoo/aes-js#3.1.2":
   version "3.1.2"
   resolved "https://codeload.github.com/ricmoo/aes-js/tar.gz/7c9fad4add4b349dcb89a4e2125f37defaef3bc8"
@@ -150,10 +154,6 @@
   resolved "https://codeload.github.com/stefanocudini/leaflet-search/tar.gz/1b15fad4fdb5be0bdac8aa8883fab864e8675dc5"
   dependencies:
     leaflet "*"
-
-"@bower_components/leaflet.awesome-markers@lvoogdt/Leaflet.awesome-markers#2.0.2":
-  version "0.0.0"
-  resolved "https://codeload.github.com/lvoogdt/Leaflet.awesome-markers/tar.gz/bfac1eb6f7896072d690bde57c1fb5002961a99a"
 
 "@bower_components/leaflet.loading@ebrelsford/Leaflet.loading#^0.1.24":
   version "0.1.24"

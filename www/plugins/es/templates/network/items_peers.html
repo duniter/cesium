@@ -1,0 +1,36 @@
+<div ng-class="::motion.ionListClass" class="no-padding">
+
+  <div class="item item-text-wrap no-border done in gray no-padding-top no-padding-bottom inline text-italic" ng-if="::isHttps && expertMode">
+    <small><i class="icon ion-alert-circled"></i> {{::'NETWORK.INFO.ONLY_SSL_PEERS'|translate}}</small>
+  </div>
+
+  <div class="item row row-header hidden-xs hidden-sm done in" ng-if="::expertMode">
+    <a class="col col-header no-padding dark" ng-click="toggleSort('name')">
+      <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'name'"></cs-sort-icon>
+      {{::'ES_PEER.NAME' | translate}} / {{::'COMMON.PUBKEY' | translate}}
+    </a>
+    <a class="no-padding dark hidden-md col col-15 col-header"
+       ng-click="toggleSort('api')">
+      <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'api'"></cs-sort-icon>
+      {{::'PEER.API' | translate}}
+    </a>
+    <a class="no-padding dark col col-20 col-header"
+       ng-click="toggleSort('difficulty')">
+      <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'software'"></cs-sort-icon>
+      {{::'ES_PEER.SOFTWARE' | translate}}
+    </a>
+    <a class="col col-20 col-header no-padding dark" ng-click="toggleSort('doc_count')">
+      <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'doc_count'"></cs-sort-icon>
+      {{::'ES_PEER.DOCUMENTS' | translate}}
+    </a>
+  </div>
+
+  <div ng-repeat="peer in :rebind:search.results track by peer.id"
+       class="item item-peer item-icon-left ink"
+       ng-class="::ionItemClass"
+       id="{{helptipPrefix}}-peer-{{$index}}"
+       ng-click="selectPeer(peer)"
+       ng-include="'plugins/es/templates/network/item_content_peer.html'">
+  </div>
+
+</div>

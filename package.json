@@ -9,8 +9,8 @@
     "url": "git@git.duniter.org:clients/cesium/cesium.git"
   },
   "scripts": {
-    "clean": "trash www/dist/** platforms/web platforms/**/*.apk  platforms/desktop/**/*.deb",
-    "postinstall": "node -e \"try { require('fs').symlinkSync(require('path').resolve('node_modules/@bower_components'), 'www/lib', 'junction') } catch (e) { }\" && rm -f hooks/minify-conf.json hooks/uglify-config.json hooks/after_prepare/ionic-minify.js  hooks/after_prepare/uglify.js",
+    "clean": "trash www/dist/** dist/web/* dist/desktop/**/*.deb platforms/android/**/*.apk",
+    "postinstall": "node -e \"try { require('fs').symlinkSync(require('path').resolve('node_modules/@bower_components'), 'www/lib', 'junction') } catch (e) { }\" && rm -f hooks/uglify-config.json hooks/after_prepare/uglify.js",
     "install-platforms": "ionic cordova prepare",
     "start": "ionic serve",
     "docker:build": "sudo docker build . -t cesium/release",
@@ -182,7 +182,9 @@
   ],
   "cordova": {
     "plugins": {
-      "cordova-plugin-camera": {},
+      "cordova-plugin-camera": {
+        "CAMERA_USAGE_DESCRIPTION": "Add picture to the user profile",
+        "PHOTOLIBRARY_USAGE_DESCRIPTION": "Take a picture for the user profile"},
       "cordova-plugin-console": {},
       "cordova-plugin-device": {},
       "cordova-plugin-dialogs": {},
@@ -200,7 +202,9 @@
       },
       "ionic-plugin-keyboard": {},
       "cordova-clipboard": {},
-      "cordova-plugin-ionic-webview": {}
+      "cordova-plugin-ionic-webview": {
+        "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
+      }
     },
     "platforms": [
       "ios",

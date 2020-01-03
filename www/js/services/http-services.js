@@ -158,7 +158,9 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     timeout = timeout || csSettings.data.timeout;
 
     function _waitOpen(self) {
-      if (!self.delegate) throw new Error('Websocket not opened');
+      if (!self.delegate) {
+        throw new Error('Websocket {0} was closed!'.format(uri));
+      }
       if (self.delegate.readyState == 1) {
         return $q.when(self.delegate);
       }

@@ -31,6 +31,8 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
   // Initialize the super class and extend it.
   angular.extend(this, $controller('GpCurrencyAbstractCtrl', {$scope: $scope}));
 
+  $scope.formData.rangeDuration = 'month';
+
   $scope.displayRightAxis = true;
   $scope.hiddenDatasets = [];
 
@@ -353,7 +355,7 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
     if (!values) return undefined;
     var previousValue;
     return _.map(values, function(value) {
-      var newValue = (value !== undefined) && (value - (previousValue || value)) || undefined;
+      var newValue = (value !== undefined && previousValue !== undefined) ? (value - (previousValue || value)) : undefined;
       previousValue = value;
       return newValue;
     });

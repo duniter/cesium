@@ -20,15 +20,19 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       that = this,
       cachePrefix = 'esHttp-',
       constants = {
+        ES_USER_API: 'ES_USER_API',
+        ES_SUBSCRIPTION_API: 'ES_SUBSCRIPTION_API',
         ES_USER_API_ENDPOINT: 'ES_USER_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))',
+        ANY_API_ENDPOINT: '([A-Z_]+)(?:[ ]+([a-z_][a-z0-9-_.ğĞ]*))?(?:[ ]+([0-9.]+))?(?:[ ]+([0-9a-f:]+))?(?:[ ]+([0-9]+))(?:\\/[^\\/]+)?',
         MAX_UPLOAD_BODY_SIZE: csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.maxUploadBodySize || 2097152 /*=2M*/
       },
       regexp = {
         IMAGE_SRC: exact('data:([A-Za-z//]+);base64,(.+)'),
         URL: match('(www\\.|https?:\/\/(www\\.)?)[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)'),
-        HASH_TAG: match('(?:^|[\t\n\r\s ])#([\\wḡĞǦğàáâãäåçèéêëìíîïðòóôõöùúûüýÿ]+)'),
+        HASH_TAG: match('(?:^|[\t\n\r\s ])#([0-9_-\\wḡĞǦğàáâãäåçèéêëìíîïðòóôõöùúûüýÿ]+)'),
         USER_TAG: match('(?:^|[\t\n\r\s ])@('+BMA.constants.regexp.USER_ID+')'),
-        ES_USER_API_ENDPOINT: exact(constants.ES_USER_API_ENDPOINT)
+        ES_USER_API_ENDPOINT: exact(constants.ES_USER_API_ENDPOINT),
+        API_ENDPOINT: exact(constants.ANY_API_ENDPOINT),
       },
       fallbackNodeIndex = 0,
       listeners,
@@ -74,8 +78,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     }
 
     function isSameNode(host, port, useSsl) {
-      return (that.host == host) &&
-        (that.port == port) &&
+      return (that.host === host) &&
+        (that.port === port) &&
         (angular.isUndefined(useSsl) || useSsl == that.useSsl);
     }
 
@@ -140,6 +144,9 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       return that.start(true /*skipInit*/);
     };
 
+    // Get node time (UTC) FIXME: get it from the node
+    that.date = { now : csHttp.date.now };
+
     that.byteCount = function (s) {
       s = (typeof s == 'string') ? s : JSON.stringify(s);
       return encodeURI(s).split(/%(?:u[0-9A-F]{2})?[0-9A-F]{2}|./).length - 1;
@@ -157,7 +164,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       var getRequestFn = function(params) {
         if (!that.started) {
           if (!that._startPromise) {
-            console.error('[ES] [http] Trying to get [{0}] before start(). Waiting...'.format(path));
+            console.warn('[ES] [http] Trying to get [{0}] before start(). Waiting...'.format(path));
           }
           return that.ready().then(function(start) {
             if (!start) return $q.reject('ERROR.ES_CONNECTION_ERROR');
@@ -212,6 +219,23 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         }
         return sock;
       };
+    };
+
+    that.wsChanges = function(source) {
+      var wsChanges = that.ws('/ws/_changes')();
+      if (!source) return wsChanges;
+      // var oldOpen = wsChanges.open;
+      // wsChanges.open = function() {
+      //   return oldOpen.call(wsChanges).then(function(sock) {
+      //     if(sock) {
+      //       sock.send(source);
+      //     }
+      //     else {
+      //       console.warn('Trying to access ws changes, but no sock anymore... already open ?');
+      //     }
+      //   });
+      // };
+      return wsChanges;
     };
 
     that.isAlive = function() {
@@ -378,6 +402,28 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       return urls;
     }
 
+    function parseMarkdownTitlesFromText(value, prefix, suffix) {
+      prefix = prefix || '##';
+      var reg = match('(?:^|[\\r\\s])('+prefix+'([^#></]+)' + (suffix||'') + ')');
+      var matches = value && reg.exec(value);
+      var lines = matches && [];
+      var res = matches && [];
+      while(matches) {
+        var line = matches[1];
+        if (!_.contains(lines, line)) {
+          lines.push(line);
+          res.push({
+            line: line,
+            title: matches[2]
+          });
+        }
+        value = value.substr(matches.index + matches[1].length + 1);
+        matches = value.length > 0 && reg.exec(value);
+      }
+      return res;
+    }
+
+
     function escape(text) {
       if (!text) return text;
       return text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -416,6 +462,13 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         _.forEach(userTags, function(tag){
           var link = '<a ui-sref=\"{0}({uid: \'{1}\'})\">@{2}</a>'.format(options.uidState, tag, tag);
           content = content.replace('@'+tag, link);
+        });
+
+        // Replace markdown titles
+        var titles = parseMarkdownTitlesFromText(content, '#+[ ]*', '<br>');
+        _.forEach(titles, function(matches){
+          var size = matches.line.lastIndexOf('#', 5)+1;
+          content = content.replace(matches.line, '<h{0}>{1}</h{2}>'.format(size, matches.title, size));
         });
       }
       return content;
@@ -492,34 +545,41 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
               fillRecordTags(obj, options.tagFields);
             }
 
-        var str = JSON.stringify(obj);
+            var str = JSON.stringify(obj);
 
-          return CryptoUtils.util.hash(str)
-            .then(function(hash) {
-              return CryptoUtils.sign(hash, keypair)
-                .then(function(signature) {
-                  // Prepend hash+signature
-                  str = '{"hash":"{0}","signature":"{1}",'.format(hash, signature) + str.substring(1);
-                  // Send data
-                  return postRequest(str, params)
-                    .then(function (id){
+            return CryptoUtils.util.hash(str)
+              .then(function(hash) {
+                return CryptoUtils.sign(hash, keypair)
+                  .then(function(signature) {
+                    // Prepend hash+signature
+                    str = '{"hash":"{0}","signature":"{1}",'.format(hash, signature) + str.substring(1);
+                    // Send data
+                    return postRequest(str, params)
+                      .then(function (id){
 
-                      // Clear cache
-                      csCache.clear(cachePrefix);
+                        // Clear cache
+                        csCache.clear(cachePrefix);
 
-                      return id;
-                    })
-                    .catch(function(err) {
-                      var bodyLength = that.byteCount(obj);
-                      if (bodyLength > constants.MAX_UPLOAD_BODY_SIZE) {
-                        throw {message: 'ERROR.ES_MAX_UPLOAD_BODY_SIZE', length: bodyLength};
-                      }
-                      throw err;
-                    });
-                });
-            });
-         });
+                        return id;
+                      })
+                      .catch(function(err) {
+                        var bodyLength = that.byteCount(obj);
+                        if (bodyLength > constants.MAX_UPLOAD_BODY_SIZE) {
+                          throw {message: 'ERROR.ES_MAX_UPLOAD_BODY_SIZE', length: bodyLength};
+                        }
+                        throw err;
+                      });
+                  });
+              });
+          });
       };
+    }
+
+    function countRecord(index, type) {
+      return that.get("/{0}/{1}/_search?size=0".format(index, type))
+        .then(function(res) {
+          return res && res.hits && res.hits.total;
+        });
     }
 
     function removeRecord(index, type) {
@@ -624,25 +684,26 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     };
 
     function parseEndPoint(endpoint) {
-      var matches = regexp.ES_USER_API_ENDPOINT.exec(endpoint);
+      var matches = regexp.API_ENDPOINT.exec(endpoint);
       if (!matches) return;
-      var port = matches[8] || 80;
       return {
+        "api": matches[1] || '',
         "dns": matches[2] || '',
-        "ipv4": matches[4] || '',
-        "ipv6": matches[6] || '',
-        "port": port,
-        "useSsl": port == 80 ? false : (port == 443)
+        "ipv4": matches[3] || '',
+        "ipv6": matches[4] || '',
+        "port": matches[5] || 80,
+        "path": matches[6] || '',
+        "useSsl": matches[5] == 443
       };
     }
 
     function emptyHit() {
       return {
-         _id: null,
-         _index: null,
-         _type: null,
-         _version: null,
-         _source: {}
+        _id: null,
+        _index: null,
+        _type: null,
+        _version: null,
+        _source: {}
       };
     }
 
@@ -673,13 +734,26 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         sameAsSettings: isSameNodeAsSettings,
         isFallback: isFallbackNode
       },
+      websocket: {
+        changes: that.wsChanges,
+        block: that.ws('/ws/block'),
+        peer: that.ws('/ws/peer')
+      },
+      wot: {
+        member: {
+          uids : that.get('/wot/members')
+        }
+      },
       network: {
-        peering: that.get('/network/peering'),
+        peering: {
+          self: that.get('/network/peering')
+        },
         peers: that.get('/network/peers')
       },
       record: {
         post: postRecord,
-        remove: removeRecord
+        remove: removeRecord,
+        count : countRecord
       },
       image: {
         fromAttachment: imageFromAttachment,
@@ -705,6 +779,53 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
   service.instance = function(host, port, useSsl, useCache) {
     return new EsHttp(host, port, useSsl, useCache);
+  };
+
+  service.lightInstance = function(host, port, useSsl, timeout) {
+    port = port || 80;
+    useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443);
+
+    function countHits(path, params) {
+      return csHttp.get(host, port, path)(params)
+        .then(function(res) {
+          return res && res.hits && res.hits.total;
+        });
+    }
+
+    function countRecords(index, type) {
+      return countHits("/{0}/{1}/_search?size=0".format(index, type));
+    }
+
+    function countSubscriptions(params) {
+      var queryString = _.keys(params||{}).reduce(function(res, key) {
+        return (res && (res + " AND ") || "") + key + ":" + params[key];
+      }, '');
+      return countHits("/subscription/record/_search?size=0&q=" + queryString);
+    }
+
+    return {
+      host: host,
+      port: port,
+      useSsl: useSsl,
+      node: {
+        summary: csHttp.getWithCache(host, port, '/node/summary', useSsl, csHttp.cache.LONG, false, timeout)
+      },
+      network: {
+        peering: {
+          self: csHttp.get(host, port, '/network/peering', useSsl, timeout)
+        },
+        peers: csHttp.get(host, port, '/network/peers', useSsl, timeout)
+      },
+      blockchain: {
+        current: csHttp.get(host, port, '/blockchain/current?_source=number,hash,medianTime', useSsl, timeout)
+      },
+      record: {
+        count: countRecords
+      },
+      subscription: {
+        count: countSubscriptions
+      }
+    };
   };
 
   return service;

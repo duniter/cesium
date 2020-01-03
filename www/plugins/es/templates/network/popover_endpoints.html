@@ -1,0 +1,15 @@
+<ion-popover-view class="popover-endpoints popover-light" style="height: {{(titleKey?30:0)+((!items || items.length &lt;= 1) ? 55 : 3+items.length*52)}}px">
+  <ion-header-bar class="bar bar-header stable-bg" ng-if="titleKey">
+    <div class="title">
+      {{titleKey | translate:titleValues }}
+    </div>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <div class="list" ng-class="{'has-header': titleKey}">
+      <div class="item item-text-wrap" ng-repeat="item in items">
+        <div class="item-label" ng-if="item.label">{{item.label | translate}}</div>
+        <div id="endpoint_{{$index}}" class="badge item-note dark">{{item.value}}</span>
+      </div>
+    </div>
+  </ion-content>
+</ion-popover-view>

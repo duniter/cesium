@@ -82,8 +82,8 @@
           <i class="icon light ion-android-exit"></i>
         </a>
 
-        <!-- Fullscreen button -->
         <!-- removeIf(device) -->
+        <!-- Fullscreen button -->
         <a ng-if="::$root.device.isWeb()"
            ng-click="toggleFullscreen()"
            class="button-icon"
@@ -144,7 +144,7 @@
           <i class="icon-secondary ion-card" style="top: 22px; left: 19px; font-size: 20px; background-color: white; width:17px; height: 14px;"></i>
           {{:locale:'MENU.WALLETS'|translate}}
         </a>
-		  
+
         <!-- MAIN Section -->
         <div class="item item-divider"></div>
 
@@ -162,7 +162,7 @@
 
         <!-- POWER USER Section -->
         <div class="item item-divider"></div>
-		  
+
         <a menu-close
            class="item item-icon-left"
            active-link="active"
@@ -185,8 +185,8 @@
 
         <!-- Allow extension here -->
         <cs-extension-point name="menu-discover"></cs-extension-point>
-		  
-		  
+
+
 
 
         <div class="item item-divider visible-xs visible-sm"></div>

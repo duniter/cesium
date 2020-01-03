@@ -463,7 +463,8 @@
     "LOOKUP": {
       "TITLE": "Recherche de documents",
       "BTN_ACTIONS": "Actions",
-      "SEARCH_HELP": "Emetteur:AAA*, temps:1508406169",
+      "SEARCH_HELP": "issuer:AAA*, time:1508406169",
+      "LAST_DOCUMENTS_DOTS": "Derniers documents :",
       "LAST_DOCUMENTS": "Derniers documents",
       "SHOW_QUERY": "Voir la requête",
       "HIDE_QUERY": "Masquer la requête",
@@ -472,6 +473,8 @@
       "HEADER_RECIPIENT": "Destinataire",
       "READ": "Lu",
       "BTN_REMOVE": "Supprimer ce document",
+      "BTN_COMPACT": "Compacter",
+      "HAS_REGISTERED": "a créé ou modifié son profil",
       "POPOVER_ACTIONS": {
         "TITLE": "Actions",
         "REMOVE_ALL": "Supprimer ces documents..."
@@ -522,6 +525,13 @@
     "ERROR": {
       "RECIPIENT_IS_MANDATORY": "Un destinataire est obligatoire pour le chiffrement."
     }
+  },
+  "ES_PEER": {
+    "NAME": "Nom",
+    "DOCUMENTS": "Documents",
+    "SOFTWARE": "Logiciel",
+    "DOCUMENT_COUNT": "Nombre de documents",
+    "EMAIL_SUBSCRIPTION_COUNT": "{{emailSubscription}} abonnés aux notifications par email"
   },
   "EVENT": {
     "NODE_STARTED": "Votre noeud ES API <b>{{params[0]}}</b> est démarré",

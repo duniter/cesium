@@ -1,0 +1,36 @@
+<ion-modal-view id="nodes" class="modal-full-height" cache-view="false">
+  <ion-header-bar class="bar-positive">
+    <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
+    <h1 class="title" translate>PEER.PEER_LIST</h1>
+    <div class="buttons buttons-right header-item">
+      <span class="secondary">
+        <button class="button button-clear icon ion-loop button-clear" ng-click="refresh()">
+
+        </button>
+        <button class="button button-icon button-clear icon ion-android-more-vertical visible-xs visible-sm"
+                ng-click="showActionsPopover($event)">
+        </button>
+      </span>
+    </div>
+  </ion-header-bar>
+
+  <ion-content>
+    <div class="list">
+      <div class="padding padding-xs" style="display: block; height: 60px;">
+
+        <div class="pull-left">
+          <h4 ng-if="!enableFilter || !search.type">
+            {{'PEER.ALL_PEERS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
+          </h4>
+        </div>
+
+        <div class="pull-right">
+          <ion-spinner class="icon" icon="android" ng-if="search.loading"></ion-spinner>&nbsp;
+        </div>
+      </div>
+
+      <ng-include src="'plugins/es/templates/network/items_peers.html'"></ng-include>
+
+	  </div>
+  </ion-content>
+</ion-modal-view>

@@ -1,5 +1,5 @@
 
-<div class="item row row-header done in hidden-xs hidden-sm">
+<div class="item row row-header done in hidden-xs hidden-sm" ng-if="showHeaders">
 
   <a class="no-padding dark col col-header"
      ng-if=":rebind:expertMode"
@@ -27,5 +27,14 @@
 
 <!-- for each doc -->
 <ng-repeat ng-repeat="doc in :rebind:search.results track by doc.id"
-           ng-include="'plugins/es/templates/document/item_document.html'">
+           ng-switch on="doc.type">
+  <div ng-switch-when="comment">
+    <ng-include src="::'plugins/es/templates/document/item_document_comment.html'"></ng-include>
+  </div>
+  <div ng-switch-when="profile">
+    <ng-include src="::'plugins/es/templates/document/item_document_profile.html'"></ng-include>
+  </div>
+  <div ng-switch-default>
+    <ng-include src="::'plugins/es/templates/document/item_document.html'"></ng-include>
+  </div>
 </ng-repeat>

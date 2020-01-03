@@ -26,7 +26,6 @@
     <link rel="stylesheet" type="text/css" href="lib/chart.js/dist/Chart.min.css">
     <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/es/css/style.css">
     <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/graph/css/style.css">
-    <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/graph/css/style.css">
     <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/map/css/style.css">
     <!--endRemoveIf(no-plugin)-->
     <!-- endbuild -->
@@ -48,6 +47,7 @@
     <meta property="og:locale:alternate" content="fr_FR" />
     <meta property="og:locale:alternate" content="it_IT" />
     <meta property="og:locale:alternate" content="nl_NL" />
+    <meta property="og:locale:alternate" content="eo_EO" />
 
     <!--endRemoveIf(device)-->
 
@@ -72,11 +72,9 @@
     <script src="lib/numeral/languages/es.js"></script>
     <script src="lib/numeral/languages/it.js"></script>
     <script src="js/vendor/numeral.eo.js"></script>
-
     <script src="lib/socket.io-client/dist/socket.io.min.js"></script>
     <script src="lib/underscore/underscore-min.js"></script>
     <script src="lib/qrcode.js/qrcode.js"></script>
-
     <script src="lib/aes-js/index.js"></script>
     <script src="lib/chart.js/dist/Chart.min.js"></script>
 
@@ -191,6 +189,7 @@
     <script src="dist/dist_js/plugins/es/js/entities/notification.js"></script>
     <script src="dist/dist_js/plugins/es/js/entities/comment.js"></script>
     <script src="dist/dist_js/plugins/es/js/entities/invitation.js"></script>
+    <script src="dist/dist_js/plugins/es/js/entities/peer.js"></script>
     <script src="dist/dist_js/plugins/es/js/services.js"></script>
     <script src="dist/dist_js/plugins/es/js/services/comment-services.js"></script>
     <script src="dist/dist_js/plugins/es/js/services/http-services.js"></script>
@@ -211,6 +210,7 @@
     <script src="dist/dist_js/plugins/es/js/services/tx-services.js"></script>
     <script src="dist/dist_js/plugins/es/js/services/geo-services.js"></script>
     <script src="dist/dist_js/plugins/es/js/services/document-services.js"></script>
+    <script src="dist/dist_js/plugins/es/js/services/network-services.js"></script>
     <script src="dist/dist_js/plugins/es/js/controllers/common-controllers.js"></script>
     <script src="dist/dist_js/plugins/es/js/controllers/app-controllers.js"></script>
     <script src="dist/dist_js/plugins/es/js/controllers/settings-controllers.js"></script>
@@ -229,7 +229,6 @@
     <script src="dist/dist_js/plugins/es/js/controllers/document-controllers.js"></script>
 
     <!-- Graph plugin -->
-    <!--removeIf(ubuntu)--> <!-- FIXME: issue #463 -->
     <script src="dist/dist_js/plugins/graph/js/plugin.js"></script>
     <script src="dist/dist_js/plugins/graph/js/services.js"></script>
     <script src="dist/dist_js/plugins/graph/js/services/data-services.js"></script>
@@ -241,7 +240,6 @@
     <script src="dist/dist_js/plugins/graph/js/controllers/account-controllers.js"></script>
     <script src="dist/dist_js/plugins/graph/js/controllers/docstats-controllers.js"></script>
     <script src="dist/dist_js/plugins/graph/js/controllers/synchro-controllers.js"></script>
-    <!--endRemoveIf(ubuntu)-->
 
     <!-- Map plugin -->
     <script src="dist/dist_js/plugins/map/js/plugin.js"></script>

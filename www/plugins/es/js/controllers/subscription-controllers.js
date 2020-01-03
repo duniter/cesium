@@ -35,9 +35,9 @@ angular.module('cesium.es.subscription.controllers', ['cesium.es.services'])
 
   })
 
- .controller('ViewSubscriptionsCtrl', ViewSubscriptionsController)
+  .controller('ViewSubscriptionsCtrl', ViewSubscriptionsController)
 
- .controller('ModalEmailSubscriptionsCtrl', ModalEmailSubscriptionsController)
+  .controller('ModalEmailSubscriptionsCtrl', ModalEmailSubscriptionsController)
 
 ;
 
@@ -260,7 +260,7 @@ function ViewSubscriptionsController($scope, $q, $ionicHistory, csWot, csWallet,
       })
       .then(function(cat){
         if (cat && cat.parent) {
-           return cat;
+          return cat;
         }
       });
   };
@@ -272,7 +272,7 @@ function ViewSubscriptionsController($scope, $q, $ionicHistory, csWot, csWallet,
 }
 
 
-function ModalEmailSubscriptionsController($scope, Modals, csSettings, esHttp, csWot, parameters) {
+function ModalEmailSubscriptionsController($scope, Modals, csSettings, esHttp, csWot, esModals, parameters) {
   'ngInject';
 
   $scope.frequencies = [
@@ -289,6 +289,15 @@ function ModalEmailSubscriptionsController($scope, Modals, csSettings, esHttp, c
     if ($scope.formData.recipient) {
       $scope.recipient = {pubkey: $scope.formData.recipient};
       return csWot.extendAll([$scope.recipient]);
+    }
+    else {
+      return esHttp.network.peering.self()
+        .then(function(res){
+          if (!res) return;
+          $scope.formData.recipient = res.pubkey;
+          $scope.recipient = {pubkey: $scope.formData.recipient};
+          return csWot.extendAll([$scope.recipient]);
+        });
     }
   });
 
@@ -318,10 +327,9 @@ function ModalEmailSubscriptionsController($scope, Modals, csSettings, esHttp, c
   }
 
   $scope.showNetworkLookup = function() {
-    return Modals.showNetworkLookup({
+    return esModals.showNetworkLookup({
       enableFilter: true,
-      endpoint: esHttp.constants.ES_USER_API_ENDPOINT,
-      bma: false
+      endpointFilter: esHttp.constants.ES_SUBSCRIPTION_API
     })
       .then(function (peer) {
         if (peer) {

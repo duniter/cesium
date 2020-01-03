@@ -138,10 +138,10 @@ $screen-lg:                       1200px;
     padding: 16px !important;
   }
   .no-padding-xs {
-    padding: 0px !important;
+    padding: 0 !important;
   }
   .no-margin-xs {
-    margin: 0px !important;
+    margin: 0 !important;
   }
 }
 
@@ -169,10 +169,10 @@ $screen-lg:                       1200px;
     padding: 16px !important;
   }
   .no-padding-sm {
-    padding: 0px !important;
+    padding: 0 !important;
   }
   .no-margin-sm {
-    margin: 0px !important;
+    margin: 0 !important;
   }
 }
 
@@ -345,7 +345,7 @@ $screen-lg:                       1200px;
 
 @media screen and (max-width: $screen-xs-max) {
   .no-margin-xs {
-    margin: 0px !important;
+    margin: 0 !important;
   }
 }
 
@@ -482,7 +482,7 @@ html, body {
       height: 20px;
       line-height: 19px;
       max-width: 260px;
-      margin: 0px 5px;
+      margin: 0 5px;
       text-align: left;
     }
 
@@ -493,7 +493,7 @@ html, body {
       position: absolute;
       right: 0;
       top: 0;
-      margin: 0px 5px;
+      margin: 0 5px;
       display: block;
     }
   }
@@ -559,7 +559,7 @@ html, body {
     .title {
       color: black;
       text-align: left;
-      left: 0px !important;
+      left: 0 !important;
       font-size: 14px;
       line-height: 30px;
     }
@@ -620,7 +620,7 @@ html, body {
   .button.button-small {
     height: 30px;
     font-size: 12px;
-    padding: 0px 5px !important;
+    padding: 0 5px !important;
     line-height: 30px;
   }
 }
@@ -701,7 +701,7 @@ html, body {
 
 // Avoid to have not align button on bar-header
 .bar .buttons.pull-right, .bar .title + .button:last-child, .bar .title + .buttons, .bar > .button + .button:last-child, .bar > .button.pull-right {
-  top: 0px !important;
+  top: 0 !important;
 }
 
 // Avoid different between home view and other view (space between last button and left border)
@@ -709,7 +709,7 @@ html, body {
   padding-right: 5px !important;
 
   .buttons-right span {
-    margin-left: 0px !important;
+    margin-left: 0 !important;
   }
 }
 
@@ -861,7 +861,7 @@ html, body {
 }
 
 .no-padding {
-  padding: 0px !important;
+  padding: 0 !important;
 }
 
 .avatar-member {
@@ -1266,7 +1266,7 @@ body {
 
 .card .card-header {
   padding-top: 5px !important;
-  padding-bottom: 0px !important;
+  padding-bottom: 0 !important;
   min-height: 25px;
 }
 
@@ -1277,7 +1277,7 @@ body {
 .card .card-avatar,
 .card.card-avatar {
   .avatar {
-    box-shadow: 0px 3px 4px 0 rgba(0, 0, 0, 0.26);
+    box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.26);
     top: 7px;
     background-color: #D9D9D9;
   }
@@ -1340,7 +1340,7 @@ a.underline:hover,
 
   .avatar,
   .item-avatar .avatar {
-    box-shadow: 0px 2px 2px 0 rgba(0, 0, 0, 0.26);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.26);
     height: 30px !important;
     width: 30px !important;
     left: 5px !important;
@@ -1352,7 +1352,7 @@ a.underline:hover,
   }
 
   .card-footer {
-    padding-top: 0px;
+    padding-top: 0;
     padding-left: 42px !important;
   }
 }
@@ -1557,7 +1557,7 @@ a.underline:hover,
   .list.item-border-large {
     .item {
       border-bottom: solid 1px #ccc !important;
-      margin: 0px 0px 1px;
+      margin: 0 0px 1px;
     }
 
     .item-divider {
@@ -1573,11 +1573,11 @@ a.underline:hover,
 
 .list .item.item-small-height {
   padding-top: 2px;
-  padding-bottom: 0px;
+  padding-bottom: 0;
   min-height: 24px;
 
   .badge {
-    padding-top: 0px !important;
+    padding-top: 0 !important;
     top: inherit;
   }
 
@@ -1606,12 +1606,12 @@ a.underline:hover,
 }
 
 .form-error {
-  padding: 0px 16px;
+  padding: 0 16px;
   font-size: 12px;
   color: red;
   vertical-align: middle;
   text-align: end;
-  top: 0px;
+  top: 0;
   position: relative;
 }
 
@@ -1747,7 +1747,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 **********/
 
 .modal.modal-full-height {
-  bottom: 0px;
+  bottom: 0;
 }
 
 // Force modal as fullscreen, on xs screen
@@ -1755,7 +1755,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   .modal {
     top: 0 !important;
     left: 0 !important;
-    bottom: 0px;
+    bottom: 0;
     min-height: 100% !important;
     width: 100% !important;
   }
@@ -1763,7 +1763,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 
 @media screen and (max-width: $screen-sm-max) {
   .modal {
-    bottom: 0px;
+    bottom: 0;
 
     // Hide swiper on tablet
     .swiper-pagination {
@@ -1789,7 +1789,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 
 
 .modal.about .bar.bar-header .button + .title {
-  left: 0px !important; /* avoid title offset on large screens, if button are 'visible-xs')'*/
+  left: 0 !important; /* avoid title offset on large screens, if button are 'visible-xs')'*/
 }
 
 /**********
@@ -1934,8 +1934,8 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     .item.item-divider {
       min-height: 2px;
       height: 2px;
-      padding-top: 0px;
-      padding-bottom: 0px;
+      padding-top: 0;
+      padding-bottom: 0;
     }
 
     .item,
@@ -1953,7 +1953,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     }
 
     .item.item-complex {
-      padding-top: 0px;
+      padding-top: 0;
     }
 
     .item.item-button-right .button {
@@ -1965,14 +1965,14 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 
     // Hide footer on small screen
     ion-content.has-footer {
-      bottom: 0px !important; /*ignore footer*/
+      bottom: 0 !important; /*ignore footer*/
     }
 
     .bar-header {
       background-color: $positive-900-bg;
       color: #fff;
       height: 150px;
-      padding-right: 0px !important;
+      padding-right: 0 !important;
 
       .platform-ios.platform-cordova & {
         height: calc(constant(safe-area-inset-top) + 150px);
@@ -1984,7 +1984,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
         box-shadow: none; // not need (define in bar-header)
 
         .content {
-          bottom: 0px;
+          bottom: 0;
         }
       }
     }
@@ -2169,7 +2169,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     text-align: center;
     position: relative;
     top: 8px;
-    height: 0px;
+    height: 0;
   }
 
   .icon.icon-bottom-right {
@@ -2195,7 +2195,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     width: 100%;
     bottom: 8px;
     text-align: center;
-    height: 0px;
+    height: 0;
   }
 }
 
@@ -2223,7 +2223,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     .col .button {
       max-width: inherit;
       width: 100%;
-      padding: 5px 0px;
+      padding: 5px 0;
       margin: 0;
     }
   }
@@ -2242,7 +2242,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     height: 35px;
     width: 35px;
     position: relative;
-    left: 0px;
+    left: 0;
     top: 4px;
     border: solid 1px #D9D9D9;
   }
@@ -2255,7 +2255,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     height: 31px;
     width: 31px;
     position: relative;
-    left: 0px;
+    left: 0;
     top: 6px;
   }
 }
@@ -2321,7 +2321,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 
 .row-header {
   border-bottom: solid 1px #ccc !important;
-  margin: 0px;
+  margin: 0;
   min-height: 28px !important;
 }
 

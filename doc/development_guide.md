@@ -6,7 +6,7 @@ To build Cesium, you will have to:
  
   - Installing build tools:
 ```
- sudo apt-get install build-essential
+ sudo apt-get install git wget curl unzip build-essential software-properties-common ruby ruby-dev ruby-ffi gcc make
 ```
 
   - Installing [nvm](https://github.com/nvm-sh/nvm)
@@ -18,14 +18,14 @@ If you are using fish shell, there is a [dedicated plugin](https://github.com/jo
 
 > Then reload your terminal, for instance by executing the commande `bash`
 
-  - Configure NodeJS to use a version 6: (**WARNING**: upper version will NOT work !) 
+  - Configure NodeJS to use a version 10: (**WARNING**: upper version will NOT work !) 
 ```
-  nvm install 6
+  nvm install 10
 ```
       
-  - Installing node.js build tools:
+  - Installing node.js build tools, as global dependencies:
 ```
-   npm install -g yarn gulp cordova@9.0.0 ionic@1.7.16
+   npm install -g yarn gulp cordova ionic
 ```
    
 ## Get the source code and dependencies
@@ -40,7 +40,6 @@ If you are using fish shell, there is a [dedicated plugin](https://github.com/jo
   - Installing Cordova plugins (need for platforms specific builds)   
 ```
   ionic state restore
-  ionic browser add crosswalk@12.41.296.5
 ```
 
 - This should create a new directory `platforms/android`
@@ -66,10 +65,10 @@ If you are using fish shell, there is a [dedicated plugin](https://github.com/jo
  
   - Compiling and running Cesium:
 ```
-  ionic serve
+  npm start
 ```
  
-> or alternative: `ionic serve` 
+> or alternative: `yarn run start` or `ionic serve` 
 
   - Open a web browser at address: [localhost:8100](http://localhost:8100). The application should be running.
   

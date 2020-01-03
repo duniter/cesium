@@ -1,0 +1,137 @@
+<ion-view>
+  <ion-nav-title>
+    <span translate>PEER.VIEW.TITLE</span>
+  </ion-nav-title>
+
+  <ion-content class="has-header" scroll="true">
+
+    <div class="row no-padding">
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+      </div>
+
+      <div class="col list">
+
+        <ion-item>
+          <h1>
+            <span translate>PEER.VIEW.TITLE</span>
+            <span class="gray">
+              {{node.host}}
+            </span>
+          </h1>
+          <h2 class="gray">
+            <i class="gray icon ion-android-globe"></i>
+            {{node.ep.dns || node.server}}
+            <span class="gray" ng-if="!loading && node.useSsl">
+              <i class="gray ion-locked"></i> <small>SSL</small>
+            </span>
+            <span class="gray" ng-if="!loading && node.useTor">
+              <i class="gray ion-bma-tor-api"></i>
+            </span>
+          </h2>
+
+          <!-- node owner -->
+          <h3>
+            <span class="dark">
+              <i class="icon ion-android-desktop"></i>
+              {{'PEER.VIEW.OWNER'|translate}}
+            </span>
+            <a class="positive"
+                  ng-if="node.name"
+                  ui-sref="app.wot_identity({pubkey: node.pubkey, uid: node.name})">
+              <i class="ion-person"></i> {{node.name}}
+            </a>
+            <span ng-if="!loading && !node.name">
+              <a class="gray"
+                 ui-sref="app.wot_identity({pubkey: node.pubkey})">
+                <i class="ion-key"></i>
+                {{node.pubkey|formatPubkey}}
+              </a>
+            </span>
+          </h3>
+
+          <h3>
+            <a ng-click="openRawPeering($event)">
+              <i class="icon ion-share"></i> {{'PEER.VIEW.SHOW_RAW_PEERING'|translate}}
+            </a>
+
+            <span class="gray" ng-if="!isReachable"> | </span>
+            <a ng-if="!isReachable"
+               ng-click="openRawCurrentBlock($event)">
+              <i class="icon ion-share"></i> <span translate>PEER.VIEW.SHOW_RAW_CURRENT_BLOCK</span>
+            </a>
+          </h3>
+        </ion-item>
+
+
+        <div class="item item-divider" translate>
+          PEER.VIEW.GENERAL_DIVIDER
+        </div>
+
+        <ion-item class="item-icon-left item-text-wrap ink"
+                  copy-on-click="{{node.pubkey}}">
+          <i class="icon ion-key"></i>
+          <span translate>COMMON.PUBKEY</span>
+          <h4 class="dark text-left">{{node.pubkey}}</h4>
+        </ion-item>
+
+        <ion-item class="item item-icon-left item-text-wrap"
+                  ng-if="isReachable">
+          <i class="icon ion-document"></i>
+          <span translate>ES_PEER.DOCUMENT_COUNT</span>
+          <div class="badge badge-stable" ng-if="!loading">
+            {{node.docCount|formatInteger}}
+          </div>
+        </ion-item>
+
+        <!--<a class="item item-icon-left item-icon-right item-text-wrap ink"-->
+           <!--ng-if="isReachable"-->
+           <!--ui-sref="app.document_search(options.document)">-->
+          <!--<i class="icon ion-document" style="font-size: 25px;"></i>-->
+          <!--<i class="icon-secondary ion-clock" style="font-size: 18px; left: 33px; top: -12px;"></i>-->
+          <!--<span translate>DOCUMENT.LOOKUP.LAST_DOCUMENTS</span>-->
+          <!--<i class="gray icon ion-ios-arrow-right"></i>-->
+        <!--</a>-->
+
+        <ion-item class="item item-icon-left item-text-wrap ink"
+                  ng-if="isReachable">
+          <i class="icon ion-cube"></i>
+          <span translate>BLOCKCHAIN.VIEW.TITLE_CURRENT</span>
+          <div class="badge badge-calm" ng-if="!loading">
+            {{current.number|formatInteger}}
+          </div>
+        </ion-item>
+
+        <!-- Allow extension here -->
+        <cs-extension-point name="general"></cs-extension-point>
+
+        <div class="item item-divider" ng-hide="loading || !isReachable" translate>
+          PEER.VIEW.KNOWN_PEERS
+        </div>
+
+        <ion-item class="item item-text-wrap no-border done in gray no-padding-top no-padding-bottom inline text-italic"
+                  ng-show="!loading && !isReachable">
+          <small><i class="icon ion-alert-circled"></i> {{'NETWORK.INFO.ONLY_SSL_PEERS'|translate}}</small>
+        </ion-item>
+
+        <div class="item center" ng-if="loading">
+            <ion-spinner class="icon" icon="android"></ion-spinner>
+        </div>
+
+        <div class="list no-padding {{::motion.ionListClass}}" ng-if="isReachable">
+
+          <div ng-repeat="peer in :rebind:peers track by peer.id"
+               class="item item-peer item-icon-left ink"
+               ng-class="::ionItemClass"
+               ng-click="selectPeer(peer)"
+               ng-include="'plugins/es/templates/network/item_content_peer.html'">
+          </div>
+
+        </div>
+      </div>
+
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+      </div>
+    </div>
+
+  </ion-content>
+</ion-view>
