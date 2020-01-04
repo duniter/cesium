@@ -19,6 +19,7 @@
 
 /dist/web
 /dist/android
+/dist/*.sha256
 
 /hooks/uglify-config.json
 /hooks/after_prepare/uglify.js
