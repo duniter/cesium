@@ -32,7 +32,7 @@ angular.module('cesium.es.network.controllers', ['cesium.es.services'])
       cache: false, // fix #766
       views: {
         'menuContent': {
-          templateUrl: "plugins/es/templates/network/view_network.html",
+          templateUrl: "plugins/es/templates/network/view_es_network.html",
           controller: 'ESNetworkLookupCtrl'
         }
       },

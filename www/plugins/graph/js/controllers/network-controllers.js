@@ -10,9 +10,9 @@ angular.module('cesium.graph.network.controllers', ['chart.js', 'cesium.graph.se
       PluginServiceProvider
         .extendState('app.network', {
           points: {
-            'buttons': {
+            'blockchain-buttons': {
               templateUrl: "plugins/graph/templates/network/view_network_extend.html",
-              controller: 'GpNetworkViewExtendCtrl'
+              controller: 'ESExtensionCtrl'
             }
           }
         })
@@ -28,9 +28,9 @@ angular.module('cesium.graph.network.controllers', ['chart.js', 'cesium.graph.se
 
         .extendState('app.es_network', {
           points: {
-            'buttons': {
+            'documents-buttons': {
               templateUrl: "plugins/graph/templates/network/view_es_network_extend.html",
-              controller: 'GpNetworkViewExtendCtrl'
+              controller: 'ESExtensionCtrl'
             }
           }
         })
@@ -49,23 +49,9 @@ angular.module('cesium.graph.network.controllers', ['chart.js', 'cesium.graph.se
     }
   })
 
-  .controller('GpNetworkViewExtendCtrl', GpNetworkViewExtendController)
-
   .controller('GpPeerViewExtendCtrl', GpPeerViewExtendController)
 
 ;
-
-
-function GpNetworkViewExtendController($scope, PluginService, esSettings) {
-  'ngInject';
-
-  $scope.extensionPoint = PluginService.extensions.points.current.get();
-  $scope.enable = esSettings.isEnable();
-
-  esSettings.api.state.on.changed($scope, function(enable) {
-    $scope.enable = enable;
-  });
-}
 
 function GpPeerViewExtendController($scope, $timeout, PluginService, esSettings, csCurrency, gpData) {
   'ngInject';

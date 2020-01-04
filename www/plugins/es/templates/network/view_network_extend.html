@@ -1,6 +1,6 @@
 <!-- Network: buttons section -->
 <ng-if ng-if=":state:enable && extensionPoint === 'network-buttons'">
-  <a class="button button-text button-small hidden-xs hidden-sm ink"
+  <a class="button button-text button-small hidden-xs hidden-sm ink"  ng-if="::expertMode"
      title="{{'NETWORK.VIEW.ENDPOINTS.ES_USER_API'|translate}}"
      ui-sref="app.es_network" >
     <i class="icon ion-image"></i>

@@ -39,6 +39,7 @@
 
               <a class="button button-text button-small hidden-xs hidden-sm ink"
                  ng-class="{'button-text-positive': search.type=='member'}"
+                 title="{{'PEER.MEMBER_PEERS'|translate}}"
                  ng-click="toggleSearchType('member')">
                 <i class="icon ion-person-stalker"></i>
                 {{'PEER.MEMBERS'|translate}}
@@ -46,6 +47,7 @@
               &nbsp;
               <a class="button button-text button-small hidden-xs hidden-sm ink"
                  ng-class="{'button-text-positive': search.type=='mirror'}"
+                 title="{{'PEER.MIRROR_PEERS'|translate}}"
                  ng-click="toggleSearchType('mirror')" >
                 <i class="icon ion-radio-waves"></i>
                 {{'PEER.MIRRORS'|translate}}
@@ -53,6 +55,7 @@
 
               <a class="button button-text button-small hidden-xs hidden-sm ink"
                  ng-class="{'button-text-positive': search.type=='offline', 'button-text-stable': search.type!='offline'}"
+                 title="{{'PEER.OFFLINE_PEERS'|translate}}"
                  ng-click="toggleSearchType('offline')" >
                 <i class="icon ion-close-circled light-gray"></i>
                 <span>{{'PEER.OFFLINE'|translate}}</span>
