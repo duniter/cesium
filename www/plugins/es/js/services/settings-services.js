@@ -20,7 +20,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
       excludes: ['timeout', 'cacheTimeMs', 'version', 'build', 'minVersion', 'fallbackLanguage'],
       plugins: {
         es: {
-          excludes: ['enable', 'host', 'port', 'fallbackNodes', 'enableGoogleApi', 'googleApiKey'],
+          excludes: ['enable', 'host', 'port', 'fallbackNodes', 'enableGoogleApi', 'googleApiKey', 'document'],
           notifications: {
           }
         }
@@ -56,6 +56,10 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
             googleApiKey: undefined,
             wot: {
               enableMixedSearch: true
+            },
+            document: {
+              index: 'user,page,group',
+              type: 'profile,record,comment'
             },
             registry: {
               defaultSearch: {

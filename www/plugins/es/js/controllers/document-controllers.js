@@ -331,8 +331,11 @@ function ESDocumentLookupController($scope, $ionicPopover, $location, $timeout,
 }
 
 
-function ESLastDocumentsController($scope, $controller, $timeout, $state) {
+function ESLastDocumentsController($scope, $controller, $timeout, $state, $filter) {
   'ngInject';
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('ESDocumentLookupCtrl', {$scope: $scope}));
 
   $scope.search = {
     loading: true,
@@ -345,11 +348,9 @@ function ESLastDocumentsController($scope, $controller, $timeout, $state) {
   };
   $scope.expertMode = false;
   $scope.defaultSizeLimit = 20;
-  $scope._source = ["issuer", "hash", "time", "creationTime", "title", "avatar._content_type", "city", "message", "record"];
+  $scope._source = ["issuer", "hash", "time", "creationTime", "title", "avatar._content_type", "city", "message", "record", "type"];
   $scope.showHeaders = false;
 
-  // Initialize the super class and extend it.
-  angular.extend(this, $controller('ESDocumentLookupCtrl', {$scope: $scope}));
   $scope.$on('$ionicParentView.enter', $scope.enter);
 
   $scope.selectDocument = function(event, doc) {
@@ -361,13 +362,21 @@ function ESLastDocumentsController($scope, $controller, $timeout, $state) {
     }
     else if (doc.index === "page" && doc.type === "record") {
       $state.go('app.view_page', {title: doc.title, id: doc.id});
-      return
+    }
+    else if (doc.index === "page" && doc.type === "comment") {
+      var anchor = $filter('formatHash')(doc.id);
+      $state.go('app.view_page_anchor', {title: doc.title, id: doc.record, anchor: anchor});
     }
     else if (doc.index === "group" && doc.type === "record") {
       $state.go('app.view_group', {title: doc.title, id: doc.id});
-      return
     }
-    console.warn("Click on this kind of document not implement yet!", doc)
+    else if (doc.index === "group" && doc.type === "comment") {
+      var anchor = $filter('formatHash')(doc.id);
+      $state.go('app.view_group_anchor', {title: doc.title, id: doc.record, anchor: anchor});
+    }
+    else {
+      console.warn("Click on this kind of document not implement yet!", doc)
+    }
   };
 
   // Override parent function computeOptions

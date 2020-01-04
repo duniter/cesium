@@ -42,11 +42,11 @@ angular.module('cesium.es.network.controllers', ['cesium.es.services'])
     })
 
     .state('app.view_es_peer', {
-      url: "/data/network/peer/:server?ssl&tor",
+      url: "/network/data/peer/:server?ssl&tor",
       cache: false,
       views: {
         'menuContent': {
-          templateUrl: "plugins/es/templates/network/view_peer.html",
+          templateUrl: "plugins/es/templates/network/view_es_peer.html",
           controller: 'ESPeerViewCtrl'
         }
       },
@@ -166,6 +166,7 @@ function ESNetworkLookupController($scope,  $state, $location, $ionicPopover, $w
   $scope.load = function() {
 
     if ($scope.search.loading){
+      // Start network scan
       esNetwork.start($scope.node, $scope.computeOptions());
 
       // Catch event on new peers
@@ -197,11 +198,11 @@ function ESNetworkLookupController($scope,  $state, $location, $ionicPopover, $w
     $scope.search.memberPeersCount = data.memberPeersCount;
     // Always tru if network not started (e.g. after leave+renter the view)
     $scope.search.loading = !$scope.networkStarted || esNetwork.isBusy();
+    if (!$scope.loading) {
+      $scope.$broadcast('$$rebind::rebind'); // force data binding
+    }
     if ($scope.motion && $scope.search.results && $scope.search.results.length > 0) {
       $scope.motion.show({selector: '.item-peer'});
-    }
-    if (!$scope.loading) {
-      $scope.$broadcast('$$rebind::' + 'rebind'); // force data binding
     }
   };
 
@@ -227,7 +228,7 @@ function ESNetworkLookupController($scope,  $state, $location, $ionicPopover, $w
 
     // Update location href
     if ($scope.enableLocationHref) {
-      $location.search({online: $scope.search.online}).replace();
+      $location.search($scope.search.online ? {} : {online: false}).replace();
     }
   };
 
@@ -281,30 +282,27 @@ function ESNetworkLookupController($scope,  $state, $location, $ionicPopover, $w
   /* -- popover -- */
 
   $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('templates/network/lookup_popover_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'plugins/es/templates/network/lookup_popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.actionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
-        });
-        $scope.actionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.actionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
 
   $scope.showEndpointsPopover = function($event, peer, endpointFilter) {
+    $event.preventDefault();
+    $event.stopPropagation();
+
     var endpoints = peer.getEndpoints(endpointFilter);
     endpoints = (endpoints||[]).reduce(function(res, ep) {
       var bma = esHttp.node.parseEndPoint(ep);
@@ -322,7 +320,6 @@ function ESNetworkLookupController($scope,  $state, $location, $ionicPopover, $w
         items: endpoints
       }
     });
-    $event.stopPropagation();
   };
 
   $scope.showWs2pPopover = function($event, peer) {
@@ -348,8 +345,8 @@ function ESNetworkLookupController($scope,  $state, $location, $ionicPopover, $w
                 label: 'NETWORK.VIEW.POW_PREFIX',
                 value: peer.powPrefix
               }]
-          }
-        });
+            }
+          });
       });
   };
 
@@ -482,7 +479,7 @@ function ESPeerInfoPopoverController($scope, $q, csSettings, csCurrency, csHttp,
           // continue
         }),
 
-      // Get duniter latest version
+      // Get latest version
       esHttp.version.latest()
         .then(function(latestRelease){
           $scope.formData.latestRelease = latestRelease;
@@ -494,7 +491,7 @@ function ESPeerInfoPopoverController($scope, $q, csSettings, csCurrency, csHttp,
     ])
       .then(function() {
         // Compare, to check if newer
-        if ($scope.formData.latestRelease && $scope.formData.software == 'duniter') {
+        if ($scope.formData.latestRelease && $scope.formData.software === 'cesium-plus-pod') {
           var compare = csHttp.version.compare($scope.formData.version, $scope.formData.latestRelease.version);
           $scope.formData.isPreRelease = compare > 0;
           $scope.formData.hasNewRelease = compare < 0;
@@ -504,7 +501,7 @@ function ESPeerInfoPopoverController($scope, $q, csSettings, csCurrency, csHttp,
           $scope.formData.hasNewRelease = false;
         }
         $scope.loading = false;
-        $scope.$broadcast('$$rebind::' + 'rebind'); // force data binding
+        $scope.$broadcast('$$rebind::rebind'); // force data binding
       });
   };
 
@@ -557,6 +554,9 @@ function ESPeerViewController($scope, $q, $window, $state, UIUtils, csWot, esHtt
       })
       .then(function(){
         $scope.loading = false;
+      })
+      .catch(function() {
+        $scope.loading = false;
       });
   });
 
@@ -568,7 +568,7 @@ function ESPeerViewController($scope, $q, $window, $state, UIUtils, csWot, esHtt
       useTor: useTor
     };
     var serverParts = server.split(':');
-    if (serverParts.length == 2) {
+    if (serverParts.length === 2) {
       node.host = serverParts[0];
       node.port = serverParts[1];
     }
@@ -589,8 +589,8 @@ function ESPeerViewController($scope, $q, $window, $state, UIUtils, csWot, esHtt
           // find the current peer
           var peers = (res && res.peers || []).reduce(function(res, json) {
             var peer = new EsPeer(json);
-            if (!peer.hasEndpoint('GCHANGE_API')) return res;
-            var ep = esHttp.node.parseEndPoint(peer.getEndpoints('GCHANGE_API')[0]);
+            if (!peer.hasEsEndpoint()) return res;
+            var ep = esHttp.node.parseEndPoint(peer.getEsEndpoints()[0]);
             if((ep.dns == node.host || ep.ipv4 == node.host || ep.ipv6 == node.host) && (
               ep.port == node.port)) {
               peer.ep = ep;
@@ -632,10 +632,10 @@ function ESPeerViewController($scope, $q, $window, $state, UIUtils, csWot, esHtt
         .then(function(json) {
           var peers = json.peers.reduce(function (res, p) {
             var peer = new EsPeer(p);
-            if (!peer.hasEndpoint('GCHANGE_API')) return res;
+            if (!peer.hasEsEndpoint()) return res;
             peer.online = p.status === 'UP';
             peer.blockNumber = peer.block.replace(/-.+$/, '');
-            peer.ep = esHttp.node.parseEndPoint(peer.getEndpoints('GCHANGE_API')[0]);
+            peer.ep = esHttp.node.parseEndPoint(peer.getEsEndpoints()[0]);
             peer.dns = peer.getDns();
             peer.id = peer.keyID();
             peer.server = peer.getServer();

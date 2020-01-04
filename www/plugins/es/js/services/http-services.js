@@ -224,17 +224,19 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     that.wsChanges = function(source) {
       var wsChanges = that.ws('/ws/_changes')();
       if (!source) return wsChanges;
-      // var oldOpen = wsChanges.open;
-      // wsChanges.open = function() {
-      //   return oldOpen.call(wsChanges).then(function(sock) {
-      //     if(sock) {
-      //       sock.send(source);
-      //     }
-      //     else {
-      //       console.warn('Trying to access ws changes, but no sock anymore... already open ?');
-      //     }
-      //   });
-      // };
+
+      // If a source is given, send it just after connection open
+      var _inheritedOpen = wsChanges.open;
+      wsChanges.open = function() {
+        return _inheritedOpen.call(wsChanges).then(function(sock) {
+          if(sock) {
+            sock.send(source);
+          }
+          else {
+            console.warn('Trying to access ws changes, but no sock anymore... already open ?');
+          }
+        });
+      };
       return wsChanges;
     };
 

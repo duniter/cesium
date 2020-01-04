@@ -474,7 +474,7 @@
       "READ": "Lu",
       "BTN_REMOVE": "Supprimer ce document",
       "BTN_COMPACT": "Compacter",
-      "HAS_REGISTERED": "a créé ou modifié son profil",
+      "HAS_CREATE_OR_UPDATE_PROFILE": "a créé ou modifié son profil",
       "POPOVER_ACTIONS": {
         "TITLE": "Actions",
         "REMOVE_ALL": "Supprimer ces documents..."

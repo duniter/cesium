@@ -1,0 +1,40 @@
+<ion-item id="doc-{{::doc.id}}"
+          class="item item-document item-icon-left ink {{::ionItemClass}} no-padding-top no-padding-bottom"
+          ng-class="{'positive-100-bg': doc.updated}"
+          ng-click="selectDocument($event, doc)">
+
+  <i ng-if=":rebind:doc.thumbnail" class="avatar" style="background-image: url({{:rebind:doc.thumbnail.src}})"></i>
+  <i ng-if=":rebind:!doc.thumbnail" class="avatar icon dark cion-registry-{{doc.docType}}" ></i>
+
+  <div class="row no-padding">
+    <div class="col">
+      <h3 ng-if="doc.title">
+        {{:rebind:doc.title}}
+      </h3>
+      <h4>
+        <span class="dark" ng-if=":rebind:doc.picturesCount > 1">
+          <i class="ion-camera"></i> {{:rebind:doc.picturesCount}}
+        </span>
+        <span class="dark" ng-if=":rebind:doc.city">
+          <i class="ion-location"></i> {{:rebind:doc.city}}
+        </span>
+        <span class="gray" ng-if=":rebind:doc.name">
+          <i class="ion-person"></i> {{:rebind:doc.name}}
+        </span>
+      </h4>
+    </div>
+
+    <div class="col col-33">
+      <small class="gray pull-right"><i class="ion-clock"></i> {{:rebind:doc.time|formatDate}}
+      </small>
+      <a
+        ng-if=":rebind:login && doc.pubkey==walletData.pubkey"
+        ng-click="remove($event, $index)"
+        class="gray pull-right hidden-xs hidden-sm"
+        title="{{'DOCUMENT.LOOKUP.BTN_REMOVE'|translate}}">
+        <i class="ion-trash-a"></i>
+      </a>
+    </div>
+
+  </div>
+</ion-item>

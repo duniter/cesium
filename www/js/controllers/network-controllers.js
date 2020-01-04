@@ -257,7 +257,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
       return;
     }
 
-    // Skipp offline or not a BMA peer
+    // Skip offline or not a BMA peer
     if (!peer.online || !peer.hasBma()) return;
 
     var stateParams = {server: peer.getServer()};
@@ -484,7 +484,7 @@ function PeerInfoPopoverController($scope, $q, csSettings, csCurrency, csHttp, B
           // continue
         }),
 
-      // Get duniter latest version
+      // Get latest version
       BMA.version.latest()
         .then(function(latestRelease){
           $scope.formData.latestRelease = latestRelease;
@@ -567,7 +567,7 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
       useTor: useTor
     };
     var serverParts = server.split(':');
-    if (serverParts.length == 2) {
+    if (serverParts.length === 2) {
       node.host = serverParts[0];
       node.port = serverParts[1];
     }

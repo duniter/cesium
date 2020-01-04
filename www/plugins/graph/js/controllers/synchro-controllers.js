@@ -31,6 +31,8 @@ function GpSynchroController($scope, $controller, $q, $translate, gpColor, gpDat
   // Initialize the super class and extend it.
   angular.extend(this, $controller('GpCurrencyAbstractCtrl', {$scope: $scope}));
 
+  $scope.formData.rangeDuration = 'month';
+
   $scope.hiddenDatasets = [];
 
   $scope.charts = [

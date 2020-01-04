@@ -1,0 +1,20 @@
+<!-- Buttons section -->
+<ng-if ng-if="enable && extensionPoint === 'general'">
+
+  <a class="item item-icon-left item-icon-right item-text-wrap ink"
+     ng-if="isReachable"
+     ui-sref="app.doc_stats_lg">
+    <i class="icon ion-stats-bars"></i>
+    <span translate>GRAPH.DOC_STATS.TITLE</span>
+    <i class="gray icon ion-ios-arrow-right"></i>
+  </a>
+
+  <a class="item item-icon-left item-icon-right item-text-wrap ink"
+     ng-if="isReachable"
+     ui-sref="app.doc_synchro_lg">
+    <i class="icon ion-stats-bars"></i>
+    <span translate>GRAPH.SYNCHRO.TITLE</span>
+    <i class="gray icon ion-ios-arrow-right"></i>
+  </a>
+</ng-if>
+

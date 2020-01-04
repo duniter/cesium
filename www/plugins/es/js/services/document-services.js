@@ -32,7 +32,7 @@ angular.module('cesium.es.document.services', ['ngResource', 'cesium.platform', 
       if (!options || !options.index || !options.type) throw new Error('Missing mandatory options [index, type]');
 
       var side = 'desc';
-      if (options.type == 'peer') {
+      if (options.type === 'peer') {
         if (!options.sort || options.sort.time) {
           side = options.sort && options.sort.time || side;
           options.sort = {
@@ -48,7 +48,7 @@ angular.module('cesium.es.document.services', ['ngResource', 'cesium.platform', 
           return doc.time;
         };
       }
-      else if (options.type == 'movement') {
+      else if (options.type === 'movement') {
         if (!options.sort || options.sort.time) {
           side = options.sort && options.sort.time || side;
           options.sort = {'medianTime': side};
@@ -68,12 +68,13 @@ angular.module('cesium.es.document.services', ['ngResource', 'cesium.platform', 
 
       var hits = (res && res.hits && res.hits.hits || []).reduce(function(res, hit) {
         var doc = hit._source || {};
+        doc.docType = doc.type; // Save source.type, before replacement
         doc.index = hit._index;
         doc.type = hit._type;
         doc.id = hit._id;
         doc.pubkey = doc.issuer || options.issuerField && doc[options.issuerField] || doc.pubkey; // need to call csWot.extendAll()
         doc.time = options.getTimeFunction && options.getTimeFunction(doc) || doc.time;
-        doc.thumbnail = esHttp.image.fromHit(hit, 'thumbnail');
+        doc.thumbnail = esHttp.image.fromHit(hit, 'avatar') || esHttp.image.fromHit(hit, 'thumbnail');
         return res.concat(doc);
       }, []);
 
@@ -143,7 +144,7 @@ angular.module('cesium.es.document.services', ['ngResource', 'cesium.platform', 
       var request = {
         text: queryString,
         index: options.index || 'user',
-        type: options.type || 'event',
+        type: options.type || 'profiles',
         from: options.from || 0,
         size: options.size || constants.DEFAULT_LOAD_SIZE,
         sort: options.sort || 'time:desc',

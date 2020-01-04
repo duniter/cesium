@@ -68,7 +68,7 @@
       }
     },
     "DOC_STATS": {
-      "TITLE": "Statistiques de stockage (Cesium+)",
+      "TITLE": "Statistiques de stockage",
       "USER": {
         "TITLE": "Nombre de documents liés à un compte",
         "USER_PROFILE": "Profils utilisateur",
