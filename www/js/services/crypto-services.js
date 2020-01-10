@@ -104,7 +104,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
     CryptoAbstractService.prototype.async_load_base64 = function(on_ready) {
       var that = this;
       if (Base64 !== null) {on_ready(Base64);}
-      else {$timetout(function(){that.async_load_base64(on_ready);}, 100);}
+      else {$timeout(function(){that.async_load_base64(on_ready);}, 100);}
     };
 
     CryptoAbstractService.prototype.async_load_sha256 = function(on_ready) {
@@ -220,9 +220,9 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         return $q(function (resolve, reject) {
           try {
             // TODO: waiting for a new version of js-nacl, with missing functions expose
-            //resolve(that.nacl.crypto_box_keypair_from_sign_sk(signPk);
+            //resolve(that.nacl.crypto_box_keypair_from_sign_sk(signKeyPair.signSk);
 
-            resolve(crypto_box_keypair_from_sign_sk(signPk));
+            resolve(crypto_box_keypair_from_sign_sk(signKeyPair.signSk));
           }
           catch(err) {
             reject(err);

@@ -188,6 +188,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
             if (!uid) { // user cancel
               delete $scope.formData.uid;
               UIUtils.loading.hide();
+              reject('CANCELLED');
               return;
             }
             resolve(uid);
@@ -202,6 +203,8 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
     return $scope.showUidPopup()
     .then(function(uid) {
+      if (!uid) return;
+
       UIUtils.loading.show();
 
       return wallet.self(uid)

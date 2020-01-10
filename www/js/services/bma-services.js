@@ -64,7 +64,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         PROTOCOL_VERSION: 10,
         ROOT_BLOCK_HASH: 'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855',
         LIMIT_REQUEST_COUNT: 5, // simultaneous async request to a Duniter node
-        LIMIT_REQUEST_DELAY: 1000, // time (in second) to wait between to call of a rest request
+        LIMIT_REQUEST_DELAY: 1000, // time (in ms) to wait between to call of a rest request
         regexp: regexp,
         api: api
       },
@@ -175,7 +175,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         return request(params)
           .catch(function(err){
             // If node return too many requests error
-            if (err && err.ucode == exports.errorCodes.HTTP_LIMITATION) {
+            if (err && err.ucode === exports.errorCodes.HTTP_LIMITATION) {
               // If max number of retry not reach
               if (execCount <= exports.constants.LIMIT_REQUEST_COUNT) {
                 if (execCount === 1) {
