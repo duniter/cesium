@@ -393,12 +393,12 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     return Modals.showWotLookup({enableWallets: true})
       .then(function(result){
         if (result) {
-          if (formDataField == 'destPub') {
+          if (formDataField === 'destPub') {
             $scope.destUid = result.uid;
             $scope.destPub = result.uid ? '' : result.pubkey;
             $scope.formData.destPub = result.pubkey;
           }
-          else if (formDataField == 'restPub') {
+          else if (formDataField === 'restPub') {
             $scope.restUid = result.uid;
             $scope.restPub = result.uid ? '' : result.pubkey;
             $scope.formData.restPub = result.pubkey;

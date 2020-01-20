@@ -126,6 +126,10 @@
   min-height: inherit !important;
 }
 
+.card.card-comment .card-footer button {
+  top: 0;
+}
+
 /**********
    Record view
 **********/
