@@ -27,7 +27,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
             event: esHttp.post('/user/event/_search?pretty')
           },
           docstat: {
-            search: esHttp.post('/docstat/record/_search')
+            search: esHttp.post('/document/stats/_search')
           },
           synchro: {
             search: esHttp.post('/:currency/synchro/_search')
@@ -731,7 +731,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
                     aggs: {
                       type: {
                         terms: {
-                          field: "indexType",
+                          field: "type",
                           size: 0
                         },
                         aggs: {
@@ -753,6 +753,9 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           // prepare next loop
           ranges = [];
           var indices = {};
+          var params = {
+            request_cache: angular.isDefined(options.cache) ? options.cache : true // enable by default
+          };
 
           if (jobs.length === 10) {
             console.error('Too many parallel jobs!');
@@ -760,7 +763,8 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           }
           else {
             jobs.push(
-              exports.raw.docstat.search(request).then(processSearchResult)
+              exports.raw.docstat.search(request, params)
+                  .then(processSearchResult)
             );
           }
         }
