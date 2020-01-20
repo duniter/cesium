@@ -1,72 +1,72 @@
-
 angular.module('cesium.es.network.controllers', ['cesium.es.services'])
 
-.config(function(PluginServiceProvider, csConfig) {
-  'ngInject';
+  .config(function(PluginServiceProvider, csConfig) {
+    'ngInject';
 
-  var enable = csConfig.plugins && csConfig.plugins.es;
-  if (enable) {
-    PluginServiceProvider.extendState('app.network', {
-      points: {
-        'network-buttons': {
-          templateUrl: "plugins/es/templates/network/view_network_extend.html",
-          controller: 'ESExtensionCtrl'
+    var enable = csConfig.plugins && csConfig.plugins.es;
+    if (enable) {
+      PluginServiceProvider.extendState('app.network', {
+        points: {
+          'network-buttons': {
+            templateUrl: "plugins/es/templates/network/view_network_extend.html",
+            controller: 'ESExtensionCtrl'
+          },
+          'blockchain-buttons': {
+            templateUrl: "plugins/es/templates/network/view_network_extend.html",
+            controller: 'ESExtensionCtrl'
+          }
+        }
+      })
+      ;
+    }
+  })
+
+  .config(function($stateProvider) {
+    'ngInject';
+
+    $stateProvider
+
+      .state('app.es_network', {
+        url: "/network/data?online&expert",
+        cache: false, // fix #766
+        views: {
+          'menuContent': {
+            templateUrl: "plugins/es/templates/network/view_es_network.html",
+            controller: 'ESNetworkLookupCtrl'
+          }
         },
-        'blockchain-buttons': {
-          templateUrl: "plugins/es/templates/network/view_network_extend.html",
-          controller: 'ESExtensionCtrl'
+        data: {
+          silentLocationChange: true
         }
-      }
-    })
-    ;
-  }
-})
+      })
 
-.config(function($stateProvider) {
-  'ngInject';
-
-  $stateProvider
-
-    .state('app.es_network', {
-      url: "/network/data?online&expert",
-      cache: false, // fix #766
-      views: {
-        'menuContent': {
-          templateUrl: "plugins/es/templates/network/view_es_network.html",
-          controller: 'ESNetworkLookupCtrl'
+      .state('app.view_es_peer', {
+        url: "/network/data/peer/:server?ssl&tor",
+        cache: false,
+        views: {
+          'menuContent': {
+            templateUrl: "plugins/es/templates/network/view_es_peer.html",
+            controller: 'ESPeerViewCtrl'
+          }
+        },
+        data: {
+          preferHttp: true // avoid HTTPS if config has httpsMode=clever
         }
-      },
-      data: {
-        silentLocationChange: true
-      }
-    })
-
-    .state('app.view_es_peer', {
-      url: "/network/data/peer/:server?ssl&tor",
-      cache: false,
-      views: {
-        'menuContent': {
-          templateUrl: "plugins/es/templates/network/view_es_peer.html",
-          controller: 'ESPeerViewCtrl'
-        }
-      },
-      data: {
-        preferHttp: true // avoid HTTPS if config has httpsMode=clever
-      }
-    });
-})
+      });
+  })
 
   .controller('ESNetworkLookupCtrl', ESNetworkLookupController)
 
-  .controller('ESPeerViewCtrl', ESPeerViewController)
-
   .controller('ESNetworkLookupModalCtrl', ESNetworkLookupModalController)
+
+  .controller('ESPeerViewCtrl', ESPeerViewController)
 
   .controller('ESNetworkLookupPopoverCtrl', ESNetworkLookupPopoverController)
 
   .controller('ESPeerInfoPopoverCtrl', ESPeerInfoPopoverController)
 
 ;
+
 
 function ESNetworkLookupController($scope,  $state, $location, $ionicPopover, $window, $translate,
                                  esHttp, UIUtils, csConfig, csSettings, csCurrency, esNetwork, csWot) {
@@ -355,7 +355,7 @@ function ESNetworkLookupModalController($scope, $controller, parameters) {
   'ngInject';
 
   // Initialize the super class and extend it.
-  angular.extend(this, $controller('NetworkLookupCtrl', {$scope: $scope}));
+  angular.extend(this, $controller('ESNetworkLookupCtrl', {$scope: $scope}));
 
   // Read parameters
   parameters = parameters || {};

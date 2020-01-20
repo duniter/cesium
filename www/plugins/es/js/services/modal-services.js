@@ -69,8 +69,8 @@ angular.module('cesium.es.modal.services', ['cesium.modal.services', 'cesium.es.
     }
 
     function showNetworkLookup(parameters) {
-      return ModalUtils.show('plugins/es/templates/network/modal_network.html', 'NetworkLookupModalCtrl',
-        parameters, {focusFirstInput: true});
+      return ModalUtils.show('plugins/es/templates/network/modal_network.html', 'ESNetworkLookupModalCtrl',
+        parameters, {focusFirstInput: false});
     }
 
     return {

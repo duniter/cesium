@@ -17,39 +17,27 @@ angular.module('cesium.es.settings.controllers', ['cesium.es.services'])
       });
 
       $stateProvider
-      .state('app.es_settings', {
-        url: "/settings/es",
-        views: {
-          'menuContent': {
-            templateUrl: "plugins/es/templates/settings/plugin_settings.html",
-            controller: 'ESPluginSettingsCtrl'
+        .state('app.es_settings', {
+          url: "/settings/es",
+          views: {
+            'menuContent': {
+              templateUrl: "plugins/es/templates/settings/plugin_settings.html",
+              controller: 'ESPluginSettingsCtrl'
+            }
           }
-        }
-      });
+        });
     }
   })
 
- .controller('ESExtendSettingsCtrl', ESExtendSettingsController)
-
- .controller('ESPluginSettingsCtrl', ESPluginSettingsController)
-
+  .controller('ESPluginSettingsCtrl', ESPluginSettingsController)
 ;
 
-/*
- * Settings extend controller
- */
-function ESExtendSettingsController ($scope, PluginService) {
-  'ngInject';
-
-  $scope.extensionPoint = PluginService.extensions.points.current.get();
-
-}
 
 /*
  * Settings extend controller
  */
 function ESPluginSettingsController ($scope, $window, $q,  $translate, $ionicPopup,
-                                     UIUtils, Modals, csHttp, csConfig, csSettings, esHttp, esSettings) {
+                                     UIUtils, Modals, csHttp, csConfig, csSettings, esHttp, esSettings, esModals) {
   'ngInject';
 
   $scope.hasWindowNotification = !!("Notification" in window);
@@ -68,10 +56,10 @@ function ESPluginSettingsController ($scope, $window, $q,  $translate, $ionicPop
     var wasEnable = $scope.formData.enable;
     $scope.formData = csSettings.data.plugins && csSettings.data.plugins.es ?
       angular.copy(csSettings.data.plugins.es) : {
-      enable: false,
-      host: undefined,
-      port: undefined
-    };
+        enable: false,
+        host: undefined,
+        port: undefined
+      };
     if (keepEnableState && wasEnable) {
       $scope.formData.enable = wasEnable;
     }
@@ -93,46 +81,46 @@ function ESPluginSettingsController ($scope, $window, $q,  $translate, $ionicPop
   // Change ESnode
   $scope.changeEsNode= function(node) {
     node = node || {
-        host: $scope.formData.host,
-        port: $scope.formData.port && $scope.formData.port != 80 && $scope.formData.port != 443 ? $scope.formData.port : undefined,
-        useSsl: angular.isDefined($scope.formData.useSsl) ?
-          $scope.formData.useSsl :
-          ($scope.formData.port == 443)
-      };
+      host: $scope.formData.host,
+      port: $scope.formData.port && $scope.formData.port != 80 && $scope.formData.port != 443 ? $scope.formData.port : undefined,
+      useSsl: angular.isDefined($scope.formData.useSsl) ?
+        $scope.formData.useSsl :
+        ($scope.formData.port == 443)
+    };
 
     $scope.showNodePopup(node)
-    .then(function(newNode) {
-      if (newNode.host == $scope.formData.host &&
-        newNode.port == $scope.formData.port &&
-        newNode.useSsl == $scope.formData.useSsl) {
-        UIUtils.loading.hide();
-        return; // same node = nothing to do
-      }
-      UIUtils.loading.show();
-
-      var newEsNode = esHttp.instance(newNode.host, newNode.port, newNode.useSsl);
-      return newEsNode.isAlive() // ping the node
-        .then(function(alive) {
-          if (!alive) {
-            UIUtils.loading.hide();
-            return UIUtils.alert.error('ERROR.INVALID_NODE_SUMMARY')
-              .then(function(){
-                $scope.changeEsNode(newNode); // loop
-              });
-          }
-
-          $scope.formData.host = newEsNode.host;
-          $scope.formData.port = newEsNode.port;
-          $scope.formData.useSsl = newEsNode.useSsl;
-
-          return esHttp.copy(newEsNode);
-        })
-        .then(function() {
-          $scope.server = $scope.getServer(esHttp);
-          $scope.isFallbackNode = false;
+      .then(function(newNode) {
+        if (newNode.host == $scope.formData.host &&
+          newNode.port == $scope.formData.port &&
+          newNode.useSsl == $scope.formData.useSsl) {
           UIUtils.loading.hide();
-        });
-    });
+          return; // same node = nothing to do
+        }
+        UIUtils.loading.show();
+
+        var newEsNode = esHttp.instance(newNode.host, newNode.port, newNode.useSsl);
+        return newEsNode.isAlive() // ping the node
+          .then(function(alive) {
+            if (!alive) {
+              UIUtils.loading.hide();
+              return UIUtils.alert.error('ERROR.INVALID_NODE_SUMMARY')
+                .then(function(){
+                  $scope.changeEsNode(newNode); // loop
+                });
+            }
+
+            $scope.formData.host = newEsNode.host;
+            $scope.formData.port = newEsNode.port;
+            $scope.formData.useSsl = newEsNode.useSsl;
+
+            return esHttp.copy(newEsNode);
+          })
+          .then(function() {
+            $scope.server = $scope.getServer(esHttp);
+            $scope.isFallbackNode = false;
+            UIUtils.loading.hide();
+          });
+      });
   };
 
   // Show node popup
@@ -167,25 +155,28 @@ function ESPluginSettingsController ($scope, $window, $q,  $translate, $ionicPop
                     //don't allow the user to close unless he enters a node
                     e.preventDefault();
                   } else {
-                    return $scope.popupData.newNode;
+                    return {
+                      server: $scope.popupData.newNode,
+                      useSsl: $scope.popupData.useSsl
+                    };
                   }
                 }
               }
             ]
           })
-          .then(function(node) {
-            if (!node) { // user cancel
-              UIUtils.loading.hide();
-              return;
-            }
-            var parts = node.split(':');
-            var useSsl = $scope.popupData.useSsl || (parts[1] == 443);
-            resolve({
-              host: parts[0],
-              port: parts[1] || (useSsl ? 443 : 80),
-              useSsl: useSsl
+            .then(function(res) {
+              if (!res) { // user cancel
+                UIUtils.loading.hide();
+                return;
+              }
+              var parts = res.server.split(':');
+              parts[1] = parts[1] ? parts[1] : (res.useSsl ? 443 : 80);
+              resolve({
+                host: parts[0],
+                port: parts[1],
+                useSsl: res.useSsl
+              });
             });
-          });
         });
     });
   };
@@ -196,28 +187,28 @@ function ESPluginSettingsController ($scope, $window, $q,  $translate, $ionicPop
     ($window.location && $window.location.protocol === 'https:') ? true : false;
 
     $ionicPopup._popupStack[0].responseDeferred.promise.close();
-    return Modals.showNetworkLookup({
+    return esModals.showNetworkLookup({
       enableFilter: true,
       endpoint: esHttp.constants.ES_USER_API_ENDPOINT,
       ssl: forceUseSsl ? true: undefined
     })
       .then(function (peer) {
         if (!peer) return;
-          var esEps = peer.getEndpoints().reduce(function(res, ep){
-            var esEp = esHttp.node.parseEndPoint(ep);
-            return esEp ? res.concat(esEp) : res;
-          }, []);
-          if (!esEps.length) return;
-          var ep = esEps[0];
-          return {
-            host: (ep.dns ? ep.dns :
-                   (peer.hasValid4(ep) ? ep.ipv4 : ep.ipv6)),
-            port: ep.port || 80,
-            useSsl: ep.useSsl || ep.port == 443
-          };
+        var esEps = peer.getEndpoints().reduce(function(res, ep){
+          var esEp = esHttp.node.parseEndPoint(ep);
+          return esEp ? res.concat(esEp) : res;
+        }, []);
+        if (!esEps.length) return;
+        var ep = esEps[0];
+        return {
+          host: (ep.dns ? ep.dns :
+                 (peer.hasValid4(ep) ? ep.ipv4 : ep.ipv6)),
+          port: ep.port || 80,
+          useSsl: ep.useSsl || ep.port == 443
+        };
       })
       .then(function(newEsNode) {
-        $scope.changeEsNode(newEsNode);
+        $scope.changeEsNode(newEsNode); // get back to node popup
       });
   };
 
