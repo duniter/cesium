@@ -20,7 +20,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
       excludes: ['timeout', 'cacheTimeMs', 'version', 'build', 'minVersion', 'fallbackLanguage'],
       plugins: {
         es: {
-          excludes: ['enable', 'host', 'port', 'useSsl', 'fallbackNodes', 'enableGoogleApi', 'googleApiKey', 'document'],
+          excludes: ['enable', 'host', 'port', 'useSsl', 'fallbackNodes', 'enableGoogleApi', 'googleApiKey', 'document', 'maxUploadBodySize', 'defaultCountry'],
           notifications: {
           }
         }
