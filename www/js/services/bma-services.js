@@ -10,7 +10,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     var pubkey = "[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44}";
     var
       // TX output conditions
-      SIG = "SIG\\(([0-9a-zA-Z]{43,44})\\)",
+      SIG = "SIG\\((" + pubkey + ")\\)",
       XHX = 'XHX\\(([A-F0-9]{1,64})\\)',
       CSV = 'CSV\\(([0-9]{1,8})\\)',
       CLTV = 'CLTV\\(([0-9]{1,10})\\)',

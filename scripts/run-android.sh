@@ -17,7 +17,12 @@ cd ${PROJECT_DIR}
 
 # Run the build
 echo "Building Android application..."
-ionic cordova build android --warning-mode=none --color
+ionic cordova build android --warning-mode=none --color $*
 
 echo "Running Android application..."
-native-run android --app ${ANDROID_OUTPUT_APK_DEBUG}/android-debug.apk $*
+if [[ "$1" == "--release" ]]; then
+  native-run android --app ${ANDROID_OUTPUT_APK_RELEASE}/android-release.apk
+else
+  native-run android --app ${ANDROID_OUTPUT_APK_DEBUG}/android-debug.apk
+fi
+

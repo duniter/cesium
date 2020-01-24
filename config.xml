@@ -24,11 +24,6 @@
     <preference name="DisallowOverscroll" value="true" />
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashScreenDelay" value="4000" />
-    <preference name="FadeSplashScreen" value="true" />
-    <preference name="FadeSplashScreenDuration" value="300" />
-    <preference name="SplashShowOnlyFirstTime" value="false" />
-    <preference name="AutoHideSplashScreen" value="false" />
-    <preference name="ShowSplashScreen" value="true" />
     <preference name="KeyboardDisplayRequiresUserAction" value="false" />
     <preference name="KeyboardResizeMode" value="ionic" />
     <preference name="xwalkVersion" value="19" />

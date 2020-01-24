@@ -1,14 +1,17 @@
 #!/usr/bin/env node
 "use strict";
-const gulp = require('gulp');
-const path = require("path");
-const es = require('event-stream');
-const useref = require('gulp-useref');
-const filter = require('gulp-filter');
-const uglify = require('gulp-uglify-es').default;
-const csso = require('gulp-csso');
-const rev = require('gulp-rev');
-const revReplace = require('gulp-rev-replace');
+const gulp = require('gulp'),
+  path = require("path"),
+  es = require('event-stream'),
+  useref = require('gulp-useref'),
+  filter = require('gulp-filter'),
+  uglify = require('gulp-uglify-es').default,
+  csso = require('gulp-csso'),
+  rev = require('gulp-rev'),
+  revReplace = require('gulp-rev-replace'),
+  log = require('fancy-log'),
+  colors = require('ansi-colors');
+
 
 const cmd = process.env.CORDOVA_CMDLINE;
 const rootdir = process.argv[2];
@@ -16,6 +19,9 @@ const rootdir = process.argv[2];
 let skip = true;
 if (cmd.indexOf("--release") > -1 || cmd.indexOf("--useref") > -1) {
     skip = false;
+}
+else {
+  log(colors.grey('Skipping useref'));
 }
 
 if (rootdir && !skip) {
@@ -41,6 +47,8 @@ if (rootdir && !skip) {
     const revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
     const uglifyOptions = {
       toplevel: true,
+      warnings: true,
+      ecma: '2015',
       compress: {
         global_defs: {
           "@console.log": "alert"
