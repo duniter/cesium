@@ -134,20 +134,24 @@ if [[ $? -ne 0 ]]; then
 fi
 git commit -m "v$2"
 git tag -f -a "v$2" -m "${description}"
+# Push the tag
 git push origin "v$2"
-git push
+# Push the master branch
+git push origin HEAD:master
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
 # Commit android project
-cd ${PROJECT_DIR}/platforms/android
+cd ${PROJECT_DIR}/platforms/android || exit 1
 git reset HEAD
 git add -A
 git commit -m "v$2"
 git tag -f -a "v$2" -m "${description}"
+# Push the tag
 git push origin "v$2"
-git push
+# Push the master branch
+git push origin
 if [[ $? -ne 0 ]]; then
   exit 1
 fi

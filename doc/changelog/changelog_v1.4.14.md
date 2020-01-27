@@ -5,7 +5,7 @@
 - [enh] Transfer form: display the amount's unit as a dropdown  
 - [fix] I18n: better explanation for where Cesium+ profile are stored
 
-Build artifact
+## Build tools
 
 - [enh] Migrate dependency management to Yarn, instead of Bower (deprecated) 
 - [fix] Avoid error during `ionic state restore` : move `platforms/desktop` and `platforms/web` to `dist` 

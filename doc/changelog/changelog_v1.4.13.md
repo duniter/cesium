@@ -7,8 +7,3 @@
   and `www/lib/ionic/angular`
 - [fix] Cesium+: fix charts X axis labels
 
-## Android
-
-
-## Desktop
-
