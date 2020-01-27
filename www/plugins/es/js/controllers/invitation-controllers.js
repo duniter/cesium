@@ -230,7 +230,9 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
   $scope.showNewInvitationModal = function() {
     $scope.hideActionsPopover();
 
-    return esModals.showNewInvitation({});
+    return $timeout(function() {
+      return esModals.showNewInvitation({})
+    }, 500); // Timeout need, to avoid freeze
   };
 
   /* -- Popover -- */
@@ -368,7 +370,7 @@ function NewInvitationModalController($scope, $q, Modals, UIUtils, csWallet, esH
         }
       })
       .catch(function(err){
-        if (err == 'CANCELLED') return $scope.cancel(); // close the modal
+        if (err === 'CANCELLED') return $scope.cancel(); // close the modal
         UIUtils.onError('ERROR.LOGIN_FAILED')(err);
       });
   };
