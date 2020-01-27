@@ -1,6 +1,6 @@
 angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.http.services', 'cesium.es.wot.services'])
 
-  .factory('gpData', function($rootScope, $q, $timeout, esHttp, BMA, csWot, csCache, esWot) {
+  .factory('gpData', function($rootScope, $q, $timeout, csHttp, esHttp, BMA, csWot, csCache, esWot) {
     'ngInject';
 
     var
@@ -32,6 +32,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           synchro: {
             search: esHttp.post('/:currency/synchro/_search')
           }
+
         },
         regex: {
         }
@@ -39,6 +40,20 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
 
     function _powBase(amount, base) {
       return base <= 0 ? amount : amount * Math.pow(10, base);
+    }
+
+    function rawLightInstance(host, port, useSsl, timeout) {
+      port = port || 80;
+      useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443);
+
+      return {
+        docstat: {
+          search: csHttp.post(host, port, '/document/stats/_search', useSsl, timeout)
+        },
+        synchro: {
+          search: csHttp.post(host, port, '/:currency/synchro/_search', useSsl, timeout)
+        }
+      };
     }
 
     function _initRangeOptions(options) {
@@ -679,6 +694,14 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
 
       options = _initRangeOptions(options);
 
+      var searchRequest = exports.raw.docstat.search;
+      if (options.server) {
+        var serverParts = options.server.split(':');
+        var host = serverParts[0];
+        var port = serverParts[1] || 80;
+        searchRequest = rawLightInstance(host, port, options.useSsl).docstat.search;
+      }
+
       var jobs = [];
 
       var from = moment.unix(options.startTime).utc().startOf(options.rangeDuration);
@@ -763,7 +786,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           }
           else {
             jobs.push(
-              exports.raw.docstat.search(request, params)
+              searchRequest(request, params)
                   .then(processSearchResult)
             );
           }
@@ -797,6 +820,14 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
     exports.synchro.execution.get = function(options) {
 
       options = _initRangeOptions(options);
+
+      var searchRequest = exports.raw.synchro.search;
+      if (options.server) {
+        var serverParts = options.server.split(':');
+        var host = serverParts[0];
+        var port = serverParts[1] || 80;
+        searchRequest = rawLightInstance(host, port, options.useSsl).synchro.search;
+      }
 
       var jobs = [];
 
@@ -899,7 +930,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           }
           else {
             jobs.push(
-              exports.raw.synchro.search(request, {currency: options.currency})
+              searchRequest(request, {currency: options.currency})
                 .then(processSearchResult)
             );
           }

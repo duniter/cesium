@@ -6,7 +6,18 @@ angular.module('cesium.graph.docstats.controllers', ['chart.js', 'cesium.graph.s
 
     $stateProvider
       .state('app.doc_stats_lg', {
-        url: "/data/stats?stepUnit&t&hide&scale",
+        url: "/network/data/stats/:server?stepUnit&t&hide&scale&useSsl&useTor",
+        views: {
+          'menuContent': {
+            templateUrl: "plugins/graph/templates/docstats/view_stats.html",
+            controller: 'GpDocStatsCtrl'
+          }
+        }
+      })
+
+      // Deprecated URL
+      .state('app.doc_stats_lg_old', {
+        url: "/data/stats?stepUnit&t&hide&scale&useSsl&useTor",
         views: {
           'menuContent': {
             templateUrl: "plugins/graph/templates/docstats/view_stats.html",
@@ -237,6 +248,16 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
   $scope.init = function(e, state) {
     if (state && state.stateParams) {
       // Manage URL parameters
+
+      var server = state.stateParams && state.stateParams.server || undefined;
+      if (server) {
+        console.debug("[docstats] Will use server: " + server);
+        angular.merge($scope.formData, {
+          server: state.stateParams.server,
+          useSsl: state.stateParams.useSsl,
+          useTor: state.stateParams.useTor
+        });
+      }
     }
   };
 
