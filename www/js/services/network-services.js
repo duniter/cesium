@@ -197,7 +197,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
 
         return $q.all(initJobs)
           .then(function() {
-            return data.bma.network.peers();
+            return data.bma && data.bma.network.peers();
           })
           .then(function(res){
             if (!res || !res.peers || !res.peers.length) return;
