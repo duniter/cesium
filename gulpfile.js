@@ -29,7 +29,6 @@ const gulp = require('gulp'),
   htmlmin = require('gulp-htmlmin'),
   jshint = require('gulp-jshint'),
   markdown = require('gulp-markdown'),
-  sourcemaps = require('gulp-sourcemaps'),
   log = require('fancy-log'),
   colors = require('ansi-colors');
 
@@ -92,7 +91,6 @@ function appSass() {
     .pipe(cleanCss({
       keepSpecialComments: 0
     }))
-    .pipe(sourcemaps.write())
     .pipe(rename({ extname: '.min.css' }))
     .pipe(gulp.dest('./www/css/'));
 }
@@ -259,7 +257,6 @@ function pluginSass() {
       .pipe(cleanCss({
         keepSpecialComments: 0
       }))
-      .pipe(sourcemaps.write())
       .pipe(rename({ extname: '.min.css' }))
       .pipe(gulp.dest('./www/css/'))
   );
