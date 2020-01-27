@@ -2,38 +2,36 @@
 angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
   'cesium.settings.services', 'cesium.wot.services' ])
 
-.factory('csTx', function($q, $timeout, $filter, $translate, FileSaver, UIUtils, BMA, Api,
-                          csConfig, csSettings, csWot, csCurrency) {
-  'ngInject';
+  .factory('csTx', function($q, $timeout, $filter, $translate, FileSaver, UIUtils, BMA, Api,
+                            csConfig, csSettings, csWot, csCurrency) {
+    'ngInject';
 
-  var defaultBMA = BMA;
+    const defaultBMA = BMA;
 
-  function CsTx(id, BMA) {
+    function CsTx(id, BMA) {
 
-    BMA = BMA || defaultBMA;
-    var
-      api = new Api(this, "csTx-" + id),
+      BMA = BMA || defaultBMA;
+      var
+        api = new Api(this, "csTx-" + id);
 
-      _reduceTxAndPush = function(pubkey, txArray, result, processedTxMap, allowPendings) {
+      function reduceTxAndPush(pubkey, txArray, result, processedTxMap, allowPendings) {
         if (!txArray || !txArray.length) return; // Skip if empty
 
         _.forEach(txArray, function(tx) {
           if (tx.block_number !== null || allowPendings) {
             var walletIsIssuer = false;
-            var otherIssuer = tx.issuers.reduce(function(issuer, res) {
-              walletIsIssuer = walletIsIssuer || (res === pubkey);
-              return issuer + ((res !== pubkey) ? ', ' + res : '');
-            }, '');
-            if (otherIssuer.length > 0) {
-              otherIssuer = otherIssuer.substring(2);
-            }
-            var otherReceiver;
-            var outputBase;
-            var sources = [];
-            var lockedOutputs;
+            var otherIssuers = tx.issuers.reduce(function(res, issuer) {
+              walletIsIssuer = walletIsIssuer || (issuer === pubkey);
+              return (issuer !== pubkey) ? res.concat(issuer) : res;
+            }, []);
+            var otherRecipients = [],
+              outputBase,
+              sources = [],
+              lockedOutputs;
+
             var amount = tx.outputs.reduce(function(sum, output, noffset) {
               // FIXME duniter v1.4.13
-              var outputArray = (typeof output == 'string') ? output.split(':',3) : [output.amount,output.base,output.conditions];
+              var outputArray = (typeof output === 'string') ? output.split(':',3) : [output.amount,output.base,output.conditions];
               outputBase = parseInt(outputArray[1]);
               var outputAmount = powBase(parseInt(outputArray[0]), outputBase);
               var outputCondition = outputArray[2];
@@ -59,11 +57,15 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                     });
                   }
                 }
-                else { // output is for someone else
-                  if (outputPubkey !== '' && outputPubkey != otherIssuer) {
-                    otherReceiver = outputPubkey;
+
+                // The output is for someone else
+                else {
+                  // Add into recipients list(if not a issuer)
+                  if (outputPubkey !== '' && !_.contains(otherIssuers, outputPubkey)) {
+                    otherRecipients.push(outputPubkey);
                   }
                   if (walletIsIssuer) {
+                    // TODO: should be fix, when TX has multiple issuers (need a repartition)
                     return sum - outputAmount;
                   }
                 }
@@ -75,14 +77,14 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                 if (lockedOutput) {
                   // Add a source
                   sources.push(angular.merge({
-                   amount: parseInt(outputArray[0]),
-                   base: outputBase,
-                   type: 'T',
-                   identifier: tx.hash,
-                   noffset: noffset,
-                   conditions: outputCondition,
-                   consumed: false
-                   }, lockedOutput));
+                    amount: parseInt(outputArray[0]),
+                    base: outputBase,
+                    type: 'T',
+                    identifier: tx.hash,
+                    noffset: noffset,
+                    conditions: outputCondition,
+                    consumed: false
+                  }, lockedOutput));
                   lockedOutput.amount = outputAmount;
                   lockedOutputs = lockedOutputs || [];
                   lockedOutputs.push(lockedOutput);
@@ -94,7 +96,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
               return sum;
             }, 0);
 
-            var txPubkey = amount > 0 ? otherIssuer : otherReceiver;
+            var txPubkeys = amount > 0 ? otherIssuers : otherRecipients;
             var time = tx.time || tx.blockstampTime;
 
             // Avoid duplicated tx, or tx to him self
@@ -104,14 +106,16 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
               var newTx = {
                 time: time,
                 amount: amount,
-                pubkey: txPubkey,
+                pubkey: txPubkeys.length === 1 ? txPubkeys[0] : undefined,
+                pubkeys: txPubkeys.length > 1 ? txPubkeys : undefined,
                 comment: tx.comment,
                 isUD: false,
                 hash: tx.hash,
                 locktime: tx.locktime,
                 block_number: tx.block_number
               };
-              // If pending: store sources and inputs for a later use - see method processTransactionsAndSources()
+
+                // If pending: store sources and inputs for a later use - see method processTransactionsAndSources()
               if (walletIsIssuer && tx.block_number === null) {
                 newTx.inputs = tx.inputs;
                 newTx.sources = sources;
@@ -123,9 +127,10 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             }
           }
         });
-      },
+      }
 
-      loadTx = function(pubkey, fromTime) {
+
+      function loadTx(pubkey, fromTime) {
         return $q(function(resolve, reject) {
 
           var nowInSec = moment().utc().unix();
@@ -138,10 +143,6 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           };
 
           var processedTxMap = {};
-          var _reducePendingTx = function (res) {
-            _reduceTxAndPush(pubkey, res.history.sending, tx.pendings, processedTxMap, true /*allow pendings*/);
-            _reduceTxAndPush(pubkey, res.history.pending, tx.pendings, processedTxMap, true /*allow pendings*/);
-          };
 
           var jobs = [
             // get current block
@@ -149,14 +150,17 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
             // get pending tx
             BMA.tx.history.pending({pubkey: pubkey})
-              .then(_reducePendingTx)
+              .then(function (res) {
+                reduceTxAndPush(pubkey, res.history.sending, tx.pendings, processedTxMap, true /*allow pendings*/);
+                reduceTxAndPush(pubkey, res.history.pending, tx.pendings, processedTxMap, true /*allow pendings*/);
+              })
           ];
 
           // get TX history since
           if (fromTime !== 'pending') {
-            var _reduceTx = function (res) {
-              _reduceTxAndPush(pubkey, res.history.sent, tx.history, processedTxMap, false);
-              _reduceTxAndPush(pubkey, res.history.received, tx.history, processedTxMap, false);
+            var reduceTxFn = function (res) {
+              reduceTxAndPush(pubkey, res.history.sent, tx.history, processedTxMap, false);
+              reduceTxAndPush(pubkey, res.history.received, tx.history, processedTxMap, false);
             };
 
             // get TX from a given time
@@ -166,19 +170,19 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
               fromTime = fromTime - (fromTime % sliceTime);
               for(var i = fromTime; i - sliceTime < nowInSec; i += sliceTime)  {
                 jobs.push(BMA.tx.history.times({pubkey: pubkey, from: i, to: i+sliceTime-1}, true /*with cache*/)
-                  .then(_reduceTx)
+                  .then(reduceTxFn)
                 );
               }
 
               // Last slide: no cache
               jobs.push(BMA.tx.history.times({pubkey: pubkey, from: nowInSec - (nowInSec % sliceTime), to: nowInSec+999999999}, false/*no cache*/)
-                .then(_reduceTx));
+                .then(reduceTxFn));
             }
 
             // get all TX
             else {
               jobs.push(BMA.tx.history.all({pubkey: pubkey})
-                .then(_reduceTx)
+                .then(reduceTxFn)
               );
             }
 
@@ -216,7 +220,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                     console.debug('Error while loading UDs history, on extension point.');
                     console.error(err);
                   })
-                );
+              );
             }
           }
 
@@ -242,27 +246,27 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             })
             .catch(reject);
         });
-      },
+      }
 
-      powBase = function(amount, base) {
+      function powBase(amount, base) {
         return base <= 0 ? amount : amount * Math.pow(10, base);
-      },
+      }
 
-      addSource = function(src, sources, sourcesIndexByKey) {
+      function addSource(src, sources, sourcesIndexByKey) {
         var srcKey = src.type+':'+src.identifier+':'+src.noffset;
         if (angular.isUndefined(sourcesIndexByKey[srcKey])) {
           sources.push(src);
           sourcesIndexByKey[srcKey] = sources.length - 1;
         }
-      },
+      }
 
-      addSources = function(result, sources) {
+      function addSources(result, sources) {
         _(sources).forEach(function(src) {
           addSource(src, result.sources, result.sourcesIndexByKey);
         });
-      },
+      }
 
-      loadSourcesAndBalance = function(pubkey) {
+      function loadSourcesAndBalance(pubkey) {
         return BMA.tx.sources({pubkey: pubkey})
           .then(function(res){
             var data = {
@@ -283,19 +287,19 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             console.warn("[tx] Error while getting sources...", err);
             throw err;
           });
-      },
+      }
 
-      loadData = function(pubkey, fromTime) {
+      function loadData(pubkey, fromTime) {
         var now = Date.now();
 
         return $q.all([
 
-            // Load Sources
-            loadSourcesAndBalance(pubkey),
+          // Load Sources
+          loadSourcesAndBalance(pubkey),
 
-            // Load Tx
-            loadTx(pubkey, fromTime)
-          ])
+          // Load Tx
+          loadTx(pubkey, fromTime)
+        ])
 
           .then(function(res) {
             // Copy sources and balance
@@ -383,91 +387,91 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             console.warn("[tx] Error while getting sources and tx...", err);
             throw err;
           });
-    },
+      }
 
-    loadSources = function(pubkey) {
-      console.debug("[tx] Loading sources for " + pubkey.substring(0,8));
-      return loadData(pubkey, 'pending');
-    };
+      function loadSources(pubkey) {
+        console.debug("[tx] Loading sources for " + pubkey.substring(0,8));
+        return loadData(pubkey, 'pending');
+      }
 
-    // Download TX history file
-    downloadHistoryFile = function(pubkey, options) {
+      // Download TX history file
+      function downloadHistoryFile(pubkey, options) {
 
-      options = options || {};
-      options.fromTime = options.fromTime || -1;
+        options = options || {};
+        options.fromTime = options.fromTime || -1;
 
-      console.debug("[tx] Exporting TX history for pubkey [{0}]".format(pubkey.substr(0,8)));
+        console.debug("[tx] Exporting TX history for pubkey [{0}]".format(pubkey.substr(0,8)));
 
-      return $q.all([
-        $translate(['ACCOUNT.HEADERS.TIME',
-          'COMMON.UID',
-          'COMMON.PUBKEY',
-          'COMMON.UNIVERSAL_DIVIDEND',
-          'ACCOUNT.HEADERS.AMOUNT',
-          'ACCOUNT.HEADERS.COMMENT']),
-        csCurrency.blockchain.current(true/*withCache*/),
-        loadData(pubkey, options.fromTime)
-      ])
-        .then(function(result){
-          var translations = result[0];
-          var currentBlock = result[1];
-          var currentTime = (currentBlock && currentBlock.medianTime) || moment().utc().unix();
-          var currency = currentBlock && currentBlock.currency;
+        return $q.all([
+          $translate(['ACCOUNT.HEADERS.TIME',
+            'COMMON.UID',
+            'COMMON.PUBKEY',
+            'COMMON.UNIVERSAL_DIVIDEND',
+            'ACCOUNT.HEADERS.AMOUNT',
+            'ACCOUNT.HEADERS.COMMENT']),
+          csCurrency.blockchain.current(true/*withCache*/),
+          loadData(pubkey, options.fromTime)
+        ])
+          .then(function(result){
+            var translations = result[0];
+            var currentBlock = result[1];
+            var currentTime = (currentBlock && currentBlock.medianTime) || moment().utc().unix();
+            var currency = currentBlock && currentBlock.currency;
 
-          var data = result[2];
+            var data = result[2];
 
-          // no TX
-          if (!data || !data.tx || !data.tx.history) {
-            return UIUtils.toast.show('INFO.EMPTY_TX_HISTORY');
-          }
+            // no TX
+            if (!data || !data.tx || !data.tx.history) {
+              return UIUtils.toast.show('INFO.EMPTY_TX_HISTORY');
+            }
 
-          return $translate('ACCOUNT.FILE_NAME', {currency: currency, pubkey: pubkey, currentTime : currentTime})
-            .then(function(filename){
+            return $translate('ACCOUNT.FILE_NAME', {currency: currency, pubkey: pubkey, currentTime : currentTime})
+              .then(function(filename){
 
-              var formatDecimal = $filter('formatDecimal');
-              var medianDate = $filter('medianDate');
-              var formatSymbol = $filter('currencySymbolNoHtml');
+                var formatDecimal = $filter('formatDecimal');
+                var medianDate = $filter('medianDate');
+                var formatSymbol = $filter('currencySymbolNoHtml');
 
-              var headers = [
-                translations['ACCOUNT.HEADERS.TIME'],
-                translations['COMMON.UID'],
-                translations['COMMON.PUBKEY'],
-                translations['ACCOUNT.HEADERS.AMOUNT'] + ' (' + formatSymbol(currency) + ')',
-                translations['ACCOUNT.HEADERS.COMMENT']
-              ];
-              var content = data.tx.history.concat(data.tx.validating).reduce(function(res, tx){
-                return res.concat([
+                var headers = [
+                  translations['ACCOUNT.HEADERS.TIME'],
+                  translations['COMMON.UID'],
+                  translations['COMMON.PUBKEY'],
+                  translations['ACCOUNT.HEADERS.AMOUNT'] + ' (' + formatSymbol(currency) + ')',
+                  translations['ACCOUNT.HEADERS.COMMENT']
+                ];
+                var content = data.tx.history.concat(data.tx.validating).reduce(function(res, tx){
+                  return res.concat([
                     medianDate(tx.time),
                     tx.uid,
                     tx.pubkey,
                     formatDecimal(tx.amount/100),
                     '"' + (tx.isUD ? translations['COMMON.UNIVERSAL_DIVIDEND'] : tx.comment) + '"'
                   ].join(';') + '\n');
-              }, [headers.join(';') + '\n']);
+                }, [headers.join(';') + '\n']);
 
-              var file = new Blob(content, {type: 'text/plain; charset=utf-8'});
-              FileSaver.saveAs(file, filename);
-            });
-        });
+                var file = new Blob(content, {type: 'text/plain; charset=utf-8'});
+                FileSaver.saveAs(file, filename);
+              });
+          });
+      }
+
+      // Register extension points
+      api.registerEvent('data', 'loadUDs');
+
+      return {
+        id: id,
+        load: loadData,
+        loadSources: loadSources,
+        downloadHistoryFile: downloadHistoryFile,
+        // api extension
+        api: api
+      };
+    }
+
+    var service = new CsTx('default');
+
+    service.instance = function(id, bma) {
+      return new CsTx(id, bma);
     };
-
-    // Register extension points
-    api.registerEvent('data', 'loadUDs');
-
-    return {
-      id: id,
-      load: loadData,
-      loadSources: loadSources,
-      downloadHistoryFile: downloadHistoryFile,
-      // api extension
-      api: api
-    };
-  }
-
-  var service = new CsTx('default');
-
-  service.instance = function(id, bma) {
-    return new CsTx(id, bma);
-  };
-  return service;
-});
+    return service;
+  });

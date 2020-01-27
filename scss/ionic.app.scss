@@ -1187,8 +1187,29 @@ body {
     width: 40%;
   }
 
-  .width-cup{
-    width: 175px;
+  p.comment{
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  p.text-wrap {
+    white-space: normal;
+    a {
+      white-space: nowrap;
+    }
+  }
+
+  .col-pubkey {
+    max-width: 80%;
+
+    .pubkeys {
+      display: block;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-height: 130px;
+      overflow: hidden;
+    }
   }
 }
 
