@@ -90,7 +90,7 @@ function ESPluginSettingsController ($scope, $window, $q,  $translate, $ionicPop
 
     $scope.showNodePopup(node)
       .then(function(newNode) {
-        if (newNode.host == $scope.formData.host &&
+        if (newNode.host === $scope.formData.host &&
           newNode.port == $scope.formData.port &&
           newNode.useSsl == $scope.formData.useSsl) {
           UIUtils.loading.hide();
@@ -194,7 +194,7 @@ function ESPluginSettingsController ($scope, $window, $q,  $translate, $ionicPop
     })
       .then(function (peer) {
         if (!peer) return;
-        var esEps = peer.getEndpoints().reduce(function(res, ep){
+        var esEps = (peer.getEsEndpoints() || []).reduce(function(res, ep){
           var esEp = esHttp.node.parseEndPoint(ep);
           return esEp ? res.concat(esEp) : res;
         }, []);
