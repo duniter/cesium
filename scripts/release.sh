@@ -137,7 +137,7 @@ git tag -f -a "v$2" -m "${description}"
 # Push the tag
 git push origin "v$2"
 # Push the master branch
-git push origin HEAD:master
+git push origin
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
