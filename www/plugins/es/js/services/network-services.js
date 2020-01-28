@@ -4,7 +4,7 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
 .factory('esNetwork', function($rootScope, $q, $interval, $timeout, $window, csSettings, csConfig, esHttp, Api, BMA) {
   'ngInject';
 
-  factory = function(id) {
+  function EsNetwork(id) {
 
     var
       interval,
@@ -27,8 +27,10 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
         },
         sort:{
           type: null,
-          asc: true
+          asc: true,
+          compact: true
         },
+        groupBy: 'pubkey',
         expertMode: false,
         knownBlocks: [],
         mainBlock: null,
@@ -53,6 +55,7 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
           type: null,
           asc: true
         };
+        data.groupBy = 'pubkey';
         data.expertMode = false;
         data.knownBlocks = [];
         data.mainBlock = null;
@@ -116,9 +119,8 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
                 .then(function(res){
                   var jobs = [];
                   _.forEach(res.peers, function(json) {
-                    if (json.status == 'UP') {
-                      jobs.push(addOrRefreshPeerFromJson(json, newPeers));
-                    }
+                    if (json.status !== 'UP') return;
+                    jobs.push(addOrRefreshPeerFromJson(json, newPeers));
                   });
 
                   if (jobs.length) return $q.all(jobs);
@@ -134,14 +136,12 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
               .then(function(res){
                 var jobs = [];
                 _.forEach(res.peers, function(json) {
-                  if (json.status !== 'UP') {
-                    jobs.push(addOrRefreshPeerFromJson(json, newPeers));
-                  }
+                  if (json.status === 'UP') return;
+                  jobs.push(addOrRefreshPeerFromJson(json, newPeers));
                 });
                 if (jobs.length) return $q.all(jobs);
               });
           })
-
           .then(function(){
             data.searchingPeersOnNetwork = false;
           })
@@ -165,7 +165,7 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
         }
 
         // Filter on status
-        if (!data.filter.online && peer.status == 'UP') {
+        if (!data.filter.online && peer.status === 'UP') {
           return false;
         }
 
@@ -199,26 +199,29 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
                   if (existingPeer) {
                     // remove existing peers, when reject or offline
                     if (!refreshedPeer || (refreshedPeer.online !== data.filter.online && data.filter.online !== 'all')) {
-                      console.debug('[network] Peer [{0}] removed (cause: {1})'.format(peer.server, !refreshedPeer ? 'filtered' : (refreshedPeer.online ? 'UP': 'DOWN')));
-                      data.peers.splice(data.peers.indexOf(existingPeer), 1);
-                      hasUpdates = true;
+                      var existingIndex = data.peers.indexOf(existingPeer);
+                      if (existingIndex !== -1) {
+                        console.debug('[network] Peer [{0}] removed (cause: {1})'.format(peer.server, !refreshedPeer ? 'filtered' : (refreshedPeer.online ? 'UP': 'DOWN')));
+                        data.peers.splice(existingIndex, 1);
+                        hasUpdates = true;
+                      }
                     }
                     else if (refreshedPeer.buid !== existingMainBuid){
                       console.debug('[network] {0} endpoint [{1}] new current block'.format(
-                        refreshedPeer.ep && (refreshedPeer.ep.useBma ? 'BMA' : 'WS2P') || 'null',
+                        refreshedPeer.ep && refreshedPeer.ep.api || '',
                         refreshedPeer.server));
                       hasUpdates = true;
                     }
                     else if (existingOnline !== refreshedPeer.online){
                       console.debug('[network] {0} endpoint [{1}] is now {2}'.format(
-                        refreshedPeer.ep && (refreshedPeer.ep.useBma ? 'BMA' : 'WS2P') || 'null',
+                        refreshedPeer.ep && refreshedPeer.ep.api || '',
                         refreshedPeer.server,
                         refreshedPeer.online ? 'UP' : 'DOWN'));
                       hasUpdates = true;
                     }
                     else {
                       console.debug("[network] {0} endpoint [{1}] unchanged".format(
-                        refreshedPeer.ep && (refreshedPeer.ep.useBma ? 'BMA' : 'WS2P') || 'null',
+                        refreshedPeer.ep && refreshedPeer.ep.api || '',
                         refreshedPeer.server));
                     }
                   }
@@ -278,7 +281,7 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
         // Apply filter
         if (!applyPeerFilter(peer)) return $q.when();
 
-        if (!data.filter.online || (data.filter.online === 'all' && peer.status === 'DOWN') || !peer.getHost() /*fix #537*/) {
+        if (!data.filter.online || (!data.filter.online && peer.status === 'DOWN') || !peer.getHost() /*fix #537*/) {
           peer.online = false;
           return $q.when(peer);
         }
@@ -428,8 +431,8 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
             if (!buid || !buid.medianTime) {
               buid = {
                 buid: peer.buid,
-                count: 0,
-                medianTime: peer.medianTime
+                medianTime: peer.medianTime,
+                count: 0
               };
               buids[peer.buid] = buid;
             }
@@ -437,7 +440,7 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
             else if (!buid.medianTime && peer.medianTime) {
               buid.medianTime = peer.medianTime;
             }
-            if (buid.buid != constants.UNKNOWN_BUID) {
+            if (buid.buid !== constants.UNKNOWN_BUID) {
               buid.count++;
             }
           }
@@ -486,8 +489,16 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
           return -score;
         });
 
+        if (data.groupBy) {
+          var previousPeer;
+          data.peers.forEach(function(peer) {
+            peer.compacted = (previousPeer && peer[data.groupBy] && peer[data.groupBy] === previousPeer[data.groupBy]);
+            previousPeer = peer;
+          });
+        }
+
         // Raise event on new main block
-        if (updateMainBuid && mainBlock.buid && (!data.mainBlock || data.mainBlock.buid !== mainBlock.buid)) {
+        if (updateMainBuid && mainBlock && mainBlock.buid && (!data.mainBlock || data.mainBlock.buid !== mainBlock.buid)) {
           data.mainBlock = mainBlock;
           api.data.raise.mainBlockChanged(mainBlock);
         }
@@ -557,6 +568,7 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
         return esHttp.ready()
           .then(function() {
             close();
+            resetData();
             data.pod = pod || esHttp;
             data.filter = options.filter ? angular.merge(data.filter, options.filter) : data.filter;
             data.sort = options.sort ? angular.merge(data.sort, options.sort) : data.sort;
@@ -579,8 +591,8 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
         if (data.pod) {
           console.info('[network-service] Stopping...');
           removeListeners();
+          resetData();
         }
-        resetData();
       },
 
       isStarted = function() {
@@ -638,8 +650,11 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
     };
   };
 
-  var service = factory('default');
+  var service = new EsNetwork('default');
 
-  service.instance = factory;
+  service.instance = function(id) {
+    return new EsNetwork(id);
+  };
+
   return service;
 });

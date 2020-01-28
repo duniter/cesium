@@ -70,7 +70,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
   $scope.compactMode = true;
   $scope.listeners = [];
   $scope.helptipPrefix = 'helptip-network';
-  $scope.enableLocationHref = true; // can be overrided by sub-controler (e.g. popup)
+  $scope.enableLocationHref = true; // can be overrided by sub-controller (e.g. popup)
 
   $scope.removeListeners = function() {
     if ($scope.listeners.length) {

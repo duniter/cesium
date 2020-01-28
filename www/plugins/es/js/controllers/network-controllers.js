@@ -85,6 +85,7 @@ function ESNetworkLookupController($scope,  $state, $location, $ionicPopover, $w
     sort : undefined,
     asc: true
   };
+  $scope.compactMode = true;
   $scope.listeners = [];
   $scope.helptipPrefix = 'helptip-network';
   $scope.enableLocationHref = true; // can be overrided by sub-controller (e.g. popup)
@@ -112,7 +113,7 @@ function ESNetworkLookupController($scope,  $state, $location, $ionicPopover, $w
           $scope.node = !esHttp.node.same(currency.node.host, currency.node.port) ?
             esHttp.instance(currency.node.host, currency.node.port) : esHttp;
           if (state && state.stateParams) {
-            if (state.stateParams.online == 'true') {
+            if (state.stateParams.online === 'true') {
               $scope.search.online = true;
             }
             if (state.stateParams.expert) {
@@ -190,6 +191,7 @@ function ESNetworkLookupController($scope,  $state, $location, $ionicPopover, $w
 
   $scope.updateView = function(data) {
     console.debug("[peers] Updating UI");
+    $scope.$broadcast('$$rebind::rebind'); // force data binding
     $scope.search.results = data.peers;
     $scope.search.memberPeersCount = data.memberPeersCount;
     // Always tru if network not started (e.g. after leave+renter the view)
@@ -252,6 +254,11 @@ function ESNetworkLookupController($scope,  $state, $location, $ionicPopover, $w
   };
 
   $scope.selectPeer = function(peer) {
+    if (peer.compacted && $scope.compactMode) {
+      $scope.toggleCompactMode();
+      return;
+    }
+
     // Skip offline
     if (!peer.online ) return;
 
@@ -309,6 +316,7 @@ function ESNetworkLookupController($scope,  $state, $location, $ionicPopover, $w
     }, []);
     if (!endpoints.length) return;
 
+    // Call extension points
     UIUtils.popover.show($event, {
       templateUrl: 'templates/network/popover_endpoints.html',
       bindings: {
@@ -345,9 +353,6 @@ function ESNetworkLookupController($scope,  $state, $location, $ionicPopover, $w
           });
       });
   };
-
-
-
 }
 
 

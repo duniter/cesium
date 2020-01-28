@@ -362,9 +362,12 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
                   if (existingPeer) {
                     // remove existing peers, when reject or offline
                     if (!refreshedPeer || (refreshedPeer.online !== data.filter.online && data.filter.online !== 'all')) {
-                      console.debug('[network] Peer [{0}] removed (cause: {1})'.format(peer.server, !refreshedPeer ? 'filtered' : (refreshedPeer.online ? 'UP': 'DOWN')));
-                      data.peers.splice(data.peers.indexOf(existingPeer), 1);
-                      hasUpdates = true;
+                      var existingIndex = data.peers.indexOf(existingPeer);
+                      if (existingIndex !== -1) {
+                        console.debug('[network] Peer [{0}] removed (cause: {1})'.format(peer.server, !refreshedPeer ? 'filtered' : (refreshedPeer.online ? 'UP' : 'DOWN')));
+                        data.peers.splice(existingIndex, 1);
+                        hasUpdates = true;
+                      }
                     }
                     else if (refreshedPeer.buid !== existingMainBuid){
                       console.debug('[network] {0} endpoint [{1}] new current block'.format(
@@ -753,7 +756,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           .then(function() {
             close();
 
-            data.bma = bma ? bma : BMA;
+            data.bma = bma || BMA;
             data.filter = options.filter ? angular.merge(data.filter, options.filter) : data.filter;
             data.sort = options.sort ? angular.merge(data.sort, options.sort) : data.sort;
             data.expertMode = angular.isDefined(options.expertMode) ? options.expertMode : data.expertMode;
