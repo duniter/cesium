@@ -48,8 +48,6 @@ angular.module('cesium.app.controllers', ['cesium.platform', 'cesium.services'])
 
   .controller('PluginExtensionPointCtrl', PluginExtensionPointController)
 
-
-
 ;
 
 /**
@@ -127,14 +125,14 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
                 // Login using keypair
                 return wallet.login({
-                    silent: true,
-                    forceAuth: true,
-                    minData: false,
-                    authData: {
-                      pubkey: pubkey,
-                      keypair: keypair
-                    }
-                  })
+                  silent: true,
+                  forceAuth: true,
+                  minData: false,
+                  authData: {
+                    pubkey: pubkey,
+                    keypair: keypair
+                  }
+                })
                   .then(function () {
 
                     // Open transfer all wallet
@@ -344,7 +342,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
             });
         }
         else {
-
+          UIUtils.loading.hide();
         }
       })
       .catch(UIUtils.onError());
@@ -427,6 +425,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       $timeout(function(){$scope.profilePopover.hide();});
     }
   };
+
   // Change peer info
   $scope.showPeerInfoPopover = function(event) {
     return UIUtils.popover.show(event, {
@@ -437,7 +436,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   ////////////////////////////////////////
-  // Link management (fix issue #)
+  // Link management
   ////////////////////////////////////////
 
   $scope.openLink = function($event, uri, options) {
@@ -486,7 +485,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       okText: 'COMMON.BTN_YES'
     })
       .then(function(confirm) {
-         if (!confirm) return;
+        if (!confirm) return;
         $scope.toggleFullscreen();
       });
   };
