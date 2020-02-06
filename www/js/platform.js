@@ -88,7 +88,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
 
   .factory('csPlatform', function (ionicReady, $rootScope, $q, $state, $translate, $timeout, UIUtils,
-                                   BMA, Device, csHttp, csConfig, csSettings, csCurrency, csWallet) {
+                                   BMA, Device, csHttp, csConfig, csCache, csSettings, csCurrency, csWallet) {
 
     'ngInject';
     var
@@ -193,7 +193,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     function getLatestRelease() {
       var latestRelease = csSettings.data.latestReleaseUrl && csHttp.uri.parse(csSettings.data.latestReleaseUrl);
       if (latestRelease) {
-        return csHttp.get(latestRelease.host, latestRelease.protocol == 'https:' ? 443 : latestRelease.port, "/" + latestRelease.pathname)()
+        return csHttp.getWithCache(latestRelease.host, latestRelease.protocol === 'https:' ? 443 : latestRelease.port, "/" + latestRelease.pathname, undefined, csCache.constants.LONG)()
           .then(function (json) {
             if (json && json.name && json.tag_name && json.html_url) {
               return {
@@ -326,13 +326,13 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
     // Compute the root path
     var hashIndex = $window.location.href.indexOf('#');
-    $rootScope.rootPath = (hashIndex != -1) ? $window.location.href.substr(0, hashIndex) : $window.location.href;
+    $rootScope.rootPath = (hashIndex !== -1) ? $window.location.href.substr(0, hashIndex) : $window.location.href;
     console.debug('[app] Root path is [' + $rootScope.rootPath + ']');
 
     // removeIf(device)
     // -- Automatic redirection to HTTPS
     if ((csConfig.httpsMode === true || csConfig.httpsMode == 'true' ||csConfig.httpsMode === 'force') &&
-      $window.location.protocol != 'https:') {
+      $window.location.protocol !== 'https:') {
       $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
         var path = 'https' + $rootScope.rootPath.substr(4) + $state.href(next, nextParams);
         if (csConfig.httpsModeDebug) {
@@ -401,9 +401,6 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       // Make sure platform is started
       return csPlatform.ready();
     });
-
-
-
   })
 ;
 
