@@ -114,13 +114,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
     };
 
     CryptoAbstractService.prototype.seed_from_signSk = function(signSk) {
-      var seed = new Uint8Array(that.constants.SEED_LENGTH);
-      for (var i = 0; i < seed.length; i++) seed[i] = signSk[i];
-      return seed;
-    };
-
-    CryptoAbstractService.prototype.seed_from_signSk = function(signSk) {
-      var seed = new Uint8Array(that.constants.SEED_LENGTH);
+      var seed = new Uint8Array(this.constants.SEED_LENGTH);
       for (var i = 0; i < seed.length; i++) seed[i] = signSk[i];
       return seed;
     };
