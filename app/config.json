@@ -24,7 +24,8 @@
     "license": {
       "en": "license/license_g1-en",
       "fr-FR": "license/license_g1-fr-FR",
-      "es-ES": "license/license_g1-es-ES"
+      "es-ES": "license/license_g1-es-ES",
+      "eo-EO": "license/license_g1-eo-EO"
     },
     "node": {
       "host": "g1.duniter.org",
@@ -103,7 +104,9 @@
     },
     "license": {
       "fr-FR": "license/license_g1-fr-FR",
-      "en": "license/license_g1-en"
+      "en": "license/license_g1-en",
+      "es-ES": "license/license_g1-es-ES",
+      "eo-EO": "license/license_g1-eo-EO"
     },
     "node": {
       "host": "g1.duniter.fr",
@@ -305,7 +308,9 @@
     },
     "license": {
       "fr-FR": "license/license_g1-fr-FR",
-      "en": "license/license_g1-en"
+      "en": "license/license_g1-en",
+      "es-ES": "license/license_g1-es-ES",
+      "eo-EO": "license/license_g1-eo-EO"
     },
     "node": {
       "host": "g1.duniter.fr",
@@ -377,7 +382,9 @@
     },
     "license": {
       "fr-FR": "license/license_g1-fr-FR.txt",
-      "en": "license/license_g1-en.txt"
+      "en": "license/license_g1-en.txt",
+      "es-ES": "license/license_g1-es-ES",
+      "eo-EO": "license/license_g1-eo-EO"
     },
     "node": {
       "host": "g1.duniter.org",
