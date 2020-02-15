@@ -15,7 +15,7 @@
 
 <ion-list show-reorder="socialData.reorder">
 
-  <ion-item class="item-remove-animate item-icon-left "
+  <ion-item class="item-remove-animate item-icon-left item-social-edit"
             type="no-padding item-text-wrap"
             ng-if="formData.socials && formData.socials.length"
             ng-repeat="social in formData.socials | filter:filterFn track by social.url"
@@ -27,9 +27,7 @@
       <i class="ion-locked" ng-if="social.recipient"></i>
     </p>
     <h2>
-      <a href="{{social.url}}" ng-if="social.type != 'email' && social.type != 'phone'" target="_blank">{{social.url}}</a>
-      <a href="mailto:{{social.url}}" ng-if="social.type == 'email'">{{social.url}}</a>
-      <a href="tel:{{social.url}}" ng-if="social.type == 'phone'">{{social.url}}</a>
+      <span>{{social.url}}</span>
       <a class="gray hidden-device"
          ng-if="!social.recipient && !socialData.reorder"
          ng-click="formData.socials.splice($index, 1); dirty = true;">

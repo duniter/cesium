@@ -19,6 +19,17 @@
 }
 
 /**********
+   Social link item
+**********/
+
+.item.item-social-edit h2 {
+  overflow: inherit ;
+  text-overflow: inherit ;
+  white-space: normal !important;
+  display: block;
+}
+
+/**********
    Record list
 **********/
 
@@ -36,7 +47,7 @@
 
 .row-record .col {
   padding-top: 5px;
-  padding-bottom: 0px;
+  padding-bottom: 0;
 }
 
 .row-record .item-avatar i.item-image {
@@ -137,8 +148,8 @@
 .hero .content .button.button-camera {
   display: block;
   position: absolute;
-  bottom: 0px;
-  right: 0px;
+  bottom: 0;
+  right: 0;
 }
 
 .hero .content i.avatar .button {
