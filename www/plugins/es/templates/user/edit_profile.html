@@ -63,11 +63,7 @@
 
         <form name="profileForm" novalidate="" ng-submit="saveAndClose()">
 
-          <div class="list item-text-wrap {{::motion.ionListClass}}"
-                    ng-init="setForm(profileForm)">
-
-
-
+          <div class="list item-text-wrap {{::motion.ionListClass}}" ng-init="setForm(profileForm)">
 
             <!-- Public info -->
             <div class="item item-icon-left item-text-wrap">
@@ -75,9 +71,7 @@
               <h4 class="positive" translate>PROFILE.HELP.WARNING_PUBLIC_DATA</h4>
             </div>
 
-            <div class="item item-divider">
-              {{'PROFILE.GENERAL_DIVIDER' | translate}}
-            </div>
+            <div class="item item-divider" translate>PROFILE.GENERAL_DIVIDER</div>
 
             <!-- title -->
             <ion-item class="item-input item-floating-label item-button-right"
@@ -121,9 +115,7 @@
 
           <div class="list item-text-wrap {{::motion.ionListClass}}">
 
-            <div class="item item-divider">
-              {{'PROFILE.TECHNICAL_DIVIDER' | translate}}
-            </div>
+            <div class="item item-divider" translate>PROFILE.TECHNICAL_DIVIDER</div>
 
             <!-- uid -->
             <ion-item class="item-icon-left" ng-if="walletData && walletData.uid">

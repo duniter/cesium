@@ -1,9 +1,9 @@
-<ion-list class="no-padding">
+<div class="list no-padding {{::motion.ionListClass}}">
   <!-- divider -->
   <div class="item item-divider">
-      <span>
-        {{'PROFILE.SOCIAL_NETWORKS_DIVIDER' | translate}}
-      </span>
+
+    <span translate>PROFILE.SOCIAL_NETWORKS_DIVIDER</span>
+
     <a class="badge button button-text button-small button-small-padding"
        ng-class="{'button-text-positive': socialData.reorder}"
        ng-if="formData.socials && formData.socials.length &gt; 1"
@@ -11,11 +11,11 @@
       <span translate>PROFILE.BTN_REORDER</span>
     </a>
   </div>
-</ion-list>
+</div>
 
 <ion-list show-reorder="socialData.reorder">
 
-  <ion-item class="item-remove-animate item-icon-left item-social-edit"
+  <ion-item class="item-icon-left item-social-edit done in"
             type="no-padding item-text-wrap"
             ng-if="formData.socials && formData.socials.length"
             ng-repeat="social in formData.socials | filter:filterFn track by social.url"
@@ -63,9 +63,8 @@
              on-return="addSocialNetwork($event);"
              ng-model="socialData.url"/>
     </label>
-    <button class="button button-small hidden-xs" type="button" ng-click="addSocialNetwork($event)">
-      {{'COMMON.BTN_ADD'|translate}}
-    </button>
+    <button class="button button-small hidden-xs" type="button" ng-click="addSocialNetwork($event)"
+            translate>COMMON.BTN_ADD</button>
     <button class="button button-small button-icon icon ion-android-add visible-xs" type="button"
             ng-click="addSocialNetwork($event)">
     </button>
