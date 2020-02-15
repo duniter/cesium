@@ -1608,7 +1608,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       return $q.all([
           getKeypair(),
           csCurrency.get(),
-          csCurrency.blockchain.current() // TODO: use lastValid() instead ?
+          csCurrency.blockchain.lastValid()
         ])
         .then(function(res) {
           var keypair = res[0];
