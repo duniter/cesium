@@ -74,6 +74,11 @@
         "USER_PROFILE": "Uzanto-profiloj",
         "USER_SETTINGS": "Parametroj konservitaj"
       },
+      "USER_DELTA": {
+        "TITLE": "Variado de la nombro de dokumentoj ligitaj al konto",
+        "USER_PROFILE": "Uzanto-profiloj",
+        "USER_SETTINGS": "Parametroj konservitaj"
+      },
       "MESSAGE": {
         "TITLE": "Nombro de dokumentoj ligitaj al komunikado",
         "MESSAGE_INBOX": "Mesaĝoj en ricevujo",
