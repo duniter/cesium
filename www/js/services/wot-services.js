@@ -703,13 +703,15 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
         var medianTime;
 
         return $q.all([
+
             // Get parameters
             csCurrency.parameters()
               .then(function(res) {
                 parameters = res;
               }),
+
             // Get current time
-            csCurrency.blockchain.current()
+            csCurrency.blockchain.current(true)
               .then(function(current) {
                 medianTime = current.medianTime;
               })

@@ -173,8 +173,8 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
           }
         }),
 
-      // Get the current block informations
-      BMA.blockchain.current()
+      // Get the current block information
+      csCurrency.blockchain.current()
         .then(function(block){
           M = block.monetaryMass;
           data.N = block.membersCount;

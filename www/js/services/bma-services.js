@@ -277,7 +277,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     function onSettingsChanged(settings) {
 
       var server = csHttp.getUrl(settings.node.host, settings.node.port, ''/*path*/, settings.node.useSsl);
-      var hasChanged = (server != that.url);
+      var hasChanged = (server !== that.url);
       if (hasChanged) {
         init(settings.node.host, settings.node.port, settings.node.useSsl, that.useCache);
         that.restart();
@@ -422,9 +422,9 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           all: get('/wot/members', csHttp.cache.LONG),
           pending: get('/wot/pending', csHttp.cache.SHORT)
         },
-        requirements: function(params, withCache) {
+        requirements: function(params, cache) {
           // No cache by default
-          if (withCache !== true) return exports.raw.wot.requirements(params);
+          if (cache !== true) return exports.raw.wot.requirements(params);
           return exports.raw.wot.requirementsWithCache(params);
         },
         add: post('/wot/add'),
@@ -435,7 +435,10 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         parameters: get('/blockchain/parameters', csHttp.cache.VERY_LONG),
         block: get('/blockchain/block/:block', csHttp.cache.SHORT),
         blocksSlice: get('/blockchain/blocks/:count/:from'),
-        current: get('/blockchain/current', csHttp.cache.SHORT),
+        current: function(cache) {
+          // No cache by default
+          return (cache !== true) ? exports.raw.blockchain.current() : exports.raw.blockchain.currentWithCache();
+        },
         membership: post('/blockchain/membership'),
         stats: {
           ud: get('/blockchain/with/ud', csHttp.cache.MEDIUM),
@@ -459,9 +462,9 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
                 return res;
               });
           },
-          times: function(params, withCache) {
+          times: function(params, cache) {
             // No cache by default
-            return ((withCache !== true) ? exports.raw.tx.history.times(params) : exports.raw.tx.history.timesWithCache(params))
+            return ((cache !== true) ? exports.raw.tx.history.times(params) : exports.raw.tx.history.timesWithCache(params))
               .then(function(res) {
                 res.history = res.history || {};
                 // Clean sending and pendings, because already returned by tx/history/:pubkey/pending
@@ -480,6 +483,10 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       uri: {},
       version: {},
       raw: {
+        blockchain: {
+          currentWithCache: get('/blockchain/current', csHttp.cache.SHORT),
+          current: get('/blockchain/current')
+        },
         wot: {
           requirementsWithCache: get('/wot/requirements/:pubkey', csHttp.cache.LONG),
           requirements: get('/wot/requirements/:pubkey')

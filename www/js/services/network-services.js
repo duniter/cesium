@@ -498,7 +498,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         peer.api = peer.api ||  BMA.lightInstance(peer.getHost(), peer.getPort(), peer.isSsl(), data.timeout);
 
         // Get current block
-        return peer.api.blockchain.current()
+        return peer.api.blockchain.current(false/*no cache*/)
           .then(function(block) {
             peer.currentNumber = block.number;
             peer.online = true;

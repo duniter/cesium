@@ -279,7 +279,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
             }
           }
 
-          return BMA.blockchain.current()
+          return BMA.blockchain.current(false)
             .catch(function(err){
               // Special case for currency init (root block not exists): use fixed values
               if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {

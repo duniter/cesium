@@ -227,7 +227,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 
     // get blocks
     if (from === 0) {
-      promise = $scope.node.blockchain.current()
+      promise = $scope.node.blockchain.current(false)
         .then(function(current) {
           var size = current.number < $scope.defaultSizeLimit ? current.number : $scope.defaultSizeLimit;
           return $scope.node.blockchain.blocksSlice({count: size, from: current.number-size})
@@ -391,14 +391,14 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 
   $scope.onBlock = function(block) {
     // Skip if still loading or if filter/sort is not the default (not last blocks)
-    if ($scope.search.loading || $scope.search.type != 'last' ||
-      ($scope.search.sort && $scope.search.sort != 'desc')) return; // skip
+    if ($scope.search.loading || $scope.search.type !== 'last' ||
+      ($scope.search.sort && $scope.search.sort !== 'desc')) return; // skip
 
     // Make sure results is init
     $scope.search.results = $scope.search.results || [];
 
     if (!$scope.search.results.length) {
-      console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
+      console.debug('[blockchain] new block #{0} received (by websocket)'.format(block.number));
       // add it to result
       $scope.search.total++;
       $scope.search.results.push(block);
@@ -415,8 +415,8 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 
       // replace existing block (fork could have replaced previous block)
       if (existingBlock) {
-        if (existingBlock.hash != block.hash) {
-          console.debug('[ES] [blockchain] block #{0} updated (by websocket)'.format(block.number));
+        if (existingBlock.hash !== block.hash) {
+          console.debug('[blockchain] block #{0} updated (by websocket)'.format(block.number));
           // Replace existing content
           angular.copy(block, existingBlock);
           // Prepare the new block, then show it
@@ -427,7 +427,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
         }
       }
       else {
-        console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
+        console.debug('[blockchain] new block #{0} received (by websocket)'.format(block.number));
         // Insert at index 0
         $scope.search.total++;
         $scope.search.results.splice(0, 0, block);
