@@ -220,13 +220,13 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
                       hasUpdates = true;
                     }
                     else {
-                      console.debug("[network] {0} endpoint [{1}] unchanged".format(
+                      console.debug("[ES] [network] {0} endpoint [{1}] unchanged".format(
                         refreshedPeer.ep && refreshedPeer.ep.api || '',
                         refreshedPeer.server));
                     }
                   }
                   else if (refreshedPeer && (refreshedPeer.online === data.filter.online || data.filter.online === 'all')) {
-                    console.debug("[network] {0} endpoint [{1}] is {2}".format(
+                    console.debug("[ES] [network] {0} endpoint [{1}] is {2}".format(
                       refreshedPeer.ep && refreshedPeer.ep.api || '',
                       refreshedPeer.server,
                       refreshedPeer.online ? 'UP' : 'DOWN'
@@ -328,10 +328,10 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
             }
             if (!peer.secondTry) {
               var ep = peer.ep || peer.getEP();
-              if (ep.dns && peer.server.indexOf(ep.dns) == -1) {
+              if (ep.dns && peer.server.indexOf(ep.dns) === -1) {
                 // try again, using DNS instead of IPv4 / IPV6
                 peer.secondTry = true;
-                peer.api = esHttp.lightInstance(ep.dns, ep.port, ep.useSsl);
+                peer.api = esHttp.lightInstance(ep.dns, peer.getPort(), peer.isSsl(), data.timeout);
                 return refreshPeer(peer); // recursive call
               }
             }
@@ -574,14 +574,14 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
             data.sort = options.sort ? angular.merge(data.sort, options.sort) : data.sort;
             data.expertMode = angular.isDefined(options.expertMode) ? options.expertMode : data.expertMode;
             data.timeout = angular.isDefined(options.timeout) ? options.timeout : csConfig.timeout;
-            console.info('[network] Starting network from [{0}]'.format(data.pod.server));
+            console.info('[ES] [network] Starting network from [{0}]'.format(data.pod.server));
             var now = Date.now();
 
             addListeners();
 
             return loadPeers()
               .then(function(peers){
-                console.debug('[network] Started in '+(Date.now() - now)+'ms');
+                console.debug('[ES] [network] Started in '+(Date.now() - now)+'ms');
                 return peers;
               });
           });
@@ -589,7 +589,7 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
 
       close = function() {
         if (data.pod) {
-          console.info('[network-service] Stopping...');
+          console.info('[ES] [network-service] Stopping...');
           removeListeners();
           resetData();
         }

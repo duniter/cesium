@@ -11,7 +11,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
   var defaultBMA = BMA;
   var service;
 
-  function csWallet(id, BMA) {
+  function CsWallet(id, BMA) {
 
     BMA = BMA || defaultBMA;
     var
@@ -2450,8 +2450,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     return exports;
   }
 
-  service = csWallet('default', BMA);
-  service.instance = csWallet;
+  service = CsWallet('default', BMA);
+  service.instance = CsWallet;
 
   return service;
 });
