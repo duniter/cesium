@@ -3,8 +3,7 @@
   </ion-nav-title>
 
   <ion-content scroll="true"
-               class="refresher-light"
-               ng-class="{'member refresher-positive-900-bg': !loading && formData.isMember, 'refresher-dark-100-bg': loading || !formData.isMember}">
+               ng-class="{'member': !loading && formData.isMember}">
 
     <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
                    on-refresh="doUpdate(true)">
@@ -25,9 +24,10 @@
           <h3 class="light" ng-if=":rebind:formData.uid">{{:rebind:formData.uid}}</h3>
           <h3 class="light" ng-if=":rebind:!formData.uid"><i class="ion-key"></i> {{:rebind:formData.pubkey | formatPubkey}}</h3>
         </ng-if>
-        <h4 class="assertive">
-          <ng-if ng-if=":rebind:(formData.name || formData.uid) && !formData.isMember && revoked" translate>WOT.IDENTITY_REVOKED_PARENTHESIS</ng-if>
-          <ng-if ng-if=":rebind:(formData.name || formData.uid) && formData.isMember && revoked" translate>WOT.MEMBER_PENDING_REVOCATION_PARENTHESIS</ng-if>
+        <h4>
+          <ng-if class="assertive" ng-if=":rebind:(formData.name || formData.uid) && !formData.isMember && revoked" translate>WOT.IDENTITY_REVOKED_PARENTHESIS</ng-if>
+          <ng-if class="assertive" ng-if=":rebind:(formData.name || formData.uid) && formData.isMember && revoked" translate>WOT.MEMBER_PENDING_REVOCATION_PARENTHESIS</ng-if>
+          <cs-extension-point name="hero"></cs-extension-point>
         </h4>
 
       </div>
@@ -65,6 +65,8 @@
               ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.name||formData.uid})">
         {{'COMMON.BTN_SEND_MONEY' | translate}}
       </button>
+
+      <cs-extension-point name="after-buttons"></cs-extension-point>
     </div>
 
     <!-- fab buttons -->

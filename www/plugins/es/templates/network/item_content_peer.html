@@ -28,7 +28,7 @@
           </span>
           <span ng-if=":rebind:peer.hasEndpoint('ES_SUBSCRIPTION_API')"
                title="{{'ES_PEER.EMAIL_SUBSCRIPTION_COUNT'|translate: peer.docCount }}">
-            <i class="ion-email"></i> {{:rebind:peer.docCount.emailSubscription || '?'}}
+            <i class="ion-email"></i> {{:rebind:peer.docCount.emailSubscription}}
           </span>
         </div>
         <div ng-if=":rebind:peer.isTor()">

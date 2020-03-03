@@ -3,8 +3,14 @@
     "CATEGORY": "Kategorio",
     "CATEGORIES": "Kategorioj",
     "CATEGORY_SEARCH_HELP": "Serĉado",
+    "COMMENT_HELP": "Komento",
     "LAST_MODIFICATION_DATE": "Ĝisdatigita la",
     "SUBMIT_BY": "Submetita de",
+    "BTN_LIKE": "Mi ŝatas",
+    "LIKES_TEXT": "{{total}} persono{{total > 1 ? 'j' : ''}} ŝatis tiun ĉi paĝon",
+    "ABUSES_TEXT": "{{total}} persono{{total > 1 ? 'j' : ''}} atentigis pri problemo",
+    "BTN_REPORT_ABUSE_DOTS": "Atentigi pri problemo aŭ misuzo...",
+    "BTN_REMOVE_REPORTED_ABUSE": "Nuligi mian atentigon",
     "BTN_PUBLISH": "Publikigi",
     "BTN_PICTURE_DELETE": "Forigi",
     "BTN_PICTURE_FAVORISE": "Precipa",
@@ -20,6 +26,15 @@
       "NO_RESULT": "Neniu avizo",
       "SHOW_ALL": "Vidi ĉion",
       "LOAD_NOTIFICATIONS_FAILED": "Malsukceso por ŝarĝi la avizojn"
+    },
+    "REPORT_ABUSE": {
+      "TITLE": "Atentigi pri problemo",
+      "SUB_TITLE": "Bonvolu klarigi rapide la problemon:",
+      "REASON_HELP": "Mi klarigas la problemon...",
+      "ASK_DELETE": "Peti la forigon?",
+      "CONFIRM": {
+        "SENT": "Atentigo sendita. Dankon!"
+      }
     }
   },
   "MENU": {
@@ -118,6 +133,8 @@
     "REPLY_TO_DELETED_COMMENT": "Responde al forigita komento",
     "REPLY_COUNT": "{{replyCount}} respondoj",
     "DELETED_COMMENT": "Komento forigita",
+    "MODIFIED_ON": "modifita la {{time|formatDate}}",
+    "MODIFIED_PARENTHESIS": "(modifita poste)",
     "ERROR": {
       "FAILED_SAVE_COMMENT": "Eraro dum la konservo de la komento",
       "FAILED_REMOVE_COMMENT": "Eraro dum la forigo de la komento"
@@ -464,6 +481,7 @@
       "TITLE": "Serĉado de dokumentoj",
       "BTN_ACTIONS": "Agoj",
       "SEARCH_HELP": "Sendanto:AAA*, tempo:1508406169",
+      "LAST_DOCUMENTS_DOTS": "Lastaj dokumentoj:",
       "LAST_DOCUMENTS": "Lastaj dokumentoj",
       "SHOW_QUERY": "Vidi la informpeton",
       "HIDE_QUERY": "Kaŝi la informpeton",
@@ -472,6 +490,8 @@
       "HEADER_RECIPIENT": "Ricevonto",
       "READ": "Legita",
       "BTN_REMOVE": "Forigi tiun ĉi dokumenton",
+      "BTN_COMPACT": "Densigi",
+      "HAS_CREATE_OR_UPDATE_PROFILE": "kreis aŭ modifis sian profilon",
       "POPOVER_ACTIONS": {
         "TITLE": "Agoj",
         "REMOVE_ALL": "Forigi tiujn ĉi dokumentojn..."
@@ -523,6 +543,13 @@
       "RECIPIENT_IS_MANDATORY": "Adresito estas deviga por la ĉifrado."
     }
   },
+  "ES_PEER": {
+    "NAME": "Nomo",
+    "DOCUMENTS": "Dokumentoj",
+    "SOFTWARE": "Programo",
+    "DOCUMENT_COUNT": "Nombro de dokumentoj",
+    "EMAIL_SUBSCRIPTION_COUNT": "{{emailSubscription}} abonantoj pri avizoj per retmesaĝoj"
+  },
   "EVENT": {
     "NODE_STARTED": "Via nodo ES API <b>{{params[0]}}</b> ekis",
     "NODE_BMA_DOWN": "La nodo <b>{{params[0]}}:{{params[1]}}</b> (uzata de via nodo ES API) estas <b>neatingebla</b>.",
@@ -538,11 +565,26 @@
     "TX_RECEIVED_MULTI": "Vi <b>ricevis pagon</b> de <b>{{params[1]}}</b>.",
     "CERT_SENT": "Via <b>atestado</b> al <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> efektiviĝis.",
     "CERT_RECEIVED": "Vi <b>ricevis atestaĵon</b> de <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
-    "REGISTRY": {
+    "USER": {
+      "LIKE_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ŝatas vian profilon",
+      "FOLLOW_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> sekvas viajn agojn",
+      "STAR_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> notis vin ({{params[3]}} <b class=\"ion-star\">)",
+      "MODERATION_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> petas de vi moderigon pri la profilo: <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "DELETION_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> atentigis pri profilo foriginda: <b>{{params[2]}}</b>",
+      "ABUSE_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> atentigis pri via profilo"
+    },
+    "PAGE": {
       "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> komentis vian anoncon: <b>{{params[2]}}</b>",
       "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> modifis sian komenton pri via anonco: <b>{{params[2]}}</b>",
       "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> respondis al via komento pri la anonco: <b>{{params[2]}}</b>",
-      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> modifis sian respondon al via komento pri la anonco: <b>{{params[2]}}</b>"
+      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> modifis sian respondon al via komento pri la anonco: <b>{{params[2]}}</b>",
+      "FOLLOW_NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> komentis la paĝon: <b>{{params[2]}}</b>",
+      "FOLLOW_UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> modifis sian komenton ĉe la paĝo: <b>{{params[2]}}</b>",
+      "FOLLOW_NEW": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> aldonis la paĝon: <b>{{params[2]}}</b>",
+      "FOLLOW_UPDATE": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> modifis la paĝon: <b>{{params[2]}}</b>",
+      "MODERATION_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> petas de vis moderigon pri la paĝo: <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "DELETION_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> atentigis pri paĝo foriginda: <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "ABUSE_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> atentigis pri via paĝo: <b>{{params[2]}}</b>"
     }
   },
   "CONFIRM": {

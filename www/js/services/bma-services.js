@@ -147,7 +147,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 
     get = function (path, cacheTime) {
 
-      cacheTime = that.useCache && cacheTime;
+      cacheTime = that.useCache && cacheTime || 0 /* no cache*/ ;
       var cacheKey = path + (cacheTime ? ('#'+cacheTime) : '');
 
       var getRequestFn = function(params) {
@@ -415,7 +415,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         }
       },
       wot: {
-        lookup: get('/wot/lookup/:search', csHttp.cache.MEDIUM),
+        lookup: get('/wot/lookup/:search'),
         certifiedBy: get('/wot/certified-by/:pubkey'),
         certifiersOf: get('/wot/certifiers-of/:pubkey'),
         member: {

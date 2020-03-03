@@ -435,7 +435,7 @@
       "MESSAGE": "<i class=\"ion-android-time\"></i> Vi estis <b>malkonektita</b> aŭtomate, pro tro longa senaktiveco.",
       "BTN_RELOGIN": "Rekonektiĝi",
       "IDLE_WARNING": "Vi estos malkonektita... {{countdown}}"
-    },			
+    },
     "METHOD": {
       "SCRYPT_DEFAULT": "Sekreta identigilo kaj pasvorto",
       "SCRYPT_ADVANCED": "Sperta salumado",
@@ -694,7 +694,6 @@
     "SEND_CERTIFICATION_FAILED": "Atestado malsukcesa",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY": "Vi ne povas efektivigi atestadon, ĉar via konto <b>ne estas membro</b>.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF": "Vi ne povas efektivigi atestadon, ĉar via konto ankoraŭ ne estas membro.<br/><br/>Ankoraŭ mankas al vi atestaĵoj, aŭ tiuj ĉi ankoraŭ ne estis validigitaj.",
-    "NOT_MEMBER_FOR_CERTIFICATION": "Via konto ankoraŭ ne estas membro.",
     "IDENTITY_TO_CERTIFY_HAS_NO_SELF": "Konto ne atestebla. Neniu aliĝo-peto estis farita, aŭ la aliĝo ne estis revalidigita.",
     "LOGIN_FAILED": "Eraro dum konektiĝo.",
     "LOAD_IDENTITY_FAILED": "Eraro por ŝarĝi la identecon.",

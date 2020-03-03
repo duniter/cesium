@@ -1,0 +1,25 @@
+
+<div class="likes">
+
+  <!-- likes -->
+  <ng-if ng-if="likeData.likes && likeData.likes.total">
+      <span ng-class="{'gray': !likeData.likes.wasHitCount, 'positive': likeData.likes.wasHitCount}">
+        <a title="{{'COMMON.LIKES_TEXT'|translate: likeData.likes }}"
+           ng-click="!canEdit && toggleLike($event, {kind: 'like'})">
+            {{likeData.likes.total}}
+            <i class="icon ion-heart"></i>
+        </a>
+      </span>
+  </ng-if>
+
+  <!-- abuses -->
+  <ng-if ng-if="likeData.abuses && likeData.abuses.total">
+    <span class="gray" ng-if="likeData.likes && likeData.likes.total">&nbsp;|&nbsp;</span>
+    <a ng-class="{'assertive': likeData.abuses.wasHitCount}"
+       ng-click="!canEdit && reportAbuse($event)"
+       title="{{'COMMON.ABUSES_TEXT'|translate: likeData.abuses }}">
+        {{likeData.abuses.total}}
+        <i class="icon ion-android-warning"></i>
+    </a>
+  </ng-if>
+</div>

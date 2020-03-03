@@ -213,8 +213,14 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     that.ws = function(path) {
       return function() {
         var sock = that.cache.wsByPath[path];
-        if (!sock) {
+        if (!sock || sock.isClosed()) {
           sock =  csHttp.ws(that.host, that.port, path, that.useSsl);
+
+          // When close, remove from cache
+          sock.onclose = function() {
+            delete that.cache.wsByPath[path];
+          };
+
           that.cache.wsByPath[path] = sock;
         }
         return sock;
@@ -504,13 +510,13 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     function postRecord(path, options) {
       options = options || {};
       var postRequest = that.post(path);
-      return function(record, options) {
-        options = options || {};
-        var wallet = options.wallet || (options.walletId && csWallet.children.get(options.walletId)) ||
-          ((!options.pubkey || csWallet.isUserPubkey(options.pubkey)) && csWallet) ||
-          (options.pubkey && csWallet.children.getByPubkey(options.pubkey));
+      return function(record, params) {
+        params = params || {};
+        var wallet = params.wallet || (params.walletId && csWallet.children.get(params.walletId)) ||
+          ((!params.pubkey || csWallet.isUserPubkey(params.pubkey)) && csWallet) ||
+          (params.pubkey && csWallet.children.getByPubkey(params.pubkey));
 
-        var keypair = options.keypair || wallet && wallet.data && wallet.data.keypair;
+        var keypair = params.keypair || wallet && wallet.data && wallet.data.keypair;
 
         if (!keypair && !wallet) {
           throw new Error('Missing wallet or keypair, to sign record');
@@ -518,15 +524,15 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
         // Create the POSt request params,
         // but BEFORE, remove protected options
-        delete options.wallet;
-        delete options.walletId;
-        delete options.keypair;
-        var params = angular.copy(options);
+        delete params.wallet;
+        delete params.walletId;
+        delete params.keypair;
+        var params = angular.copy(params);
         params.pubkey = params.pubkey || wallet.data.pubkey;
 
         return (wallet.isAuth() ? $q.when(wallet.data) : wallet.auth({silent: true, minData: true}))
           .then(function() {
-            if (options.creationTime && !record.creationTime) {
+            if (params.creationTime && !record.creationTime) {
               record.creationTime = moment().utc().unix();
             }
             // Always update the time - fix #572
@@ -577,11 +583,14 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       };
     }
 
-    function countRecord(index, type) {
-      return that.get("/{0}/{1}/_search?size=0".format(index, type))
-        .then(function(res) {
-          return res && res.hits && res.hits.total;
-        });
+    function countRecords(index, type, cacheTime) {
+      var getRequest = that.get("/{0}/{1}/_search?size=0".format(index, type), cacheTime);
+      return function(params) {
+        return getRequest(params)
+            .then(function(res) {
+              return res && res.hits && res.hits.total;
+            });
+      };
     }
 
     function removeRecord(index, type) {
@@ -755,7 +764,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       record: {
         post: postRecord,
         remove: removeRecord,
-        count : countRecord
+        count : countRecords
       },
       image: {
         fromAttachment: imageFromAttachment,
@@ -785,7 +794,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
   service.lightInstance = function(host, port, useSsl, timeout) {
     port = port || 80;
-    useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443);
+    useSsl = angular.isDefined(useSsl) ? useSsl : (+port === 443);
 
     function countHits(path, params) {
       return csHttp.get(host, port, path)(params)

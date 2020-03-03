@@ -3,8 +3,15 @@
     "CATEGORY": "Catégorie",
     "CATEGORIES": "Catégories",
     "CATEGORY_SEARCH_HELP": "Recherche",
+    "COMMENT_HELP": "Commentaire",
     "LAST_MODIFICATION_DATE": "Mise à jour le",
     "SUBMIT_BY": "Soumis par",
+    "BTN_LIKE": "J'aime",
+    "BTN_LIKE_REMOVE": "Je n'aime plus",
+    "LIKES_TEXT": "{{total}} personne{{total > 1 ? 's' : ''}} {{total > 1 ? 'ont' : 'a'}} aimé cette page",
+    "ABUSES_TEXT": "{{total}} personne{{total > 1 ? 's' : ''}} {{total > 1 ? 'ont' : 'a'}} signalé un problème",
+    "BTN_REPORT_ABUSE_DOTS": "Signaler un problème ou un abus...",
+    "BTN_REMOVE_REPORTED_ABUSE": "Annuler mon signalement",
     "BTN_PUBLISH": "Publier",
     "BTN_PICTURE_DELETE": "Supprimer",
     "BTN_PICTURE_FAVORISE": "Principale",
@@ -20,6 +27,15 @@
       "NO_RESULT": "Aucune notification",
       "SHOW_ALL": "Voir tout",
       "LOAD_NOTIFICATIONS_FAILED": "Erreur de chargement des notifications"
+    },
+    "REPORT_ABUSE": {
+      "TITLE": "Signaler un problème",
+      "SUB_TITLE": "Merci d'expliquer succintement le problème :",
+      "REASON_HELP": "J'explique le problème...",
+      "ASK_DELETE": "Demander la suppression ?",
+      "CONFIRM": {
+        "SENT": "Signalement envoyé. Merci !"
+      }
     }
   },
   "MENU": {
@@ -118,6 +134,8 @@
     "REPLY_TO_DELETED_COMMENT": "En réponse à un commentaire supprimé",
     "REPLY_COUNT": "{{replyCount}} réponses",
     "DELETED_COMMENT": "Commentaire supprimé",
+    "MODIFIED_ON": "modifié le {{time|formatDate}}",
+    "MODIFIED_PARENTHESIS": "(modifié ensuite)",
     "ERROR": {
       "FAILED_SAVE_COMMENT": "Erreur lors de la sauvegarde du commentaire",
       "FAILED_REMOVE_COMMENT": "Erreur lors de la suppression du commentaire"
@@ -136,7 +154,7 @@
       "MESSAGE_RECEIVED": "Vous avez <b>reçu un message</b><br/>de"
     },
     "LIST": {
-      "INBOX": "Boite de réception",
+      "INBOX": "Boîte de réception",
       "OUTBOX": "Messages envoyés",
       "LAST_INBOX": "Nouveaux messages",
       "LAST_OUTBOX": "Messages envoyés",
@@ -341,7 +359,7 @@
       "LOAD_CATEGORY_FAILED": "Erreur de chargement de la liste des activités",
       "LOAD_RECORD_FAILED": "Erreur lors du chargement de la page",
       "LOOKUP_RECORDS_FAILED": "Erreur lors de l'exécution de la recherche",
-      "REMOVE_RECORD_FAILED": "Erreur de la suppression de la page",
+      "REMOVE_RECORD_FAILED": "Erreur lors de la suppression de la page",
       "SAVE_RECORD_FAILED": "Erreur lors de la sauvegarde",
       "RECORD_NOT_EXISTS": "Page inexistante",
       "GEO_LOCATION_NOT_FOUND": "Ville ou code postal non trouvé"
@@ -448,9 +466,9 @@
       "DELETE_SUBSCRIPTION_FAILED": "Erreur lors de la suppression de l'abonnement"
     },
     "MODAL_EMAIL": {
-      "TITLE" : "Notification par email",
-      "HELP" : "Remplissez ce formulaire pour <b>être notifié par email</b> des événements de votre compte.<br/>Votre adresse email sera chiffrée pour n'être visible que par le prestataire de service.",
-      "EMAIL_LABEL" : "Votre email :",
+      "TITLE": "Notification par email",
+      "HELP": "Remplissez ce formulaire pour <b>être notifié par email</b> des événements de votre compte.<br/>Votre adresse email sera chiffrée pour n'être visible que par le prestataire de service.",
+      "EMAIL_LABEL": "Votre email :",
       "EMAIL_HELP": "jean.dupond@domaine.com",
       "FREQUENCY_LABEL": "Fréquence des notifications :",
       "FREQUENCY_DAILY": "Journalier",
@@ -531,7 +549,7 @@
     "DOCUMENTS": "Documents",
     "SOFTWARE": "Logiciel",
     "DOCUMENT_COUNT": "Nombre de documents",
-    "EMAIL_SUBSCRIPTION_COUNT": "{{emailSubscription}} abonnés aux notifications par email"
+    "EMAIL_SUBSCRIPTION_COUNT": "{{emailSubscription}} abonné{{emailSubscription ? 's' : ''}} aux notifications par email"
   },
   "EVENT": {
     "NODE_STARTED": "Votre noeud ES API <b>{{params[0]}}</b> est démarré",
@@ -548,11 +566,31 @@
     "TX_RECEIVED_MULTI": "Vous avez <b>reçu un paiement</b> de <b>{{params[1]}}</b>.",
     "CERT_SENT": "Votre <b>certification</b> à <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a été effectuée.",
     "CERT_RECEIVED": "Vous avez <b>reçu une certification</b> de <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
-    "REGISTRY": {
-      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a commenté votre référencement : <b>{{params[2]}}</b>",
-      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a modifié son commentaire sur votre référencement : <b>{{params[2]}}</b>",
-      "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a répondu à votre commentaire sur le référencement : <b>{{params[2]}}</b>",
-      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a modifié sa réponse à votre commentaire sur le référencement : <b>{{params[2]}}</b>"
+    "USER": {
+      "LIKE_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> aime votre profil",
+      "FOLLOW_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> suit votre activité",
+      "STAR_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> vous a noté ({{params[3]}} <b class=\"ion-star\">)",
+      "MODERATION_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> vous demande une modération sur le profil : <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "DELETION_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> demande la suppression d'un profil : <b>{{params[2]}}</b>",
+      "ABUSE_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> a signalé votre profil"
+    },
+    "PAGE": {
+      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a commenté votre page : <b>{{params[2]}}</b>",
+      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a modifié son commentaire sur votre page : <b>{{params[2]}}</b>",
+      "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a répondu à votre commentaire sur la page : <b>{{params[2]}}</b>",
+      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a modifié sa réponse à votre commentaire sur la page : <b>{{params[2]}}</b>",
+      "FOLLOW_NEW_COMMENT": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> a commenté la page : <b>{{params[2]}}</b>",
+      "FOLLOW_UPDATE_COMMENT": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> a modifié son commentaire sur la page : <b>{{params[2]}}</b>",
+      "FOLLOW_NEW": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> a ajouté la page : <b>{{params[2]}}</b>",
+      "FOLLOW_UPDATE": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> a modifié la page : <b>{{params[2]}}</b>",
+      "MODERATION_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> vous demande une modération sur la page : <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "DELETION_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> a signalé une page à supprimer : <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "ABUSE_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> a signalé votre page : <b>{{params[2]}}</b>"
+    }
+  },
+  "LIKE": {
+    "ERROR": {
+      "FAILED_TOGGLE_LIKE": "Impossible d'executer cette action."
     }
   },
   "CONFIRM": {

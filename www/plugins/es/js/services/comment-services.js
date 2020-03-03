@@ -1,7 +1,7 @@
 angular.module('cesium.es.comment.services', ['ngResource', 'cesium.services',
   'cesium.es.http.services', 'cesium.es.profile.services'])
 
-  .factory('esComment', function($rootScope, $q, UIUtils, BMA, esHttp, csWallet, csWot) {
+  .factory('esComment', function($rootScope, $q, esHttp, csWallet, csWot) {
     'ngInject';
 
     function EsComment(index) {

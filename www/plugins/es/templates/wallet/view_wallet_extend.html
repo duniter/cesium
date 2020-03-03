@@ -1,4 +1,12 @@
-<ng-if ng-if=":state:enable">
+<ng-if ng-if=":state:enable && extensionPoint === 'hero'" >
+  <!-- likes -->
+  <small class="light" style="display: inline-block;"
+         ng-include="'plugins/es/templates/common/view_likes.html'"
+         ng-init="canEdit=true"></small>
+</ng-if>
+
+<ng-if ng-if=":state:enable && extensionPoint === 'after-general'">
+
   <!-- profile -->
   <div class="item item-divider item-divider-top-border">
     <span>
@@ -93,7 +101,7 @@
 
     <a class="badge button button-text button-small button-small-padding "
        ng-if="!formData.pages.count"
-       ng-click="showNewPageModal()">
+       ng-click="showNewPageModal($event)">
       <i class="icon ion-edit"></i>
       <span translate>REGISTRY.BTN_NEW</span>
     </a>

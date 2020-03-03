@@ -5,7 +5,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
 .factory('csWot', function($rootScope, $q, $timeout, BMA, Api, CacheFactory, csConfig, csCurrency, csSettings, csCache) {
   'ngInject';
 
-  function factory(id) {
+  function csWot(id) {
 
     var
       api = new Api(this, "csWot-" + id),
@@ -1209,8 +1209,8 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
     };
   }
 
-  var service = factory('default', BMA);
+  var service = csWot('default', BMA);
 
-  service.instance = factory;
+  service.instance = csWot;
   return service;
 });

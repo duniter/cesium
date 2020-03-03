@@ -12,7 +12,7 @@ angular.module('cesium.graph.account.controllers', ['chart.js', 'cesium.graph.se
           points: {
             'buttons': {
               templateUrl: "plugins/graph/templates/account/view_wallet_tx_extend.html",
-              controller: 'GpExtendCtrl'
+              controller: 'ESExtensionCtrl'
             }
           }
         })
@@ -21,16 +21,7 @@ angular.module('cesium.graph.account.controllers', ['chart.js', 'cesium.graph.se
           points: {
             'buttons': {
               templateUrl: "plugins/graph/templates/account/view_wallet_tx_extend.html",
-              controller: 'GpExtendCtrl'
-            }
-          }
-        })
-
-        .extendState('app.wot_identity', {
-          points: {
-            'buttons': {
-              templateUrl: "plugins/graph/templates/account/view_identity_extend.html",
-              controller: 'GpExtendCtrl'
+              controller: 'ESExtensionCtrl'
             }
           }
         })
@@ -39,7 +30,7 @@ angular.module('cesium.graph.account.controllers', ['chart.js', 'cesium.graph.se
           points: {
             'buttons': {
               templateUrl: "plugins/graph/templates/account/view_identity_tx_extend.html",
-              controller: 'GpExtendCtrl'
+              controller: 'ESExtensionCtrl'
             }
           }
         })
@@ -81,39 +72,12 @@ angular.module('cesium.graph.account.controllers', ['chart.js', 'cesium.graph.se
     }
   })
 
-  .controller('GpExtendCtrl', GpExtendController)
-
   .controller('GpAccountBalanceCtrl', GpAccountBalanceController)
 
   .controller('GpAccountSumTxCtrl', GpAccountSumTxController)
 
   .controller('GpAccountCertificationCtrl', GpAccountCertificationController)
-
 ;
-
-function GpExtendController($scope, PluginService, esSettings, $state, csWallet) {
-  'ngInject';
-
-  $scope.extensionPoint = PluginService.extensions.points.current.get();
-  $scope.enable = esSettings.isEnable();
-
-  esSettings.api.state.on.changed($scope, function(enable) {
-    $scope.enable = enable;
-  });
-
-  $scope.showIdentityStats = function() {
-    if ($scope.formData && $scope.formData.pubkey) {
-      $state.go('app.wot_identity_stats', {pubkey: $scope.formData.pubkey});
-    }
-  };
-
-  $scope.showWalletStats = function() {
-    if (csWallet.isLogin()) {
-      $state.go('app.wot_identity_stats', {pubkey: csWallet.data.pubkey});
-    }
-  };
-}
-
 
 function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $translate, csWot, gpData, gpColor, csWallet) {
   'ngInject';

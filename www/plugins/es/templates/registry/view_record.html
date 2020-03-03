@@ -23,15 +23,28 @@
         <i class="avatar cion-page-{{formData.type}}" ng-if="!formData.avatar"></i>
         <i class="avatar" ng-style="{{avatarStyle}}" ng-if="formData.avatar"></i>
         <h3><span class="dark" ng-bind-html="formData.title"></span></h3>
-        <h4>&nbsp;</h4>
+        <h4 class="gray">
+          <span ng-if="formData.city" class="gray hidden-xs hidden-sm">
+            <i class="icon ion-location"></i> <span ng-bind-html="formData.city"></span>
+          </span>
+          <!-- likes -->
+          <small ng-include="'plugins/es/templates/common/view_likes.html'"></small>
+        </h4>
+
       </div>
+
       <h4 class="content dark" ng-if="loading">
         <ion-spinner icon="android"></ion-spinner>
       </h4>
-      <h4 class="content gray hidden-xs hidden-sm" ng-if="formData.city">
-        <i class="icon ion-location"></i>
-        <span ng-bind-html="formData.city"></span>
-      </h4>
+    </div>
+
+    <!-- Top fab button -->
+    <div class="visible-xs visible-sm">
+      <!-- like -->
+      <button class="button button-fab button-fab-top-right button-stable"
+              ng-click="toggleLike($event)">
+        <i class="icon ion-heart"  ng-class="{'gray': !likeData.likes.wasHitCount, 'calm': likeData.likes.wasHitCount}"></i>
+      </button>
     </div>
 
     <div class="row no-padding-xs no-padding-sm">
@@ -66,7 +79,7 @@
                 {{issuer.pubkey|formatPubkey}}
               </span>
             </a>
-            <span >
+            <span>
                 {{formData.time|formatFromNow}}
                 <h4 class="gray hidden-xs">|
                   {{formData.time | formatDate}}
@@ -81,6 +94,14 @@
           <button class="button button-stable button-small-padding icon ion-android-share-alt"
                   ng-click="showSharePopover($event)">
           </button>
+          <!-- Like button -->
+          <button class="button button-stable button-small-padding ink-dark"
+                  ng-if="!canEdit"
+                  title="{{'COMMON.BTN_LIKE' | translate }}"
+                  ng-click="toggleLike($event)">
+            <i class="icon ion-heart" ng-class="{'gray': !likeData.likes.wasHitCount, 'calm': likeData.likes.wasHitCount}"></i>
+          </button>
+
           <button class="button button-calm ink-dark"
                   ng-if="showTransfer"
                   ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.title})">
@@ -96,6 +117,12 @@
                   ng-if="canEdit"
                   ng-click="edit()">
             {{'COMMON.BTN_EDIT' | translate}}
+          </button>
+
+          <!-- options -->
+          <button class="button button-stable button-small-padding icon ion-android-more-vertical"
+                  ng-if="!canEdit"
+                  ng-click="showActionsPopover($event)">
           </button>
         </div>
 

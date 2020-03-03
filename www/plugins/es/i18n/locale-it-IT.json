@@ -518,7 +518,7 @@
      "TX_RECEIVED_MULTI": "Ha ricevuto un pagamento da <b>{{params[1]}}</b>.",
      "CERT_SENT": "Sua <b>certificazione</b> a favore di <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> è stata eseguita.",
      "CERT_RECEIVED": "Ha ricevuto <b>una certificazione</b> da parte di <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
-     "REGISTRY": {
+     "PAGE": {
        "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha scritto un commento sul suo riferimento: <b>{{params[2]}}</b>",
        "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha modificato il suo commento sul suo riferimento: <b>{{params[2]}}</b>",
        "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha risposto al suo commento sul riferimento: <b>{{params[2]}}</b>",

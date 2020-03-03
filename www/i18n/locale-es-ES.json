@@ -643,7 +643,6 @@
     "SEND_CERTIFICATION_FAILED": "Error de la certificación.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY": "No se puede certificar, porque su cuenta no <b>es miembro</b>.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF": "No se puede certificar, porque su cuenta ya no es miembro.<br/><br/>Todavía faltan certificaciones, o ahora no son validas.",
-    "NOT_MEMBER_FOR_CERTIFICATION": "Su cuenta todavía no es miembro.",
     "IDENTITY_TO_CERTIFY_HAS_NO_SELF": "Cuenta no certificable. No se ha solicitado la adhesión, o no fue renovada.",
     "LOGIN_FAILED": "Error durante la autentificación.",
     "LOAD_IDENTITY_FAILED": "Error de carga de la identidad.",

@@ -3,8 +3,15 @@
     "CATEGORY": "Category",
     "CATEGORIES": "Categories",
     "CATEGORY_SEARCH_HELP": "Search",
+    "COMMENT_HELP": "Comments",
     "LAST_MODIFICATION_DATE": "Updated on ",
     "SUBMIT_BY": "Submitted by",
+    "BTN_LIKE": "I like",
+    "BTN_LIKE_REMOVE": "I don't like anymore",
+    "LIKES_TEXT": "{{total}} {{total > 1 ? 'people' : 'person'}} liked this page",
+    "ABUSES_TEXT": "{{total}} {{total > 1 ? 'people' : 'person'}} reported a problem on this page",
+    "BTN_REPORT_ABUSE_DOTS": "Report a problem or an abuse...",
+    "BTN_REMOVE_REPORTED_ABUSE": "Cancel my problem report",
     "BTN_PUBLISH": "Publish",
     "BTN_PICTURE_DELETE": "Delete",
     "BTN_PICTURE_FAVORISE": "Default",
@@ -20,6 +27,15 @@
       "NO_RESULT": "No notification",
       "SHOW_ALL": "Show all",
       "LOAD_NOTIFICATIONS_FAILED": "Could not load notifications"
+    },
+    "REPORT_ABUSE": {
+      "TITLE": "Report a problem",
+      "SUB_TITLE": "Please explain briefly the problem:",
+      "REASON_HELP": "I explain the problem...",
+      "ASK_DELETE": "Request removal?",
+      "CONFIRM": {
+        "SENT": "Request sent. Thnak you!"
+      }
     }
   },
   "MENU": {
@@ -118,6 +134,8 @@
     "REPLY_TO_DELETED_COMMENT": "In response to a deleted comment",
     "REPLY_COUNT": "{{replyCount}} responses",
     "DELETED_COMMENT": "Comment deleted",
+    "MODIFIED_ON": "modified on {{time|formatDate}}",
+    "MODIFIED_PARENTHESIS": "(modified then)",
     "ERROR": {
       "FAILED_SAVE_COMMENT": "Saving comment failed",
       "FAILED_REMOVE_COMMENT": "Deleting comment failed"
@@ -497,11 +515,31 @@
     "TX_RECEIVED_MULTI": "You received a payment from <b>{{params[1]}}</b>.",
     "CERT_SENT": "Your <b>certification</b> to <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> was executed.",
     "CERT_RECEIVED": "You  have <b>received a certification</b> from <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
-    "REGISTRY": {
+    "USER": {
+      "LIKE_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> like your profile",
+      "FOLLOW_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> follows your activity",
+      "STAR_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> rated you ({{params[3]}} <i class=\"ion-star\">)",
+      "MODERATION_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> asks you for a moderation on the profile: <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "DELETION_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> reported a profile to be deleted: <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "ABUSE_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has requested moderation on your profile"
+    },
+    "PAGE": {
       "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has commented on your referencing: <b>{{params[2]}}</b>",
       "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has modified his comment on your referencing: <b>{{params[2]}}</b>",
       "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has replied to your comment on the referencing: <b>{{params[2]}}</b>",
-      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has modified his answer to your comment, on the referencing: <b>{{params[2]}}</b>"
+      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has modified his answer to your comment, on the referencing: <b>{{params[2]}}</b>",
+      "FOLLOW_NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has commented on the page: <b>{{params[2]}}</b>",
+      "FOLLOW_UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has modified his comment on the page: <b>{{params[2]}}</b>",
+      "FOLLOW_NEW": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> added a page: <b>{{params[2]}}</b>",
+      "FOLLOW_UPDATE": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> updated the page: <b>{{params[2]}}</b>",
+      "MODERATION_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> asks you for a moderation on the page: <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "DELETION_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> reported a page to be deleted: <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "ABUSE_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has requested moderation on your page: <b>{{params[2]}}</b>"
+    }
+  },
+  "LIKE": {
+    "ERROR": {
+      "FAILED_TOGGLE_LIKE": "Unable to execute this action."
     }
   },
   "CONFIRM": {

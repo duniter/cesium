@@ -65,7 +65,10 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   $scope.settings = csSettings.data;
   $scope.qrcodeId = 'qrcode-wallet-' + $scope.$id;
   $scope.toggleQRCode = false;
-
+  $scope.likeData = {
+    likes: {},
+    abuses: {}
+  };
 
   var wallet;
 

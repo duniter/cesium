@@ -1,9 +1,8 @@
-<!-- Buttons section -->
-<ng-if ng-if=":state:enable && extensionPoint === 'buttons'">
-  <button class="button button-stable button-small-padding icon ion-compose"
-          ng-click="showNewMessageModal()"
-          title="{{'MESSAGE.BTN_WRITE' | translate}}">
-  </button>
+<!-- Hero -->
+<ng-if ng-if=":state:enable && extensionPoint === 'hero'">
+  <!-- likes -->
+  <small class="light" style="display: inline-block;"
+         ng-include="'plugins/es/templates/common/view_likes.html'"></small>
 </ng-if>
 
 <!-- Top fab buttons -->
@@ -13,6 +12,22 @@
           style="left: 88px;"
           ng-click="showNewMessageModal()">
     <i class="icon ion-compose"></i>
+  </button>
+</ng-if>
+
+<!-- Buttons section -->
+<ng-if ng-if=":state:enable && extensionPoint === 'buttons'">
+  <button class="button button-stable button-small-padding icon ion-compose"
+          ng-click="showNewMessageModal()"
+          title="{{'MESSAGE.BTN_WRITE' | translate}}">
+  </button>
+</ng-if>
+
+<!-- End of buttons section -->
+<ng-if ng-if=":state:enable && extensionPoint === 'after-buttons'">
+  <!-- options -->
+  <button class="button button-stable button-small-padding icon ion-android-more-vertical"
+          ng-click="showActionsPopover($event)">
   </button>
 </ng-if>
 

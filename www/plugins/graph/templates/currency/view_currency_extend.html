@@ -1,6 +1,6 @@
 
 <!-- section actual parameters -->
-<ng-if ng-if="enable && extensionPoint === 'parameters-actual'" >
+<ng-if ng-if=":state:enable && extensionPoint === 'parameters-actual'" >
 
   <ng-if ng-if="!smallscreen">
     <div class="item padding-left padding-right no-padding-xs no-padding-sm"
@@ -26,7 +26,7 @@
 </ng-if>
 
 <!-- section Wot -->
-<ng-if ng-if="enable && extensionPoint === 'wot-actual'" >
+<ng-if ng-if=":state:enable && extensionPoint === 'wot-actual'" >
 
   <ng-if ng-if="!smallscreen">
     <div class="item padding-left padding-right no-padding-xs no-padding-sm"
@@ -51,7 +51,7 @@
 </ng-if>
 
 <!-- section Wot -->
-<ng-if ng-if="enable && extensionPoint === 'network-actual'" >
+<ng-if ng-if=":state:enable && extensionPoint === 'network-actual'" >
 
   <div class="item padding-left padding-right no-padding-xs no-padding-sm"
        ng-if="!smallscreen"

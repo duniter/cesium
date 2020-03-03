@@ -22,7 +22,7 @@
       BLOCKCHAIN.LOOKUP.NO_BLOCK
     </div>
     <!-- blocks -->
-    <ng-repeat ng-repeat="block in search.results"
+    <ng-repeat ng-repeat="block in search.results track by block.id"
                ng-include="!block.empty ? 'templates/blockchain/item_block_lg.html' : 'templates/blockchain/item_block_empty_lg.html'">
     </ng-repeat>
   </ion-list>

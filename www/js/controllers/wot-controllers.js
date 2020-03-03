@@ -254,7 +254,7 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
       type: undefined
     };
 
-    if ($scope.search.type == 'text') {
+    if ($scope.search.type === 'text') {
       var text = $scope.search.text.trim();
       if (text.match(/^#[\wḡĞǦğàáâãäåçèéêëìíîïðòóôõöùúûüýÿ]+$/)) {
         stateParams.hash = text.substr(1);
@@ -283,16 +283,15 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
   };
 
   $scope.doSearch = function() {
-    $scope.search.loading = true;
     var text = $scope.search.text.trim();
     if ((UIUtils.screen.isSmall() && text.length < 3) || !text.length) {
       $scope.search.results = undefined;
-      $scope.search.loading = false;
       $scope.search.type = 'none';
       $scope.search.total = undefined;
       return $q.when();
     }
 
+    $scope.search.loading = true;
     $scope.search.type = 'text';
     return csWot.search(text)
       .then(function(idties){
@@ -1040,7 +1039,20 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
   $scope.motion = UIUtils.motion.fadeSlideInRight;
   $scope.qrcodeId = 'qrcode-wot-' + $scope.$id;
 
+  // Init likes here, to be able to use in extension
+  $scope.options = $scope.options || {};
+  $scope.options.like = {
+    kinds: ['LIKE', 'ABUSE'],
+    index: 'user',
+    type: 'profile'
+  };
+  $scope.likeData = {
+    likes: {},
+    abuses: {}
+  };
+
   $scope.$on('$ionicView.enter', function(e, state) {
+
     var onLoadSuccess = function() {
       $scope.doMotion();
       if (state.stateParams && state.stateParams.action) {
@@ -1049,6 +1061,9 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
         }, 100);
 
         $scope.removeActionParamInLocationHref(state);
+
+        // Need by like controller
+        $scope.likeData.id = $scope.formData.pubkey;
       }
 
       $scope.showQRCode();
