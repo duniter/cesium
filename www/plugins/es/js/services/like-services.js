@@ -4,29 +4,30 @@ angular.module('cesium.es.like.services', ['ngResource', 'cesium.services',
   .factory('esLike', function($q, csWallet, esHttp) {
     'ngInject';
 
+
+    var constants = {
+      KINDS: ['LIKE', 'ABUSE']
+    };
+
     function EsLike(index, type) {
 
-      var
-        raw = {
+      var that = this;
+      that.raw = {
           getSearch: esHttp.get('/like/record/_search?_source=false&q=:q'),
           searchBaseQueryString: 'index:{0} AND type:{1} AND id:'.format(index, type),
           postSearch: esHttp.post("/like/record/_search"),
           postRecord: esHttp.record.post('/{0}/{1}/:id/_like'.format(index, type)),
           removeRecord: esHttp.record.remove('like', 'record')
-        },
-        constants = {
-          KINDS: ['LIKE', 'ABUSE']
-        }
-      ;
+        };
 
       function getLikeIds(id, options) {
         options = options || {};
         options.kind = options.kind || 'LIKE';
-        var queryString = raw.searchBaseQueryString + id;
+        var queryString = that.raw.searchBaseQueryString + id;
         if (options.kind) queryString += ' AND kind:' + options.kind.toUpperCase();
         if (options.issuer) queryString += ' AND issuer:' + options.issuer;
 
-        return raw.getSearch({q: queryString})
+        return that.raw.getSearch({q: queryString})
           .then(function(res) {
             return (res && res.hits && res.hits.hits || []).map(function(hit) {
               return hit._id;
@@ -48,7 +49,7 @@ angular.module('cesium.es.like.services', ['ngResource', 'cesium.services',
         if (options.comment) record.comment = options.comment;
         if (angular.isDefined(options.level)) record.level = options.level;
 
-        return raw.postRecord(record, options);
+        return that.raw.postRecord(record, options);
       }
 
       function toggleLike(id, options) {
@@ -82,7 +83,7 @@ angular.module('cesium.es.like.services', ['ngResource', 'cesium.services',
 
       function removeLike(id, options) {
         if (!id) throw new Error("Missing 'id' argument");
-        return raw.removeRecord(id, options);
+        return that.raw.removeRecord(id, options);
       }
 
       function countLike(id, options) {
@@ -111,7 +112,7 @@ angular.module('cesium.es.like.services', ['ngResource', 'cesium.services',
           request._source = ["issuer"];
         }
 
-        return raw.postSearch(request)
+        return that.raw.postSearch(request)
           .then(function(res) {
             var hits = res && res.hits;
             var result = {
@@ -138,7 +139,6 @@ angular.module('cesium.es.like.services', ['ngResource', 'cesium.services',
       return {
         index: index,
         type: type,
-        constants: constants,
         toggle: toggleLike,
         add: addLike,
         remove: removeLike,
@@ -147,6 +147,7 @@ angular.module('cesium.es.like.services', ['ngResource', 'cesium.services',
     }
 
     return {
+      constants: constants,
       instance: EsLike
     };
   })

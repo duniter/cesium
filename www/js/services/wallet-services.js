@@ -699,8 +699,17 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       // Clean existing events
       cleanEventsByContext('requirements');
 
+      var finished = false;
+
+      $timeout(function() {
+        if (!finished) UIUtils.loading.update({template: "COMMON.LOADING_WAIT"});
+      }, 2000);
       // Get requirements
-      return csWot.loadRequirements(data, withCache);
+      return csWot.loadRequirements(data, withCache)
+        .then(function(res) {
+          finished = true;
+          return res;
+        });
     },
 
     loadTxAndSources = function(fromTime) {
@@ -2011,7 +2020,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     },
 
     getChildWalletById = function(id) {
-      return (id !== 'default') && _.find(data.children|| [], function(child) {return child.id === id;}) || undefined;
+      return (id !== 'default') && _.find(data.children|| [], function(child) {return child.id === +id;}) || undefined;
     },
 
     getChildWalletByPubkey = function(pubkey) {
@@ -2028,11 +2037,10 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     newChildInstance =  function() {
       // Return max(id) + 1
-      var walletId = (data.children && data.children.reduce(function(res, wallet) {
+      var walletId = (data.children || []).reduce(function(res, wallet) {
           return Math.max(res, wallet.id);
-        }, 0) || data.childrenCount || 0 )+ 1;
-      var childrenWallet = service.instance(walletId, BMA);
-      return childrenWallet;
+        }, 0) + 1;
+      return service.instance(walletId, BMA);
     },
 
     getAllChildrenWallet = function() {
