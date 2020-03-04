@@ -416,8 +416,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       },
       wot: {
         lookup: get('/wot/lookup/:search'),
-        certifiedBy: get('/wot/certified-by/:pubkey'),
-        certifiersOf: get('/wot/certifiers-of/:pubkey'),
+        certifiedBy: get('/wot/certified-by/:pubkey', csHttp.cache.SHORT),
+        certifiersOf: get('/wot/certifiers-of/:pubkey', csHttp.cache.SHORT),
         member: {
           all: get('/wot/members', csHttp.cache.LONG),
           pending: get('/wot/pending', csHttp.cache.SHORT)

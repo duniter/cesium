@@ -49,7 +49,7 @@
     "NO_ACCOUNT_QUESTION": "Pas encore de compte ? Créez-en un gratuitement !",
     "SEARCH_NO_RESULT": "Aucun résultat trouvé",
     "LOADING": "Veuillez patienter...",
-    "LOADING_WAIT": "Veuillez patienter...<br/><small>(Attente de disponibilité du noeud)</small>",
+    "LOADING_WAIT": "Veuillez patienter...<br/><small>(Cesium interroge le nœud Duniter)</small>",
     "SEARCHING": "Recherche en cours...",
     "FROM": "De",
     "TO": "À",

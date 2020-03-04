@@ -695,20 +695,20 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       return data;
     },
 
-    loadRequirements = function(withCache) {
+    loadRequirements = function(withCache, secondTry) {
       // Clean existing events
       cleanEventsByContext('requirements');
 
-      var finished = false;
-
-      $timeout(function() {
-        if (!finished) UIUtils.loading.update({template: "COMMON.LOADING_WAIT"});
-      }, 2000);
       // Get requirements
       return csWot.loadRequirements(data, withCache)
-        .then(function(res) {
-          finished = true;
-          return res;
+        .catch(function(err) {
+          // Retry once (can be a timeout, because Duniter node are long to response)
+          if (!secondTry) {
+            console.error("[wallet] Unable to load requirements: Will retrying... ", err);
+            UIUtils.loading.update({template: "COMMON.LOADING_WAIT"});
+            return loadRequirements(withCache, true);
+          }
+          throw err;
         });
     },
 

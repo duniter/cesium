@@ -188,8 +188,12 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
       }
       data = {pubkey: inputData.pubkey, uid: inputData.uid};
 
-      var now = Date.now();
+      // Alert user, when request is too long (> 2s)
+      $timeout(function() {
+        if (!data.requirements.loaded) UIUtils.loading.update({template: "COMMON.LOADING_WAIT"});
+      }, 2000);
 
+      var now = Date.now();
       return $q.all([
         // Get currency
         csCurrency.get(),
@@ -265,6 +269,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
           return inputData;
         })
         .catch(function(err) {
+          data.requirements = {loaded: true}; // Mark has loaded - need by the previous $timeout
           _resetRequirements(inputData);
           // If not a member: continue
           if (!!err &&
@@ -276,8 +281,6 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
           throw err;
         });
     },
-
-
 
     loadIdentityByLookup = function(pubkey, uid) {
       var data = {
