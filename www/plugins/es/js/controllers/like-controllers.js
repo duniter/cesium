@@ -61,7 +61,7 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
   };
 
   $scope.loadLikes = function(id) {
-    if ($scope.likeData.loading) return;// Skip
+    if (!$scope.likeData || $scope.likeData.loading) return;// Skip
 
     id = id || $scope.likeData.id;
     $scope.initLikes();

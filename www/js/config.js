@@ -10,37 +10,54 @@ angular.module("cesium.config", [])
 
 .constant("csConfig", {
 	"cacheTimeMs": 300000,
-	"fallbackLanguage": "fr-FR",
-	"defaultLanguage": "fr-FR",
+	"fallbackLanguage": "en",
 	"rememberMe": true,
 	"showUDHistory": true,
-	"timeout": 300000,
+	"timeout": 40000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
+	"keepAuthIdle": 600,
 	"useLocalStorage": true,
-	"useRelative": true,
-	"expertMode": true,
+	"useRelative": false,
+	"expertMode": false,
 	"decimalCount": 2,
+	"httpsMode": false,
+	"shareBaseUrl": "https://g1.duniter.fr",
 	"helptip": {
-		"enable": false,
+		"enable": true,
 		"installDocUrl": {
 			"fr-FR": "https://duniter.org/fr/wiki/duniter/installer/",
 			"en": "https://duniter.org/en/wiki/duniter/install/"
 		}
 	},
 	"license": {
-		"fr-FR": "license/license_g1-fr-FR",
 		"en": "license/license_g1-en",
+		"fr-FR": "license/license_g1-fr-FR",
 		"es-ES": "license/license_g1-es-ES",
 		"eo-EO": "license/license_g1-eo-EO"
 	},
+	"feed": {
+		"jsonFeed": {
+			"fr-FR": "feed.json",
+			"en": "feed.json"
+		},
+		"maxContentLength": 650
+	},
 	"node": {
-		"host": "g1.duniter.fr",
+		"host": "g1.duniter.org",
 		"port": 443
 	},
 	"fallbackNodes": [
 		{
-			"host": "g1.duniter.org",
+			"host": "g1.cgeek.fr",
+			"port": 443
+		},
+		{
+			"host": "g1.monnaielibreoccitanie.org",
+			"port": 443
+		},
+		{
+			"host": "g1.le-sou.org",
 			"port": 443
 		},
 		{
@@ -48,13 +65,19 @@ angular.module("cesium.config", [])
 			"port": 443
 		}
 	],
+	"developers": [
+		{
+			"name": "Benoit Lavenier",
+			"pubkey": "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE"
+		}
+	],
 	"plugins": {
 		"es": {
-			"enable": false,
-			"askEnable": false,
-			"host": "localhost",
-			"port": 9200,
-			"wsPort": 9400,
+			"enable": true,
+			"askEnable": true,
+			"useRemoteStorage": true,
+			"host": "g1.data.duniter.fr",
+			"port": 443,
 			"fallbackNodes": [
 				{
 					"host": "g1.data.le-sou.org",
@@ -72,19 +95,10 @@ angular.module("cesium.config", [])
 				"certReceived": true
 			},
 			"defaultCountry": "France"
-		},
-		"graph": {
-			"enable": true
-		},
-		"neo4j": {
-			"enable": true
-		},
-		"rml9": {
-			"enable": true
 		}
 	},
 	"version": "1.5.3",
-	"build": "2020-03-02T09:05:39.852Z",
+	"build": "2020-03-04T18:00:55.476Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 

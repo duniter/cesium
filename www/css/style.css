@@ -10,24 +10,14 @@
     line-height: inherit;
 }
 
-#home h1 {
+#home .main-container h1 {
     padding-top: 15px;
     text-align: center;
 }
-
-#home h2 {
-    font-size: 22px;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    text-align: center;
+#home .main-container h4 {
     color: #fff;
 }
-
-#home h4 {
-    color: #fff;
-}
-
-#home h4 a {
+#home .main-container h4 a {
   color: inherit;
 }
 

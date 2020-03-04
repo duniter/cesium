@@ -190,7 +190,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
 
       // Alert user, when request is too long (> 2s)
       $timeout(function() {
-        if (!data.requirements.loaded) UIUtils.loading.update({template: "COMMON.LOADING_WAIT"});
+        if (!data.requirements || !data.requirements.loaded) UIUtils.loading.update({template: "COMMON.LOADING_WAIT"});
       }, 2000);
 
       var now = Date.now();

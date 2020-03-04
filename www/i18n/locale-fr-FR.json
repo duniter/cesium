@@ -127,7 +127,10 @@
     "REPORT_ISSUE": "anomalie",
     "NOT_YOUR_ACCOUNT_QUESTION" : "Vous n'êtes pas propriétaire du compte <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b> ?",
     "BTN_CHANGE_ACCOUNT": "Déconnecter ce compte",
-    "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connexion Internet, ou changer de nœud <a class=\"positive\" ng-click=\"doQuickFix('settings')\">dans les paramètres</a>."
+    "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connexion Internet, ou changer de nœud <a class=\"positive\" ng-click=\"doQuickFix('settings')\">dans les paramètres</a>.",
+    "SHOW_ALL_FEED": "Voir tout",
+    "READ_MORE": "Lire la suite",
+    "FEED_SOURCE": "Source"
   },
   "SETTINGS": {
     "TITLE": "Paramètres",

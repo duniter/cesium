@@ -120,14 +120,17 @@
   "HOME": {
     "TITLE": "Cesium",
     "WELCOME": "Welcome to the Cesium Application!",
-    "MESSAGE": "Follow your {{currency|abbreviate}} wallets easily",
+    "MESSAGE": "Receive and send libre currency {{currency|abbreviate}}",
     "BTN_CURRENCY": "Explore currency",
     "BTN_ABOUT": "about",
     "BTN_HELP": "Help",
     "REPORT_ISSUE": "Report an issue",
     "NOT_YOUR_ACCOUNT_QUESTION" : "You do not own the account <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b>?",
     "BTN_CHANGE_ACCOUNT": "Disconnect this account",
-    "CONNECTION_ERROR": "Peer <b>{{server}}</b> unreachable or invalid address.<br/><br/>Check your Internet connection, or change node <a class=\"positive\" ng-click=\"doQuickFix('settings')\">in the settings</a>."
+    "CONNECTION_ERROR": "Peer <b>{{server}}</b> unreachable or invalid address.<br/><br/>Check your Internet connection, or change node <a class=\"positive\" ng-click=\"doQuickFix('settings')\">in the settings</a>.",
+    "SHOW_ALL_FEED": "Show all",
+    "READ_MORE": "Read more",
+    "FEED_SOURCE": "Source"
   },
   "SETTINGS": {
     "TITLE": "Settings",

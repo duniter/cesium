@@ -443,6 +443,15 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     $event.stopPropagation();
     $event.preventDefault();
 
+    // Read URL like '@UID' (Used by home page, in feed's author url)
+    if (uri && uri.startsWith('@')) {
+      var uid = uri.substr(1);
+      if (BMA.regexp.USER_ID.test(uid)) {
+        $state.go('app.wot_identity_uid', {uid: uid});
+        return false;
+      }
+    }
+
     options = options || {};
 
     // If unable to open, just copy value
@@ -502,11 +511,12 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 }
 
 
-function HomeController($scope, $state, $timeout, $ionicHistory, $translate, UIUtils, csPlatform, csCurrency, csSettings) {
+function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $http, UIUtils, csConfig, csPlatform, csCurrency, csSettings) {
   'ngInject';
 
   $scope.loading = true;
   $scope.locales = angular.copy(csSettings.locales);
+  $scope.smallscreen = UIUtils.screen.isSmall();
 
   $scope.enter = function(e, state) {
     if (ionic.Platform.isIOS()) {
@@ -533,10 +543,11 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, UIU
         notify: false});
     }
     else {
-      // Start platform
+      // Wait platform to be ready
       csPlatform.ready()
         .then(function() {
           $scope.loading = false;
+          $scope.loadFeeds();
         })
         .catch(function(err) {
           $scope.node =  csCurrency.data.node;
@@ -553,6 +564,55 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, UIU
 
     $timeout($scope.enter, 200);
   };
+
+  $scope.loadFeeds = function() {
+    var feedUrl = csSettings.getFeedUrl();
+    if (!feedUrl || typeof feedUrl !== 'string') return; // Skip
+
+    var maxContentLength = (csConfig.feed && csConfig.feed.maxContentLength) || 650;
+
+    var now = Date.now();
+    console.debug("[home] Loading feeds from {0}...".format(feedUrl));
+
+    $http.get(feedUrl, {responseType: 'json'})
+      .success(function(feed) {
+        console.debug('[home] Feeds loaded in {0}ms'.format(Date.now()-now));
+        if (!feed || !feed.items || !feed.items.length) return // skip if empty
+
+        feed.items = feed.items.reduce(function(res, item) {
+          if (!item || (!item.title && !item.content_text && !item.content_html)) return res; // Skip
+
+          // Convert UTC time
+          if (item.date_published) {
+            item.time = moment.utc(item.date_published).unix();
+          }
+          // Convert content to HTML
+          if (item.content_html) {
+            item.content = item.content_html;
+          }
+          else {
+            item.content = (item.content_text||'').replace(/\n/g, '<br/>');
+          }
+
+          // Trunc content, if need
+          if (maxContentLength !== -1 && item.content && item.content.length > maxContentLength) {
+            var endIndex = Math.max(item.content.lastIndexOf(" ", maxContentLength), item.content.lastIndexOf("<", maxContentLength));
+            item.content = item.content.substr(0, endIndex) + ' (...)';
+            item.truncated = true;
+          }
+
+          // If author is missing, copy the main author
+          item.author = item.author || feed.author;
+
+          return res.concat(item);
+        }, []);
+        $scope.feed = feed;
+      })
+      .error(function(data, status) {
+        console.error('[home] Failed to load feeds.');
+        $scope.feed = null;
+      });
+  }
 
   /**
    * Catch click for quick fix
@@ -571,6 +631,7 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, UIU
     $translate.use(langKey);
     $scope.hideLocalesPopover();
     csSettings.data.locale = _.findWhere($scope.locales, {id: langKey});
+    $scope.loadFeeds();
   };
 
   /* -- show/hide locales popup -- */

@@ -98,12 +98,12 @@ function ESWotLookupExtendController($scope, $controller, $state) {
 }
 
 function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIUtils, Modals, csWallet,
-                                     esHttp, esModals, esWallet, esProfile, esInvitation) {
+                                     esHttp, esLike, esModals, esWallet, esProfile, esInvitation) {
   'ngInject';
 
   $scope.options = $scope.options || {};
   $scope.options.like = $scope.options.like || {
-    kinds: esHttp.constants.like.KINDS,
+    kinds: esLike.constants.KINDS,
     index: 'user',
     type: 'profile',
     service: esProfile.like
