@@ -606,6 +606,7 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
 
           return res.concat(item);
         }, []);
+
         $scope.feed = feed;
       })
       .error(function(data, status) {
