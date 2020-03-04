@@ -630,7 +630,6 @@
      "SEND_CERTIFICATION_FAILED": "Certificazione fallita.",
      "NEED_MEMBER_ACCOUNT_TO_CERTIFY": "Non puoi inviare certificazioni perche tuo conto <b>non è ancora un conto membro</b>.",
      "NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF": "Non puoi inviare certificazioni adesso perche <b>non sei ancora membro</b>.<br/><br/>Devi ancora entrare nella WOT.",
-     "NOT_MEMBER_FOR_CERTIFICATION": "Tuo conto non è ancora un conto membro.",
      "IDENTITY_TO_CERTIFY_HAS_NO_SELF": "Impossibile certificare questo conto. Nessuna richiesta di certificazione trovata o bisogna rinnovarla.",
      "LOGIN_FAILED": "Errore di login.",
      "LOAD_IDENTITY_FAILED": "Impossibile caricare la tua identità.",

@@ -20,6 +20,7 @@ angular.module('cesium.es.services', [
     'cesium.es.tx.services',
     'cesium.es.geo.services',
     'cesium.es.document.services',
-    'cesium.es.network.services'
+    'cesium.es.network.services',
+    'cesium.es.like.services'
   ])
 ;

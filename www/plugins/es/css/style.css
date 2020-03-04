@@ -273,6 +273,22 @@
 }
 
 /**********
+   Common > report abuse
+**********/
+
+.popup-report-abuse .popup {
+  width: 370px !important;
+}
+.popup-report-abuse .popup .item-toggle .toggle {
+  right: 0 !important;
+}
+.popup-report-abuse .popup .item-toggle .input-label {
+  width: 280px;
+  max-width: 100%;
+  white-space: normal;
+}
+
+/**********
    Add specific Icons
 **********/
 

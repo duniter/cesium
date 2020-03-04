@@ -910,85 +910,16 @@ html, body {
 * 'ion-refresher'
 *******/
 
-body {
-  // Set default refresher background height (for android)
-  --refresher-bg-height: 100px;
-
-  // Set default refresher background
-  --refresher-background-color: inherit;
-
-}
-
-.refresher-positive-900-bg {
-  --refresher-background-color: #{$positive-900-bg};
-}
-
-.refresher-dark-100-bg {
-  --refresher-background-color: #{$dark-100-bg};
-}
-
 .platform-android {
-  // Workaround to control background of 'ion-refresher'
-  .refresher-positive-900-bg:before,
-  .refresher-dark-100-bg:before {
-    background-color: var(--refresher-background-color);
-    position: absolute;
-    display: block;
-    top: 0;
-    width: 100%;
-    height: var(--refresher-bg-height, 100px);
-    z-index: -10;
-    content: " ";
-  }
-
   .scroll-refresher {
     z-index: 50;
   }
-}
-
-.platform-ios {
-  .refresher-positive-900-bg,
-  .refresher-dark-100-bg {
-
-    // use light color for icon and text
-    //@extend .refresher-light;
-
-    background-color: var(--refresher-background-color) !important;
-
-    .scroll {
-      background-color: #fff;
-      bottom: auto;
-      min-height: 100%;
-    }
-  }
-}
-
-// Lighter style for refresher (icon and text)
-.refresher-light {
-  .scroll-refresher {
-    .ionic-refresher-content {
-      color: $light;
-    }
-
-    .spinner {
-      stroke: $light;
-      fill: $light;
-    }
-  }
-}
-
-.refresher-positive-900-bg,
-.refresher-dark-100-bg {
-  @extend .refresher-light;
 }
 
 /******
 * Wallet view
 *******/
 .view-wallet {
-
-  // Set refresher background height (for android)
-  --refresher-bg-height: 200px;
 
   .hero {
     height: 200px;
@@ -1113,7 +1044,6 @@ body {
 *******/
 @media screen and (max-width: $screen-sm-max) {
   .view-wallet-tx {
-    --refresher-bg-height: 100px;
 
     .hero {
       height: 100px;
@@ -1123,7 +1053,6 @@ body {
 
 @media screen and (min-width: $screen-md) {
   .view-wallet-tx {
-    --refresher-bg-height: 140px;
 
     .hero {
       height: 140px;
@@ -1230,20 +1159,16 @@ body {
 *******/
 
 .view-identity {
-  // Set refresher background height (for android)
-  --refresher-bg-height: 200px;
-
   // Default wallet color
-  --refresher-background-color: #{$dark-100-bg};
+  --background-color: #{$dark-100-bg};
 
-  // if member wallet, change wallet color
   .member {
-    --refresher-background-color: #{$positive-900-bg};
+    --background-color: #{$positive-900-bg};
   }
 
   .hero {
     height: 200px;
-    background-color: var(--refresher-background-color);
+    background-color: var(--background-color);
   }
 
 
@@ -2606,3 +2531,74 @@ div[dropzone]:hover {
     }
   }
 }
+
+/* -- likes -- */
+.hero .likes {
+  .gray {
+    color: white !important;
+  }
+  a.positive,
+  .positive a,
+  .positive i,
+  .positive {
+    color: $calm !important;
+  }
+}
+
+.view-wallet .hero .likes a {
+  user-select: none !important;
+  pointer-events: none;
+}
+
+/* -- feed (home page) -- */
+.feed {
+  .card {
+    background-color: rgba(0,0,0,0.3);
+    color: lightgrey;
+  }
+
+  h1, h2, h3, h4, h5 {
+    color: white !important;
+  }
+
+  ul {
+    list-style: unset;
+    padding-left: 40px;
+  }
+
+  .feed_header,
+  .card .header {
+    height: 25px;
+    color: grey !important;
+    a  {
+      color: inherit;
+    }
+    .avatar {
+      margin-top: -6px;
+      margin-left: -6px;
+      height: 30px;
+      width: 30px;
+      border: 1px solid $positive;
+    }
+    .avatar-left-padding {
+      padding-left: 30px;
+    }
+  }
+
+  .feed-title,
+  .card .title {
+    margin-top: 5px;
+    font-size: 18pt;
+    a {
+      color: white !important;;
+    }
+  }
+
+  .feed-content,
+  .card .content {
+    text-align: start;
+    color: lightgrey !important;
+  }
+
+}
+

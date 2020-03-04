@@ -120,14 +120,17 @@
   "HOME": {
     "TITLE": "Cesium",
     "WELCOME": "Welcome to the Cesium Application!",
-    "MESSAGE": "Follow your {{currency|abbreviate}} wallets easily",
+    "MESSAGE": "Receive and send libre currency {{currency|abbreviate}}",
     "BTN_CURRENCY": "Explore currency",
     "BTN_ABOUT": "about",
     "BTN_HELP": "Help",
     "REPORT_ISSUE": "Report an issue",
     "NOT_YOUR_ACCOUNT_QUESTION" : "You do not own the account <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b>?",
     "BTN_CHANGE_ACCOUNT": "Disconnect this account",
-    "CONNECTION_ERROR": "Peer <b>{{server}}</b> unreachable or invalid address.<br/><br/>Check your Internet connection, or change node <a class=\"positive\" ng-click=\"doQuickFix('settings')\">in the settings</a>."
+    "CONNECTION_ERROR": "Peer <b>{{server}}</b> unreachable or invalid address.<br/><br/>Check your Internet connection, or change node <a class=\"positive\" ng-click=\"doQuickFix('settings')\">in the settings</a>.",
+    "SHOW_ALL_FEED": "Show all",
+    "READ_MORE": "Read more",
+    "FEED_SOURCE": "Source"
   },
   "SETTINGS": {
     "TITLE": "Settings",
@@ -694,7 +697,6 @@
     "SEND_CERTIFICATION_FAILED": "Could not certify identity.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY": "You could not send certification, because your account is <b>not a member account</b>.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF": "You could not send certification now, because your are <b>not a member</b> yet.<br/><br/>You still need certification to become a member.",
-    "NOT_MEMBER_FOR_CERTIFICATION": "Your account is not a member account yet.",
     "IDENTITY_TO_CERTIFY_HAS_NO_SELF": "This account could not be certified. No registration found, or need to renew.",
     "LOGIN_FAILED": "Error while sign in.",
     "LOAD_IDENTITY_FAILED": "Could not load identity.",

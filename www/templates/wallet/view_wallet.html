@@ -63,8 +63,9 @@
           </a>
         </h3>
 
-        <h4 class="assertive">
-          <span ng-if=":rebind:(formData.name || formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</span>
+        <h4>
+          <span class="assertive" ng-if=":rebind:(formData.name || formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</span>
+          <cs-extension-point name="hero"></cs-extension-point>
         </h4>
       </div>
       <h4 class="content light" ng-if="loading">

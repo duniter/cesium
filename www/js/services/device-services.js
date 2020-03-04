@@ -2,8 +2,7 @@ var App;
 
 angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.settings.services'])
 
-  .factory('Device',
-    function($rootScope, $translate, $ionicPopup, $q,
+  .factory('Device', function($rootScope, $translate, $ionicPopup, $q,
       // removeIf(no-device)
       $cordovaClipboard, $cordovaBarcodeScanner, $cordovaCamera,
       // endRemoveIf(no-device)

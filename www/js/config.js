@@ -33,7 +33,15 @@ angular.module("cesium.config", [])
 	"license": {
 		"en": "license/license_g1-en",
 		"fr-FR": "license/license_g1-fr-FR",
-		"es-ES": "license/license_g1-es-ES"
+		"es-ES": "license/license_g1-es-ES",
+		"eo-EO": "license/license_g1-eo-EO"
+	},
+	"feed": {
+		"jsonFeed": {
+			"fr-FR": "feed.json",
+			"en": "feed.json"
+		},
+		"maxContentLength": 650
 	},
 	"node": {
 		"host": "g1.duniter.org",
@@ -90,7 +98,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "1.5.3",
-	"build": "2020-01-27T13:59:40.149Z",
+	"build": "2020-03-04T18:00:55.476Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 

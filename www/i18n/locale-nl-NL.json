@@ -434,7 +434,6 @@
     "SEND_CERTIFICATION_FAILED": "Could not certify identity.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY": "You could not send certification, because your account is <b>not a member account</b>.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF": "You could not send certification now, because your are <b>not a member</b> yet.<br/><br/>You still need certification to become a member.",
-    "NOT_MEMBER_FOR_CERTIFICATION": "Your account is not a member account yet.",
     "IDENTITY_TO_CERTIFY_HAS_NO_SELF": "This account could not be certified. No registration found, or need to renew.",
     "LOGIN_FAILED": "Error while sign in.",
     "LOAD_IDENTITY_FAILED": "Could not load identity.",

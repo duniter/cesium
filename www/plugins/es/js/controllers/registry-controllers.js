@@ -775,7 +775,7 @@ function ESWalletPagesController($scope, $controller, $timeout, UIUtils, esModal
 }
 
 
-function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout, $ionicPopover, $ionicHistory, $translate,
+function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout, $ionicPopover, $ionicHistory, $translate, $controller,
                                         $anchorScroll, csConfig, csWallet, esRegistry, UIUtils, esHttp) {
   'ngInject';
 
@@ -787,6 +787,21 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
   $scope.showTransfer = false;
   $scope.loading = true;
   $scope.motion = UIUtils.motion.fadeSlideIn;
+
+  // Init likes here, to be able to use in extension
+  $scope.options = $scope.options || {};
+  $scope.options.like = {
+    kinds: ['LIKE', 'ABUSE'],
+    index: 'page',
+    type: 'record'
+  };
+  $scope.likeData = {
+    likes: {},
+    abuses: {}
+  };
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('ESLikesCtrl', {$scope: $scope}));
 
   $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
     // Enable back button (workaround need for navigation outside tabs - https://stackoverflow.com/a/35064602)
@@ -954,6 +969,7 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
       $scope.actionsPopover.hide();
       $scope.actionsPopover = null;
     }
+    return true;
   };
 
   $scope.showSharePopover = function(event) {

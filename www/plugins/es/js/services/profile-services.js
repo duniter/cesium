@@ -1,4 +1,4 @@
-angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http.services'])
+angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http.services', 'cesium.es.like.services'])
   .config(function(PluginServiceProvider, csConfig) {
     'ngInject';
 
@@ -10,7 +10,7 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
 
   })
 
-  .factory('esProfile', function($rootScope, $q, esHttp, SocialUtils, csWot, csWallet, csPlatform, esSettings) {
+  .factory('esProfile', function($rootScope, $q, esHttp, SocialUtils, csWot, csWallet, csPlatform, esSettings, esLike) {
     'ngInject';
 
     var
@@ -385,9 +385,10 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
       get: getProfile,
       add: esHttp.record.post('/user/profile', {tagFields: ['title', 'description']}),
       update: esHttp.record.post('/user/profile/:id/_update', {tagFields: ['title', 'description']}),
+      remove: esHttp.record.remove("user","profile"),
       avatar: esHttp.get('/user/profile/:id?_source=avatar'),
       fillAvatars: fillAvatars,
-      remove: esHttp.record.remove("user","profile")
+      like: esLike.instance('user', 'profile')
     };
   })
 ;

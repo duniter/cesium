@@ -49,7 +49,7 @@
     "NO_ACCOUNT_QUESTION": "Pas encore de compte ? Créez-en un gratuitement !",
     "SEARCH_NO_RESULT": "Aucun résultat trouvé",
     "LOADING": "Veuillez patienter...",
-    "LOADING_WAIT": "Veuillez patienter...<br/><small>(Attente de disponibilité du noeud)</small>",
+    "LOADING_WAIT": "Veuillez patienter...<br/><small>(Cesium interroge le nœud Duniter)</small>",
     "SEARCHING": "Recherche en cours...",
     "FROM": "De",
     "TO": "À",
@@ -127,7 +127,10 @@
     "REPORT_ISSUE": "anomalie",
     "NOT_YOUR_ACCOUNT_QUESTION" : "Vous n'êtes pas propriétaire du compte <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b> ?",
     "BTN_CHANGE_ACCOUNT": "Déconnecter ce compte",
-    "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connexion Internet, ou changer de nœud <a class=\"positive\" ng-click=\"doQuickFix('settings')\">dans les paramètres</a>."
+    "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connexion Internet, ou changer de nœud <a class=\"positive\" ng-click=\"doQuickFix('settings')\">dans les paramètres</a>.",
+    "SHOW_ALL_FEED": "Voir tout",
+    "READ_MORE": "Lire la suite",
+    "FEED_SOURCE": "Source"
   },
   "SETTINGS": {
     "TITLE": "Paramètres",
@@ -692,9 +695,8 @@
     "SALT_NOT_CONFIRMED": "Ne correspond pas à l'identifiant secret",
     "SEND_IDENTITY_FAILED": "Échec de l'inscription",
     "SEND_CERTIFICATION_FAILED": "Échec de la certification",
-    "NEED_MEMBER_ACCOUNT_TO_CERTIFY": "Vous ne pouvez pas effectuer de certification, car votre compte n'est <b>pas membre</b>.",
-    "NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF": "Vous ne pouvez pas effectuer de certification, car votre compte n'est pas encore membre.<br/><br/>Il vous manque encore des certifications, ou bien celles-ci n'ont pas encore été validées.",
-    "NOT_MEMBER_FOR_CERTIFICATION": "Votre compte n'est pas encore membre.",
+    "NEED_MEMBER_ACCOUNT_TO_CERTIFY": "Vous ne pouvez pas effectuer de certification, car ce compte n'est <b>pas membre</b>.",
+    "NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF": "Vous ne pouvez pas effectuer de certification, car ce compte n'est pas encore membre.<br/><br/>Il vous manque encore des certifications, ou bien celles-ci n'ont pas encore été validées.",
     "IDENTITY_TO_CERTIFY_HAS_NO_SELF": "Compte non certifiable. Aucune demande d'adhésion n'a été faite, ou bien elle n'a pas été renouvelée.",
     "LOGIN_FAILED": "Erreur lors de la connexion.",
     "LOAD_IDENTITY_FAILED": "Erreur de chargement de l'identité.",

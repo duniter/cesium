@@ -257,6 +257,12 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
       (csConfig.license[locale] ? csConfig.license[locale] : defaultSettings.license[csConfig.defaultLanguage || 'en'] || csConfig.license) : undefined;
   },
 
+  getFeedUrl = function() {
+    var locale = data.locale && data.locale.id || csConfig.defaultLanguage || 'en';
+    return (csConfig.feed && csConfig.feed.jsonFeed) ?
+      (csConfig.feed.jsonFeed[locale] ? csConfig.feed.jsonFeed[locale] : defaultSettings.feed.jsonFeed[csConfig.defaultLanguage || 'en'] || csConfig.feed) : undefined;
+  },
+
   // Detect locale successful changes, then apply to vendor libs
   onLocaleChange = function() {
     var locale = $translate.use();
@@ -344,6 +350,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     store: store,
     restore: restore,
     getLicenseUrl: getLicenseUrl,
+    getFeedUrl: getFeedUrl,
     defaultSettings: defaultSettings,
     // api extension
     api: api,

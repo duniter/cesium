@@ -135,7 +135,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
           useTor: useTor
         };
         var serverParts = state.stateParams.server.split(':');
-        if (serverParts.length == 2) {
+        if (serverParts.length === 2) {
           node.host = serverParts[0];
           node.port = serverParts[1];
         }

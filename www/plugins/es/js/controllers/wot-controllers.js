@@ -27,11 +27,23 @@ angular.module('cesium.es.wot.controllers', ['cesium.es.services'])
 
         .extendStates(['app.wot_identity', 'app.wot_identity_uid'], {
           points: {
+            'hero': {
+              templateUrl: "plugins/es/templates/wot/view_identity_extend.html",
+              controller: 'ESWotIdentityViewCtrl'
+            },
+            'general': {
+              templateUrl: "plugins/es/templates/wot/view_identity_extend.html",
+              controller: 'ESWotIdentityViewCtrl'
+            },
             'after-general': {
               templateUrl: "plugins/es/templates/wot/view_identity_extend.html",
               controller: 'ESWotIdentityViewCtrl'
             },
             'buttons': {
+              templateUrl: "plugins/es/templates/wot/view_identity_extend.html",
+              controller: 'ESWotIdentityViewCtrl'
+            },
+            'after-buttons': {
               templateUrl: "plugins/es/templates/wot/view_identity_extend.html",
               controller: 'ESWotIdentityViewCtrl'
             },
@@ -55,8 +67,6 @@ angular.module('cesium.es.wot.controllers', ['cesium.es.services'])
           }
         })
       ;
-
-
     }
 
   })
@@ -88,8 +98,20 @@ function ESWotLookupExtendController($scope, $controller, $state) {
 }
 
 function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIUtils, Modals, csWallet,
-                                     esModals, esWallet, esInvitation) {
+                                     esHttp, esLike, esModals, esWallet, esProfile, esInvitation) {
   'ngInject';
+
+  $scope.options = $scope.options || {};
+  $scope.options.like = $scope.options.like || {
+    kinds: esLike.constants.KINDS,
+    index: 'user',
+    type: 'profile',
+    service: esProfile.like
+  };
+  $scope.smallscreen = angular.isDefined($scope.smallscreen) ? $scope.smallscreen : UIUtils.screen.isSmall();
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('ESLikesCtrl', {$scope: $scope}));
 
   // Initialize the super class and extend it.
   angular.extend(this, $controller('ESExtensionCtrl', {$scope: $scope}));
@@ -100,6 +122,7 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
 
   $scope.showNewMessageModal = function(confirm) {
 
+    // note: not need to select wallet here, because message modal will do it, if need
     return csWallet.login({minData: true, method: 'default'})
       .then(function() {
         UIUtils.loading.hide();
@@ -122,8 +145,8 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
           destPub: $scope.formData.pubkey,
           destUid: $scope.formData.name||$scope.formData.uid
         })
-        .then(function(send) {
-          if (send) UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT');
+        .then(function(sent) {
+          if (sent) UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT');
         });
       });
   };
@@ -196,6 +219,7 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
     var identities;
     return (csWallet.children.count() ? Modals.showSelectWallet({displayBalance: false}) : $q.when(csWallet))
       .then(function(wallet) {
+        if (!wallet) throw 'CANCELLED';
         return wallet.auth({minData: true});
       })
       .then(function(walletData) {
@@ -287,6 +311,15 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
       });
   };
 
+  /* -- likes -- */
+
+  // Load likes, when profile loaded
+  $scope.$watch('formData.pubkey', function(pubkey) {
+    if (pubkey) {
+      $scope.loadLikes(pubkey);
+    }
+  });
+
   /* -- Popover -- */
 
   $scope.showCertificationActionsPopover = function(event) {
@@ -305,6 +338,26 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
       $scope.certificationActionsPopover.hide();
       $scope.certificationActionsPopover = null;
     }
+    return true;
+  };
+
+  $scope.showActionsPopover = function (event) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'plugins/es/templates/wot/view_popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
+        $scope.actionsPopover = popover;
+      }
+    });
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
+    }
+    return true;
   };
 
   if ($scope.extensionPoint === 'buttons-top-fab') {
@@ -323,4 +376,3 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
     $scope.showSuggestCertificationModal();
   }, 1000);*/
 }
-

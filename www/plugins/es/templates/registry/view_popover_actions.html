@@ -5,18 +5,29 @@
   <ion-content scroll="false">
     <div class="list item-text-wrap">
 
-      <a class="item item-icon-left ink"
+      <a class="item item-icon-left ink visible-xs visible-sm"
          ng-click="showSharePopover($event)">
         <i class="icon ion-android-share-alt"></i>
         {{'COMMON.BTN_SHARE' | translate}}
       </a>
 
-      <a class="item item-icon-left assertive ink"
+      <a class="item item-icon-left assertive ink visible-xs visible-sm"
          ng-if="canEdit"
          ng-click="delete()">
         <i class="icon ion-trash-a"></i>
         {{'COMMON.BTN_DELETE' | translate}}
       </a>
+
+      <!-- report abuse -->
+      <ng-if ng-if="!canEdit && likeData.abuses">
+        <button class="item item-icon-left ink"
+           ng-disabled="!!likeData.abuses.wasHitCount"
+           ng-class="{'gray': !!likeData.abuses.wasHitCount}"
+           ng-click="hideActionsPopover() && reportAbuse($event)">
+          <i class="icon ion-android-warning"></i>
+          {{'COMMON.BTN_REPORT_ABUSE_DOTS' | translate}}
+        </button>
+      </ng-if>
     </div>
   </ion-content>
 </ion-popover-view>

@@ -1,0 +1,35 @@
+{
+  "version": "https://jsonfeed.org/version/1",
+  "user_comment": "This feed allows you to read the posts from this site in any feed reader that supports the JSON Feed format. To add this feed to your reader, copy the following URL — https://jsonfeed.org/feed.json — and add it your reader.",
+  "title": "Actualités",
+  "description": "Cesium News",
+  "home_page_url": "https://forum.monnaie-libre.fr/tag/cesium",
+  "feed_url": "/feed.json",
+  "author": {
+    "name": "Benoit Lavenier",
+    "url": "@BenoitLavenier",
+    "avatar": "http://localhost:9200/user/profile/38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE/_image/avatar.png"
+  },
+  "items": [
+    {
+      "title": "Fermeture prochaine de Cesium-web",
+      "author": {
+        "name": "Moul",
+        "url": "@moul",
+        "avatar": "https://forum.monnaie-libre.fr/user_avatar/forum.monnaie-libre.fr/moul/45/1246_2.png"
+      },
+      "date_published": "2020-02-07T09:42:00+01:00",
+      "id": "https://forum.monnaie-libre.fr/t/fermeture-prochaine-de-cesium-web-1er-mai/9474",
+      "url": "https://forum.monnaie-libre.fr/t/fermeture-prochaine-de-cesium-web-1er-mai/9474",
+      "content_html": "<p>Au <b>1er mai 2020</b>, il ne sera <b>plus possible de vous connecter à Ğ1 via la version web de Cesium</b> (Cesium-web), pour faire des transactions et certifier de nouveaux membres. Cesium-web restera cependant disponible en lecture, pour consulter vos comptes et vos certifications. Cette décision a été prise par les développeurs, en raison de potentielles failles de sécurité, qui pourraient affecter l’évolution de cette monnaie.</p><p>Le présent article a pour objectif : <ul><li>de vous présenter les causes et conséquences de cette décision,</li>\n<li>de détailler les procédures d’installation sur les différentes plateformes.</li></ul></p><p><h4>Pourquoi fermer Cesium-Web ?</h2></p><h5>Rappels concernant la Ğ1</h5><p>La monnaie libre Ğ1 est une monnaie cryptographique, c’est-à-dire qu’elle utilise des procédés de chiffrement pour garantir la légitimité de chaque transaction.</p>\n"
+    },
+    {
+      "title": "Un site officiel simple pour Cesium !",
+      "date_published": "2019-02-21T22:55:00+01:00",
+      "id": "https://cesium.app",
+      "url": "https://cesium.app",
+      "image": "https://cesium.app/i18n/fr_FR/contents/accueil/Cesium-G1-maquette.png",
+      "content_html": "<p><ul><li>Vous aimeriez vous inscrire à la Ğ1 (<i>June</i>), mais vous ne savez pas comment vous y prendre ?</li><li>Vous voulez savoir <b>comment utiliser</b> Cesium depuis votre smartphone ou ordinateur ?</li><li>On vous a dit que Cesium faisait aussi le café (en plus de gérer votre portefeuille en monnaie libre), mais vous n'en êtes pas sûr ? :-)</li></ul></p><p>Tutos, téléchargements, documentation: tout est désormais accessible depuis le <b>site officiel</b> : <b>https://cesium.app</b> !</p>"
+    }
+  ]
+}

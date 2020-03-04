@@ -589,7 +589,7 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
             var peer = new Peer(json);
             return (peer.getEndpoints('BASIC_MERKLED_API') || []).reduce(function(res, ep) {
               var bma = BMA.node.parseEndPoint(ep);
-              if((bma.dns == node.host || bma.ipv4 == node.host || bma.ipv6 == node.host) && (
+              if((bma.dns === node.host || bma.ipv4 === node.host || bma.ipv6 === node.host) && (
                 bma.port == node.port)) {
                 peer.bma = bma;
                 return res.concat(peer);
