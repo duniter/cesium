@@ -7,6 +7,11 @@
   "description": "Manage your Duniter Wallet on a libre currency, like Ğ1",
   "icons": [
     {
+      "src": "img/logo_32px.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
       "src": "img/logo_96px.png",
       "sizes": "96x96",
       "type": "image/png"
