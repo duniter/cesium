@@ -269,6 +269,7 @@ function pluginSass() {
 function webClean() {
   return del([
     './dist/web/www',
+    './dist/web/extension',
     './dist/web/build'
   ]);
 }
@@ -615,9 +616,65 @@ function webZip() {
     .pipe(gulp.dest('./dist/web/build'));
 }
 
+
+function webExtCopyFiles() {
+  log(colors.green('Copy web extension files...'));
+
+  const version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+  const manifestFilter = filter(["**/manifest.json"], { restore: true });
+  const txtFilter = filter(["**/*.txt"], { restore: true });
+
+  // Copy files
+  const wwwPath = './dist/web/www';
+  const resourcesPath = './resources/web-ext';
+  return gulp.src([
+    wwwPath + '/**/*',
+    wwwPath + '/dist_js/*.*',
+
+    // Remove debug JS files
+    '!' + wwwPath + '/dist_js/cesium.js',
+    '!' + wwwPath + '/dist_js/vendor.js',
+    '!' + wwwPath + '/dist_js/cesium-api*.js',
+    '!' + wwwPath + '/dist_js/vendor-api*.js',
+
+    wwwPath + '/dist_css/*.*',
+    // Remove debug CSS files
+    '!' + wwwPath + '/dist_css/cesium.css',
+    '!' + wwwPath + '/dist_css/cesium-api*.css',
+    '!' + wwwPath + '/debug.html',
+    '!' + wwwPath + '/manifest.json',
+
+    // Add specific resource
+    resourcesPath + '/**/*.*'
+   ])
+
+    // Process TXT files: Add the UTF-8 BOM character
+    .pipe(txtFilter)
+    .pipe(header('\ufeff'))
+    .pipe(txtFilter.restore)
+
+    // Replace version in 'manifest.json' file
+    .pipe(manifestFilter)
+    .pipe(replace(/\"version\": \"[^\"]*\"/, '"version": "' + version + '"'))
+    .pipe(manifestFilter.restore)
+
+    .pipe(gulp.dest('./dist/web/ext'));
+}
+
+function webExtXpi() {
+  const srcPath = './dist/web/ext';
+  const distPath = './dist/web/build';
+  const version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+
+  return gulp.src(srcPath + '/**/*.*')
+    .pipe(zip('cesium-v'+version+'-extension.xpi'))
+    .pipe(gulp.dest(distPath));
+}
+
 function webBuildSuccess(done) {
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
   log(colors.green("Build for web created at: 'dist/web/build/cesium-v" + version + "-web.zip'"));
+  log(colors.green("Build for web extension created at: 'dist/webExtension/cesium-v" + version + "-extension.xpi'"));
   done();
 }
 
@@ -674,7 +731,9 @@ gulp.task('webCleanUnusedFiles', ['webApiUglify'], webCleanUnusedFiles);
 gulp.task('webCleanUnusedDirectories', ['webCleanUnusedFiles'], webCleanUnusedDirectories);
 gulp.task('webZip', ['webCleanUnusedDirectories'], webZip);
 
-gulp.task('webBuild', ['webZip'], webBuildSuccess);
+gulp.task('webExtCopyFiles', ['webCleanUnusedDirectories'], webExtCopyFiles);
+gulp.task('webExtXpi', ['webExtCopyFiles'], webExtXpi);
 
-gulp.task('build:web', ['webZip'], webBuildSuccess); // @deprecated
+gulp.task('webBuild', ['webZip', 'webExtXpi'], webBuildSuccess);
+gulp.task('build:web', ['webBuild']); // = webBuild
 
