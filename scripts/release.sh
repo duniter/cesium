@@ -61,6 +61,10 @@ case "$1" in
     currentManifestJsonVersion=$(grep -oP "version\": \"\d+.\d+.\d+((a|b)[0-9]+)?\"" www/manifest.json | grep -oP "\d+.\d+.\d+((a|b)[0-9]+)?")
     sed -i "s/version\": \"$currentManifestJsonVersion\"/version\": \"$2\"/g" www/manifest.json
 
+    # Change version in file: 'resources/web-ext/manifest.json'
+    currentExtManifestJsonVersion=$(grep -oP "version\": \"\d+.\d+.\d+((a|b)[0-9]+)?\"" resources/web-ext/manifest.json | grep -oP "\d+.\d+.\d+((a|b)[0-9]+)?")
+    sed -i "s/version\": \"$currentExtManifestJsonVersion\"/version\": \"$2\"/g" resources/web-ext/manifest.json
+
     # Bump the install.sh
     sed -i "s/echo \"v.*\" #lastest/echo \"v$2\" #lastest/g" install.sh
     ;;
@@ -103,7 +107,7 @@ cp ${APK_RELEASE_FILE} "${DIST_ANDROID}/${PROJECT_NAME}-v$2-android.apk" || exit
 
 
 echo "----------------------------------"
-echo "- Building web artifact..."
+echo "- Building web and webExtension artifacts..."
 echo "----------------------------------"
 cd ${PROJECT_DIR} || exit 1
 gulp config --env default
@@ -114,6 +118,11 @@ fi
 DIST_WEB_FILE="${DIST_WEB}/${PROJECT_NAME}-v$2-web.zip"
 if [[ ! -f "${DIST_WEB_FILE}" ]]; then
   echo "ERROR: Missing web artifact at ${DIST_WEB_FILE}"
+  exit 1
+fi;
+DIST_WEB_EXT_FILE="${DIST_WEB}/${PROJECT_NAME}-v$2-extension.xpi"
+if [[ ! -f "${DIST_WEB_EXT_FILE}" ]]; then
+  echo "ERROR: Missing web-ext artifact at ${DIST_WEB_EXT_FILE}"
   exit 1
 fi;
 
@@ -128,7 +137,7 @@ fi
 # Commit
 cd ${PROJECT_DIR} || exit 1
 git reset HEAD
-git add package.json config.xml install.sh www/js/config.js www/manifest.json
+git add package.json config.xml install.sh www/js/config.js www/manifest.json resources/web-ext/manifest.json
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
@@ -157,6 +166,22 @@ if [[ $? -ne 0 ]]; then
 fi
 
 echo "**********************************"
+echo "* Upload web extension to Modzilla..."
+echo "**********************************"
+if [[ "_" == "_${AMO_JWT_ISSUER}" || "_" == "_${AMO_JWT_SECRET}" ]]; then
+  echo "WARN: Cannot send webExtension to Modzilla: missing env variable 'AMO_JWT_ISSUER' or 'AMO_JWT_SECRET'. Use local file './local/env.sh' to define it, then retry."
+else
+  web-ext sign --api-key=${AMO_JWT_ISSUER} --api-secret=${AMO_JWT_SECRET} --id=${AMO_APP_ID} --source-dir=${PROJECT_DIR}/dist/web/ext --artifacts-dir=${PROJECT_DIR}/dist/web/build
+  if [[ $? -ne 0 ]]; then
+    exit 1
+  fi
+
+fi
+
+
+exit 1
+
+echo "**********************************"
 echo "* Uploading artifacts to Github..."
 echo "**********************************"
 # Pause (wait propagation to from git.duniter.org to github)
@@ -167,6 +192,7 @@ sleep 40s
 if [[ $? -ne 0 ]]; then
     exit 1
 fi
+
 
 echo "----------------------------------"
 echo "- Building desktop artifacts..."

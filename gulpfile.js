@@ -629,22 +629,26 @@ function webExtCopyFiles() {
   const resourcesPath = './resources/web-ext';
   return gulp.src([
     wwwPath + '/**/*',
-    wwwPath + '/dist_js/*.*',
 
-    // Remove debug JS files
+    // Remove JS debug files
+    wwwPath + '/dist_js/*.*',
     '!' + wwwPath + '/dist_js/cesium.js',
     '!' + wwwPath + '/dist_js/vendor.js',
-    '!' + wwwPath + '/dist_js/cesium-api*.js',
-    '!' + wwwPath + '/dist_js/vendor-api*.js',
+    '!' + wwwPath + '/dist_js/cesium-api.js',
+    '!' + wwwPath + '/dist_js/vendor-api.js',
 
+    // Remove CSS debug files
     wwwPath + '/dist_css/*.*',
-    // Remove debug CSS files
     '!' + wwwPath + '/dist_css/cesium.css',
     '!' + wwwPath + '/dist_css/cesium-api*.css',
-    '!' + wwwPath + '/debug.html',
-    '!' + wwwPath + '/manifest.json',
 
-    // Add specific resource
+    // Remove HTML debug files
+    wwwPath + '/api/*',
+    '!' + wwwPath + '/api/debug.html',
+    '!' + wwwPath + '/debug.html',
+
+    // Add specific resource (and overwrite the default 'manifest.json')
+    '!' + wwwPath + '/manifest.json',
     resourcesPath + '/**/*.*'
    ])
 
