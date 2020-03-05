@@ -1760,10 +1760,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           var saveIdFile = new Blob([saveId], {type: 'text/plain; charset=utf-8'});
           FileSaver.saveAs(saveIdFile, '{0}-recover_ID.txt'.format(data.pubkey.substring(0,8)));
         });
-
     },
-
-
 
     downloadKeyFile = function(format){
       if (!isAuth()) return $q.reject('user not authenticated');
@@ -2121,7 +2118,12 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     fromJson = function(json, failIfInvalid) {
       failIfInvalid = angular.isUndefined(failIfInvalid) ? true : failIfInvalid;
       return $q(function(resolve, reject) {
-        var obj = JSON.parse(json || '{}');
+        var obj;
+        try {
+          obj = JSON.parse(json || '{}');
+        }
+        catch(err) { /* invalid JSON : continue*/}
+
         // FIXME #379
         /*if (obj && obj.pubkey) {
           resolve({

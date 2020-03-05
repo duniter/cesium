@@ -33,11 +33,9 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     // endRemoveIf(no-device)
   })
 
-
   .config(function($compileProvider, csConfig) {
     'ngInject';
-
-    $compileProvider.debugInfoEnabled(!!csConfig.debug);
+     $compileProvider.debugInfoEnabled(csConfig.debug === true);
   })
 
   .config(function($animateProvider) {

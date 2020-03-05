@@ -120,7 +120,7 @@ if [[ ! -f "${DIST_WEB_FILE}" ]]; then
   echo "ERROR: Missing web artifact at ${DIST_WEB_FILE}"
   exit 1
 fi;
-DIST_WEB_EXT_FILE="${DIST_WEB}/${PROJECT_NAME}-v$2-extension.xpi"
+DIST_WEB_EXT_FILE="${DIST_WEB}/${PROJECT_NAME}-v$2-extension.zip"
 if [[ ! -f "${DIST_WEB_EXT_FILE}" ]]; then
   echo "ERROR: Missing web-ext artifact at ${DIST_WEB_EXT_FILE}"
   exit 1
@@ -176,9 +176,6 @@ else
     exit 1
   fi
 fi
-
-
-exit 1
 
 echo "**********************************"
 echo "* Uploading artifacts to Github..."

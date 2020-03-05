@@ -318,7 +318,7 @@ function WalletListAbstractController($scope, $q, $timeout, UIUtils, filterTrans
       method: 'PUBKEY' // Default method - fix #767
     })
       .then(function(walletData) {
-        if (!walletData) { // User cancelled
+        if (!walletData || !walletData.pubkey) { // User cancelled
           UIUtils.loading.hide(100);
           return;
         }
@@ -337,7 +337,7 @@ function WalletListAbstractController($scope, $q, $timeout, UIUtils, filterTrans
           return;
         }
 
-        console.debug("[wallet] Adding secondary wallet {"+walletData.pubkey.substring(0,8)+"}");
+        console.debug("[wallet] Adding secondary wallet {{0}}".format(walletData.pubkey.substring(0,8)));
 
         // Add the child wallet
         return $scope.addNewWallet(wallet)
@@ -530,6 +530,7 @@ function WalletListViewController($scope, $controller, $state, $timeout, $q, $tr
     $scope.hideActionsPopover();
 
     var loginAndAddWallet = function(authData) {
+      if (!authData || !authData.pubkey) return $q.reject('Invalid authentication data');
       console.debug("[wallet] Adding secondary wallet {"+authData.pubkey.substring(0,8)+"}");
       var wallet = csWallet.children.instance();
       return wallet.login({
@@ -588,7 +589,7 @@ function WalletListViewController($scope, $controller, $state, $timeout, $q, $tr
     return $q(function(resolve, reject) {
       $translate(['ACCOUNT.WALLET_LIST.EDIT_POPOVER.TITLE', 'ACCOUNT.WALLET_LIST.EDIT_POPOVER.HELP', 'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
         .then(function (translations) {
-          $scope.formData.name = wallet.data.localName || wallet.data.name || wallet.data.uid || wallet.data.pubkey.substring(0, 8);
+          $scope.formData.name = wallet.data.localName || wallet.data.name || wallet.data.uid || (wallet.data.pubkey && wallet.data.pubkey.substring(0, 8)) || '';
 
           // Choose UID popup
           $ionicPopup.show({

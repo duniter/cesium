@@ -617,7 +617,9 @@ function webZip() {
 }
 
 
-function webExtCopyFiles() {
+function webExtensionCopyFiles() {
+  const wwwPath = './dist/web/www';
+  const resourcesPath = './resources/web-ext';
   log(colors.green('Copy web extension files...'));
 
   const version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
@@ -625,8 +627,6 @@ function webExtCopyFiles() {
   const txtFilter = filter(["**/*.txt"], { restore: true });
 
   // Copy files
-  const wwwPath = './dist/web/www';
-  const resourcesPath = './resources/web-ext';
   return gulp.src([
     wwwPath + '/**/*',
 
@@ -668,20 +668,19 @@ function webExtCopyFiles() {
     .pipe(gulp.dest('./dist/web/ext'));
 }
 
-function webExtXpi() {
+function webExtensionZip() {
   const srcPath = './dist/web/ext';
   const distPath = './dist/web/build';
   const version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
 
   return gulp.src(srcPath + '/**/*.*')
-    .pipe(zip('cesium-v'+version+'-extension.xpi'))
+    .pipe(zip('cesium-v'+version+'-extension.zip'))
     .pipe(gulp.dest(distPath));
 }
 
 function webBuildSuccess(done) {
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
-  log(colors.green("Build for web created at: 'dist/web/build/cesium-v" + version + "-web.zip'"));
-  log(colors.green("Build for web extension created at: 'dist/webExtension/cesium-v" + version + "-extension.xpi'"));
+  log(colors.green("Web artifacts created at: 'dist/web/build/cesium-v" + version + "-web.zip' and 'dist/web/build/cesium-v" + version + "-extension.zip'"));
   done();
 }
 
@@ -738,9 +737,9 @@ gulp.task('webCleanUnusedFiles', ['webApiUglify'], webCleanUnusedFiles);
 gulp.task('webCleanUnusedDirectories', ['webCleanUnusedFiles'], webCleanUnusedDirectories);
 gulp.task('webZip', ['webCleanUnusedDirectories'], webZip);
 
-gulp.task('webExtCopyFiles', ['webCleanUnusedDirectories'], webExtCopyFiles);
-gulp.task('webExtXpi', ['webExtCopyFiles'], webExtXpi);
+gulp.task('webExtensionCopyFiles', ['webCleanUnusedDirectories'], webExtensionCopyFiles);
+gulp.task('webExtensionZip', ['webExtensionCopyFiles'], webExtensionZip);
 
-gulp.task('webBuild', ['webZip', 'webExtXpi'], webBuildSuccess);
+gulp.task('webBuild', ['webZip', 'webExtensionZip'], webBuildSuccess);
 gulp.task('build:web', ['webBuild']); // = webBuild
 

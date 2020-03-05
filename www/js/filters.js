@@ -349,7 +349,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     return function(input) {
       if (!input) return '';
       input = input.toLowerCase();
-      return input.substring(0,1).toUpperCase()+input.substring(1);
+      return input.length > 1 ? (input.substring(0,1).toUpperCase()+input.substring(1)) : input;
     };
   })
 
