@@ -115,6 +115,13 @@
       "es-ES": "license/license_g1-es-ES",
       "eo-EO": "license/license_g1-eo-EO"
     },
+    "feed": {
+      "jsonFeed": {
+        "fr-FR": "feed.json",
+        "en": "feed.json"
+      },
+      "maxContentLength": 650
+    },
     "node": {
       "host": "g1.duniter.fr",
       "port": 443

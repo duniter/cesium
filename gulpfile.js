@@ -342,8 +342,8 @@ function webCopyFiles() {
     gulp.src('./www/img/**/*.*')
       .pipe(gulp.dest(tmpPath + '/img')),
 
-    // Copy manifest
-    gulp.src('./www/manifest.json')
+    // Copy manifest.json, feed.json
+    gulp.src(['./www/manifest.json', './www/feed*.json'])
       .pipe(gulp.dest(tmpPath)),
 
     // Copy lib
@@ -646,6 +646,9 @@ function webExtCopyFiles() {
     wwwPath + '/api/*',
     '!' + wwwPath + '/api/debug.html',
     '!' + wwwPath + '/debug.html',
+
+    // Remove unused files (feed.json) in extension
+    '!' + wwwPath + '/feed*.json',
 
     // Add specific resource (and overwrite the default 'manifest.json')
     '!' + wwwPath + '/manifest.json',
