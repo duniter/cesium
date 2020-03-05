@@ -43,7 +43,7 @@
           </div>
         </div>
 
-        <div class="center animate-fade-in animate-show-hide ng-hide" ng-show="!loading && !error">
+        <div class="center animate-show-hide ng-hide" ng-show="!loading && !error">
 
           <!-- Help tour (NOT ready yet for small device) -->
           <button type="button"
@@ -125,38 +125,42 @@
           </h3>
 
           <!-- feed items -->
-          <div ng-repeat="item in feed.items"
-             class="card padding">
+          <div class="animate-show-hide ng-hide" ng-show="feed">
+            <div ng-repeat="item in feed.items"
+               class="card padding ">
 
-            <div class="header ">
-              <!-- author -->
-              <i ng-if="item.author.avatar" class="avatar" style="background-image: url({{item.author.avatar}});"></i>
-              <a ng-class="{'avatar-left-padding': item.author.avatar}" class="author"
-                 ng-click="item.author.url && openLink($event, item.author.url)">
-                {{item.author.name}}
-              </a>
+              <div class="header ">
+                <!-- author -->
+                <i ng-if="item.author.avatar" class="avatar" style="background-image: url({{item.author.avatar}});"></i>
+                <a ng-class="{'avatar-left-padding': item.author.avatar}" class="author"
+                   ng-click="item.author.url && openLink($event, item.author.url)">
+                  {{item.author.name}}
+                </a>
 
-              <!-- time -->
-              <a ng-if="item.time"
-                 title="{{item.time|formatDate}}"
-                 ng-click="openLink($event, item.url)"
-                 class="item-note">
-                <small><i class="icon ion-clock"></i>&nbsp;{{item.time|formatFromNow}}</small>
-              </a>
+                <!-- time -->
+                <a ng-if="item.time"
+                   title="{{item.time|formatDate}}"
+                   ng-click="openLink($event, item.url)"
+                   class="item-note ">
+                  <small><i class="icon ion-clock"></i>&nbsp;{{item.time|formatFromNow}}</small>
+                </a>
+              </div>
+              <!-- title -->
+              <h2 class="title feed-title">
+                <a ng-click="openLink($event, item.url)">{{item.title}}</a></h2>
+              <div ng-if="item.content"
+                   class="content feed-content"
+                   trust-as-html="item.content"></div>
+
+              <!-- footer -->
+              <h4 class="card-footer feed-footer text-right positive-100">
+                <a ng-click="openLink($event, item.url)">
+                  <span ng-if="item.truncated" translate>HOME.READ_MORE</span>
+                  <span ng-if="!item.truncated" translate>COMMON.BTN_SHOW</span>
+                  <i class="icon ion-chevron-right"></i>
+                </a>
+              </h4>
             </div>
-            <!-- title -->
-            <h2 class="title feed-title">
-              <a ng-click="openLink($event, item.url)">{{item.title}}</a></h2>
-            <div ng-if="item.content"
-                 class="content feed-content"
-                 trust-as-html="item.content"></div>
-            <h4 class="card-footer feed-footer text-right positive-100">
-              <a ng-click="openLink($event, item.url)">
-                <span ng-if="item.truncated" translate>HOME.READ_MORE</span>
-                <span ng-if="!item.truncated" translate>COMMON.BTN_SHOW</span>
-                <i class="icon ion-chevron-right"></i>
-              </a>
-            </h4>
           </div>
         </div>
       </div>

@@ -2550,7 +2550,10 @@ div[dropzone]:hover {
   pointer-events: none;
 }
 
-/* -- feed (home page) -- */
+/**********
+  feed (home page)
+**********/
+
 .feed {
   .card {
     background-color: rgba(0,0,0,0.3);
@@ -2565,13 +2568,16 @@ div[dropzone]:hover {
     list-style: unset;
     padding-left: 40px;
   }
+  a  {
+    color: inherit;
+  }
 
   .feed_header,
   .card .header {
     height: 25px;
     color: grey !important;
-    a  {
-      color: inherit;
+    a:hover {
+      color: $positive !important;
     }
     .avatar {
       margin-top: -6px;
@@ -2599,6 +2605,11 @@ div[dropzone]:hover {
     text-align: start;
     color: lightgrey !important;
   }
-
+  .feed-footer,
+  .card .footer {
+    a:hover {
+      color: $positive !important;
+    }
+  }
 }
 
