@@ -29,8 +29,8 @@
     },
     "feed": {
       "jsonFeed": {
-        "fr-FR": "feed.json",
-        "en": "feed.json"
+        "fr-FR": "https://g1.duniter.fr/feed-fr.json",
+        "en": "https://g1.duniter.fr/feed-en.json"
       },
       "maxContentLength": 650
     },
@@ -117,8 +117,8 @@
     },
     "feed": {
       "jsonFeed": {
-        "fr-FR": "feed.json",
-        "en": "feed.json"
+        "fr-FR": "https://g1.duniter.fr/feed-fr.json",
+        "en": "https://g1.duniter.fr/feed-en.json"
       },
       "maxContentLength": 650
     },
