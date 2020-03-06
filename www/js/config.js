@@ -10,10 +10,10 @@ angular.module("cesium.config", [])
 
 .constant("csConfig", {
 	"cacheTimeMs": 300000,
-	"fallbackLanguage": "fr",
+	"fallbackLanguage": "en",
 	"rememberMe": true,
 	"showUDHistory": true,
-	"timeout": 300000,
+	"timeout": 40000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
 	"keepAuthIdle": 600,
@@ -31,8 +31,8 @@ angular.module("cesium.config", [])
 		}
 	},
 	"license": {
-		"fr-FR": "license/license_g1-fr-FR",
 		"en": "license/license_g1-en",
+		"fr-FR": "license/license_g1-fr-FR",
 		"es-ES": "license/license_g1-es-ES",
 		"eo-EO": "license/license_g1-eo-EO"
 	},
@@ -44,12 +44,12 @@ angular.module("cesium.config", [])
 		"maxContentLength": 650
 	},
 	"node": {
-		"host": "g1.duniter.fr",
+		"host": "g1.duniter.org",
 		"port": 443
 	},
 	"fallbackNodes": [
 		{
-			"host": "g1.duniter.fr",
+			"host": "g1.cgeek.fr",
 			"port": 443
 		},
 		{
@@ -61,12 +61,14 @@ angular.module("cesium.config", [])
 			"port": 443
 		},
 		{
-			"host": "duniter.normandie-libre.fr",
+			"host": "g1.duniter.fr",
 			"port": 443
-		},
+		}
+	],
+	"developers": [
 		{
-			"host": "g1.duniter.org",
-			"port": 443
+			"name": "Benoit Lavenier",
+			"pubkey": "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE"
 		}
 	],
 	"plugins": {
@@ -96,7 +98,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "1.5.5",
-	"build": "2020-03-06T14:22:26.485Z",
+	"build": "2020-03-06T14:24:11.110Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
