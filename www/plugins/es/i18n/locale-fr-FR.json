@@ -590,7 +590,7 @@
   },
   "LIKE": {
     "ERROR": {
-      "FAILED_TOGGLE_LIKE": "Impossible d'executer cette action."
+      "FAILED_TOGGLE_LIKE": "Impossible d'exécuter cette action."
     }
   },
   "CONFIRM": {
