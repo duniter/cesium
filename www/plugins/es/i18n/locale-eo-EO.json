@@ -7,6 +7,7 @@
     "LAST_MODIFICATION_DATE": "Ĝisdatigita la",
     "SUBMIT_BY": "Submetita de",
     "BTN_LIKE": "Mi ŝatas",
+    "BTN_LIKE_REMOVE": "Mi ne plu ŝatas",
     "LIKES_TEXT": "{{total}} persono{{total > 1 ? 'j' : ''}} ŝatis tiun ĉi paĝon",
     "ABUSES_TEXT": "{{total}} persono{{total > 1 ? 'j' : ''}} atentigis pri problemo",
     "BTN_REPORT_ABUSE_DOTS": "Atentigi pri problemo aŭ misuzo...",
@@ -582,9 +583,14 @@
       "FOLLOW_UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> modifis sian komenton ĉe la paĝo: <b>{{params[2]}}</b>",
       "FOLLOW_NEW": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> aldonis la paĝon: <b>{{params[2]}}</b>",
       "FOLLOW_UPDATE": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> modifis la paĝon: <b>{{params[2]}}</b>",
-      "MODERATION_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> petas de vis moderigon pri la paĝo: <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "MODERATION_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> petas de vi moderigon pri la paĝo: <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
       "DELETION_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> atentigis pri paĝo foriginda: <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
       "ABUSE_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> atentigis pri via paĝo: <b>{{params[2]}}</b>"
+    }
+  },
+  "LIKE": {
+    "ERROR": {
+      "FAILED_TOGGLE_LIKE": "Ne eblas fari tiun ĉi agon."
     }
   },
   "CONFIRM": {
