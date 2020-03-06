@@ -107,7 +107,7 @@ cp ${APK_RELEASE_FILE} "${DIST_ANDROID}/${PROJECT_NAME}-v$2-android.apk" || exit
 
 
 echo "----------------------------------"
-echo "- Building web and webExtension artifacts..."
+echo "- Building web and extension artifacts..."
 echo "----------------------------------"
 cd ${PROJECT_DIR} || exit 1
 gulp config --env default
@@ -152,43 +152,20 @@ if [[ $? -ne 0 ]]; then
 fi
 
 echo "----------------------------------"
-echo "- Push git android project..."
+echo "- Uploading web extension to Modzilla ..."
 echo "----------------------------------"
+. ${PROJECT_DIR}/scripts/release-sign-extension.sh $1
+# FIXME: always failed: but continue
+#if [[ $? -ne 0 ]]; then
+#    exit 1
+#fi
 
-# Commit android project
-cd ${PROJECT_DIR}/platforms/android || exit 1
-git reset HEAD
-git add -A
-git commit -m "v$2"
-git tag -f -a "v$2" -m "${description}"
-# Push the tag
-git push origin "v$2"
-# Push the master branch
-git push origin
-if [[ $? -ne 0 ]]; then
-  echo "ERROR: cannot push platform/android project ! Continue anyway..."
-fi
-
-echo "**********************************"
-echo "* Upload web extension to {addons.modzilla.org} ..."
-echo "**********************************"
-if [[ "_" == "_${AMO_JWT_ISSUER}" || "_" == "_${AMO_JWT_SECRET}" ]]; then
-  echo "WARN: Cannot send webExtension to Modzilla: missing env variable 'AMO_JWT_ISSUER' or 'AMO_JWT_SECRET'. Use local file './local/env.sh' to define it, then retry."
-else
-  web-ext sign --api-key=${AMO_JWT_ISSUER} --api-secret=${AMO_JWT_SECRET} --id=${AMO_APP_ID} --source-dir=${PROJECT_DIR}/dist/web/ext --artifacts-dir=${PROJECT_DIR}/dist/web/build
-  if [[ $? -ne 0 ]]; then
-    exit 1
-  fi
-fi
-
-echo "**********************************"
-echo "* Uploading artifacts to {github.com} ..."
-echo "**********************************"
+echo "----------------------------------"
+echo "- Uploading artifacts to Gihub ..."
+echo "----------------------------------"
 # Pause (wait propagation to from git.duniter.org to github)
-echo " Waiting 40s, for propagation to github..."
-sleep 40s
-
-. ${PROJECT_DIR}/scripts/github.sh $1 ''"$description"''
+echo " Waiting 40s, for propagation to github..." && sleep 40s
+. ${PROJECT_DIR}/scripts/release-to-github.sh $1 ''"$description"''
 if [[ $? -ne 0 ]]; then
     exit 1
 fi
@@ -196,17 +173,23 @@ fi
 echo "----------------------------------"
 echo "- Building desktop artifacts..."
 echo "----------------------------------"
-. ${PROJECT_DIR}/scripts/release-desktop.sh $2
+. ${PROJECT_DIR}/scripts/release-desktop.sh $2 ''"$description"''
 if [[ $? -ne 0 ]]; then
     exit 1
 fi
 
-
-# Back to nodejs
-cd ${PROJECT_DIR}
+# Back to nodejs project version
 nvm use ${NODEJS_VERSION}
+
+echo "----------------------------------"
+echo "- Push git android project..."
+echo "----------------------------------"
+. ${PROJECT_DIR}/scripts/release-android-sources.sh $2  ''"$description"''
 
 echo "**********************************"
 echo "* Build release succeed !"
 echo "**********************************"
+
+# Back to nodejs project version
+nvm use ${NODEJS_VERSION}
 

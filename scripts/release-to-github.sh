@@ -25,7 +25,7 @@ if [[ "_$current" == "_" ]]; then
   echo "Unable to read the current version in 'package.json'. Please check version format is: x.y.z (x and y should be an integer)."
   exit 1;
 fi
-echo "Current version: $current"
+echo "Sending v$current extension to Github..."
 
 ###  get auth token
 GITHUB_TOKEN=$(cat ~/.config/${PROJECT_NAME}/.github)
@@ -145,7 +145,7 @@ case "$1" in
     else
       echo "Wrong arguments"
       echo "Usage:"
-      echo " > ./github.sh del|pre|rel <release_description>"
+      echo " > $0 del|pre|rel <release_description>"
       echo "With:"
       echo " - del: delete existing release"
       echo " - pre: use for pre-release"
@@ -155,6 +155,8 @@ case "$1" in
     ;;
   *)
     echo "No task given"
+    echo "Usage:"
+      echo " > $0 del|pre|rel <release_description>"
     exit 1
     ;;
 esac
