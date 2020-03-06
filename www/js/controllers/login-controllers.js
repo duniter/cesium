@@ -43,7 +43,7 @@ function LoginController($scope, $timeout, $controller, csWallet) {
 
 }
 
-function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, csCrypto, ionicReady,
+function LoginModalController($scope, $timeout, $q, $ionicPopover, $document, CryptoUtils, csCrypto, ionicReady,
                               UIUtils, BMA, Modals, csSettings, Device, parameters) {
   'ngInject';
 
@@ -543,6 +543,16 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
         });
     });
   };
+
+  /**
+   * On the file chooser
+   */
+  $scope.openFileChooser = function() {
+    var elements = angular.element(document.getElementById('loginImportFile'));
+    if (elements && elements.length) {
+      elements[0].click();
+    }
+  }
 
   /**
    * On file drop

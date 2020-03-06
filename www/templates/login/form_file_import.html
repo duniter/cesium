@@ -8,8 +8,7 @@
 </div>
 
 <div dropzone="onKeyFileDrop(file)">
-  <div ng-if="!formData.file"
-       onclick="angular.element(document.querySelector('#loginImportFile'))[0].click();">
+  <div ng-if="!formData.file" ng-click="openFileChooser()">
     <h2 class="gray" translate>COMMON.CHOOSE_FILE</h2>
     <input type="file" id="loginImportFile" accept=".dunikey,.yml"
            style="visibility:hidden; position:absolute;"
