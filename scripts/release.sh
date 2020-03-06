@@ -144,9 +144,9 @@ fi
 git commit -m "v$2"
 git tag -f -a "v$2" -m "${description}"
 # Push the tag
-git push origin "v$2"
+git push -f origin "v$2"
 # Push the master branch
-git push origin
+git push -f origin
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
@@ -161,7 +161,7 @@ echo "----------------------------------"
 #fi
 
 echo "----------------------------------"
-echo "- Uploading artifacts to Gihub ..."
+echo "- Uploading artifacts to Github ..."
 echo "----------------------------------"
 # Pause (wait propagation to from git.duniter.org to github)
 echo " Waiting 40s, for propagation to github..." && sleep 40s
@@ -173,7 +173,7 @@ fi
 echo "----------------------------------"
 echo "- Building desktop artifacts..."
 echo "----------------------------------"
-. ${PROJECT_DIR}/scripts/release-desktop.sh $2 ''"$description"''
+. ${PROJECT_DIR}/scripts/release-desktop.sh $1 ''"$description"''
 if [[ $? -ne 0 ]]; then
     exit 1
 fi
