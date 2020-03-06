@@ -56,3 +56,13 @@ case "$1" in
     exit 1
     ;;
 esac
+
+## Rename output file
+XPI_BASENAME=${PROJECT_NAME}-$current-an+fx.xpi
+XPI_FILE=${PROJECT_DIR}/dist/web/build/${XPI_BASENAME}
+if [[ -f "${XPI_FILE}" ]]; then
+  cd ${PROJECT_DIR}/dist/web/build/
+
+  # add a 'v' before version
+  mv ${XPI_BASENAME} ${PROJECT_NAME}-v$current-an+fx.xpi
+fi

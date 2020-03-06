@@ -110,22 +110,34 @@ WEB_FILE="${DIST_WEB}/${WEB_BASENAME}"
 if [[ -f "${WEB_FILE}" ]]; then
   result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/zip' -T "${WEB_FILE}" "${upload_url}?name=${WEB_BASENAME}")
   browser_download_url=$(echo "$result" | grep -P "\"browser_download_url\":[ ]?\"[^\"]+" | grep -oP "\"browser_download_url\":[ ]?\"[^\"]+"  | grep -oP "https://[A-Za-z0-9/.-]+")
-  WEB_FILE_SHA256=$(cd ${DIST_WEB} && sha256sum "${WEB_BASENAME}")
-  echo " - ${browser_download_url}  | Checksum: ${WEB_FILE_SHA256}"
+  WEB_SHA256=$(cd ${DIST_WEB} && sha256sum "${WEB_BASENAME}")
+  echo " - ${browser_download_url}  | Checksum: ${WEB_SHA256}"
 else
   echo " - ERROR: Web artifact (ZIP) not found! Skipping."
 fi
 
-# Upload web extension file
-WEB_EXT_BASENAME="${PROJECT_NAME}-v$current-extension.zip"
-WEB_EXT_FILE="${DIST_WEB}/${WEB_EXT_BASENAME}"
+# Upload web extension (ZIP) file
+WEB_EXT_ZIP_BASENAME="${PROJECT_NAME}-v$current-extension.zip"
+WEB_EXT_ZIP_FILE="${DIST_WEB}/${WEB_EXT_ZIP_BASENAME}"
 if [[ -f "${WEB_EXT_FILE}" ]]; then
-  result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/zip' -T "${WEB_EXT_FILE}" "${upload_url}?name=${WEB_EXT_BASENAME}")
+  result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/zip' -T "${WEB_EXT_ZIP_FILE}" "${upload_url}?name=${WEB_EXT_ZIP_BASENAME}")
   browser_download_url=$(echo "$result" | grep -P "\"browser_download_url\":[ ]?\"[^\"]+" | grep -oP "\"browser_download_url\":[ ]?\"[^\"]+"  | grep -oP "https://[A-Za-z0-9/.-]+")
-  WEB_EXT_FILE_SHA256=$(cd ${DIST_WEB} && sha256sum "${WEB_EXT_BASENAME}")
-  echo " - ${browser_download_url}  | Checksum: ${WEB_EXT_FILE_SHA256}"
+  WEB_EXT_ZIP_SHA256=$(cd ${DIST_WEB} && sha256sum "${WEB_EXT_ZIP_BASENAME}")
+  echo " - ${browser_download_url}  | Checksum: ${WEB_EXT_ZIP_SHA256}"
 else
   echo " - ERROR: Web extension artifact (ZIP) not found! Skipping."
+fi
+
+# Upload web extension (XPI) file
+WEB_EXT_XPI_BASENAME="${PROJECT_NAME}-v$current-an+fx.xpi"
+WEB_EXT_XPI_FILE="${DIST_WEB}/${WEB_EXT_BASENAME}"
+if [[ -f "${WEB_EXT_XPI_FILE}" ]]; then
+  result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/zip' -T "${WEB_EXT_XPI_FILE}" "${upload_url}?name=${WEB_EXT_XPI_BASENAME}")
+  browser_download_url=$(echo "$result" | grep -P "\"browser_download_url\":[ ]?\"[^\"]+" | grep -oP "\"browser_download_url\":[ ]?\"[^\"]+"  | grep -oP "https://[A-Za-z0-9/.-]+")
+  WEB_EXT_XPI_SHA256=$(cd ${DIST_WEB} && sha256sum "${WEB_EXT_XPI_BASENAME}")
+  echo " - ${browser_download_url}  | Checksum: ${WEB_EXT_XPI_SHA256}"
+else
+  echo " - ERROR: Web signed extension artifact (XPI) not found! Skipping."
 fi
 
 # Upload Android APK file
@@ -134,8 +146,8 @@ APK_FILE="${DIST_ANDROID}/${APK_BASENAME}"
 if [[ -f "${APK_FILE}" ]]; then
   result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/vnd.android.package-archive' -T "${APK_FILE}" "${upload_url}?name=${APK_BASENAME}")
   browser_download_url=$(echo "$result" | grep -P "\"browser_download_url\":[ ]?\"[^\"]+" | grep -oP "\"browser_download_url\":[ ]?\"[^\"]+"  | grep -oP "https://[A-Za-z0-9/.-]+")
-  APK_FILE_SHA256=$(cd ${DIST_ANDROID} && sha256sum "${APK_BASENAME}")
-  echo " - ${browser_download_url}  | Checksum: ${APK_FILE_SHA256}"
+  APK_SHA256=$(cd ${DIST_ANDROID} && sha256sum "${APK_BASENAME}")
+  echo " - ${browser_download_url}  | Checksum: ${APK_SHA256}"
 else
   echo "- ERROR: Android artifact (APK) not found! Skipping."
 fi
@@ -143,9 +155,10 @@ fi
 # Upload sha256 file (checksum)
 SHA_BASENAME=${PROJECT_NAME}-v$current.sha256
 SHA_FILE=${PROJECT_DIR}/dist/${SHA_BASENAME}
-echo "${WEB_FILE_SHA256}" > ${SHA_FILE}
-echo "${WEB_EXT_FILE_SHA256}" >> ${SHA_FILE}
-echo "${APK_FILE_SHA256}" >> ${SHA_FILE}
+echo "${WEB_SHA256}" > ${SHA_FILE}
+echo "${WEB_EXT_ZIP_SHA256}" >> ${SHA_FILE}
+echo "${WEB_EXT_XPI_SHA256}" >> ${SHA_FILE}
+echo "${APK_SHA256}" >> ${SHA_FILE}
 result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: text/plain' -T "${SHA_FILE}" "${upload_url}?name=${SHA_BASENAME}")
 
 ### Success message
