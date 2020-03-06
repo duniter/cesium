@@ -2,7 +2,7 @@
   "short_name": "Cesium",
   "name": "Cesium",
   "manifest_version": 2,
-  "version": "1.5.7",
+  "version": "1.5.8",
   "description": "Manage your Duniter Wallet on a libre currency, like Ğ1",
   "background": {
     "scripts": ["background.js"]
