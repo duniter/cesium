@@ -38,8 +38,8 @@ angular.module("cesium.config", [])
 	},
 	"feed": {
 		"jsonFeed": {
-			"fr-FR": "feed.json",
-			"en": "feed.json"
+			"fr-FR": "https://g1.duniter.fr/feed-fr.json",
+			"en": "https://g1.duniter.fr/feed-en.json"
 		},
 		"maxContentLength": 650
 	},
@@ -97,8 +97,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "1.5.4",
-	"build": "2020-03-05T17:29:02.131Z",
+	"version": "1.5.5",
+	"build": "2020-03-06T13:29:11.018Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
