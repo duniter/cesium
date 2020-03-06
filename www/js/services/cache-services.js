@@ -19,7 +19,7 @@ angular.module('cesium.cache.services', ['angular-cache'])
     return settings && settings.useLocalStorage && settings.persistCache && $window.localStorage ? 'localStorage' : 'memory';
   }
 
-  function fillStorageOptions(options) {
+  function getCacheOptions(options) {
     options = options || {};
     options.storageMode = getSettingsStorageMode();
     options.deleteOnExpire = (options.storageMode === 'localStorage' || options.onExpire) ? 'aggressive' : 'passive';
@@ -27,24 +27,6 @@ angular.module('cesium.cache.services', ['angular-cache'])
       (60 * 60 * 1000) : // If passive mode, remove all items every hour
       null;
     return options;
-  }
-
-  function onSettingsChanged(settings) {
-    var newStorageMode = getSettingsStorageMode(settings)
-    var hasChanged = (newStorageMode !== storageMode);
-    if (hasChanged) {
-      storageMode = newStorageMode;
-      console.debug("[cache] Updating caches with {storageMode: {0}}".format(storageMode));
-      if (storageMode === 'memory') {
-        clearAllCaches();
-      }
-      _.forEach(_.keys(cacheNames), function(cacheName) {
-        var cache = CacheFactory.get(cacheName);
-        if (cache) {
-          cache.setOptions({storageMode: storageMode});
-        }
-      });
-    }
   }
 
   function getOrCreateCache(prefix, maxAge, onExpire){
@@ -72,7 +54,7 @@ angular.module('cesium.cache.services', ['angular-cache'])
     if (cache) return cache;
 
     // Not exists yet: create a new cache
-    var options = fillStorageOptions({
+    var options = getCacheOptions({
       maxAge: maxAge,
       onExpire: onExpire || null
     });
@@ -99,6 +81,21 @@ angular.module('cesium.cache.services', ['angular-cache'])
         }
       }
     });
+  }
+
+  function onSettingsChanged(settings) {
+    var newStorageMode = getSettingsStorageMode(settings)
+    var hasChanged = (newStorageMode !== storageMode);
+    if (hasChanged) {
+      storageMode = newStorageMode;
+      console.debug("[cache] Updating caches with {storageMode: {0}}".format(storageMode));
+      _.forEach(_.keys(cacheNames), function(cacheName) {
+        var cache = CacheFactory.get(cacheName);
+        if (cache) {
+          cache.setOptions(getCacheOptions(), true);
+        }
+      });
+    }
   }
 
   function addListeners() {
