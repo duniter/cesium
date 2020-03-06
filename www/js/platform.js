@@ -44,10 +44,20 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     $animateProvider.classNameFilter( /\banimate-/ );
   })
 
-  // Configure cache (used by HTTP requests) default max age
+  // Configure cache (used by HTTP requests) default options
   .config(function (CacheFactoryProvider, csConfig) {
     'ngInject';
-    angular.extend(CacheFactoryProvider.defaults, { maxAge: csConfig.cacheTimeMs || 60 * 1000 /*1min*/});
+
+    angular.extend(CacheFactoryProvider.defaults, {
+      // Fixed options:
+      recycleFreq: 60 * 1000, // Scan expired items every 1min
+      storagePrefix: 'caches.', // Override storage key prefix
+      capacity: 100, // Force to use a LRU cache, to avoid size exceed max
+
+      // Options overwritten by the csCache service:
+      maxAge: csConfig.cacheTimeMs || 60 * 1000, // from config if exists, or 1min
+      storageMode: 'memory' // Do NOT use local Storage by default
+    });
   })
 
   // Configure screen size detection

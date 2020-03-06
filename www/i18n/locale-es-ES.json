@@ -134,6 +134,8 @@
     "NETWORK_SETTINGS": "Red",
     "PEER": "Dirección del nodo Duniter",
     "PEER_CHANGED_TEMPORARY": "Dirección utilizada temporalmente",
+    "PERSIST_CACHE": "Mantener datos de navegación (experimental)",
+    "PERSIST_CACHE_HELP": "Permite una navegación más rápida, conservando localmente los datos recibidos, para usar de una sesión a otra.",
     "USE_LOCAL_STORAGE": "Activar el almacenamiento local",
     "USE_LOCAL_STORAGE_HELP": "Permitir el ahorro de almacenamiento local",
     "WALLETS_SETTINGS": "Mis monederos",

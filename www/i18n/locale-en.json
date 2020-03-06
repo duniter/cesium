@@ -140,6 +140,8 @@
     "PEER": "Duniter peer address",
     "PEER_SHORT": "Peer address",
     "PEER_CHANGED_TEMPORARY": "Address used temporarily",
+    "PERSIST_CACHE": "Keep navigation data (experimental)",
+    "PERSIST_CACHE_HELP": "Allows faster navigation, locally retaining the data received, for use from one session to another.",
     "USE_LOCAL_STORAGE": "Enable local storage",
     "USE_LOCAL_STORAGE_HELP": "Allows you to save your settings",
     "WALLETS_SETTINGS": "My wallets",

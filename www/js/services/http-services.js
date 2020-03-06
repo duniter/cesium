@@ -102,7 +102,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
         };
         if (autoRefresh) { // redo the request if need
           config.cache = csCache.get(cachePrefix, maxAge, function (key, value, done) {
-              console.debug('[http] Refreshing cache for ['+key+'] ');
+              console.debug('[http] Refreshing cache for {{0}} '.format(key));
               $http.get(key, config)
                 .success(function (data) {
                   config.cache.put(key, data);

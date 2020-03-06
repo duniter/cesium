@@ -1,6 +1,6 @@
 angular.module('cesium.cache.services', ['angular-cache'])
 
-.factory('csCache', function($http, $window, csSettings, CacheFactory) {
+.factory('csCache', function($rootScope, $http, $window, csSettings, CacheFactory) {
   'ngInject';
 
   var
@@ -10,54 +10,78 @@ angular.module('cesium.cache.services', ['angular-cache'])
       MEDIUM: 5  * 60 * 1000 /*5 min*/,
       SHORT: csSettings.defaultSettings.cacheTimeMs // around 1min
     },
+    storageMode = getSettingsStorageMode(),
     cacheNames = []
   ;
 
-  function getOrCreateCache(prefix, maxAge, onExpire){
-    prefix = prefix || 'csCache-';
-    maxAge = maxAge || constants.SHORT;
-    var cacheName = prefix + (maxAge / 1000);
+  function getSettingsStorageMode(settings) {
+    settings = settings || csSettings.data;
+    return settings && settings.useLocalStorage && settings.persistCache && $window.localStorage ? 'localStorage' : 'memory';
+  }
 
-    // FIXME: enable this when cache is cleaning on rollback
-    var storageMode = csSettings.data.useLocalStorage && $window.localStorage ? 'localStorage' : 'memory';
+  function fillStorageOptions(options) {
+    options = options || {};
+    options.storageMode = getSettingsStorageMode();
+    options.deleteOnExpire = (options.storageMode === 'localStorage' || options.onExpire) ? 'aggressive' : 'passive';
+    options.cacheFlushInterval = options.deleteOnExpire === 'passive' ?
+      (60 * 60 * 1000) : // If passive mode, remove all items every hour
+      null;
+    return options;
+  }
 
-    if (!onExpire) {
-      if (!cacheNames[cacheName]) {
-        cacheNames[cacheName] = true;
-        console.debug("[cache] Creating cache {0}...".format(cacheName));
+  function onSettingsChanged(settings) {
+    var newStorageMode = getSettingsStorageMode(settings)
+    var hasChanged = (newStorageMode !== storageMode);
+    if (hasChanged) {
+      storageMode = newStorageMode;
+      console.debug("[cache] Updating caches with {storageMode: {0}}".format(storageMode));
+      if (storageMode === 'memory') {
+        clearAllCaches();
       }
-      return CacheFactory.get(cacheName) ||
-        CacheFactory.createCache(cacheName, {
-          maxAge: maxAge,
-          deleteOnExpire: 'passive',
-          //cacheFlushInterval: 60 * 60 * 1000, //  clear itself every hour
-          recycleFreq: Math.max(maxAge - 1000, 5 * 60 * 1000 /*5min*/),
-          storageMode: storageMode
-        });
-    }
-    else {
-      var counter = 1;
-      while(CacheFactory.get(cacheName + counter)) {
-        counter++;
-      }
-      cacheName = cacheName + counter;
-      if (!cacheNames[cacheName]) {
-        cacheNames[cacheName] = true;
-      }
-      console.debug("[cache] Creating cache {0} with 'onExpire' option...".format(cacheName));
-      return CacheFactory.createCache(cacheName, {
-          maxAge: maxAge,
-          deleteOnExpire: 'aggressive',
-          //cacheFlushInterval: 60 * 60 * 1000, // This cache will clear itself every hour
-          recycleFreq: maxAge,
-          onExpire: onExpire,
-          storageMode: storageMode
-        });
+      _.forEach(_.keys(cacheNames), function(cacheName) {
+        var cache = CacheFactory.get(cacheName);
+        if (cache) {
+          cache.setOptions({storageMode: storageMode});
+        }
+      });
     }
   }
 
+  function getOrCreateCache(prefix, maxAge, onExpire){
+    prefix = prefix || '';
+    maxAge = maxAge || constants.SHORT;
+    var cacheName = prefix + ((maxAge / 1000) + 's');
+
+    // If onExpire fn, generate a new cache key
+    var cache;
+    if (onExpire && typeof onExpire == 'function') {
+      var counter = 1;
+      while (CacheFactory.get(cacheName + counter)) {
+        counter++;
+      }
+      cacheName = cacheName + counter;
+    }
+    else {
+      cache = CacheFactory.get(cacheName);
+    }
+
+    // Add to cache names map
+    if (!cacheNames[cacheName]) cacheNames[cacheName] = true;
+
+    // Already exists: use it
+    if (cache) return cache;
+
+    // Not exists yet: create a new cache
+    var options = fillStorageOptions({
+      maxAge: maxAge,
+      onExpire: onExpire || null
+    });
+    console.debug("[cache] Creating cache {{0}} with {storageMode: {1}}...".format(cacheName, options.storageMode));
+    return CacheFactory.createCache(cacheName, options);
+  }
+
   function clearAllCaches() {
-    console.debug("[cache] cleaning all caches");
+    console.debug("[cache] Cleaning all caches...");
     _.forEach(_.keys(cacheNames), function(cacheName) {
       var cache = CacheFactory.get(cacheName);
       if (cache) {
@@ -76,6 +100,15 @@ angular.module('cesium.cache.services', ['angular-cache'])
       }
     });
   }
+
+  function addListeners() {
+    listeners = [
+      // Listen if node changed
+      csSettings.api.data.on.changed($rootScope, onSettingsChanged, this)
+    ];
+  }
+
+  addListeners();
 
   return {
     get: getOrCreateCache,

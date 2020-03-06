@@ -69,6 +69,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     useRelative: false,
     useLocalStorage: !!$window.localStorage, // override to false if no device
     useLocalStorageEncryption: false,
+    persistCache: false, // disable by default (waiting resolution of issue #885)
     walletHistoryTimeSecond: 30 * 24 * 60 * 60 /*30 days*/,
     walletHistorySliceSecond: 5 * 24 * 60 * 60 /*download using 5 days slice*/,
     walletHistoryAutoRefresh: true, // override to false if device
@@ -300,6 +301,9 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     api.locale.raise.changed(locale);
   },
 
+  isStarted = function() {
+    return started;
+  },
 
   ready = function() {
     if (started) return $q.when();
@@ -341,6 +345,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   //start();
 
   return {
+    isStarted: isStarted,
     ready: ready,
     start: start,
     data: data,

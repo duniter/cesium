@@ -90,6 +90,20 @@
           </label>
         </div>
 
+        <!-- Persist cache ? -->
+        <div class="item item-text-wrap item-toggle dark hidden-xs hidden-sm">
+          <div class="input-label" ng-class="{'gray': !formData.useLocalStorage}"
+               ng-bind-html="'SETTINGS.PERSIST_CACHE' | translate"></div>
+          <h4 class="gray" ng-bind-html="'SETTINGS.PERSIST_CACHE_HELP' | translate"></h4>
+          <label class="toggle toggle-royal">
+            <input type="checkbox" ng-model="formData.persistCache" ng-if="formData.useLocalStorage">
+            <input type="checkbox" ng-model="formData.useLocalStorage" ng-if="!formData.useLocalStorage" disabled>
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
+        </div>
+
         <!-- Allow extension here -->
         <cs-extension-point name="common"></cs-extension-point>
 
@@ -104,7 +118,8 @@
           <h4 class="gray text-wrap" ng-bind-html="'SETTINGS.REMEMBER_ME_HELP' | translate"></h4>
 
           <label class="toggle toggle-royal">
-            <input type="checkbox" ng-model="formData.rememberMe" ng-disabled="!formData.useLocalStorage">
+            <input type="checkbox" ng-model="formData.rememberMe" ng-if="formData.useLocalStorage">
+            <input type="checkbox" ng-model="formData.useLocalStorage" ng-if="!formData.useLocalStorage" disabled>
             <div class="track">
               <div class="handle"></div>
             </div>
@@ -145,7 +160,8 @@
             <h4 class="gray text-wrap" ng-bind-html="'SETTINGS.USE_WALLETS_ENCRYPTION_HELP' | translate">
             </h4>
             <label class="toggle toggle-royal">
-              <input type="checkbox" ng-model="formData.useLocalStorageEncryption" ng-disabled="!formData.useLocalStorage">
+              <input type="checkbox" ng-model="formData.useLocalStorageEncryption" ng-if="formData.useLocalStorage">
+              <input type="checkbox" ng-model="formData.useLocalStorage" ng-if="!formData.useLocalStorage" disabled>
               <div class="track">
                 <div class="handle"></div>
               </div>

@@ -2,7 +2,7 @@
 angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services',
   'cesium.settings.services'])
 
-.factory('csWot', function($rootScope, $q, $timeout, BMA, Api, CacheFactory, csConfig, csCurrency, csSettings, csCache) {
+.factory('csWot', function($rootScope, $q, $timeout, BMA, Api, CacheFactory, UIUtils, csConfig, csCurrency, csSettings, csCache) {
   'ngInject';
 
 
@@ -681,17 +681,17 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
       if (pubkey) {
         data = (options.cache !== false) ? identityCache.get(pubkey) : null;
         if (data && (!uid || data.uid === uid) && (!options.blockUid || data.blockUid === options.blockUid)) {
-          console.debug("[wot] Identity " + pubkey.substring(0, 8) + " found in cache");
+          console.debug("[wot] Identity {{0}} found in cache".format(pubkey.substring(0, 8)));
           return $q.when(data);
         }
-        console.debug("[wot] Loading identity " + pubkey.substring(0, 8) + "...");
+        console.debug("[wot] Loading identity {{0}}...".format(pubkey.substring(0, 8)));
         data = {
           pubkey: pubkey,
           uid: uid
         };
       }
       else {
-        console.debug("[wot] Loading identity from uid " + uid);
+        console.debug("[wot] Loading identity from uid {{0}}...".format(uid));
         data = {
           uid: uid
         };
