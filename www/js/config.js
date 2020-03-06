@@ -38,8 +38,8 @@ angular.module("cesium.config", [])
 	},
 	"feed": {
 		"jsonFeed": {
-			"fr-FR": "https://g1.duniter.fr/feed-fr.json",
-			"en": "https://g1.duniter.fr/feed-en.json"
+			"fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/www/feed-fr.json",
+			"en": "https://raw.githubusercontent.com/duniter/cesium/master/www/feed-en.json"
 		},
 		"maxContentLength": 650
 	},

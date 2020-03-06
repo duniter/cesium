@@ -342,9 +342,13 @@ function webCopyFiles() {
     gulp.src('./www/img/**/*.*')
       .pipe(gulp.dest(tmpPath + '/img')),
 
-    // Copy manifest.json, feed.json
-    gulp.src(['./www/manifest.json', './www/feed*.json'])
+    // Copy manifest.json
+    gulp.src('./www/manifest.json')
       .pipe(gulp.dest(tmpPath)),
+
+    // Copy feed*.json
+    //gulp.src('./www/feed*.json')
+    //  .pipe(gulp.dest(tmpPath)),
 
     // Copy lib
     gulp.src('./www/lib/**/*.*')

@@ -173,7 +173,7 @@ fi
 echo "----------------------------------"
 echo "- Building desktop artifacts..."
 echo "----------------------------------"
-. ${PROJECT_DIR}/scripts/release-desktop.sh $1 ''"$description"''
+. ${PROJECT_DIR}/scripts/release-desktop.sh $1
 if [[ $? -ne 0 ]]; then
     exit 1
 fi
@@ -184,7 +184,7 @@ nvm use ${NODEJS_VERSION}
 echo "----------------------------------"
 echo "- Push git android project..."
 echo "----------------------------------"
-. ${PROJECT_DIR}/scripts/release-android-sources.sh $2  ''"$description"''
+. ${PROJECT_DIR}/scripts/release-android-sources.sh $2
 
 echo "**********************************"
 echo "* Build release succeed !"

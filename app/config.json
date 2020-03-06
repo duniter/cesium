@@ -29,8 +29,8 @@
     },
     "feed": {
       "jsonFeed": {
-        "fr-FR": "https://g1.duniter.fr/feed-fr.json",
-        "en": "https://g1.duniter.fr/feed-en.json"
+        "fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-fr.json",
+        "en": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-en.json"
       },
       "maxContentLength": 650
     },
@@ -117,8 +117,8 @@
     },
     "feed": {
       "jsonFeed": {
-        "fr-FR": "https://g1.duniter.fr/feed-fr.json",
-        "en": "https://g1.duniter.fr/feed-en.json"
+        "fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-fr.json",
+        "en": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-en.json"
       },
       "maxContentLength": 650
     },

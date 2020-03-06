@@ -511,7 +511,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 }
 
 
-function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $http, UIUtils, csConfig, csPlatform, csCurrency, csSettings) {
+function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $http, UIUtils,
+                        csConfig, csCache, csPlatform, csCurrency, csSettings) {
   'ngInject';
 
   $scope.loading = true;
@@ -574,7 +575,7 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
     var now = Date.now();
     console.debug("[home] Loading feeds from {0}...".format(feedUrl));
 
-    $http.get(feedUrl, {responseType: 'json'})
+    $http.get(feedUrl, {responseType: 'json', cache: csCache.get(null, csCache.constants.LONG)})
       .success(function(feed) {
         console.debug('[home] Feeds loaded in {0}ms'.format(Date.now()-now));
         if (!feed || !feed.items || !feed.items.length) return // skip if empty
