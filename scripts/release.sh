@@ -110,11 +110,15 @@ echo "----------------------------------"
 echo "- Building web and extension artifacts..."
 echo "----------------------------------"
 cd ${PROJECT_DIR} || exit 1
+
+# Run web build
 gulp config --env default
 gulp webBuild --release
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
+
+# check files exists
 DIST_WEB_FILE="${DIST_WEB}/${PROJECT_NAME}-v$2-web.zip"
 if [[ ! -f "${DIST_WEB_FILE}" ]]; then
   echo "ERROR: Missing web artifact at ${DIST_WEB_FILE}"

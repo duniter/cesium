@@ -46,7 +46,9 @@ case "$1" in
   rel)
     web-ext sign "--api-key=${AMO_JWT_ISSUER}" "--api-secret=${AMO_JWT_SECRET}" "--source-dir=${PROJECT_DIR}/dist/web/ext" "--artifacts-dir=${PROJECT_DIR}/dist/web/build"  --id=${WEB_EXT_ID} --channel=listed
     if [[ $? -ne 0 ]]; then
-      exit 1
+      # Comment out, because always failed with message:
+      #   "Your add-on has been submitted for review. It passed validation but could not be automatically signed because this is a listed add-on."
+      #exit 1
     fi
     ;;
   *)

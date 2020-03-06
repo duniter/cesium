@@ -29,7 +29,7 @@
       "id": "https://cesium.app",
       "url": "https://cesium.app",
       "image": "https://cesium.app/i18n/fr_FR/contents/accueil/Cesium-G1-maquette.png",
-      "content_html": "<p><ul><li>Vous aimeriez vous inscrire à la Ğ1 (<i>June</i>), mais vous ne savez pas comment vous y prendre ?</li><li>Vous voulez savoir <b>comment utiliser</b> Cesium depuis votre smartphone ou ordinateur ?</li><li>On vous a dit que Cesium faisait aussi le café (en plus de gérer votre portefeuille en monnaie libre), mais vous n'en êtes pas sûr ? :-)</li></ul></p><p>Tutos, téléchargements, documentation: tout est désormais accessible depuis le <b>site officiel</b> : <b>https://cesium.app</b> !</p>"
+      "content_html": "<p><ul><li>Vous aimeriez vous inscrire à la Ğ1 (<i>June</i>), mais vous ne savez pas comment vous y prendre ?</li><li>Vous voulez savoir <b>comment utiliser</b> Cesium depuis votre smartphone ou ordinateur ?</li><li>On vous a dit que Cesium faisait aussi le café (en plus de gérer votre portefeuille en monnaie libre), mais vous n'en êtes pas sûr ? :-)</li></ul></p><p>Tutos, téléchargements, documentation: tout est désormais accessible depuis le <b>site officiel</b> : <a href=\"https://cesium.app\">https://cesium.app</a> !</p>"
     }
   ]
 }

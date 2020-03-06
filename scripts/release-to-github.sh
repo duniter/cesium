@@ -119,7 +119,7 @@ fi
 # Upload web extension (ZIP) file
 WEB_EXT_ZIP_BASENAME="${PROJECT_NAME}-v$current-extension.zip"
 WEB_EXT_ZIP_FILE="${DIST_WEB}/${WEB_EXT_ZIP_BASENAME}"
-if [[ -f "${WEB_EXT_FILE}" ]]; then
+if [[ -f "${WEB_EXT_ZIP_FILE}" ]]; then
   result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/zip' -T "${WEB_EXT_ZIP_FILE}" "${upload_url}?name=${WEB_EXT_ZIP_BASENAME}")
   browser_download_url=$(echo "$result" | grep -P "\"browser_download_url\":[ ]?\"[^\"]+" | grep -oP "\"browser_download_url\":[ ]?\"[^\"]+"  | grep -oP "https://[A-Za-z0-9/.-]+")
   WEB_EXT_ZIP_SHA256=$(cd ${DIST_WEB} && sha256sum "${WEB_EXT_ZIP_BASENAME}")
@@ -157,8 +157,8 @@ SHA_BASENAME=${PROJECT_NAME}-v$current.sha256
 SHA_FILE=${PROJECT_DIR}/dist/${SHA_BASENAME}
 echo "${WEB_SHA256}" > ${SHA_FILE}
 echo "${WEB_EXT_ZIP_SHA256}" >> ${SHA_FILE}
-echo "${WEB_EXT_XPI_SHA256}" >> ${SHA_FILE}
 echo "${APK_SHA256}" >> ${SHA_FILE}
+echo "${WEB_EXT_XPI_SHA256}" >> ${SHA_FILE}
 result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: text/plain' -T "${SHA_FILE}" "${upload_url}?name=${SHA_BASENAME}")
 
 ### Success message

@@ -54,6 +54,14 @@ cd "${PROJECT_DIR}/dist/desktop"
 # Fetch last updates
 git fetch origin && git merge origin/master || exit 1
 
+### Skip windows assets (workaround because it often failed)
+if [[ "${DESKTOP_ASSETS}" == "linux" ]]; then
+
+  echo "Skipping windows assets, because DESKTOP_ASSETS env was set to 'linux'."
+  EXPECTED_ASSETS="${PROJECT_NAME}-desktop-v$current-linux-x64.deb
+${PROJECT_NAME}-desktop-v$current-linux-x64.tar.gz"
+fi
+
 # Build desktop assets
 ./release.sh $current
 if [[ $? -ne 0 ]]; then

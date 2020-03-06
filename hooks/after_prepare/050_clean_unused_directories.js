@@ -33,6 +33,7 @@ if (rootdir && !skip) {
 
     // Clean unused directories
     del.sync([
+      path.join(wwwPath, 'api'),
       path.join(wwwPath, 'i18n'),
       path.join(wwwPath, 'js'),
       path.join(wwwPath, 'templates'),
