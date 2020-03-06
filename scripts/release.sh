@@ -75,7 +75,7 @@ case "$1" in
 esac
 
 
-# Preparing Android environment
+# Preparing the environment
 . ${PROJECT_DIR}/scripts/env-global.sh
 if [[ $? -ne 0 ]]; then
   exit 1
@@ -151,6 +151,10 @@ if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
+echo "----------------------------------"
+echo "- Push git android project..."
+echo "----------------------------------"
+
 # Commit android project
 cd ${PROJECT_DIR}/platforms/android || exit 1
 git reset HEAD
@@ -162,11 +166,11 @@ git push origin "v$2"
 # Push the master branch
 git push origin
 if [[ $? -ne 0 ]]; then
-  exit 1
+  echo "ERROR: cannot push platform/android project ! Continue anyway..."
 fi
 
 echo "**********************************"
-echo "* Upload web extension to Modzilla..."
+echo "* Upload web extension to {addons.modzilla.org} ..."
 echo "**********************************"
 if [[ "_" == "_${AMO_JWT_ISSUER}" || "_" == "_${AMO_JWT_SECRET}" ]]; then
   echo "WARN: Cannot send webExtension to Modzilla: missing env variable 'AMO_JWT_ISSUER' or 'AMO_JWT_SECRET'. Use local file './local/env.sh' to define it, then retry."
@@ -178,7 +182,7 @@ else
 fi
 
 echo "**********************************"
-echo "* Uploading artifacts to Github..."
+echo "* Uploading artifacts to {github.com} ..."
 echo "**********************************"
 # Pause (wait propagation to from git.duniter.org to github)
 echo " Waiting 40s, for propagation to github..."
@@ -189,27 +193,14 @@ if [[ $? -ne 0 ]]; then
     exit 1
 fi
 
-
 echo "----------------------------------"
 echo "- Building desktop artifacts..."
 echo "----------------------------------"
+. ${PROJECT_DIR}/scripts/release-desktop.sh $2
+if [[ $? -ne 0 ]]; then
+    exit 1
+fi
 
-
-if [[ -d "${PROJECT_DIR}/dist/desktop" ]]; then
-  cd "${PROJECT_DIR}/dist/desktop"
-
-  # Fetch last updates
-  git fetch origin && git merge origin/master || exit 1
-
-  # Build desktop assets
-  ./release.sh $2
-  if [[ $? -ne 0 ]]; then
-      exit 1
-  fi
-else
-  echo "ERROR: dist/desktop not found -> Make sure git submodule has been init!"
-  exit 1
-fi;
 
 # Back to nodejs
 cd ${PROJECT_DIR}
