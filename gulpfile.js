@@ -269,7 +269,7 @@ function pluginSass() {
 function webClean() {
   return del([
     './dist/web/www',
-    './dist/web/extension',
+    './dist/web/ext',
     './dist/web/build'
   ]);
 }
@@ -620,6 +620,11 @@ function webZip() {
     .pipe(gulp.dest('./dist/web/build'));
 }
 
+function webExtensionClean() {
+  return del([
+    './dist/web/ext'
+  ]);
+}
 
 function webExtensionCopyFiles() {
   const wwwPath = './dist/web/www';
@@ -634,12 +639,15 @@ function webExtensionCopyFiles() {
   return gulp.src([
     wwwPath + '/**/*',
 
+    // Remove API
+    '!' + wwwPath + '/api',
+
     // Remove JS debug files
     wwwPath + '/dist_js/*.*',
     '!' + wwwPath + '/dist_js/cesium.js',
     '!' + wwwPath + '/dist_js/vendor.js',
-    '!' + wwwPath + '/dist_js/cesium-api.js',
-    '!' + wwwPath + '/dist_js/vendor-api.js',
+    '!' + wwwPath + '/dist_js/cesium-api*.js',
+    '!' + wwwPath + '/dist_js/vendor-api*.js',
 
     // Remove CSS debug files
     wwwPath + '/dist_css/*.*',
@@ -741,7 +749,8 @@ gulp.task('webCleanUnusedFiles', ['webApiUglify'], webCleanUnusedFiles);
 gulp.task('webCleanUnusedDirectories', ['webCleanUnusedFiles'], webCleanUnusedDirectories);
 gulp.task('webZip', ['webCleanUnusedDirectories'], webZip);
 
-gulp.task('webExtensionCopyFiles', ['webCleanUnusedDirectories'], webExtensionCopyFiles);
+gulp.task('webExtensionClean', [], webExtensionClean);
+gulp.task('webExtensionCopyFiles', ['webExtensionClean', 'webCleanUnusedDirectories'], webExtensionCopyFiles);
 gulp.task('webExtensionZip', ['webExtensionCopyFiles'], webExtensionZip);
 
 gulp.task('webBuild', ['webZip', 'webExtensionZip'], webBuildSuccess);
