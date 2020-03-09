@@ -41,7 +41,7 @@ angular.module("cesium.config", [])
 			"fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-fr.json",
 			"en": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-en.json"
 		},
-		"maxContentLength": 650
+		"maxContentLength": 1300
 	},
 	"node": {
 		"host": "g1.duniter.org",
