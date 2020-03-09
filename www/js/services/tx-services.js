@@ -64,6 +64,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                 return sum - outputAmount;
               }
             }
+
           }
 
           // Complex unlock condition, on the issuer pubkey
@@ -95,8 +96,8 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
         var time = tx.time || tx.blockstampTime;
 
         // Avoid duplicated tx, or tx to him self
-        var txKey = amount + ':' + tx.hash + ':' + time;
-        if (!processedTxMap[txKey]) {
+        var txKey = (amount !== 0) && amount + ':' + tx.hash + ':' + time;
+        if (txKey && !processedTxMap[txKey]) {
           processedTxMap[txKey] = true; // Mark as processed
           var newTx = {
             time: time,
