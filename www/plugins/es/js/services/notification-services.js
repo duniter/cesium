@@ -118,7 +118,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
       // Add some wallet events as notifications
       var time = csHttp.date.now() - filterTranslations.MEDIAN_TIME_OFFSET;
       var result = (wallet.data.events || []).reduce(function(res, event) {
-        if (event.type != "warn" && event.type != "error") return res; // Keep only warn and error events
+        if (event.type !== "warn" && event.type !== "error") return res; // Keep only warn and error events
         var notification = new EsNotification({}, function(self) {
           if (!self.read) {
             self.read = true;
@@ -127,12 +127,12 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
             }
           }
         });
-        notification.id=event.code;
+        notification.id= event.code;
+        notification.time= time;
         notification.read = false;
         notification.state = 'app.view_wallet';
         notification.avatarIcon = 'ion-alert-circled';
         notification.icon = 'ion-alert-circled assertive';
-        notification.time = time;
         notification.message = event.message;
         notification.messageParams = event.messageParams;
         return res.concat(notification);
@@ -200,6 +200,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
     }
 
     var notification = new EsNotification(event, markNotificationAsRead);
+    notification.id = event.id || notification.id;
 
     // Extend the notification entity
     return csWot.extendAll([notification])
