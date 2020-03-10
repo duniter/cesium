@@ -327,7 +327,9 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
   function onWalletLoad(data, deferred) {
     deferred = deferred || $q.defer();
     if (!data || !data.pubkey || !data.keypair) {
-      deferred.resolve();
+      $timeout(function() {
+        deferred.resolve(data);
+      });
       return deferred.promise;
     }
 
@@ -341,7 +343,9 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
       data.notifications.warnCount = countWarnEvents(data);
 
       console.debug('[ES] [notification] Skipping load (loaded '+(time - data.notifications.time)+'s ago)');
-      deferred.resolve();
+      $timeout(function() {
+        deferred.resolve(data);
+      });
       return deferred.promise;
     }
 
@@ -373,7 +377,10 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
         console.debug('[ES] [notification] Loaded count (' + unreadCount + ') in '+(Date.now()-now)+'ms');
         deferred.resolve(data);
       })
-      .catch(deferred.reject);
+      .catch(function(err){
+        console.error('Error while counting notification: ' + (err.message ? err.message : err));
+        deferred.resolve(data);
+      });
 
     return deferred.promise;
   }

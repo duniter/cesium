@@ -342,10 +342,10 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
             });
         }
         else {
-          UIUtils.loading.hide();
+          UIUtils.loading.hide(10);
         }
       })
-      .catch(UIUtils.onError());
+      .catch(UIUtils.onError('ERROR.LOGOUT'));
   };
   // Do authentification
   $scope.doAuth = function(options) {

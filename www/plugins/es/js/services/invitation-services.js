@@ -12,7 +12,7 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
 
   })
 
-.factory('esInvitation', function($rootScope, $q, CryptoUtils, csPlatform, Api, esHttp, csWallet, esWallet, csWot, esNotification) {
+.factory('esInvitation', function($rootScope, $q, $timeout, CryptoUtils, csPlatform, Api, esHttp, csWallet, esWallet, csWot, esNotification) {
   'ngInject';
 
   var
@@ -51,7 +51,9 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
   function onWalletLoad(data, deferred) {
     deferred = deferred || $q.defer();
     if (!data || !data.pubkey) {
-      deferred.resolve();
+      $timeout(function() {
+        deferred.resolve(data);
+      });
       return deferred.promise;
     }
 
@@ -61,8 +63,10 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
     // Skip if loaded less than 1 min ago
     // (This is need to avoid reload on login AND load phases)
     if (data.invitations && data.invitations.time && (time - data.invitations.time < 30 /*=30s*/)) {
-      console.debug('[ES] [invitation] Skipping load (loaded '+(time - data.invitations.time)+'s ago)');
-      deferred.resolve();
+      console.debug('[ES] [invitation] Skipping load (loaded {0}s ago)'.format(time - data.invitations.time));
+      $timeout(function() {
+        deferred.resolve(data);
+      });
       return deferred.promise;
     }
 

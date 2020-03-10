@@ -235,7 +235,10 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         })
         .then(function() {
           if (options && options.silent) {
-            UIUtils.loading.hide();
+            UIUtils.loading.hide(10);
+          }
+          else {
+            UIUtils.loading.hide(1000);
           }
 
           return keepAuth ? data : angular.merge({}, data, authData);
@@ -942,7 +945,10 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         })
         .then(function() {
           data.loaded = true;
-          console.debug("[wallet] Loaded {{0}} full data in {1}s".format(data.pubkey.substr(0,8), Date.now() - now));
+          console.debug("[wallet] Loaded {{0}} full data in {1}ms".format(data.pubkey.substr(0,8), Date.now() - now));
+
+          // Make sure to hide loading, because sometimes it stay - should fix freeze screen
+          UIUtils.loading.hide(1000);
           return data;
         })
         .catch(function(err) {

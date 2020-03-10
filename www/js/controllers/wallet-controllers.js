@@ -91,7 +91,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     }
     else {
       // update view (to refresh avatar + plugin data, such as profile, subscriptions...)
-      UIUtils.loading.hide();
+      UIUtils.loading.hide(10);
       $timeout($scope.updateView, 300);
     }
   };
@@ -108,12 +108,14 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         $scope.showQRCode();
         if (wallet.isDefault()) $scope.showHelpTip();
         $scope.addListeners();
-        UIUtils.loading.hide(); // loading could have be open (e.g. new account)
+
+        UIUtils.loading.hide(10); // loading could have be open (e.g. new account)
       })
       .catch(function(err){
         if (err === 'CANCELLED') {
-          $scope.showHome();
+          return $scope.showHome();
         }
+        UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR')(err);
       });
   };
 
@@ -467,6 +469,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
 
   $scope.showQRCode = function(timeout) {
+    if (!$scope.qrcodeId || !$scope.formData.pubkey) return; // Skip
     if (!$scope.qrcode) {
       $scope.qrcode = new QRCode(
         $scope.qrcodeId,
