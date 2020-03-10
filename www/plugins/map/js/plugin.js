@@ -4,6 +4,7 @@ angular.module('cesium.map.plugin', [
     // Services
     'cesium.map.services',
     // Controllers
+    'cesium.map.common.controllers',
     'cesium.map.wot.controllers',
     'cesium.map.registry.controllers',
     'cesium.map.network.controllers',

@@ -495,6 +495,7 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
     loading: false,
     enable: undefined
   };
+  $scope.searchModalOpened = false;
 
   $scope.tryToLocalize = function() {
     if ($scope.formPosition.loading || loadingCurrentPosition) return;
@@ -603,6 +604,9 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
 
   $scope.openSearchLocationModal = function(options) {
 
+    if ($scope.searchModalOpened) return; // Skip
+
+    $scope.searchModalOpened = true;
     options = options || {};
 
     var parameters = {
@@ -618,10 +622,16 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
       parameters,
       {
         focusFirstInput: true
-        //,scope: $scope
       }
     )
-      .then($scope.updateGeoPoint);
+      .then(function(res) {
+        $scope.searchModalOpened = false;
+        $scope.updateGeoPoint(res);
+      })
+      .catch(function() {
+        console.error(err);
+        $scope.searchModalOpened = false;
+      });
   };
 }
 

@@ -1,5 +1,5 @@
 
-angular.module('cesium.map.registry.controllers', ['cesium.services', 'cesium.map.services', 'cesium.map.help.controllers'])
+angular.module('cesium.map.registry.controllers', ['cesium.services', 'cesium.map.services', 'cesium.map.help.controllers', 'cesium.map.common.controllers'])
 
   .config(function($stateProvider, PluginServiceProvider, csConfig) {
     'ngInject';
@@ -21,6 +21,15 @@ angular.module('cesium.map.registry.controllers', ['cesium.services', 'cesium.ma
           points: {
             'filter-buttons': {
               templateUrl: "plugins/map/templates/registry/lookup_lg_extend.html"
+            }
+          }
+        })
+
+        .extendState('app.registry_edit_record', {
+          points: {
+            'after-position': {
+              templateUrl: 'plugins/map/templates/common/edit_position_extend.html',
+              controller: 'MapPageEditCtrl'
             }
           }
         });
@@ -46,6 +55,7 @@ angular.module('cesium.map.registry.controllers', ['cesium.services', 'cesium.ma
   // Map view of the registry
   .controller('MapRegistryViewCtrl', MapRegistryViewController)
 
+  .controller('MapPageEditCtrl', MapPageEditController)
 ;
 
 
@@ -422,4 +432,14 @@ function MapRegistryViewController($scope, $filter, $templateCache, $interpolate
         csSettings.store();
       });
   };
+}
+
+
+function MapPageEditController($scope, $controller) {
+  'ngInject';
+
+  $scope.mapId = 'map-page-' + $scope.$id;
+
+  // Initialize the super classes and extend it.
+  angular.extend(this, $controller('MapEditPositionAbstractCtrl', { $scope: $scope}));
 }
