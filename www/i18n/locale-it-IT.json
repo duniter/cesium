@@ -96,8 +96,6 @@
      "CURRENCY": "Moneta",
      "ACCOUNT": "Mio conto",
      "WALLETS": "I miei portafogli",
-     "TRANSFER": "Trasferire",
-     "SCAN": "Scansionare",
      "SETTINGS": "Impostazioni",
      "NETWORK": "Rete",
      "TRANSACTIONS": "Miei pagamenti"
@@ -797,8 +795,7 @@
        "WALLET_RECEIVED_CERTS": "Questo mostra l'elenco delle persone che ti hanno fatto entrare nella WoT.",
        "WALLET_CERTIFY": "Questo bottone <b>{{'WOT.BTN_SELECT_AND_CERTIFY'|translate}}</b> permette di selezionare e certificare una identità.<br/><br/>Solo gli utenti <b>che sono già membri</b> possono certificare gli altri.",
        "WALLET_CERT_STOCK": "Tuo stock di certificazioni da dare è limitato a <b>{{sigStock}} certificazioni</b>.<br/><br/>Questo stock si rifornisce col tempo, man mano che le certificazioni inviate scadono.",
-       "MENU_BTN_TX_MEMBER": "<b>{{'MENU.TRANSACTIONS'|translate}}</b> permette l'accesso alla cronologia delle transazioni, e permette di fare nuovi bonifici.",
-       "MENU_BTN_TX": "Visualizza la cronologia <b>delle tue transazioni</b> qui e fai nuovi bonifici.",
+       "MENU_BTN_TX": "<b>{{'MENU.TRANSACTIONS'|translate}}</b> permette l'accesso alla cronologia delle transazioni, e permette di fare nuovi bonifici.",
        "MENU_BTN_WOT": "Il menu<b>{{'MENU.WOT'|translate}}</b> permette di cercare <b>utenti</b> della moneta (membri o non).",
        "WOT_SEARCH_TEXT_XS": "Per fare una ricerca nel annuario, digita <b>le prime lettere dello pseudonimo o della chiave pubblica di un utente</b>.<br/><br/>La ricerca inizierà automaticamente.",
        "WOT_SEARCH_TEXT": "Per cercare nel annuario, digita <b>le prime lettere dello pseudonimo o della chiave pubblica di un utente</b>.<br/><br/>Dopodichè calca <b>Enter</b> per avviare la ricerca.",

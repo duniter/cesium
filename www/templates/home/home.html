@@ -4,11 +4,9 @@
 
   <ion-nav-buttons side="secondary" >
     <!-- locales  -->
-    <button class="button button-clear hidden-xs hidden-sm gray"
+    <button class="button button-icon button-clear hidden-xs hidden-sm gray"
             ng-click="showLocalesPopover($event)" style="align-content: center">
-      <img ng-if=":locale:$root.settings.locale.country"
-           ng-src="https://www.countryflags.io/{{:locale:$root.settings.locale.country}}/shiny/32.png">
-      <span ng-if=":locale:!$root.settings.locale.country">{{:locale:$root.settings.locale.label}}&nbsp;</span>
+      <img ng-src="img/flag-{{:locale:$root.settings.locale.flag}}.png"/>
       <small class="ion-arrow-down-b"></small>
     </button>
   </ion-nav-buttons>
@@ -16,7 +14,7 @@
   <ion-content class="positive-900-bg circle-bg-dark">
 
     <div class="row no-padding-xs responsive-lg">
-      <div class="col col-30 hidden-xs hidden-sm">&nbsp;</div>
+      <div class="col col-30 no-padding hidden-xs hidden-sm">&nbsp;</div>
       <div class="col text-center no-padding-xs main-container">
 
         <div id="helptip-home-logo" class="logo"></div>
@@ -111,10 +109,12 @@
 
 
       </div>
-      <div class="col col-30 no-padding">
+      <div class="col no-padding" ng-class="{'col-30': !feed, 'col-10': feed}">&nbsp;
+      </div>
+      <div class="col col-30 no-padding" ng-if="feed">
 
         <!-- feed -->
-        <div ng-if="feed" class="feed padding padding-top">
+        <div class="feed padding padding-top">
           <h3 class="padding-left">
             <i class="icon ion-speakerphone"></i>
             {{feed.title}}

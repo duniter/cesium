@@ -18,6 +18,7 @@
 <!-- Buttons section -->
 <ng-if ng-if=":state:enable && extensionPoint === 'buttons'">
   <button class="button button-stable button-small-padding icon ion-compose"
+          ng-disabled="loading"
           ng-click="showNewMessageModal()"
           title="{{'MESSAGE.BTN_WRITE' | translate}}">
   </button>

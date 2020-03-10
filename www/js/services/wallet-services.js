@@ -909,6 +909,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     loadFullData = function(fromTime) {
       data.loaded = false;
 
+      var now = Date.now();
+      console.debug("[wallet] Loading {{0}} full data...".format(data.pubkey.substr(0,8)));
+
       return $q.all([
 
           // Get requirements
@@ -939,6 +942,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         })
         .then(function() {
           data.loaded = true;
+          console.debug("[wallet] Loaded {{0}} full data in {1}s".format(data.pubkey.substr(0,8), Date.now() - now));
           return data;
         })
         .catch(function(err) {
@@ -954,6 +958,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       if (!options.requirements) {
         return $q.when(data);
       }
+
       return refreshData(options)
         .then(function(data) {
           data.loaded = true;
@@ -982,6 +987,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       }
 
       var jobs = [];
+
+      var now = Date.now();
+      console.debug("[wallet] {0} {{1}} data, with options: ".format(!data.loaded ? 'Loading' : 'Refreshing', data.pubkey.substr(0,8)), options);
 
       // Get requirements
       if (options.requirements) {
@@ -1018,9 +1026,11 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           return api.data.raisePromise.load(data)
             .then(function(){
 
+              console.debug("[wallet] {0} {{1}} data in {2}ms".format(!data.loaded ? 'Loaded' : 'Refreshed', data.pubkey.substr(0,8), Date.now() - now));
+
               // Compute if full loaded
               if (!data.loaded) {
-                data.loaded = data.requirements.loaded && data.sources;
+                data.loaded = data.requirements.loaded && data.sources && true;
               }
 
               return data;

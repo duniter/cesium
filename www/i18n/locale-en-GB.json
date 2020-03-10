@@ -98,8 +98,6 @@
     "CURRENCY": "Currency",
     "ACCOUNT": "My Account",
     "WALLETS": "My wallets",
-    "TRANSFER": "Transfer",
-    "SCAN": "Scan",
     "SETTINGS": "Settings",
     "NETWORK": "Network",
     "TRANSACTIONS": "My transactions"
@@ -886,8 +884,8 @@
       "WALLET_RECEIVED_CERTS": "This shows the list of persons that certified you.",
       "WALLET_CERTIFY": "The button <b>{{'WOT.BTN_SELECT_AND_CERTIFY'|translate}}</b> allows selecting an identity and certifying it.<br/><br/>Only users that are <b>already member</b> may certify others.",
       "WALLET_CERT_STOCK": "Your supply of certifications (to send) is limited to <b>{{sigStock}} certifications</b>.<br/><br/>This supply will replete itself over time, as and when earlier certifications expire.",
-      "MENU_BTN_TX_MEMBER": "<b>{{'MENU.TRANSACTIONS'|translate}}</b> allow access to transactions history, and send new payments.",
-      "MENU_BTN_TX": "View the history of <b>your transactions</b> here and send new payments.",
+      "MENU_BTN_WALLETS": "The menu <b>{{'MENU.WALLETS'|translate}}</b> allows you to add additional wallets that you manage.",
+      "MENU_BTN_TX": "The menu <b>{{'MENU.TRANSACTIONS'|translate}}</b> allow access to transactions history, and send new payments.",
       "MENU_BTN_WOT": "The menu <b>{{'MENU.WOT'|translate}}</b> allows searching <b>users</b> of the currency (member or not).",
       "WOT_SEARCH_TEXT_XS": "To search in the registry, type the <b>first letters of a users pseudonym or public key</b>.<br/><br/>The search will start automatically.",
       "WOT_SEARCH_TEXT": "To search in the registry, type the <b>first letters of a users pseudonym or public key</b>.<br/><br/>Then hit <b>Enter</b> to start the search.",
@@ -901,7 +899,7 @@
       "HEADER_BAR_BTN_PROFILE": "Click here to access your <b>user profile</b>",
       "SETTINGS_CHANGE_UNIT": "You can <b>change the display unit</b> of amounts by clicking here.<br/><br/>- Deactivate the option to show amounts in {{currency|capitalize}}.<br/>- Activate the option for relative amounts in {{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub> (<b>divided</b> by the current Universal Dividend).",
       "END_LOGIN": "This guided visit has <b>ended</b>.<br/><br/>Welcome to the <b>free economy</b>!",
-      "END_NOT_LOGIN": "This guided visit has <b>ended</b>.<br/><br/>If you wish to join the currency {{currency|capitalize}}, simply click <b>{{'LOGIN.CREATE_ACCOUNT'|translate}}</b> below."
+      "END_NOT_LOGIN": "This guided visit has <b>ended</b>.<br/><br/>If you wish to join the currency {{currency|capitalize}}, simply click <b>{{'LOGIN.CREATE_FREE_ACCOUNT'|translate}}</b> below."
     }
   },
   "API" :{

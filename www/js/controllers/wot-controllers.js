@@ -1137,6 +1137,7 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
   };
 
   $scope.showQRCode = function(timeout) {
+    if (!$scope.qrcodeId || !$scope.formData.pubkey) return; // Skip
     if (!$scope.qrcode) {
       $scope.qrcode = new QRCode(
         $scope.qrcodeId,

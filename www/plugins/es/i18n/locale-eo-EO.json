@@ -351,8 +351,8 @@
       "RECORD_PUBKEY_HELP": "Publika ŝlosilo por ricevi la pagojn"
     },
     "WALLET": {
-      "REGISTRY_DIVIDER": "Paĝoj",
-      "REGISTRY_HELP": "La paĝoj listigas agadojn, kiuj akceptas la liberan monon aŭ helpas ĝin: komercoj, entreprenoj, asocioj, institucioj."
+      "PAGE_DIVIDER": "Paĝoj",
+      "PAGE_DIVIDER_HELP": "La paĝoj listigas agadojn, kiuj akceptas la liberan monon aŭ helpas ĝin: komercoj, entreprenoj, asocioj, institucioj."
     },
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Malsukceso por ŝarĝi la liston de la agadoj",

@@ -9,6 +9,7 @@
       <ion-nav-buttons side="left">
         <button class="button button-icon button-clear icon ion-navicon visible-nomenu" menu-toggle="left" ></button>
       </ion-nav-buttons>
+
       <ion-nav-buttons side="right" >
 
         <!-- current node info -->
@@ -97,19 +98,22 @@
     <ion-content scroll="false" class="scroll-content ionic-scroll" ng-class="{'overflow-scroll': smallscreen, 'scroll-content-false': !smallscreen}">
       <ion-list class="list" ng-class="{'scroll': smallscreen}">
 
-        <!-- Home -->
+        <!-- ************ -->
+        <!-- Home section -->
+        <!-- ************ -->
         <ion-item menu-close class="item-icon-left hidden-xs" ui-sref="app.home" active-link="active">
           <i class="icon ion-home"></i>
           {{:locale:'MENU.HOME'|translate}}
         </ion-item>
         <ion-item menu-close
-                  ng-if="!login"
                   class="item-icon-left visible-xs" ui-sref="app.home" active-link="active">
           <i class="icon ion-home"></i>
           {{:locale:'MENU.HOME'|translate}}
         </ion-item>
 
-        <!-- USER Section -->
+        <!-- ************ -->
+        <!-- User Section -->
+        <!-- ************ -->
         <div class="item item-divider"></div>
 
         <a menu-close
@@ -144,76 +148,26 @@
           <i class="icon-secondary ion-card" style="top: 22px; left: 19px; font-size: 20px; background-color: white; width:17px; height: 14px;"></i>
           {{:locale:'MENU.WALLETS'|translate}}
         </a>
-
-        <!-- MAIN Section -->
-        <div class="item item-divider"></div>
-
-        <a menu-close class="item item-icon-left"
-           active-link="active"
-           active-link-path-prefix="#/app/wot"
-           ui-sref="app.wot_lookup.tab_search">
-          <i class="icon ion-person-stalker"></i>
-          {{:locale:'MENU.WOT'|translate}}
-        </a>
-        <a id="helptip-menu-btn-wot"></a>
-
-        <!-- Allow extension here -->
-        <cs-extension-point name="menu-main"></cs-extension-point>
-
-        <!-- POWER USER Section -->
-        <div class="item item-divider"></div>
-
-        <a menu-close
-           class="item item-icon-left"
-           active-link="active"
-           active-link-path-prefix="#/app/currency"
-           ui-sref="app.currency">
-          <i class="icon ion-ios-world-outline"></i>
-          {{:locale:'MENU.CURRENCY'|translate}}
-        </a>
-        <a id="helptip-menu-btn-currency"></a>
-
-        <a menu-close
-           class="item item-icon-left hidden-xs hidden-sm"
-           active-link="active"
-           active-link-path-prefix="#/app/network"
-           ui-sref="app.network">
-          <i class="icon ion-cloud"></i>
-          {{:locale:'MENU.NETWORK'|translate}}
-        </a>
-        <a id="helptip-menu-btn-network"></a>
-
-        <!-- Allow extension here -->
-        <cs-extension-point name="menu-discover"></cs-extension-point>
-
-
-
+        <a id="helptip-menu-btn-wallets"></a>
 
         <div class="item item-divider visible-xs visible-sm"></div>
 
         <!-- Allow extension here -->
         <cs-extension-point name="menu-user"></cs-extension-point>
 
-        <a menu-close
-           class="item item-icon-left visible-xs visible-sm"
-           active-link="active"
-           active-link-path-prefix="#/app/settings"
-           ui-sref="app.settings">
-          <i class="icon ion-android-settings"></i>
-          {{:locale:'MENU.SETTINGS'|translate}}
-        </a>
-        <a id="helptip-menu-btn-settings"></a>
 
-        <!-- actions divider -->
+        <!-- *************** -->
+        <!-- Actions section -->
+        <!-- *************** -->
         <div class="item item-divider" ng-if="login"></div>
 
-
-        <ion-item menu-close class="item  item-button-right" ng-if="login"
-          ng-class="::{'item-button-left': $root.device.barcode.enable}">
+        <ion-item menu-close class="item item-actions item-button-right" ng-if="login"
+                  ng-class="::{'item-button-left': $root.device.barcode.enable}">
           <!-- transfer -->
           <button
             class="button button-positive ink-dark"
-            ng-click="showTransferModal()">
+            ng-click="showTransferModal()"
+            title="{{:locale:'COMMON.BTN_SEND_MONEY'|translate}}">
             <i class="icon ion-paper-airplane"></i>
           </button>
 
@@ -226,6 +180,76 @@
         </ion-item>
 
         <cs-extension-point name="menu-actions"></cs-extension-point>
+
+        <!-- Spacer (large screen only) -->
+        <div class="item-spacer"></div>
+
+        <!-- ************ -->
+        <!-- Main section -->
+        <!-- ************ -->
+        <div class="item item-divider"></div>
+
+        <!-- Help tour (NOT ready yet for small device) -->
+        <a  class="item item-icon-left hidden-xs hidden-sm"
+                ng-show="!login"
+                ng-click="startHelpTour()" >
+          <i class="icon ion-easel"></i>
+          {{:locale:'COMMON.BTN_HELP_TOUR'|translate}}
+        </a>
+
+        <a menu-close class="item item-icon-left"
+           id="helptip-menu-btn-wot"
+           active-link="active"
+           active-link-path-prefix="#/app/wot"
+           ui-sref="app.wot_lookup.tab_search">
+          <i class="icon ion-person-stalker"></i>
+          {{:locale:'MENU.WOT'|translate}}
+        </a>
+
+        <!-- Allow extension here -->
+        <cs-extension-point name="menu-main"></cs-extension-point>
+
+        <!-- **************** -->
+        <!-- Discover section -->
+        <!-- **************** -->
+
+        <a menu-close
+           class="item item-icon-left"
+           id="helptip-menu-btn-currency"
+           active-link="active"
+           active-link-path-prefix="#/app/currency"
+           ui-sref="app.currency">
+          <i class="icon ion-ios-world-outline"></i>
+          {{:locale:'MENU.CURRENCY'|translate}}
+        </a>
+
+        <a menu-close
+           class="item item-icon-left hidden-xs hidden-sm"
+           id="helptip-menu-btn-network"
+           active-link="active"
+           active-link-path-prefix="#/app/network"
+           ui-sref="app.network">
+          <i class="icon ion-cloud"></i>
+          {{:locale:'MENU.NETWORK'|translate}}
+        </a>
+
+        <!-- Allow extension here -->
+        <cs-extension-point name="menu-discover"></cs-extension-point>
+
+
+        <div class="item item-divider visible-xs visible-sm"></div>
+
+        <a menu-close
+           class="item item-icon-left visible-xs visible-sm"
+           active-link="active"
+           active-link-path-prefix="#/app/settings"
+           ui-sref="app.settings">
+          <i class="icon ion-android-settings"></i>
+          {{:locale:'MENU.SETTINGS'|translate}}
+        </a>
+        <a id="helptip-menu-btn-settings"></a>
+
+
 
       </ion-list>
 

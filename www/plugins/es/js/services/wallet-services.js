@@ -71,9 +71,7 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
           }
           deferred.resolve(data);
         })
-        .catch(function(err){
-          deferred.reject(err);
-        });
+        .catch(deferred.reject);
 
       return deferred.promise;
     }
@@ -98,12 +96,13 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
           if (profile) {
             data.name = profile.name;
             data.avatar = profile.avatar;
-            data.profile = profile.source;
-            data.profile.description = profile.description;
-            console.debug('[ES] [wallet] Loaded full user profile in '+ (Date.now()-now) +'ms');
+            data.profile = data.profile || {};
+            angular.merge(data.profile, profile.source, {descriptionHtml: profile.descriptionHtml});
+            console.debug('[ES] [wallet] Loaded full user profile in {0}ms'.format(Date.now()-now));
           }
-          deferred.resolve();
-        });
+          deferred.resolve(data);
+        })
+        .catch(deferred.reject);
 
       return deferred.promise;
     }

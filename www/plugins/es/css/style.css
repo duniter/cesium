@@ -338,3 +338,6 @@
   height: 57px;
 }
 
+.view-wallet .item-wallet-help a {
+  text-decoration: underline;
+}

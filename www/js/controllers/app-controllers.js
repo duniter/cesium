@@ -633,6 +633,7 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
     $translate.use(langKey);
     $scope.hideLocalesPopover();
     csSettings.data.locale = _.findWhere($scope.locales, {id: langKey});
+    csSettings.store();
     $scope.loadFeeds();
   };
 

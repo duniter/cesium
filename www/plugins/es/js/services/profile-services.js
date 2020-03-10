@@ -69,9 +69,9 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
           // avatar
           profile.avatar = esHttp.image.fromHit(res, 'avatar');
 
-          // description
-          if (!options.raw) {
-            profile.description = esHttp.util.parseAsHtml(profile.source.description);
+          // convert description into html
+          if (!options.raw && profile.source.description) {
+            profile.descriptionHtml = esHttp.util.parseAsHtml(profile.source.description);
           }
 
           // Social url must be unique in socials links - Workaround for issue #306:
@@ -82,9 +82,9 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
           }
 
           if (!csWallet.isLogin()) {
-            // Exclude crypted socials
+            // Exclude encrypted socials items
             profile.source.socials = _.filter(profile.source.socials, function(social) {
-              return social.type != 'curve25519';
+              return social.type !== 'curve25519';
             });
           }
           else {
@@ -383,8 +383,8 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
     return {
       getAvatarAndName: getAvatarAndName,
       get: getProfile,
-      add: esHttp.record.post('/user/profile', {tagFields: ['title', 'description']}),
-      update: esHttp.record.post('/user/profile/:id/_update', {tagFields: ['title', 'description']}),
+      add: esHttp.record.post('/user/profile', {tagFields: ['title', 'description'], ignoreFields: ['enableGeoPoint', 'descriptionHtml']}),
+      update: esHttp.record.post('/user/profile/:id/_update', {tagFields: ['title', 'description'], ignoreFields: ['enableGeoPoint', 'descriptionHtml']}),
       remove: esHttp.record.remove("user","profile"),
       avatar: esHttp.get('/user/profile/:id?_source=avatar'),
       fillAvatars: fillAvatars,

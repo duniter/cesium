@@ -975,7 +975,9 @@ html, body {
 -- */
 
 .view-wallet,
-.view-identity {
+.view-wallet-tx,
+.view-identity,
+.view-identity-tx {
   .qrcode {
     position: absolute;
     display: block;
@@ -987,16 +989,16 @@ html, body {
     z-index: 1;
     -webkit-backface-visibility: hidden !important;
     backface-visibility: hidden !important;
-    -webkit-transition: all 0.5s ease-out !important;
-    transition: all 0.5s ease-out !important;
+    -webkit-transition: all 0.2s ease-in-out !important;
+    transition: all 0.2s ease-in-out !important;
     overflow: hidden;
     img {
-      display: float;
+      display: unset;
       float: right;
       width: 0;
       height: 0;
       z-index: 1;
-      transition: all 0.5s ease-out !important;
+      transition: all 0.2s ease-in-out !important;
     }
   }
 
@@ -1839,8 +1841,9 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   font-style: italic !important;
 }
 
+
 /**********
-   Screen - Left Menu
+   Menu
 **********/
 
 .menu.menu-left {
@@ -1868,6 +1871,14 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 
   .item-menu-disable {
     color: $dark !important;
+  }
+
+  .item-spacer {
+    flex: 1 1 auto;
+  }
+
+  .item-actions {
+    min-height: 47px !important;
   }
 }
 
@@ -1908,6 +1919,10 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
       top: 4px;
     }
 
+    .item-spacer {
+      display: none;
+      visibility: hidden;
+    }
 
     // Hide footer on small screen
     ion-content.has-footer {
@@ -1943,16 +1958,23 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
         top: calc(env(safe-area-inset-top) + 150px);
       }
     }
-  }
-}
 
-/**********
-   Menu
-**********/
+  }
+
+}
 
 // Menu for NOT small screens
 @media screen and (min-width: $screen-sm) {
   .menu.menu-left {
+
+    .list {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
 
     .item.item-divider {
       min-height: 5px;
@@ -1976,6 +1998,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     height: 100%;
   }
 }
+
 
 /**********
    Screen - identity Certifications
@@ -2029,9 +2052,9 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   z-index: 99;
 }
 
-/**********
-   Help Tip
-**********/
+  /**********
+     Help Tip
+  **********/
 
 .popover-helptip {
   background-color: rgba(68, 68, 68, 0.85) !important;
@@ -2049,6 +2072,10 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   a:hover {
     text-decoration: underline;
   }
+}
+
+.popover-helptip.popover-bottom {
+  margin-top: 12px !important;
 }
 
 // Empeche les clignotement du backdrop, pendant le feature tour
@@ -2491,6 +2518,11 @@ div[dropzone]:hover {
 
   .item {
     height: 48px;
+    padding-left: 60px;
+
+    .avatar {
+      border-radius: 0;
+    }
   }
 }
 

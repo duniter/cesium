@@ -326,8 +326,8 @@
        "RECORD_PUBKEY_HELP": "Chiave pubblica per ricevere pagamenti"
      },
      "WALLET": {
-      "REGISTRY_DIVIDER": "Pagine",
-      "REGISTRY_HELP": "Le pagine sono un elenco dei profesionisti che accettano o favoriscono: negozi, aziende, associazioni, istituti..."
+      "PAGE_DIVIDER": "Pagine",
+      "PAGE_DIVIDER_HELP": "Le pagine sono un elenco dei profesionisti che accettano o favoriscono: negozi, aziende, associazioni, istituti..."
     },
      "ERROR": {
        "LOAD_CATEGORY_FAILED": "Errore nel caricamento delle attività principali",

@@ -352,8 +352,8 @@
       "RECORD_PUBKEY_HELP": "Clé publique de réception des paiements"
     },
     "WALLET": {
-      "REGISTRY_DIVIDER": "Pages",
-      "REGISTRY_HELP": "Les pages référencent des activités acceptant la monnaie ou la favorisant : commerces, entreprises, associations, institutions."
+      "PAGE_DIVIDER": "Pages",
+      "PAGE_DIVIDER_HELP": "Les pages référencent des activités acceptant la monnaie ou la favorisant : commerces, entreprises, associations, institutions. Elles sont stockées en dehors du réseau de la monnaie, dans <a ui-sref=\"app.es_network\">le réseau des nœuds Cesium+</a>."
     },
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Erreur de chargement de la liste des activités",
@@ -371,7 +371,7 @@
   },
   "PROFILE": {
     "PROFILE_DIVIDER": "Profil Cesium+",
-    "PROFILE_DIVIDER_HELP": "Il s'agit de données annexes, stockées en dehors du réseau de la monnaie.",
+    "PROFILE_DIVIDER_HELP": "Il s'agit de données annexes, optionnelles. Elles sont stockées en dehors du réseau de la monnaie, dans <a ui-sref=\"app.es_network\">le réseau Cesium+</a>.",
     "NO_PROFILE_DEFINED": "Aucun profil saisi",
     "BTN_ADD": "Saisir mon profil",
     "BTN_EDIT": "Editer mon profil",
@@ -441,7 +441,7 @@
   },
   "SUBSCRIPTION": {
     "SUBSCRIPTION_DIVIDER": "Services en ligne",
-    "SUBSCRIPTION_DIVIDER_HELP": "Les services en ligne offrent des services supplémentaires optionnels, délégués à un tiers.",
+    "SUBSCRIPTION_DIVIDER_HELP": "Les services en ligne offrent des services supplémentaires et optionnels, délégués à un perstataire de votre choix. Par exemple, pour recevoir les notifications de paiement par email.",
     "BTN_ADD": "Ajouter un service",
     "BTN_EDIT": "Gérer mes services",
     "NO_SUBSCRIPTION": "Aucun service utilisé",
@@ -518,7 +518,7 @@
     "ENABLE_REMOTE_STORAGE": "Activer le stockage distant ?",
     "ENABLE_REMOTE_STORAGE_HELP": "Permet de stockage (chiffré) de vos paramètres sur les noeuds Cesium+",
     "ENABLE_MESSAGE_TOGGLE": "Activer les messages privés ?",
-    "PEER": "Adresse du nœud de données",
+    "PEER": "Nœud de données Cesium+",
     "POPUP_PEER": {
       "TITLE" : "Nœud de données",
       "HELP" : "Saisissez l'adresse du nœud que vous voulez utiliser :",

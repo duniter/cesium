@@ -130,7 +130,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
         return $scope.executeStep(partName, steps, index+1);
       })
       .catch(function(err) {
-        if (err && err.message == 'transition prevented') {
+        if (err && err.message === 'transition prevented') {
           console.error('ERROR: in help tour [{0}], in step [{1}] -> use large if exists, to prevent [transition prevented] error'.format(partName, index));
         }
         else {
@@ -161,68 +161,8 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
     $scope.tour = true;
     $scope.continue = true;
 
-    // Currency
-    return $scope.startCurrencyTour(0, true)
-      .then(function(endIndex){
-        if (!endIndex || $scope.cancelled) return false;
-        csSettings.data.helptip.currency=endIndex;
-        csSettings.store();
-        return $scope.continue;
-      })
-
-      // Network
-      .then(function(next){
-        if (!next) return false;
-        return $scope.startNetworkTour(0, true)
-          .then(function(endIndex){
-            if (!endIndex || $scope.cancelled) return false;
-            csSettings.data.helptip.network=endIndex;
-            csSettings.store();
-            return $scope.continue;
-          });
-      })
-
-      // Wot lookup
-      .then(function(next){
-        if (!next) return false;
-        return $scope.startWotLookupTour(0, true)
-          .then(function(endIndex){
-            if (!endIndex || $scope.cancelled) return false;
-            csSettings.data.helptip.wotLookup=endIndex;
-            csSettings.store();
-            return $scope.continue;
-          });
-      })
-
-      // Wot identity
-      .then(function(next){
-        if (!next) return false;
-        return $scope.startWotTour(0, true)
-          .then(function(endIndex){
-            if (!endIndex || $scope.cancelled) return false;
-            csSettings.data.helptip.wot=endIndex;
-            csSettings.store();
-            return $scope.continue;
-          });
-      })
-
-      // Identity certifications
-      .then(function(next){
-        if (!next) return false;
-        return $scope.startWotCertTour(0, true)
-          .then(function(endIndex){
-            if (!endIndex) return false;
-            csSettings.data.helptip.wotCerts=endIndex;
-            csSettings.store();
-            return $scope.continue;
-          });
-      })
-
-      // Wallet (if NOT login)
-      .then(function(next){
-        if (!next) return false;
-        return $scope.startWalletNoLoginTour(0, true);
-      })
+    // Wallet (if NOT login)
+    return $scope.startWalletNoLoginTour(0, true)
 
       // Wallet (if login)
       .then(function(next){
@@ -263,6 +203,19 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
           });
       })
 
+      // My wallets (if login)
+      .then(function(next){
+        if (!next) return false;
+        if (!csWallet.isLogin()) return true; // not login: continue
+        return $scope.startWalletsTour(0, true)
+          .then(function(endIndex){
+            if (!endIndex) return false;
+            csSettings.data.helptip.wallets=endIndex;
+            csSettings.store();
+            return $scope.continue;
+          });
+      })
+
       // Header tour
       .then(function(next){
         if (!next) return false;
@@ -274,6 +227,68 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
         if (!next) return false;
         return $scope.startSettingsTour(0, true);
       })
+
+      // Wot lookup tour
+      .then(function(next){
+        if (!next) return false;
+        return $scope.startWotLookupTour(0, true)
+          .then(function(endIndex){
+            if (!endIndex || $scope.cancelled) return false;
+            csSettings.data.helptip.wotLookup=endIndex;
+            csSettings.store();
+            return $scope.continue;
+          });
+      })
+
+      // Wot identity
+      .then(function(next){
+        if (!next) return false;
+        return $scope.startWotTour(0, true)
+          .then(function(endIndex){
+            if (!endIndex || $scope.cancelled) return false;
+            csSettings.data.helptip.wot=endIndex;
+            csSettings.store();
+            return $scope.continue;
+          });
+      })
+
+      // Identity certifications
+      .then(function(next){
+        if (!next) return false;
+        return $scope.startWotCertTour(0, true)
+          .then(function(endIndex){
+            if (!endIndex) return false;
+            csSettings.data.helptip.wotCerts=endIndex;
+            csSettings.store();
+            return $scope.continue;
+          });
+      })
+
+      // Currency tour
+      .then(function(next){
+        if (!next) return false;
+
+        return $scope.startCurrencyTour(0, true)
+          .then(function(endIndex){
+            if (!endIndex || $scope.cancelled) return false;
+            csSettings.data.helptip.currency=endIndex;
+            csSettings.store();
+            return $scope.continue;
+          });
+      })
+
+      // Network tour
+      .then(function(next){
+        if (!next) return false;
+        return $scope.startNetworkTour(0, true)
+          .then(function(endIndex){
+            if (!endIndex || $scope.cancelled) return false;
+            csSettings.data.helptip.network=endIndex;
+            csSettings.store();
+            return $scope.continue;
+          });
+      })
+
 
       // Finish tour
       .then(function(next){
@@ -304,7 +319,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
           bindings: {
             content: 'HELP.TIP.MENU_BTN_CURRENCY',
             icon: {
-              position: 'left'
+              position: UIUtils.screen.isSmall() ? 'left' : 'bottom-left'
             }
           }
         });
@@ -392,7 +407,8 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
             },
             hasNext: hasNext
           },
-          timeout: 1200 // need for Firefox
+          timeout: 1200, // need for Firefox
+          retry: 2
         });
       }
     ];
@@ -434,7 +450,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
           bindings: {
             content: 'HELP.TIP.MENU_BTN_NETWORK',
             icon: {
-              position: 'left'
+              position: UIUtils.screen.isSmall() ? 'left' : 'bottom-left'
             }
           }
         });
@@ -529,7 +545,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
           bindings: {
             content: 'HELP.TIP.MENU_BTN_WOT',
             icon: {
-              position: 'left'
+              position: UIUtils.screen.isSmall() ? 'left' : 'bottom-left'
             }
           },
           onError: 'continue'
@@ -693,6 +709,32 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
             hasNext: hasNext
           }
         });
+      },
+
+      function () {
+        $ionicSideMenuDelegate.toggleLeft(true);
+        return $scope.showHelpTip('helptip-menu-btn-tx', {
+          bindings: {
+            content: 'HELP.TIP.MENU_BTN_TX',
+            icon: {
+              position: 'left'
+            },
+            hasNext: hasNext
+          }
+        });
+      },
+
+      function () {
+        $ionicSideMenuDelegate.toggleLeft(true);
+        return $scope.showHelpTip('helptip-menu-btn-wallets', {
+          bindings: {
+            content: 'HELP.TIP.MENU_BTN_WALLETS',
+            icon: {
+              position: 'left'
+            },
+            hasNext: hasNext
+          }
+        });
       }
     ];
 
@@ -736,7 +778,9 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
                 icon: {
                   position: UIUtils.screen.isSmall() ? 'right' : 'center'
                 }
-              }
+              },
+              timeout: UIUtils.screen.isSmall() ? 2000 : 1000,
+              retry: 10
             });
           });
       },
@@ -912,7 +956,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
         $ionicSideMenuDelegate.toggleLeft(true);
         return $scope.showHelpTip('helptip-menu-btn-tx', {
           bindings: {
-            content: csWallet.data.isMember ? 'HELP.TIP.MENU_BTN_TX_MEMBER' : 'HELP.TIP.MENU_BTN_TX',
+            content: 'HELP.TIP.MENU_BTN_TX',
             icon: {
               position: 'left'
             }
@@ -966,6 +1010,30 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
   };
 
   /**
+   * Features tour on My wallets
+   * @returns {*}
+   */
+  $scope.startWalletsTour = function(startIndex, hasNext) {
+
+    var steps = [
+      function () {
+        $ionicSideMenuDelegate.toggleLeft(true);
+        return $scope.showHelpTip('helptip-menu-btn-wallets', {
+          bindings: {
+            content: 'HELP.TIP.MENU_BTN_WALLETS',
+            icon: {
+              position: 'left'
+            },
+            hasNext: hasNext
+          }
+        });
+      }
+    ];
+
+    return $scope.executeStep('my-wallets', steps, startIndex);
+  };
+
+  /**
    * header tour
    * @returns {*}
    */
@@ -984,11 +1052,16 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
         if (UIUtils.screen.isSmall()) return true; // skip for small screen
         var element = _getProfilBtnElement();
         if (!element) return true;
+
+        // If home; add offset because of locales button
+        var iconStyle =  $state.is('app.home') ? 'margin-right: 60px' : undefined;
+
         return $scope.showHelpTip(element, {
           bindings: {
             content: 'HELP.TIP.HEADER_BAR_BTN_PROFILE',
             icon: {
-              position: 'right'
+              position: 'right',
+              style: iconStyle
             }
           }
         });

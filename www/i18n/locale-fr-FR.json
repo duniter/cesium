@@ -98,8 +98,6 @@
     "CURRENCY": "Monnaie",
     "ACCOUNT": "Mon compte",
     "WALLETS": "Mes portefeuilles",
-    "TRANSFER": "Virement",
-    "SCAN": "Scanner",
     "SETTINGS": "Paramètres",
     "NETWORK": "Réseau",
     "TRANSACTIONS": "Mes opérations"
@@ -871,7 +869,7 @@
       "NETWORK_PEERS": "Les <b>nœuds</b> visibles ici correspondent aux <b>ordinateurs qui actualisent et contrôlent</b> la chaine de blocs.<br/><br/>Plus il y a de nœuds, plus la monnaie a une gestion <b>décentralisée</b> et digne de confiance.",
       "NETWORK_PEERS_BLOCK_NUMBER": "Ce <b>numéro</b> (en vert) indique le <b>dernier bloc validé</b> pour ce nœud (dernière page écrite dans le grand livre de comptes).<br/><br/>La couleur verte indique que ce bloc est également validé par <b>la plupart des autres nœuds</b>.",
       "NETWORK_PEERS_PARTICIPATE": "<b>Chaque membre</b>, équipé d'un ordinateur avec Internet, <b>peut participer en ajoutant un nœud</b>. Il suffit d'<b>installer le logiciel Duniter</b> (libre et gratuit). <a href=\"{{installDocUrl}}\" target=\"_system\">Voir le manuel d'installation &gt;&gt;</a>.",
-      "MENU_BTN_ACCOUNT": "Le menu <b>{{'ACCOUNT.TITLE'|translate}}</b> permet d'accéder à la gestion de votre compte.",
+      "MENU_BTN_ACCOUNT": "Le menu <b>{{'MENU.ACCOUNT'|translate}}</b> permet d'accéder à la gestion de votre compte.",
       "MENU_BTN_ACCOUNT_MEMBER": "Consultez ici l'état de votre compte et les informations sur vos certifications.",
       "WALLET_CERTIFICATIONS": "Cliquez ici pour consulter le détail de vos certifications (reçues et émises).",
       "WALLET_RECEIVED_CERTIFICATIONS": "Cliquez ici pour consulter le détail de vos <b>certifications reçues</b>.",
@@ -886,8 +884,8 @@
       "WALLET_RECEIVED_CERTS": "S'affichera ici la liste des personnes qui vous ont certifié.",
       "WALLET_CERTIFY": "Le bouton <b>{{'WOT.BTN_SELECT_AND_CERTIFY'|translate}}</b> permet de sélectionner une identité et de la certifier.<br/><br/>Seuls des utilisateurs <b>déjà membres</b> peuvent en certifier d'autres.",
       "WALLET_CERT_STOCK": "Votre stock de certifications (émises) est limité à <b>{{sigStock}} certifications</b>.<br/><br/>Ce stock se renouvelle avec le temps, au fur et à mesure que les certifications s'invalident.",
-      "MENU_BTN_TX_MEMBER": "Le menu <b>{{'MENU.TRANSACTIONS'|translate}}</b> permet de consulter votre solde, l'historique vos transactions et d'envoyer un paiement.",
-      "MENU_BTN_TX": "Consultez ici <b>l'historique de vos transactions</b> et effectuez de nouvelles opérations.",
+      "MENU_BTN_WALLETS": "Le menu <b>{{'MENU.WALLETS'|translate}}</b> permet d'ajouter des portefeuilles supplémentaires que vous gérer.",
+      "MENU_BTN_TX": "Le menu <b>{{'MENU.TRANSACTIONS'|translate}}</b> permet de consulter votre solde, l'historique vos transactions et d'envoyer un paiement.",
       "MENU_BTN_WOT": "Le menu <b>{{'MENU.WOT'|translate}}</b> permet de rechercher parmi les <b>utilisateurs</b> de la monnaie (membres ou non).",
       "WOT_SEARCH_TEXT_XS": "Pour rechercher dans l'annuaire, tapez les <b>premières lettres d'un pseudonyme</b> (ou d'une clé publique).<br/><br/>La recherche se lancera automatiquement.",
       "WOT_SEARCH_TEXT": "Pour rechercher dans l'annuaire, tapez les <b>premières lettres d'un pseudonyme</b> (ou d'une clé publique). <br/><br/>Appuyer ensuite sur <b>Entrée</b> pour lancer la recherche.",
@@ -901,7 +899,7 @@
       "HEADER_BAR_BTN_PROFILE": "Cliquez ici pour accéder à votre <b>profil utilisateur.</b>",
       "SETTINGS_CHANGE_UNIT": "Vous pourrez <b>changer d'unité d'affichage</b> des montants en cliquant ci-dessus.<br/><br/>- Désactivez l'option pour un affichage des montants en {{currency|capitalize}}.<br/>- Activez l'option pour un affichage relatif en {{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub> (tous les montants seront <b>divisés</b> par le Dividende Universel courant).",
       "END_LOGIN": "Cette visite guidée est <b>terminée</b> !<br/><br/>Bonne continuation à vous, dans le nouveau monde de l'<b>économie libre</b> !",
-      "END_NOT_LOGIN": "Cette visite guidée est <b>terminée</b> !<br/><br/>Si vous souhaitez rejoindre la monnaie {{currency|capitalize}}, il vous suffira de cliquer sur <b>{{'LOGIN.CREATE_ACCOUNT'|translate}}</b> ci-dessous."
+      "END_NOT_LOGIN": "Cette visite guidée est <b>terminée</b> !<br/><br/>Si vous souhaitez rejoindre la monnaie {{currency|capitalize}}, il vous suffira de cliquer sur <b>{{'LOGIN.CREATE_FREE_ACCOUNT'|translate}}</b> ci-dessous."
     }
   },
   "API" :{

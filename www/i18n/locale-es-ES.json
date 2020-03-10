@@ -98,8 +98,6 @@
     "CURRENCY": "Moneda",
     "ACCOUNT": "Mi cuenta",
     "WALLETS": "Mis monederos",
-    "TRANSFER": "Transferencia",
-    "SCAN": "Escáner",
     "SETTINGS": "Configuraciones",
     "NETWORK": "Red",
     "TRANSACTIONS": "Mis operaciones"
@@ -807,8 +805,7 @@
       "WALLET_RECEIVED_CERTS": "Se exhibirá aquí la lista de las personas que le han certificado.",
       "WALLET_CERTIFY": "El botón <b>{{'WOT.BTN_SELECT_AND_CERTIFY'|translate}}</b> permite seleccionar una identidad y certificarla.<br/><br/>Sólo usuarios <b>miembros</b> pueden certificar a otros.",
       "WALLET_CERT_STOCK": "Su stock de certificaciones (emitidas) es limitado a <b>{{sigStock}} certificaciones</b>.<br/><br/>Este stock se renueva con el tiempo, a medida que las certificaciones caducan.",
-      "MENU_BTN_TX_MEMBER": "El menú <b>{{'MENU.TRANSACTIONS'|translate}}</b> permite consultar su saldo, el historial de sus transacciones y mandar un pago.",
-      "MENU_BTN_TX": "Consulte aquí <b>el historial de sus transacciones</b> y efectúe nuevas operaciones.",
+      "MENU_BTN_TX": "El menú <b>{{'MENU.TRANSACTIONS'|translate}}</b> permite consultar su saldo, el historial de sus transacciones y mandar un pago.",
       "MENU_BTN_WOT": "El menú <b>{{'MENU.WOT'|translate}}</b> permite buscar <b>usuarios</b> de la moneda (miembro o no).",
       "WOT_SEARCH_TEXT_XS": "Para buscar en el directorio, escribe las <b>primeras letras de un seudónimo</b> (o de una llave pública).<br/><br/>La búsqueda se iniciará automáticamente.",
       "WOT_SEARCH_TEXT": "Para buscar en el directorio, escribe las <b>primeras letras de un seudónimo</b> (o de una llave pública). <br/><br/>Luego, pulsa en la tecla <b>Entrada</b> para iniciar la búsqueda.",

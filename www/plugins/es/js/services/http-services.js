@@ -527,8 +527,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         delete params.wallet;
         delete params.walletId;
         delete params.keypair;
-        var params = angular.copy(params);
-        params.pubkey = params.pubkey || wallet.data.pubkey;
+        var postParams = angular.copy(params);
+        postParams.pubkey = postParams.pubkey || wallet.data.pubkey;
 
         return (wallet.isAuth() ? $q.when(wallet.data) : wallet.auth({silent: true, minData: true}))
           .then(function() {
@@ -543,7 +543,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
             var obj = angular.copy(record);
             delete obj.signature;
             delete obj.hash;
-            obj.issuer = params.pubkey; // force keypair pubkey
+            obj.issuer = postParams.pubkey; // force keypair pubkey
             if (!obj.version) {
               obj.version = 2;
             }
@@ -551,6 +551,15 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
             // Fill tags
             if (options.tagFields) {
               fillRecordTags(obj, options.tagFields);
+            }
+
+            // Remove unused fields
+            if (options.ignoreFields) {
+              _.forEach(options.ignoreFields, function(key) {
+                if (angular.isDefined(obj[key])) {
+                  delete obj[key];
+                }
+              });
             }
 
             var str = JSON.stringify(obj);
@@ -562,7 +571,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
                     // Prepend hash+signature
                     str = '{"hash":"{0}","signature":"{1}",'.format(hash, signature) + str.substring(1);
                     // Send data
-                    return postRequest(str, params)
+                    return postRequest(str, postParams)
                       .then(function (id){
 
                         // Clear cache

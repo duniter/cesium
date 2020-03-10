@@ -85,6 +85,7 @@
     <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
 
       <button class="button button-stable button-small-padding icon ion-android-share-alt ink"
+              ng-disabled="loading"
               ng-click="showSharePopover($event)"
               title="{{'COMMON.BTN_SHARE' | translate}}">
       </button>

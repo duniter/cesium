@@ -98,8 +98,6 @@
     "CURRENCY": "Mono",
     "ACCOUNT": "Mia konto",
     "WALLETS": "Miaj monujoj",
-    "TRANSFER": "Elspezo",
-    "SCAN": "Skani",
     "SETTINGS": "Parametroj",
     "NETWORK": "Reto",
     "TRANSACTIONS": "Miaj spezoj"
@@ -880,8 +878,7 @@
       "WALLET_RECEIVED_CERTS": "Afiŝiĝos ĉi tie la listo de la personoj, kiuj atestis vin.",
       "WALLET_CERTIFY": "La butono <b>{{'WOT.BTN_SELECT_AND_CERTIFY'|translate}}</b> ebligas elekti identecon kaj atesti ĝin.<br/><br/>Nur uzantoj <b>jam membroj</b> povas atesti aliajn.",
       "WALLET_CERT_STOCK": "Via stoko da atestaĵoj (senditaj) estas limigita je <b>{{sigStock}} atestaĵoj</b>.<br/><br/>Tiu stoko plu evoluas laŭ la tempo, samtempe kiam la atestaĵoj malvalidiĝas.",
-      "MENU_BTN_TX_MEMBER": "La menuo <b>{{'MENU.TRANSACTIONS'|translate}}</b> ebligas konsulti vian konton, la liston de viaj spezoj, kaj sendi pagon.",
-      "MENU_BTN_TX": "Konsultu ĉi tie <b>la liston de viaj spezoj</b> kaj efektivigu novajn operaciojn.",
+      "MENU_BTN_TX": "La menuo <b>{{'MENU.TRANSACTIONS'|translate}}</b> ebligas konsulti vian konton, la liston de viaj spezoj, kaj sendi pagon.",
       "MENU_BTN_WOT": "La menuo <b>{{'MENU.WOT'|translate}}</b> ebligas traserĉi inter la <b>uzantoj</b> de la mono (membroj aŭ ne).",
       "WOT_SEARCH_TEXT_XS": "Por traserĉi en la kontaro, tajpu la <b>unuajn literojn de pseŭdonimo</b> (aŭ de publika ŝlosilo).<br/><br/>La serĉado ekos aŭtomate.",
       "WOT_SEARCH_TEXT": "Por traserĉi en la kontaro, tajpu la <b>unuajn literojn de de pseŭdonimo</b> (aŭ de publika ŝlosilo). <br/><br/>Premu poste sur la klavon <b>Enigi</b> por ekigi la serĉadon.",
