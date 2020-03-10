@@ -1,6 +1,6 @@
 angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'cesium.es.http.services', 'cesium.es.crypto.services'])
 
-  .factory('esWallet', function($q, $rootScope, $timeout, CryptoUtils, csPlatform, csWallet, esCrypto, esProfile, esHttp) {
+  .factory('esWallet', function($q, $rootScope, $timeout, CryptoUtils, csPlatform, csWallet, csSettings, esCrypto, esProfile, esHttp) {
     'ngInject';
 
     var
@@ -8,9 +8,10 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
       that = this;
 
     function onWalletReset(data) {
+      data.name = null;
       data.avatar = null;
       data.profile = null;
-      data.name = null;
+      data.moderator = null;
       csWallet.events.cleanByContext('esWallet');
       if (data.keypair) {
         delete data.keypair.boxSk;
@@ -28,7 +29,8 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
           data.keypair.boxPk = res.boxPk;
           console.debug("[ES] [wallet] Box keypair successfully computed");
           deferred.resolve();
-        });
+        })
+        .catch(deferred.reject);
       return deferred.promise;
     }
 
@@ -58,20 +60,40 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
       console.debug('[ES] [wallet] Loading user avatar+name...');
       var now = Date.now();
 
-      esProfile.getAvatarAndName(data.pubkey)
-        .then(function(profile) {
-          if (profile) {
-            data.name = profile.name;
-            data.avatarStyle = profile.avatarStyle;
-            data.avatar = profile.avatar;
-            console.debug('[ES] [wallet] Loaded user avatar+name in '+ (Date.now()-now) +'ms');
-          }
-          else {
-            console.debug('[ES] [wallet] No user avatar+name found');
-          }
-          deferred.resolve(data);
-        })
-        .catch(deferred.reject);
+      var jobs = [
+        esProfile.getAvatarAndName(data.pubkey)
+          .then(function(profile) {
+            if (profile) {
+              data.name = profile.name;
+              data.avatarStyle = profile.avatarStyle;
+              data.avatar = profile.avatar;
+              console.debug('[ES] [wallet] Loaded user avatar+name in '+ (Date.now()-now) +'ms');
+            }
+            else {
+              console.debug('[ES] [wallet] No user avatar+name found');
+            }
+            deferred.resolve(data);
+          })
+        ];
+
+        // Check if user is a moderators (only if expert mode)
+      if (csSettings.data.expertMode) {
+        jobs.push(esHttp.node.moderators()
+          .then(function(res) {
+            data.moderator = _.contains(res && res.moderators, data.pubkey);
+          })
+          .catch(function(err) {
+            console.error("[ES] [wallet] Cannot check is user is moderator: ", (err && err.message || err));
+            // Continue
+          })
+        );
+      }
+
+      $q.all(jobs)
+      .then(function() {
+        deferred.resolve(data);
+      })
+      .catch(deferred.reject);
 
       return deferred.promise;
     }
@@ -102,7 +124,7 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
           }
           deferred.resolve(data);
         })
-        .catch(deferred.reject);
+      .catch(deferred.reject);
 
       return deferred.promise;
     }

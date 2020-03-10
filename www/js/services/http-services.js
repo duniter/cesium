@@ -34,7 +34,10 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       reject(data);
     }
     else {
-      if (status == 404) {
+      if (status == 403) {
+        reject({ucode: 403, message: 'Resource is forbidden' + (url ? ' ('+url+')' : '')});
+      }
+      else if (status == 404) {
         reject({ucode: 404, message: 'Resource not found' + (url ? ' ('+url+')' : '')});
       }
       else if (url) {

@@ -319,6 +319,8 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
         return deferred.promise;
       }
 
+      console.debug("[ES] [profile] Extending identity {{0}} ...".format(data.pubkey.substr(0,8)));
+
       $q.all([
         // Load full profile
         getProfile(data.pubkey)
@@ -326,8 +328,13 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
             if (profile) {
               data.name = profile.name;
               data.avatar = profile.avatar;
-              data.profile = profile.source;
-              data.profile.description = profile.description;
+              data.profile = data.profile || {};
+              angular.merge(data.profile, profile.source, {descriptionHtml: profile.descriptionHtml});
+            }
+            else {
+              data.name = null;
+              data.avatar = null;
+              data.profile = null;
             }
             deferred.resolve(data);
           }),
@@ -383,8 +390,8 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
     return {
       getAvatarAndName: getAvatarAndName,
       get: getProfile,
-      add: esHttp.record.post('/user/profile', {tagFields: ['title', 'description'], ignoreFields: ['enableGeoPoint', 'descriptionHtml']}),
-      update: esHttp.record.post('/user/profile/:id/_update', {tagFields: ['title', 'description'], ignoreFields: ['enableGeoPoint', 'descriptionHtml']}),
+      add: esHttp.record.post('/user/profile', {tagFields: ['title', 'description'], ignoreFields: ['enableGeoPoint', 'descriptionHtml', 'moderator']}),
+      update: esHttp.record.post('/user/profile/:id/_update', {tagFields: ['title', 'description'], ignoreFields: ['enableGeoPoint', 'descriptionHtml', 'moderator']}),
       remove: esHttp.record.remove("user","profile"),
       avatar: esHttp.get('/user/profile/:id?_source=avatar'),
       fillAvatars: fillAvatars,

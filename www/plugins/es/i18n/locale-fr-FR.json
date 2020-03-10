@@ -394,12 +394,14 @@
       "RESULT_HELP": "<b>Voici le résultat</b> tel que visible sur votre profil :"
     },
     "CONFIRM": {
-      "DELETE": "Êtes-vous sûr de vouloir <b>supprimer votre profil Cesium+ ?</b><br/><br/>Cette opération est irréversible."
+      "DELETE": "Êtes-vous sûr de vouloir <b>supprimer votre profil Cesium+ ?</b><br/><br/>Cette opération est irréversible.",
+      "DELETE_BY_MODERATOR": "Êtes-vous sûr de vouloir <b>supprimer ce profil Cesium+ ?</b><br/><br/>Cette opération est irréversible."
     },
     "ERROR": {
       "REMOVE_PROFILE_FAILED": "Erreur de suppression du profil",
-      "LOAD_PROFILE_FAILED": "Erreur de chargement du profil utilisateur",
+      "LOAD_PROFILE_FAILED": "Erreur de chargement du profil",
       "SAVE_PROFILE_FAILED": "Erreur lors de la sauvegarde",
+      "DELETE_PROFILE_FAILED": "Erreur lors de la suppression du profil",
       "INVALID_SOCIAL_NETWORK_FORMAT": "Format non pris en compte : veuillez indiquer une adresse valide.<br/><br/>Exemples :<ul><li>- Une page Facebook (https://www.facebook.com/user)</li><li>- Une page web (http://www.monsite.fr)</li><li>- Une adresse email (joe@dalton.com)</li></ul>",
       "IMAGE_RESIZE_FAILED": "Erreur lors du redimensionnement de l'image"
     },

@@ -97,7 +97,7 @@ function ESWotLookupExtendController($scope, $controller, $state) {
   };
 }
 
-function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIUtils, Modals, csWallet,
+function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, $timeout, UIUtils, Modals, csWallet,
                                      esHttp, esLike, esModals, esWallet, esProfile, esInvitation) {
   'ngInject';
 
@@ -116,7 +116,7 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
   // Initialize the super class and extend it.
   angular.extend(this, $controller('ESExtensionCtrl', {$scope: $scope}));
 
-  $scope.canCertify = false; // disable certity on the popover (by default - override by the wot map controller)
+  $scope.canCertify = false; // disable certify on the popover (by default - override by the wot map controller)
 
   /* -- modals -- */
 
@@ -311,13 +311,46 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
       });
   };
 
-  /* -- likes -- */
+  $scope.delete = function(confirm) {
 
-  // Load likes, when profile loaded
+    if (!confirm) {
+      $scope.hideActionsPopover();
+      if (!$scope.formData.pubkey) return; // Skip
+
+      return UIUtils.alert.confirm('PROFILE.CONFIRM.DELETE_BY_MODERATOR')
+        .then(function(confirm) {
+          if (confirm) return $scope.delete(confirm); // recursive call
+        });
+    }
+
+    return UIUtils.loading.show()
+      .then(function() {
+        return esProfile.remove($scope.formData.pubkey);
+      })
+      .then(function() {
+        return $scope.doUpdate();
+      })
+      .then(function() {
+        return $timeout(function() {
+          UIUtils.toast.show('DOCUMENT.INFO.REMOVED'); // toast
+        }, 800);
+      })
+      .catch(UIUtils.onError("PROFILE.ERROR.DELETE_PROFILE_FAILED"));
+  };
+
+  /* -- Load data -- */
+
+  // Watch when profile loaded
   $scope.$watch('formData.pubkey', function(pubkey) {
     if (pubkey) {
+
+      // Load likes,
       $scope.loadLikes(pubkey);
+
+      // Update moderator right
+      $scope.canDelete = $scope.formData.profile && csWallet.isLogin() && csWallet.data.moderator === true;
     }
+
   });
 
   /* -- Popover -- */

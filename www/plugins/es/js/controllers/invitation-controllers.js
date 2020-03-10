@@ -110,7 +110,7 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
         UIUtils.loading.hide();
       })
       .catch(function(err) {
-        if (err == 'CANCELLED') return $scope.cancel();
+        if (err === 'CANCELLED') return $scope.cancel();
         $scope.search.loading = false;
         if (!from) {
           $scope.search.results = [];

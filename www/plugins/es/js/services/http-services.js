@@ -749,6 +749,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       getServer: csHttp.getServer,
       node: {
         summary: that.get('/node/summary'),
+        moderators: that.get('/node/moderators'),
         parseEndPoint: parseEndPoint,
         same: isSameNode,
         sameAsSettings: isSameNodeAsSettings,

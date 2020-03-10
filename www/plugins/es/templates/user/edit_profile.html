@@ -52,9 +52,10 @@
       <div class="col">
 
         <!-- Buttons bar-->
-        <div class="hidden-xs hidden-sm padding text-center" ng-if="existing && !saving">
+        <div class="hidden-xs hidden-sm padding text-center  animate-show-hide ng-hide" ng-show="existing">
 
           <button class="button button-stable icon-right ink"
+                  ng-disabled="saving"
                   ng-click="showActionsPopover($event)">
             &nbsp; <i class="icon ion-android-more-vertical"></i>&nbsp;
             {{'COMMON.BTN_OPTIONS' | translate}}
