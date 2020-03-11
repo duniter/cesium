@@ -374,47 +374,185 @@ $screen-menu:                     845px;
 
 // Screen without left menu
 @media screen and (max-width: $screen-nomenu-max) {
-  .hidden-nomenu {
-    display: none !important;
-    visibility: hidden !important;
-  }
   .visible-nomenu {
     display: inherit !important;
     visibility: visible !important;
   }
 }
-
 @media screen and (min-width: $screen-menu) {
-  .hidden-nomenu {
-    display: inherit;
-    visibility: visible;
-  }
   .visible-nomenu {
     display: none !important;
     visibility: hidden !important;
   }
 }
+.menu.menu-left {
 
-// Screen WITH left menu
-@media screen and (min-width: $screen-menu) {
-  .hidden-menu {
-    display: none !important;
-    visibility: hidden !important;
+  background-color: whitesmoke;
+  .item {
+    opacity: 0.75;
+    color: black;
   }
-  .visible-menu {
-    display: inherit !important;
-    visibility: visible !important;
+
+  .item-button-right > .button,
+  .item-button-right .item-content > .button,
+  .item-button-right > .buttons,
+  .item-button-right .item-content > .buttons {
+    top: 8px !important;
+  }
+
+  .item.active {
+    background-color: $active !important;
+
+    .item-content {
+      background-color: transparent;
+    }
+  }
+
+  .item-menu-disable {
+    color: $dark !important;
+  }
+
+  .item-spacer {
+    flex: 1 1 auto;
+  }
+
+  .item-actions {
+    min-height: 47px !important;
+  }
+
+  .item-closeable:hover {
+    cursor: pointer;
+  }
+
+
+  .item-closeable {
+    .close {
+      position: absolute;
+      right: 5px;
+      top: 5px;
+    }
+  }
+  .item-closeable:hover {
+    .close {
+      @extend .ion-close;
+    }
   }
 }
 
-@media screen and (max-width: $screen-nomenu-max) {
-  .hidden-menu {
-    display: inherit;
-    visibility: visible;
+
+// Menu on small screens
+@media screen and (max-width: $screen-sm-max) {
+  .menu.menu-left {
+
+    // Compact menu item (reduce height, etc.)
+    .item.item-divider {
+      min-height: 2px;
+      height: 2px;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .item,
+    .item.item-complex .item-content {
+      height: 40px;
+      min-height: 40px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+
+      .badge {
+        top: 10px;
+        padding: 2px 6px;
+        font-size: 12px;
+      }
+    }
+
+    .item.item-complex {
+      padding-top: 0;
+    }
+
+    .item.item-button-right .button {
+      height: 30px;
+      min-height: 30px;
+      top: 4px;
+    }
+
+    .item-spacer {
+      display: none;
+      visibility: hidden;
+    }
+
+    // Hide footer on small screen
+    ion-content.has-footer {
+      bottom: 0 !important; /*ignore footer*/
+    }
+
+    .bar-header {
+      background-color: $positive-900-bg;
+      color: #fff;
+      height: 150px;
+      padding-right: 0 !important;
+
+      .platform-ios.platform-cordova & {
+        height: calc(constant(safe-area-inset-top) + 150px);
+        height: calc(env(safe-area-inset-top) + 150px);
+      }
+
+      .hero {
+        height: 150px;
+        box-shadow: none; // not need (define in bar-header)
+
+        .content {
+          bottom: 0;
+        }
+      }
+    }
+
+    .has-header {
+      top: 150px;
+
+      .platform-ios.platform-cordova & {
+        top: calc(constant(safe-area-inset-top) + 150px);
+        top: calc(env(safe-area-inset-top) + 150px);
+      }
+    }
+
   }
-  .visible-menu {
-    display: none;
-    visibility: hidden;
+
+}
+
+// Menu for NOT small screens
+@media screen and (min-width: $screen-sm) {
+  .menu.menu-left {
+
+    .list {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .item.item-divider {
+      min-height: 5px;
+      height: 5px;
+    }
+
+    .footer a {
+      font-size: 14px ! important;
+      color: grey !important;
+    }
+  }
+}
+
+@media screen and (min-width: $screen-md) {
+  .menu.menu-left {
+    background-image: url('../../resources/logo/svg/white/logo.large.empty.transparent.svg');
+    background-repeat: no-repeat;
+    background-position: -500px -100px;
+    background-size: 1024px 1024px;
+    background-color: whitesmoke;
+    height: 100%;
   }
 }
 
@@ -1839,164 +1977,6 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 
 .text-italic {
   font-style: italic !important;
-}
-
-
-/**********
-   Menu
-**********/
-
-.menu.menu-left {
-
-  background-color: whitesmoke;
-  .item {
-    opacity: 0.75;
-    color: black;
-  }
-
-  .item-button-right > .button,
-  .item-button-right .item-content > .button,
-  .item-button-right > .buttons,
-  .item-button-right .item-content > .buttons {
-    top: 8px !important;
-  }
-
-  .item.active {
-    background-color: $active !important;
-
-    .item-content {
-      background-color: transparent;
-    }
-  }
-
-  .item-menu-disable {
-    color: $dark !important;
-  }
-
-  .item-spacer {
-    flex: 1 1 auto;
-  }
-
-  .item-actions {
-    min-height: 47px !important;
-  }
-}
-
-
-// Menu on small screens
-@media screen and (max-width: $screen-sm-max) {
-  .menu.menu-left {
-
-    // Compact menu item (reduce height, etc.)
-    .item.item-divider {
-      min-height: 2px;
-      height: 2px;
-      padding-top: 0;
-      padding-bottom: 0;
-    }
-
-    .item,
-    .item.item-complex .item-content {
-      height: 40px;
-      min-height: 40px;
-      padding-top: 10px;
-      padding-bottom: 10px;
-
-      .badge {
-        top: 10px;
-        padding: 2px 6px;
-        font-size: 12px;
-      }
-    }
-
-    .item.item-complex {
-      padding-top: 0;
-    }
-
-    .item.item-button-right .button {
-      height: 30px;
-      min-height: 30px;
-      top: 4px;
-    }
-
-    .item-spacer {
-      display: none;
-      visibility: hidden;
-    }
-
-    // Hide footer on small screen
-    ion-content.has-footer {
-      bottom: 0 !important; /*ignore footer*/
-    }
-
-    .bar-header {
-      background-color: $positive-900-bg;
-      color: #fff;
-      height: 150px;
-      padding-right: 0 !important;
-
-      .platform-ios.platform-cordova & {
-        height: calc(constant(safe-area-inset-top) + 150px);
-        height: calc(env(safe-area-inset-top) + 150px);
-      }
-
-      .hero {
-        height: 150px;
-        box-shadow: none; // not need (define in bar-header)
-
-        .content {
-          bottom: 0;
-        }
-      }
-    }
-
-    .has-header {
-      top: 150px;
-
-      .platform-ios.platform-cordova & {
-        top: calc(constant(safe-area-inset-top) + 150px);
-        top: calc(env(safe-area-inset-top) + 150px);
-      }
-    }
-
-  }
-
-}
-
-// Menu for NOT small screens
-@media screen and (min-width: $screen-sm) {
-  .menu.menu-left {
-
-    .list {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      box-sizing: border-box;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .item.item-divider {
-      min-height: 5px;
-      height: 5px;
-    }
-
-    .footer a {
-      font-size: 14px ! important;
-      color: grey !important;
-    }
-  }
-}
-
-@media screen and (min-width: $screen-md) {
-  .menu.menu-left {
-    background-image: url('../../resources/logo/svg/white/logo.large.empty.transparent.svg');
-    background-repeat: no-repeat;
-    background-position: -500px -100px;
-    background-size: 1024px 1024px;
-    background-color: whitesmoke;
-    height: 100%;
-  }
 }
 
 

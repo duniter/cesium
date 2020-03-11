@@ -190,11 +190,15 @@
         <div class="item item-divider"></div>
 
         <!-- Help tour (NOT ready yet for small device) -->
-        <a  class="item item-icon-left hidden-xs hidden-sm"
-                ng-show="!login"
-                ng-click="startHelpTour()" >
+        <a  class="item item-icon-left item-closeable hidden-xs hidden-sm"
+                ng-show="!login || $root.settings.helptip.enable"
+                ng-click="startHelpTour($event)">
           <i class="icon ion-easel"></i>
           {{:locale:'COMMON.BTN_HELP_TOUR'|translate}}
+
+          <span class="close"
+                ng-if="login"
+                ng-click="disableHelpTour($event)"></span>
         </a>
 
         <a menu-close class="item item-icon-left"

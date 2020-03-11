@@ -62,7 +62,7 @@ function PluginExtensionPointController($scope, PluginService) {
  * Abstract controller (inherited by other controllers)
  */
 function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout,
-                       $ionicHistory, $controller, $window, csPlatform, CryptoUtils, csCrypto,
+                       $ionicHistory, $controller, $window, csPlatform, csSettings, CryptoUtils, csCrypto,
                        UIUtils, BMA, csWallet, Device, Modals, csConfig, csHttp
 ) {
   'ngInject';
@@ -161,17 +161,19 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Show Help tour
   ////////////////////////////////////////
 
-  $scope.createHelptipScope = function(isTour, helpController) {
+  $scope.createHelptipScope = function(isTour) {
     if (!isTour && ($rootScope.tour || !$rootScope.settings.helptip.enable || UIUtils.screen.isSmall())) {
       return; // avoid other helptip to be launched (e.g. csWallet)
     }
     // Create a new scope for the tour controller
     var helptipScope = $scope.$new();
-    $controller(helpController||'HelpTipCtrl', { '$scope': helptipScope});
+    $controller('HelpTipCtrl', { '$scope': helptipScope});
     return helptipScope;
   };
 
-  $scope.startHelpTour = function(helpController, skipClearCache) {
+  $scope.startHelpTour = function(event, skipClearCache) {
+    if (event && event.defaultPrevented) return false; // Event stopped;
+
     $rootScope.tour = true; // to avoid other helptip to be launched (e.g. csWallet)
 
     // Clear cache history
@@ -179,11 +181,11 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       $ionicHistory.clearHistory();
       return $ionicHistory.clearCache()
         .then(function() {
-          $scope.startHelpTour(helpController, true/*continue*/);
+          $scope.startHelpTour(null, true/*continue*/);
         });
     }
 
-    var helptipScope = $scope.createHelptipScope(true/*is tour*/, helpController);
+    var helptipScope = $scope.createHelptipScope(true/*is tour*/);
     return helptipScope.startHelpTour()
       .then(function() {
         helptipScope.$destroy();
@@ -192,6 +194,19 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       .catch(function(err){
         delete $rootScope.tour;
       });
+  };
+
+  $scope.disableHelpTour = function(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    if (csSettings.data.helptip && csSettings.data.helptip.enable) {
+      $rootScope.settings.helptip.enable = false;
+      csSettings.store();
+    }
+
   };
 
   ////////////////////////////////////////
