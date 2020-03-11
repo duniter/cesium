@@ -66,6 +66,9 @@ $screen-md:                       992px;
 $screen-md-max:                   1199px;
 $screen-lg:                       1200px;
 
+// Resolution for left menu show/hide
+$screen-nomenu-max:               $screen-xs-max;
+$screen-menu:                     $screen-sm;
 
 // IE10 on Windows Phone 8
 // IE10 on WP8 doesn't report CSS pixels, but actual device pixels. In
@@ -368,9 +371,6 @@ $screen-lg:                       1200px;
  Left menu
 =============== */
 
-// Resolution for left menu show/hide
-$screen-nomenu-max:               844px;
-$screen-menu:                     845px;
 
 // Screen without left menu
 @media screen and (max-width: $screen-nomenu-max) {
@@ -521,7 +521,7 @@ $screen-menu:                     845px;
 }
 
 // Menu for NOT small screens
-@media screen and (min-width: $screen-sm) {
+@media screen and (min-width: $screen-md) {
   .menu.menu-left {
 
     .list {
