@@ -196,6 +196,9 @@ $screen-menu:                     $screen-sm;
   .button.hidden-sm {
     display: flex;
   }
+  .button.button-icon.hidden-sm {
+    display: inline-block;
+  }
   .pull-right,
   .pull-left {
     .button.hidden-sm {
@@ -417,7 +420,7 @@ $screen-menu:                     $screen-sm;
   }
 
   .item-actions {
-    min-height: 47px !important;
+    min-height: 65px !important;
   }
 
   .item-closeable:hover {
@@ -846,7 +849,7 @@ html, body {
 .bar.bar-header {
   padding-right: 5px !important;
 
-  .buttons-right span {
+  .buttons-right .right-buttons {
     margin-left: 0 !important;
   }
 }
@@ -2195,7 +2198,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     height: 35px;
     width: 35px;
     position: relative;
-    left: 0;
+    left: 4px;
     top: 4px;
     border: solid 1px #D9D9D9;
   }
@@ -2210,6 +2213,33 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     position: relative;
     left: 0;
     top: 6px;
+  }
+
+}
+
+.bar-header .button-clear.button-peer {
+  display: block;
+  height: 44px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin: 0;
+
+  * {
+    height: 32px;
+    line-height: 32px;
+  }
+}
+
+// Locale flags
+.bar-header .button.flag  {
+  height: 44px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  img {
+    position: relative;
+    bottom: 0;
+    width: 32px !important;
+    height: 32px !important;
   }
 }
 

@@ -7,20 +7,24 @@
       </ion-nav-back-button>
 
       <ion-nav-buttons side="left">
-        <button class="button button-icon button-clear icon ion-navicon visible-nomenu" menu-toggle="left" ></button>
+        <button class="button button-clear visible-nomenu " menu-toggle="left" >
+          <i class="icon ion-navicon"></i>
+        </button>
       </ion-nav-buttons>
 
       <ion-nav-buttons side="right" >
 
         <!-- current node info -->
-        <button class="button button-clear hidden-xs hidden-sm gray icon-left"
+        <button class="button button-clear button-peer hidden-xs hidden-sm gray"
                 ng-if="$root.settings.expertMode"
                 style="max-width: 450px !important;"
                 ng-click="showPeerInfoPopover($event)">
-          <small class="ion-locked" ng-if=":peer:$root.currency.node.useSsl">&nbsp;</small>
-          {{:peer:$root.currency.node.host}}{{:peer:$root.currency.node.port != 80 && $root.currency.node.port != 443 ? ':'+$root.currency.node.port : ''}}
-          <small>&nbsp;</small>
-          <small class="ion-arrow-down-b"></small>
+          <span style="display: inline-flex;">
+            <small class="ion-locked" ng-if=":peer:$root.currency.node.useSsl">&nbsp;</small>
+            {{:peer:$root.currency.node.host}}{{:peer:$root.currency.node.port != 80 && $root.currency.node.port != 443 ? ':'+$root.currency.node.port : ''}}
+            <small>&nbsp;</small>
+            <small class="ion-arrow-down-b"></small>
+          </span>
         </button>
 
         <!-- Allow extension here -->
@@ -78,10 +82,6 @@
           </h4>
           <cs-extension-point name="menu-profile-user"></cs-extension-point>
         </div>
-        <!-- logout -->
-        <a ng-if="login" class="button-icon" ng-click="logout({askConfirm: true})" style="position: absolute; top: 5px; left: 5px; z-index: 999;">
-          <i class="icon light ion-android-exit"></i>
-        </a>
 
         <!-- removeIf(device) -->
         <!-- Fullscreen button -->
@@ -191,13 +191,13 @@
 
         <!-- Help tour (NOT ready yet for small device) -->
         <a  class="item item-icon-left item-closeable hidden-xs hidden-sm"
-                ng-show="!login || $root.settings.helptip.enable"
+                ng-show="$root.settings.helptip.enable"
+                title="{{:locale:'SETTINGS.DISABLE_HELPTIP'|translate}}"
                 ng-click="startHelpTour($event)">
           <i class="icon ion-easel"></i>
           {{:locale:'COMMON.BTN_HELP_TOUR'|translate}}
 
           <span class="close"
-                ng-if="login"
                 ng-click="disableHelpTour($event)"></span>
         </a>
 
@@ -243,8 +243,7 @@
 
         <div class="item item-divider visible-xs visible-sm"></div>
 
-        <a menu-close
-           class="item item-icon-left visible-xs visible-sm"
+        <a class="item item-icon-left visible-xs visible-sm"
            active-link="active"
            active-link-path-prefix="#/app/settings"
            ui-sref="app.settings">
@@ -254,6 +253,18 @@
         <a id="helptip-menu-btn-settings"></a>
 
 
+        <!-- logout -->
+        <div class="item item-divider visible-xs visible-sm margin-top"  ng-if="login"></div>
+        <a menu-close
+           ng-if="login"
+           class="item item-icon-left visible-xs visible-sm"
+           ng-click="logout({askConfirm: true})">
+          <i class="icon ion-log-out assertive"></i>
+          <span class="assertive" translate> {{:locale:'COMMON.BTN_LOGOUT'|translate}}</span>
+        </a>
+<!--        <a ng-if="login" class="button-icon" ng-click="logout({askConfirm: true})" style="position: absolute; top: 5px; left: 5px; z-index: 999;">-->
+<!--          <i class="icon light ion-log-out"></i>-->
+<!--        </a>-->
 
       </ion-list>
 

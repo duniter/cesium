@@ -1,13 +1,13 @@
-<ion-view id="home" class="">
+<ion-view id="home">
   <!-- no title -->
   <ion-nav-title></ion-nav-title>
 
   <ion-nav-buttons side="secondary" >
     <!-- locales  -->
-    <button class="button button-icon button-clear hidden-xs hidden-sm gray"
+    <button class="button button-clear hidden-xs hidden-sm flag"
             ng-click="showLocalesPopover($event)" style="align-content: center">
-      <img ng-src="img/flag-{{:locale:$root.settings.locale.flag}}.png"/>
-      <small class="ion-arrow-down-b"></small>
+      <img ng-src="./img/flag-{{$root.settings.locale.flag}}.png"/>
+      <b class="ion-arrow-down-b gray"></b>
     </button>
   </ion-nav-buttons>
 
@@ -82,7 +82,7 @@
             <span ng-bind-html="'HOME.NOT_YOUR_ACCOUNT_QUESTION'|translate:{pubkey: walletData.pubkey}"></span>
             <br/>
             <b>
-              <a class="assertive hidden-xs hidden-sm" ng-click="logout()" translate>
+              <a class="assertive" ng-click="logout({askConfirm: true})" translate>
                 HOME.BTN_CHANGE_ACCOUNT
               </a>
             </b>
@@ -91,9 +91,6 @@
           <button type="button"
                   class="button button-block button-stable button-raised ink visible-xs visible-sm"
                   ui-sref="app.view_wallet" ng-if="!login" translate>COMMON.BTN_LOGIN</button>
-          <button type="button"
-                  class="button button-block button-assertive button-raised icon icon-left ion-log-out ink-dark visible-xs visible-sm"
-                  ng-click="logout()" ng-if="login" translate>COMMON.BTN_LOGOUT</button>
 
 
           <div class="text-center no-padding visible-xs stable">

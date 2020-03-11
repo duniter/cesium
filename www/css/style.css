@@ -38,7 +38,9 @@
   min-width: 44px !important;
   max-width: 90px !important;
 }
-.bar .button.button-clear:first-child {
+
+.bar.bar-header .left-buttons > .button.button-clear:first-child,
+.bar.bar-header > .button.button-clear:first-child {
   margin-left: 5px;
 }
 

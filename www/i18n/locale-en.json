@@ -146,6 +146,7 @@
     "USE_WALLETS_ENCRYPTION": "Secure the list",
     "USE_WALLETS_ENCRYPTION_HELP": "Enables you to encrypt the list of your wallets. Authentication required to access it.",
     "ENABLE_HELPTIP": "Enable contextual help tips",
+    "DISABLE_HELPTIP": "Disable contextual help tips",
     "ENABLE_UI_EFFECTS": "Enable visual effects",
     "HISTORY_SETTINGS": "Account operations",
     "DISPLAY_UD_HISTORY": "Display produced dividends?",

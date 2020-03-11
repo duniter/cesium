@@ -119,14 +119,14 @@ node --version
 Si vous n'êtes pas sur une v6, utilisez la commande 
 
 ```
-nvm use 6
+nvm use 10
 ```
 
 Vous pouvez maintenant lancer l'instalaltion du projet Cesium pour Android :
 
 
 ```
-ionic state restore
+ionic cordova prepare
 ```
 
 Normalement, cette commande devrait initialiser (entre autre) un répertoire `platforms/android`.

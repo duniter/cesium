@@ -15,20 +15,22 @@ const jsFolders =  glob.sync("www/**/*.js", {nonull: true})
   .map(file => file.substring(0, file.lastIndexOf('/')))
   // Reduce to a map of folders
   .reduce((res, folder) => {
-
     if (folder.indexOf('www/dist/') !== -1 || // Exclude dist js
       folder.indexOf('/plugins/rml') !== -1 || // Exclude plugin tutorial
-      folder.indexOf('/vendor') // exclude vendor libs
-    ) return res;
+      folder.indexOf('www/js/vendor') || // exclude vendor libs
+      folder.indexOf('www/lib') // exclude www/lib
+    ) {
+      return res;
+    }
     res[folder] = res[folder] || true;
     return res;
   }, {});
 
 // Process each folder with Js file
 Object.keys(jsFolders).forEach(folder => processFiles(folder));
-
 function processFiles(dir) {
     let errorCount = 0;
+  log(colors.grey('Processing folder ' + folder + '...'));
     fs.readdir(dir, function(err, list) {
         if (err) {
             log(colors.red('processFiles err: ' + err));
@@ -36,6 +38,7 @@ function processFiles(dir) {
         }
         async.eachSeries(list, function(file, innercallback) {
             file = dir + '/' + file;
+            log(colors.grey('Processing file ' + file + '...'));
             fs.stat(file, function(err, stat) {
                 if(!stat.isDirectory()) {
                     if(path.extname(file) === ".js") {
@@ -54,7 +57,11 @@ function processFiles(dir) {
             });
         }, function(error) {
             if(errorCount > 0) {
+              log(colors.red('KO Error '));
                 process.exit(1);
+            }
+            else {
+              log(colors.red('OK NO Error '));
             }
         });
     });

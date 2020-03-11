@@ -39,7 +39,7 @@ If you are using fish shell, there is a [dedicated plugin](https://github.com/jo
 
   - Installing Cordova plugins (need for platforms specific builds)   
 ```
-  ionic state restore
+  ionic cordova preapre
 ```
 
 - This should create a new directory `platforms/android`
