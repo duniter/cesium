@@ -84,24 +84,24 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
     $q.all([
       csSettings.ready(),
       csCurrency.parameters()
-        .then(function(parameters) {
-          return parameters && parameters.avgGenTime;
-        })
-        // Make sure to continue even if node is down - Fix #788
         .catch(function(err) {
-          console.error("[settings] Could not not currency parameters. Using default 'avgGenTime' (300)", err);
-          return {avgGenTime: 300};
+          // Continue (will use default value)
+          // Make sure to continue even if node is down - Fix #788
         })
         .then(function(parameters) {
+          var avgGenTime = parameters && parameters.avgGenTime;
+          if (!avgGenTime || avgGenTime < 0) {
+            console.warn("[settings] Could not not currency parameters. Using default G1 'avgGenTime' (300s)");
+            avgGenTime = 300; /* = G1 value = 5min */
+          }
           _.each($scope.blockValidityWindows, function(blockCount) {
             if (blockCount > 0) {
-              $scope.blockValidityWindowLabels[blockCount].labelParams.time= parameters.avgGenTime * blockCount;
+              $scope.blockValidityWindowLabels[blockCount].labelParams.time = avgGenTime * blockCount;
             }
           });
         })
     ])
-      .then($scope.load)
-    ;
+    .then($scope.load);
   });
 
   $scope.setPopupForm = function(popupForm) {
@@ -167,8 +167,7 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
       }
       UIUtils.loading.show();
 
-      var nodeBMA = BMA.instance(newNode.host, newNode.port, newNode.useSsl, true /*cache*/);
-      nodeBMA.isAlive()
+      BMA.isAlive(newNode)
         .then(function(alive) {
           if (!alive) {
             UIUtils.loading.hide();
@@ -180,7 +179,8 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
           UIUtils.loading.hide();
           angular.merge($scope.formData.node, newNode);
           delete $scope.formData.node.temporary;
-          BMA.copy(nodeBMA);
+          BMA.stop();
+          BMA.copy(newNode);
           $scope.bma = BMA;
 
           // Restart platform (or start if not already started)

@@ -1,5 +1,5 @@
 <ion-side-menus enable-menu-with-back-views="true"
-                bind-notifier="{locale:$root.settings.locale.id}">
+                bind-notifier="{locale: $root.settings.locale.id, peer: $root.currency.node.url}">
   <!-- HEADER -->
   <ion-side-menu-content>
     <ion-nav-bar class="bar-dark" title-align="left">
@@ -17,8 +17,8 @@
                 ng-if="$root.settings.expertMode"
                 style="max-width: 450px !important;"
                 ng-click="showPeerInfoPopover($event)">
-          <small class="ion-locked" ng-if="$root.currency.node.useSsl">&nbsp;</small>
-          {{$root.currency.node.host}}{{$root.currency.node.port != 80 && $root.currency.node.port != 443 ? ':'+$root.currency.node.port : ''}}
+          <small class="ion-locked" ng-if=":peer:$root.currency.node.useSsl">&nbsp;</small>
+          {{:peer:$root.currency.node.host}}{{:peer:$root.currency.node.port != 80 && $root.currency.node.port != 443 ? ':'+$root.currency.node.port : ''}}
           <small>&nbsp;</small>
           <small class="ion-arrow-down-b"></small>
         </button>

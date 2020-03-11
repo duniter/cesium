@@ -140,7 +140,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
           node.port = serverParts[1];
         }
 
-        if (BMA.node.same(node.host, node.port)) {
+        if (BMA.node.same(node)) {
           $scope.node = BMA;
         }
         else {
@@ -454,7 +454,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
         $anchorScroll('block-' + block.number);
       }, 900);
     }
-    else if (BMA.node.same($scope.node.host, $scope.node.port)) {
+    else if (BMA.node.same($scope.node)) {
       $state.go('app.view_block_hash', {number: block.number, hash: block.hash});
     }
     else {
@@ -534,7 +534,7 @@ function BlockViewController($scope, $ionicPopover, $state, UIUtils, BMA, csCurr
           node.port = serverParts[1];
         }
 
-        if (BMA.node.same(node.host, node.port)) {
+        if (BMA.node.same(node)) {
           $scope.node = BMA;
         }
         else {

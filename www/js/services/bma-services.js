@@ -7,7 +7,9 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 
   function BMA(host, port, useSsl, useCache) {
 
-    var cachePrefix = "BMA-",
+    var
+      id = (!host ? 'default' : '{0}:{1}'.format(host, (port || (useSsl ? '443' : '80')))), // Unique id of this instance
+      cachePrefix = "BMA-",
       pubkey = "[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44}",
       // TX output conditions
       SIG = "SIG\\((" + pubkey + ")\\)",
@@ -76,7 +78,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       postByPath: {},
       wsByPath: {}
     };
-    that.api = new Api(this, 'BMA-' + that.server);
+    that.api = new Api(this, 'BMA-' + id);
     that.started = false;
     that.init = init;
 
@@ -121,7 +123,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     }
 
     function closeWs() {
-      if (!that.cache) return;
+      if (!that.raw) return;
 
       console.warn('[BMA] Closing all websockets...');
       _.keys(that.raw.wsByPath||{}).forEach(function(key) {
@@ -135,12 +137,10 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
      console.debug("[BMA] Cleaning cache {prefix: '{0}'}...".format(cachePrefix));
      csCache.clear(cachePrefix);
 
-     // Clean raw requests cache
-     angular.merge(that.raw, {
-        getByPath: {},
-        postByPath: {},
-        wsByPath: {}
-     });
+     // Clean raw requests by path cache
+     that.raw.getByPath = {};
+     that.raw.postByPath = {};
+     that.raw.wsByPath = {};
    }
 
    function get(path, cacheTime) {
@@ -234,9 +234,13 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       };
     }
 
-    that.isAlive = function() {
-      // Warn: cannot use previous get() function, because node may not be started yet
-      return csHttp.get(that.host, that.port, '/node/summary', that.useSsl)()
+    that.isAlive = function(node) {
+      node = node || that;
+      // WARN:
+      //  - Cannot use previous get() function, because
+      //    node can be !=that, or not be started yet
+      //  - Do NOT use cache here
+      return csHttp.get(node.host, node.port, '/node/summary', node.useSsl)()
         .then(function(json) {
           var software = json && json.duniter && json.duniter.software;
           var isCompatible = true;
@@ -259,6 +263,17 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         });
     };
 
+    function isSameNode(node2) {
+      node2 = node2 || {};
+      node2.useSsl = angular.isDefined(node2.useSsl) ? node2.useSsl : (node2.port && node2.port == 443);
+      // Same host
+      return that.host === node2.host &&
+          // Same port
+          ((!that.port && !node2.port2) || (that.port == node2.port2||80)) &&
+          // Same useSsl
+          (that.useSsl === node2.useSsl);
+    }
+
     function removeListeners() {
       _.forEach(listeners, function(remove){
         remove();
@@ -274,13 +289,10 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     }
 
     function onSettingsChanged(settings) {
-
-      var server = csHttp.getUrl(settings.node.host, settings.node.port, ''/*path*/, settings.node.useSsl);
-      var hasChanged = (server !== that.url);
-      if (hasChanged) {
-        init(settings.node.host, settings.node.port, settings.node.useSsl, that.useCache);
-        that.restart();
-      }
+      // Wait 1s (because settings controller can have restart the service), then copy the settings node
+      $timeout(function() {
+        exports.copy(settings.node);
+      }, 1000);
     }
 
     that.isStarted = function() {
@@ -308,12 +320,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           });
       }
 
-      if (that.useSsl) {
-        console.debug('[BMA] Starting [{0}] (SSL on)...'.format(that.server));
-      }
-      else {
-        console.debug('[BMA] Starting [{0}]...'.format(that.server));
-      }
+      console.debug("[BMA] Starting {0} {ssl: {1})...".format(that.server, that.useSsl));
 
       var now = Date.now();
 
@@ -324,14 +331,14 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         .then(function(res) {
           that.alive = res[1];
           if (!that.alive) {
-            console.error('[BMA] Could not start [{0}]: node unreachable'.format(that.server));
+            console.error("[BMA] Could not start {0} : unreachable".format(that.server));
             that.started = true;
             delete that._startPromise;
             return false;
           }
 
           // Add listeners
-          if (!listeners || listeners.length === 0) {
+          if (!listeners || !listeners.length) {
             addListeners();
           }
           console.debug('[BMA] Started in '+(Date.now()-now)+'ms');
@@ -345,14 +352,24 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     };
 
     that.stop = function() {
+      if (!that.started && !that._startPromise) return $q.when(); // Skip multiple call
+
       console.debug('[BMA] Stopping...');
+
       removeListeners();
-      closeWs();
-      cleanCache();
-      that.alive = false;
-      that.started = false;
       delete that._startPromise;
-      that.api.node.raise.stop();
+
+      if (that.alive) {
+        closeWs();
+        cleanCache();
+        that.alive = false;
+        that.started = false;
+        that.api.node.raise.stop();
+      }
+      else {
+        that.started = false;
+      }
+      return $q.when();
     };
 
     that.restart = function() {
@@ -397,9 +414,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       },
       node: {
         summary: get('/node/summary', csCache.constants.LONG),
-        same: function(host2, port2) {
-          return host2 === that.host && ((!that.port && !port2) || (that.port == port2||80)) && (that.useSsl == (port2 && port2 === 443));
-        },
+        same: isSameNode,
         forceUseSsl: that.forceUseSsl
       },
       network: {
@@ -680,14 +695,24 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     };
 
     exports.copy = function(otherNode) {
-      var wasStarted = that.started;
 
       var server = csHttp.getUrl(otherNode.host, otherNode.port, ''/*path*/, otherNode.useSsl);
       var hasChanged = (server !== that.url);
       if (hasChanged) {
+        var wasStarted = that.started;
+        if (wasStarted) that.stop();
         that.init(otherNode.host, otherNode.port, otherNode.useSsl, that.useCache/*keep original value*/);
-        // Restart (only if was already started)
-        return wasStarted ? that.restart() : $q.when();
+        if (wasStarted) {
+          return $timeout(function () {
+            return that.start()
+              .then(function (alive) {
+                if (alive) {
+                  that.api.node.raise.restart();
+                }
+                return alive;
+              });
+          }, 200); // Wait stop finished
+        }
       }
     };
 

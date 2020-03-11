@@ -147,7 +147,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       var newServer = fallbackNode.host + ((!fallbackNode.port && fallbackNode.port != 80 && fallbackNode.port != 443) ? (':' + fallbackNode.port) : '');
 
       // Skip is same as actual node
-      if (BMA.node.same(fallbackNode.host, fallbackNode.port)) {
+      if (BMA.node.same(fallbackNode)) {
         console.debug('[platform] Skipping fallback node [{0}]: same as actual node'.format(newServer));
         return checkBmaNodeAlive(); // loop (= go to next node)
       }

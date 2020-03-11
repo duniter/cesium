@@ -42,9 +42,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     that.data = {
       isFallback: false
     };
-    that.cache = {
-      enable: angular.isDefined(enableCache) ? enableCache : false, // need here because used in get() function
-    };
+    that.useCache = angular.isDefined(enableCache) ? enableCache : false; // need here because used in get() function
     that.raw = {
       getByPath: {},
       postByPath: {},
@@ -124,19 +122,25 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       return deferred.promise;
     }
 
-    that.clearAllCache = function() {
-      console.debug("[ES] [http] Cleaning cache {prefix: '{0}'}...".format(cachePrefix));
-      _.keys(that.raw.wsByPath).forEach(function(key) {
+    that.closeWs = function() {
+
+      if (!that.raw) return;
+
+      console.warn('[ES] [http] Closing all websockets...');
+      _.keys(that.raw.wsByPath||{}).forEach(function(key) {
         var sock = that.raw.wsByPath[key];
         sock.close();
       });
+      that.raw.wsByPath = {};
+    };
 
-      angular.merge(that.raw, {
-        getByPath: {},
-        postByPath: {},
-        wsByPath: {}
-      });
+    that.cleanCache = function() {
+      console.debug("[ES] [http] Cleaning cache {prefix: '{0}'}...".format(cachePrefix));
       csCache.clear(cachePrefix);
+
+      that.raw.getByPath = {};
+      that.raw.postByPath = {};
+      that.raw.wsByPath = {};
     };
 
     that.copy = function(otherNode) {
@@ -160,7 +164,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
     that.get = function (path, cacheTime) {
 
-      cacheTime = that.cache.enable && cacheTime;
+      cacheTime = that.useCache && cacheTime;
       var requestKey = path + (cacheTime ? ('#'+cacheTime) : '');
 
       var getRequestFn = function(params) {
@@ -346,7 +350,6 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
               console.debug('[ES] [http] Started in '+(Date.now()-now)+'ms');
               that.api.node.raise.start();
 
-
               that.started = true;
               delete that._startPromise;
               fallbackNodeIndex = 0; // reset the fallback node counter
@@ -359,6 +362,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     };
 
     that.stop = function() {
+      if (!that.started && !that._startPromise) return $q.when(); // Skip multiple call
+
       console.debug('[ES] [http] Stopping...');
 
       removeListeners();
@@ -366,7 +371,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       setIsFallbackNode(false); // will be re-computed during start phase
       delete that._startPromise;
       if (that.alive) {
-        that.clearAllCache();
+        that.closeWs();
+        that.cleanCache();
         that.alive = false;
         that.started = false;
         that.api.node.raise.stop();
@@ -729,6 +735,38 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       };
     }
 
+    // Get latest release, of Cesium+ pod
+    function getLatestVersion() {
+      var getRequest = that.raw.getLatestRelease;
+      if (!getRequest) {
+        var url = csHttp.uri.parse(csSettings.data.plugins.es.latestReleaseUrl);
+        var useSsl = (url.port == 443 || url.protocol === 'https:' || forceUseSsl);
+        getRequest = csHttp.getWithCache(url.host, url.port, "/" + url.pathname, useSsl, csCache.constants.LONG);
+        that.raw.getLatestRelease = getRequest
+      }
+
+      return getRequest()
+        .then(function (json) {
+          if (!json) return;
+          if (json.name && json.html_url) {
+            return {
+              version: json.name,
+              url: json.html_url
+            };
+          }
+          if (json.tag_name && json.html_url) {
+            return {
+              version: json.tag_name.substring(1),
+              url: json.html_url
+            };
+          }
+        })
+        .catch(function(err) {
+          // silent (just log it)
+          console.error('[BMA] Failed to get Duniter latest version', err);
+        });
+    }
+
     function addListeners() {
       // Watch some service events
       listeners = [
@@ -758,6 +796,9 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         sameAsSettings: isSameNodeAsSettings,
         isFallback: isFallbackNode
       },
+      version: {
+        latest: getLatestVersion
+      },
       websocket: {
         changes: that.wsChanges,
         block: that.ws('/ws/block'),
@@ -773,6 +814,9 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
           self: that.get('/network/peering')
         },
         peers: that.get('/network/peers')
+      },
+      blockchain: {
+        current: that.get('/blockchain/current?_source=number,hash,medianTime')
       },
       record: {
         post: postRecord,
@@ -790,9 +834,6 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         parseTags: parseTagsFromText,
         parseAsHtml: parseAsHtml,
         findObjectInTree: findObjectInTree
-      },
-      cache: {
-        clearAll: that.clearAllCache
       },
       constants: constants
     };

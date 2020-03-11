@@ -340,7 +340,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
       $scope.loading = true;
 
       // Set BMA node
-      if (!$scope.error && $scope.node && !BMA.node.same($scope.node.host, $scope.node.port)) {
+      if (!$scope.error && $scope.node && !BMA.node.same($scope.node)) {
         console.debug("[api] Using preferred node: {0}:{1}".format($scope.node.host, $scope.node.port));
         BMA.stop();
         BMA.copy($scope.node);
