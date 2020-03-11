@@ -46,6 +46,6 @@
 <!-- blocks (small screens) -->
 <ng-if ng-if=":rebind:smallscreen">
   <ng-repeat ng-repeat="block in :rebind:search.results track by block.number"
-             ng-include="'templates/blockchain/item_block.html'">
+             ng-include="::'templates/blockchain/item_block.html'">
   </ng-repeat>
 </ng-if>

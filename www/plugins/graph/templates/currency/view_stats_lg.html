@@ -18,7 +18,7 @@
         </div>
 
         <div class="item no-padding-xs" ng-if="!loading"
-             ng-include="'plugins/graph/templates/currency/graph_monetary_mass.html'"
+             ng-include="::'plugins/graph/templates/currency/graph_monetary_mass.html'"
              ng-init="setSize(250, 1000)">
         </div>
 
@@ -38,7 +38,7 @@
       <ng-controller ng-controller="GpCurrencyDUCtrl" >
         <div class="item no-padding-xs"
              ng-if="!loading"
-             ng-include="'plugins/graph/templates/currency/graph_du.html'"
+             ng-include="::'plugins/graph/templates/currency/graph_du.html'"
              ng-init="setSize(250, 1000)">
         </div>
       </ng-controller>
@@ -47,7 +47,7 @@
       <ng-controller ng-controller="GpCurrencyMembersCountCtrl" >
       <div class="item no-padding-xs"
            ng-if="!loading"
-           ng-include="'plugins/graph/templates/currency/graph_members_count.html'"
+           ng-include="::'plugins/graph/templates/currency/graph_members_count.html'"
            ng-init="setSize(250, 1000)">
       </div>
 

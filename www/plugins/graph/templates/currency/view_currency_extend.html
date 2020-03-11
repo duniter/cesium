@@ -4,7 +4,7 @@
 
   <ng-if ng-if="!smallscreen">
     <div class="item padding-left padding-right no-padding-xs no-padding-sm"
-         ng-include="'plugins/graph/templates/currency/graph_monetary_mass.html'"
+         ng-include="::'plugins/graph/templates/currency/graph_monetary_mass.html'"
          ng-controller="GpCurrencyMonetaryMassCtrl"
          ng-init="displayShareAxis=false;">
     </div>
@@ -30,7 +30,7 @@
 
   <ng-if ng-if="!smallscreen">
     <div class="item padding-left padding-right no-padding-xs no-padding-sm"
-         ng-include="'plugins/graph/templates/currency/graph_members_count.html'"
+         ng-include="::'plugins/graph/templates/currency/graph_members_count.html'"
          ng-controller="GpCurrencyMembersCountCtrl">
     </div>
     <div class="item buttons no-padding-top ">
@@ -55,7 +55,7 @@
 
   <div class="item padding-left padding-right no-padding-xs no-padding-sm"
        ng-if="!smallscreen"
-       ng-include="'plugins/graph/templates/blockchain/graph_block_issuers.html'"
+       ng-include="::'plugins/graph/templates/blockchain/graph_block_issuers.html'"
        ng-controller="GpBlockchainIssuersCtrl">
   </div>
 

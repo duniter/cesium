@@ -311,6 +311,11 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, $ti
       });
   };
 
+  /**
+   * Delete the user profile (need moderator access, on Cs+ pod)
+   * @param confirm
+   * @returns {*}
+   */
   $scope.delete = function(confirm) {
 
     if (!confirm) {
@@ -322,6 +327,12 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, $ti
           if (confirm) return $scope.delete(confirm); // recursive call
         });
     }
+
+    // TODO: ask for deletion of all data ? (e.g. message, comment, likes, etc.)
+    // if (angular.isUndefined(allData)) {
+    //   return UIUtils.alert.confirm(...)
+    //   ...
+    // }
 
     return UIUtils.loading.show()
       .then(function() {
@@ -347,7 +358,7 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, $ti
       // Load likes,
       $scope.loadLikes(pubkey);
 
-      // Update moderator right
+      // Enable deletion, if moderator
       $scope.canDelete = $scope.formData.profile && csWallet.isLogin() && csWallet.data.moderator === true;
     }
 

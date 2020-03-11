@@ -14,7 +14,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     console.debug('[ES] [https] Enable SSL (forced by config or detected in URL)');
   }
 
-  function EsHttp(host, port, useSsl, useCache) {
+  function EsHttp(host, port, useSsl, enableCache) {
 
     var
       that = this,
@@ -42,15 +42,21 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     that.data = {
       isFallback: false
     };
-    that.cache = _emptyCache();
+    that.cache = {
+      enable: angular.isDefined(enableCache) ? enableCache : false, // need here because used in get() function
+    };
+    that.raw = {
+      getByPath: {},
+      postByPath: {},
+      wsByPath: {}
+    };
     that.api = new Api(this, "esHttp");
     that.started = false;
     that.init = init;
 
-    init(host, port, useSsl, useCache);
-    that.useCache = angular.isDefined(useCache) ? useCache : false; // need here because used in get() function
+    init(host, port, useSsl);
 
-    function init(host, port, useSsl, useCache) {
+    function init(host, port, useSsl) {
       // Use settings as default
       if (!host && csSettings.data) {
         host = host || (csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null);
@@ -100,14 +106,6 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       return new RegExp(regexpContent);
     }
 
-    function _emptyCache() {
-      return {
-        getByPath: {},
-        postByPath: {},
-        wsByPath: {}
-      };
-    }
-
     function onSettingsReset(data, deferred) {
       deferred = deferred || $q.defer();
 
@@ -126,14 +124,18 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       return deferred.promise;
     }
 
-    that.cleanCache = function() {
-      console.debug('[ES] [http] Cleaning requests cache...');
-      _.keys(that.cache.wsByPath).forEach(function(key) {
-        var sock = that.cache.wsByPath[key];
+    that.clearAllCache = function() {
+      console.debug("[ES] [http] Cleaning cache {prefix: '{0}'}...".format(cachePrefix));
+      _.keys(that.raw.wsByPath).forEach(function(key) {
+        var sock = that.raw.wsByPath[key];
         sock.close();
       });
-      that.cache = _emptyCache();
 
+      angular.merge(that.raw, {
+        getByPath: {},
+        postByPath: {},
+        wsByPath: {}
+      });
       csCache.clear(cachePrefix);
     };
 
@@ -158,8 +160,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
     that.get = function (path, cacheTime) {
 
-      cacheTime = that.useCache && cacheTime;
-      var cacheKey = path + (cacheTime ? ('#'+cacheTime) : '');
+      cacheTime = that.cache.enable && cacheTime;
+      var requestKey = path + (cacheTime ? ('#'+cacheTime) : '');
 
       var getRequestFn = function(params) {
         if (!that.started) {
@@ -172,7 +174,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
           });
         }
 
-        var request = that.cache.getByPath[cacheKey];
+        var request = that.raw.getByPath[requestKey];
         if (!request) {
           if (cacheTime) {
             request =  csHttp.getWithCache(that.host, that.port, path, that.useSsl, cacheTime, null, null, cachePrefix);
@@ -180,7 +182,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
           else {
             request =  csHttp.get(that.host, that.port, path, that.useSsl);
           }
-          that.cache.getByPath[cacheKey] = request;
+          that.raw.getByPath[requestKey] = request;
         }
         return request(params);
       };
@@ -200,10 +202,10 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
           });
         }
 
-        var request = that.cache.postByPath[path];
+        var request = that.raw.postByPath[path];
         if (!request) {
           request =  csHttp.post(that.host, that.port, path, that.useSsl);
-          that.cache.postByPath[path] = request;
+          that.raw.postByPath[path] = request;
         }
         return request(obj, params);
       };
@@ -212,16 +214,16 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
     that.ws = function(path) {
       return function() {
-        var sock = that.cache.wsByPath[path];
+        var sock = that.raw.wsByPath[path];
         if (!sock || sock.isClosed()) {
           sock =  csHttp.ws(that.host, that.port, path, that.useSsl);
 
           // When close, remove from cache
           sock.onclose = function() {
-            delete that.cache.wsByPath[path];
+            delete that.raw.wsByPath[path];
           };
 
-          that.cache.wsByPath[path] = sock;
+          that.raw.wsByPath[path] = sock;
         }
         return sock;
       };
@@ -290,7 +292,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         .then(function (confirm) {
           if (!confirm) return false; // stop the loop
 
-          that.cleanCache();
+          that.clearAllCache();
 
           that.init(fallbackNode.host, fallbackNode.port, fallbackNode.useSsl || fallbackNode.port == 443);
 
@@ -364,7 +366,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       setIsFallbackNode(false); // will be re-computed during start phase
       delete that._startPromise;
       if (that.alive) {
-        that.cleanCache();
+        that.clearAllCache();
         that.alive = false;
         that.started = false;
         that.api.node.raise.stop();
@@ -745,6 +747,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     that.api.registerEvent('node', 'start');
     that.api.registerEvent('node', 'stop');
 
+
     var exports = {
       getServer: csHttp.getServer,
       node: {
@@ -788,7 +791,9 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         parseAsHtml: parseAsHtml,
         findObjectInTree: findObjectInTree
       },
-      cache: csHttp.cache,
+      cache: {
+        clearAll: that.clearAllCache
+      },
       constants: constants
     };
     exports.constants.regexp = regexp;
@@ -798,8 +803,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
   var service = new EsHttp(undefined, undefined, undefined, true);
 
-  service.instance = function(host, port, useSsl, useCache) {
-    return new EsHttp(host, port, useSsl, useCache);
+  service.instance = function(host, port, useSsl, enableCache) {
+    return new EsHttp(host, port, useSsl, enableCache);
   };
 
   service.lightInstance = function(host, port, useSsl, timeout) {

@@ -23,7 +23,7 @@
 
         <div class="item no-padding-xs"
              ng-if="!loading"
-             ng-include="'plugins/graph/templates/account/graph_balance.html'"
+             ng-include="::'plugins/graph/templates/account/graph_balance.html'"
              ng-init="setSize(350, 1000)">
         </div>
       </ng-controller>
@@ -31,7 +31,7 @@
     </div>
 
     <div class="item no-padding-xs"
-         ng-include="'plugins/graph/templates/account/graph_sum_tx.html'"
+         ng-include="::'plugins/graph/templates/account/graph_sum_tx.html'"
          ng-controller="GpAccountSumTxCtrl">
     </div>
 
@@ -41,7 +41,7 @@
     </div>
 
     <div class="item no-padding-xs"
-         ng-include="'plugins/graph/templates/account/graph_certifications.html'"
+         ng-include="::'plugins/graph/templates/account/graph_certifications.html'"
          ng-controller="GpAccountCertificationCtrl"
          ng-init="setSize(350, 1000)">
     </div>-->

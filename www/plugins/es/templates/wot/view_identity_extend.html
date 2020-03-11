@@ -2,7 +2,7 @@
 <ng-if ng-if=":state:enable && extensionPoint === 'hero'">
   <!-- likes -->
   <small class="light" style="display: inline-block;"
-         ng-include="'plugins/es/templates/common/view_likes.html'"></small>
+         ng-include="::'plugins/es/templates/common/view_likes.html'"></small>
 </ng-if>
 
 <!-- Top fab buttons -->
@@ -49,6 +49,6 @@
     <small translate>PROFILE.PROFILE_DIVIDER_HELP</small>
   </div>
 
-  <ng-include src="'plugins/es/templates/user/items_profile.html'" ng-init="showName=false;"></ng-include>
+  <ng-include src="::'plugins/es/templates/user/items_profile.html'" ng-init="showName=false;"></ng-include>
 
 </ng-if>
