@@ -90,6 +90,9 @@ $screen-menu:                     $screen-sm;
   @-ms-viewport {
     width: 320px;
   }
+  .no-padding-xxs {
+    padding: 0 !important;
+  }
 }
 
 // ----------------------------------
@@ -420,7 +423,7 @@ $screen-menu:                     $screen-sm;
   }
 
   .item-actions {
-    min-height: 65px !important;
+    min-height: 55px !important;
   }
 
   .item-closeable:hover {

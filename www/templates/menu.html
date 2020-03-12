@@ -92,11 +92,40 @@
           <i class="icon ion-arrow-expand dark" ng-class="{'ion-arrow-shrink': fullscreen}"></i>
         </a>
         <!-- endRemoveIf(device) -->
+
+
       </div>
+
+
     </ion-header-bar>
+
+
 
     <ion-content scroll="false" class="scroll-content ionic-scroll" ng-class="{'overflow-scroll': smallscreen, 'scroll-content-false': !smallscreen}">
       <ion-list class="list" ng-class="{'scroll': smallscreen}">
+
+        <!-- *************** -->
+        <!-- Actions section -->
+        <!-- *************** -->
+
+        <ion-item menu-close
+                  class="item item-actions item-button-right visible-xs visible-sm"
+                  ng-if="login"
+                  ng-class="::{'item-button-left': $root.device.barcode.enable}">
+          <!-- transfer -->
+          <button
+            class="button button-positive ink-dark"
+            ng-click="showTransferModal()">
+            <i class="icon ion-paper-airplane"></i>
+          </button>
+
+          <!-- scan QR code -->
+          <button class="button button-stable ink"
+                  ng-if="$root.device.barcode.enable"
+                  ng-click="scanQrCodeAndGo()">
+            <i class="icon ion-qr-scanner"></i>
+          </button>
+        </ion-item>
 
         <!-- ************ -->
         <!-- Home section -->
@@ -133,19 +162,20 @@
            active-link-path-prefix="#/app/history"
            ui-sref="app.view_wallet_tx"
            ng-class="{'item-menu-disable': !login}">
-          <i class="icon ion-card"></i>
+          <i class="icon ion-clock" style="top: calc(100%/4); left: 25px; font-size: 10pt; display: block;"></i>
+          <b class="icon-secondary ion-card" style="top: calc(100%/2.5); left: 19px; font-size: 17pt; background-color: whitesmoke; width:17px; height: 14px;"></b>
           {{:locale:'MENU.TRANSACTIONS'|translate}}
         </a>
         <a id="helptip-menu-btn-tx"></a>
 
         <a menu-close
-           class="item item-icon-left "
+           class="item item-icon-left"
            active-link="active"
            active-link-path-prefix="#/app/wallets"
            ui-sref="app.view_wallets"
            ng-class="{'item-menu-disable': !login}">
-          <i class="icon ion-card " style="top: -5px; left: 22px; font-size: 18px;"></i>
-          <i class="icon-secondary ion-card" style="top: 22px; left: 19px; font-size: 20px; background-color: white; width:17px; height: 14px;"></i>
+          <i class="icon ion-card " style="top: calc(100%/5); left: 22px; font-size: 16pt; display: block;"></i>
+          <i class="icon-secondary ion-card" style="top: 20px; left: 19px; font-size: 16pt; background-color: whitesmoke; width:17px; height: 14px;"></i>
           {{:locale:'MENU.WALLETS'|translate}}
         </a>
         <a id="helptip-menu-btn-wallets"></a>
@@ -155,31 +185,18 @@
         <!-- Allow extension here -->
         <cs-extension-point name="menu-user"></cs-extension-point>
 
-
         <!-- *************** -->
         <!-- Actions section -->
         <!-- *************** -->
-        <div class="item item-divider" ng-if="login"></div>
 
-        <ion-item menu-close class="item item-actions item-button-right" ng-if="login"
-                  ng-class="::{'item-button-left': $root.device.barcode.enable}">
+        <ion-item class="item hidden-xs hidden-sm">
           <!-- transfer -->
-          <button
-            class="button button-positive ink-dark"
-            ng-click="showTransferModal()"
-            title="{{:locale:'COMMON.BTN_SEND_MONEY'|translate}}">
-            <i class="icon ion-paper-airplane"></i>
-          </button>
-
-          <!-- scan QR code -->
-          <button class="button button-stable ink"
-                  ng-if="$root.device.barcode.enable"
-                  ng-click="scanQrCodeAndGo()">
-            <i class="icon ion-qr-scanner"></i>
+          <button class="button button-block button-small button-small-padding button-stable icon-left icon ion-paper-airplane no-margin"
+                  ng-class="{'button-positive': login}"
+                  ng-click="showTransferModal()">
+            {{:locale:'COMMON.BTN_SEND_MONEY'|translate}}
           </button>
         </ion-item>
-
-        <cs-extension-point name="menu-actions"></cs-extension-point>
 
         <!-- Spacer (large screen only) -->
         <div class="item-spacer"></div>

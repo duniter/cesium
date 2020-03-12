@@ -123,7 +123,7 @@
     "BTN_ABOUT": "à propos",
     "BTN_HELP": "Aide en ligne",
     "REPORT_ISSUE": "anomalie",
-    "NOT_YOUR_ACCOUNT_QUESTION" : "Vous n'êtes pas propriétaire du compte <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b> ?",
+    "NOT_YOUR_ACCOUNT_QUESTION" : "Vous n'êtes pas propriétaire du compte <b class=\"ion-key\"> {{pubkey|formatPubkey}}</b>&nbsp;?",
     "BTN_CHANGE_ACCOUNT": "Déconnecter ce compte",
     "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connexion Internet, ou changer de nœud <a class=\"positive\" ng-click=\"doQuickFix('settings')\">dans les paramètres</a>.",
     "SHOW_ALL_FEED": "Voir tout",
