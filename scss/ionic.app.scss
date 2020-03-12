@@ -1176,14 +1176,8 @@ html, body {
   .view-identity,
   .view-identity-tx {
 
-    .hero.hero-qrcode-active {
-      h1, h2, h3, h4, h5, i.avatar {
-        //margin-right: 200px;
-      }
-    }
-
     .qrcode.on.active {
-      width: 100%;
+      width: calc(min(100vh - 125px, 100vw));
       height: 100%;
       z-index: 10001;
       svg, img {
