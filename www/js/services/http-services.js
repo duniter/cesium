@@ -465,6 +465,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
         if (!isPositiveInteger(parts[i])) {
           return false;
         }
+        parts[i] = parseInt(parts[i]);
       }
       return true;
     }
