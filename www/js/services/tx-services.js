@@ -288,6 +288,13 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
   function loadData(pubkey, fromTime) {
     var now = Date.now();
 
+    var data;
+
+    // Alert user, when request is too long (> 2s)
+    $timeout(function() {
+      if (!data) UIUtils.loading.update({template: "COMMON.LOADING_WAIT"});
+    }, 2000);
+
     return $q.all([
 
       // Load Sources
@@ -299,7 +306,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
       .then(function(res) {
         // Copy sources and balance
-        var data = res[0];
+        data = res[0];
         data.tx = res[1];
 
         var txPendings = [];

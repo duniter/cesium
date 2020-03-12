@@ -105,15 +105,17 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         $scope.formData = walletData;
         $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
         $scope.updateView();
+        $scope.addListeners();
+
         $scope.showQRCode();
         if (wallet.isDefault()) $scope.showHelpTip();
-        $scope.addListeners();
 
         UIUtils.loading.hide(10); // loading could have be open (e.g. new account)
       })
       .catch(function(err){
         if (err === 'CANCELLED') {
-          return $scope.showHome();
+          $scope.showHome();
+          return;
         }
         UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR')(err);
       });
@@ -469,28 +471,26 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
 
   $scope.showQRCode = function(timeout) {
-    if (!$scope.qrcodeId || !$scope.formData.pubkey) return; // Skip
-    if (!$scope.qrcode) {
-      $scope.qrcode = new QRCode(
-        $scope.qrcodeId,
-        {
-          text: $scope.formData.pubkey,
-          width: 180,
-          height: 180,
-          correctLevel: QRCode.CorrectLevel.L
-        });
-      UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
+    if (!wallet || !$scope.qrcodeId) return; // Skip
+
+    // Get the DIV element
+    var element = angular.element(document.querySelector('#' + $scope.qrcodeId + ' .content'));
+    if (!element) {
+      console.error("[wallet-controller] Cannot found div #{0} for the QRCode. Skipping.".format($scope.qrcodeId));
+      return;
     }
-    else {
-      $scope.qrcode.clear();
-      $scope.qrcode.makeCode($scope.formData.pubkey);
-      UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
-    }
+
+    wallet.loadQrCode()
+      .then(function(svg) {
+        element.html(svg);
+        UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
+      });
   };
 
   $scope.hideQRCode = function() {
-    if ($scope.qrcode) {
-      $scope.qrcode.clear();
+    if (!$scope.qrcodeId) return;
+    var element = angular.element(document.querySelector('#' + $scope.qrcodeId));
+    if (element) {
       UIUtils.motion.toggleOff({selector: '#'+$scope.qrcodeId});
     }
   };
@@ -689,6 +689,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
   $scope.loading = true;
   $scope.settings = csSettings.data;
   $scope.listeners = [];
+  $scope.qrcodeId = 'qrcode-wallet-tx-' + $scope.$id;
 
   var wallet;
 
@@ -723,7 +724,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
   $scope.$on('$ionicView.leave', $scope.leave);
 
   $scope.load = function() {
-    if (!wallet) return;
+    if (!wallet) return $q.reject('Missing wallet');
 
     var hasMinData = wallet.isDataLoaded({minData: true});
     var options = {
@@ -740,15 +741,21 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
         $scope.formData = walletData;
         $scope.loading = false; // very important, to avoid TX to be display before wallet.currentUd is loaded
         $scope.updateView();
-        $scope.showFab('fab-transfer');
-        if (wallet.isDefault()) $scope.showHelpTip();
         $scope.addListeners();
-        UIUtils.loading.hide(); // loading could have be open (e.g. during login phase)
+
+        $scope.showFab('fab-transfer');
+        $scope.showQRCode();
+        if (wallet.isDefault()) $scope.showHelpTip();
+
+        return UIUtils.loading.hide(10); // loading could have be open (e.g. during login phase)
       })
       .catch(function(err){
         if (err === 'CANCELLED') {
           $scope.showHome();
+          return;
         }
+        console.error(err);
+        UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR')(err);
       });
   };
 
@@ -803,6 +810,31 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
       )
       .then($scope.updateView)
       .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
+  };
+
+  $scope.showQRCode = function(timeout) {
+    if (!wallet || !$scope.qrcodeId) return; // Skip
+
+    // Get the DIV element
+    var element = angular.element(document.querySelector('#' + $scope.qrcodeId + ' .content'));
+    if (!element) {
+      console.error("[wallet-controller] Cannot found div #{0} for the QRCode. Skipping.".format($scope.qrcodeId));
+      return;
+    }
+
+    wallet.loadQrCode()
+      .then(function(svg) {
+        element.html(svg);
+        UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
+      });
+  };
+
+  $scope.hideQRCode = function() {
+    if (!$scope.qrcodeId) return;
+    var element = angular.element(document.querySelector('#' + $scope.qrcodeId));
+    if (element) {
+      UIUtils.motion.toggleOff({selector: '#'+$scope.qrcodeId});
+    }
   };
 
   /* -- add listeners -- */

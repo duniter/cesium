@@ -22,8 +22,7 @@
     </ion-refresher>
 
     <div class="positive-900-bg hero"
-         style="max-width: 100%; display: block"
-         ng-class="{'hero-qrcode-active': toggleQRCode}">
+         style="max-width: 100%; display: block">
       <div class="content" ng-if="!loading"
            style="max-width: 100%">
 
@@ -74,11 +73,7 @@
 
     </div>
 
-    <a ng-attr-id="{{ qrcodeId }}"
-       class="qrcode spin pull-right"
-       ng-class="{'active': toggleQRCode}"
-       ng-click="toggleQRCode = !toggleQRCode">
-    </a>
+    <ng-include src="::'templates/common/qrcode.html'"></ng-include>
 
     <!-- Buttons bar-->
     <a id="wallet-share-anchor"></a>

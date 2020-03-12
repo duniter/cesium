@@ -1,3 +1,5 @@
+// var qrcode;
+
 angular.module('cesium.utils.services', [])
 
 // Replace the '$ionicPlatform.ready()', to enable multiple calls
@@ -740,6 +742,50 @@ angular.module('cesium.utils.services', [])
     toggleOff: toggleOff
   };
 
+  function createQRCodeObj(text, typeNumber,
+                        errorCorrectionLevel, mode, mb) {
+
+    mb = mb || 'default'; // default | SJIS | UTF-8
+    qrcode.stringToBytes = qrcode.stringToBytesFuncs[mb];
+
+    var qr = qrcode(typeNumber || 4, errorCorrectionLevel || 'M');
+    qr.addData(text, mode);
+    qr.make();
+
+    return qr;
+  }
+
+  /**
+   * Create a QRCode as an <svg> tag
+   * @param text
+   * @param typeNumber
+   * @param errorCorrectionLevel
+   * @param mode
+   * @param mb multibyte ? value: 'default' | 'SJIS' | 'UTF-8'
+   * @returns {string}
+   */
+  function getSvgQRCode(text, typeNumber,
+                        errorCorrectionLevel, mode, mb) {
+
+    var qr = createQRCodeObj(text, typeNumber, errorCorrectionLevel, mode, mb);
+    return qr.createSvgTag();
+  }
+
+  /**
+   * Create a QRCode as an <img> tag
+   * @param text
+   * @param typeNumber
+   * @param errorCorrectionLevel
+   * @param mode
+   * @param mb multibyte ? value: 'default' | 'SJIS' | 'UTF-8'
+   * @returns {string}
+   */
+  function getImgQRCode(text, typeNumber,
+                           errorCorrectionLevel, mode, mb) {
+
+    var qr = createQRCodeObj(text, typeNumber, errorCorrectionLevel, mode, mb);
+    return qr.createImgTag();
+  }
 
   function toggleOn(options, timeout) {
     // We have a single option, so it may be passed as a string or property
@@ -812,6 +858,10 @@ angular.module('cesium.utils.services', [])
     ink: ionicMaterialInk.displayEffect,
     motion: raw.motion,
     setEffects: setEffects,
+    qrcode: {
+      svg: getSvgQRCode,
+      img: getImgQRCode
+    },
     fab: {
       show: showFab,
       hide: hideFab

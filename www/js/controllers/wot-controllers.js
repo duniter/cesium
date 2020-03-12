@@ -1079,7 +1079,8 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
       if ($scope.loading) { // load once
 
         return $scope.load(state.stateParams.pubkey.trim(), state.stateParams.uid, options)
-          .then(onLoadSuccess);
+          .then(onLoadSuccess)
+          .catch(UIUtils.onError("ERROR.LOAD_IDENTITY_FAILED"));
       }
     }
 
@@ -1138,27 +1139,26 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
 
   $scope.showQRCode = function(timeout) {
     if (!$scope.qrcodeId || !$scope.formData.pubkey) return; // Skip
-    if (!$scope.qrcode) {
-      $scope.qrcode = new QRCode(
-        $scope.qrcodeId,
-        {
-          text: $scope.formData.pubkey,
-          width: 180,
-          height: 180,
-          correctLevel: QRCode.CorrectLevel.L
-        });
-      UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
+
+    // Get the DIV element
+    var element = angular.element(document.querySelector('#' + $scope.qrcodeId + ' .content'));
+    if (!element) {
+      console.error("[wot-controller] Cannot found div #{0} for the QRCode. Skipping.".format($scope.qrcodeId));
+      return;
     }
-    else {
-      $scope.qrcode.clear();
-      $scope.qrcode.makeCode($scope.formData.pubkey);
+
+    console.debug("[wot-controller] Generating QR code for identity...");
+    $timeout(function() {
+      var svg = UIUtils.qrcode.svg($scope.formData.pubkey);
+      element.html(svg);
       UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
-    }
+    });
   };
 
   $scope.hideQRCode = function() {
-    if ($scope.qrcode) {
-      $scope.qrcode.clear();
+    if (!$scope.qrcodeId) return;
+    var element = angular.element(document.querySelector('#' + $scope.qrcodeId));
+    if (element) {
       UIUtils.motion.toggleOff({selector: '#'+$scope.qrcodeId});
     }
   };

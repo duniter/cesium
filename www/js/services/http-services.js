@@ -42,6 +42,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
         reject({ucode: 404, message: 'Resource not found' + (url ? ' ('+url+')' : '')});
       }
       else if (url) {
+        console.error('[http] Get HTTP error {status: ' + status + '} on [' + url + ']');
         reject('Error while requesting [' + url + ']');
       }
       else {

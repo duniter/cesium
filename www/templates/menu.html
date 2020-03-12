@@ -191,8 +191,8 @@
 
         <ion-item class="item hidden-xs hidden-sm">
           <!-- transfer -->
-          <button class="button button-block button-small button-small-padding button-stable icon-left icon ion-paper-airplane no-margin"
-                  ng-class="{'button-positive': login}"
+          <button class="button button-block button-small button-small-padding  icon-left icon ion-paper-airplane no-margin"
+                  ng-class="{'button-positive': login, 'button-stable': !login}"
                   ng-click="showTransferModal()">
             {{:locale:'COMMON.BTN_SEND_MONEY'|translate}}
           </button>
@@ -279,9 +279,6 @@
           <i class="icon ion-log-out assertive"></i>
           <span class="assertive" translate> {{:locale:'COMMON.BTN_LOGOUT'|translate}}</span>
         </a>
-<!--        <a ng-if="login" class="button-icon" ng-click="logout({askConfirm: true})" style="position: absolute; top: 5px; left: 5px; z-index: 999;">-->
-<!--          <i class="icon light ion-log-out"></i>-->
-<!--        </a>-->
 
       </ion-list>
 

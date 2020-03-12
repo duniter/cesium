@@ -192,9 +192,9 @@
   version "1.5.6"
   resolved "https://codeload.github.com/adamwdraper/Numeral-js/tar.gz/b598d6eeaf7981be55840d5fda5541e598eaf04f"
 
-"@bower_components/qrcode.js@davidshimjs/qrcodejs#*":
+"@bower_components/qrcode-generator@kazuhikoarase/qrcode-generator#js1.4.4":
   version "0.0.0"
-  resolved "https://codeload.github.com/davidshimjs/qrcodejs/tar.gz/04f46c6a0708418cb7b96fc563eacae0fbf77674"
+  resolved "https://codeload.github.com/kazuhikoarase/qrcode-generator/tar.gz/9bd2163ddc1628d1ec8ff22ea288a747275ef442"
 
 "@bower_components/robotodraft@raibutera/robotodraft#1.1.0":
   version "0.0.0"

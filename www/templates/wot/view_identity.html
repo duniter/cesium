@@ -9,7 +9,7 @@
                    on-refresh="doUpdate(true)">
     </ion-refresher>
 
-    <div class="hero" ng-class="{'hero-qrcode-active': toggleQRCode}">
+    <div class="hero">
       <div class="content" ng-if="!loading">
         <i class="avatar"
            ng-if=":rebind:!formData.avatar"
@@ -35,13 +35,11 @@
         <ion-spinner icon="android"></ion-spinner>
       </h4>
 
-
     </div>
 
-    <div ng-attr-id="{{ qrcodeId }}"
-         class="qrcode spin"
-         ng-class="{'active': toggleQRCode}"
-         ng-click="toggleQRCode = !toggleQRCode"></div>
+    <!-- QR code -->
+    <ng-include src="::'templates/common/qrcode.html'"></ng-include>
+
 
     <!-- button bar-->
     <a id="wot-share-anchor-{{::formData.pubkey}}"></a>

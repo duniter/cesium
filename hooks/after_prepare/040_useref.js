@@ -42,13 +42,16 @@ if (rootdir && !skip) {
 
     let indexPath = path.join(wwwPath, 'index.html');
 
-    const jsFilter = filter(["**/*.js", "!**/vendor/*", '!**/config.js'], { restore: true });
-    const cssFilter = filter("**/*.css", { restore: true });
+    const jsFilter = filter(['**/*.js', '!**/vendor/*', '!**/config.js'], { restore: true });
+    const cssFilter = filter('**/*.css', { restore: true });
     const revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
     const uglifyOptions = {
       toplevel: true,
       warnings: true,
-      ecma: '2015',
+      ecma: '5',
+      mangle: {
+        reserved: ['qrcode', 'Base58']
+      },
       compress: {
         global_defs: {
           "@console.log": "alert"

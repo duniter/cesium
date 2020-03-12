@@ -41,6 +41,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     resetData = function(init) {
       data.loaded = false;
       data.pubkey= null;
+      data.qrcode=null;
 
       data.uid = null;
       data.localName = null;
@@ -158,8 +159,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       var keepAuth = csSettings.data.keepAuthIdle > 0;
 
       var authData;
-      return (options && options.authData && $q.when(options.authData) ||
-        Modals.showLogin(options))
+      return (options && options.authData ? $q.when(options.authData) : Modals.showLogin(options))
         .then(function(res){
           if (!res || !res.pubkey ||
              (!needLogin && res.pubkey !== data.pubkey) ||
@@ -843,6 +843,15 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         });
     },
 
+    loadQrCode = function(){
+      if (!data.pubkey || data.qrcode) return $q.when(data.qrcode);
+      console.debug("[wallet] Creating SVG QRCode...");
+      return $timeout(function() {
+        data.qrcode = UIUtils.qrcode.svg(data.pubkey);
+        return data.qrcode;
+      });
+    },
+
     loadData = function(options) {
 
       var alertIfUnusedWallet = !csCurrency.data.initPhase && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet) &&
@@ -865,8 +874,12 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         loadPromise = loadFullData();
       }
 
-      return loadPromise
+      return $q.all([
+        loadPromise,
 
+        // Create the QR code
+        loadQrCode()
+      ])
         // Warn if wallet has been never used - see #167
         .then(function() {
           var unused = isNeverUsed();
@@ -973,16 +986,16 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     },
 
     refreshData = function(options) {
-        options = options || {
-          requirements: true,
-          sources: true,
-          tx: {
-            enable: true,
-            fromTime: data.tx && data.tx.fromTime !== 'pending' ? data.tx.fromTime : undefined // keep previous time
-          },
-          sigStock: true,
-          api: true
-        };
+      options = options || {
+        requirements: true,
+        sources: true,
+        tx: {
+          enable: true,
+          fromTime: data.tx && data.tx.fromTime !== 'pending' ? data.tx.fromTime : undefined // keep previous time
+        },
+        sigStock: true,
+        api: true
+      };
 
       // Force some load (requirements) if not already loaded
       options.requirements = angular.isDefined(options.requirements) ? options.requirements : !data.requirements.loaded;
@@ -1024,7 +1037,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       if (options.sigStock) jobs.push(loadSigStock());
 
       return (jobs.length ? $q.all(jobs) : $q.when())
-        .then(function(){
+        .then(function() {
           // Skip api
           if (angular.isDefined(options.api) && !options.api) return data;
 
@@ -1041,6 +1054,11 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
               return data;
             });
+        })
+        .catch(function(err) {
+          console.error("[wallet] Error while {0} data: ".format(!data.loaded ? 'Loading' : 'Refreshing'), err);
+          data.loaded = data.requirements.loaded && data.sources && true;
+          throw err;
         });
     },
 
@@ -2420,6 +2438,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       getData: getData,
       loadData: loadData,
       refreshData: refreshData,
+      loadQrCode: loadQrCode,
       // internal
       internal: {
         addListener: addListener,
