@@ -1,13 +1,13 @@
 'use strict';
 
 const gulp = require('gulp'),
+  debug = require('gulp-debug'),
   sass = require('gulp-sass'),
   cleanCss = require('gulp-clean-css'),
   base64 = require('gulp-base64-v2'),
   rename = require('gulp-rename'),
   ngConstant = require('gulp-ng-constant'),
   fs = require("fs"),
-  argv = require('yargs').argv,
   header = require('gulp-header'),
   footer = require('gulp-footer'),
   removeCode = require('gulp-remove-code'),
@@ -19,6 +19,7 @@ const gulp = require('gulp'),
   zip = require('gulp-zip'),
   del = require('del'),
   useref = require('gulp-useref'),
+  hash_src = require("gulp-hash-src"),
   filter = require('gulp-filter'),
   uglify = require('gulp-uglify-es').default,
   csso = require('gulp-csso'),
@@ -30,8 +31,8 @@ const gulp = require('gulp'),
   jshint = require('gulp-jshint'),
   markdown = require('gulp-markdown'),
   log = require('fancy-log'),
-  colors = require('ansi-colors');
-
+  colors = require('ansi-colors'),
+  argv = require('yargs').argv;
 const paths = {
   license_md: ['./www/license/*.md'],
   sass: ['./scss/ionic.app.scss'],
@@ -350,8 +351,8 @@ function webCopyFiles() {
     //gulp.src('./www/feed*.json')
     //  .pipe(gulp.dest(tmpPath)),
 
-    // Copy lib
-    gulp.src('./www/lib/**/*.*')
+    // Copy lib (JS, CSS and fonts)
+    gulp.src(['./www/lib/**/*.js', './www/lib/**/*.css', './www/lib/**/fonts/**/*.*'])
       .pipe(gulp.dest(tmpPath + '/lib')),
 
     // Copy license into HTML
@@ -445,48 +446,68 @@ function webDebugFile() {
 }
 
 function webUglify() {
-  log(colors.green('Optimizing JS and CSS files...'));
+  const wwwPath = './dist/web/www';
+  const enableUglify = argv.release || argv.useref || argv.uglify || false;
+  if (enableUglify) {
 
-  const wwwPath = './dist/web/www';
-  const jsFilter = filter(["**/*.js", '!**/config.js'], { restore: true });
-  const cssFilter = filter("**/*.css", { restore: true });
-  const revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
-  const uglifyOptions = {
-    toplevel: true,
-    warnings: true,
-    compress: {
-      global_defs: {
-        "@console.log": "alert"
+    log(colors.green('Uglify JS and CSS files...'));
+
+    const jsFilter = filter(["**/*.js", '!**/config.js'], {restore: true});
+    const cssFilter = filter("**/*.css", {restore: true});
+    const revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
+    const uglifyOptions = {
+      toplevel: true,
+      warnings: true,
+      compress: {
+        global_defs: {
+          "@console.log": "alert"
+        },
+        passes: 2
       },
-      passes: 2
-    },
-    output: {
-      beautify: false,
-      preamble: "/* minified */",
-      max_line_len: 120000
-    }
-  };
+      output: {
+        beautify: false,
+        preamble: "/* minified */",
+        max_line_len: 120000
+      }
+    };
+
+    // Process index.html
+    return gulp.src(wwwPath + '/index.html')
+      .pipe(useref())             // Concatenate with gulp-useref
+
+      // Process JS
+      .pipe(jsFilter)
+      .pipe(uglify(uglifyOptions)) // Minify javascript files
+      .pipe(jsFilter.restore)
+
+      // Process CSS
+      .pipe(cssFilter)
+      .pipe(csso())               // Minify any CSS sources
+      .pipe(cssFilter.restore)
+
+      // Add revision to filename  (but not index.html and config.js)
+      .pipe(revFilesFilter)
+      .pipe(rev())                // Rename the concatenated files
+      .pipe(revFilesFilter.restore)
+
+      .pipe(revReplace())         // Substitute in new filenames
+      .pipe(gulp.dest(wwwPath));
+  }
+}
+
+function webIntegrity() {
+  const wwwPath = './dist/web/www';
+
+  log(colors.green('Add integrity hash to <script src> tag...'));
 
   // Process index.html
   return gulp.src(wwwPath + '/index.html')
-    .pipe(useref())             // Concatenate with gulp-useref
 
-    // Process JS
-    .pipe(jsFilter)
-    .pipe(uglify(uglifyOptions)) // Minify javascript files
-    .pipe(jsFilter.restore)
+    // Add an integrity hash
+    .pipe(hash_src({build_dir: wwwPath, src_path: wwwPath, hash: 'sha256', enc: 'base64'}))
+    .pipe(replace(/"config\.js\?cbh=[^"]+"/g, '"config.js"'))
+    .pipe(replace('.js?cbh=', '.js" integrity="sha256-'))
 
-    // Process CSS
-    .pipe(cssFilter)
-    .pipe(csso())               // Minify any CSS sources
-    .pipe(cssFilter.restore)
-
-    // Add revision to filename  (but not index.html and config.js)
-    .pipe(revFilesFilter)
-    .pipe(rev())                // Rename the concatenated files
-    .pipe(revFilesFilter.restore)
-
-    .pipe(revReplace())         // Substitute in new filenames
     .pipe(gulp.dest(wwwPath));
 }
 
@@ -509,56 +530,83 @@ function webApiDebugFile() {
 }
 
 function webApiUglify() {
-  log(colors.green('API: Optimizing JS and CSS files...'));
   const tmpPath = './dist/web/www';
-  const jsFilter = filter(["**/*.js", '!**/config.js'], { restore: true });
-  const cssFilter = filter("**/*.css", { restore: true });
-  const revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
-  const indexFilter = filter('**/index.html', { restore: true });
-  const uglifyOptions = {
-    toplevel: true,
-    warnings: true,
-    compress: {
-      global_defs: {
-        "@console.log": "alert"
+  const jsFilter = filter(["**/*.js", '!**/config.js'], {restore: true});
+  const cssFilter = filter("**/*.css", {restore: true});
+  const indexFilter = filter('**/index.html', {restore: true});
+
+  // Skip if not required
+  const enableUglify = argv.release || argv.useref || argv.uglify || false;
+  if (enableUglify) {
+    log(colors.green('API: Optimizing JS and CSS files...'));
+    const revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], {restore: true});
+    const uglifyOptions = {
+      toplevel: true,
+      warnings: true,
+      compress: {
+        global_defs: {
+          "@console.log": "alert"
+        },
+        passes: 2
       },
-      passes: 2
-    },
-    output: {
-      beautify: false,
-      preamble: "/* minified */",
-      max_line_len: 120000
-    }
-  };
+      output: {
+        beautify: false,
+        preamble: "/* minified */",
+        max_line_len: 120000
+      }
+    };
 
-  // Process api/index.html
-  return gulp.src(tmpPath + '/*/index.html')
-    .pipe(useref())             // Concatenate with gulp-useref
+    // Process api/index.html
+    return gulp.src(tmpPath + '/*/index.html')
+      //.pipe(refHash())            // Generate hashed filenames for the build blocks
+      .pipe(useref())             // Concatenate with gulp-useref
 
-    // Process JS
-    .pipe(jsFilter)
-    .pipe(uglify(uglifyOptions)) // Minify any javascript sources
-    .pipe(jsFilter.restore)
+      // Process JS
+      .pipe(jsFilter)
+      .pipe(uglify(uglifyOptions)) // Minify any javascript sources
+      .pipe(jsFilter.restore)
 
-    // Process CSS
-    .pipe(cssFilter)
-    .pipe(csso())               // Minify any CSS sources
-    .pipe(cssFilter.restore)
+      // Process CSS
+      .pipe(cssFilter)
+      .pipe(csso())               // Minify any CSS sources
+      .pipe(cssFilter.restore)
 
-    // Add revision to filename  (but not index.html and config.js)
-    .pipe(revFilesFilter)
-    .pipe(rev())                // Rename the concatenated files
-    .pipe(revFilesFilter.restore)
+      // Add revision to filename  (but not index.html and config.js)
+      .pipe(revFilesFilter)
+      .pipe(rev())                // Rename the concatenated files
+      .pipe(revFilesFilter.restore)
 
-    .pipe(revReplace())         // Substitute in new filenames
+      .pipe(revReplace())         // Substitute in new filenames
 
-    .pipe(indexFilter)
-    .pipe(replace("dist_js", "../dist_js"))
-    .pipe(replace("dist_css", "../dist_css"))
-    .pipe(replace("config.js", "../config.js"))
-    .pipe(indexFilter.restore)
+      .pipe(indexFilter)
+      .pipe(replace("dist_js", "../dist_js"))
+      .pipe(replace("dist_css", "../dist_css"))
+      .pipe(replace("config.js", "../config.js"))
+      .pipe(indexFilter.restore)
 
-    .pipe(gulp.dest(tmpPath));
+      .pipe(gulp.dest(tmpPath));
+  }
+
+  else {
+    log(colors.red('API: Uglify JS and CSS files. Skip') + colors.grey(' (missing options --release or --uglify)'));
+
+    return gulp.src(tmpPath + '/*/index.html')
+      //.pipe(refHash())            // Generate hashed filenames for the build blocks
+      .pipe(useref())             // Concatenate with gulp-useref
+
+      // Process CSS
+      .pipe(cssFilter)
+      .pipe(csso())               // Minify any CSS sources
+      .pipe(cssFilter.restore)
+
+      .pipe(indexFilter)
+      .pipe(replace("dist_js", "../dist_js"))
+      .pipe(replace("dist_css", "../dist_css"))
+      .pipe(replace("config.js", "../config.js"))
+      .pipe(indexFilter.restore)
+
+      .pipe(gulp.dest(tmpPath));
+  }
 }
 
 function webCleanUnusedFiles() {
@@ -587,20 +635,28 @@ function webCleanUnusedDirectories() {
 
   // Clean dir
   const wwwPath = './dist/web/www';
-  return del.sync([
-      wwwPath + '/css',
-      wwwPath + '/templates',
-      wwwPath + '/js',
-      wwwPath + '/plugins',
-      wwwPath + '/dist',
-      wwwPath + '/lib/*',
-      '!' + wwwPath + '/lib/ionic',
-      '!' + wwwPath + '/lib/robotodraft',
-      wwwPath + '/lib/ionic/*',
-      '!' + wwwPath + '/lib/ionic/fonts',
-      wwwPath + '/lib/robotodraft/*',
-      '!' + wwwPath + '/lib/robotodraft/fonts'
-    ]);
+  const patterns = [
+    wwwPath + '/css',
+    wwwPath + '/templates',
+    wwwPath + '/js',
+    wwwPath + '/plugins',
+    wwwPath + '/dist',
+    wwwPath + '/lib/*',
+
+    //  Keep IonIcons font
+    '!' + wwwPath + '/lib/ionic',
+    wwwPath + '/lib/ionic/*',
+    '!' + wwwPath + '/lib/ionic/fonts',
+
+    //  Keep RobotoDraft font
+    '!' + wwwPath + '/lib/robotodraft',
+    wwwPath + '/lib/robotodraft/*',
+    '!' + wwwPath + '/lib/robotodraft/fonts'
+  ]
+
+  return gulp.src(patterns, {read: false})
+    //.pipe(debug({title: 'deleting '}))
+    .pipe(clean());
 }
 
 function webZip() {
@@ -639,22 +695,8 @@ function webExtensionCopyFiles() {
   return gulp.src([
     wwwPath + '/**/*',
 
-    // Remove API
+    // Skip API and debug.html
     '!' + wwwPath + '/api',
-
-    // Remove JS debug files
-    wwwPath + '/dist_js/*.*',
-    '!' + wwwPath + '/dist_js/cesium.js',
-    '!' + wwwPath + '/dist_js/vendor.js',
-    '!' + wwwPath + '/dist_js/cesium-api*.js',
-    '!' + wwwPath + '/dist_js/vendor-api*.js',
-
-    // Remove CSS debug files
-    wwwPath + '/dist_css/*.*',
-    '!' + wwwPath + '/dist_css/cesium.css',
-    '!' + wwwPath + '/dist_css/cesium-api*.css',
-
-    // Remove HTML debug files
     wwwPath + '/api/*',
     '!' + wwwPath + '/api/debug.html',
     '!' + wwwPath + '/debug.html',
@@ -662,8 +704,10 @@ function webExtensionCopyFiles() {
     // Remove unused files (feed.json) in extension
     '!' + wwwPath + '/feed*.json',
 
-    // Add specific resource (and overwrite the default 'manifest.json')
+    // Skip web manifest
     '!' + wwwPath + '/manifest.json',
+
+    // Add specific resource (and overwrite the default 'manifest.json')
     resourcesPath + '/**/*.*'
    ])
 
@@ -742,7 +786,9 @@ gulp.task('webPluginNgAnnotate', ['webPluginNgTemplate'],  webPluginNgAnnotate);
 
 gulp.task('webDebugFile', ['webPluginNgAnnotate'], webDebugFile);
 gulp.task('webUglify', ['webDebugFile'], webUglify);
-gulp.task('webApiDebugFile', ['webUglify'], webApiDebugFile);
+gulp.task('webIntegrity', ['webUglify'], webIntegrity);
+
+gulp.task('webApiDebugFile', ['webIntegrity'], webApiDebugFile);
 gulp.task('webApiUglify', ['webApiDebugFile'], webApiUglify);
 
 gulp.task('webCleanUnusedFiles', ['webApiUglify'], webCleanUnusedFiles);
@@ -756,3 +802,19 @@ gulp.task('webExtensionZip', ['webExtensionCopyFiles'], webExtensionZip);
 gulp.task('webBuild', ['webZip', 'webExtensionZip'], webBuildSuccess);
 gulp.task('build:web', ['webBuild']); // = webBuild
 
+gulp.task('webExtBuild', ['webExtensionZip']);
+
+gulp.task('help', function() {
+  log(colors.green("Usage: gulp {config|webBuild|webExtBuild} OPTIONS"));
+  log(colors.green(""));
+  log(colors.green("NAME"));
+  log(colors.green(""));
+  log(colors.green("  config --env <config_name>  Configure Cesium. "));
+  log(colors.green("  webBuild                    Build Cesium has a web ZIP"));
+  log(colors.green("  webExtBuild                 Build Cesium has a webExtension"));
+  log(colors.green(""));
+  log(colors.green("OPTIONS"));
+  //log(colors.green(""));
+  //log(colors.green("  --release                   Release build"));
+  //log(colors.green("  --useref                    Build with uglify and useref plugins"));
+})
