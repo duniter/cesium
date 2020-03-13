@@ -82,7 +82,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
 
     $scope.showLocalesPopover = function(event) {
       UIUtils.popover.show(event, {
-        templateUrl: 'templates/api/locales_popover.html',
+        templateUrl: 'templates/api/popover_locales.html',
         scope: $scope,
         autoremove: true,
         afterShow: function(popover) {
