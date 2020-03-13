@@ -478,19 +478,15 @@ function webUglify() {
       // Process JS
       .pipe(jsFilter)
       .pipe(uglify(uglifyOptions)) // Minify javascript files
+      .pipe(rename({ extname: '.min.js' }))
       .pipe(jsFilter.restore)
 
       // Process CSS
       .pipe(cssFilter)
       .pipe(csso())               // Minify any CSS sources
+      .pipe(rename({ extname: '.min.css' }))
       .pipe(cssFilter.restore)
 
-      // Add revision to filename  (but not index.html and config.js)
-      .pipe(revFilesFilter)
-      .pipe(rev())                // Rename the concatenated files
-      .pipe(revFilesFilter.restore)
-
-      .pipe(revReplace())         // Substitute in new filenames
       .pipe(gulp.dest(wwwPath));
   }
 }
@@ -564,19 +560,14 @@ function webApiUglify() {
       // Process JS
       .pipe(jsFilter)
       .pipe(uglify(uglifyOptions)) // Minify any javascript sources
+      .pipe(rename({ extname: '.min.js' }))
       .pipe(jsFilter.restore)
 
       // Process CSS
       .pipe(cssFilter)
       .pipe(csso())               // Minify any CSS sources
+      .pipe(rename({ extname: '.min.css' }))
       .pipe(cssFilter.restore)
-
-      // Add revision to filename  (but not index.html and config.js)
-      .pipe(revFilesFilter)
-      .pipe(rev())                // Rename the concatenated files
-      .pipe(revFilesFilter.restore)
-
-      .pipe(revReplace())         // Substitute in new filenames
 
       .pipe(indexFilter)
       .pipe(replace("dist_js", "../dist_js"))
@@ -591,13 +582,7 @@ function webApiUglify() {
     log(colors.red('API: Uglify JS and CSS files. Skip') + colors.grey(' (missing options --release or --uglify)'));
 
     return gulp.src(tmpPath + '/*/index.html')
-      //.pipe(refHash())            // Generate hashed filenames for the build blocks
       .pipe(useref())             // Concatenate with gulp-useref
-
-      // Process CSS
-      .pipe(cssFilter)
-      .pipe(csso())               // Minify any CSS sources
-      .pipe(cssFilter.restore)
 
       .pipe(indexFilter)
       .pipe(replace("dist_js", "../dist_js"))
@@ -691,25 +676,31 @@ function webExtensionCopyFiles() {
   const manifestFilter = filter(["**/manifest.json"], { restore: true });
   const txtFilter = filter(["**/*.txt"], { restore: true });
 
-  // Copy files
-  return gulp.src([
-    wwwPath + '/**/*',
+  return es.merge(
+    // Copy files
+    gulp.src([
+      wwwPath + '/**/*',
 
-    // Skip API and debug.html
-    '!' + wwwPath + '/api',
-    wwwPath + '/api/*',
-    '!' + wwwPath + '/api/debug.html',
-    '!' + wwwPath + '/debug.html',
+      // Skip min files
+      '!' + wwwPath + '/dist_js/*.min.js',
+      '!' + wwwPath + '/dist_css/*.min.css',
 
-    // Remove unused files (feed.json) in extension
-    '!' + wwwPath + '/feed*.json',
+      // Skip API and html
+      '!' + wwwPath + '/api',
+      '!' + wwwPath + '/dist_js/*-api.js',
+      '!' + wwwPath + '/dist_css/*-api.css',
+      '!' + wwwPath + '/index.html',
+      '!' + wwwPath + '/debug.html',
 
-    // Skip web manifest
-    '!' + wwwPath + '/manifest.json',
+      // Remove unused files (feed.json) in extension
+      '!' + wwwPath + '/feed*.json',
 
-    // Add specific resource (and overwrite the default 'manifest.json')
-    resourcesPath + '/**/*.*'
-   ])
+      // Skip web manifest
+      '!' + wwwPath + '/manifest.json',
+
+      // Add specific resource (and overwrite the default 'manifest.json')
+      resourcesPath + '/**/*.*'
+    ])
 
     // Process TXT files: Add the UTF-8 BOM character
     .pipe(txtFilter)
@@ -721,7 +712,13 @@ function webExtensionCopyFiles() {
     .pipe(replace(/\"version\": \"[^\"]*\"/, '"version": "' + version + '"'))
     .pipe(manifestFilter.restore)
 
-    .pipe(gulp.dest('./dist/web/ext'));
+    .pipe(gulp.dest('./dist/web/ext')),
+
+    // Use debug as main index
+    gulp.src(wwwPath + '/debug.html')
+      .pipe(rename("index.html"))
+      .pipe(gulp.dest('./dist/web/ext'))
+  );
 }
 
 function webExtensionZip() {
