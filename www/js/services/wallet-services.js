@@ -1749,6 +1749,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     },
 
     recoverId = function(recover) {
+      if (!recover || !recover.cypherNonce || !recover.cypherSalt || !recover.cypherPwd) {
+        throw {message:'ERROR.INVALID_FILE_FORMAT'};
+      }
       var nonce = CryptoUtils.util.decode_base58(recover.cypherNonce);
       return getkeypairSaveId(recover)
         .then(function (recover) {
@@ -1763,7 +1766,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           return recover;
         })
         .catch(function(err){
-          console.warn('Incorrect answers - Unable to recover passwords');
+          console.warn('Incorrect answers: unable to recover identifiers', err);
+          throw new Error('Incorrect answers: unable to recover identifiers');
         });
     },
 

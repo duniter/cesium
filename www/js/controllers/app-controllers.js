@@ -656,7 +656,7 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
 
   $scope.showLocalesPopover = function(event) {
     UIUtils.popover.show(event, {
-      templateUrl: 'templates/api/locales_popover.html',
+      templateUrl: 'templates/common/popover_locales.html',
       scope: $scope,
       autoremove: true,
       afterShow: function(popover) {

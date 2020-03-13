@@ -2259,7 +2259,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   height: 44px;
   padding-top: 6px;
   padding-bottom: 6px;
-  img {
+  .flag-image {
     position: relative;
     bottom: 0;
     width: 32px !important;
@@ -2382,7 +2382,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
    Drop zone component
 **********/
 
-div[dropzone] {
+div[drop-zone] {
   border: 2px dashed #bbb;
   border-radius: 5px;
   padding: 15px;
@@ -2398,7 +2398,7 @@ div[dropzone] {
   }
 }
 
-div[dropzone]:hover {
+div[drop-zone]:hover {
   background-color: $stable-100-bg;
 }
 

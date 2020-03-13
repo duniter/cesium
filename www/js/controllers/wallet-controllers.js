@@ -1267,13 +1267,12 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
   };
 
   /**
-   * Recover Id
+   * Set the file content
    */
-
-  $scope.recoverContent = function(file) {
+  $scope.onFileChanged = function(file) {
     $scope.hasContent = angular.isDefined(file) && file !== '';
     $scope.fileData = file.fileData ? file.fileData : '';
-    $scope.isValidFile = $scope.fileData !== '' && $scope.fileData.type == 'text/plain';
+    $scope.isValidFile = $scope.fileData !== '' && $scope.fileData.type === 'text/plain';
 
     if ($scope.isValidFile && $scope.option === 'recoverID') {
       $scope.content = file.fileContent.split('\n');
@@ -1325,7 +1324,8 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
         else {
           UIUtils.alert.error('ERROR.RECOVER_ID_FAILED');
         }
-      });
+      })
+      .catch(UIUtils.onError('ERROR.RECOVER_ID_FAILED'));
 
   };
 
@@ -1482,7 +1482,16 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
         $scope.closeModal();
         return UIUtils.loading.hide();
       })
-      .catch(UIUtils.onError('ERROR.REVOCATION_FAILED'));
+      .catch(function(err) {
+        if ($scope.revocation){
+          $scope.isValidFile = false;
+          $scope.revocationError = err && err.message || err || 'ERROR.REVOCATION_FAILED';
+          UIUtils.loading.hide(10);
+        }
+        else {
+          UIUtils.onError('ERROR.REVOCATION_FAILED')(err);
+        }
+      });
   };
 
 

@@ -43,7 +43,7 @@ function LoginController($scope, $timeout, $controller, csWallet) {
 
 }
 
-function LoginModalController($scope, $timeout, $q, $ionicPopover, $document, CryptoUtils, csCrypto, ionicReady,
+function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, CryptoUtils, csCrypto, ionicReady,
                               UIUtils, BMA, Modals, csSettings, Device, parameters) {
   'ngInject';
 
@@ -506,14 +506,17 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $document, Cr
       });
   };
 
-  $scope.fileChanged = function(event) {
-    $scope.validatingFile = true;
-    $scope.formData.file = event && event.target && event.target.files && event.target.files.length && event.target.files[0];
-    if (!$scope.formData.file) {
+  $scope.onFileChanged = function(file) {
+    if (!file || !file.fileData) {
       $scope.validatingFile = false;
-      return;
+      return; // Skip
     }
-
+    $scope.formData.file = {
+      name: file.fileData.name,
+      size: file.fileData.size,
+      content: file.fileContent
+    };
+    $scope.validatingFile = true;
     $timeout(function() {
       console.debug("[login] key file changed: ", $scope.formData.file);
       $scope.validatingFile = true;
@@ -536,51 +539,6 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $document, Cr
             $scope.removeKeyFile();
             return;
           }
-          $scope.validatingFile = false;
-          $scope.formData.file.valid = false;
-          $scope.formData.file.pubkey = undefined;
-          UIUtils.onError('ERROR.AUTH_FILE_ERROR')(err);
-        });
-    });
-  };
-
-  /**
-   * On the file chooser
-   */
-  $scope.openFileChooser = function() {
-    var elements = angular.element(document.getElementById('loginImportFile'));
-    if (elements && elements.length) {
-      elements[0].click();
-    }
-  }
-
-  /**
-   * On file drop
-   */
-  $scope.onKeyFileDrop = function(file) {
-    if (!file || !file.fileData) return;
-
-    $scope.formData.file = {
-      name: file.fileData.name,
-      size: file.fileData.size,
-      content: file.fileContent
-    };
-    $scope.validatingFile = true;
-    $timeout(function() {
-      return $scope.readKeyFile($scope.formData.file, {withSecret: false})
-        .then(function (keypair) {
-          if (!keypair || !keypair.signPk) {
-            $scope.formData.file.valid = false;
-            $scope.formData.file.pubkey = undefined;
-          }
-          else {
-            $scope.formData.file.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-            $scope.formData.file.valid = !$scope.expectedPubkey || $scope.expectedPubkey == $scope.formData.file.pubkey;
-            $scope.validatingFile = false;
-          }
-
-        })
-        .catch(function (err) {
           $scope.validatingFile = false;
           $scope.formData.file.valid = false;
           $scope.formData.file.pubkey = undefined;

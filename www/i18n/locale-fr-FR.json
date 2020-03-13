@@ -618,6 +618,7 @@
       "QUESTION_19": "Quel était le métier de votre grand-père ?",
       "RECOVER_ID": "Retrouver mon mot de passe...",
       "RECOVER_ID_HELP": "Si vous disposez d'un <b>fichier de sauvegarde de vos identifiants</b>, vous pouvez les retrouver en répondant correctement à vos questions personnelles.",
+      "RECOVER_ID_SELECT_FILE": "Choisissez le <b>fichier de sauvegarde de vos identifiants</b> à utiliser :",
       "REVOCATION_WITH_FILE": "Révoquer mon compte membre...",
       "REVOCATION_WITH_FILE_DESCRIPTION": "Si vous avez <b>définitivement perdus vos identifiants</b> de compte membre (ou que la sécurité du compte est compromise), vous pouvez utiliser <b>le fichier de révocation</b> du compte pour <b>forcer sa sortie définitive de la toile de confiance</b>.",
       "REVOCATION_WITH_FILE_HELP": "Pour <b>révoquer définitivement</b> un compte membre, veuillez glisser dans la zone ci-dessous votre fichier de révocation, ou bien cliquer dans la zone pour rechercher un fichier.",
