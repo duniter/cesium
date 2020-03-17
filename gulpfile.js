@@ -1,7 +1,6 @@
 'use strict';
 
 const gulp = require('gulp'),
-  debug = require('gulp-debug'),
   sass = require('gulp-sass'),
   cleanCss = require('gulp-clean-css'),
   base64 = require('gulp-base64-v2'),
@@ -19,20 +18,21 @@ const gulp = require('gulp'),
   zip = require('gulp-zip'),
   del = require('del'),
   useref = require('gulp-useref'),
-  hash_src = require("gulp-hash-src"),
   filter = require('gulp-filter'),
   uglify = require('gulp-uglify-es').default,
+  sourcemaps = require('gulp-sourcemaps'),
+  lazypipe = require('lazypipe'),
   csso = require('gulp-csso'),
   replace = require('gulp-replace'),
-  rev = require('gulp-rev'),
-  revReplace = require('gulp-rev-replace'),
   clean = require('gulp-clean'),
   htmlmin = require('gulp-htmlmin'),
   jshint = require('gulp-jshint'),
   markdown = require('gulp-markdown'),
   log = require('fancy-log'),
   colors = require('ansi-colors'),
-  argv = require('yargs').argv;
+  argv = require('yargs').argv,
+  sriHash = require('gulp-sri-hash');
+
 const paths = {
   license_md: ['./www/license/*.md'],
   sass: ['./scss/ionic.app.scss'],
@@ -302,28 +302,12 @@ function webCopyFiles() {
       .pipe(htmlmin())
       .pipe(gulp.dest(tmpPath)),
 
-    // Copy index.html to debug.html (and remove unused code)
-    gulp.src('./www/index.html')
-      .pipe(removeCode({'no-device': true}))
-      .pipe(removeHtml('.hidden-no-device'))
-      .pipe(removeHtml('[remove-if][remove-if="no-device"]'))
-      .pipe(rename("debug.html"))
-      .pipe(gulp.dest(tmpPath)),
-
     // Copy API index.html
     gulp.src('./www/api/index.html')
       .pipe(removeCode({'no-device': true}))
       .pipe(removeHtml('.hidden-no-device'))
       .pipe(removeHtml('[remove-if][remove-if="no-device"]'))
       .pipe(htmlmin())
-      .pipe(gulp.dest(tmpPath + '/api')),
-
-    // Copy API index.html
-    gulp.src('./www/api/index.html')
-      .pipe(removeCode({'no-device': true}))
-      .pipe(removeHtml('.hidden-no-device'))
-      .pipe(removeHtml('[remove-if][remove-if="no-device"]'))
-      .pipe(rename("debug.html"))
       .pipe(gulp.dest(tmpPath + '/api')),
 
     // Copy fonts
@@ -437,24 +421,18 @@ function webPluginNgAnnotate() {
     .pipe(gulp.dest(tmpPath + '/dist/dist_js/plugins'));
 }
 
-function webDebugFile() {
-  log(colors.green('Building debug.html file...'));
-  const tmpPath = './dist/web/www';
-  return gulp.src(tmpPath + '/debug.html')
-    .pipe(useref())             // Concatenate with gulp-useref
-    .pipe(gulp.dest(tmpPath));
-}
-
 function webUglify() {
   const wwwPath = './dist/web/www';
   const enableUglify = argv.release || argv.useref || argv.uglify || false;
+  const version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+
   if (enableUglify) {
 
-    log(colors.green('Uglify JS and CSS files...'));
+    log(colors.green('Minify JS and CSS files...'));
 
+    const indexFilter = filter('**/index.html', {restore: true});
     const jsFilter = filter(["**/*.js", '!**/config.js'], {restore: true});
     const cssFilter = filter("**/*.css", {restore: true});
-    const revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
     const uglifyOptions = {
       toplevel: true,
       warnings: true,
@@ -473,19 +451,25 @@ function webUglify() {
 
     // Process index.html
     return gulp.src(wwwPath + '/index.html')
-      .pipe(useref())             // Concatenate with gulp-useref
+      .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))  // Concatenate with gulp-useref
 
       // Process JS
       .pipe(jsFilter)
       .pipe(uglify(uglifyOptions)) // Minify javascript files
-      .pipe(rename({ extname: '.min.js' }))
       .pipe(jsFilter.restore)
 
       // Process CSS
       .pipe(cssFilter)
       .pipe(csso())               // Minify any CSS sources
-      .pipe(rename({ extname: '.min.css' }))
       .pipe(cssFilter.restore)
+
+      // Add version to file path
+      .pipe(indexFilter)
+      .pipe(replace(/"(dist_js\/[a-zA-Z0-9]+).js"/g, '"$1.js?v=' + version + '"'))
+      .pipe(replace(/"(dist_css\/[a-zA-Z0-9]+).css"/g, '"$1.css?v=' + version + '"'))
+      .pipe(indexFilter.restore)
+
+      .pipe(sourcemaps.write('maps'))
 
       .pipe(gulp.dest(wwwPath));
   }
@@ -497,36 +481,18 @@ function webIntegrity() {
   log(colors.green('Add integrity hash to <script src> tag...'));
 
   // Process index.html
-  return gulp.src(wwwPath + '/index.html')
+  return gulp.src(wwwPath + '/index.html', {base: wwwPath})
 
     // Add an integrity hash
-    .pipe(hash_src({build_dir: wwwPath, src_path: wwwPath, hash: 'sha256', enc: 'base64'}))
-    .pipe(replace(/"config\.js\?cbh=[^"]+"/g, '"config.js"'))
-    .pipe(replace('.js?cbh=', '.js" integrity="sha256-'))
-
+    .pipe(sriHash())
+    .pipe(rename({ extname: '.integrity.html' }))
     .pipe(gulp.dest(wwwPath));
-}
-
-function webApiDebugFile() {
-  log(colors.green('API: Building debug.html...'));
-
-  var tmpPath = './dist/web/www';
-  var debugFilter = filter('**/debug.html', { restore: true });
-
-  return gulp.src(tmpPath + '/*/debug.html')
-    .pipe(useref())             // Concatenate with gulp-useref
-
-    .pipe(debugFilter)
-    .pipe(replace("dist_js", "../dist_js"))
-    .pipe(replace("dist_css", "../dist_css"))
-    .pipe(replace("config.js", "../config.js"))
-    .pipe(debugFilter.restore)
-
-    .pipe(gulp.dest(tmpPath));
 }
 
 function webApiUglify() {
   const tmpPath = './dist/web/www';
+  const version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+
   const jsFilter = filter(["**/*.js", '!**/config.js'], {restore: true});
   const cssFilter = filter("**/*.css", {restore: true});
   const indexFilter = filter('**/index.html', {restore: true});
@@ -534,8 +500,7 @@ function webApiUglify() {
   // Skip if not required
   const enableUglify = argv.release || argv.useref || argv.uglify || false;
   if (enableUglify) {
-    log(colors.green('API: Optimizing JS and CSS files...'));
-    const revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], {restore: true});
+    log(colors.green('API: Minify JS and CSS files...'));
     const uglifyOptions = {
       toplevel: true,
       warnings: true,
@@ -554,32 +519,37 @@ function webApiUglify() {
 
     // Process api/index.html
     return gulp.src(tmpPath + '/*/index.html')
-      //.pipe(refHash())            // Generate hashed filenames for the build blocks
-      .pipe(useref())             // Concatenate with gulp-useref
+
+      .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))  // Concatenate with gulp-useref
 
       // Process JS
       .pipe(jsFilter)
       .pipe(uglify(uglifyOptions)) // Minify any javascript sources
-      .pipe(rename({ extname: '.min.js' }))
       .pipe(jsFilter.restore)
 
       // Process CSS
       .pipe(cssFilter)
       .pipe(csso())               // Minify any CSS sources
-      .pipe(rename({ extname: '.min.css' }))
       .pipe(cssFilter.restore)
 
       .pipe(indexFilter)
+
+      // Add version to files path
+      .pipe(replace(/"(dist_js\/[a-zA-Z0-9-.]+).js"/g, '"$1.js?v=' + version + '"'))
+      .pipe(replace(/"(dist_css\/[a-zA-Z0-9-.]+).css"/g, '"$1.css?v=' + version + '"'))
+
       .pipe(replace("dist_js", "../dist_js"))
       .pipe(replace("dist_css", "../dist_css"))
       .pipe(replace("config.js", "../config.js"))
       .pipe(indexFilter.restore)
 
+      .pipe(sourcemaps.write('maps'))
+
       .pipe(gulp.dest(tmpPath));
   }
 
   else {
-    log(colors.red('API: Uglify JS and CSS files. Skip') + colors.grey(' (missing options --release or --uglify)'));
+    log(colors.red('API: Minify JS and CSS files. Skip') + colors.grey(' (missing options --release or --uglify)'));
 
     return gulp.src(tmpPath + '/*/index.html')
       .pipe(useref())             // Concatenate with gulp-useref
@@ -609,8 +579,12 @@ function webCleanUnusedFiles() {
     // Clean plugins JS + CSS
     gulp.src(wwwPath + '/plugins/**/*.js', {read: false})
       .pipe(clean()),
-    gulp.src(wwwPath + '/plugins/**/*.css', {read: false})
-      .pipe(clean())
+    gulp.src(wwwPath + '/plugins/**/*.css', {read: false}),
+      .pipe(clean()),
+
+    // Unused maps/config.js.map
+      gulp.src(wwwPath + '/maps/config.js.map', {read: false})
+        .pipe(clean())
   );
 }
 
@@ -676,49 +650,35 @@ function webExtensionCopyFiles() {
   const manifestFilter = filter(["**/manifest.json"], { restore: true });
   const txtFilter = filter(["**/*.txt"], { restore: true });
 
-  return es.merge(
-    // Copy files
-    gulp.src([
-      wwwPath + '/**/*',
+  // Copy files
+  return gulp.src([
+    wwwPath + '/**/*',
 
-      // Skip min files
-      '!' + wwwPath + '/dist_js/*.min.js',
-      '!' + wwwPath + '/dist_css/*.min.css',
+    // Skip API files
+    '!' + wwwPath + '/api',
+    '!' + wwwPath + '/dist_js/*-api.js',
+    '!' + wwwPath + '/dist_css/*-api.css',
+    '!' + wwwPath + '/maps/dist_js/*-api.js.map',
+    '!' + wwwPath + '/maps/dist_css/*-api.css.map',
 
-      // Skip API and html
-      '!' + wwwPath + '/api',
-      '!' + wwwPath + '/dist_js/*-api.js',
-      '!' + wwwPath + '/dist_css/*-api.css',
-      '!' + wwwPath + '/index.html',
-      '!' + wwwPath + '/debug.html',
+    // Skip web manifest
+    '!' + wwwPath + '/manifest.json',
 
-      // Remove unused files (feed.json) in extension
-      '!' + wwwPath + '/feed*.json',
+    // Add specific resource (and overwrite the default 'manifest.json')
+    resourcesPath + '/**/*.*'
+  ])
 
-      // Skip web manifest
-      '!' + wwwPath + '/manifest.json',
+  // Process TXT files: Add the UTF-8 BOM character
+  .pipe(txtFilter)
+  .pipe(header('\ufeff'))
+  .pipe(txtFilter.restore)
 
-      // Add specific resource (and overwrite the default 'manifest.json')
-      resourcesPath + '/**/*.*'
-    ])
+  // Replace version in 'manifest.json' file
+  .pipe(manifestFilter)
+  .pipe(replace(/\"version\": \"[^\"]*\"/, '"version": "' + version + '"'))
+  .pipe(manifestFilter.restore)
 
-    // Process TXT files: Add the UTF-8 BOM character
-    .pipe(txtFilter)
-    .pipe(header('\ufeff'))
-    .pipe(txtFilter.restore)
-
-    // Replace version in 'manifest.json' file
-    .pipe(manifestFilter)
-    .pipe(replace(/\"version\": \"[^\"]*\"/, '"version": "' + version + '"'))
-    .pipe(manifestFilter.restore)
-
-    .pipe(gulp.dest('./dist/web/ext')),
-
-    // Use debug as main index
-    gulp.src(wwwPath + '/debug.html')
-      .pipe(rename("index.html"))
-      .pipe(gulp.dest('./dist/web/ext'))
-  );
+  .pipe(gulp.dest('./dist/web/ext'));
 }
 
 function webExtensionZip() {
@@ -781,12 +741,12 @@ gulp.task('webPluginCopyFiles', ['webNgAnnotate'], webPluginCopyFiles);
 gulp.task('webPluginNgTemplate', ['webPluginCopyFiles'], webPluginNgTemplate);
 gulp.task('webPluginNgAnnotate', ['webPluginNgTemplate'],  webPluginNgAnnotate);
 
-gulp.task('webDebugFile', ['webPluginNgAnnotate'], webDebugFile);
-gulp.task('webUglify', ['webDebugFile'], webUglify);
+gulp.task('webUglify', ['webPluginNgAnnotate'], webUglify);
+
+// FIXME: The generated file 'index.integrity.html' always failed
 gulp.task('webIntegrity', ['webUglify'], webIntegrity);
 
-gulp.task('webApiDebugFile', ['webIntegrity'], webApiDebugFile);
-gulp.task('webApiUglify', ['webApiDebugFile'], webApiUglify);
+gulp.task('webApiUglify', ['webIntegrity'], webApiUglify);
 
 gulp.task('webCleanUnusedFiles', ['webApiUglify'], webCleanUnusedFiles);
 gulp.task('webCleanUnusedDirectories', ['webCleanUnusedFiles'], webCleanUnusedDirectories);
