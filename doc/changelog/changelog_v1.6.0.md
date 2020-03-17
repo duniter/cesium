@@ -1,4 +1,4 @@
-# Version v1.5.3
+# Version v1.6.0
 
 ## All platforms
 
