@@ -40,8 +40,7 @@ if (rootdir && !skip) {
 
     let indexPath = path.join(wwwPath, 'index.html');
 
-    const indexFilter = filter('**/index.html', {restore: true});
-    const jsFilter = filter(['**/*.js', '!**/vendor/*', '!**/config.js'], { restore: true });
+    const jsFilter = filter(['*/lib/**/*.js', '*/js/vendor/**/*.js'], { restore: true });
     const cssFilter = filter('**/*.css', { restore: true });
     const uglifyOptions = {
       toplevel: true,
