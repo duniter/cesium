@@ -81,11 +81,15 @@ if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
+
 echo "----------------------------------"
 echo "- Compiling sources..."
 echo "----------------------------------"
 cd ${PROJECT_DIR} || exit 1
 gulp config build --env default_fr || exit 1
+
+echo "Clean previous sha256 files..."
+rm -rf ${PROJECT_DIR}/dist/*.sha256
 
 echo "----------------------------------"
 echo "- Building Android artifact..."
