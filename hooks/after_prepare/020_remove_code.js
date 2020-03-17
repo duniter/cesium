@@ -67,7 +67,7 @@ if (rootdir) {
           .pipe(removeHtml('.hidden-xs.hidden-sm'))
           .pipe(removeHtml('.hidden-device'))
           .pipe(removeHtml('[remove-if][remove-if="device"]'))
-          .pipe(htmlmin(/*no options, to build comments*/))
+          .pipe(htmlmin(/*no options, to keep comments*/))
           .pipe(gulp.dest(wwwPath)),
 
         // Remove unused JS code + add ng annotations

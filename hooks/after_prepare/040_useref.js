@@ -7,8 +7,6 @@ const gulp = require('gulp'),
   filter = require('gulp-filter'),
   uglify = require('gulp-uglify-es').default,
   csso = require('gulp-csso'),
-  rev = require('gulp-rev'),
-  revReplace = require('gulp-rev-replace'),
   log = require('fancy-log'),
   colors = require('ansi-colors');
 
@@ -42,9 +40,9 @@ if (rootdir && !skip) {
 
     let indexPath = path.join(wwwPath, 'index.html');
 
+    const indexFilter = filter('**/index.html', {restore: true});
     const jsFilter = filter(['**/*.js', '!**/vendor/*', '!**/config.js'], { restore: true });
     const cssFilter = filter('**/*.css', { restore: true });
-    const revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
     const uglifyOptions = {
       toplevel: true,
       warnings: true,
@@ -69,16 +67,15 @@ if (rootdir && !skip) {
     es.concat(
       gulp.src(indexPath)
         .pipe(useref())      // Concatenate with gulp-useref
+
         .pipe(jsFilter)
         .pipe(uglify(uglifyOptions)) // Minify any javascript sources
         .pipe(jsFilter.restore)
+
         .pipe(cssFilter)
         .pipe(csso())               // Minify any CSS sources
         .pipe(cssFilter.restore)
-        .pipe(revFilesFilter)
-        .pipe(rev())                // Rename the concatenated files (but not index.html)
-        .pipe(revFilesFilter.restore)
-        .pipe(revReplace())         // Substitute in new filenames
+
         .pipe(gulp.dest(wwwPath))
      );
   }

@@ -277,6 +277,7 @@ function webClean() {
 
 function webCopyFiles() {
   log(colors.green('Preparing dist/web files...'));
+  let htmlminOptions = {removeComments: true, collapseWhitespace: true};
 
   var tmpPath = './dist/web/www';
   return es.merge(
@@ -291,7 +292,7 @@ function webCopyFiles() {
       .pipe(removeCode({"no-device": true}))
       .pipe(removeHtml('.hidden-no-device'))
       .pipe(removeHtml('[remove-if][remove-if="no-device"]'))
-      .pipe(htmlmin())
+      .pipe(htmlmin(htmlminOptions))
       .pipe(gulp.dest(tmpPath + '/templates')),
 
     // Copy index.html (and remove unused code)
@@ -299,7 +300,7 @@ function webCopyFiles() {
       .pipe(removeCode({'no-device': true}))
       .pipe(removeHtml('.hidden-no-device'))
       .pipe(removeHtml('[remove-if][remove-if="no-device"]'))
-      .pipe(htmlmin())
+      .pipe(htmlmin(/*no options, to keep comments*/))
       .pipe(gulp.dest(tmpPath)),
 
     // Copy API index.html
