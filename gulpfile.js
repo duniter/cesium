@@ -579,7 +579,7 @@ function webCleanUnusedFiles() {
     // Clean plugins JS + CSS
     gulp.src(wwwPath + '/plugins/**/*.js', {read: false})
       .pipe(clean()),
-    gulp.src(wwwPath + '/plugins/**/*.css', {read: false}),
+    gulp.src(wwwPath + '/plugins/**/*.css', {read: false})
       .pipe(clean()),
 
     // Unused maps/config.js.map
