@@ -18,6 +18,8 @@
 - [enh] Can toggle QR code into full screen
 - [enh] Show more QRcode (on a identity page, in the transactions history) 
 
+- [fix] Android: revert to minSdkVersion=16
+
 ### Firefox and Chrome extension
 
 - [enh] Allow to add Cesium as browser extension 
