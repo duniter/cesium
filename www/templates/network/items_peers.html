@@ -31,7 +31,7 @@
   <div ng-repeat="peer in search.results track by peer.id"
        class="item item-peer item-icon-left ink {{::ionItemClass}}"
        ng-class=":rebind:{'compacted': peer.compacted && compactMode}"
-       id="{{::helptipPrefix}}-peer-{{::$index}}"
+       ng-attr-id="{{::($index === 0 ? (helptipPrefix + '-peer-0') : undefined)}}"
        ng-click="selectPeer(peer)"
        ng-include="::'templates/network/item_content_peer.html'">
   </div>
