@@ -1,4 +1,4 @@
-# iOS Builds
+# Build Cesium for iOS
 
 Cesium can be build as desktop application for iOS. .
 
