@@ -2,12 +2,25 @@
 
 # Cesium
 
- - [Unhosted webapp](https://unhosted.org) client for any [Duniter](https://duniter.org) crypto-currency.
- - Manage your wallet, certify your friends, and more ! 
- - [Web site](https://cesium.app)
+Cesium is wallet client software for [Duniter](https://duniter.org) crypto-currency, like Ğ1.
+Cesium allow you to manage your wallet, certify your friends, and more!
+
+Cesium is an [Unhosted](https://unhosted.org) Progressive Web Application (PWA), using AngularJS and Ionic.
+
+Please visit th Cesium web site: [cesium.app](https://cesium.app)
 
 ## Install
 
+### As a web extension (Firefox, Chrome)
+
+ - Download the [latest extension release](https://github.com/duniter/cesium/releases/latest)
+ 
+ - Drag/drop the file into your browser;
+ 
+ - Confirm the installation.
+ 
+ That's it! A new button is appeared, on the top right corner.
+ 
 ### On desktop computer
 
  - Download the [latest release](https://github.com/duniter/cesium/releases/latest)
@@ -29,83 +42,7 @@
  - iOS
     * Coming soon...;
 
-### As a web site
 
-#### First installation
-
-Cesium can be easily installed on most web server : 
-
- - Download the [latest release](https://github.com/duniter/cesium/releases/latest) (file `cesium-vx.y.z-web.zip`); 
- - Unpack into an empty directory;
- - Configure the web server engine (e.g. apache, nginx):
-    * Add a new virtual host, that use the directory as `web root`. 
-    * Make sure the file `index.html` exist inside this directory.
-
-#### Update to last version
-
-On Linux distributions, an update script can be used to update your Cesium web site:
-
-```
-cd <CESIUM_WEB_ROOT>
-curl -kL https://git.duniter.org/clients/cesium-grp/cesium/raw/master/install.sh | bash
-```
-or:
-
-```
-cd <CESIUM_WEB_ROOT>
-wget -qO- https://git.duniter.org/clients/cesium-grp/cesium/raw/master/install.sh | bash
-```
-
-
-**Note**: You may need root permission to write files. If so just replace `| bash` with `| sudo bash`.
-
-#### Changing default settings 
-
-To change default configuration, on a Cesium web site:
-
-  - Edit the file `config.js` in the web root directory, and change some properties:
-  
-```js
-angular.module("cesium.config", [])
-.constant("csConfig", {
-  "fallbackLanguage": "en",
-  "rememberMe": false,
-  "timeWarningExpireMembership": 5184000,
-  "timeWarningExpire": 7776000,
-  "useLocalStorage": true,
-  "useRelative": true,
-  "decimalCount": 4,
-  "helptip": {
-    "enable": true,
-    "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
-  },
-  "node": {
-    "host": "g1.duniter.org",
-    "port": "443"
-  },
-	"plugins": {
-		"es": {
-			"enable": "true",
-			"host": "g1.data.duniter.fr",
-			"port": "443"
-		}
-	},
-	"version": "1.3.7",
-	"build": "2019-04-02T08:27:57.915Z"
-});
-```
-
-  - Configure a Duniter node:
- 
-     * set `node.host` and `node.port` to the default node address. 
-   
-  - Configure the optional extension for [Cesium+](https://git.duniter.org/clients/cesium-grp/cesium-plus-pod/)
- 
-     * set `plugins.es.host` and `plugins.es.port` to the default Cesium+ Pod (aka ES) address.
-   
-     * set `plugins.es.enable` with [true|false] to change the default extension state. 
-   
-To learn more about configuration options, see the [detailed documentation](doc/configuration.md).
  
 #### Yunohost package
     

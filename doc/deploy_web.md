@@ -10,33 +10,90 @@
 
 ## First deployment
 
-1. Create the root directory:
-    ```bash
-      cd /var/www/
-      sudo mkdir cesium
-      cd cesium 
-    ```
+1. Download the [latest release](https://github.com/duniter/cesium/releases/latest) (file `cesium-vx.y.z-web.zip`);
+ 
+2. Unpack into an empty directory;
 
-2. Download and unzip:
-    ```bash
-      cd /var/www/cesium
-      wget -kL https://.../cesiumvx.y.z.zip
-      unzip -o /var/www/cesium cesiumvx.y.z.zip
-    ```
+3. Change Cesium default settings, by editing the file `config.js` (see next bottom); 
 
-3. Configure Cesium default settings, by editing the file `config.js`; 
-
-4. Configure your web engine (e.g. Apache, nginx) to use the root directory, by creating a new `location` or a new `virtualhost`;
-
+4. Configure the web server engine (e.g. Apache, nginx):
+  * Add a new `location` (or a new `virtual host`), that use the directory as `web root`. 
+  * Make sure the file `index.html` exist inside this directory.
+ 
    Please refer to your engine documentation.
 
 5. Restart your web engine.
 
 That's it !
 
-## Update to the latest version
 
-## Example Bash script 
+## Configure Cesium default settings 
+
+To change default configuration, that Cesium will use:
+
+- Edit the file `config.js` in the web root directory, and change some properties:
+  
+```js
+angular.module("cesium.config", [])
+.constant("csConfig", {
+  "fallbackLanguage": "en",
+  "rememberMe": false,
+  "timeWarningExpireMembership": 5184000,
+  "timeWarningExpire": 7776000,
+  "useLocalStorage": true,
+  "useRelative": true,
+  "decimalCount": 4,
+  "helptip": {
+    "enable": true,
+    "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+  },
+  "node": {
+    "host": "g1.duniter.org",
+    "port": "443"
+  },
+	"plugins": {
+		"es": {
+			"enable": "true",
+			"host": "g1.data.duniter.fr",
+			"port": "443"
+		}
+	},
+	"version": "1.3.7",
+	"build": "2019-04-02T08:27:57.915Z"
+});
+```
+
+- Configure a Duniter node:
+  * set `node.host` and `node.port` to the default node address. 
+
+- Configure the optional extension for [Cesium+](https://git.duniter.org/clients/cesium-grp/cesium-plus-pod/)
+
+  * set `plugins.es.host` and `plugins.es.port` to the default Cesium+ Pod (aka ES) address.
+  * set `plugins.es.enable` with [true|false] to change the default extension state. 
+   
+   
+To learn more about configuration options, see the [detailed documentation](configuration.md).
+
+ 
+## Update to the last version
+
+On Linux server, you can use an update script:
+
+```
+cd <CESIUM_WEB_ROOT>
+curl -kL https://git.duniter.org/clients/cesium-grp/cesium/raw/master/install.sh | bash
+```
+or:
+
+```
+cd <CESIUM_WEB_ROOT>
+wget -qO- https://git.duniter.org/clients/cesium-grp/cesium/raw/master/install.sh | bash
+```
+
+> **Note**: You should NOT need root permission. Make sure to NEVER replace `| bash` by `| sudo bash`!
+> For any permission issue during installation, change permission on directory, then retry.
+
+## Another Bash script  
  
 This is a bash script example, that you can use to deploy the latest release, in a existing Cesium web site.
 
