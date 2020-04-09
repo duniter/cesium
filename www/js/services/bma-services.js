@@ -300,8 +300,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     };
 
     that.ready = function() {
-      if (that.started) return $q.when(true);
-      return that._startPromise || that.start();
+      if (that.started) return $q.when(that.alive);
+      return (that._startPromise || that.start());
     };
 
     that.start = function() {
@@ -321,11 +321,10 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       }
 
       console.debug("[BMA] Starting {0} {ssl: {1})...".format(that.server, that.useSsl));
-
       var now = Date.now();
 
       that._startPromise = $q.all([
-          csSettings.ready,
+          csSettings.ready(),
           that.isAlive()
         ])
         .then(function(res) {
