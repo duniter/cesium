@@ -245,9 +245,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
       })
 
       // Load data
-      .then(function(started) {
-        return loadData();
-      })
+      .then(loadData)
 
       // Emit ready event
       .then(function() {
