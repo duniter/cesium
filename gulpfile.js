@@ -768,8 +768,8 @@ gulp.task('help', function() {
   log(colors.green("NAME"));
   log(colors.green(""));
   log(colors.green("  config --env <config_name>  Configure Cesium. "));
-  log(colors.green("  webBuild                    Build Cesium has a web ZIP"));
-  log(colors.green("  webExtBuild                 Build Cesium has a webExtension"));
+  log(colors.green("  webBuild                    Build Cesium as ZIP archive"));
+  log(colors.green("  webExtBuild                 Build Cesium as a webExtension"));
   log(colors.green(""));
   log(colors.green("OPTIONS"));
   //log(colors.green(""));

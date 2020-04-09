@@ -223,14 +223,14 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
     return $timeout(start, 200);
   }
 
-  function start() {
+  function start(bmaAlive) {
     if (startPromise) return startPromise;
     if (started) return $q.when(data);
 
-    if (!BMA.started) {
+    if (!bmaAlive) {
       return BMA.ready()
         .then(function(alive) {
-          if (alive) return start(); // Loop
+          if (alive) return start(alive); // Loop
           return $timeout(start, 500); // Loop, after a delay, because BMA node seems to be not alive...
         });
     }

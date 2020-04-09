@@ -160,7 +160,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 echo "----------------------------------"
-echo "- Uploading web extension to Modzilla ..."
+echo "- Uploading web extension to Mozilla ..."
 echo "----------------------------------"
 . ${PROJECT_DIR}/scripts/release-sign-extension.sh $1
 # FIXME: always failed: but continue
