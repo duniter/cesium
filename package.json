@@ -11,7 +11,7 @@
   },
   "scripts": {
     "clean": "trash www/dist/** dist/web/* dist/desktop/**/*.deb platforms/android/**/*.apk",
-    "postinstall": "node -e \"try { require('fs').symlinkSync(require('path').resolve('node_modules/@bower_components'), 'www/lib', 'junction') } catch (e) { }\" && rm -f hooks/uglify-config.json hooks/after_prepare/uglify.js",
+    "postinstall": "node -e \"try { require('fs').symlinkSync(require('path').resolve('node_modules/@bower_components'), 'www/lib', 'junction') } catch (e) { }\" && rm -f hooks/uglify-config.json hooks/after_prepare/uglify.js www/lib/moment/meteor/moment.js",
     "install-platforms": "ionic cordova prepare",
     "start": "ionic serve",
     "docker:build": "sudo docker build . -t cesium/release",
@@ -101,7 +101,7 @@
   },
   "devDependencies": {
     "@ionic/cli": "^6.5.0",
-    "@ionic/v1-toolkit": "3.1.2",
+    "@ionic/v1-toolkit": "^3.1.2",
     "cordova-uglify": "^0.3.4",
     "del": "^3.0.0",
     "delete-empty": "^0.1.3",

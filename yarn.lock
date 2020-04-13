@@ -75,11 +75,11 @@
   version "1.5.11"
   resolved "https://codeload.github.com/angular/bower-angular-messages/tar.gz/4853e43f00243d582b4f6145b6096129ca91fbdf"
 
-"@bower_components/angular-moment@urish/angular-moment#1.3.0":
-  version "1.3.0"
-  resolved "https://codeload.github.com/urish/angular-moment/tar.gz/aa3e39f77214da5a718755a3582aac517a53a04f"
+"@bower_components/angular-moment@urish/angular-moment#v0.10.3":
+  version "0.10.3"
+  resolved "https://codeload.github.com/urish/angular-moment/tar.gz/07d373b7a2fd17ff25ab927ff7fcb0b53b2d13fd"
   dependencies:
-    moment ">=2.8.0 <3.0.0"
+    moment ">=2.8.0 <2.11.0"
 
 "@bower_components/angular-resource@angular/bower-angular-resource#v1.5.11":
   version "1.5.11"
@@ -410,7 +410,7 @@
     debug "^4.0.0"
     tslib "^1.9.0"
 
-"@ionic/v1-toolkit@3.1.2":
+"@ionic/v1-toolkit@^3.1.2":
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/@ionic/v1-toolkit/-/v1-toolkit-3.1.2.tgz#54ce9e52dbb2479cf3c6d9351e127307527e3720"
   integrity sha512-Pv1sOY7QBitEMk5QMGR/6QEgYvsHxza2ytYZ09sbttVq6jr0dKsCL69TU3pPI0jry4wa+DVZbnIKZf8I+0WiYQ==
@@ -6330,7 +6330,12 @@ mkdirp@^1.0.3:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
-"moment@>=2.8.0 <3.0.0", moment@^2.10.2, moment@^2.10.6:
+"moment@>=2.8.0 <2.11.0":
+  version "2.10.6"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.10.6.tgz#6cb21967c79cba7b0ca5e66644f173662b3efa77"
+  integrity sha1-bLIZZ8ecunsMpeZmRPFzZis++nc=
+
+moment@^2.10.2, moment@^2.10.6:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
   integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
