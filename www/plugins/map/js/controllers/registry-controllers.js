@@ -238,7 +238,7 @@ function MapRegistryViewController($scope, $filter, $templateCache, $interpolate
             var popupMarker = popupMarkerId && _.find(map._layers, function(layer) {
                 return (layer.options && layer.options.id === popupMarkerId);
               });
-            popupMarker && popupMarker.openPopup();
+            if (popupMarker) popupMarker.openPopup();
           }, 400);
         },
         firstTipSubmit: true,

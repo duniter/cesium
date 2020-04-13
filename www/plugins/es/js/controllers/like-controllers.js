@@ -256,7 +256,7 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
           if (!res || !res.comment) return; // Empty comment: skip
           options.comment = res.comment;
           options.level = res.level || (res.delete && 5) || undefined;
-          return $scope.reportAbuse(event, options) // Loop, with the comment
+          return $scope.reportAbuse(event, options); // Loop, with the comment
         });
     }
 
@@ -264,8 +264,8 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
     options.kind = 'ABUSE';
     return $scope.toggleLike(event, options)
       .then(function() {
-        UIUtils.toast.show('COMMON.REPORT_ABUSE.CONFIRM.SENT')
-      })
+        UIUtils.toast.show('COMMON.REPORT_ABUSE.CONFIRM.SENT');
+      });
   };
 
   csWallet.api.data.on.reset($scope, function() {
@@ -275,7 +275,7 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
         $scope.likeData[key].wasHitByPubkey = {};
         $scope.likeData[key].wasHitCount = 0;
       }
-    })
+    });
     $scope.$broadcast('$$rebind::like'); // notify binder
   }, this);
 

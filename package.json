@@ -100,7 +100,8 @@
     "phonegap-plugin-barcodescanner": "^8.1.0"
   },
   "devDependencies": {
-    "@ionic/v1-toolkit": "^3.1.2",
+    "@ionic/cli": "^6.5.0",
+    "@ionic/v1-toolkit": "3.1.2",
     "cordova-uglify": "^0.3.4",
     "del": "^3.0.0",
     "delete-empty": "^0.1.3",
@@ -135,7 +136,6 @@
     "gulp-uglify-es": "^2.0.0",
     "gulp-useref": "^3.1.0",
     "gulp-zip": "^3.2.0",
-    "@ionic/cli": "^6.5.0",
     "jshint": "^2.10.3",
     "lazypipe": "^1.0.2",
     "merge2": "^1.3.0",
@@ -143,8 +143,7 @@
     "node-sass": "^4.13.0",
     "playup": "^1.1.0",
     "vinyl-fs": "^3.0.3",
-    "yargs": "^5.0.0",
-    "cordova-plugin-secure-storage-android10": "duniter-cesium/cordova-plugin-secure-storage-android10#^6.0.3"
+    "yargs": "^5.0.0"
   },
   "peerDependencies": {
     "nopt": "4.0.1",

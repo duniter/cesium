@@ -742,7 +742,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         var url = csHttp.uri.parse(csSettings.data.plugins.es.latestReleaseUrl);
         var useSsl = (url.port == 443 || url.protocol === 'https:' || forceUseSsl);
         getRequest = csHttp.getWithCache(url.host, url.port, "/" + url.pathname, useSsl, csCache.constants.LONG);
-        that.raw.getLatestRelease = getRequest
+        that.raw.getLatestRelease = getRequest;
       }
 
       return getRequest()

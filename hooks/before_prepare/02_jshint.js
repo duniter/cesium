@@ -17,8 +17,8 @@ const jsFolders =  glob.sync("www/**/*.js", {nonull: true})
   .reduce((res, folder) => {
     if (folder.indexOf('www/dist/') !== -1 || // Exclude dist js
       folder.indexOf('/plugins/rml') !== -1 || // Exclude plugin tutorial
-      folder.indexOf('www/js/vendor') || // exclude vendor libs
-      folder.indexOf('www/lib') // exclude www/lib
+      folder.indexOf('www/js/vendor') !== -1 || // exclude vendor libs
+      folder.indexOf('www/lib') !== -1 // exclude www/lib
     ) {
       return res;
     }
@@ -30,7 +30,7 @@ const jsFolders =  glob.sync("www/**/*.js", {nonull: true})
 Object.keys(jsFolders).forEach(folder => processFiles(folder));
 function processFiles(dir) {
     let errorCount = 0;
-  log(colors.grey('Processing folder ' + folder + '...'));
+  log(colors.grey('Processing folder ' + dir + '...'));
     fs.readdir(dir, function(err, list) {
         if (err) {
             log(colors.red('processFiles err: ' + err));
@@ -38,7 +38,7 @@ function processFiles(dir) {
         }
         async.eachSeries(list, function(file, innercallback) {
             file = dir + '/' + file;
-            log(colors.grey('Processing file ' + file + '...'));
+            log(colors.grey('Processing file ./' + file + '...'));
             fs.stat(file, function(err, stat) {
                 if(!stat.isDirectory()) {
                     if(path.extname(file) === ".js") {
@@ -57,11 +57,11 @@ function processFiles(dir) {
             });
         }, function(error) {
             if(errorCount > 0) {
-              log(colors.red('KO Error '));
+              log(colors.red('JS Error detected (see below)'));
                 process.exit(1);
             }
             else {
-              log(colors.red('OK NO Error '));
+              //log(colors.red('OK NO Error '));
             }
         });
     });
@@ -80,7 +80,7 @@ function lintFile(file, callback) {
           const out = jshint.data(),
           errors = out.errors;
           for(let j = 0; j < errors.length; j++) {
-            log(colors.red(`${colors.bold(file)}:${colors.bold(errors[j].line)} -> ${colors.bold(errors[j].evidence.trim())}`));
+            log(colors.red(`${colors.bold(file + ':' + errors[j].line + ':0' )} -> ${colors.bold(errors[j].evidence.trim())}`));
             log(colors.red(` ${errors[j].reason}`));
           }
           log('-----------------------------------------');

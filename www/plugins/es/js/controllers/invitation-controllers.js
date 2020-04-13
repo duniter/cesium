@@ -231,7 +231,7 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
     $scope.hideActionsPopover();
 
     return $timeout(function() {
-      return esModals.showNewInvitation({})
+      return esModals.showNewInvitation({});
     }, 500); // Timeout need, to avoid freeze
   };
 

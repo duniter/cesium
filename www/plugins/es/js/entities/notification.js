@@ -166,7 +166,7 @@ function EsNotification(json, markAsReadCallback) {
       that.icon = 'ion-alert-circled energized';
 
       // If deletion has been asked, change the message
-      if (json.code === 'MODERATION_RECEIVED' && level == 5) {
+      if (json.code === 'MODERATION_RECEIVED' && json.level === 5) {
         that.message = 'EVENT.PAGE.DELETION_RECEIVED';
         that.icon = 'ion-trash-a assertive';
       }
