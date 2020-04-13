@@ -22,18 +22,17 @@
 
 
     <div ng-show="formData.imageCropStep == 1">
+
       <p translate>PROFILE.MODAL_AVATAR.SELECT_FILE_HELP</p>
 
-      <!-- Add picture button -->
-      <div class="item card text-center padding ink"
-           ng-click="openFileSelector()">
-        <i class="ion-image stable" style="font-size:150px"></i>
-        <b class="ion-plus gray" style="position:relative; font-size:80px; top:-51px; right: 19px;"></b>
-        <p translate>PROFILE.MODAL_AVATAR.BTN_SELECT_FILE</p>
+      <!-- Add picture drop zone -->
+      <div drop-zone="onFileChanged(file)">
+        <div file-select="onFileChanged(file)" accept="image/*">
+          <i class="ion-image stable" style="font-size:150px"></i>
+          <b class="ion-plus gray" style="position:relative; font-size:80px; top:-51px; right: 19px;"></b>
+          <p class="gray" translate>COMMON.CHOOSE_FILE</p>
+        </div>
       </div>
-
-      <input type="file" name="fileInput" accept="image/*" id="fileInput" onchange="angular.element(this).scope().fileChanged(event)"
-             style="visibility:hidden; position:absolute;"/>
     </div>
 
     <div ng-show="formData.imageCropStep == 2">
@@ -73,23 +72,28 @@
 
       <div class="item card padding hero" style="height: 110px;">
         <div class="content">
-          <img class="avatar" ng-src="{{formData.result}}" style="height: 88px; width: 88px;">
+          <img class="avatar" ng-src="{{formData.result|trustAsHtml}}" style="height: 88px; width: 88px;">
         </div>
       </div>
     </div>
 
     <!-- buttons bar -->
     <div class="padding hidden-xs text-right">
-      <button class="button button-clear button-dark ink" ng-click="closeModal()" type="button" translate>
+      <button class="button button-clear button-dark ink" ng-click="closeModal()" type="button"
+              ng-if="formData.imageCropStep <= 2" translate>
         COMMON.BTN_CANCEL
       </button>
+      <button class="button button-stable icon-left ion-chevron-left ink" ng-click="doPrevious()" translate
+              ng-if="formData.imageCropStep >= 2">
+        COMMON.BTN_BACK
+      </button>
       <button class="button button-calm icon-right ion-chevron-right ink" ng-click="doCrop()" translate
-              ng-disabled="formData.imageCropStep == 1"
+              ng-disabled="formData.imageCropStep === 1"
               ng-if="formData.imageCropStep <= 2">
         COMMON.BTN_NEXT
       </button>
       <button class="button button-positive ink" ng-click="closeModal(formData.result)" translate
-              ng-if="formData.imageCropStep == 3">
+              ng-if="formData.imageCropStep === 3">
         COMMON.BTN_CONTINUE
       </button>
     </div>
