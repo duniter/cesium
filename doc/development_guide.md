@@ -27,7 +27,7 @@ To build Cesium, you will have to:
       
 3. Installing node build tools, as global dependencies:
    ```bash
-      npm install -g yarn gulp cordova ionic
+      npm install -g yarn gulp cordova @ionic/cli
    ```
    
 ## Get the source code and dependencies
@@ -40,20 +40,21 @@ To build Cesium, you will have to:
 2. Install project dependencies:    
    ```bash
       cd cesium
-      yarn install
+      yarn
    ```
 
 3. Installing Cordova plugins (required to build Android and iOS artifacts): 
    ```bash
       export JAVA_HOME=/path/to/jdk-8
+      export PATH=$JAVA_HOME/bin:$PATH
       ionic cordova prepare
    ```
 
    This should create new directories `platforms/android` and `platforms/ios`.
 
-   > To remind: check that your command line is configured:
+   > As a reminder: check that your command line is configured correctly:
    > - You must place yourself in the directory of the application: `cd cesium`
-   > - and be configured for NodeJs v10: `nvm use 10` (please check using the command `node --version`)
+   > - and working with NodeJs **v10**: `nvm use 10` (please check using the command `node --version`)
     
 
 ## Prepare Cesium default config
