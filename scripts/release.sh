@@ -34,7 +34,7 @@ fi
 echo "Current Android version: $currentAndroid"
 
 # Check version format
-if [[ ! $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ || ! $3 =~ ^[0-9]+$ ]]; then
+if [[ ! $2 =~ ^[0-9]+.[0-9]+.[0-9]+(-(alpha|beta|rc)[-0-9]*)?$ || ! $3 =~ ^[0-9]+$ ]]; then
   echo "Wrong version format"
   echo "Usage:"
   echo " > ./release.sh [pre|rel] <version>  <android-version> <release_description>"
@@ -117,7 +117,7 @@ cd ${PROJECT_DIR} || exit 1
 
 # Run web build
 gulp config --env default
-gulp webBuild --release
+gulp webBuild webExtBuild --release
 if [[ $? -ne 0 ]]; then
   exit 1
 fi

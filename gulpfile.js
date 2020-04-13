@@ -269,9 +269,7 @@ function pluginSass() {
 
 function webClean() {
   return del([
-    './dist/web/www',
-    './dist/web/ext',
-    './dist/web/build'
+    './dist/web/www'
   ]);
 }
 
@@ -694,9 +692,16 @@ function webExtensionZip() {
 
 function webBuildSuccess(done) {
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
-  log(colors.green("Web artifacts created at: 'dist/web/build/cesium-v" + version + "-web.zip' and 'dist/web/build/cesium-v" + version + "-extension.zip'"));
+  log(colors.green("Web artifact created at: 'dist/web/build/cesium-v" + version + "-web.zip'"));
   done();
 }
+
+function webExtBuildSuccess(done) {
+  var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+  log(colors.green("Web extension artifact created at: 'dist/web/build/cesium-v" + version + "-extension.zip'"));
+  done();
+}
+
 
 /* --------------------------------------------------------------------------
    -- Define gulp public tasks
@@ -757,7 +762,7 @@ gulp.task('webExtensionClean', [], webExtensionClean);
 gulp.task('webExtensionCopyFiles', ['webExtensionClean', 'webCleanUnusedDirectories'], webExtensionCopyFiles);
 gulp.task('webExtensionZip', ['webExtensionCopyFiles'], webExtensionZip);
 
-gulp.task('webBuild', ['webZip', 'webExtensionZip'], webBuildSuccess);
+gulp.task('webBuild', ['webZip'], webBuildSuccess);
 gulp.task('build:web', ['webBuild']); // = webBuild
 
 gulp.task('webExtBuild', ['webExtensionZip']);
