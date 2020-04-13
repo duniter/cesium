@@ -97,8 +97,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "1.6.1",
-	"build": "2020-04-13T15:04:20.243Z",
+	"version": "1.6.2-alpha",
+	"build": "2020-04-13T18:04:09.778Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
