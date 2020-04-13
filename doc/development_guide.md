@@ -45,7 +45,8 @@ To build Cesium, you will have to:
 
 3. Installing Cordova plugins (required to build Android and iOS artifacts): 
    ```bash
-      ionic cordova preapre
+      export JAVA_HOME=/path/to/jdk-8
+      ionic cordova prepare
    ```
 
    This should create new directories `platforms/android` and `platforms/ios`.
