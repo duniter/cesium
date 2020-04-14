@@ -10,7 +10,6 @@
   "browser_action" : {
     "default_title": "Cesium",
     "default_icon": {
-      "16": "img/logo.svg",
       "32": "img/logo_32px.png",
       "60": "img/logo_60px.png",
       "96": "img/logo_96px.png",
@@ -18,7 +17,6 @@
     }
   },
   "icons": {
-    "16": "img/logo.svg",
     "32": "img/logo_32px.png",
     "60": "img/logo_60px.png",
     "96": "img/logo_96px.png",
