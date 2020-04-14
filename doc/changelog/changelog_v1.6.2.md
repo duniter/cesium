@@ -3,7 +3,10 @@
 ## All platforms
 
 - [enh] Improve private message icon, on a identity profile - fix [#900](https://git.duniter.org/clients/cesium-grp/cesium/-/issues/900)
-
+- [enh] Improve avatar modal, when editing a Cesium+ profile:
+  * allow drag and drop;
+  * add a "previous" button;
+  
 - [fix] Fix some ES translations
 - [fix] API: error 'qrcode not defined' - fix [#903](https://git.duniter.org/clients/cesium-grp/cesium/-/issues/903)
 
