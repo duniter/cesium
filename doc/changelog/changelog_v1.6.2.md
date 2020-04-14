@@ -1,20 +1,26 @@
-# Version v1.6.0
+# Version v1.6.2
 
 ## All platforms
 
+- [enh] Improve private message icon, on a identity profile - fix [#900](https://git.duniter.org/clients/cesium-grp/cesium/-/issues/900)
+
 - [fix] Fix some ES translations
+- [fix] API: error 'qrcode not defined' - fix [#903](https://git.duniter.org/clients/cesium-grp/cesium/-/issues/903)
 
 ### Desktop
 
 - [enh] Add a splash screen
 
+- [fix] Fix command line option `--debug`
+- [fix] Open popup to select local Duniter node, if detected  
+
 ### Android
 
-- [enh] Fix Android 10 secure storage 
+- [enh] Fix Android 10 compatibility (due to secure storage Cordova plugin) - fix [#908](https://git.duniter.org/clients/cesium-grp/cesium/-/issues/898)
 
 ### Firefox and Chrome extension
 
-- [fix] Fix profile avatar and page's pictures
+- [fix] Unable to set avatar and page's pictures - fix [#904](https://git.duniter.org/clients/cesium-grp/cesium/-/issues/904)
 
 ### Build from source
 
