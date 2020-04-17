@@ -73,8 +73,7 @@ angular.module('cesium.es.wot.services', ['ngResource', 'cesium.es.http.services
 
           return result;
         });
-    };
-
+    }
 
     function cleanAllCache() {
       console.debug("[ES] [wot] Cleaning cache {prefix: '{0}'}...".format(cachePrefix));

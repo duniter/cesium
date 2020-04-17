@@ -360,7 +360,7 @@
      "TECHNICAL_DIVIDER": "Dati tecnici",
      "MODAL_AVATAR": {
        "TITLE": "Avatar",
-       "SELECT_FILE_HELP": "<b>Scegliere un'immagine</b>, cliccando sul bottone qui sotto:",
+       "SELECT_FILE_HELP": "<b>Scegliere un'immagine</b>:",
        "BTN_SELECT_FILE": "Scegliere un'immagine",
        "RESIZE_HELP": "<b>Ritagliare l'immagine</b> se necessario. Cliccare sull'immagine permette di spostarla. Cliccando nella zona a basso sinistra permette di fare uno zoom-in.",
        "RESULT_HELP": "<b>Questo è il risultato</b> come visibile sul suo profilo:"

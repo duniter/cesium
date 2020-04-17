@@ -230,7 +230,7 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
         return dataset.yAxisID && dataset.yAxisID === meta.yAxisID;
       }).length;
       if (yAxisDatasetCount === 1) {
-        ci.scales[meta.yAxisID].options.display = !(meta.hidden === true);
+        ci.scales[meta.yAxisID].options.display = (meta.hidden !== false);
       }
     }
 

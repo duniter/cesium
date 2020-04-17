@@ -11,13 +11,13 @@
           class="button button-fab button-fab-top-left button-fab-hero mini button-stable spin"
           style="left: 88px;"
           ng-click="showNewMessageModal()">
-    <i class="icon ion-compose"></i>
+    <i class="icon ion-email"></i>
   </button>
 </ng-if>
 
 <!-- Buttons section -->
 <ng-if ng-if=":state:enable && extensionPoint === 'buttons'">
-  <button class="button button-stable button-small-padding icon ion-compose"
+  <button class="button button-stable button-small-padding icon ion-email"
           ng-disabled="loading"
           ng-click="showNewMessageModal()"
           title="{{'MESSAGE.BTN_WRITE' | translate}}">

@@ -387,7 +387,7 @@
     "TECHNICAL_DIVIDER": "Teknikaj informoj",
     "MODAL_AVATAR": {
       "TITLE": "Profil-foto",
-      "SELECT_FILE_HELP": "Bonvolu <b>elekti bildo-dosieron</b>, alklakante la ĉi-suban butonon:",
+      "SELECT_FILE_HELP": "Bonvolu <b>elekti bildo-dosieron</b>:",
       "BTN_SELECT_FILE": "Elekti foton",
       "RESIZE_HELP": "<b>Rekadri la bildon</b>, laŭbezone. Pluigi klakon sur la bildo ebligas movi ĝin. Alklaku la zonon malsupre maldekstre por zomi.",
       "RESULT_HELP": "<b>Jen la rezulto</b> tiel videbla ĉe via profilo:"

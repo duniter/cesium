@@ -593,7 +593,7 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
     $http.get(feedUrl, {responseType: 'json', cache: csCache.get(null, csCache.constants.LONG)})
       .success(function(feed) {
         console.debug('[home] Feeds loaded in {0}ms'.format(Date.now()-now));
-        if (!feed || !feed.items || !feed.items.length) return // skip if empty
+        if (!feed || !feed.items || !feed.items.length) return; // skip if empty
 
         feed.items = feed.items.reduce(function(res, item) {
           if (!item || (!item.title && !item.content_text && !item.content_html)) return res; // Skip
@@ -629,7 +629,7 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
         console.error('[home] Failed to load feeds.');
         $scope.feed = null;
       });
-  }
+  };
 
   /**
    * Catch click for quick fix

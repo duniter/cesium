@@ -40,7 +40,7 @@ WEB_EXT_ID="{6f9922f7-a054-4609-94ce-d269993246a5}"
 
 GRADLE_VERSION=4.10.3
 GRADLE_HOME=${HOME}/.gradle/${GRADLE_VERSION}
-CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL=https\://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-all.zip
+CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL=https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-all.zip
 
 
 # Override with a local file, if any
@@ -96,7 +96,7 @@ if [[ ! -d "${ANDROID_SDK_ROOT}" ]]; then
 fi
 
 # Export Android SDK tools to path
-ANDROID_SDK_TOOLS_ROOT=${ANDROID_SDK_ROOT}/tools
+too=${ANDROID_SDK_ROOT}/tools
 PATH=${ANDROID_SDK_TOOLS_ROOT}/bin:${GRADLE_HOME}/bin:$PATH
 
 # Export useful variables
@@ -133,21 +133,18 @@ fi
 # Install global dependencies
 IONIC_PATH=`which ionic`
 CORDOVA_PATH=`which cordova`
-if [[ "_" == "_${IONIC_PATH}" || "_" == "_${CORDOVA_PATH}" ]]; then
-  echo "Installing global dependencies..."
-  npm install -g cordova ionic native-run yarn
-  if [[ $? -ne 0 ]]; then
-      exit 1
-  fi
-fi
-
+CORDOVA_RES_PATH=`which cordova-res`
 NATIVE_RUN_PATH=`which native-run`
-if [[ "_" == "_${NATIVE_RUN_PATH}" ]]; then
+WEB_EXT_PATH=`which web-ext`
+if [[ "_" == "_${IONIC_PATH}" || "_" == "_${CORDOVA_PATH}" || "_" == "_${CORDOVA_RES_PATH}" || "_" == "_${NATIVE_RUN_PATH}" || "_" == "_${WEB_EXT_PATH}" ]]; then
   echo "Installing global dependencies..."
-  npm install -g native-run
+  npm install -g cordova cordova-res @ionic/cli web-ext native-run yarn
   if [[ $? -ne 0 ]]; then
       exit 1
   fi
+
+  # Make sure Ionic use yarn
+  ionic config set -g yarn true
 fi
 
 # Install project dependencies

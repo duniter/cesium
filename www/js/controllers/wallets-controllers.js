@@ -756,7 +756,6 @@ function WalletListImportModalController($scope, $timeout, BMA, csWallet) {
   $scope.validatingFile = false;
 
   $scope.onFileChanged = function(file) {
-    console.log(file);
     $scope.validatingFile = true;
 
     $scope.hasContent = angular.isDefined(file) && file !== '';

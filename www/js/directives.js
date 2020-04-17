@@ -389,10 +389,11 @@ angular.module('cesium.directives', [])
         elem.bind('drop', function(e) {
           e.stopPropagation();
           e.preventDefault();
+          var file = e.dataTransfer.files[0];
           var fileData = {
-            name: e.dataTransfer.files[0].name,
-            size: e.dataTransfer.files[0].size,
-            type: e.dataTransfer.files[0].type
+            name: file.name,
+            size: file.size,
+            type: file.type
           };
 
           var reader = new FileReader();
@@ -400,6 +401,7 @@ angular.module('cesium.directives', [])
             scope.$apply(function () {
               fn(scope, {
                 file: {
+                  file: file,
                   fileContent: onLoadEvent.target.result,
                   fileData : fileData}
               });
@@ -433,16 +435,18 @@ angular.module('cesium.directives', [])
 
         fileInput.on('change', function (onChangeEvent) {
           var reader = new FileReader();
+          var file = this.files[0];
           var fileData = {
-            name: this.files[0].name,
-            size: this.files[0].size,
-            type: this.files[0].type
+            name: file.name,
+            size: file.size,
+            type: file.type
           };
 
           reader.onload = function(onLoadEvent) {
             scope.$applyAsync(function() {
               fn(scope, {
                 file: {
+                  file: file,
                   fileContent: onLoadEvent.target.result,
                   fileData : fileData}
               });
@@ -476,4 +480,3 @@ angular.module('cesium.directives', [])
       }
     };
   });
-;

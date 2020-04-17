@@ -2089,15 +2089,15 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       if (!data.pubkey) throw new Error('User not login!');
       return (data.children || []).reduce(function(res, wallet) {
         return wallet.data.pubkey ? res.concat(wallet.data.pubkey) : res;
-      }, [data.pubkey])
-    }
+      }, [data.pubkey]);
+    },
 
     getByPubkey = function(pubkey) {
       if (!pubkey) throw new Error("Missing 'pubkey' argument !");
       if (!data.pubkey) throw new Error('User not login!');
       if (data.pubkey === pubkey) return exports; // main wallet
       return getChildWalletByPubkey(pubkey);
-    }
+    },
 
     downloadChildrenWalletFile = function() {
       return $q.all([

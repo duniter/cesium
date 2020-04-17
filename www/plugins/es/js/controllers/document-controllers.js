@@ -356,7 +356,7 @@ function ESLastDocumentsController($scope, $controller, $timeout, $state, $filte
   $scope.selectDocument = function(event, doc) {
     if (!doc || !event || event.defaultPrevented) return;
     event.stopPropagation();
-
+    var anchor;
     if (doc.index === "user" && doc.type === "profile") {
       $state.go('app.wot_identity', {pubkey: doc.pubkey, uid: doc.name});
     }
@@ -364,18 +364,18 @@ function ESLastDocumentsController($scope, $controller, $timeout, $state, $filte
       $state.go('app.view_page', {title: doc.title, id: doc.id});
     }
     else if (doc.index === "page" && doc.type === "comment") {
-      var anchor = $filter('formatHash')(doc.id);
+      anchor = $filter('formatHash')(doc.id);
       $state.go('app.view_page_anchor', {title: doc.title, id: doc.record, anchor: anchor});
     }
     else if (doc.index === "group" && doc.type === "record") {
       $state.go('app.view_group', {title: doc.title, id: doc.id});
     }
     else if (doc.index === "group" && doc.type === "comment") {
-      var anchor = $filter('formatHash')(doc.id);
+      anchor = $filter('formatHash')(doc.id);
       $state.go('app.view_group_anchor', {title: doc.title, id: doc.record, anchor: anchor});
     }
     else {
-      console.warn("Click on this kind of document not implement yet!", doc)
+      console.warn("Click on this kind of document not implement yet!", doc);
     }
   };
 

@@ -648,7 +648,7 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
       // api extension
       api: api
     };
-  };
+  }
 
   var service = new EsNetwork('default');
 

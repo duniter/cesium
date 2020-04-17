@@ -80,4 +80,3 @@ if [[ -d "${PROJECT_DIR}/.local/android" ]]; then
 else
   echo "No directory '${PROJECT_DIR}/.local/android' found. Please create it, with a file 'release-signing.properties' for release signing"
 fi
-
