@@ -1,0 +1,76 @@
+{
+  "MAP": {
+    "COMMON": {
+      "SEARCH_DOTS": "Buscar...",
+      "BTN_LOCALIZE_ME": "Localizarme"
+    },
+    "NETWORK": {
+      "LOOKUP": {
+        "BTN_MAP": "Mapa",
+        "BTN_MAP_HELP": "Abrir mapa de nodos"
+      },
+      "VIEW": {
+        "TITLE": "Mapa de nodos",
+        "LAYER": {
+          "MEMBER": "Nodos miembro",
+          "MIRROR": "Nodos espejo",
+          "OFFLINE": "Nodos fuera de línea"
+        }
+      }
+    },
+    "WOT": {
+      "LOOKUP": {
+        "BTN_MAP": "Mapa",
+        "BTN_MAP_HELP": "Abrir el mapa de miembros"
+      },
+      "VIEW": {
+        "TITLE": "Mapa de miembros",
+        "LAYER": {
+          "MEMBER": "<i class=\"icon ion-person positive\"></i> Miembros",
+          "PENDING": "<i class=\"icon ion-clock energized\"></i> Candidaturas pendientes",
+          "WALLET": "<i class=\"icon ion-card gray\"></i> Cuentas simples"
+        }
+      },
+      "ERROR": {
+        "LOAD_POSITION_FAILED": "No se pudieron cargar las coordenadas a mostrar."
+      }
+    },
+    "REGISTRY": {
+      "LOOKUP": {
+        "BTN_MAP": "Mapa",
+        "BTN_MAP_HELP": "Abrir el mapa de páginas"
+      },
+      "VIEW": {
+        "TITLE": "Mapa de páginas",
+        "LAYER": {
+          "SHOP": "<i class=\"icon ion-page-shop positive\"></i> Tiendas locales",
+          "COMPANY": "<i class=\"icon ion-page-company positive\"></i> Empresas",
+          "ASSOCIATION": "<i class=\"icon ion-page-association energized\"></i> Asociaciones",
+          "INSTITUTION": "<i class=\"icon ion-page-institution gray\"></i> Instituciones"
+        }
+      }
+    },
+    "PROFILE": {
+      "MARKER_HELP": "<b>Arrastre y suelte</b> este marcador para <b>actualizar<br/>su posición</b>, o use los botones<br/>arriba del mapa."
+    },
+    "ERROR": {
+      "LOCALIZE_ME_FAILED": "No se pudo obtener su posición actual"
+    },
+    "SETTINGS": {
+      "MAP_DIVIDER": "Mapas",
+      "ENABLE_GOOGLE_API": "Habilitar los servicios de Google API",
+      "ENABLE_GOOGLE_API_HELP": "Permite en el <b>mapa de miembros</b> mostrar cuentas con una dirección postal pero sin coordenadas introducidas.",
+      "GOOGLE_API_KEY": "Llave de Google API",
+      "BTN_GOOGLE_API": "Obtener una llave",
+      "BTN_GOOGLE_API_WARNING": "Necesita una cuenta de Google",
+      "GOOGLE_API_KEY_PLACEHOLDER": "ej: AIzaqyAgszvWm0tM81x1sMK_ipDHBI7EowLqR7I"
+    },
+    "HELP": {
+      "TIP": {
+        "WOT": "Este mapa muestra <b>perfiles con una posición</b>, tengan miembresía o no.<br/><br/>Solo los perfiles cuya opción &quot;aparecer en el mapa&quot; ha sido habilitada.",
+        "WOT_BTN_LAYERS": "<b>Fitrar los datos mostrados</b>: membresías, candidaturas pendientes, cuentas simples, etc.",
+        "WOT_BTN_SEARCH": "Puede <b>buscar</b> por nombre, llave pública o seudónimo."
+      }
+    }
+  }
+}
