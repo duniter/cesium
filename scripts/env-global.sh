@@ -95,9 +95,8 @@ if [[ ! -d "${ANDROID_SDK_ROOT}" ]]; then
   fi
 fi
 
-# Export Android SDK tools to path
-too=${ANDROID_SDK_ROOT}/tools
-PATH=${ANDROID_SDK_TOOLS_ROOT}/bin:${GRADLE_HOME}/bin:$PATH
+# Add Java, Android SDK tools to path
+PATH=${ANDROID_SDK_TOOLS_ROOT}/bin:${GRADLE_HOME}/bin:${JAVA_HOME}/bin$:$PATH
 
 # Export useful variables
 export PATH \
@@ -121,9 +120,7 @@ if [[ -d "${NVM_DIR}" ]]; then
     # Or install it
     if [[ $? -ne 0 ]]; then
         nvm install ${NODEJS_VERSION}
-        if [[ $? -ne 0 ]]; then
-            exit 1;
-        fi
+        [[ $? -ne 0 ]] && exit 1
     fi
 else
     echo "nvm (Node version manager) not found (directory ${NVM_DIR} not found). Please install, and retry"

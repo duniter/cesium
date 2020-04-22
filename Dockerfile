@@ -1,5 +1,9 @@
-FROM     ubuntu:18.04
+FROM  node:10-alpine
 LABEL maintainer="benoit [dot] lavenier [at] e-is [dot] pro"
+LABEL version="1.6.3"
+LABEL description="Cesium Wallet for Ğ1 libre currency"
+
+ARG CESIUM_VER="1.6.3"
 
 ENV DEBIAN_FRONTEND=noninteractive \
     NODE_VERSION=10.20.0 \
@@ -11,28 +15,27 @@ ENV DEBIAN_FRONTEND=noninteractive \
     GULP_VERSION=2.2.0
 
 # Install basics
-RUN apt-get update && \
-    apt-get install -y git wget curl unzip build-essential software-properties-common ruby ruby-dev ruby-ffi gcc make python && \
-    curl --retry 3 -SLO "http://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" && \
-    tar -xzf "node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local --strip-components=1 && \
-    rm "node-v$NODE_VERSION-linux-x64.tar.gz"
+RUN apk update && \
+        apk add ca-certificates wget curl git && \
+        update-ca-certificates && \
+    apk add --update python make g++
 
-RUN mkdir -p /home/root && \
-    chmod -R 777 /home/root
-WORKDIR /home/root
+# create group and user cesium
+RUN addgroup -S -g 1111 cesium && \
+	adduser -SD -h /cesium -G cesium -u 1111 cesium
+#RUN mkdir -p /var/lib/cesium /etc/cesium && chown cesium:cesium /var/lib/cesium /etc/cesium
 
-# Install global nodeJS dependencies
-RUN npm install -g npm@"$NPM_VERSION" && \
-    npm install -g yarn@"$YARN_VERSION" gulp@"$GULP_VERSION" cordova@"$CORDOVA_VERSION" cordova-res@"$CORDOVA_RES_VERSION" @ionic/cli@"$IONIC_CLI_VERSION" && \
-    npm cache clear --force
+# Install global dependencies
+RUN yarn global add gulp@"$GULP_VERSION" @ionic/cli@"$IONIC_CLI_VERSION"
 
-# Install source code
-#RUN git config --global user.email "user.name@domain.com" && \
-#    git config --global user.name "User Name" && \
-RUN git clone https://git.duniter.org/clients/cesium-grp/cesium.git && \
-    cd cesium && \
-    yarn install
+# copy source tree
+COPY ./ ./
 
-WORKDIR cesium
+# Install project dependencies
+# Workaround need for node-sass (- )see https://github.com/yarnpkg/yarn/issues/4867)
+RUN yarn install --ignore-engines && \
+    yarn remove node-sass && yarn add node-sass
+
+WORKDIR /cesium
 EXPOSE 8100 35729
 CMD ["yarn", "run", "start"]
