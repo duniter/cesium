@@ -66,5 +66,5 @@ if [[ -f "${XPI_FILE}" ]]; then
   cd ${PROJECT_DIR}/dist/web/build/
 
   # add a 'v' before version
-  mv ${XPI_BASENAME} ${PROJECT_NAME}-v$current-an+fx.xpi
+  mv ${XPI_BASENAME} ${PROJECT_NAME}-v$current-extension-firefox.xpi
 fi

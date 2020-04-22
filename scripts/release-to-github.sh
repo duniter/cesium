@@ -129,8 +129,8 @@ else
 fi
 
 # Upload web extension (XPI) file
-WEB_EXT_XPI_BASENAME="${PROJECT_NAME}-v$current-an+fx.xpi"
-WEB_EXT_XPI_FILE="${DIST_WEB}/${WEB_EXT_BASENAME}"
+WEB_EXT_XPI_BASENAME="${PROJECT_NAME}-v$current-extension-firefox.xpi"
+WEB_EXT_XPI_FILE="${DIST_WEB}/${WEB_EXT_XPI_BASENAME}"
 if [[ -f "${WEB_EXT_XPI_FILE}" ]]; then
   result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/zip' -T "${WEB_EXT_XPI_FILE}" "${upload_url}?name=${WEB_EXT_XPI_BASENAME}")
   browser_download_url=$(echo "$result" | grep -P "\"browser_download_url\":[ ]?\"[^\"]+" | grep -oP "\"browser_download_url\":[ ]?\"[^\"]+"  | grep -oP "https://[A-Za-z0-9/.-]+")
