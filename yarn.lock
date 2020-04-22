@@ -301,10 +301,10 @@
     wrap-ansi "^6.0.0"
     write-file-atomic "^3.0.0"
 
-"@ionic/cli@^6.5.0":
-  version "6.5.0"
-  resolved "https://registry.yarnpkg.com/@ionic/cli/-/cli-6.5.0.tgz#8198bef2034e819a324bb7cb80a6de0a69db0180"
-  integrity sha512-FyalQsiBAD/YhJ4FKpfRsFDXLEQ68E8tVivl8vfERAo8MLrQUwO0TSqtZKh5dWmRfkpMFnJa4joPo/9Qj6sn5Q==
+"@ionic/cli@^6.6.0":
+  version "6.6.0"
+  resolved "https://registry.yarnpkg.com/@ionic/cli/-/cli-6.6.0.tgz#508fd89e3fac51dd3758acf637d8d47469ee656c"
+  integrity sha512-AmF4tMdIGf2XTf6Riune6MwkKl0WImYwnStNDm0871qS8GRFtRSTmMOWnPfkW4lGrIo+OkKfi+NOdziLJ+KmFA==
   dependencies:
     "@ionic/cli-framework" "4.1.2"
     "@ionic/cli-framework-prompts" "2.1.1"
