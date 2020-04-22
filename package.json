@@ -1,6 +1,6 @@
 {
   "name": "cesium",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "description": "Cesium Wallet for G1 libre currency",
   "author": "Benoit Lavenier <benoit.lavenier@e-is.pro>",
   "license": "AGPL-3.0",
@@ -104,7 +104,7 @@
     "phonegap-plugin-barcodescanner": "^8.1.0"
   },
   "devDependencies": {
-    "@ionic/cli": "^6.5.0",
+    "@ionic/cli": "^6.6.0",
     "@ionic/v1-toolkit": "^3.1.2",
     "cordova-uglify": "^0.3.4",
     "del": "^3.0.0",

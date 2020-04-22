@@ -9,10 +9,10 @@ ENV DEBIAN_FRONTEND=noninteractive \
     NODE_VERSION=10.20.0 \
     NPM_VERSION=6.14.4 \
     YARN_VERSION=1.22.4 \
-    IONIC_CLI_VERSION=6.5.0 \
+    IONIC_CLI_VERSION=6.6.0 \
     CORDOVA_VERSION=8.1.2 \
     GRADLE_VERSION=4.10.3 \
-    GULP_VERSION=2.2.0
+    GULP_VERSION=3.9.1
 
 # Install basics
 RUN apk update && \
