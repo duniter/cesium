@@ -70,12 +70,12 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
 
   function alertInfo(message, subtitle) {
     return $q(function(resolve) {
-      $translate([message, subtitle, 'INFO.POPUP_TITLE', 'COMMON.BTN_OK'])
+      $translate([message, 'INFO.POPUP_TITLE', 'COMMON.BTN_OK'].concat(subtitle ? [subtitle] : []))
         .then(function (translations) {
           $ionicPopup.show({
             template: '<p>' + translations[message] + '</p>',
             title: translations['INFO.POPUP_TITLE'],
-            subTitle: translations[subtitle],
+            subTitle: subtitle && translations[subtitle] || undefined,
             buttons: [
               {
                 text: translations['COMMON.BTN_OK'],

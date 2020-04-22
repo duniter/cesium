@@ -504,7 +504,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     var skip = $scope.fullscreen || !UIUtils.screen.isSmall() || !Device.isWeb();
     if (skip) return;
 
-    return UIUtils.alert.confirm('CONFIRM.FULLSCREEN', null, {
+    return UIUtils.alert.confirm('CONFIRM.FULLSCREEN', undefined, {
       cancelText: 'COMMON.BTN_NO',
       okText: 'COMMON.BTN_YES'
     })
