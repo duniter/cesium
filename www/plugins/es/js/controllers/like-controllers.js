@@ -135,7 +135,7 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
 
     if (!options.pubkey) {
       if (csWallet.children.count() === 0) {
-        options.pubkey = csWallet.data.pubkey
+        options.pubkey = csWallet.data.pubkey;
       }
       // Select the wallet, if many
       else {
@@ -256,7 +256,7 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
 
     if (!options.pubkey) {
       if (csWallet.children.count() === 0) {
-        options.pubkey = csWallet.data.pubkey
+        options.pubkey = csWallet.data.pubkey;
       }
       // Select the wallet, if many
       else {
