@@ -424,10 +424,10 @@
     "TECHNICAL_DIVIDER": "Informaciones técnicas",
     "MODAL_AVATAR": {
       "TITLE": "Foto de perfil",
-      "SELECT_FILE_HELP": "Por favor, <b>elige un fichero imagen</b> :",
-      "BTN_SELECT_FILE": "Eligir una foto",
-      "RESIZE_HELP": "<b>Encuadra la imagen</b>, si es necesario. Un clic mantenido sobre la imagen permite desplazarla. Hace un clic sobre la zona abajo a la izquierda para hacer zoom.",
-      "RESULT_HELP": "<b>Aquí está el resultado</b> tal como está visible sobre su perfil :"
+      "SELECT_FILE_HELP": "Por favor, <b>elija una imagen</b>, haciendo clic sobre el cuadro de abajo:",
+      "BTN_SELECT_FILE": "Eligir una imagen",
+      "RESIZE_HELP": "<b>Encuadre la imagen</b>, si es necesario. Un clic presionado sobre la imagen permite desplazarla. Haga clic en la zona inferior izquierda para hacer zoom.",
+      "RESULT_HELP": "<b>Aquí está el resultado</b> tal como se verá sobre su perfil :"
     },
     "CONFIRM": {
       "DELETE": "¿Desea <b>eliminar su perfil Cesium+?</b><br/><br/>Esta operación es irreversible.",
