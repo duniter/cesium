@@ -424,7 +424,7 @@
     "TECHNICAL_DIVIDER": "Informaciones técnicas",
     "MODAL_AVATAR": {
       "TITLE": "Foto de perfil",
-      "SELECT_FILE_HELP": "Por favor, <b>elija una imagen</b>, haciendo clic sobre el cuadro de abajo:",
+      "SELECT_FILE_HELP": "Por favor, <b>elija una imagen</b>:",
       "BTN_SELECT_FILE": "Eligir una imagen",
       "RESIZE_HELP": "<b>Encuadre la imagen</b>, si es necesario. Un clic presionado sobre la imagen permite desplazarla. Haga clic en la zona inferior izquierda para hacer zoom.",
       "RESULT_HELP": "<b>Aquí está el resultado</b> tal como se verá sobre su perfil :"
