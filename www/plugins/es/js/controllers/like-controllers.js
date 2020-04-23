@@ -112,7 +112,7 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
     $scope.initLikes();
     if (!$scope.likeData.id) throw new Error("Missing 'likeData.id' in scope. Cannot apply toggle");
 
-    // Make sure tobe auth before continue
+    // Make sure to be auth before continue
     if (!csWallet.isLogin()) {
       return csWallet.auth({minData: true})
         .then(function(data){
@@ -242,7 +242,7 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
 
   $scope.reportAbuse = function(event, options) {
 
-    // Make sure tobe auth before continue
+    // Make sure to be auth before continue
     if (!csWallet.isLogin()) {
       return csWallet.auth({minData: true})
         .then(function(data){
