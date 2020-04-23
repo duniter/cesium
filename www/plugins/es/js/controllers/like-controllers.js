@@ -115,9 +115,11 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
     // Make sure tobe auth before continue
     if (!csWallet.isLogin()) {
       return csWallet.auth({minData: true})
-        .then(function(){
+        .then(function(data){
           UIUtils.loading.hide();
-          return $scope.reportAbuse(event, options); // loop
+          if (!data) throw new Error('CANCELLED');
+          options.pubkey = options.pubkey || data.pubkey;
+          return $scope.toggleLike(event, options); // loop
         });
     }
 
@@ -141,9 +143,9 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
       else {
         return Modals.showSelectWallet({displayBalance: false})
           .then(function (wallet) {
-            if (!wallet) throw 'CANCELLED';
+            if (!wallet) throw new Error('CANCELLED');
             options.pubkey = wallet.data.pubkey;
-            return $scope.reportAbuse(event, options); // Loop
+            return $scope.toggleLike(event, options); // Loop
           });
       }
     }
@@ -243,8 +245,10 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
     // Make sure tobe auth before continue
     if (!csWallet.isLogin()) {
       return csWallet.auth({minData: true})
-        .then(function(){
+        .then(function(data){
           UIUtils.loading.hide();
+          if (!data) throw new Error('CANCELLED');
+          options.pubkey = options.pubkey || data.pubkey;
           return $scope.reportAbuse(event, options); // loop
         });
     }
