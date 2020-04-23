@@ -707,10 +707,11 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         .catch(function(err) {
           // Retry once (can be a timeout, because Duniter node are long to response)
           if (!secondTry) {
-            console.error("[wallet] Unable to load requirements: Will retrying... ", err);
+            console.error("[wallet] Unable to load requirements (first try): {0}. Retrying once...".format(err && err.message || err), err);
             UIUtils.loading.update({template: "COMMON.LOADING_WAIT"});
             return loadRequirements(withCache, true);
           }
+          console.error("[wallet] Unable to load requirements (after a second try): {0}".format(err && err.message || err), err);
           throw err;
         });
     },
@@ -926,7 +927,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       data.loaded = false;
 
       var now = Date.now();
-      console.debug("[wallet] Loading {{0}} full data...".format(data.pubkey.substr(0,8)));
+      console.debug("[wallet] Loading {{0}} full data...".format(data.pubkey && data.pubkey.substr(0,8)));
 
       return $q.all([
 
@@ -958,7 +959,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         })
         .then(function() {
           data.loaded = true;
-          console.debug("[wallet] Loaded {{0}} full data in {1}ms".format(data.pubkey.substr(0,8), Date.now() - now));
+          console.debug("[wallet] Loaded {{0}} full data in {1}ms".format(data.pubkey && data.pubkey.substr(0,8), Date.now() - now));
 
           // Make sure to hide loading, because sometimes it stay - should fix freeze screen
           UIUtils.loading.hide(1000);
@@ -1056,7 +1057,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
             });
         })
         .catch(function(err) {
-          console.error("[wallet] Error while {0} data: ".format(!data.loaded ? 'Loading' : 'Refreshing'), err);
+          console.error("[wallet] Error while {0} data: {1}".format(!data.loaded ? 'Loading' : 'Refreshing', (err && err.message || err)), err);
           data.loaded = data.requirements.loaded && data.sources && true;
           throw err;
         });
@@ -2039,8 +2040,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       data.children = data.children || [];
       var childIndex = _.findIndex(data.children, function(child) {return child.id === id;});
       if (childIndex === -1) {
-        console.warn('[wallet] Unable to remove child wallet {'+id+'} (not found)');
-        return;
+        console.warn('[wallet] Unable to remove child wallet {{0}} (not found)'.format(id));
+        throw new Error('Wallet with id {{0}} not found'.format(id));
       }
       // Remove the wallet, and return it
       var wallet = data.children.splice(childIndex, 1)[0];
@@ -2049,9 +2050,10 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       wallet.stop();
 
       // Store (store children locally)
-      if (!options || angular.isUndefined(options.store) || options.store) {
+      if (!options || options.store !== false) {
         return storeData();
       }
+      return $q.when();
     },
 
     getChildWalletById = function(id) {

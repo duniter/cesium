@@ -771,6 +771,7 @@
     "CHECK_NETWORK_CONNECTION": "Aucun nœud ne semble accessible.<br/><br/>Veuillez <b>vérifier votre connexion Internet</b>.",
     "ISSUE_524_TX_FAILED": "Échec du virement.<br/><br/>Un message a été envoyé aux développeurs pour faciliter la résolution du problème. <b>Merci de votre aide</b>.",
     "ADD_SECONDARY_WALLET_FAILED": "Échec de l'ajout du portefeuille secondaire.",
+    "REMOVE_SECONDARY_WALLET_FAILED": "Échec de la suppression du portefeuille secondaire.",
     "UPDATE_WALLET_LIST_FAILED": "Échec du rafraîchissement des portefeuilles secondaires.",
     "LOAD_WALLET_LIST_FAILED": "Échec du chargement des portefeuilles secondaires.",
     "SAVE_WALLET_LIST_FAILED": "Échec de la sauvegarde des portefeuilles secondaires.",

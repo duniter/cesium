@@ -207,7 +207,7 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
         reject(fullMsg);
       }
       // If just a user cancellation: silent
-      else if (fullMsg == 'CANCELLED') {
+      else if (fullMsg === 'CANCELLED') {
         return hideLoading(10); // timeout, to avoid bug on transfer (when error on reference)
       }
 

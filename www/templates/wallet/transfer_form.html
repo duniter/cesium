@@ -30,21 +30,26 @@
               tabindex="2"
               ng-click="showSelectWalletModal()">
       <span class="gray" translate>TRANSFER.FROM</span>
+      <span class="badge item-note" ng-if="loading"><ion-spinner class="ion-spinner-small" icon="android" ></ion-spinner></span>
       <span class="badge animate-fade-in animate-show-hide ng-hide" ng-show="!loading"
-            ng-class="{'badge-assertive': (convertedBalance <= 0 || form.amount.$error.max), 'badge-balanced': (convertedBalance > 0 && (!form.amount.$error.max)) }">
-            <ion-spinner icon="android" ng-show="!walletData.pubkey"></ion-spinner>
-            <span ng-if="walletData.pubkey && !walletData.isMember">
-              <i class="ion-key"></i> {{walletData.pubkey| formatPubkey}}&nbsp;&nbsp;
-            </span>
-            <span ng-if="walletData.isMember">
-              <i class="ion-person"></i> {{walletData.name||walletData.uid}}&nbsp;&nbsp;
-            </span>
-            <span
-              ng-bind-html="walletData.balance|formatAmount:{useRelative: formData.useRelative, currency:currency}"></span>
-        </span>
+          ng-class="{'badge-assertive': (convertedBalance <= 0 || form.amount.$error.max), 'badge-balanced': (convertedBalance > 0 && (!form.amount.$error.max)) }">
 
+          <span ng-if="walletData.pubkey && !walletData.isMember">
+            <i class="ion-key"></i> {{walletData.pubkey| formatPubkey}}&nbsp;&nbsp;
+          </span>
+          <span ng-if="walletData.isMember">
+            <i class="ion-person"></i> {{walletData.name||walletData.uid}}&nbsp;&nbsp;
+          </span>
+          <span
+            ng-bind-html="walletData.balance|formatAmount:{useRelative: formData.useRelative, currency:currency}"></span>
+      </span>
       <i class="gray icon ion-ios-arrow-right" ng-if="enableSelectWallet"></i>
     </ion-item>
+    <div class="form-errors ng-hide" ng-show="!loading && walletData.pubkey && walletData.balance <= 0">
+      <div class="form-error">
+        <span translate="ERROR.NOT_ENOUGH_CREDIT"></span>
+      </div>
+    </div>
 
     <!-- Amount -->
     <ion-item class="item-input item-floating-label item-button-right"
@@ -208,6 +213,7 @@
     <button class="button ink"
             tabindex="8"
             ng-class="{'button-assertive': formData.all, 'button-positive': !formData.all}"
+            ng-disabled="loading"
             type="submit" translate>
       TRANSFER.BTN_SEND
     </button>
