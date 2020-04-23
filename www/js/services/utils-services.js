@@ -43,17 +43,17 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
 
   function alertError(err, subtitle) {
     if (!err) {
-      return $q.when();
+      return $q.when(); // Silent
     }
 
     return $q(function(resolve) {
-      $translate([err, subtitle, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'])
+      $translate([err, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'].concat(subtitle ? [subtitle] : []))
         .then(function (translations) {
           var message = err.message || translations[err];
           return $ionicPopup.show({
             template: '<p>' + (message || translations['ERROR.UNKNOWN_ERROR']) + '</p>',
             title: translations['ERROR.POPUP_TITLE'],
-            subTitle: translations[subtitle],
+            subTitle: subtitle && translations[subtitle] || undefined,
             buttons: [
               {
                 text: '<b>'+translations['COMMON.BTN_OK']+'</b>',
@@ -69,6 +69,7 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
   }
 
   function alertInfo(message, subtitle) {
+    if (!message) return $q.reject("Missing 'message' argument");
     return $q(function(resolve) {
       $translate([message, 'INFO.POPUP_TITLE', 'COMMON.BTN_OK'].concat(subtitle ? [subtitle] : []))
         .then(function (translations) {
@@ -159,6 +160,7 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
   }
 
   function showToast(message, duration, position) {
+    if (!message) return $q.reject("Missing 'message' argument");
     duration = duration || 'short';
     position = position || 'bottom';
 
