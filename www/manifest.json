@@ -29,6 +29,7 @@
   ],
   "background_color": "#1a237e",
   "theme_color": "black",
+  "dir": "ltr",
   "start_url": "/#/app/home",
   "display": "standalone"
 }
