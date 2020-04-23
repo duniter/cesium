@@ -910,7 +910,7 @@
       "LINK_DOC_HELP": "Documentation pour les développeurs",
       "LINK_STANDARD_APP": "Version classique",
       "LINK_STANDARD_APP_HELP": "Ouvrir la version classique de {{'COMMON.APP_NAME'|translate}}",
-      "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connexion Internet, ou contactez l'administrateur du site</a>."
+      "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connexion Internet, ou contactez l'administrateur du site."
     },
     "HOME": {
       "TITLE": "Documentation API {{'COMMON.APP_NAME'|translate}}",
@@ -974,7 +974,7 @@
         "PARAM_REDIRECT_URL": "Adresse web de redirection",
         "PARAM_REDIRECT_URL_HELP": "Adresse web (URL) de redirection, appelé quand le paiement a été envoyé. Peut contenir les chaînes suivantes, qui seront remplacées par les valeurs de la transaction : \"{tx}\", \"{hash}\", \"{comment}\", \"{amount}\", \"{pubkey}\" et \"{node}\".",
         "PARAM_CANCEL_URL": "Adresse web d'annulation",
-        "PARAM_CANCEL_URL_HELP": "Adresse web (URL) en cas d'annulation du paiement, par l'utilisateur. Peut contenir les chaînes suivantes, qui seront remplacées dynamiquement : \"{comment}\", \"{amount}\" et {pubkey}.",
+        "PARAM_CANCEL_URL_HELP": "Adresse web (URL) en cas d'annulation du paiement, par l'utilisateur. Peut contenir les chaînes suivantes, qui seront remplacées dynamiquement : \"{comment}\", \"{amount}\" et \"{pubkey}\".",
         "PARAM_PREFERRED_NODE": "Adresse du nœud préféré",
         "PARAM_PREFERRED_NODE_HELP": "Adresse (URL) du nœud Duniter à utiliser de préférence (\"g1.domaine.com:443\" ou \"https://g1.domaine.com\").",
         "EXAMPLES_HELP": "Voici des exemples d'intégration :",

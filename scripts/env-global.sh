@@ -24,8 +24,9 @@ NODEJS_VERSION=10
 
 ANDROID_NDK_VERSION=r19c
 ANDROID_SDK_VERSION=r29.0.2
-ANDROID_SDK_ROOT=/usr/lib/android-sdk
 ANDROID_SDK_TOOLS_VERSION=4333796
+ANDROID_SDK_ROOT=/usr/lib/android-sdk
+ANDROID_SDK_TOOLS_ROOT=${ANDROID_SDK_ROOT}/build-tools
 ANDROID_OUTPUT_APK=${PROJECT_DIR}/platforms/android/build/outputs/apk
 ANDROID_OUTPUT_APK_DEBUG=${ANDROID_OUTPUT_APK}/debug
 ANDROID_OUTPUT_APK_RELEASE=${ANDROID_OUTPUT_APK}/release
@@ -33,10 +34,10 @@ ANDROID_OUTPUT_APK_RELEASE=${ANDROID_OUTPUT_APK}/release
 DIST_WEB=${PROJECT_DIR}/dist/web/build
 DIST_ANDROID=${PROJECT_DIR}/dist/android
 
-# Addons Modzilla ID
+# Addons Mozilla Web extension ID
 WEB_EXT_ID="{6f9922f7-a054-4609-94ce-d269993246a5}"
 
-#JAVA_HOME=
+#JAVA_HOME= /!\ TODO Should be define in your <project>/.local/env.sh file
 
 GRADLE_VERSION=4.10.3
 GRADLE_HOME=${HOME}/.gradle/${GRADLE_VERSION}
@@ -95,9 +96,8 @@ if [[ ! -d "${ANDROID_SDK_ROOT}" ]]; then
   fi
 fi
 
-# Export Android SDK tools to path
-too=${ANDROID_SDK_ROOT}/tools
-PATH=${ANDROID_SDK_TOOLS_ROOT}/bin:${GRADLE_HOME}/bin:$PATH
+# Add Java, Android SDK tools to path
+PATH=${ANDROID_SDK_TOOLS_ROOT}/bin:${GRADLE_HOME}/bin:${JAVA_HOME}/bin$:$PATH
 
 # Export useful variables
 export PATH \
@@ -121,9 +121,7 @@ if [[ -d "${NVM_DIR}" ]]; then
     # Or install it
     if [[ $? -ne 0 ]]; then
         nvm install ${NODEJS_VERSION}
-        if [[ $? -ne 0 ]]; then
-            exit 1;
-        fi
+        [[ $? -ne 0 ]] && exit 1
     fi
 else
     echo "nvm (Node version manager) not found (directory ${NVM_DIR} not found). Please install, and retry"

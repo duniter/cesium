@@ -229,7 +229,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           tx.history.sort(function(tx1, tx2) {
             return (tx2.time - tx1.time);
           });
-          var firstValidatedTxIndex = tx.history.findIndex(function(tx){
+          var firstValidatedTxIndex = _.findIndex(tx.history, function(tx){
             return (tx.block_number <= current.number - csSettings.data.blockValidityWindow);
           });
           // remove validating from history

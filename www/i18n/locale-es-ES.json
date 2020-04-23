@@ -103,6 +103,7 @@
     "TRANSACTIONS": "Mis transacciones"
   },
   "ABOUT": {
+    "BTN_OPEN_DEV_WINDOW": "Abrir ventana de depuración",
     "TITLE": "Acerca de",
     "LICENSE": "Software <b>libre</b> (licencia GNU AGPLv3).",
     "LATEST_RELEASE": "Existe una <b>versión más nueva</b> de {{'COMMON.APP_NAME' | translate}} (<b>v{{version}}</b>)",
@@ -115,16 +116,19 @@
     "REPORT_ISSUE": "Reportar un problema"
   },
   "HOME": {
+    "FEED_SOURCE": "Fuente",
+    "READ_MORE": "Leer más",
+    "SHOW_ALL_FEED": "Ver todo",
     "TITLE": "Cesium",
-    "WELCOME": "Le damos la bienvenida a la aplicación Cesium !",
+    "WELCOME": "¡Bienvenida/o a la aplicación Cesium!",
     "MESSAGE": "Reciba y envíe moneda libre {{currency|abbreviate}} fácilmente",
     "BTN_CURRENCY": "Explorar la moneda",
     "BTN_ABOUT": "Acerca de",
     "BTN_HELP": "Ayuda en línea",
-    "REPORT_ISSUE": "anomalía",
+    "REPORT_ISSUE": "Reportar anomalía",
     "NOT_YOUR_ACCOUNT_QUESTION": "¿No es suya la cuenta <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b>?",
     "BTN_CHANGE_ACCOUNT": "Desconectar esta cuenta",
-    "CONNECTION_ERROR": "Nodo <b>{{servidor}}</b> inalcanzable o dirección inválida.<br/><br/>Compruebe su conexión a Internet, o nodo de conmutación <a class=\"positive\" ng-click=\"doQuickFix('settings')\">en los ajustes</a>."
+    "CONNECTION_ERROR": "Nodo <b>{{server}}</b> inalcanzable o dirección inválida.<br/><br/>Compruebe su conexión a Internet, o nodo de conmutación <a class=\"positive\" ng-click=\"doQuickFix('settings')\">en los ajustes</a>."
   },
   "SETTINGS": {
     "TITLE": "Ajustes",
@@ -133,12 +137,14 @@
     "NETWORK_SETTINGS": "Red",
     "PEER": "Dirección del nodo Duniter",
     "PEER_CHANGED_TEMPORARY": "Dirección utilizada temporalmente",
+    "PEER_SHORT": "Nodo Duniter",
     "PERSIST_CACHE": "Conservar los datos de navegación (experimental)",
     "PERSIST_CACHE_HELP": "Permite una navegación más rápida, conservando localmente los datos recibidos, para usar de una sesión a otra.",
     "USE_LOCAL_STORAGE": "Activar el almacenamiento local",
     "USE_LOCAL_STORAGE_HELP": "Permitir conservar sus ajustes",
     "WALLETS_SETTINGS": "Mis monederos",
     "USE_WALLETS_ENCRYPTION": "Cifrar el listado",
+    "USE_WALLETS_ENCRYPTION_HELP": "Permite proteger la lista de sus monederos (mediante cifrado), exigiendo una autenticación para acceder.",
     "ENABLE_HELPTIP": "Activar la ayuda contextual",
     "ENABLE_UI_EFFECTS": "Activar los efectos visuales",
     "HISTORY_SETTINGS": "Transacciones de la cuenta",
@@ -157,14 +163,16 @@
       "HOUR": "Después de {{value}}h de inactividad",
       "ALWAYS": "Al finalizar la sesión"
     },
-    "KEYRING_FILE": "Archivo de llavero",
+    "KEYRING_FILE": "Archivo de llaves",
+    "KEYRING_FILE_HELP": "Le permite <b>conectarse</b> automáticamente en cada inicio <br/>e incluso de <b>autenticarse</b> (solo si \"Caducidad de la autenticación\" está configurada en modo: \"al finalizar la sesión\").",
     "REMEMBER_ME": "Recordarme",
     "REMEMBER_ME_HELP": "Permite mantenerse siempre conectado (no recomendado), conservando localmente la llave pública.",
     "PLUGINS_SETTINGS": "Extensiones",
-    "BTN_RESET": "Restaurar los valores por defecto" ,
+    "BTN_RESET": "Restaurar los valores por defecto",
     "EXPERT_MODE": "Modo experto",
     "EXPERT_MODE_HELP": "Permite una visualización más detallada",
     "BLOCK_VALIDITY_WINDOW": "Tiempo de incertitud de los bloques",
+    "DISABLE_HELPTIP": "Desactivar la opción de ayuda contextual",
     "BLOCK_VALIDITY_WINDOW_SHORT": "Tiempo de incertitud",
     "BLOCK_VALIDITY_WINDOW_HELP": "Tiempo de espera antes de considerar una información como validada",
     "BLOCK_VALIDITY_OPTION": {
@@ -407,7 +415,7 @@
     "TITLE": "<i class=\"icon ion-locked\"></i> Conexión",
     "SCRYPT_FORM_HELP": "Ingrese sus credenciales.<br>Recuerde comprobar que la llave pública pertenece a su cuenta.",
     "PUBKEY_FORM_HELP": "Por favor ingrese una llave pública de cuenta:",
-    "FILE_FORM_HELP": "Elija el archivo de llavero a usar:",
+    "FILE_FORM_HELP": "Elija el archivo de llaves a usar:",
     "SCAN_FORM_HELP": "Escanee el código QR de un monedero.",
     "SALT": "Identificador secreto",
     "SALT_HELP": "Identificador secreto",
@@ -420,7 +428,7 @@
     "CREATE_ACCOUNT": "Crear una cuenta",
     "CREATE_FREE_ACCOUNT": "Crear una cuenta gratis",
     "FORGOTTEN_ID": "¿Olvidó su contraseña?",
-    "ASSOCIATED_PUBKEY": "Llave pública del llavero:",
+    "ASSOCIATED_PUBKEY": "Llave pública del archivo de llaves:",
     "BTN_METHODS": "Otros métodos",
     "BTN_METHODS_DOTS": "Otras vías…",
     "METHOD_POPOVER_TITLE": "Métodos",
@@ -435,7 +443,7 @@
     "METHOD": {
       "SCRYPT_DEFAULT": "Estándar (por defecto)",
       "SCRYPT_ADVANCED": "Aleatoriedad avanzada",
-      "FILE": "Archivo llavero",
+      "FILE": "Archivo de llaves",
       "PUBKEY": "Llave pública o seudónimo",
       "SCAN": "Escanear un código QR"
     },
@@ -452,6 +460,99 @@
     },
     "FILE": {
       "HELP": "Formato de archivo esperado: <b>.yml</b> o <b>.dunikey</b> (tipo PubSec, WIF o EWIF)."
+    }
+  },
+  "API": {
+    "COMMON": {
+        "CONNECTION_ERROR": "Nodo <b>{{server}}</b> inalcanzable o dirección inválida.<br/><br/>Verifique su conexión a Internet, o contacte con la administración del sitio.</a>.",
+        "LINK_DOC": "Documentación API",
+        "LINK_DOC_HELP": "Documentación para desarrolladores",
+        "LINK_STANDARD_APP": "Versión clásica",
+        "LINK_STANDARD_APP_HELP": "Abrir la versión clásica de {{'COMMON.APP_NAME'|translate}}"
+    },
+    "DOC": {
+        "AVAILABLE_PARAMETERS": "Lista de parámetros disponibles :",
+        "DEMO_CANCELLED": "<i class=\"icon ion-close\"></i> Cancelado por el usuario",
+        "DEMO_DIVIDER": "Probar",
+        "DEMO_HELP": "Para probar este servicio, haga clic en este botón. El resultado se mostrará debajo.",
+        "DEMO_RESULT": "Resultado retornado por la llamada :",
+        "DEMO_RESULT_PEER": "Dirección del nodo utilizado :",
+        "DEMO_SUCCEED": "<i class=\"icon ion-checkmark\"></i> ¡ Éxito !",
+        "DESCRIPTION_DIVIDER": "Descripción",
+        "INTEGRATE_CODE": "Código :",
+        "INTEGRATE_DIVIDER": "Integrar",
+        "INTEGRATE_PARAMETERS": "Parámetros",
+        "INTEGRATE_RESULT": "Previsualización del resultado :",
+        "PARAMETERS_DIVIDER": "Parámetros",
+        "TRANSFER": {
+            "DESCRIPTION": "Desde una web (ej: tienda online) puede delegar el pago en moneda libre con la API de Cesium. Para eso, simplemente ponga un link a la siguiente dirección :",
+            "EXAMPLE_BUTTON": "Botón HTML",
+            "EXAMPLE_BUTTON_BG_COLOR": "Color de fondo",
+            "EXAMPLE_BUTTON_BG_COLOR_HELP": "Ejemplo : #fbc14c, black, lightgrey, rgb(180,180,180)",
+            "EXAMPLE_BUTTON_DEFAULT_STYLE": "Estilo personalizado",
+            "EXAMPLE_BUTTON_DEFAULT_TEXT": "Pagar en {{currency|currencySymbol}}",
+            "EXAMPLE_BUTTON_FONT_COLOR": "Color del texto",
+            "EXAMPLE_BUTTON_FONT_COLOR_HELP": "Ejemplo : black, orange, rgb(180,180,180)",
+            "EXAMPLE_BUTTON_ICON_CESIUM": "Logo Cesium",
+            "EXAMPLE_BUTTON_ICON_DUNITER": "Logo Duniter",
+            "EXAMPLE_BUTTON_ICON_G1_BLACK": "Logo Ğ1 (negro)",
+            "EXAMPLE_BUTTON_ICON_G1_COLOR": "Logo Ğ1",
+            "EXAMPLE_BUTTON_ICON_NONE": "Ninguno",
+            "EXAMPLE_BUTTON_TEXT_HELP": "Texto del botón",
+            "EXAMPLE_BUTTON_TEXT_ICON": "Icono",
+            "EXAMPLE_BUTTON_TEXT_WIDTH": "Anchura",
+            "EXAMPLE_BUTTON_TEXT_WIDTH_HELP": "Ejemplo : 200px, 50%",
+            "EXAMPLES_HELP": "Ejemplos de integración :",
+            "PARAM_AMOUNT": "Cuantía",
+            "PARAM_AMOUNT_HELP": "Cuantía de la transición (obligatorio). Valores múltiples permitidos utilizando un separador (punto y coma, barra vertical o espacio).",
+            "PARAM_CANCEL_URL": "Dirección web de cancelación",
+            "PARAM_CANCEL_URL_HELP": "Dirección web (URL) en caso de anulación del pago por parte del usuario. Puede contener las siguientes palabras que serán remplazadas por sus valores dinámicamente en cada caso: \"{comment}\", \"{amount}\" y \"{pubkey}\".",
+            "PARAM_COMMENT": "Concepto (o comentario)",
+            "PARAM_COMMENT_HELP": "Concepto o comentario. Le permitirá por ejemplo identificar el pago en la cadena de bloques (blockchain).",
+            "PARAM_NAME": "Nombre (del destinatario o de su sitio web)",
+            "PARAM_NAME_HELP": "El nombre del destinatario, o de su sitio web. Puede ser un nombre leíble (\"Mi tienda en línea\"), o un dominio (\"Mitienda.com\").",
+            "PARAM_PREFERRED_NODE": "Dirección del nodo preferido",
+            "PARAM_PREFERRED_NODE_HELP": "Dirección (URL) del nodo Duniter a utilizar preferentemente (\"g1.domaine.com:443\" o \"https://g1.domaine.com\").",
+            "PARAM_PUBKEY": "Llave pública del destinatario",
+            "PARAM_PUBKEY_HELP": "La llave pública del destinatario (obligatoria)",
+            "PARAM_REDIRECT_URL": "Dirección web de redirección",
+            "PARAM_REDIRECT_URL_HELP": "Dirección web (URL) de redirección, llamada cuanda el pago ha sido enviado. Puede contener las palabras siguientes, que serán remplazadas por los valores de la transacción dinámicanente : \"{tx}\", \"{hash}\", \"{comment}\", \"{amount}\", \"{pubkey}\" y \"{node}\".",
+            "TITLE": "Pagos"
+        },
+        "URL_DIVIDER": "Dirección de llamada"
+    },
+    "HOME": {
+        "DOC_HEADER": "Servicios disponibles :",
+        "MESSAGE": "Bienvenido/a a la <b>documentación de la API</b> {{'COMMON.APP_NAME'|translate}}.<br/>Conecte sus sitios webs a la cadena de bloques <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> muy fácilmente !",
+        "MESSAGE_SHORT": "Conecte sus sitios a <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> muy fácilmente !",
+        "TITLE": "Documentación API {{'COMMON.APP_NAME'|translate}}"
+    },
+    "TRANSFER": {
+        "AMOUNT": "Cuantía :",
+        "AMOUNTS_HELP": "Elija la cuantía :",
+        "COMMENT": "Concepto/Comentario de la operación :",
+        "DEMO": {
+            "BAD_CREDENTIALS": "Verifique sus credenciales.<br/>En modo demostración, las credenciales son : {{'API.TRANSFER.DEMO.SALT'|translate}} / {{'API.TRANSFER.DEMO.PASSWORD'|translate}}",
+            "HELP": "<b>Modo demostración</b> : Ningún pago será enviado realmente durante esta simulación.<br/>Utilice las credenciales : <b>{{'API.TRANSFER.DEMO.SALT'|translate}} / {{'API.TRANSFER.DEMO.PASSWORD'|translate}}</b>",
+            "PASSWORD": "demo",
+            "PUBKEY": "3G28bL6deXQBYpPBpLFuECo46d3kfYMJwst7uhdVBnD1",
+            "SALT": "demo"
+        },
+        "ERROR": {
+            "TRANSFER_FAILED": "Error en el pago"
+        },
+        "INFO": {
+            "CANCEL_REDIRECTING": "Pago cancelado.<br/>Redirigiendo al sitio del vendedor...",
+            "CANCEL_REDIRECTING_WITH_NAME": "Pago cancelado.<br/>Redirigiendo a <b>{{name}}</b>...",
+            "SUCCESS_REDIRECTING": "Pago enviado.<br/>Redirigiendo al sitio del vendedor...",
+            "SUCCESS_REDIRECTING_WITH_NAME": "Pago enviado.<br/>Redirigiendo a <b>{{name}}</b>..."
+        },
+        "NAME": "Nombre :",
+        "NODE": "Dirección del nodo :",
+        "PUBKEY": "Llave pública del destinatario :",
+        "SUMMARY": "Resumen del pago :",
+        "TITLE": "{{'COMMON.APP_NAME'|translate}} - Pago en línea",
+        "TITLE_SHORT": "Pago en línea"
     }
   },
   "AUTH": {
@@ -471,6 +572,7 @@
     "SHOW_MORE_TX": "Mostrar más",
     "SHOW_ALL_TX": "Mostrar todo",
     "TX_FROM_DATE": "(mostrar solo {{fromTime|medianFromNowShort}})",
+    "OUT_DISTANCED": "Sus certificaciones recibidas provienen de un grupo demasiado aislado de la <a ng-click=\"showHelpModal('wot')\">Red de Confianza</a> (RdC) : la <a ng-click=\"showHelpModal('distance_rule')\">regla de distancia máxima</a> no se cumple.<br/>Deberá obtener certificaciones provinientes de otros sectores de la RdC, o esperar a que ésta estreche sus vínculos.",
     "PENDING_TX": "Transacciones pendientes",
     "VALIDATING_TX": "Transacciones validadas",
     "ERROR_TX": "Transacciones no ejecutadas",
@@ -479,9 +581,11 @@
     "EVENTS": "Eventos",
     "WAITING_MEMBERSHIP": "Solicitud de membresía emitida. En espera de aceptación.",
     "WAITING_CERTIFICATIONS": "Debe obtener {{needCertificationCount}} certificación(es) para ser miembro.",
+    "WAITING_CERTIFICATIONS_HELP": "Para obtener sus certificaciones, solicitelas únicamente a miembros <b>que le conozcan bien (y en persona)</b>, como exige <a ng-click=\"showLicenseModal()\">la licencia de la moneda</a> que usted ha aceptado.<br/>Si no conoce lo suficiente a miembros, hágalo saber en <a ng-click=\"openLink($event, $root.settings.userForumUrl)\">el foro</a> para conocerlos en persona o asistir a algún encuentro.",
     "WILL_MISSING_CERTIFICATIONS": "Pronto le van a <b>faltar certificaciones</b> (al menos {{willNeedCertificationCount}} son necesarias)",
     "WILL_NEED_RENEW_MEMBERSHIP": "Su adhesión como miembro <b>va a expirar {{membershipExpiresIn|formatDurationTo}}</b>. Piense en <a ng-click=\"doQuickFix('renew')\">renovar su adhesión</a> mientras tanto.",
-    "NEED_RENEW_MEMBERSHIP": "No es miembro porque su adhesión <b>ha expirado</b>. Piense en <a ng-click=\"doQuickFix('renew')\">renovar su adhesión</a>.",
+    "NEED_RENEW_MEMBERSHIP": "Ya no es miembro porque su adhesión <b>ha expirado</b>. Piense en <a ng-click=\"doQuickFix('renew')\">renovar su adhesión</a>.",
+    "NEED_RENEW_MEMBERSHIP_AFTER_CANCELLED": "Ya no es miembro de la moneda, <b>por falta de certificaciones</b>. Considere <a ng-click=\"doQuickFix('renew')\">renovar su adhesión</a>.",
     "NO_WAITING_MEMBERSHIP": "No hay adhesión miembro en espera. Si desea <b>convertirse en miembro</b>, por favor <a ng-click=\"doQuickFix('membership')\">envíe su adhesión como miembro</a>.",
     "CERTIFICATION_COUNT": "Certificaciones recibidas",
     "CERTIFICATION_COUNT_SHORT": "Certificaciones",
@@ -548,6 +652,12 @@
       "TITLE": "Selección de monedero"
     },
     "WALLET_LIST": {
+      "IMPORT_MODAL": {
+        "HELP": "Para <b>importar monederos</b>, haga clic para seleccionar o arrastre en la zona de abajo el archivo con la lista de monederos.",
+        "NO_NEW_WALLET": "Ningún monedero nuevo",
+        "TITLE": "Importar monederos",
+        "WALLET_COUNT": "<b>{{count}}</b> nuevo{{count > 1 ? 's' : ''}} monedero{{count > 1 ? 's' : ''}}"
+      },
       "TITLE": "Mis monederos",
       "BTN_NEW": "Añadir un monedero",
       "BTN_DOWNLOAD": "Descargue el listado",
@@ -556,6 +666,7 @@
       "BTN_DELETE": "Eliminar un monedero secundario…",
       "BTN_RENAME": "Renombrar el monedero",
       "EXPORT_FILENAME": "monederos-{{pubkey|formatPubkey}}-{{currency}}.csv",
+      "TOTAL_DOTS": "Total : ",
       "EDIT_POPOVER": {
         "TITLE": "Renombrar el monedero",
         "HELP": "Escribe el nuevo nombre",
@@ -563,11 +674,29 @@
       }
     },
     "SECURITY": {
+      "KEYFILE": {
+        "ERROR": {
+            "BAD_CHECKSUM": "Suma de control (checksum) incorrecta",
+            "BAD_PASSWORD": "Frase secreta incorrecta"
+        },
+        "EWIF_FORMAT": "Formato EWIF (Encrypted Wallet Import Format) - v1",
+        "EWIF_FORMAT_HELP": "Este formato almacena su archivo de llaves <b>de forma cifrada</b> a partir de una frase secreta de su elección. También guarda una suma de control (checksum) para verificar la integridad del archivo.<br/><b>Atención :</b>¡ Asegúrese siempre de recordar su frase secreta !",
+        "PASSWORD_POPUP": {
+            "HELP": "Indique la frase secreta :",
+            "PASSWORD_HELP": "Frase secreta",
+            "TITLE": "Archivo de llaves cifrado"
+        },
+        "PUBSEC_FORMAT": "Formato PubSec",
+        "PUBSEC_FORMAT_HELP": "Este formato almacena su archivo de llaves de forma simple. Es compatible con Cesium, ğannonce y Duniter.<br/><b>Atención :</b>El archivo <b>no está cifrado</b> (la llave privada aparece en claro) ; ¡ guárdelo en un lugar seguro !",
+        "WIF_FORMAT": "Formato WIF (Wallet Import Format) - v1",
+        "WIF_FORMAT_HELP": "Este formato almacena su archivo de llaves con una suma de control (checksum) para verificar la integridad del archivo. Es compatible con los monederos en papel (Duniter paper wallet).<br/><b>Atención :</b>El archivo <b>no está cifrado</b> (la llave privada aparece en claro) ; ¡ guárdelo en un lugar seguro !"
+      },
       "ADD_QUESTION": "Añadir pregunta personalizada",
       "BTN_CLEAN": "Limpiar",
       "BTN_RESET": "Reiniciar",
       "DOWNLOAD_REVOKE": "Guardar un archivo de revocación",
       "DOWNLOAD_REVOKE_HELP" : "Tener un archivo de revocación es importante, en caso de perdida de las credenciales. Le permitirá <b>invalidar y sacar su cuenta miembro fuera de la Red de Confianza</b>, convirtíendose en un monedero simple.",
+      "RECOVER_ID_SELECT_FILE": "Elija el <b>archivo para salvaguardar sus credenciales</b> a utilizar :",
       "GENERATE_KEYFILE": "Generar mi archivo de llaves…",
       "GENERATE_KEYFILE_HELP": "Genera un archivo que le permitirá atenticarse sin tener que introducir las credenciales.<br/><b>Cuidado:</b> este archivo contendrá su llave secreta; ¡Es muy importante conservarlo en un lugar seguro!",
       "KEYFILE_FILENAME": "llavero-{{pubkey|formatPubkey}}-{{currency}}-{{format}}.dunikey",
@@ -637,12 +766,22 @@
     }
   },
   "ERROR": {
+    "ADD_SECONDARY_WALLET_FAILED": "Error añadiendo el monedero secundario.",
+    "COULD_NOT_ADD_EXISTING_WALLET": "Monedero ya existe en la lista.",
+    "COULD_NOT_ADD_MAIN_WALLET": "Este monedero <b>corresponde a la cuenta principal</b> con la que se conecta.<br/>Imposible añadirlo como monedero secundario.",
+    "ISSUE_524_TX_FAILED": "Error en la transferencia.<br/><br/>Un mensaje ha sido enviado a los/as desarrolladores/as para facilitar la resolución del problema. <b>Gracias por su ayuda</b>.",
+    "LOAD_WALLET_LIST_FAILED": "Error cargando los monederos secundarios.",
+    "ONLY_MEMBER_OR_WAS_MEMBER_CAN_EXECUTE_THIS_ACTION": "Usted debe <b>ser miembro (o haber sido miembro)</b> para poder efectuar esta acción.",
+    "RESTORE_WALLET_LIST_FAILED": "Error en la restauración de los monederos secundarios.",
+    "SAVE_WALLET_LIST_FAILED": "Error al guardar los monederos secundarios.",
+    "UNKNOWN_WALLET_ID": "Monedero secundario desconocido.",
+    "UPDATE_WALLET_LIST_FAILED": "Error en la actualización de los monederos secundarios.",
     "UNKNOWN_URI_FORMAT": "Formato URI desconocido",
     "PUBKEY_INVALID_CHECKSUM": "Llave pública no válida (suma de comprobación incorrecta).",
     "POPUP_TITLE": "Error",
     "UNKNOWN_ERROR": "Error desconocido",
     "CRYPTO_UNKNOWN_ERROR": "Su navegador parece incompatible con las funcionalidades de cryptografía.",
-    "DOWNLOAD_KEYFILE_FAILED": "Error al generar el archivo de llavero.",
+    "DOWNLOAD_KEYFILE_FAILED": "Error al generar el archivo de llaves.",
     "EQUALS_TO_PSEUDO": "Debe ser diferente del seudónimo.",
     "EQUALS_TO_SALT": "Debe ser diferente del identificador secreto.",
     "FIELD_REQUIRED": "Campo obligatorio.",
@@ -751,6 +890,9 @@
     "EMPTY_TX_HISTORY": "Ninguna operación a exportar"
   },
   "CONFIRM": {
+    "EXIT_APP": "¿ Cerrar la aplicación ?",
+    "FULLSCREEN": "¿ Mostrar la aplicación en pantalla completa ?",
+    "ISSUE_524_SEND_LOG": "La transacción ha sido rechazada a causa de una anomalía conocida (ticket #524) pero todavía <b>no replicable</b>.<br/><br/>Para ayudar a los/as desarrolladores/as a corregir este error, ¿ <b>acepta el envío de los logs(trazas del programa)</b> ?<br/><small>(ningún dato confidencia será enviado)</small>.",
     "POPUP_TITLE": "<b>Confirmación</b>",
     "POPUP_WARNING_TITLE": "<b>Advertencia</b>",
     "POPUP_SECURITY_WARNING_TITLE": "<i class=\"icon ion-alert-circled\"></i> <b>Advertencia de seguridad</b>",
@@ -788,11 +930,15 @@
     "LOGIN": {
       "SECTION": "Autenticación",
       "PUBKEY": "Llave pública",
-      "PUBKEY_DEF": "La llave pública del llavero es generada de las credenciales introducidas (cualquiera que sean), sin estar obligatoriamente vinculadas o contrastadas con ninguna cuenta ya usada. <br/><b>Asegúrese por lo tanto de que la llave pública es la misma con la que se creó originalmente su cuenta</b>. De lo contrario, se autogenerará una cuenta vacía que probablemente nunca ha sido usada, ya que el riesgo de coincidir con las credenciales de otra cuenta ajena es muy pequeño.<br/><a href=\"https://es.wikipedia.org/wiki/Criptograf%C3%ADa_de_curva_el%C3%ADptica\" target=\"_ system\">Conozca más sobre criptografía</a> con llaves públicas.",
+      "PUBKEY_DEF": "La llave pública del archivo de llaves es generada de las credenciales introducidas (cualquiera que sean), sin estar obligatoriamente vinculadas o contrastadas con ninguna cuenta ya usada. <br/><b>Asegúrese por lo tanto de que la llave pública es la misma con la que se creó originalmente su cuenta</b>. De lo contrario, se autogenerará una cuenta vacía que probablemente nunca ha sido usada, ya que el riesgo de coincidir con las credenciales de otra cuenta ajena es muy pequeño.<br/><a href=\"https://es.wikipedia.org/wiki/Criptograf%C3%ADa_de_curva_el%C3%ADptica\" target=\"_ system\">Conozca más sobre criptografía</a> con llaves públicas.",
       "METHOD": "Métodos de autenticación",
       "METHOD_DEF": "Diversas opciones están disponibles para conectar a las cuentas: <br/> - La conexión <b>con aleatoriedad (estándar o avanzada)</b> mezcla su contraseña con su identificador secreto, para limitar los intentos de ataque<br/> - La conexión <b>usando llave pública</b> le permite entrar sin credenciales, las cuales solo se le pedirán cuando alguna operación lo necesite.<br/> - La conexión <b>usando archivo de llaves</b> leerá las llave pública y privada de la cuenta desde un archivo sin necesitar sus credenciales. Varios formatos son posibles."
     },
     "GLOSSARY": {
+      "DISTANCE_RULE": "Regla de distancia",
+      "DISTANCE_RULE_DEF": "La regle de distancia de la Red de Confianza define <b>una distancia máxima a respetar</b> entre una candidatura y número mínimo miembros referentes (aquellos más conectados). Esta distancia es calculada utilizando los enlaces de certificación.",
+      "WOT": "Red de Confianza (RdC)",
+      "WOT_DEF": "La Red de Confianza se compone del conjunto de miembros de la moneda, y de los enlaces de certificaciones que los conectan.",
       "SECTION": "Glosario",
       "PUBKEY_DEF": "Una llave pública identifica un monedero, que puede estar asociado a un miembro o ser un monedero anónimo. En Cesium se calcula a partir del identificador secreto y la contraseña.",
       "MEMBER": "Miembro",
@@ -833,6 +979,7 @@
       "WALLET_CERTIFY": "El botón <b>{{'WOT.BTN_SELECT_AND_CERTIFY'|translate}}</b> permite seleccionar una identidad y certificarla.<br/><br/>Solo quienes son <b>miembros</b> pueden certificar a otras personas.",
       "WALLET_CERT_STOCK": "Su stock de certificaciones (emitidas) es limitado a <b>{{sigStock}} certificaciones</b>.<br/><br/>Este stock se renueva con el tiempo, a medida que las certificaciones caducan.",
       "MENU_BTN_TX": "El menú <b>{{'MENU.TRANSACTIONS'|translate}}</b> permite consultar su saldo, el historial de transacciones y realizar nuevos pagos.",
+      "MENU_BTN_WALLETS": "El menú <b>{{'MENU.WALLETS'|translate}}</b> permite añadir monederos complementarios que usted maneja.",
       "MENU_BTN_WOT": "El menú <b>{{'MENU.WOT'|translate}}</b> permite buscar <b>usuarios</b> de la moneda (miembro o no).",
       "WOT_SEARCH_TEXT_XS": "Para buscar en el directorio, escriba las <b>primeras letras de un seudónimo</b> (o de una llave pública).<br/><br/>La búsqueda se iniciará automáticamente.",
       "WOT_SEARCH_TEXT": "Para buscar en el directorio, escriba las <b>primeras letras de un seudónimo</b> (o de una llave pública). <br/><br/>Luego, pulse en la tecla <b>Intro</b> para iniciar la búsqueda.",

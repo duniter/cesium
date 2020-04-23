@@ -301,10 +301,10 @@
     wrap-ansi "^6.0.0"
     write-file-atomic "^3.0.0"
 
-"@ionic/cli@^6.5.0":
-  version "6.5.0"
-  resolved "https://registry.yarnpkg.com/@ionic/cli/-/cli-6.5.0.tgz#8198bef2034e819a324bb7cb80a6de0a69db0180"
-  integrity sha512-FyalQsiBAD/YhJ4FKpfRsFDXLEQ68E8tVivl8vfERAo8MLrQUwO0TSqtZKh5dWmRfkpMFnJa4joPo/9Qj6sn5Q==
+"@ionic/cli@^6.6.0":
+  version "6.6.0"
+  resolved "https://registry.yarnpkg.com/@ionic/cli/-/cli-6.6.0.tgz#508fd89e3fac51dd3758acf637d8d47469ee656c"
+  integrity sha512-AmF4tMdIGf2XTf6Riune6MwkKl0WImYwnStNDm0871qS8GRFtRSTmMOWnPfkW4lGrIo+OkKfi+NOdziLJ+KmFA==
   dependencies:
     "@ionic/cli-framework" "4.1.2"
     "@ionic/cli-framework-prompts" "2.1.1"
@@ -7049,7 +7049,7 @@ node-gyp@^3.8.0:
     tar "^2.0.0"
     which "1"
 
-node-sass@^4.13.0, node-sass@^4.8.3:
+node-sass@^4.13.1, node-sass@^4.8.3:
   version "4.13.1"
   resolved "https://registry.yarnpkg.com/node-sass/-/node-sass-4.13.1.tgz#9db5689696bb2eec2c32b98bfea4c7a2e992d0a3"
   integrity sha512-TTWFx+ZhyDx1Biiez2nB0L3YrCZ/8oHagaDalbuBSlqXgUPsdkUSzJsVxeDO9LtPB49+Fh3WQl3slABo6AotNw==
@@ -10130,6 +10130,11 @@ utils-merge@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=
+
+uuid@3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.2.1.tgz#12c528bb9d58d0b9265d9a2f6f0fe8be17ff1f14"
+  integrity sha512-jZnMwlb9Iku/O3smGWvZhauCf6cvvpKi4BKRiliS3cxnI+Gz9j5MEpTz2UFuXiKPJocb7gnsLHwiS05ige5BEA==
 
 uuid@^2.0.1:
   version "2.0.3"
