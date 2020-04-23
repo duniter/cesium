@@ -8,7 +8,7 @@ if [[ "_" == "_${PROJECT_DIR}" ]]; then
 fi;
 
 # Preparing Android environment
-. ${PROJECT_DIR}/scripts/env-global.sh
+. ${PROJECT_DIR}/scripts/env-android.sh
 if [[ $? -ne 0 ]]; then
   exit 1
 fi
@@ -16,7 +16,7 @@ fi
 cd ${PROJECT_DIR}
 
 echo "Updating Ionic..."
-npm update -g ionic@latest
+npm update -g @ionic/cli
 
 echo "Updating Cordova..."
 npm update -g cordova@latest
@@ -24,8 +24,13 @@ if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
-echo "Updating Cordova plugins..."
-ionic cordova platform update android --save
-if [[ $? -ne 0 ]]; then
-  exit 1
+if [[ ! -d "${PROJECT_DIR}/plugins" ]]; then
+  echo "Installing Cordova plugins..."
+  ionic cordova prepare
 fi
+
+#echo "Updating Cordova plugins..."
+#ionic cordova platform update android --save
+#if [[ $? -ne 0 ]]; then
+#  exit 1
+#fi

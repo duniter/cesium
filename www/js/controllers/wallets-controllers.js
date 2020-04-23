@@ -756,13 +756,12 @@ function WalletListImportModalController($scope, $timeout, BMA, csWallet) {
   $scope.validatingFile = false;
 
   $scope.onFileChanged = function(file) {
-    console.log(file);
     $scope.validatingFile = true;
 
     $scope.hasContent = angular.isDefined(file) && file !== '';
     $scope.fileData = file.fileData ? file.fileData : '';
     var isValidFile = $scope.fileData !== '' &&
-      ($scope.fileData.type == 'text/csv' || $scope.fileData.type == 'text/plain' || 'application/vnd.ms-excel' /*fix issue #810*/);
+      ($scope.fileData.type === 'text/csv' || $scope.fileData.type === 'text/plain' || 'application/vnd.ms-excel' /*fix issue #810*/);
 
     // Bad file type: invalid file
     if (!isValidFile) {

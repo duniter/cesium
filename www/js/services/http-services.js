@@ -9,7 +9,6 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     sockets = [],
     defaultCachePrefix = 'csHttp-',
     allCachePrefixes = {};
-  ;
 
   if (!timeout) {
     timeout=4000; // default

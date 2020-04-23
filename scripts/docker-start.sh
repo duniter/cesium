@@ -9,7 +9,6 @@ fi;
 
 cd ${PROJECT_DIR}
 
-PWD=$(pwd)
-CMD="sudo docker run -ti --rm -p 8100:8100 -p 35729:35729 -v $PWD:/cesium:rw cesium:release"
+CMD="sudo docker run -ti --rm -p 8100:8100 -p 35729:35729 -v ${PROJECT_DIR}:/cesium:rw cesium:release"
 echo "Executing: $CMD"
 $CMD

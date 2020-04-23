@@ -40,7 +40,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
     // Fix issue #893
     // See https://stackoverflow.com/questions/31859257/firefox-addon-using-angularjs-ng-src-not-working
-    $compileProvider.imgSrcSanitizationWhitelist(/^\s*(filesystem:resource|resource|moz-extension|chrome-extension|file):/);
+    $compileProvider.imgSrcSanitizationWhitelist(/^\s*(filesystem:resource|resource|moz-extension|chrome-extension|file|data):/);
   })
 
   .config(function($animateProvider) {

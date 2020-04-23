@@ -419,7 +419,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
   $scope.changeMethod = function(method, params){
     $scope.hideMethodsPopover();
 
-    if (!method || method == $scope.formData.method) return; // same method
+    if (!method || method === $scope.formData.method) return; // same method
 
     console.debug("[login] method is: " + method);
     $scope.formData.method = method;
@@ -431,7 +431,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
     }
 
     // Scrypt (advanced or not)
-    if (method == 'SCRYPT_DEFAULT' || method == 'SCRYPT_ADVANCED') {
+    if (method === 'SCRYPT_DEFAULT' || method === 'SCRYPT_ADVANCED') {
       $scope.pubkey = null;
 
 
@@ -451,9 +451,9 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
       }
       $scope.changeScrypt(scrypt);
 
-      $scope.autoComputePubkey = $scope.autoComputePubkey && (method == 'SCRYPT_DEFAULT');
+      $scope.autoComputePubkey = $scope.autoComputePubkey && (method === 'SCRYPT_DEFAULT');
     }
-    else if (method == 'SCAN') {
+    else if (method === 'SCAN') {
       return $scope.doScan();
     }
     else {
@@ -529,7 +529,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
           }
           else {
             $scope.formData.file.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-            $scope.formData.file.valid = !$scope.expectedPubkey || $scope.expectedPubkey == $scope.formData.file.pubkey;
+            $scope.formData.file.valid = !$scope.expectedPubkey || $scope.expectedPubkey === $scope.formData.file.pubkey;
             $scope.validatingFile = false;
           }
 
@@ -592,11 +592,14 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
   // TODO : for DEV only
   /*$timeout(function() {
     $scope.formData = {
-      username: 'benoit.lavenier@e-is.pro',
-      password: ''
+      method: 'SCRYPT_DEFAULT',
+      username: 'abc',
+      password: 'def'
     };
-    //$scope.form = {$valid:true};
-  }, 900);*/
+    $scope.form = {$valid:true};
+
+    $timeout($scope.doLogin, 500);
+  }, 900); */
 }
 
 

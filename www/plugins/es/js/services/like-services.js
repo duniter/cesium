@@ -63,7 +63,7 @@ angular.module('cesium.es.like.services', ['ngResource', 'cesium.services',
               // User already like: so remove it
               if (existingLikeIds && existingLikeIds.length) {
                 return $q.all(_.map(existingLikeIds, function(likeId) {
-                  return removeLike(likeId, options)
+                  return removeLike(likeId, options);
                 }))
                   // Return the deletion, as a delta
                   .then(function() {
@@ -129,10 +129,10 @@ angular.module('cesium.es.like.services', ['ngResource', 'cesium.services',
 
               result.wasHitByPubkey[issuer] = issuerHitIndex !== -1 || false;
               result.wasHitCount += issuerHitIndex !== -1 ? 1 : 0;
-            })
+            });
 
             return result;
-          })
+          });
       }
 
       // Expose functions

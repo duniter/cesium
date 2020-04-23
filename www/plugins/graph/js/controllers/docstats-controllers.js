@@ -352,22 +352,22 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
   $scope.onChartClick = function(data, e, item) {
     if (!item) return;
     var chart = _.find($scope.charts , function(chart) {
-      return ($scope.chartIdPrefix  + chart.id) == item._chart.canvas.id;
+      return ($scope.chartIdPrefix  + chart.id) === item._chart.canvas.id;
     });
 
-    var serie = chart.series[item._datasetIndex];
+    var serie = chart && chart.series[item._datasetIndex];
+    var from = $scope.times[item._index];
+    var to = moment.unix(from).utc().add(1, $scope.formData.rangeDuration).unix();
 
     if (serie && serie.clickState && serie.clickState.name) {
       var stateParams = serie.clickState.params ? angular.copy(serie.clickState.params) : {};
 
       // Compute query
-      var from = $scope.times[item._index];
-      var to = moment.unix(from).utc().add(1, $scope.formData.rangeDuration).unix();
       stateParams.q = 'time:>={0} AND time:<{1}'.format(from, to);
 
       return $state.go(serie.clickState.name, stateParams);
     }
-    else {
+    else if (serie) {
       console.debug('Click on item index={0} on range [{1},{2}]'.format(item._index, from, to));
     }
   };
