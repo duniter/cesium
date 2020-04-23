@@ -25,6 +25,8 @@
 
 - [fix] Unable to set avatar and page's pictures - fix [#904](https://git.duniter.org/clients/cesium-grp/cesium/-/issues/904)
 
+## Development environment
+
 ### Build from source
 
 Before building Cesium, please launch this commands:
