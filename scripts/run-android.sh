@@ -9,15 +9,14 @@ fi;
 
 # Preparing Android environment
 . ${PROJECT_DIR}/scripts/env-android.sh
-if [[ $? -ne 0 ]]; then
-  exit 1
-fi
+[[ $? -ne 0 ]] && exit 1
 
 cd ${PROJECT_DIR}
 
 # Run the build
 echo "Building Android application..."
 ionic cordova build android --warning-mode=none --color $*
+[[ $? -ne 0 ]] && exit 1
 
 echo "Running Android application..."
 if [[ "$1" == "--release" ]]; then
