@@ -6,7 +6,7 @@ angular.module('cesium.modal.services', ['cesium.utils.services'])
 
 })
 
-.controller('AboutModalCtrl', function ($scope, UIUtils, csHttp) {
+.controller('AboutModalCtrl', function ($scope, csConfig, UIUtils, csHttp, filterTranslations) {
   'ngInject';
 
   $scope.openLink = function(event, uri, options) {
@@ -19,6 +19,9 @@ angular.module('cesium.modal.services', ['cesium.utils.services'])
 
     return csHttp.uri.open(uri, options);
   };
+
+  // Change UTC date into user date
+  $scope.buildDate = moment().utc(csConfig.build).format(filterTranslations.DATE_PATTERN || 'YYYY-MM-DD HH:mm');
 })
 
 .factory('ModalUtils', function($ionicModal, $rootScope, $q, $injector, $controller, $timeout, Device) {
