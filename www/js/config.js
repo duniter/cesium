@@ -23,6 +23,7 @@ angular.module("cesium.config", [])
 	"decimalCount": 2,
 	"httpsMode": false,
 	"shareBaseUrl": "https://g1.duniter.fr",
+  "demo": true,
 	"helptip": {
 		"enable": true,
 		"installDocUrl": {
@@ -98,7 +99,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "1.6.5",
-	"build": "2020-04-22T17:36:59.565Z",
+	"build": "2020-04-30T16:11:11.201Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
