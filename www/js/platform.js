@@ -439,7 +439,7 @@ if (typeof String.prototype.trim !== 'function') {
 if (Math && typeof Math.trunc !== 'function') {
   console.debug("Adding Math.trunc() -> was missing on this platform");
   Math.trunc = function(number) {
-    return (number - 0.5).toFixed();
+    return parseInt((number - 0.5).toFixed());
   };
 }
 
