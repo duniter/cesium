@@ -20,6 +20,7 @@
      "BTN_RELATIVE_UNIT": "Mostra importi in DU?",
      "BTN_BACK": "Indietro",
      "BTN_NEXT": "Avanti",
+     "BTN_IMPORT": "Importazione",
      "BTN_CANCEL": "Cancellare",
      "BTN_CLOSE": "Chiudere",
      "BTN_LATER": "Più tardi",
@@ -48,6 +49,7 @@
      "NO_ACCOUNT_QUESTION": "Non sei ancora membro? Registrati subito!",
      "SEARCH_NO_RESULT": "Nessun risultato trovato",
      "LOADING": "Caricando...",
+     "LOADING_WAIT": "Caricando...<br/><small>(Cesium interroga dal nodo peer Duniter)</small>",
      "SEARCHING": "Cercando...",
      "FROM": "Da",
      "TO": "A",
@@ -104,11 +106,10 @@
      "TITLE": "A proposito",
      "LICENSE": "<b>Free/libre software</b> (License GNU AGPLv3).",
      "CODE": "Codice sorgente:",
+     "OFFICIAL_WEB_SITE": "Sito ufficiale:",
      "DEVELOPERS": "Sviluppatori:",
      "FORUM": "Forum:",
-     "DEV_WARNING": "Attenzione!",
-     "DEV_WARNING_MESSAGE": "Questa app è ancora in sviluppo attivo.<br/>Facci sapere se trovi dei bugs!",
-     "DEV_WARNING_MESSAGE_SHORT": "Questa app è tutt'ora instabile (in sviluppo)",
+     "PLEASE_REPORT_ISSUE": "Non esitate a parlarci delle anomalie riscontrate",
      "REPORT_ISSUE": "Segnalare un bug"
    },
    "HOME": {
@@ -606,6 +607,7 @@
      }
    },
    "ERROR": {
+     "UNKNOWN_URI_FORMAT": "Formato URI sconosciuto",
      "POPUP_TITLE": "Errore",
      "UNKNOWN_ERROR": "Errore",
      "CRYPTO_UNKNOWN_ERROR": "Suo navigatore non sembra compatibile con le funzionalità di cryptografia.",
@@ -657,6 +659,7 @@
      "INVALID_USER_ID": "Il campo del 'pseudonimo' non deve avere spazi vuoti o caratteri speciali.",
      "INVALID_COMMENT": "Il formato del campo 'reference' è errato.",
      "INVALID_PUBKEY": "If formato della chiave pubblica è errato.",
+     "INVALID_PUBKEY_CHECKSUM": "Checkum non valido.",
      "IDENTITY_REVOKED": "Questa identità <b>è stata revocata</b>. Non puo più diventare membro.",
      "IDENTITY_REVOKED_WITH_TIME": "Questa identità <b>è stata revocata {{revocationTime|medianFromNow}}</b> ({{revocationTime|medianDate}}). Non puo più diventare membro.",
      "IDENTITY_PENDING_REVOCATION": "L'<b>annulamento di questa identità</b> è stata richiesta ed è in corso di evaluazione. Capacità ad inviare certificazioni disabilitata",
@@ -681,6 +684,7 @@
      "LOAD_NEWCOMERS_FAILED": "Impossibile caricare i nuovi membri.",
      "LOAD_PENDING_FAILED": "Impossibile caricare le certificazioni pendenti.",
      "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "Devi <b>essere membro</b> per poter fare questo.",
+     "ONLY_MEMBER_OR_WAS_MEMBER_CAN_EXECUTE_THIS_ACTION": "Devi <b>essere membro</b> (o era un membro) per poter fare questo.",
      "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "Devi aver <b>publiccato tua identità</b> per poter fare questo.",
      "GET_BLOCK_FAILED": "Impossibile caricare il blocco",
      "INVALID_BLOCK_HASH": "Blocco non trovato (hash errato)",
@@ -710,7 +714,6 @@
      "REVOCATION_SENT": "Revoca dell'identità inviata",
      "REVOCATION_SENT_WAITING_PROCESS": "Cancellazione dell'identità <b>inviata con successo</b>. In attesa di validazione.",
      "FEATURES_NOT_IMPLEMENTED": "Questa funzionalità non è ancora disponibile.<br/><br/>Vuoi contribuire per velocizzarne la disponibilità? ;)",
-     "FEATURE_NOT_AVAILABLE_ON_DEMO": "Funzionalità non disponibile su questo sito dimostrativo.<br/>Per <b>motivi di sicurezza</b> ti consigliamo di <b>installare</b> la tua copia del software.<br/>Visita il sito <a href='https://cesium.app'>www.cesium.app</a> per assistenza.",
      "EMPTY_TX_HISTORY": "Nessuna operazione da esportare"
    },
    "CONFIRM": {
@@ -738,6 +741,13 @@
      "INVALID_FILE_FORMAT": "Formato file non valido.",
      "SAME_TX_RECIPIENT": "Il destinatario deve essere diverso dall'emittente."
     },
+  "DEMO": {
+    "BADGE": "Demo",
+    "MODE": "Modalità dimostrativa",
+    "FEATURE_NOT_AVAILABLE": "Funzionalità <b>non disponibile</b> su questo sito dimostrativo.",
+    "MODE_HELP": "Il cesio funziona in <b>modalità dimostrativa</b>: è disponibile la consultazione per conto, ma non è possibile eseguire alcuna operazione per conto.",
+    "INSTALL_HELP": "Per <b>motivi di sicurezza</b> ti consigliamo di <b>installare</b> la tua copia del software.<br/>Visita il sito <a href='https://cesium.app'>www.cesium.app</a> per assistenza."
+  },
    "DOWNLOAD": {
      "POPUP_TITLE": "<b>File di cancellazione dell'identità/b>",
      "POPUP_REVOKE_MESSAGE": "Per migliorare la sicurezza del tuo conto, scarica <b>il documento di revoca del conto</b>. Ti consentirà di revocare tuo conto (nel caso di violazione del conto, della tua identità, conto creato con errori, etc.).<br/><br/><b>Tiene questo document al sicuro.</b>"

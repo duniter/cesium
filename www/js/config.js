@@ -10,6 +10,7 @@ angular.module("cesium.config", [])
 
 .constant("csConfig", {
 	"cacheTimeMs": 300000,
+  "demo": true,
 	"fallbackLanguage": "en",
 	"rememberMe": true,
 	"showUDHistory": true,
@@ -23,7 +24,6 @@ angular.module("cesium.config", [])
 	"decimalCount": 2,
 	"httpsMode": false,
 	"shareBaseUrl": "https://g1.duniter.fr",
-  "demo": true,
 	"helptip": {
 		"enable": true,
 		"installDocUrl": {

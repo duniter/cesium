@@ -82,28 +82,25 @@
           <div class="list">
             <!-- simple wallet -->
             <button class="item item-complex card stable-bg item-icon-left item-icon-right ink"
-               ng-click="selectAccountTypeAndClose('wallet')">
+                    ng-click="selectAccountTypeAndClose('wallet')">
               <div class="item-content item-text-wrap">
                 <i class="item-image icon dark ion-card"></i>
                 <h2 translate>ACCOUNT.NEW.WALLET_ACCOUNT</h2>
                 <h4 class="gray" translate>ACCOUNT.NEW.WALLET_ACCOUNT_HELP</h4>
-
-                <h4 ng-if="$root.config.demo" style="color: red !important;"><b class="ion-android-warning"></b> <span translate>INFO.FEATURE_NOT_AVAILABLE_ON_DEMO</span></h4>
-                <i class="icon dark ion-ios-arrow-right" ng-if="!$root.config.demo"></i>
+                <ng-include src="::'templates/common/note_feature_not_available.html'"></ng-include>
+                <i class="icon dark ion-ios-arrow-right"></i>
               </div>
             </button>
 
             <!-- member account -->
             <button class="item item-complex card stable-100-bg item-icon-left item-icon-right ink"
-                 ng-click="selectAccountTypeAndClose('member')"
-                 ng-disabled="$root.config.demo">
+                 ng-click="selectAccountTypeAndClose('member')">
               <div class="item-content item-text-wrap">
                 <i class="item-image icon dark ion-person"></i>
                 <h2 translate>ACCOUNT.NEW.MEMBER_ACCOUNT</h2>
                 <h4 class="gray" ng-bind-html="'ACCOUNT.NEW.MEMBER_ACCOUNT_HELP'|translate:currency"></h4>
-
-                <h4 ng-if="$root.config.demo" style="color: red !important;"><b class="ion-android-warning"></b> <span translate>INFO.FEATURE_NOT_AVAILABLE_ON_DEMO</span></h4>
-                <i class="icon dark ion-ios-arrow-right" ng-if="!$root.config.demo"></i>
+                <ng-include src="::'templates/common/note_feature_not_available.html'"></ng-include>
+                <i class="icon dark ion-ios-arrow-right"></i>
               </div>
             </button>
 

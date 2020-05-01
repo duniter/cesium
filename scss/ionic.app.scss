@@ -1050,6 +1050,13 @@ html, body {
   }
 }
 
+.popup-container.large {
+  .popup {
+    min-width: 250px !important;
+    width: 350px !important;
+  }
+}
+
 /******
 * 'ion-refresher'
 *******/
@@ -1679,6 +1686,10 @@ a.underline:hover,
   }
 }
 
+.item.item-no-border {
+  border-width: 0;
+}
+
 .list .item.item-border {
   border-bottom: solid 1px #ccc !important;
   margin-bottom: 1px;
@@ -2026,7 +2037,27 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   border: solid 1px #D9D9D9;
 }
 
+/**********
+   Demo
+**********/
 
+#menu .badge-demo {
+  font-size: 12px;
+  font-weight: bold;
+  color: whitesmoke !important;
+  position: absolute;
+  top: 10px;
+  left: 1px;
+  padding: 0 4px;
+  text-transform: uppercase;
+  transform-origin: 26px 5px;
+  transform: rotate(-10deg);
+}
+#menu .badge-demo:hover {
+  font-size: 13px;
+  padding: 1px 4px;
+  transform: rotate(-15deg);
+}
 /**********
    Help
 **********/
@@ -2057,6 +2088,14 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   left: 12px;
   top: 8px;
   z-index: 99;
+}
+#menu .footer .icon-help:hover {
+  @extend .ion-ios-help;
+  color: $positive !important;
+  font-size: 31px !important;
+  top: 6px;
+  left: 11px;
+  transform: rotate(10deg);
 }
 
   /**********

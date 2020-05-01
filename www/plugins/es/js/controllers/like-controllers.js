@@ -186,7 +186,7 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
       })
       .catch(function(err) {
         $scope.likeData[key].loading = false;
-        if (err === 'CANCELLED') return; // User cancelled
+        if (err === 'CANCELLED') throw 'CANCELLED'; // User cancelled
         console.error(err);
         UIUtils.onError('LIKE.ERROR.FAILED_TOGGLE_LIKE')(err);
         event.preventDefault();
@@ -297,6 +297,7 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
     options.kind = 'ABUSE';
     return $scope.toggleLike(event, options)
       .then(function() {
+        console.log('BEFORE display toast');
         UIUtils.toast.show('COMMON.REPORT_ABUSE.CONFIRM.SENT');
       });
   };

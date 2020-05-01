@@ -541,6 +541,7 @@ function WalletListViewController($scope, $controller, $state, $timeout, $q, $tr
       'WalletListImportModalCtrl'
     )
       .then(function(items){
+
         if (!items || !items.length) return; // User cancel
 
         UIUtils.loading.show();

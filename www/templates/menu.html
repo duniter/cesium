@@ -61,6 +61,7 @@
         <span class="animate-fade-in animate-show-hide ng-hide" ng-show="$root.currency.name">
           {{:locale:'COMMON.APP_NAME'|translate}} {{$root.currency.name|abbreviate}}
         </span>
+        <a class="badge badge-demo badge-assertive" ng-if="::$root.config.demo" ng-click="showHelpModal('demo')()" translate>DEMO.BADGE</a>
       </h1>
 
       <div class="visible-sm visible-xs hero">
@@ -260,6 +261,16 @@
 
         <div class="item item-divider visible-xs visible-sm"></div>
 
+
+        <a menu-close
+           class="item item-icon-left visible-xs visible-sm"
+           active-link="active"
+           active-link-path-prefix="#/app/help"
+           ui-sref="app.help">
+          <i class="icon ion-ios-help-outline"></i>
+          {{:locale:'HOME.BTN_HELP'|translate}}
+        </a>
+
         <a menu-close
            class="item item-icon-left visible-xs visible-sm"
            active-link="active"
@@ -269,7 +280,6 @@
           {{:locale:'MENU.SETTINGS'|translate}}
         </a>
         <a id="helptip-menu-btn-settings"></a>
-
 
         <!-- logout -->
         <div class="item item-divider visible-xs visible-sm margin-top"  ng-if="login"></div>

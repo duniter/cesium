@@ -1109,7 +1109,7 @@ function WalletTxErrorController($scope, UIUtils, csSettings, csWallet) {
 
 }
 
-function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, parameters){
+function WalletSecurityModalController($scope, UIUtils, csConfig, csWallet, $translate, parameters){
 
   var wallet = parameters && parameters.wallet || csWallet;
 
@@ -1151,6 +1151,10 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
       });
     });
 
+  $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
+    // Disable swipe
+    data.slider.lockSwipes();
+  });
 
   $scope.slidePrev = function() {
     $scope.slides.slider.unlockSwipes();
@@ -1220,7 +1224,10 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
     }
   };
 
-  $scope.selectOption = function(option){
+  $scope.selectOption = function(option, enableOnDemo){
+    if (!enableOnDemo && (csConfig.demo === true || csConfig.demo === "true")) {
+      return UIUtils.alert.demo();
+    }
     $scope.option = option;
     $scope.slideNext();
   };

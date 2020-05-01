@@ -49,10 +49,9 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
 
   parameters = parameters || {};
 
-  // Demo mode (=readonly)
+  // Demo mode: force PUBKEY method
   if (csConfig.demo === true || csConfig.demo === "true") {
     parameters.method = 'PUBKEY';
-    parameters.showMethods = false;
   }
 
   $scope.computing = false;
@@ -424,6 +423,10 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
 
   $scope.changeMethod = function(method, params){
     $scope.hideMethodsPopover();
+
+    if (method !== 'PUBKEY' && (csConfig.demo === true || csConfig.demo === "true")) {
+      return UIUtils.alert.demo();
+    }
 
     if (!method || method === $scope.formData.method) return; // same method
 

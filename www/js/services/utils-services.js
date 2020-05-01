@@ -68,18 +68,23 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
     });
   }
 
-  function alertInfo(message, subtitle) {
+  function alertInfo(message, subtitle, options) {
     if (!message) return $q.reject("Missing 'message' argument");
+    options = options || {};
+    options.cssClass = options.cssClass || 'info';
+    options.okText = options.okText || 'COMMON.BTN_OK';
+
     return $q(function(resolve) {
-      $translate([message, 'INFO.POPUP_TITLE', 'COMMON.BTN_OK'].concat(subtitle ? [subtitle] : []))
+      $translate([message, 'INFO.POPUP_TITLE', options.okText].concat(subtitle ? [subtitle] : []))
         .then(function (translations) {
           $ionicPopup.show({
             template: '<p>' + translations[message] + '</p>',
             title: translations['INFO.POPUP_TITLE'],
             subTitle: subtitle && translations[subtitle] || undefined,
+            cssClass: options.cssClass,
             buttons: [
               {
-                text: translations['COMMON.BTN_OK'],
+                text: translations[options.okText],
                 type: 'button-positive',
                 onTap: function(e) {
                   resolve(e);
@@ -93,6 +98,15 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
 
   function alertNotImplemented() {
     return alertInfo('INFO.FEATURES_NOT_IMPLEMENTED');
+  }
+
+  function alertDemo() {
+    return $translate(["DEMO.FEATURE_NOT_AVAILABLE", "DEMO.INSTALL_HELP"])
+      .then(function(translations) {
+        var message = translations["DEMO.FEATURE_NOT_AVAILABLE"] + "<br/><br/>" + translations["DEMO.INSTALL_HELP"];
+        return alertInfo(message, undefined, {cssClass: 'large'});
+      })
+
   }
 
   function askConfirm(message, title, options) {
@@ -842,7 +856,8 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
       error: alertError,
       info: alertInfo,
       confirm: askConfirm,
-      notImplemented: alertNotImplemented
+      notImplemented: alertNotImplemented,
+      demo: alertDemo
     },
     loading: {
       show: showLoading,

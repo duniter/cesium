@@ -796,7 +796,6 @@
     "REVOCATION_SENT": "Révocation envoyée",
     "REVOCATION_SENT_WAITING_PROCESS": "La <b>révocation de cette identité</b> a été demandée et est en attente de traitement.",
     "FEATURES_NOT_IMPLEMENTED": "Cette fonctionnalité est encore en cours de développement.<br/>Pourquoi ne pas <b>contribuer à Cesium</b>, pour l'obtenir plus rapidement ? ;)",
-    "FEATURE_NOT_AVAILABLE_ON_DEMO": "Fonctionnalité non disponible sur ce site de démonstration.<br/>Pour des <b>raisons de sécurité</b> nous vous recommandons <b>d'installer</b> votre copie du logiciel.<br/>Visitez le site <a href='https://cesium.app'>www.cesium.app</a> pour obtenir de l'aide.",
     "EMPTY_TX_HISTORY": "Aucune opération à exporter"
   },
   "CONFIRM": {
@@ -825,6 +824,13 @@
     "LOGOUT": "Êtes-vous sûr de vouloir vous déconnecter ?",
     "USE_FALLBACK_NODE": "Nœud <b>{{old}}</b> injoignable ou adresse invalide.<br/><br/>Voulez-vous temporairement utiliser le nœud <b>{{new}}</b> ?",
     "ISSUE_524_SEND_LOG": "La transaction a été rejetée, à cause d'une anomalie connue (ticket #524) mais <b>non reproduite</b>.<br/><br/>Pour aider les développeurs à corriger cette erreur, <b>acceptez-vous la transmission de vos logs</b> par message ?<br/><small>(aucune donnée confidentielle n'est envoyée)</small>."
+  },
+  "DEMO": {
+    "BADGE": "Démo",
+    "MODE": "Mode démonstration",
+    "FEATURE_NOT_AVAILABLE": "Fonctionnalité <b>non disponible</b> sur ce site de démonstration.",
+    "MODE_HELP": "Cesium fonctionne en <b>mode démonstration</b> : la consultation est de compte est disponible, mais aucune opération de compte ne peut être réalisée.",
+    "INSTALL_HELP": "Pour des <b>raisons de sécurité</b> nous vous recommandons <b>d'installer</b> votre copie du logiciel. Visitez le site <a href='https://cesium.app'>www.cesium.app</a> pour obtenir de l'aide."
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Fichier de révocation</b>",
