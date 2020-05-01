@@ -71,7 +71,7 @@
        "USER": {
          "TITLE": "Numero di documenti legati ad un conto",
          "USER_PROFILE": "Profili dell'utente",
-         "USER_SETTINGS": "Impostazioni salvate",
+         "USER_SETTINGS": "Impostazioni salvate"
        },
        "MESSAGE": {
          "TITLE": "Numero di documenti legati alla conversazione",

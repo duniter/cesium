@@ -58,7 +58,7 @@
        "SUGGEST_CERTIFICATIONS": "E’ sicuro(a) di voler <b>suggerire queste certificazioni</b> ?",
        "ASK_CERTIFICATION": " E’ sicuro(a) di voler  <b>chiedere una certificazione</b> ?",
        "ASK_CERTIFICATIONS": " E’ sicuro(a) di voler <b>chiedere una certificazione</b> a questi membri ?"
-     },
+     }
    },
   "INVITATION": {
     "TITLE": "Invitazioni",
