@@ -710,6 +710,7 @@
      "REVOCATION_SENT": "Revoca dell'identità inviata",
      "REVOCATION_SENT_WAITING_PROCESS": "Cancellazione dell'identità <b>inviata con successo</b>. In attesa di validazione.",
      "FEATURES_NOT_IMPLEMENTED": "Questa funzionalità non è ancora disponibile.<br/><br/>Vuoi contribuire per velocizzarne la disponibilità? ;)",
+     "FEATURE_NOT_AVAILABLE_ON_DEMO": "Funzionalità non disponibile su questo sito dimostrativo.<br/>Per <b>motivi di sicurezza</b> ti consigliamo di <b>installare</b> la tua copia del software.<br/>Visita il sito <a href='https://cesium.app'>www.cesium.app</a> per assistenza.",
      "EMPTY_TX_HISTORY": "Nessuna operazione da esportare"
    },
    "CONFIRM": {

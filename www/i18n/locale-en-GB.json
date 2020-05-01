@@ -796,6 +796,7 @@
     "REVOCATION_SENT": "Revocation sent successfully",
     "REVOCATION_SENT_WAITING_PROCESS": "Revocation <b>has been sent successfully</b>. It is awaiting processing.",
     "FEATURES_NOT_IMPLEMENTED": "This features is not implemented yet.<br/><br/>Why not to contribute to get it faster? ;)",
+    "FEATURE_NOT_AVAILABLE_ON_DEMO": "Functionality not available on this demonstration site.<br/>For <b>security reasons</b> we recommend <b>installing</b> your copy of the software.<br/> Visit the site <a href='https://cesium.app'>www.cesium.app</a> for help.",
     "EMPTY_TX_HISTORY": "No operations to export"
   },
   "CONFIRM": {

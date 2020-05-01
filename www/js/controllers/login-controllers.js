@@ -44,10 +44,16 @@ function LoginController($scope, $timeout, $controller, csWallet) {
 }
 
 function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, CryptoUtils, csCrypto, ionicReady,
-                              UIUtils, BMA, Modals, csSettings, Device, parameters) {
+                              UIUtils, BMA, Modals, csConfig, csSettings, Device, parameters) {
   'ngInject';
 
   parameters = parameters || {};
+
+  // Demo mode (=readonly)
+  if (csConfig.demo === true || csConfig.demo === "true") {
+    parameters.method = 'PUBKEY';
+    parameters.showMethods = false;
+  }
 
   $scope.computing = false;
   $scope.pubkey = null;

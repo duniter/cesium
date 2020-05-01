@@ -289,6 +289,14 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           });
       }
 
+      // Disable auth, if demo
+      if (csConfig.demo === true || csConfig.demo === "true") {
+        return UIUtils.alert.info('INFO.FEATURE_NOT_AVAILABLE_ON_DEMO')
+          .then(function() {
+            throw 'CANCELLED';
+          });
+      }
+
       if (isAuth() && (!options || !options.forceAuth)) {
         return $q.when(data);
       }

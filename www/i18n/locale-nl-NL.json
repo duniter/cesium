@@ -486,7 +486,11 @@
     "COPY_TO_CLIPBOARD_DONE": "Kopie geslaagd",
     "MEMBERSHIP_OUT_SENT": "Opzegging lidmaatschap succesvol verzonden",
     "NOT_NEED_MEMBERSHIP": "Je bent al lid.",
-    "IDENTITY_WILL_MISSING_CERTIFICATIONS": "Deze identiteit heeft binnenkort onvoldoende certificaties (ten minste {{willNeedCertificationCount}} nodig)."
+    "IDENTITY_WILL_MISSING_CERTIFICATIONS": "Deze identiteit heeft binnenkort onvoldoende certificaties (ten minste {{willNeedCertificationCount}} nodig).",
+    "REVOCATION_SENT": "Intrekking succesvol verzonden",
+    "REVOCATION_SENT_WAITING_PROCESS": "Intrekking <b>is succesvol verzonden</b>. Het wacht op verwerking.",
+    "FEATURE_NOT_AVAILABLE_ON_DEMO": "Functionaliteit niet beschikbaar op deze demonstratiesite.<br/>Om <b>veiligheidsredenen</b> raden we u aan uw kopie van de software te <b>installeren</b>.<br/>Bezoek de website <a href='https://cesium.app'>www.cesium.app</a> voor hulp.",
+    "EMPTY_TX_HISTORY": "Aucune operatie à exporteur"
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Bevestiging</b>",

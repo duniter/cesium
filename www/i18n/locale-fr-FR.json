@@ -796,6 +796,7 @@
     "REVOCATION_SENT": "Révocation envoyée",
     "REVOCATION_SENT_WAITING_PROCESS": "La <b>révocation de cette identité</b> a été demandée et est en attente de traitement.",
     "FEATURES_NOT_IMPLEMENTED": "Cette fonctionnalité est encore en cours de développement.<br/>Pourquoi ne pas <b>contribuer à Cesium</b>, pour l'obtenir plus rapidement ? ;)",
+    "FEATURE_NOT_AVAILABLE_ON_DEMO": "Fonctionnalité non disponible sur ce site de démonstration.<br/>Pour des <b>raisons de sécurité</b> nous vous recommandons <b>d'installer</b> votre copie du logiciel.<br/>Visitez le site <a href='https://cesium.app'>www.cesium.app</a> pour obtenir de l'aide.",
     "EMPTY_TX_HISTORY": "Aucune opération à exporter"
   },
   "CONFIRM": {
