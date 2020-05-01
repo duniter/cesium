@@ -14,7 +14,7 @@
     "expertMode": false,
     "decimalCount": 2,
     "httpsMode": false,
-    "shareBaseUrl": "https://demo.cesium.app",
+    "shareBaseUrl": "https://demo.cesium.app/",
     "helptip": {
       "enable": true,
       "installDocUrl": {
@@ -123,7 +123,7 @@
     "expertMode": false,
     "decimalCount": 2,
     "httpsMode": false,
-    "shareBaseUrl": "https://demo.cesium.app",
+    "shareBaseUrl": "https://demo.cesium.app/",
     "helptip": {
       "enable": true,
       "installDocUrl": {
