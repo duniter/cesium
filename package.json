@@ -109,6 +109,7 @@
   "devDependencies": {
     "@ionic/cli": "^6.7.0",
     "@ionic/v1-toolkit": "^3.2.0",
+    "@prantlf/gulp-jsonlint": "^2.4.0",
     "cordova-uglify": "^0.3.4",
     "del": "^5.1.0",
     "delete-empty": "^0.1.3",

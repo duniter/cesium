@@ -1004,4 +1004,4 @@
       "END_NOT_LOGIN": "¡La visita guiada ha <b>terminado</b>!<br/><br/>Si quiere utilizar la moneda {{currency|capitalize}}, tiene que hacer un clic en <b>{{'LOGIN.CREATE_ACCOUNT'|translate}}</b> más abajo."
     }
   }
-},
+}

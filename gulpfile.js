@@ -33,7 +33,8 @@ const gulp = require('gulp'),
   colors = require('ansi-colors'),
   argv = require('yargs').argv,
   sriHash = require('gulp-sri-hash'),
-  sort = require('gulp-sort');
+  sort = require('gulp-sort'),
+  jsonlint = require("@prantlf/gulp-jsonlint");
 
 const paths = {
   license_md: ['./www/license/*.md'],
@@ -160,6 +161,8 @@ function appNgTranslate() {
   log(colors.green('Building App translation file...'));
 
   return gulp.src('www/i18n/locale-*.json')
+    .pipe(jsonlint())
+    .pipe(jsonlint.reporter())
     .pipe(sort())
     .pipe(ngTranslate({standalone:true, module: 'cesium.translations'}))
     .pipe(gulp.dest('www/dist/dist_js/app'));
@@ -221,6 +224,8 @@ function pluginNgTranslate() {
   log(colors.green('Building Plugins translation file...'));
 
   return gulp.src(paths.ng_translate_plugin)
+    .pipe(jsonlint())
+    .pipe(jsonlint.reporter())
     .pipe(sort())
     .pipe(ngTranslate({standalone:true, module: 'cesium.plugins.translations'}))
     .pipe(gulp.dest('www/dist/dist_js/plugins'));
@@ -324,6 +329,8 @@ function webCopyFiles() {
 
     // Copy i18n
     gulp.src('./www/i18n/locale-*.json')
+      .pipe(jsonlint())
+      .pipe(jsonlint.reporter())
       .pipe(sort())
       .pipe(ngTranslate({standalone:true, module: 'cesium.translations'}))
       .pipe(gulp.dest(tmpPath + '/js')),
@@ -335,10 +342,6 @@ function webCopyFiles() {
     // Copy manifest.json
     gulp.src('./www/manifest.json')
       .pipe(gulp.dest(tmpPath)),
-
-    // Copy feed*.json
-    //gulp.src('./www/feed*.json')
-    //  .pipe(gulp.dest(tmpPath)),
 
     // Copy lib (JS, CSS and fonts)
     gulp.src(['./www/lib/**/*.js', './www/lib/**/*.css', './www/lib/**/fonts/**/*.*'])
@@ -400,6 +403,8 @@ function webPluginCopyFiles() {
 
     // Transform i18n into JS
     gulp.src(paths.ng_translate_plugin)
+      .pipe(jsonlint())
+      .pipe(jsonlint.reporter())
       .pipe(sort())
       .pipe(ngTranslate({standalone:true, module: 'cesium.plugins.translations'}))
       .pipe(gulp.dest(tmpPath + '/dist/dist_js/plugins')),
