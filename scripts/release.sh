@@ -117,10 +117,11 @@ cd ${PROJECT_DIR} || exit 1
 
 # Run web build
 gulp config --env default
-gulp webBuild webExtBuild --release
-if [[ $? -ne 0 ]]; then
-  exit 1
-fi
+gulp webBuild --release
+[[ $? -ne 0 ]] && exit 1
+
+gulp webExtBuild --release
+[[ $? -ne 0 ]] && exit 1
 
 # check files exists
 DIST_WEB_FILE="${DIST_WEB}/${PROJECT_NAME}-v$2-web.zip"
