@@ -10,11 +10,11 @@ angular.module("cesium.config", [])
 
 .constant("csConfig", {
 	"cacheTimeMs": 300000,
-  "demo": true,
-	"fallbackLanguage": "en",
+	"demo": false,
+	"fallbackLanguage": "fr",
 	"rememberMe": true,
 	"showUDHistory": true,
-	"timeout": 40000,
+	"timeout": 300000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
 	"keepAuthIdle": 600,
@@ -23,17 +23,17 @@ angular.module("cesium.config", [])
 	"expertMode": false,
 	"decimalCount": 2,
 	"httpsMode": false,
-	"shareBaseUrl": "https://g1.duniter.fr",
+	"shareBaseUrl": "https://demo.cesium.app",
 	"helptip": {
 		"enable": true,
 		"installDocUrl": {
-			"fr-FR": "https://duniter.org/fr/wiki/duniter/installer/",
+			"fr-FR": "https://duniter.org/fr/miner-des-blocs/installer/",
 			"en": "https://duniter.org/en/wiki/duniter/install/"
 		}
 	},
 	"license": {
-		"en": "license/license_g1-en",
 		"fr-FR": "license/license_g1-fr-FR",
+		"en": "license/license_g1-en",
 		"es-ES": "license/license_g1-es-ES",
 		"eo-EO": "license/license_g1-eo-EO"
 	},
@@ -54,7 +54,19 @@ angular.module("cesium.config", [])
 			"port": 443
 		},
 		{
-			"host": "g1.monnaielibreoccitanie.org",
+			"host": "g1.librelois.fr",
+			"port": 443
+		},
+		{
+			"host": "g1.e-is.pro",
+			"port": 443
+		},
+		{
+			"host": "duniter.moul.re",
+			"port": 443
+		},
+		{
+			"host": "g1.presles.fr",
 			"port": 443
 		},
 		{
@@ -62,14 +74,12 @@ angular.module("cesium.config", [])
 			"port": 443
 		},
 		{
-			"host": "g1.duniter.fr",
+			"host": "duniter.normandie-libre.fr",
 			"port": 443
-		}
-	],
-	"developers": [
+		},
 		{
-			"name": "Benoit Lavenier",
-			"pubkey": "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE"
+			"host": "g1.duniter.org",
+			"port": 443
 		}
 	],
 	"plugins": {
@@ -77,15 +87,19 @@ angular.module("cesium.config", [])
 			"enable": true,
 			"askEnable": true,
 			"useRemoteStorage": true,
-			"host": "g1.data.duniter.fr",
+			"host": "g1.data.e-is.pro",
 			"port": 443,
 			"fallbackNodes": [
+				{
+					"host": "g1.data.presles.fr",
+					"port": 443
+				},
 				{
 					"host": "g1.data.le-sou.org",
 					"port": 443
 				},
 				{
-					"host": "g1.data.duniter.fr",
+					"host": "g1.data.mithril.re",
 					"port": 443
 				}
 			],
@@ -98,8 +112,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "1.6.5",
-	"build": "2020-04-30T16:11:11.201Z",
+	"version": "1.6.6",
+	"build": "2020-05-01T14:57:18.055Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
