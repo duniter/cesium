@@ -16,7 +16,7 @@ After that you should be able to start the application using `npm start`or `yarn
 - To create a uncompressed extension, use :
   ```bash
      cd cesium
-     gulp webExtensionCopyFiles --release
+     gulp webExtCompile --release
   ```
   
   The uncompressed web extension will be visible `dist/web/ext`

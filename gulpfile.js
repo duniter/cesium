@@ -812,6 +812,7 @@ exports.build = build;
 exports.webBuild = webBuild;
 exports['build:web'] = exports.webBuild; // Alias
 
+exports.webExtCompile = webExtCompile;
 exports.webExtBuild = webExtBuild;
 exports['build:webExt'] = exports.webBuild; // Alias
 
