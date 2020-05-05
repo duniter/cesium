@@ -53,14 +53,14 @@
       <!-- Allow extension here -->
       <cs-extension-point name="buttons"></cs-extension-point>
 
-      <button class="button button-stable button-small-padding icon ion-ribbon-b ink"
+      <button class="button button-stable button-small-padding icon ion-ribbon-b ink hidden-readonly"
               ng-click="certify()"
               ng-if=":rebind:formData.hasSelf"
               title="{{'WOT.BTN_CERTIFY' | translate}}"
               ng-disabled="disableCertifyButton">
       </button>
 
-      <button class="button button-calm ink"
+      <button class="button button-calm ink hidden-readonly"
               ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.name||formData.uid})">
         {{'COMMON.BTN_SEND_MONEY' | translate}}
       </button>
@@ -69,9 +69,9 @@
     </div>
 
     <!-- fab buttons -->
-    <div class="visible-xs visible-sm">
+    <div class="visible-xs visible-sm ">
       <button id="fab-certify-{{:rebind:formData.uid}}"
-              class="button button-fab button-fab-top-left button-fab-hero button-calm spin"
+              class="button button-fab button-fab-top-left button-fab-hero button-calm spin hidden-readonly"
               ng-if=":rebind:(canCertify && !alreadyCertified)"
               ng-click="certify()">
         <i class="icon ion-ribbon-b"></i>
@@ -172,8 +172,8 @@
   </ion-content>
 
   <!-- fab button -->
-  <div class="visible-xs visible-sm" ng-hide="loading">
-    <button id="fab-transfer" class="button button-fab button-fab-bottom-right button-assertive drop"
+  <div class="visible-xs visible-sm " ng-hide="loading">
+    <button id="fab-transfer" class="button button-fab button-fab-bottom-right button-assertive drop hidden-readonly"
             ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.uid})">
       <i class="icon ion-android-send"></i>
     </button>

@@ -1,10 +1,22 @@
 <a name="demo"></a>
 <div class="row responsive-sm"
+     ng-if="::$root.config.demo"
      ng-class="itemsClass['demo']">
-  <div class="col col-20" translate>DEMO.MODE</div>
+  <div class="col col-20" translate>MODE.DEMO.MODE</div>
   <div class="col">
-    <span translate>DEMO.MODE_HELP</span><br/>
-    <span translate>DEMO.INSTALL_HELP</span>
+    <span translate>MODE.DEMO.MODE_HELP</span><br/>
+    <span translate>MODE.DEMO.INSTALL_HELP</span>
+  </div>
+</div>
+
+<a name="readonly"></a>
+<div class="row responsive-sm"
+     ng-if="::$root.config.readonly"
+     ng-class="itemsClass['readonly']">
+  <div class="col col-20" translate>MODE.READONLY.MODE</div>
+  <div class="col">
+    <span translate>MODE.READONLY.MODE_HELP</span><br/>
+    <span translate>MODE.READONLY.INSTALL_HELP</span>
   </div>
 </div>
 

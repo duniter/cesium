@@ -913,6 +913,29 @@ html, body {
  Home page
 =============== */
 
+#home .ribbon {
+  position: fixed;
+  top: 15px;
+  right: -110px;
+  z-index: 500;
+  transform: rotate(45deg);
+  text-align: center;
+  width: 300px;
+  text-decoration: none;
+  box-shadow: 0 0 5px #000;
+  a:first-child {
+    opacity: 1 !important;
+  }
+  a {
+    opacity: 0.7;
+    width: 100%;
+  }
+
+  a:hover {
+    opacity: 1;
+    font-size: 16px;
+  }
+}
 #home .logo {
   margin-top: 15px;
   width: 100%;
@@ -2038,25 +2061,78 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 }
 
 /**********
-   Demo
+   Specific modes (demo, readonly)
 **********/
 
-#menu .badge-demo {
-  font-size: 12px;
+/* -- readonly mode -- */
+
+.visible-readonly {
+  display: none;
+  visibility: hidden;
+}
+
+body.readonly {
+
+  .hidden-readonly {
+    display: none;
+    visibility: hidden;
+  }
+  .visible-readonly {
+    display: inherit !important;
+    visibility: visible !important;
+  }
+}
+
+/* -- demo mode -- */
+
+.visible-demo {
+  display: none;
+  visibility: hidden;
+}
+
+body.demo {
+
+  .hidden-demo {
+    display: none;
+    visibility: hidden;
+  }
+  .visible-demo {
+    display: inherit !important;
+    visibility: visible !important;
+  }
+}
+
+.badge-app-mode {
   font-weight: bold;
   color: whitesmoke !important;
-  position: absolute;
   top: 10px;
-  left: 1px;
   padding: 0 4px;
   text-transform: uppercase;
+  user-select: none;
+}
+#menu .badge-app-mode.left {
+  position: absolute;
+  font-size: 12px;
+  left: 1px;
   transform-origin: 26px 5px;
   transform: rotate(-10deg);
 }
-#menu .badge-demo:hover {
-  font-size: 13px;
+#menu .badge-app-mode.right {
+  position: absolute;
+  font-size: 14px;
+  right: 1px;
+  transform-origin: 26px 5px;
+  transform: rotate(10deg);
+}
+#menu .badge-app-mode.left:hover {
   padding: 1px 4px;
+  font-size: 13px;
   transform: rotate(-15deg);
+}
+#menu .badge-app-mode.right:hover {
+  padding: 2px 5px;
+  font-size: 16px;
+  transform: rotate(15deg);
 }
 /**********
    Help

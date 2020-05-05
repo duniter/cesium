@@ -916,12 +916,20 @@
     "USE_FALLBACK_NODE": "Nodo <b>{{old}}</b> inalcanzable o dirección inválida.<br/><br/>¿Desea utilizar temporalmente el nodo <b>{{new}}</b>?",
     "ISSUE_524_SEND_LOG": "La transacción ha sido rechazada a causa de una anomalía conocida (ticket #524) pero todavía <b>no replicable</b>.<br/><br/>Para ayudar a los/as desarrolladores/as a corregir este error, ¿ <b>acepta el envío de los logs(trazas del programa)</b> ?<br/><small>(ningún dato confidencia será enviado)</small>."
   },
-  "DEMO": {
-    "BADGE": "Demo",
-    "MODE": "Modo de demostración",
-    "FEATURE_NOT_AVAILABLE": "Funcionalidad <b>no disponible</b> en este sitio de demostración.",
-    "MODE_HELP": "El cesio funciona en <b> modo de demostración </b>: la consulta está disponible, pero no se puede realizar ninguna operación.",
-    "INSTALL_HELP": "Por <b>razones de seguridad</b> recomendamos <b>instalar</b> su copia del software.<br/>Visite el sitio de Internet <a href='https://cesium.app'> www.cesium.app </a> para obtener ayuda."
+  "MODE": {
+    "DEMO": {
+      "BADGE": "Demo",
+      "MODE": "Modo de demostración",
+      "FEATURE_NOT_AVAILABLE": "Funcionalidad <b>no disponible</b> en este sitio de demostración.",
+      "MODE_HELP": "Cesium funciona en <b> modo de demostración </b>: la consulta está disponible, pero no se puede realizar ninguna operación.",
+      "INSTALL_HELP": "Por <b>razones de seguridad</b> recomendamos <b>instalar</b> su copia del software.<br/>Visite el sitio de Internet <a href='https://cesium.app'> www.cesium.app </a> para obtener ayuda."
+    },
+    "READONLY": {
+      "BADGE": "Monit",
+      "MODE": "Modo de supervisión",
+      "MODE_HELP": "Cesium funciona en <b> modo de supervisión </b>: solo están disponibles las funciones de monitoreo de divisas.",
+      "INSTALL_HELP": "Si desea <b>crear una cuenta</b> para enviar o recibir dinero, le recomendamos <b>instalar</b> su copia del software.<br/>Visite el sitio de Internet <a href='https://cesium.app'> www.cesium.app </a> para obtener ayuda."
+    }
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Revocación del archivo</b>",

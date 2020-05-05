@@ -289,8 +289,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           });
       }
 
-      // Disable auth, if demo
-      if (csConfig.demo === true || csConfig.demo === "true") {
+      // Disable auth, if readonly or demo
+      if (csConfig.readonly || csConfig.demo) {
         return UIUtils.alert.demo()
           .then(function() {
             throw 'CANCELLED';

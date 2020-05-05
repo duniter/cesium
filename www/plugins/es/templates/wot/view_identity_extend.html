@@ -6,7 +6,7 @@
 </ng-if>
 
 <!-- Top fab buttons -->
-<ng-if ng-if=":state:enable && extensionPoint === 'buttons-top-fab'">
+<ng-if ng-if=":state:enable && extensionPoint === 'buttons-top-fab' && !$root.config.readonly">
   <button id="fab-compose-{{:rebind:formData.pubkey}}"
           class="button button-fab button-fab-top-left button-fab-hero mini button-stable spin"
           style="left: 88px;"
@@ -16,7 +16,7 @@
 </ng-if>
 
 <!-- Buttons section -->
-<ng-if ng-if=":state:enable && extensionPoint === 'buttons'">
+<ng-if ng-if=":state:enable && extensionPoint === 'buttons' && !$root.config.readonly">
   <button class="button button-stable button-small-padding icon ion-email"
           ng-disabled="loading"
           ng-click="showNewMessageModal()"
@@ -25,7 +25,7 @@
 </ng-if>
 
 <!-- End of buttons section -->
-<ng-if ng-if=":state:enable && extensionPoint === 'after-buttons'">
+<ng-if ng-if=":state:enable && extensionPoint === 'after-buttons' && !$root.config.readonly">
   <!-- options -->
   <button class="button button-stable button-small-padding icon ion-android-more-vertical"
           ng-click="showActionsPopover($event)">

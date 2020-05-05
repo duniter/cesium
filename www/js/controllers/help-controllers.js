@@ -161,13 +161,16 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
     $scope.tour = true;
     $scope.continue = true;
 
-    // Wallet (if NOT login)
-    return $scope.startWalletNoLoginTour(0, true)
+    console.debug("[help] Starting help tour... {demo: {0}, readonly: {1}, isLogin: {2}}".format(
+      csConfig.demo, csConfig.readonly, csWallet.isLogin()));
+
+    // Wallet (if NOT readonly and NOT login)
+    return ((!csConfig.readonly && csWallet.isLogin()) ? $scope.startWalletNoLoginTour(0, true) : $q.when(true))
 
       // Wallet (if login)
       .then(function(next){
         if (!next) return false;
-        if (!csWallet.isLogin()) return true; // not login: continue
+        if (csConfig.readonly || !csWallet.isLogin()) return true; // not login or readonly: continue
         return $scope.startWalletTour(0, true)
           .then(function(endIndex){
             if (!endIndex) return false;
@@ -180,7 +183,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
       // Wallet certifications
       .then(function(next){
         if (!next) return false;
-        if (!csWallet.isLogin()) return true; // not login: continue
+        if (csConfig.readonly || !csWallet.isLogin()) return true; // not login or readonly: continue
         return $scope.startWalletCertTour(0, true)
           .then(function(endIndex){
             if (!endIndex) return false;
@@ -193,7 +196,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
       // My operations (if login)
       .then(function(next){
         if (!next) return false;
-        if (!csWallet.isLogin()) return true; // not login: continue
+        if (csConfig.readonly || !csWallet.isLogin()) return true; // not login or readonly: continue
         return $scope.startTxTour(0, true)
           .then(function(endIndex){
             if (!endIndex) return false;
@@ -206,7 +209,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
       // My wallets (if login)
       .then(function(next){
         if (!next) return false;
-        if (!csWallet.isLogin()) return true; // not login: continue
+        if (csConfig.readonly || !csWallet.isLogin()) return true; // not login or readonly: continue
         return $scope.startWalletsTour(0, true)
           .then(function(endIndex){
             if (!endIndex) return false;
@@ -219,12 +222,14 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
       // Header tour
       .then(function(next){
         if (!next) return false;
+        if (csConfig.readonly) return true; // readonly: continue
         return $scope.startHeaderTour(0, true);
       })
 
-      // Settings tour
+      // Settings tour (if not readonly mode)
       .then(function(next){
         if (!next) return false;
+        if (csConfig.readonly) return true; // Skip if readonly mode (will be play later)
         return $scope.startSettingsTour(0, true);
       })
 
@@ -289,6 +294,12 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
           });
       })
 
+      // Settings tour (if readonly mode)
+      .then(function(next){
+        if (!next) return false;
+        if (!csConfig.readonly) return true; // Skip if NOT readonly
+        return $scope.startSettingsTour(0, true);
+      })
 
       // Finish tour
       .then(function(next){
@@ -319,7 +330,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
           bindings: {
             content: 'HELP.TIP.MENU_BTN_CURRENCY',
             icon: {
-              position: UIUtils.screen.isSmall() ? 'left' : 'bottom-left'
+              position: UIUtils.screen.isSmall() || csConfig.readonly ? 'left' : 'bottom-left'
             }
           }
         });
@@ -432,7 +443,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
         // Select the second tabs
         $timeout(function () {
           var tabs = $window.document.querySelectorAll('ion-tabs .tabs a');
-          if (tabs && tabs.length == 3) {
+          if (tabs && tabs.length === 3) {
             angular.element(tabs[2]).triggerHandler('click');
           }
         }, 100);
@@ -450,7 +461,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
           bindings: {
             content: 'HELP.TIP.MENU_BTN_NETWORK',
             icon: {
-              position: UIUtils.screen.isSmall() ? 'left' : 'bottom-left'
+              position: UIUtils.screen.isSmall() || csConfig.readonly ? 'left' : 'bottom-left'
             }
           }
         });
@@ -545,7 +556,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
           bindings: {
             content: 'HELP.TIP.MENU_BTN_WOT',
             icon: {
-              position: UIUtils.screen.isSmall() ? 'left' : 'bottom-left'
+              position: UIUtils.screen.isSmall() || csConfig.readonly ? 'left' : 'bottom-left'
             }
           },
           onError: 'continue'
@@ -650,6 +661,8 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
    * @returns {*}
    */
   $scope.startWotCertTour = function(startIndex, hasNext) {
+    if (csConfig.readonly) return $q.when(true);
+
     var steps = [
 
       function() {
@@ -1038,7 +1051,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
    * @returns {*}
    */
   $scope.startHeaderTour = function(startIndex, hasNext) {
-    if (UIUtils.screen.isSmall()) return $q.when(true);
+    if (UIUtils.screen.isSmall() || csConfig.readonly) return $q.when(true);
 
     function _getProfilBtnElement() {
       var elements = $window.document.querySelectorAll('#helptip-header-bar-btn-profile');
@@ -1053,15 +1066,13 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
         var element = _getProfilBtnElement();
         if (!element) return true;
 
-        // If home; add offset because of locales button
-        var iconStyle =  $state.is('app.home') ? 'margin-right: 60px' : undefined;
-
         return $scope.showHelpTip(element, {
           bindings: {
             content: 'HELP.TIP.HEADER_BAR_BTN_PROFILE',
             icon: {
               position: 'right',
-              style: iconStyle
+              // If home; add offset because of locales button
+              style: $state.is('app.home') ? 'margin-right: 60px' : undefined
             }
           }
         });
@@ -1120,13 +1131,13 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
     var steps = [
 
       function () {
-        if (!UIUtils.screen.isSmall()) return true;
+        if (!UIUtils.screen.isSmall() && !csConfig.readonly) return true;
         $ionicSideMenuDelegate.toggleLeft(true);
-        return $scope.showHelpTip('helptip-menu-btn-settings', {
+        return $scope.showHelpTip(UIUtils.screen.isSmall() ? 'helptip-menu-btn-settings' : 'menu-btn-settings', {
           bindings: {
             content: 'HELP.TIP.MENU_BTN_SETTINGS',
             icon: {
-              position: 'left'
+              position: UIUtils.screen.isSmall() ? 'left' : 'bottom-left'
             }
           },
           timeout: 1000

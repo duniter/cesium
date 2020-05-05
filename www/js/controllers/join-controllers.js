@@ -86,7 +86,7 @@ function JoinChooseAccountTypeModalController($scope, $state, Modals, UIUtils, c
   };
 
   $scope.selectAccountTypeAndClose = function(type) {
-    if (csConfig.demo === true || csConfig.demo === "true") {
+    if (csConfig.demo) {
       return UIUtils.alert.demo();
     }
     $scope.formData.accountType = type;

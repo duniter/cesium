@@ -112,6 +112,10 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       listeners,
       removeChangeStateListener;
 
+    // Fix csConfig values
+    csConfig.demo = csConfig.demo === true || csConfig.demo === 'true' || false;
+    csConfig.readonly = csConfig.readonly === true || csConfig.readonly === 'true' || false;
+
     function disableChangeState() {
       if (removeChangeStateListener) return; // make sure to call this once
 

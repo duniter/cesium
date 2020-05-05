@@ -533,6 +533,7 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
   $scope.loading = true;
   $scope.locales = angular.copy(csSettings.locales);
   $scope.smallscreen = UIUtils.screen.isSmall();
+  $scope.showInstallHelp = false;
 
   $scope.enter = function(e, state) {
     if (ionic.Platform.isIOS()) {

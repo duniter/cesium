@@ -228,13 +228,21 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
     $scope.$watch('transferButton.style', $scope.computeTransferButtonHtml, true);
   })
 
-  .controller('ApiTransferCtrl', function ($scope, $rootScope, $timeout, $controller, $state, $q, $translate, $filter,
-                                           $window, $ionicHistory, BMA, CryptoUtils, UIUtils, csSettings, csCurrency,
-                                           csPlatform, csTx, csWallet, csDemoWallet){
+  .controller('ApiTransferCtrl', function($scope, $rootScope, $timeout, $controller, $state, $q, $translate, $filter,
+                                          $window, $ionicHistory, BMA, CryptoUtils, UIUtils, csConfig, csSettings,
+                                          csPlatform, csCurrency, csTx, csWallet, csDemoWallet) {
     'ngInject';
 
+    // WARN: Disable demo mode, on the API (a non-blocking warn message will be display later)
+    var config = csConfig;
+    if (config.demo) {
+      config = angular.copy(config);
+      config.demo = false;
+      config.readonly = false;
+    }
+
     // Initialize the super class and extend it.
-    angular.extend(this, $controller('AuthCtrl', {$scope: $scope}));
+    angular.extend(this, $controller('AuthCtrl', {$scope: $scope, csConfig: config}));
 
     $scope.loading = true;
     $scope.transferData = {

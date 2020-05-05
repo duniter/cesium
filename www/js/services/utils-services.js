@@ -101,9 +101,9 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
   }
 
   function alertDemo() {
-    return $translate(["DEMO.FEATURE_NOT_AVAILABLE", "DEMO.INSTALL_HELP"])
+    return $translate(["MODE.DEMO.FEATURE_NOT_AVAILABLE", "MODE.DEMO.INSTALL_HELP"])
       .then(function(translations) {
-        var message = translations["DEMO.FEATURE_NOT_AVAILABLE"] + "<br/><br/>" + translations["DEMO.INSTALL_HELP"];
+        var message = translations["MODE.DEMO.FEATURE_NOT_AVAILABLE"] + "<br/><br/>" + translations["MODE.DEMO.INSTALL_HELP"];
         return alertInfo(message, undefined, {cssClass: 'large'});
       });
   }

@@ -118,10 +118,16 @@
   "HOME": {
     "TITLE": "Cesium",
     "WELCOME": "Bienvenue dans l'application Cesium !",
+    "WELCOME_READONLY": "Bienvenue dans Cesium Monit !",
     "MESSAGE": "Recevez et envoyez de la monnaie libre {{currency|abbreviate}}",
-    "BTN_CURRENCY": "Explorer la monnaie {{name|abbreviate}}",
+    "MESSAGE_READONLY": "Suivez l'état de la monnaie libre {{currency|abbreviate}} en temps réel.",
+    "BTN_CURRENCY": "Explorer la monnaie {{currency|abbreviate}}",
     "BTN_ABOUT": "à propos",
     "BTN_HELP": "Aide en ligne",
+    "BTN_NETWORK": "Etat du réseau",
+    "FREE_SOFTWARE": "Logiciel libre",
+    "FORK_ME": "Cloner moi !",
+    "SHOW_LICENSE": "Voir la license",
     "REPORT_ISSUE": "anomalie",
     "NOT_YOUR_ACCOUNT_QUESTION" : "Vous n'êtes pas propriétaire du compte <b class=\"ion-key\"> {{pubkey|formatPubkey}}</b>&nbsp;?",
     "BTN_CHANGE_ACCOUNT": "Déconnecter ce compte",
@@ -825,12 +831,20 @@
     "USE_FALLBACK_NODE": "Nœud <b>{{old}}</b> injoignable ou adresse invalide.<br/><br/>Voulez-vous temporairement utiliser le nœud <b>{{new}}</b> ?",
     "ISSUE_524_SEND_LOG": "La transaction a été rejetée, à cause d'une anomalie connue (ticket #524) mais <b>non reproduite</b>.<br/><br/>Pour aider les développeurs à corriger cette erreur, <b>acceptez-vous la transmission de vos logs</b> par message ?<br/><small>(aucune donnée confidentielle n'est envoyée)</small>."
   },
-  "DEMO": {
-    "BADGE": "Démo",
-    "MODE": "Mode démonstration",
-    "FEATURE_NOT_AVAILABLE": "Fonctionnalité <b>non disponible</b> sur ce site de démonstration.",
-    "MODE_HELP": "Cesium fonctionne en <b>mode démonstration</b> : la consultation est de compte est disponible, mais aucune opération de compte ne peut être réalisée.",
-    "INSTALL_HELP": "Pour des <b>raisons de sécurité</b> nous vous recommandons <b>d'installer</b> votre copie du logiciel. Visitez le site <a href='https://cesium.app'>www.cesium.app</a> pour obtenir de l'aide."
+  "MODE": {
+    "DEMO": {
+      "BADGE": "Démo",
+      "MODE": "Mode démonstration",
+      "FEATURE_NOT_AVAILABLE": "Fonctionnalité <b>non disponible</b> sur ce site de démonstration.",
+      "MODE_HELP": "Cesium fonctionne en <b>mode démonstration</b> : la consultation de compte est possible, mais aucune opération ne pourra être réalisée.",
+      "INSTALL_HELP": "Pour des <b>raisons de sécurité</b> nous vous recommandons <b>d'installer</b> votre copie de l'application Cesium. Visitez le site <a href='https://cesium.app'>www.cesium.app</a> pour obtenir de l'aide."
+    },
+    "READONLY": {
+      "BADGE": "Monit",
+      "MODE": "Mode monitoring",
+      "MODE_HELP": "Cesium fonctionne en <b>mode monitoring</b> : sono disponibili solo le funzionalità di monitoraggio della valuta.",
+      "INSTALL_HELP": "Si vous souhaitez <b>créer un compte portefeuille</b> pour envoyer ou recevoir de la monnaie, nous vous recommandons <b>d'installer votre copie</b> de l'application Cesium. Visitez le site <a href='https://cesium.app'>www.cesium.app</a> pour obtenir de l'aide."
+    }
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Fichier de révocation</b>",

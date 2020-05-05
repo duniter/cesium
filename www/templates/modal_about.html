@@ -57,7 +57,7 @@
       <ion-item class="item-icon-left">
         <i class="item-image icon ion-network"></i>
         {{'ABOUT.CODE' | translate}}
-        <h3><a ng-click="openLink($event, 'https://git.duniter.org/clients/cesium-grp/cesium')">https://git.duniter.org/clients/cesium-grp/cesium</a></h3>
+        <h3><a ng-click="openLink($event, $root.settings.sourceUrl)">{{$root.settings.sourceUrl}}</a></h3>
       </ion-item>
 
       <!-- team -->

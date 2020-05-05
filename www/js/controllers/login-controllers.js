@@ -50,7 +50,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
   parameters = parameters || {};
 
   // Demo mode: force PUBKEY method
-  if (csConfig.demo === true || csConfig.demo === "true") {
+  if (csConfig.demo) {
     parameters.method = 'PUBKEY';
   }
 
@@ -424,7 +424,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
   $scope.changeMethod = function(method, params){
     $scope.hideMethodsPopover();
 
-    if (method !== 'PUBKEY' && (csConfig.demo === true || csConfig.demo === "true")) {
+    if (method !== 'PUBKEY' && csConfig.demo) {
       return UIUtils.alert.demo();
     }
 
@@ -612,10 +612,14 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
 }
 
 
-function AuthController($scope, $controller){
+function AuthController($scope, $controller, csConfig){
+
+  var config = angular.copy(csConfig);
+  config.demo = false;
+  config.readonly = false;
 
   // Initialize the super class and extend it.
-  angular.extend(this, $controller('LoginModalCtrl', {$scope: $scope, parameters: {auth: true}}));
+  angular.extend(this, $controller('LoginModalCtrl', {$scope: $scope, parameters: {auth: true}, csConfig: config}));
 
   $scope.setForm = function(form) {
     $scope.form = form;

@@ -16,7 +16,7 @@
 
         <!-- current node info -->
         <button class="button button-clear button-peer hidden-xs hidden-sm gray"
-                ng-if="$root.settings.expertMode"
+                ng-if="$root.config.readonly || $root.settings.expertMode"
                 style="max-width: 450px !important;"
                 ng-click="showPeerInfoPopover($event)">
           <span style="display: inline-flex;">
@@ -32,7 +32,7 @@
 
         <!-- profile -->
         <a id="helptip-header-bar-btn-profile"
-           class="button button-icon button-clear hidden-xs hidden-sm"
+           class="button button-icon button-clear hidden-xs hidden-sm hidden-readonly"
            ng-click="showProfilePopover($event)">
           <i class="avatar avatar-member"
              ng-if="!walletData.avatar"
@@ -61,7 +61,8 @@
         <span class="animate-fade-in animate-show-hide ng-hide" ng-show="$root.currency.name">
           {{:locale:'COMMON.APP_NAME'|translate}} {{$root.currency.name|abbreviate}}
         </span>
-        <a class="badge badge-demo badge-assertive" ng-if="::$root.config.demo" ng-click="showHelpModal('demo')()" translate>DEMO.BADGE</a>
+        <a class="badge badge-assertive badge-app-mode left visible-demo" ng-click="showHelpModal('demo')">{{:locale:'MODE.DEMO.BADGE'|translate}}</a>
+        <a class="badge badge-balanced badge-app-mode right visible-readonly" ng-click="showHelpModal('readonly')">{{:locale:'MODE.READONLY.BADGE'|translate}}</a>
       </h1>
 
       <div class="visible-sm visible-xs hero">
@@ -110,12 +111,12 @@
         <!-- *************** -->
 
         <ion-item menu-close
-                  class="item item-actions item-button-right visible-xs visible-sm"
+                  class="item item-actions item-button-right visible-xs visible-sm hidden-readonly"
                   ng-if="login"
                   ng-class="::{'item-button-left': $root.device.barcode.enable}">
           <!-- transfer -->
           <button
-            class="button button-positive ink-dark"
+            class="button button-positive ink-dark "
             ng-click="showTransferModal()">
             <i class="icon ion-paper-airplane"></i>
           </button>
@@ -144,10 +145,10 @@
         <!-- ************ -->
         <!-- User Section -->
         <!-- ************ -->
-        <div class="item item-divider"></div>
+        <div class="item item-divider hidden-readonly"></div>
 
         <a menu-close
-           class="item item-icon-left"
+           class="item item-icon-left hidden-readonly"
            active-link="active"
            active-link-path-prefix="#/app/account"
            ui-sref="app.view_wallet"
@@ -158,7 +159,7 @@
         <a id="helptip-menu-btn-account"></a>
 
         <a menu-close
-           class="item item-icon-left"
+           class="item item-icon-left hidden-readonly"
            active-link="active"
            active-link-path-prefix="#/app/history"
            ui-sref="app.view_wallet_tx"
@@ -170,7 +171,7 @@
         <a id="helptip-menu-btn-tx"></a>
 
         <a menu-close
-           class="item item-icon-left"
+           class="item item-icon-left hidden-readonly"
            active-link="active"
            active-link-path-prefix="#/app/wallets"
            ui-sref="app.view_wallets"
@@ -181,16 +182,16 @@
         </a>
         <a id="helptip-menu-btn-wallets"></a>
 
-        <div class="item item-divider visible-xs visible-sm"></div>
+        <div class="item item-divider visible-xs visible-sm hidden-readonly" ></div>
 
         <!-- Allow extension here -->
-        <cs-extension-point name="menu-user"></cs-extension-point>
+        <cs-extension-point name="menu-user" ></cs-extension-point>
 
         <!-- *************** -->
         <!-- Actions section -->
         <!-- *************** -->
 
-        <ion-item class="item hidden-xs hidden-sm">
+        <ion-item class="item hidden-xs hidden-sm hidden-readonly">
           <!-- transfer -->
           <button class="button button-block button-small button-small-padding  icon-left icon ion-paper-airplane no-margin"
                   ng-class="{'button-positive': login, 'button-stable': !login}"
@@ -200,12 +201,12 @@
         </ion-item>
 
         <!-- Spacer (large screen only) -->
-        <div class="item-spacer"></div>
+        <div class="item-spacer hidden-readonly"></div>
 
         <!-- ************ -->
         <!-- Main section -->
         <!-- ************ -->
-        <div class="item item-divider"></div>
+        <div class="item item-divider hidden-readonly"></div>
 
         <!-- Help tour (NOT ready yet for small device) -->
         <a  class="item item-icon-left item-closeable hidden-xs hidden-sm"
@@ -259,6 +260,8 @@
         <cs-extension-point name="menu-discover"></cs-extension-point>
 
 
+        <div class="item-spacer visible-readonly"></div>
+
         <div class="item item-divider visible-xs visible-sm"></div>
 
 
@@ -272,8 +275,9 @@
         </a>
 
         <a menu-close
-           class="item item-icon-left visible-xs visible-sm"
+           class="item item-icon-left visible-xs visible-sm visible-readonly"
            active-link="active"
+           id="menu-btn-settings"
            active-link-path-prefix="#/app/settings"
            ui-sref="app.settings">
           <i class="icon ion-android-settings"></i>

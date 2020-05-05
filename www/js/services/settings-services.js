@@ -59,6 +59,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     timeWarningExpireMembership: 2592000 * 2 /*=2 mois*/,
     timeWarningExpire: 2592000 * 3 /*=3 mois*/,
     minVersion: '1.1.0',
+    sourceUrl: 'https://git.duniter.org/clients/cesium-grp/cesium',
+    sourceLicenseUrl: 'https://git.duniter.org/clients/cesium-grp/cesium/-/raw/master/LICENSE',
     newIssueUrl: "https://git.duniter.org/clients/cesium-grp/cesium/issues/new",
     userForumUrl: "https://forum.monnaie-libre.fr",
     latestReleaseUrl: "https://api.github.com/repos/duniter/cesium/releases/latest",

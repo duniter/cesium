@@ -1225,7 +1225,7 @@ function WalletSecurityModalController($scope, UIUtils, csConfig, csWallet, $tra
   };
 
   $scope.selectOption = function(option, enableOnDemo){
-    if (!enableOnDemo && (csConfig.demo === true || csConfig.demo === "true")) {
+    if (!enableOnDemo && csConfig.demo) {
       return UIUtils.alert.demo();
     }
     $scope.option = option;

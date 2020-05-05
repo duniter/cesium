@@ -15,15 +15,28 @@
 
   <ion-content class="positive-900-bg circle-bg-dark">
 
+    <div class="ribbon" ng-if="::$root.config.demo || $root.config.readonly">
+      <a class="badge badge-assertive" ng-if="$root.config.demo"  ng-click="showHelpModal('demo')">{{:locale:'MODE.DEMO.BADGE'|translate}}</a>
+      <a class="badge badge-balanced" ng-if="$root.config.readonly" ng-click="showHelpModal('readonly')">{{:locale:'MODE.READONLY.BADGE'|translate}}</a>
+      <a class="badge badge-positive" ng-click="openLink($event, $root.settings.sourceUrl)" title="{{:locale:'HOME.FORK_ME'|translate}}">{{:locale:'HOME.FREE_SOFTWARE'|translate}}</a>
+      <a class="badge badge-stable" ng-click="openLink($event, $root.settings.sourceLicenseUrl)" title="{{:locale:'HOME.SHOW_LICENSE'|translate}}">AGPL-3.0</a>
+    </div>
+
     <div class="row padding-horizontal no-padding-xxs responsive-lg">
       <div class="col col-30 no-padding hidden-xs hidden-sm">&nbsp;</div>
       <div class="col text-center no-padding-xs main-container">
 
-        <div id="helptip-home-logo" class="logo"></div>
+        <div id="helptip-home-logo" class="logo">
+        </div>
 
-        <h4>
+        <h4 ng-if="::!$root.config.readonly">
           <span class="hidden-xs" translate>HOME.WELCOME</span>
           <b ng-show="!loading" translate-values=":currency:{currency: $root.currency.name}" translate>HOME.MESSAGE</b>
+        </h4>
+
+        <h4 ng-if="::$root.config.readonly">
+          <span class="hidden-xs" translate>HOME.WELCOME_READONLY</span>
+          <b ng-show="!loading" translate-values=":currency:{currency: $root.currency.name}" translate>HOME.MESSAGE_READONLY</b>
         </h4>
 
         <div class="center padding" ng-if="loading">
@@ -39,7 +52,7 @@
             <!-- Retry -->
             <button type="button"
                     class="button button-positive icon icon-left ion-refresh ink"
-                    ng-click="reload()">{{'COMMON.BTN_REFRESH'|translate}}</button>
+                    ng-click="reload()">{{:locale:'COMMON.BTN_REFRESH'|translate}}</button>
           </div>
         </div>
 
@@ -47,15 +60,27 @@
 
           <!-- Help tour (NOT ready yet for small device) -->
           <button type="button"
-                  class="button button-block button-stable button-raised icon-left icon ion-easel ink-dark hidden-xs"
-                  ng-show="login"
+                  class="button button-block button-stable button-raised icon-left icon ion-easel ink-dark"
+                  ng-class="::{'hidden-xs': !$root.config.readonly}"
+                  ng-show="login || $root.config.readonly"
                   ng-click="startHelpTour($event)" >
-            {{'COMMON.BTN_HELP_TOUR'|translate}}
+            {{:locale:'COMMON.BTN_HELP_TOUR'|translate}}
+          </button>
+
+          <button type="button"
+                  class="item button button-block button-balanced button-raised icon icon-left ion-ios-world-outline ink-dark "
+                  ui-sref="app.currency" ng-if="::$root.config.readonly">
+            <span translate-values=":currency:{currency: $root.currency.name}" translate>HOME.BTN_CURRENCY</span>
+          </button>
+          <button type="button"
+                  class="item button button-block button-positive button-raised icon icon-left ion-cloud ink-dark "
+                  ui-sref="app.network" ng-if="::$root.config.readonly">
+            {{:locale:'HOME.BTN_NETWORK'|translate}}
           </button>
 
           <button type="button"
                   class="button button-block button-positive button-raised ink-dark"
-                  ng-click="showJoinModal()" ng-if="!login" translate>LOGIN.CREATE_FREE_ACCOUNT</button>
+                  ng-click="showJoinModal()" ng-if="!$root.config.readonly && !login" translate>LOGIN.CREATE_FREE_ACCOUNT</button>
 
           <button type="button"
                   class="item button button-block button-raised icon icon-left ion-person ink-dark"
@@ -66,7 +91,7 @@
                   class="item button button-block button-stable button-raised icon icon-left ion-card ink-dark visible-xs"
                   ui-sref="app.view_wallet_tx" ng-if="login">
             <b class="icon-secondary ion-clock" style="left: 52px; top: -2px; font-size: 10pt; display: block;"></b>
-            {{'MENU.TRANSACTIONS'|translate}}
+            {{:locale:'MENU.TRANSACTIONS'|translate}}
           </button>
 
           <button type="button"
@@ -76,7 +101,9 @@
           <br class="visible-xs visible-sm"/>
 
           <!-- join link -->
-          <div class="text-center no-padding" ng-show="!login">
+          <div class="text-center no-padding"
+               ng-if="::!$root.config.readonly"
+               ng-show="!login">
             <br class="visible-xs visible-sm"/>
             {{'LOGIN.HAVE_ACCOUNT_QUESTION'|translate}}
             <b>
@@ -98,15 +125,31 @@
             </b>
           </div>
 
+          <!-- login (small screen) -->
           <button type="button"
                   class="button button-block button-stable button-raised ink visible-xs visible-sm"
-                  ui-sref="app.view_wallet" ng-if="!login" translate>COMMON.BTN_LOGIN</button>
+                  ui-sref="app.view_wallet" ng-if="!$root.config.readonly && !login" translate>COMMON.BTN_LOGIN</button>
+
+          <!-- Help if readonly or demo mode -->
+          <div class="text-center visible-demo">
+            <br/>
+            <p class="text-center">
+              <span class="light"><i class="icon ion-help-circled" style="font-size: 16pt;"></i></span>
+              <span class="stable" translate>MODE.DEMO.MODE_HELP</span>
+              <a href="#" ng-click="showHelpModal('demo')" translate>HOME.READ_MORE</a>
+            </p>
+          </div>
+          <p class="text-center no-padding visible-readonly">
+            <br/>
+            <span class="light"><i class="icon ion-help-circled " style="font-size: 16pt;"></i></span>
+            <span class="stable" translate>MODE.READONLY.INSTALL_HELP</span>
+          </p>
 
 
           <div class="text-center no-padding visible-xs stable">
             <br/>
             <!-- version -->
-            {{'COMMON.APP_VERSION'|translate:{version: config.version} }}
+            {{:locale:'COMMON.APP_VERSION'|translate:{version: config.version} }}
             |
             <!-- about -->
             <a href="#" ng-click="showAboutModal()" translate>HOME.BTN_ABOUT</a>

@@ -62,7 +62,12 @@ echo "Checking diff between templates files... [OK]"
 # Check web extension build
 # ----------------------------------
 
-# Compile
+# Clean generated files (1/2)
+rm www/css/*.app*.css
+rm -rf www/dist
+rm -rf dist/web
+
+# Compile (1/2)
 echo "----------------------------"
 echo "Building web extension... [1/2]"
 gulp webExtBuild --release > /dev/null
@@ -74,10 +79,16 @@ if [[ $? -ne 0 ]] || [[ ! -d "${WEB_EXT_DIR}" ]]; then
 fi;
 
 # Keep a copy
-rm -rf "${WEB_EXT_DIR}.tmp"
-mv "${WEB_EXT_DIR}" "${WEB_EXT_DIR}.tmp"
+WEB_EXT_COPY_DIR="/tmp/cesium-extention"
+rm -rf "${WEB_EXT_COPY_DIR}"
+mv "${WEB_EXT_DIR}" "${WEB_EXT_COPY_DIR}"
 
-# Compile web extension, second time
+# Clean generated files (2/2)
+rm www/css/*.app*.css
+rm -rf www/dist
+rm -rf dist/web
+
+# Compile web extension (2/2)
 echo "Building web extension... [2/2]"
 gulp webExtBuild --release > /dev/null
 [[ $? -ne 0 ]] && exit 1
@@ -85,12 +96,22 @@ gulp webExtBuild --release > /dev/null
 echo "Building web extension... [OK]"
 
 echo "Checking diff between builds..."
-diff -arq "${WEB_EXT_DIR}" "${WEB_EXT_DIR}.tmp" > /tmp/webExtention.diff
+DIFF_FILE=/tmp/cesium-extention.diff
+diff -arq "${WEB_EXT_DIR}" "${WEB_EXT_COPY_DIR}" > ${DIFF_FILE}
 if [[ $? -ne 0 ]]; then
-  cat /tmp/webExtention.diff
-  echo "ERROR: Detected some differences: build is not reproducible!"
+  echo "Checking diff between builds... [FAILED] Build is NOT reproducible!"
+  echo "Please check following diff:"
+  cat ${DIFF_FILE}
+
+  # Clean temporary dir
+  rm -rf ${WEB_EXT_COPY_DIR}
+
   exit 1;
 fi;
-echo "Checking diff between builds... [OK]"
 
-echo "SUCCESS: Build are reproducible!"
+# Final message
+echo "Checking diff between builds... [SUCCESS] Build is reproducible."
+
+# Clean temporary dir (silently)
+rm -rf ${WEB_EXT_COPY_DIR} > /dev/null
+rm /tmp/cesium-extention.diff

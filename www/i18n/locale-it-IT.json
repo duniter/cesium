@@ -740,13 +740,21 @@
      "USE_FALLBACK_NODE": "Peer <b>{{old}}</b> indisponibile o indirizzo errato.<br/><br/>Vuoi utilizzare temporanemante il <b>{{new}}</b> nodo?",
      "INVALID_FILE_FORMAT": "Formato file non valido.",
      "SAME_TX_RECIPIENT": "Il destinatario deve essere diverso dall'emittente."
+  },
+  "MODE": {
+    "DEMO": {
+      "BADGE": "Demo",
+      "MODE": "Modalità dimostrativa",
+      "FEATURE_NOT_AVAILABLE": "Funzionalità <b>non disponibile</b> su questo sito dimostrativo.",
+      "MODE_HELP": "Il cesio funziona in <b>modalità dimostrativa</b>: è disponibile la consultazione per conto, ma non è possibile eseguire alcuna operazione per conto.",
+      "INSTALL_HELP": "Per <b>motivi di sicurezza</b> ti consigliamo di <b>installare</b> la tua copia del software.<br/>Visita il sito <a href='https://cesium.app'>www.cesium.app</a> per assistenza."
     },
-  "DEMO": {
-    "BADGE": "Demo",
-    "MODE": "Modalità dimostrativa",
-    "FEATURE_NOT_AVAILABLE": "Funzionalità <b>non disponibile</b> su questo sito dimostrativo.",
-    "MODE_HELP": "Il cesio funziona in <b>modalità dimostrativa</b>: è disponibile la consultazione per conto, ma non è possibile eseguire alcuna operazione per conto.",
-    "INSTALL_HELP": "Per <b>motivi di sicurezza</b> ti consigliamo di <b>installare</b> la tua copia del software.<br/>Visita il sito <a href='https://cesium.app'>www.cesium.app</a> per assistenza."
+    "READONLY": {
+      "BADGE": "Monit",
+      "MODE": "Modalità di monitoraggio",
+      "MODE_HELP": "Il cesio funziona in <b>modalità monitoraggio</b>: sono disponibili solo le funzionalità di monitoraggio della valuta.",
+      "INSTALL_HELP": "Se desidera <b>creare un account di portafoglio</b> per inviare o ricevere valuta, ti consigliamo di <b>installare</b> la tua copia del software.<br/>Visita il sito <a href='https://cesium.app'>www.cesium.app</a> per assistenza."
+    }
   },
    "DOWNLOAD": {
      "POPUP_TITLE": "<b>File di cancellazione dell'identità/b>",

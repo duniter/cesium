@@ -11,6 +11,7 @@ angular.module("cesium.config", [])
 .constant("csConfig", {
 	"cacheTimeMs": 300000,
 	"demo": false,
+  "readonly": true,
 	"fallbackLanguage": "en",
 	"rememberMe": true,
 	"showUDHistory": true,

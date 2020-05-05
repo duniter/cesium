@@ -53,7 +53,7 @@
 
   </head>
   <body id="cesium" ng-strict-di="true" window-exit-unauth="true"
-        ng-class="{'nobackdrop': $root.tour, 'expert-mode': $root.settings.expertMode}"
+        ng-class="{'nobackdrop': $root.tour, 'expert-mode': $root.settings.expertMode, 'demo': $root.config.demo && !$root.config.readonly, 'readonly': $root.config.readonly}"
         style="background-color: #1a237e;">
     <ion-nav-view>
       <div class="loader">
