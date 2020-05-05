@@ -231,6 +231,18 @@ function pluginNgTranslate() {
     .pipe(gulp.dest('www/dist/dist_js/plugins'));
 }
 
+function pluginLeafletImages(dest) {
+  dest = dest || './www/img/';
+  // Leaflet images
+  return gulp.src(['scss/leaflet/images/*.*',
+    'www/lib/leaflet/dist/images/*.*',
+    'www/lib/leaflet-search/images/*.*',
+    '!www/lib/leaflet-search/images/back.png',
+    '!www/lib/leaflet-search/images/leaflet-search.jpg',
+    'www/lib/leaflet.awesome-markers/dist/images/*.*'])
+    .pipe(gulp.dest(dest));
+}
+
 function pluginSass() {
   log(colors.green('Building Plugins Sass...'));
 
@@ -241,13 +253,7 @@ function pluginSass() {
       .pipe(gulp.dest('www/dist/dist_css/plugins')),
 
     // Leaflet images
-    gulp.src(['scss/leaflet/images/*.*',
-      'www/lib/leaflet/dist/images/*.*',
-      'www/lib/leaflet-search/images/*.*',
-      '!www/lib/leaflet-search/images/back.png',
-      '!www/lib/leaflet-search/images/leaflet-search.jpg',
-      'www/lib/leaflet.awesome-markers/dist/images/*.*'])
-      .pipe(gulp.dest('./www/img/')),
+    pluginLeafletImages('./www/img/'),
 
     // Leaflet App style
     gulp.src('./scss/leaflet.app.scss')
@@ -385,7 +391,7 @@ function webAppNgAnnotate() {
 }
 
 function webPluginCopyFiles() {
-  var tmpPath = './dist/web/www';
+  const tmpPath = './dist/web/www';
   return merge(
     // Copy Js (and remove unused code)
     gulp.src('./www/plugins/**/*.js')
@@ -409,9 +415,17 @@ function webPluginCopyFiles() {
       .pipe(ngTranslate({standalone:true, module: 'cesium.plugins.translations'}))
       .pipe(gulp.dest(tmpPath + '/dist/dist_js/plugins')),
 
-    // Copy CSS
+    // Copy plugin CSS
     gulp.src(paths.css_plugin)
-      .pipe(gulp.dest(tmpPath + '/dist/dist_css/plugins'))
+      .pipe(gulp.dest(tmpPath + '/dist/dist_css/plugins')),
+
+    // Copy Leaflet images
+    pluginLeafletImages(tmpPath + '/img'),
+
+    // Copy Leaflet CSS
+    gulp.src('./www/css/**/leaflet.*')
+      .pipe(gulp.dest(tmpPath + '/css'))
+
   );
 }
 
@@ -809,11 +823,14 @@ exports.annotate = appNgAnnotate;
 exports.watch = appAndPluginWatch;
 exports.build = build;
 
+exports.webCompile = webCompile;
 exports.webBuild = webBuild;
 exports['build:web'] = exports.webBuild; // Alias
 
+exports.webExtClean = webExtClean;
 exports.webExtCompile = webExtCompile;
 exports.webExtBuild = webExtBuild;
+exports.webExtCopyFiles = webExtCopyFiles;
 exports['build:webExt'] = exports.webBuild; // Alias
 
 exports.default = gulp.series(appConfig, build);
