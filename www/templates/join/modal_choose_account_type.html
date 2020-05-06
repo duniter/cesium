@@ -87,7 +87,7 @@
                 <i class="item-image icon dark ion-card"></i>
                 <h2 translate>ACCOUNT.NEW.WALLET_ACCOUNT</h2>
                 <h4 class="gray" translate>ACCOUNT.NEW.WALLET_ACCOUNT_HELP</h4>
-                <ng-include ng-if="::$root.config.demo" src="::'templates/common/note_feature_not_available.html'"></ng-include>
+                <ng-if ng-if="::$root.config.demo" ng-include="::'templates/common/note_feature_not_available.html'"></ng-include>
                 <i class="icon dark ion-ios-arrow-right"></i>
               </div>
             </button>
@@ -99,7 +99,7 @@
                 <i class="item-image icon dark ion-person"></i>
                 <h2 translate>ACCOUNT.NEW.MEMBER_ACCOUNT</h2>
                 <h4 class="gray" ng-bind-html="'ACCOUNT.NEW.MEMBER_ACCOUNT_HELP'|translate:currency"></h4>
-                <ng-include ng-if="::$root.config.demo" src="::'templates/common/note_feature_not_available.html'"></ng-include>
+                <ng-if ng-if="::$root.config.demo" ng-include="::'templates/common/note_feature_not_available.html'"></ng-include>
                 <i class="icon dark ion-ios-arrow-right"></i>
               </div>
             </button>

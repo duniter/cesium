@@ -131,7 +131,7 @@
           <div class="input-label hidden-xs" ng-class="::{'gray': $root.config.demo}">
             <span class="hidden-xs" translate>SETTINGS.KEEP_AUTH</span>
             <h4 class="gray text-wrap hidden-xs" ng-bind-html="'SETTINGS.KEEP_AUTH_HELP' | translate"></h4>
-            <ng-include ng-if="::$root.config.demo" src="::'templates/common/note_feature_not_available.html'"></ng-include>
+            <ng-if ng-if="::$root.config.demo" ng-include="::'templates/common/note_feature_not_available.html'"></ng-include>
           </div>
           <span class="visible-xs" ng-class="::{'gray': $root.config.demo}" translate>SETTINGS.KEEP_AUTH_SHORT</span>
 

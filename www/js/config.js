@@ -10,8 +10,8 @@ angular.module("cesium.config", [])
 
 .constant("csConfig", {
 	"cacheTimeMs": 300000,
-	"demo": true,
-  "readonly": true,
+	"demo": false,
+	"readonly": false,
 	"fallbackLanguage": "fr",
 	"rememberMe": true,
 	"showUDHistory": true,
@@ -114,7 +114,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "1.6.7",
-	"build": "2020-05-05T19:19:12.082Z",
+	"build": "2020-05-06T08:33:48.177Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
