@@ -13,12 +13,12 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content class="circle-bg-dark"
-  ng-class="::{'positive-900-bg': !$root.config.readonly, 'balanced-900-bg': $root.config.readonly}">
+  <ion-content class="circle-bg-dark positive-900-bg"
+  ng-class="::{'calm-bg': $root.config.readonly}">
 
     <div class="ribbon" ng-if="::$root.config.demo || $root.config.readonly">
-      <a class="badge badge-assertive" ng-if="$root.config.demo"  ng-click="showHelpModal('demo')">{{:locale:'MODE.DEMO.BADGE'|translate}}</a>
-      <a class="badge badge-balanced" ng-if="$root.config.readonly" ng-click="showHelpModal('readonly')">{{:locale:'MODE.READONLY.BADGE'|translate}}</a>
+      <a class="badge badge-assertive" ng-if="::$root.config.demo"  ng-click="showHelpModal('demo')">{{:locale:'MODE.DEMO.BADGE'|translate}}</a>
+      <a class="badge badge-balanced" ng-if="::$root.config.readonly" ng-click="showHelpModal('readonly')">{{:locale:'MODE.READONLY.BADGE'|translate}}</a>
       <a class="badge badge-positive" ng-click="openLink($event, $root.settings.sourceUrl)" title="{{:locale:'HOME.FORK_ME'|translate}}">{{:locale:'HOME.FREE_SOFTWARE'|translate}}</a>
       <a class="badge badge-stable" ng-click="openLink($event, $root.settings.sourceLicenseUrl)" title="{{:locale:'HOME.SHOW_LICENSE'|translate}}">AGPL-3.0</a>
     </div>
