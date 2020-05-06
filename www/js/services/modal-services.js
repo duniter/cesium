@@ -21,7 +21,7 @@ angular.module('cesium.modal.services', ['cesium.utils.services'])
   };
 
   // Change UTC date into user date
-  $scope.buildDate = moment().utc(csConfig.build).format(filterTranslations.DATE_PATTERN || 'YYYY-MM-DD HH:mm');
+  $scope.buildDate = moment.utc(csConfig.build).format(filterTranslations.DATE_PATTERN || 'YYYY-MM-DD HH:mm');
 })
 
 .factory('ModalUtils', function($ionicModal, $rootScope, $q, $injector, $controller, $timeout, Device) {
