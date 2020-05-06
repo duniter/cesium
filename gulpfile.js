@@ -792,6 +792,8 @@ const webCompile = gulp.series(
   webCleanUnusedFiles,
   webCleanUnusedDirectories
 );
+
+// note : Do not call config, to keep same config between web and webExt artifacts
 const webBuild = gulp.series(
   webClean,
   webCompile,
@@ -803,6 +805,8 @@ const webExtCompile = gulp.series(
   webCompile,
   webExtCopyFiles
 );
+
+// note : Do not call config, to keep same config between web and webExt artifacts
 const webExtBuild = gulp.series(
   webExtCompile,
   webExtensionZip,

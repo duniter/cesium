@@ -98,9 +98,8 @@ mkdir -p ${DIST_ANDROID} || exit 1
 rm -rf ${DIST_ANDROID}/*.apk || exit 1
 rm -rf ${ANDROID_OUTPUT_APK_RELEASE}/*.apk || exit 1
 . scripts/build-android.sh --release
-if [[ $? -ne 0 ]]; then
-  exit 1
-fi
+[[ $? -ne 0 ]] && exit 1
+
 APK_RELEASE_FILE="${ANDROID_OUTPUT_APK_RELEASE}/android-release.apk"
 if [[ ! -f "${APK_RELEASE_FILE}" ]]; then
   echo "ERROR: Missing android artifact at ${APK_RELEASE_FILE}"
@@ -115,8 +114,10 @@ echo "- Building web and extension artifacts..."
 echo "----------------------------------"
 cd ${PROJECT_DIR} || exit 1
 
-# Run web build
+# Gnerate config (only once, to keep same config if web and web-extension artifacts)
 gulp config --env default
+
+# Run web build
 gulp webBuild --release
 [[ $? -ne 0 ]] && exit 1
 
