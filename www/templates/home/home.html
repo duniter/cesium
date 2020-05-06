@@ -13,7 +13,8 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content class="positive-900-bg circle-bg-dark">
+  <ion-content class="circle-bg-dark"
+  ng-class="::{'positive-900-bg': !$root.config.readonly, 'balanced-900-bg': $root.config.readonly}">
 
     <div class="ribbon" ng-if="::$root.config.demo || $root.config.readonly">
       <a class="badge badge-assertive" ng-if="$root.config.demo"  ng-click="showHelpModal('demo')">{{:locale:'MODE.DEMO.BADGE'|translate}}</a>
@@ -29,13 +30,12 @@
         <div id="helptip-home-logo" class="logo">
         </div>
 
-        <h4 ng-if="::!$root.config.readonly">
-          <span class="hidden-xs" translate>HOME.WELCOME</span>
+        <h4 class="welcome" ng-if="::!$root.config.readonly">
+          <p class="hidden-xs" translate>HOME.WELCOME</p>
           <b ng-show="!loading" translate-values=":currency:{currency: $root.currency.name}" translate>HOME.MESSAGE</b>
         </h4>
-
-        <h4 ng-if="::$root.config.readonly">
-          <span class="hidden-xs" translate>HOME.WELCOME_READONLY</span>
+        <h4 class="welcome" ng-if="::$root.config.readonly">
+          <p translate>HOME.WELCOME_READONLY</p>
           <b ng-show="!loading" translate-values=":currency:{currency: $root.currency.name}" translate>HOME.MESSAGE_READONLY</b>
         </h4>
 

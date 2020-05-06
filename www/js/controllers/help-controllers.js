@@ -1213,7 +1213,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
         .then(function(){
           return $scope.showHelpTip('helptip-home-logo', {
            bindings: {
-             content: 'HELP.TIP.END_NOT_LOGIN',
+             content: !csConfig.readonly ? 'HELP.TIP.END_NOT_LOGIN' : 'HELP.TIP.END_READONLY',
              contentParams: contentParams,
              hasNext: false
            }

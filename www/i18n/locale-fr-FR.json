@@ -118,7 +118,7 @@
   "HOME": {
     "TITLE": "Cesium",
     "WELCOME": "Bienvenue dans l'application Cesium !",
-    "WELCOME_READONLY": "Bienvenue dans Cesium Monit !",
+    "WELCOME_READONLY": "Bienvenue dans Cesium <span class='badge badge-balanced'>Monit</span> !",
     "MESSAGE": "Recevez et envoyez de la monnaie libre {{currency|abbreviate}}",
     "MESSAGE_READONLY": "Suivez l'état de la monnaie libre {{currency|abbreviate}} en temps réel.",
     "BTN_CURRENCY": "Explorer la monnaie {{currency|abbreviate}}",
@@ -923,7 +923,8 @@
       "HEADER_BAR_BTN_PROFILE": "Cliquez ici pour accéder à votre <b>profil utilisateur.</b>",
       "SETTINGS_CHANGE_UNIT": "Vous pourrez <b>changer d'unité d'affichage</b> des montants en cliquant ci-dessus.<br/><br/>- Désactivez l'option pour un affichage des montants en {{currency|capitalize}}.<br/>- Activez l'option pour un affichage relatif en {{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub> (tous les montants seront <b>divisés</b> par le Dividende Universel courant).",
       "END_LOGIN": "Cette visite guidée est <b>terminée</b> !<br/><br/>Bonne continuation à vous, dans le nouveau monde de l'<b>économie libre</b> !",
-      "END_NOT_LOGIN": "Cette visite guidée est <b>terminée</b> !<br/><br/>Si vous souhaitez rejoindre la monnaie {{currency|capitalize}}, il vous suffira de cliquer sur <b>{{'LOGIN.CREATE_FREE_ACCOUNT'|translate}}</b> ci-dessous."
+      "END_NOT_LOGIN": "Cette visite guidée est <b>terminée</b> !<br/><br/>Si vous souhaitez rejoindre la monnaie {{currency|capitalize}}, il vous suffira de cliquer sur <b>{{'LOGIN.CREATE_FREE_ACCOUNT'|translate}}</b> ci-dessous.",
+      "END_READONLY": "Cette visite guidée est <b>terminée</b>.<br/><br/>{{'MODE.READONLY.INSTALL_HELP'|translate}}."
     }
   },
   "API" :{

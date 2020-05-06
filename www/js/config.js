@@ -10,12 +10,12 @@ angular.module("cesium.config", [])
 
 .constant("csConfig", {
 	"cacheTimeMs": 300000,
-	"demo": false,
+	"demo": true,
   "readonly": true,
-	"fallbackLanguage": "en",
+	"fallbackLanguage": "fr",
 	"rememberMe": true,
 	"showUDHistory": true,
-	"timeout": 40000,
+	"timeout": 300000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
 	"keepAuthIdle": 600,
@@ -24,7 +24,7 @@ angular.module("cesium.config", [])
 	"expertMode": false,
 	"decimalCount": 2,
 	"httpsMode": false,
-	"shareBaseUrl": "https://demo.cesium.app",
+	"shareBaseUrl": "https://demo.cesium.app/",
 	"helptip": {
 		"enable": true,
 		"installDocUrl": {
@@ -33,8 +33,8 @@ angular.module("cesium.config", [])
 		}
 	},
 	"license": {
-		"en": "license/license_g1-en",
 		"fr-FR": "license/license_g1-fr-FR",
+		"en": "license/license_g1-en",
 		"es-ES": "license/license_g1-es-ES",
 		"eo-EO": "license/license_g1-eo-EO"
 	},
@@ -83,12 +83,6 @@ angular.module("cesium.config", [])
 			"port": 443
 		}
 	],
-	"developers": [
-		{
-			"name": "Benoit Lavenier",
-			"pubkey": "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE"
-		}
-	],
 	"plugins": {
 		"es": {
 			"enable": true,
@@ -119,8 +113,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "1.6.6",
-	"build": "2020-05-01T15:36:33.163Z",
+	"version": "1.6.7",
+	"build": "2020-05-05T19:19:12.082Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 

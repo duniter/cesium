@@ -2,6 +2,7 @@
   "default": {
     "cacheTimeMs": 300000,
     "demo": false,
+    "readonly": false,
     "fallbackLanguage": "en",
     "rememberMe": true,
     "showUDHistory": true,
@@ -111,6 +112,7 @@
   "default_fr": {
     "cacheTimeMs": 300000,
     "demo": false,
+    "readonly": false,
     "fallbackLanguage": "fr",
     "rememberMe": true,
     "showUDHistory": true,
@@ -217,6 +219,7 @@
   "g1-test": {
     "cacheTimeMs": 300000,
     "demo": false,
+    "readonly": false,
     "fallbackLanguage": "en",
     "rememberMe": true,
     "timeout": 300000,
@@ -273,6 +276,7 @@
   "dev": {
     "cacheTimeMs": 300000,
     "demo": false,
+    "readonly": false,
     "fallbackLanguage": "fr-FR",
     "defaultLanguage": "fr-FR",
     "rememberMe": true,
@@ -347,6 +351,7 @@
   "dev_g1": {
     "cacheTimeMs": 300000,
     "demo": false,
+    "readonly": false,
     "fallbackLanguage": "en",
     "rememberMe": true,
     "showUDHistory": true,

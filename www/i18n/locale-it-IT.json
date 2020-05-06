@@ -828,7 +828,8 @@
        "HEADER_BAR_BTN_PROFILE": "Clicca qui per entrare nel <b>tuo profilo utente</b>",
        "SETTINGS_CHANGE_UNIT": "Puoi cambiare <b>l'unità</b> della moneta cliccando qui.<br/><br/>- Disabilita questa opzione per vedere gli importi in {{currency|capitalize}}.<br/>- Abilita l'opzione per importi relativi in {{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub> (<b>divisi</b> dal attuale Dividendo Universale).",
        "END_LOGIN": "Il tour guidato <b>è finito</b>.<br/><br/>Benvenuto nel <b>economia libera</b>!",
-       "END_NOT_LOGIN": "Il tour guidato <b>è finito</b>.<br/><br/>Se desideri entrare nella Web of Trust {{currency|capitalize}}, basta cliccare <b>{{'LOGIN.CREATE_ACCOUNT'|translate}}</b> qui sotto."
+       "END_NOT_LOGIN": "Il tour guidato <b>è finito</b>.<br/><br/>Se desideri entrare nella Web of Trust {{currency|capitalize}}, basta cliccare <b>{{'LOGIN.CREATE_ACCOUNT'|translate}}</b> qui sotto.",
+       "END_READONLY": "Il tour guidato <b>è finito</b>.<br/><br/>{{'MODE.READONLY.INSTALL_HELP'|translate}}."
      }
    },
   "API" :{

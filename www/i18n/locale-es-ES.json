@@ -1008,8 +1008,9 @@
       "MENU_BTN_SETTINGS": "En <b>{{'MENU.SETTINGS'|translate}}</b> podrá configurar la aplicación.",
       "HEADER_BAR_BTN_PROFILE": "Haga clic aquí para acceder a su <b>perfil</b>",
       "SETTINGS_CHANGE_UNIT": "Podrá <b>cambiar la unidad de visualización</b> de los importes haciendo clic aquí.<br/><br/>- Desactive la opción para mostrar los importes en {{currency|capitalize}}.<br/>- Actívela para importes relativos al {{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub> (las cantidades de los importes se mostrarán <b>divididos</b> entre el Dividendo Universal actual).",
-      "END_LOGIN": "¡La visita guiada ha <b>terminado</b>!<br/><br/>¡Buena suerte en este nuevo mundo de la <b>economía libre</b> !",
-      "END_NOT_LOGIN": "¡La visita guiada ha <b>terminado</b>!<br/><br/>Si quiere utilizar la moneda {{currency|capitalize}}, tiene que hacer un clic en <b>{{'LOGIN.CREATE_ACCOUNT'|translate}}</b> más abajo."
+      "END_LOGIN": "La visita guiada ha <b>terminado</b>.<br/><br/>¡Buena suerte en este nuevo mundo de la <b>economía libre</b> !",
+      "END_NOT_LOGIN": "La visita guiada ha <b>terminado</b>.<br/><br/>Si quiere utilizar la moneda {{currency|capitalize}}, tiene que hacer un clic en <b>{{'LOGIN.CREATE_ACCOUNT'|translate}}</b> más abajo.",
+      "END_READONLY": "La visita guiada ha <b>terminado</b>.<br/><br/>{{'MODE.READONLY.INSTALL_HELP'|translate}}."
     }
   }
 }

@@ -39,7 +39,7 @@
 </div>
 
 <!-- Left menu: User section -->
-<div ng-if=":state:enable && extensionPoint === 'menu-user'" class="visible-xs visible-sm">
+<div ng-if=":state:enable && extensionPoint === 'menu-user' && !$root.config.readonly" class="visible-xs visible-sm">
 
   <a menu-close class="item item-icon-left" active-link="active"
      ng-if="login && walletData.isMember"

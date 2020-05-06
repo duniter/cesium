@@ -32,7 +32,8 @@
 
         <!-- profile -->
         <a id="helptip-header-bar-btn-profile"
-           class="button button-icon button-clear hidden-xs hidden-sm hidden-readonly"
+           class="button button-icon button-clear hidden-xs hidden-sm"
+           ng-if="::!$root.config.readonly"
            ng-click="showProfilePopover($event)">
           <i class="avatar avatar-member"
              ng-if="!walletData.avatar"

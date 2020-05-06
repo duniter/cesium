@@ -117,8 +117,10 @@
   },
   "HOME": {
     "TITLE": "Cesium",
-    "WELCOME": "Welcome to the Cesium Application!",
+    "WELCOME": "Welcome to the Cesium application!",
+    "WELCOME_READONLY": "Welcome to Cesium <span class='badge badge-balanced'>Monit</span> !",
     "MESSAGE": "Receive and send libre currency {{currency|abbreviate}}",
+    "MESSAGE_READONLY": "Libre currency {{currency|abbreviate}} real-time monitoring",
     "BTN_CURRENCY": "Explore currency",
     "BTN_ABOUT": "about",
     "BTN_HELP": "Help",
@@ -917,7 +919,8 @@
       "HEADER_BAR_BTN_PROFILE": "Click here to access your <b>user profile</b>",
       "SETTINGS_CHANGE_UNIT": "You can <b>change the display unit</b> of amounts by clicking here.<br/><br/>- Deactivate the option to show amounts in {{currency|capitalize}}.<br/>- Activate the option for relative amounts in {{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub> (<b>divided</b> by the current Universal Dividend).",
       "END_LOGIN": "This guided visit has <b>ended</b>.<br/><br/>Welcome to the <b>free economy</b>!",
-      "END_NOT_LOGIN": "This guided visit has <b>ended</b>.<br/><br/>If you wish to join the currency {{currency|capitalize}}, simply click <b>{{'LOGIN.CREATE_FREE_ACCOUNT'|translate}}</b> below."
+      "END_NOT_LOGIN": "This guided visit has <b>ended</b>.<br/><br/>If you wish to join the currency {{currency|capitalize}}, simply click <b>{{'LOGIN.CREATE_FREE_ACCOUNT'|translate}}</b> below.",
+      "END_READONLY": "This guided visit has <b>ended</b>.<br/><br/>{{'MODE.READONLY.INSTALL_HELP'|translate}}."
     }
   },
   "API" :{

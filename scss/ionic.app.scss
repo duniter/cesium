@@ -936,6 +936,10 @@ html, body {
     font-size: 16px;
   }
 }
+#home h4.welcome .badge {
+  display: inline-block !important;
+  vertical-align: bottom;
+}
 #home .logo {
   margin-top: 15px;
   width: 100%;
