@@ -11,6 +11,11 @@ fi;
 cd ${PROJECT_DIR}
 . ${PROJECT_DIR}/scripts/env-global.sh
 
+XPI_BASENAME=${PROJECT_NAME}-$current-an+fx.xpi
+XPI_FILE=${PROJECT_DIR}/dist/web/build/${XPI_BASENAME}
+XPI_FINAL_BASENAME=${PROJECT_NAME}-v$current-extension-firefox.xpi
+XPI_FINAL_FILE=${PROJECT_DIR}/dist/web/build/${XPI_FINAL_BASENAME}
+
 ### Control that the script is run on `dev` branch
 branch=$(git rev-parse --abbrev-ref HEAD)
 if [[ ! "$branch" = "master" ]];
@@ -40,7 +45,11 @@ case "$1" in
   pre)
       web-ext sign "--api-key=${AMO_JWT_ISSUER}" "--api-secret=${AMO_JWT_SECRET}" "--source-dir=${PROJECT_DIR}/dist/web/ext" "--artifacts-dir=${PROJECT_DIR}/dist/web/build"  --id=${WEB_EXT_ID} --channel=unlisted
       if [[ $? -ne 0 ]]; then
-        exit 1
+        if [[ -f "${XPI_FILE}" || -f "${XPI_FINAL_FILE}" ]]; then
+          echo "WARN: web-ext failed! Continue anyway, because output file exists"
+        else
+          exit 1
+        fi;
       fi
     ;;
   rel)
@@ -60,11 +69,8 @@ case "$1" in
 esac
 
 ## Rename output file
-XPI_BASENAME=${PROJECT_NAME}-$current-an+fx.xpi
-XPI_FILE=${PROJECT_DIR}/dist/web/build/${XPI_BASENAME}
 if [[ -f "${XPI_FILE}" ]]; then
-  cd ${PROJECT_DIR}/dist/web/build/
 
   # add a 'v' before version
-  mv ${XPI_BASENAME} ${PROJECT_NAME}-v$current-extension-firefox.xpi
+  mv ${XPI_FILE} ${XPI_FINAL_FILE}
 fi

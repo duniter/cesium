@@ -161,13 +161,14 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Show Help tour
   ////////////////////////////////////////
 
-  $scope.createHelptipScope = function(isTour) {
+  $scope.createHelptipScope = function(isTour, ctrlName) {
     if (!isTour && ($rootScope.tour || !$rootScope.settings.helptip.enable || UIUtils.screen.isSmall())) {
       return; // avoid other helptip to be launched (e.g. csWallet)
     }
+    ctrlName = ctrlName || 'HelpTipCtrl';
     // Create a new scope for the tour controller
     var helptipScope = $scope.$new();
-    $controller('HelpTipCtrl', { '$scope': helptipScope});
+    $controller(ctrlName, { '$scope': helptipScope});
     return helptipScope;
   };
 
