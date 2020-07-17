@@ -51,7 +51,7 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
 
 
 function MapWotViewController($scope, $filter, $templateCache, $interpolate, $timeout, $location, $translate, $q, $controller,
-                              ionicReady,
+                              ionicReady, $rootScope,
                               leafletData, UIUtils, csSettings, csWallet, MapUtils, mapWot) {
   'ngInject';
 
@@ -60,8 +60,6 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
   angular.extend(this, $controller('ESWotIdentityViewCtrl', {$scope: $scope}));
 
   var
-    // Create a  hidden layer, to hold search markers
-    markersSearchLayer,
     icons= {
       member: {
         type: 'awesomeMarker',
@@ -89,8 +87,6 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
     cache: 'map-wot',
     layers: {
       overlays: {
-
-        // User profile
         member: {
           type: 'featureGroup',
           name: 'MAP.WOT.VIEW.LAYER.MEMBER',
@@ -112,6 +108,25 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
     markers: {},
     loading: true
   }, $scope.mapId);
+
+  var layers = {
+    // User profile
+    member: {
+      type: 'featureGroup',
+      name: 'MAP.WOT.VIEW.LAYER.MEMBER',
+      visible: true
+    },
+    pending: {
+      type: 'featureGroup',
+      name: 'MAP.WOT.VIEW.LAYER.PENDING',
+      visible: true
+    },
+    wallet: {
+      type: 'featureGroup',
+      name: 'MAP.WOT.VIEW.LAYER.WALLET',
+      visible: true
+    }
+  };
 
   // Variables for marker
   $scope.showDescription = false;
@@ -214,38 +229,6 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
         separate: true
       }).addTo(map);
 
-      // Add localize me control
-      MapUtils.control.localizeMe({
-          title: translations['MAP.COMMON.BTN_LOCALIZE_ME']
-        })
-        .addTo(map);
-
-      // Add search control
-      markersSearchLayer = L.layerGroup({visible: false});
-      var searchTip = $interpolate($templateCache.get('plugins/map/templates/wot/item_search_tooltip.html'));
-      MapUtils.control.search({
-        layer: markersSearchLayer,
-        propertyName: 'title',
-        buildTip: function (text, val) {
-          return searchTip(val.layer.options);
-        },
-        moveToLocation: function(lnglat, title, map) {
-          if(this.options.zoom)
-            this._map.setView(lnglat, this.options.zoom);
-          else
-            this._map.panTo(lnglat);
-          var popupMarkerId = lnglat.layer && lnglat.layer.options && lnglat.layer.options.popupMarkerId;
-          $timeout(function(){
-            var popupMarker = popupMarkerId && _.find(map._layers, function(layer) {
-                return (layer.options && layer.options.id === popupMarkerId);
-              });
-            if (popupMarker) popupMarker.openPopup();
-          }, 400);
-        },
-        firstTipSubmit: true,
-        tooltipLimit: 50
-      }).addTo(map);
-
       // Add marker cluster layer
       var extractMarkerLayer = function(marker) {
         return marker.options && marker.options.layer;
@@ -255,8 +238,8 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
         maxClusterRadius: 65,
         showCoverageOnHover: false,
         iconCreateFunction: function (cluster) {
-          var countByLayer = _.countBy(cluster.getAllChildMarkers(), extractMarkerLayer);
-          var markerColor = countByLayer.member ? 'blue' : (countByLayer.pending ? 'lightgreen' : 'lightgray');
+          //var countByLayer = _.countBy(cluster.getAllChildMarkers(), extractMarkerLayer);
+          var markerColor = 'blue'; //countByLayer.member ? 'blue' : (countByLayer.pending ? 'lightgreen' : 'lightgray');
           var childCount = cluster.getChildCount();
           var className = 'marker-cluster ' + markerColor + ' marker-cluster-';
           if (childCount < 10) {
@@ -269,6 +252,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
           return L.divIcon({ html: '<div><span>' + childCount + '</span></div>', className: className, iconSize: new L.Point(40, 40) });
         }
       });
+      //_.forEach(layers, function(layer) {
       map.eachLayer(function(layer) {
         // Add capabilities of 'featureGroup.subgroup', if layer is a group
         if (layer.addLayer){
@@ -318,70 +302,54 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
       .then(function(res) {
         var markers = {};
 
-        // Clean search layer
-        markersSearchLayer.clearLayers();
 
         if (res && res.length) {
 
           var formatPubkey = $filter('formatPubkey');
           var markerTemplate = $templateCache.get('plugins/map/templates/wot/popup_marker.html');
 
+
           _.forEach(res, function (hit) {
             var type = hit.pending ? 'pending' : (hit.uid ? 'member' : 'wallet');
-            var shortPubkey = formatPubkey(hit.pubkey);
             var id = hit.index + '_' + (hit.id || (hit.uid ? (hit.uid + ':' + hit.pubkey) : hit.pubkey)).replace(/-/g, '_');
+            var title = hit.name + ' | ' + formatPubkey(hit.pubkey);
             var marker = {
               layer: type,
               icon: icons[type],
               opacity: hit.uid ? 1 : 0.7,
-              title: hit.name + ' | ' + shortPubkey,
+              title: title,
               lat: hit.geoPoint.lat,
               lng: hit.geoPoint.lon,
               getMessageScope: function () {
-                var scope = $scope.$new();
-                scope.loadingMarker = true;
-                scope.formData = {};
-                scope.$applyAsync(function() {
-                  scope.formData = {
-                    pubkey: hit.pubkey,
+                //console.debug('[map] Loading marker ' + title + "...");
+                var markerScope = $scope.$new();
+                markerScope.loadingMarker = true;
+                markerScope.formData = {};
+                markerScope.$applyAsync(function() {
+                  markerScope.formData = {
+                    pubkey: hit.pubke,
                     uid: hit.uid,
-                    name: hit.name,
+                    name: title,
                     profile: hit
                   };
-                  scope.loadingMarker = false;
+                  markerScope.loadingMarker = false;
                 });
-                return scope;
+                return markerScope;
               },
               focus: false,
               message: markerTemplate,
               id: id
             };
             markers[id] = marker;
-
-            // Create a search marker (will be hide)
-            var searchText = hit.name + ((hit.uid && hit.uid != hit.name) ? (' | ' + hit.uid) : '') + ' | ' + shortPubkey;
-            var searchMarker = angular.merge({
-              type: type,
-              opacity: 0,
-              icon: L.divIcon({
-                className: type + ' ng-hide',
-                iconSize: L.point(0, 0)
-              })
-            }, {title: searchText, pubkey: hit.pubkey, uid: hit.uid, name: hit.name, pending: hit.pending, popupMarkerId: id});
-            markersSearchLayer.addLayer(new L.Marker({
-                lat: hit.geoPoint.lat,
-                lng: hit.geoPoint.lon
-              },
-              searchMarker));
           });
         }
 
         $scope.map.markers = markers;
 
         return $timeout(function(){
-          $scope.loading = false;
 
           // hide loading indicator
+          $scope.loading = false;
           map.fire('dataload');
 
           UIUtils.loading.hide();
@@ -389,7 +357,9 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
       })
       .catch(function(err) {
         $scope.map.markers = {};
+        // hide loading indicator
         $scope.loading = false;
+        map.fire('dataload');
         UIUtils.onError('MAP.WOT.ERROR.LOAD_POSITION_FAILED')(err);
       });
   };
