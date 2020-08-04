@@ -110,7 +110,7 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
         UIUtils.loading.hide();
       })
       .catch(function(err) {
-        if (err == 'CANCELLED') return $scope.cancel();
+        if (err === 'CANCELLED') return $scope.cancel();
         $scope.search.loading = false;
         if (!from) {
           $scope.search.results = [];
@@ -231,7 +231,7 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
     $scope.hideActionsPopover();
 
     return $timeout(function() {
-      return esModals.showNewInvitation({})
+      return esModals.showNewInvitation({});
     }, 500); // Timeout need, to avoid freeze
   };
 

@@ -22,8 +22,7 @@
     </ion-refresher>
 
     <div class="positive-900-bg hero"
-         style="max-width: 100%; display: block"
-         ng-class="{'hero-qrcode-active': toggleQRCode}">
+         style="max-width: 100%; display: block">
       <div class="content" ng-if="!loading"
            style="max-width: 100%">
 
@@ -74,17 +73,14 @@
 
     </div>
 
-    <a ng-attr-id="{{ qrcodeId }}"
-       class="qrcode spin pull-right"
-       ng-class="{'active': toggleQRCode}"
-       ng-click="toggleQRCode = !toggleQRCode">
-    </a>
+    <ng-include src="::'templates/common/qrcode.html'"></ng-include>
 
     <!-- Buttons bar-->
     <a id="wallet-share-anchor"></a>
     <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
 
       <button class="button button-stable button-small-padding icon ion-android-share-alt ink"
+              ng-disabled="loading"
               ng-click="showSharePopover($event)"
               title="{{'COMMON.BTN_SHARE' | translate}}">
       </button>
@@ -115,21 +111,12 @@
       </div>
     </div>
 
-    <div class="visible-xs visible-sm padding text-center" ng-if="!loading">
-      <button class="button button-assertive button-small-padding ink"
-              ng-if="isDefaultWallet"
-              ng-click="logout({askConfirm: true})">
-        <i class="icon ion-log-out"></i>
-        {{'COMMON.BTN_LOGOUT' | translate}}
+    <div class="visible-xs visible-sm padding text-center" ng-if="!loading && formData.requirements.needRenew">
+      <button class="button button-raised icon-left button-stable button-small-padding ink"
+              ng-click="renewMembership()">
+        <i class="icon ion-loop assertive"></i>
+        <span class="assertive">{{:locale:'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}</span>
       </button>
-      <div ng-if="formData.requirements.needRenew">
-        <br/>
-        <button class="button button-raised icon-left button-stable button-small-padding ink"
-                ng-click="renewMembership()">
-          <i class="icon ion-loop assertive"></i>
-          <span class="assertive">{{:locale:'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}</span>
-        </button>
-      </div>
     </div>
 
     <div class="row no-padding">

@@ -51,7 +51,7 @@
         <div class="item item-pending item-tx item-icon-left"
              ng-repeat="tx in formData.tx.errors | filter: filterReceivedTx"
              ng-init="pending=true;"
-             ng-include="'templates/wallet/item_tx.html'">
+             ng-include="::'templates/wallet/item_tx.html'">
         </div>
 
         <!-- Error sent TX -->
@@ -73,7 +73,7 @@
         <div class="item item-pending item-tx item-icon-left"
              ng-repeat="tx in formData.tx.errors | filter: filterSentTx"
              ng-init="error=true;"
-             ng-include="'templates/wallet/item_tx.html'">
+             ng-include="::'templates/wallet/item_tx.html'">
         </div>
 
       </div>

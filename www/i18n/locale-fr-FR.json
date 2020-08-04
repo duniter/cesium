@@ -98,8 +98,6 @@
     "CURRENCY": "Monnaie",
     "ACCOUNT": "Mon compte",
     "WALLETS": "Mes portefeuilles",
-    "TRANSFER": "Virement",
-    "SCAN": "Scanner",
     "SETTINGS": "Paramètres",
     "NETWORK": "Réseau",
     "TRANSACTIONS": "Mes opérations"
@@ -120,12 +118,18 @@
   "HOME": {
     "TITLE": "Cesium",
     "WELCOME": "Bienvenue dans l'application Cesium !",
+    "WELCOME_READONLY": "Bienvenue dans Cesium <span class='badge badge-balanced'>Monit</span> !",
     "MESSAGE": "Recevez et envoyez de la monnaie libre {{currency|abbreviate}}",
-    "BTN_CURRENCY": "Explorer la monnaie {{name|abbreviate}}",
+    "MESSAGE_READONLY": "Suivez l'état de la monnaie libre {{currency|abbreviate}} en temps réel.",
+    "BTN_CURRENCY": "Explorer la monnaie {{currency|abbreviate}}",
     "BTN_ABOUT": "à propos",
     "BTN_HELP": "Aide en ligne",
+    "BTN_NETWORK": "État du réseau",
+    "FREE_SOFTWARE": "Logiciel libre",
+    "FORK_ME": "Cloner moi !",
+    "SHOW_LICENSE": "Voir la license de l'application",
     "REPORT_ISSUE": "anomalie",
-    "NOT_YOUR_ACCOUNT_QUESTION" : "Vous n'êtes pas propriétaire du compte <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b> ?",
+    "NOT_YOUR_ACCOUNT_QUESTION" : "Vous n'êtes pas propriétaire du compte <b class=\"ion-key\"> {{pubkey|formatPubkey}}</b>&nbsp;?",
     "BTN_CHANGE_ACCOUNT": "Déconnecter ce compte",
     "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connexion Internet, ou changer de nœud <a class=\"positive\" ng-click=\"doQuickFix('settings')\">dans les paramètres</a>.",
     "SHOW_ALL_FEED": "Voir tout",
@@ -148,6 +152,7 @@
     "USE_WALLETS_ENCRYPTION": "Sécuriser la liste ?",
     "USE_WALLETS_ENCRYPTION_HELP": "Permet de sécuriser la liste de vos portefeuilles (par chiffrement), en exigeant une authentification pour y accéder.",
     "ENABLE_HELPTIP": "Activer les bulles d'aide contextuelles",
+    "DISABLE_HELPTIP": "Désactiver les bulles d'aide contextuelles",
     "ENABLE_UI_EFFECTS": "Activer les effets visuels",
     "HISTORY_SETTINGS": "Mes opérations",
     "DISPLAY_UD_HISTORY": "Afficher les dividendes produits ?",
@@ -619,6 +624,7 @@
       "QUESTION_19": "Quel était le métier de votre grand-père ?",
       "RECOVER_ID": "Retrouver mon mot de passe...",
       "RECOVER_ID_HELP": "Si vous disposez d'un <b>fichier de sauvegarde de vos identifiants</b>, vous pouvez les retrouver en répondant correctement à vos questions personnelles.",
+      "RECOVER_ID_SELECT_FILE": "Choisissez le <b>fichier de sauvegarde de vos identifiants</b> à utiliser :",
       "REVOCATION_WITH_FILE": "Révoquer mon compte membre...",
       "REVOCATION_WITH_FILE_DESCRIPTION": "Si vous avez <b>définitivement perdus vos identifiants</b> de compte membre (ou que la sécurité du compte est compromise), vous pouvez utiliser <b>le fichier de révocation</b> du compte pour <b>forcer sa sortie définitive de la toile de confiance</b>.",
       "REVOCATION_WITH_FILE_HELP": "Pour <b>révoquer définitivement</b> un compte membre, veuillez glisser dans la zone ci-dessous votre fichier de révocation, ou bien cliquer dans la zone pour rechercher un fichier.",
@@ -771,6 +777,7 @@
     "CHECK_NETWORK_CONNECTION": "Aucun nœud ne semble accessible.<br/><br/>Veuillez <b>vérifier votre connexion Internet</b>.",
     "ISSUE_524_TX_FAILED": "Échec du virement.<br/><br/>Un message a été envoyé aux développeurs pour faciliter la résolution du problème. <b>Merci de votre aide</b>.",
     "ADD_SECONDARY_WALLET_FAILED": "Échec de l'ajout du portefeuille secondaire.",
+    "REMOVE_SECONDARY_WALLET_FAILED": "Échec de la suppression du portefeuille secondaire.",
     "UPDATE_WALLET_LIST_FAILED": "Échec du rafraîchissement des portefeuilles secondaires.",
     "LOAD_WALLET_LIST_FAILED": "Échec du chargement des portefeuilles secondaires.",
     "SAVE_WALLET_LIST_FAILED": "Échec de la sauvegarde des portefeuilles secondaires.",
@@ -824,6 +831,21 @@
     "USE_FALLBACK_NODE": "Nœud <b>{{old}}</b> injoignable ou adresse invalide.<br/><br/>Voulez-vous temporairement utiliser le nœud <b>{{new}}</b> ?",
     "ISSUE_524_SEND_LOG": "La transaction a été rejetée, à cause d'une anomalie connue (ticket #524) mais <b>non reproduite</b>.<br/><br/>Pour aider les développeurs à corriger cette erreur, <b>acceptez-vous la transmission de vos logs</b> par message ?<br/><small>(aucune donnée confidentielle n'est envoyée)</small>."
   },
+  "MODE": {
+    "DEMO": {
+      "BADGE": "Démo",
+      "MODE": "Mode démonstration",
+      "FEATURE_NOT_AVAILABLE": "Fonctionnalité <b>non disponible</b> sur ce site de démonstration.",
+      "MODE_HELP": "Cesium fonctionne en <b>mode démonstration</b> : la consultation de compte est possible, mais aucune opération ne pourra être réalisée.",
+      "INSTALL_HELP": "Pour des <b>raisons de sécurité</b> nous vous recommandons <b>d'installer</b> votre copie de l'application Cesium. Visitez le site <a href='https://cesium.app'>www.cesium.app</a> pour obtenir de l'aide."
+    },
+    "READONLY": {
+      "BADGE": "Monit",
+      "MODE": "Mode monitoring",
+      "MODE_HELP": "Cesium fonctionne en <b>mode monitoring</b> : sono disponibili solo le funzionalità di monitoraggio della valuta.",
+      "INSTALL_HELP": "Si vous souhaitez <b>créer un compte portefeuille</b> pour envoyer ou recevoir de la monnaie, nous vous recommandons <b>d'installer votre copie</b> de l'application Cesium. Visitez le site <a href='https://cesium.app'>www.cesium.app</a> pour obtenir de l'aide."
+    }
+  },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Fichier de révocation</b>",
     "POPUP_REVOKE_MESSAGE": "Pour sécuriser votre compte, veuillez télécharger le <b>document de révocation de compte</b>. Il vous permettra le cas échéant d'annuler votre compte (en cas d'un vol de compte, d'un changement d'identifiant, d'un compte créé à tort, etc.).<br/><br/><b>Veuillez le stocker en lieu sûr.</b>"
@@ -871,7 +893,7 @@
       "NETWORK_PEERS": "Les <b>nœuds</b> visibles ici correspondent aux <b>ordinateurs qui actualisent et contrôlent</b> la chaine de blocs.<br/><br/>Plus il y a de nœuds, plus la monnaie a une gestion <b>décentralisée</b> et digne de confiance.",
       "NETWORK_PEERS_BLOCK_NUMBER": "Ce <b>numéro</b> (en vert) indique le <b>dernier bloc validé</b> pour ce nœud (dernière page écrite dans le grand livre de comptes).<br/><br/>La couleur verte indique que ce bloc est également validé par <b>la plupart des autres nœuds</b>.",
       "NETWORK_PEERS_PARTICIPATE": "<b>Chaque membre</b>, équipé d'un ordinateur avec Internet, <b>peut participer en ajoutant un nœud</b>. Il suffit d'<b>installer le logiciel Duniter</b> (libre et gratuit). <a href=\"{{installDocUrl}}\" target=\"_system\">Voir le manuel d'installation &gt;&gt;</a>.",
-      "MENU_BTN_ACCOUNT": "Le menu <b>{{'ACCOUNT.TITLE'|translate}}</b> permet d'accéder à la gestion de votre compte.",
+      "MENU_BTN_ACCOUNT": "Le menu <b>{{'MENU.ACCOUNT'|translate}}</b> permet d'accéder à la gestion de votre compte.",
       "MENU_BTN_ACCOUNT_MEMBER": "Consultez ici l'état de votre compte et les informations sur vos certifications.",
       "WALLET_CERTIFICATIONS": "Cliquez ici pour consulter le détail de vos certifications (reçues et émises).",
       "WALLET_RECEIVED_CERTIFICATIONS": "Cliquez ici pour consulter le détail de vos <b>certifications reçues</b>.",
@@ -886,8 +908,8 @@
       "WALLET_RECEIVED_CERTS": "S'affichera ici la liste des personnes qui vous ont certifié.",
       "WALLET_CERTIFY": "Le bouton <b>{{'WOT.BTN_SELECT_AND_CERTIFY'|translate}}</b> permet de sélectionner une identité et de la certifier.<br/><br/>Seuls des utilisateurs <b>déjà membres</b> peuvent en certifier d'autres.",
       "WALLET_CERT_STOCK": "Votre stock de certifications (émises) est limité à <b>{{sigStock}} certifications</b>.<br/><br/>Ce stock se renouvelle avec le temps, au fur et à mesure que les certifications s'invalident.",
-      "MENU_BTN_TX_MEMBER": "Le menu <b>{{'MENU.TRANSACTIONS'|translate}}</b> permet de consulter votre solde, l'historique vos transactions et d'envoyer un paiement.",
-      "MENU_BTN_TX": "Consultez ici <b>l'historique de vos transactions</b> et effectuez de nouvelles opérations.",
+      "MENU_BTN_WALLETS": "Le menu <b>{{'MENU.WALLETS'|translate}}</b> permet d'ajouter des portefeuilles supplémentaires que vous gérer.",
+      "MENU_BTN_TX": "Le menu <b>{{'MENU.TRANSACTIONS'|translate}}</b> permet de consulter votre solde, l'historique vos transactions et d'envoyer un paiement.",
       "MENU_BTN_WOT": "Le menu <b>{{'MENU.WOT'|translate}}</b> permet de rechercher parmi les <b>utilisateurs</b> de la monnaie (membres ou non).",
       "WOT_SEARCH_TEXT_XS": "Pour rechercher dans l'annuaire, tapez les <b>premières lettres d'un pseudonyme</b> (ou d'une clé publique).<br/><br/>La recherche se lancera automatiquement.",
       "WOT_SEARCH_TEXT": "Pour rechercher dans l'annuaire, tapez les <b>premières lettres d'un pseudonyme</b> (ou d'une clé publique). <br/><br/>Appuyer ensuite sur <b>Entrée</b> pour lancer la recherche.",
@@ -901,7 +923,8 @@
       "HEADER_BAR_BTN_PROFILE": "Cliquez ici pour accéder à votre <b>profil utilisateur.</b>",
       "SETTINGS_CHANGE_UNIT": "Vous pourrez <b>changer d'unité d'affichage</b> des montants en cliquant ci-dessus.<br/><br/>- Désactivez l'option pour un affichage des montants en {{currency|capitalize}}.<br/>- Activez l'option pour un affichage relatif en {{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub> (tous les montants seront <b>divisés</b> par le Dividende Universel courant).",
       "END_LOGIN": "Cette visite guidée est <b>terminée</b> !<br/><br/>Bonne continuation à vous, dans le nouveau monde de l'<b>économie libre</b> !",
-      "END_NOT_LOGIN": "Cette visite guidée est <b>terminée</b> !<br/><br/>Si vous souhaitez rejoindre la monnaie {{currency|capitalize}}, il vous suffira de cliquer sur <b>{{'LOGIN.CREATE_ACCOUNT'|translate}}</b> ci-dessous."
+      "END_NOT_LOGIN": "Cette visite guidée est <b>terminée</b> !<br/><br/>Si vous souhaitez rejoindre la monnaie {{currency|capitalize}}, il vous suffira de cliquer sur <b>{{'LOGIN.CREATE_FREE_ACCOUNT'|translate}}</b> ci-dessous.",
+      "END_READONLY": "Cette visite guidée est <b>terminée</b>.<br/><br/>{{'MODE.READONLY.INSTALL_HELP'|translate}}."
     }
   },
   "API" :{
@@ -910,7 +933,7 @@
       "LINK_DOC_HELP": "Documentation pour les développeurs",
       "LINK_STANDARD_APP": "Version classique",
       "LINK_STANDARD_APP_HELP": "Ouvrir la version classique de {{'COMMON.APP_NAME'|translate}}",
-      "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connexion Internet, ou contactez l'administrateur du site</a>."
+      "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connexion Internet, ou contactez l'administrateur du site."
     },
     "HOME": {
       "TITLE": "Documentation API {{'COMMON.APP_NAME'|translate}}",
@@ -974,7 +997,7 @@
         "PARAM_REDIRECT_URL": "Adresse web de redirection",
         "PARAM_REDIRECT_URL_HELP": "Adresse web (URL) de redirection, appelé quand le paiement a été envoyé. Peut contenir les chaînes suivantes, qui seront remplacées par les valeurs de la transaction : \"{tx}\", \"{hash}\", \"{comment}\", \"{amount}\", \"{pubkey}\" et \"{node}\".",
         "PARAM_CANCEL_URL": "Adresse web d'annulation",
-        "PARAM_CANCEL_URL_HELP": "Adresse web (URL) en cas d'annulation du paiement, par l'utilisateur. Peut contenir les chaînes suivantes, qui seront remplacées dynamiquement : \"{comment}\", \"{amount}\" et {pubkey}.",
+        "PARAM_CANCEL_URL_HELP": "Adresse web (URL) en cas d'annulation du paiement, par l'utilisateur. Peut contenir les chaînes suivantes, qui seront remplacées dynamiquement : \"{comment}\", \"{amount}\" et \"{pubkey}\".",
         "PARAM_PREFERRED_NODE": "Adresse du nœud préféré",
         "PARAM_PREFERRED_NODE_HELP": "Adresse (URL) du nœud Duniter à utiliser de préférence (\"g1.domaine.com:443\" ou \"https://g1.domaine.com\").",
         "EXAMPLES_HELP": "Voici des exemples d'intégration :",

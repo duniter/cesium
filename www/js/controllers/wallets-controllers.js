@@ -317,27 +317,23 @@ function WalletListAbstractController($scope, $q, $timeout, UIUtils, filterTrans
       success: UIUtils.loading.show,
       method: 'PUBKEY' // Default method - fix #767
     })
-      .then(function(walletData) {
-        if (!walletData || !walletData.pubkey) { // User cancelled
+      .then(function(data) {
+        if (!data || !data.pubkey) { // User cancelled
           UIUtils.loading.hide(100);
           return;
         }
 
         // Avoid to add main wallet again
-        if (csWallet.isUserPubkey(walletData.pubkey)) {
-          UIUtils.loading.hide();
-          UIUtils.alert.error('ERROR.COULD_NOT_ADD_MAIN_WALLET');
-          return;
+        if (csWallet.isUserPubkey(data.pubkey)) {
+          throw new Error('ERROR.COULD_NOT_ADD_MAIN_WALLET');
         }
 
         // Avoid to add exists wallet again
-        if (csWallet.children.hasPubkey(walletData.pubkey)) {
-          UIUtils.loading.hide();
-          UIUtils.alert.error('ERROR.COULD_NOT_ADD_EXISTING_WALLET');
-          return;
+        if (csWallet.children.hasPubkey(data.pubkey)) {
+          throw new Error('ERROR.COULD_NOT_ADD_EXISTING_WALLET');
         }
 
-        console.debug("[wallet] Adding secondary wallet {{0}}".format(walletData.pubkey.substring(0,8)));
+        console.debug("[wallet] Adding secondary wallet {{0}}".format(data.pubkey && data.pubkey.substring(0,8)));
 
         // Add the child wallet
         return $scope.addNewWallet(wallet)
@@ -346,12 +342,7 @@ function WalletListAbstractController($scope, $q, $timeout, UIUtils, filterTrans
             $scope.updateView();
           });
       })
-      .catch(function(err) {
-        if (err === 'CANCELLED') {
-          // Silent
-          UIUtils.loading.hide();
-        }
-      });
+      .catch(UIUtils.onError('ERROR.ADD_SECONDARY_WALLET_FAILED'));
   };
 
   /* -- Method to override by subclasses-- */
@@ -506,23 +497,21 @@ function WalletListViewController($scope, $controller, $state, $timeout, $q, $tr
       showDefault: false
     })
       .then(function(wallet) {
-        if (!wallet || !wallet.id) return;
+        if (!wallet || !wallet.id) return; // User has cancelled
 
         // Auth (if encryption is need))
         return (csSettings.data.useLocalStorageEncryption ? csWallet.auth({minData: true}) : $q.when())
 
           // Remove the wallet
           .then(function() {
-            csWallet.children.remove(wallet.id);
+            return csWallet.children.remove(wallet.id);
+          })
+          // Refresh UI
+          .then(function() {
             UIUtils.loading.hide();
             $scope.updateView();
           })
-          .catch(function(err) {
-            if (err === 'CANCELLED') {
-              return UIUtils.loading.hide();
-            }
-            UIUtils.onError('ERROR.ADD_SECONDARY_WALLET_FAILED')(err);
-          });
+          .catch(UIUtils.onError('ERROR.REMOVE_SECONDARY_WALLET_FAILED'));
       });
   };
 
@@ -552,6 +541,7 @@ function WalletListViewController($scope, $controller, $state, $timeout, $q, $tr
       'WalletListImportModalCtrl'
     )
       .then(function(items){
+
         if (!items || !items.length) return; // User cancel
 
         UIUtils.loading.show();
@@ -755,13 +745,13 @@ function WalletListImportModalController($scope, $timeout, BMA, csWallet) {
   $scope.isValidFile = false;
   $scope.validatingFile = false;
 
-  $scope.importFromFile = function(file) {
+  $scope.onFileChanged = function(file) {
     $scope.validatingFile = true;
 
     $scope.hasContent = angular.isDefined(file) && file !== '';
     $scope.fileData = file.fileData ? file.fileData : '';
     var isValidFile = $scope.fileData !== '' &&
-      ($scope.fileData.type == 'text/csv' || $scope.fileData.type == 'text/plain' || 'application/vnd.ms-excel' /*fix issue #810*/);
+      ($scope.fileData.type === 'text/csv' || $scope.fileData.type === 'text/plain' || 'application/vnd.ms-excel' /*fix issue #810*/);
 
     // Bad file type: invalid file
     if (!isValidFile) {

@@ -1,19 +1,19 @@
-<a name="block-{{:rebind:block.number}}"></a>
-<ion-item id="block-{{:rebind:block.number}}"
+<a name="block-{{::block.number}}"></a>
+<ion-item id="block-{{::block.number}}"
           class="item item-icon-left item-block {{::ionItemClass}}"
-          ng-class="{'ink': !block.empty||!block.compacted, 'item-block-empty': block.empty, 'compacted': block.compacted && compactMode}"
+          ng-class=":rebind:{'ink': !block.empty||!block.compacted, 'item-block-empty': block.empty, 'compacted': block.compacted && compactMode}"
           ng-click="selectBlock(block)">
 
-  <i class="icon ion-cube stable" ng-if=":rebind:(!block.empty && !block.avatar)"></i>
-  <i class="avatar" ng-if=":rebind:!block.empty && block.avatar" style="background-image: url('{{:rebind:block.avatar.src}}')"></i>
+  <i class="icon ion-cube stable" ng-if="(!block.empty && !block.avatar)"></i>
+  <i class="avatar" ng-if="!block.empty && block.avatar" style="background-image: url('{{block.avatar.src}}')"></i>
 
   <div class="row no-padding" ng-if=":rebind:!block.compacted || !compactMode">
     <div class="col" style="min-width: 110px; max-width: 130px;">
-      <h4 ng-class="{'gray': block.compacted, 'dark': !block.compacted}">
+      <h4 ng-class=":rebind:{'gray': block.compacted, 'dark': !block.compacted}">
         <i class="ion-clock"></i>
         {{:rebind:block.medianTime|medianDate}}
       </h4>
-      <h4 ng-if="!block.empty">
+      <h4 ng-if=":rebind:!block.empty">
         <!-- joiners/leavers -->
         <ng-if ng-if=":rebind:block.joinersCount||(block.excludedCount-block.revokedCount)">
           <i class="dark ion-person"></i>
@@ -33,7 +33,7 @@
     </div>
 
     <div class="col col-20">
-      <span class="badge " ng-class="{'badge-balanced': !$index , 'badge-calm': $index && !block.compacted && !block.empty}">{{:rebind:block.number|formatInteger}}</span>
+      <span class="badge " ng-class=":rebind:{'badge-balanced': !$index , 'badge-calm': $index && !block.compacted && !block.empty}">{{::block.number|formatInteger}}</span>
     </div>
 
   </div>

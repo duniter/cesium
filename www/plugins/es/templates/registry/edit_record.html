@@ -61,7 +61,7 @@
               </div>
 
               <!-- pictures -->
-              <ng-include src="'plugins/es/templates/common/edit_pictures.html'"></ng-include>
+              <ng-include src="::'plugins/es/templates/common/edit_pictures.html'"></ng-include>
 
               <div class="item item-divider" translate>REGISTRY.GENERAL_DIVIDER</div>
 
@@ -115,10 +115,10 @@
               </div>
 
               <!-- position -->
-              <ng-include src="'plugins/es/templates/common/edit_position.html'"></ng-include>
+              <ng-include src="::'plugins/es/templates/common/edit_position.html'" ng-controller="ESPositionEditCtrl as ctrl"></ng-include>
 
               <!-- social networks -->
-              <ng-include src="'plugins/es/templates/common/edit_socials.html'" ng-controller="ESSocialsEditCtrl"></ng-include>
+              <ng-include src="::'plugins/es/templates/common/edit_socials.html'" ng-controller="ESSocialsEditCtrl"></ng-include>
 
               <div class="item item-divider" translate>REGISTRY.TECHNICAL_DIVIDER</div>
 

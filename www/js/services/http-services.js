@@ -7,8 +7,8 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
   var
     sockets = [],
-    cachePrefix = 'csHttp-'
-  ;
+    defaultCachePrefix = 'csHttp-',
+    allCachePrefixes = {};
 
   if (!timeout) {
     timeout=4000; // default
@@ -34,10 +34,14 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       reject(data);
     }
     else {
-      if (status == 404) {
+      if (status == 403) {
+        reject({ucode: 403, message: 'Resource is forbidden' + (url ? ' ('+url+')' : '')});
+      }
+      else if (status == 404) {
         reject({ucode: 404, message: 'Resource not found' + (url ? ' ('+url+')' : '')});
       }
       else if (url) {
+        console.error('[http] Get HTTP error {status: ' + status + '} on [' + url + ']');
         reject('Error while requesting [' + url + ']');
       }
       else {
@@ -91,7 +95,10 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
   function getResourceWithCache(host, port, path, useSsl, maxAge, autoRefresh, forcedTimeout, cachePrefix) {
     var url = getUrl(host, port, path, useSsl);
+    cachePrefix = cachePrefix || defaultCachePrefix;
     maxAge = maxAge || csCache.constants.LONG;
+    allCachePrefixes[cachePrefix] = true;
+
     //console.debug('[http] will cache ['+url+'] ' + maxAge + 'ms' + (autoRefresh ? ' with auto-refresh' : ''));
 
     return function(params) {
@@ -230,7 +237,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
                 _open(self, null, params);
               }
               else if (closeEvent) {
-                console.debug('[http] TODO -- Unexpected close of websocket [{0}]: error code: '.format(path), closeEvent);
+                console.debug('[http] Unexpected close of websocket [{0}]: error code: '.format(path), closeEvent && closeEvent.code || closeEvent);
 
                 // Force new connection
                 self.delegate = null;
@@ -458,6 +465,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
         if (!isPositiveInteger(parts[i])) {
           return false;
         }
+        parts[i] = parseInt(parts[i]);
       }
       return true;
     }
@@ -491,11 +499,18 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     return compareVersionNumbers(minVersion, actualVersion) <= 0;
   }
 
-  var cache = angular.copy(csCache.constants);
-  cache.clear = function() {
-    console.debug('[http] Cleaning cache...');
+  function clearCache(cachePrefix) {
+    cachePrefix = cachePrefix || defaultCachePrefix;
+    console.debug("[http] Cleaning cache {prefix: '{0}'}...".format(cachePrefix));
     csCache.clear(cachePrefix);
-  };
+  }
+
+  function clearAllCache() {
+    console.debug('[http] Cleaning all caches...');
+    _.keys(allCachePrefixes).forEach(function(cachePrefix) {
+      csCache.clear(cachePrefix);
+    });
+  }
 
   return {
     get: getResource,
@@ -516,7 +531,10 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       compare: compareVersionNumbers,
       isCompatible: isVersionCompatible
     },
-    cache: cache
+    cache:  angular.merge({
+      clear: clearCache,
+      clearAll: clearAllCache
+    }, csCache.constants)
   };
 })
 ;

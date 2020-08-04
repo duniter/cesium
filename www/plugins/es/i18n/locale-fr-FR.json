@@ -352,8 +352,8 @@
       "RECORD_PUBKEY_HELP": "Clé publique de réception des paiements"
     },
     "WALLET": {
-      "REGISTRY_DIVIDER": "Pages",
-      "REGISTRY_HELP": "Les pages référencent des activités acceptant la monnaie ou la favorisant : commerces, entreprises, associations, institutions."
+      "PAGE_DIVIDER": "Pages",
+      "PAGE_DIVIDER_HELP": "Les pages référencent des activités acceptant la monnaie ou la favorisant : commerces, entreprises, associations, institutions. Elles sont stockées en dehors du réseau de la monnaie, dans <a ui-sref=\"app.es_network\">le réseau des nœuds Cesium+</a>."
     },
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Erreur de chargement de la liste des activités",
@@ -371,7 +371,7 @@
   },
   "PROFILE": {
     "PROFILE_DIVIDER": "Profil Cesium+",
-    "PROFILE_DIVIDER_HELP": "Il s'agit de données annexes, stockées en dehors du réseau de la monnaie.",
+    "PROFILE_DIVIDER_HELP": "Il s'agit de données annexes, optionnelles. Elles sont stockées en dehors du réseau de la monnaie, dans <a ui-sref=\"app.es_network\">le réseau Cesium+</a>.",
     "NO_PROFILE_DEFINED": "Aucun profil saisi",
     "BTN_ADD": "Saisir mon profil",
     "BTN_EDIT": "Editer mon profil",
@@ -388,18 +388,20 @@
     "TECHNICAL_DIVIDER": "Informations techniques",
     "MODAL_AVATAR": {
       "TITLE": "Photo de profil",
-      "SELECT_FILE_HELP": "Veuillez <b>choisir un fichier image</b>, en cliquant sur le bouton ci-dessous :",
+      "SELECT_FILE_HELP": "Veuillez <b>choisir le fichier image</b> :",
       "BTN_SELECT_FILE": "Choisir une photo",
       "RESIZE_HELP": "<b>Recadrez l'image</b>, si besoin. Un clic maintenu sur l'image permet de la déplacer. Cliquez sur la zone en bas à gauche pour zoomer.",
       "RESULT_HELP": "<b>Voici le résultat</b> tel que visible sur votre profil :"
     },
     "CONFIRM": {
-      "DELETE": "Êtes-vous sûr de vouloir <b>supprimer votre profil Cesium+ ?</b><br/><br/>Cette opération est irréversible."
+      "DELETE": "Êtes-vous sûr de vouloir <b>supprimer votre profil Cesium+ ?</b><br/><br/>Cette opération est irréversible.",
+      "DELETE_BY_MODERATOR": "Êtes-vous sûr de vouloir <b>supprimer ce profil Cesium+ ?</b><br/><br/>Cette opération est irréversible."
     },
     "ERROR": {
       "REMOVE_PROFILE_FAILED": "Erreur de suppression du profil",
-      "LOAD_PROFILE_FAILED": "Erreur de chargement du profil utilisateur",
+      "LOAD_PROFILE_FAILED": "Erreur de chargement du profil",
       "SAVE_PROFILE_FAILED": "Erreur lors de la sauvegarde",
+      "DELETE_PROFILE_FAILED": "Erreur lors de la suppression du profil",
       "INVALID_SOCIAL_NETWORK_FORMAT": "Format non pris en compte : veuillez indiquer une adresse valide.<br/><br/>Exemples :<ul><li>- Une page Facebook (https://www.facebook.com/user)</li><li>- Une page web (http://www.monsite.fr)</li><li>- Une adresse email (joe@dalton.com)</li></ul>",
       "IMAGE_RESIZE_FAILED": "Erreur lors du redimensionnement de l'image"
     },
@@ -441,7 +443,7 @@
   },
   "SUBSCRIPTION": {
     "SUBSCRIPTION_DIVIDER": "Services en ligne",
-    "SUBSCRIPTION_DIVIDER_HELP": "Les services en ligne offrent des services supplémentaires optionnels, délégués à un tiers.",
+    "SUBSCRIPTION_DIVIDER_HELP": "Les services en ligne offrent des services supplémentaires et optionnels, délégués à un perstataire de votre choix. Par exemple, pour recevoir les notifications de paiement par email.",
     "BTN_ADD": "Ajouter un service",
     "BTN_EDIT": "Gérer mes services",
     "NO_SUBSCRIPTION": "Aucun service utilisé",
@@ -518,7 +520,7 @@
     "ENABLE_REMOTE_STORAGE": "Activer le stockage distant ?",
     "ENABLE_REMOTE_STORAGE_HELP": "Permet de stockage (chiffré) de vos paramètres sur les noeuds Cesium+",
     "ENABLE_MESSAGE_TOGGLE": "Activer les messages privés ?",
-    "PEER": "Adresse du nœud de données",
+    "PEER": "Nœud de données Cesium+",
     "POPUP_PEER": {
       "TITLE" : "Nœud de données",
       "HELP" : "Saisissez l'adresse du nœud que vous voulez utiliser :",
@@ -590,7 +592,7 @@
   },
   "LIKE": {
     "ERROR": {
-      "FAILED_TOGGLE_LIKE": "Impossible d'executer cette action."
+      "FAILED_TOGGLE_LIKE": "Impossible d'exécuter cette action."
     }
   },
   "CONFIRM": {

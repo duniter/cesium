@@ -4,8 +4,8 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate', 'ngApi', 'angular-cache', 'angular.screenmatch',
-  'FBAngular', // = angular-fullscreen
+angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate', 'ngApi', 'angular-cache',
+  'angular.screenmatch', 'angular-fullscreen-toggle',
   // removeIf(no-device)
   'ngCordova',
   // endRemoveIf(no-device)
@@ -82,7 +82,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
 
     $scope.showLocalesPopover = function(event) {
       UIUtils.popover.show(event, {
-        templateUrl: 'templates/api/locales_popover.html',
+        templateUrl: 'templates/api/popover_locales.html',
         scope: $scope,
         autoremove: true,
         afterShow: function(popover) {
@@ -228,13 +228,21 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
     $scope.$watch('transferButton.style', $scope.computeTransferButtonHtml, true);
   })
 
-  .controller('ApiTransferCtrl', function ($scope, $rootScope, $timeout, $controller, $state, $q, $translate, $filter,
-                                           $window, $ionicHistory, BMA, CryptoUtils, UIUtils, csSettings, csCurrency,
-                                           csPlatform, csTx, csWallet, csDemoWallet){
+  .controller('ApiTransferCtrl', function($scope, $rootScope, $timeout, $controller, $state, $q, $translate, $filter,
+                                          $window, $ionicHistory, BMA, CryptoUtils, UIUtils, csConfig, csSettings,
+                                          csPlatform, csCurrency, csTx, csWallet, csDemoWallet) {
     'ngInject';
 
+    // WARN: Disable demo mode, on the API (a non-blocking warn message will be display later)
+    var config = csConfig;
+    if (config.demo) {
+      config = angular.copy(config);
+      config.demo = false;
+      config.readonly = false;
+    }
+
     // Initialize the super class and extend it.
-    angular.extend(this, $controller('AuthCtrl', {$scope: $scope}));
+    angular.extend(this, $controller('AuthCtrl', {$scope: $scope, csConfig: config}));
 
     $scope.loading = true;
     $scope.transferData = {
@@ -340,7 +348,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
       $scope.loading = true;
 
       // Set BMA node
-      if (!$scope.error && $scope.node && !BMA.node.same($scope.node.host, $scope.node.port)) {
+      if (!$scope.error && $scope.node && !BMA.node.same($scope.node)) {
         console.debug("[api] Using preferred node: {0}:{1}".format($scope.node.host, $scope.node.port));
         BMA.stop();
         BMA.copy($scope.node);

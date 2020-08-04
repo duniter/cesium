@@ -11,7 +11,7 @@
       <ion-item class="item-icon-left item-text-wrap">
         <span>{{'COMMON.APP_NAME'|translate}}&nbsp;<b>{{'COMMON.APP_VERSION'|translate:$root.config}}</b> - <a ng-click="openLink($event, 'http://cesium.app')">www.cesium.app</a></span>
         <i ng-if="$root.newRelease" class="assertive ion-alert-circled"></i>
-        <h3 ng-if="$root.config.build" class="gray">{{'COMMON.APP_BUILD'|translate:$root.config}}</h3>
+        <h3 ng-if="buildDate" class="gray">{{'COMMON.APP_BUILD'|translate:{build: buildDate} }}</h3>
         <span translate>ABOUT.LICENSE</span>
       </ion-item>
 
@@ -57,7 +57,7 @@
       <ion-item class="item-icon-left">
         <i class="item-image icon ion-network"></i>
         {{'ABOUT.CODE' | translate}}
-        <h3><a ng-click="openLink($event, 'https://git.duniter.org/clients/cesium-grp/cesium')">https://git.duniter.org/clients/cesium-grp/cesium</a></h3>
+        <h3><a ng-click="openLink($event, $root.settings.sourceUrl)">{{$root.settings.sourceUrl}}</a></h3>
       </ion-item>
 
       <!-- team -->

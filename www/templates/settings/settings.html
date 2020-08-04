@@ -91,7 +91,7 @@
         </div>
 
         <!-- Persist cache ? -->
-        <div class="item item-text-wrap item-toggle dark hidden-xs hidden-sm">
+        <div class="item item-text-wrap item-toggle dark">
           <div class="input-label" ng-class="{'gray': !formData.useLocalStorage}"
                ng-bind-html="'SETTINGS.PERSIST_CACHE' | translate"></div>
           <h4 class="gray" ng-bind-html="'SETTINGS.PERSIST_CACHE_HELP' | translate"></h4>
@@ -107,11 +107,11 @@
         <!-- Allow extension here -->
         <cs-extension-point name="common"></cs-extension-point>
 
-        <span class="item item-divider">
+        <span class="item item-divider hidden-readonly">
           {{'SETTINGS.AUTHENTICATION_SETTINGS' | translate}}
         </span>
 
-        <div class="item item-toggle item-text-wrap" >
+        <div class="item item-toggle item-text-wrap hidden-readonly" >
           <div class="input-label" ng-class="{'gray': !formData.useLocalStorage}">
             {{'SETTINGS.REMEMBER_ME' | translate}}
           </div>
@@ -126,16 +126,20 @@
           </label>
         </div>
 
-        <label class="item item-input item-select item-text-wrap">
-          <div class="input-label hidden-xs">
+        <label class="item item-input item-select item-text-wrap hidden-readonly"
+               >
+          <div class="input-label hidden-xs" ng-class="::{'gray': $root.config.demo}">
             <span class="hidden-xs" translate>SETTINGS.KEEP_AUTH</span>
             <h4 class="gray text-wrap hidden-xs" ng-bind-html="'SETTINGS.KEEP_AUTH_HELP' | translate"></h4>
+            <ng-if ng-if="::$root.config.demo" ng-include="::'templates/common/note_feature_not_available.html'"></ng-include>
           </div>
-          <span class="visible-xs" translate>SETTINGS.KEEP_AUTH_SHORT</span>
+          <span class="visible-xs" ng-class="::{'gray': $root.config.demo}" translate>SETTINGS.KEEP_AUTH_SHORT</span>
 
           <select ng-model="formData.keepAuthIdle"
+                  ng-disabled="$root.config.demo"
                   ng-options="i as (keepAuthIdleLabels[i].labelKey | translate:keepAuthIdleLabels[i].labelParams ) for i in keepAuthIdles track by i">
           </select>
+
         </label>
 
         <div class="item item-input hidden-xs hidden-sm" ng-class="{'gray': (!formData.useLocalStorage || !formData.rememberMe)}" ng-if="::$root.device.isDesktop()">
@@ -151,11 +155,11 @@
       <!-- second column  -->
       <div class="col col-50 list item-border-large padding-left padding-right no-padding-xs no-padding-sm no-margin-xs no-margin-sm">
 
-        <span class="item item-divider">
+        <span class="item item-divider hidden-readonly">
           {{'SETTINGS.WALLETS_SETTINGS' | translate}}
         </span>
 
-          <div class="item item-toggle item-text-wrap dark">
+          <div class="item item-toggle item-text-wrap dark hidden-readonly">
             <span class="input-label" ng-class="{'gray': !formData.useLocalStorage}" translate>SETTINGS.USE_WALLETS_ENCRYPTION</span>
             <h4 class="gray text-wrap" ng-bind-html="'SETTINGS.USE_WALLETS_ENCRYPTION_HELP' | translate">
             </h4>
@@ -168,9 +172,9 @@
             </label>
           </div>
 
-        <span class="item item-divider" translate>SETTINGS.HISTORY_SETTINGS</span>
+        <span class="item item-divider hidden-readonly" translate>SETTINGS.HISTORY_SETTINGS</span>
 
-        <div class="item item-toggle item-text-wrap dark">
+        <div class="item item-toggle item-text-wrap dark hidden-readonly">
           <div class="input-label" translate>SETTINGS.DISPLAY_UD_HISTORY</div>
           <label class="toggle toggle-royal">
             <input type="checkbox" ng-model="formData.showUDHistory" >
@@ -180,7 +184,7 @@
           </label>
         </div>
 
-        <div class="item item-toggle dark hidden-xs hidden-sm">
+        <div class="item item-toggle dark hidden-xs hidden-sm hidden-readonly">
           <div class="input-label" translate>SETTINGS.TX_HISTORY_AUTO_REFRESH</div>
           <h4 class="gray text-wrap" ng-bind-html="'SETTINGS.TX_HISTORY_AUTO_REFRESH_HELP' | translate"></h4>
           <label class="toggle toggle-royal">

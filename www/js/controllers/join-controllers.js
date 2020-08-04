@@ -40,7 +40,7 @@ function JoinController($scope, $timeout, $controller, Modals, csWallet) {
 
 }
 
-function JoinChooseAccountTypeModalController($scope, $state, Modals, UIUtils, csCurrency) {
+function JoinChooseAccountTypeModalController($scope, $state, Modals, UIUtils, csConfig, csCurrency) {
   'ngInject';
 
   $scope.formData = {};
@@ -86,6 +86,9 @@ function JoinChooseAccountTypeModalController($scope, $state, Modals, UIUtils, c
   };
 
   $scope.selectAccountTypeAndClose = function(type) {
+    if (csConfig.demo) {
+      return UIUtils.alert.demo();
+    }
     $scope.formData.accountType = type;
     $scope.closeModal($scope.formData);
   };

@@ -26,7 +26,7 @@
 
         <div class="item no-padding-xs no-padding-sm"
              ng-if="!loading"
-             ng-include="'plugins/graph/templates/blockchain/graph_tx_count.html'"
+             ng-include="::'plugins/graph/templates/blockchain/graph_tx_count.html'"
              ng-init="setSize(350, 1000)">
         </div>
       </ng-controller>
@@ -39,7 +39,7 @@
 
         <div class="item no-padding-xs no-padding-sm"
              ng-if="!loading"
-             ng-include="'plugins/graph/templates/blockchain/graph_block_issuers.html'"
+             ng-include="::'plugins/graph/templates/blockchain/graph_block_issuers.html'"
              ng-init="setSize(300, 750)">
         </div>
 

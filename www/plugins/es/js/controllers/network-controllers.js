@@ -431,7 +431,7 @@ function ESPeerInfoPopoverController($scope, $q, csSettings, csCurrency, csHttp,
 
     return $q.all([
       // get current block
-      csCurrency.blockchain.current()
+      esHttp.blockchain.current()
         .then(function(block) {
           $scope.formData.number = block.number;
           $scope.formData.medianTime = block.medianTime;

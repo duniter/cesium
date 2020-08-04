@@ -7,7 +7,6 @@ const gulp = require('gulp'),
   rename = require('gulp-rename'),
   ngConstant = require('gulp-ng-constant'),
   fs = require("fs"),
-  argv = require('yargs').argv,
   header = require('gulp-header'),
   footer = require('gulp-footer'),
   removeCode = require('gulp-remove-code'),
@@ -21,16 +20,21 @@ const gulp = require('gulp'),
   useref = require('gulp-useref'),
   filter = require('gulp-filter'),
   uglify = require('gulp-uglify-es').default,
+  sourcemaps = require('gulp-sourcemaps'),
+  lazypipe = require('lazypipe'),
   csso = require('gulp-csso'),
   replace = require('gulp-replace'),
-  rev = require('gulp-rev'),
-  revReplace = require('gulp-rev-replace'),
   clean = require('gulp-clean'),
   htmlmin = require('gulp-htmlmin'),
   jshint = require('gulp-jshint'),
   markdown = require('gulp-markdown'),
+  merge = require('merge2'),
   log = require('fancy-log'),
-  colors = require('ansi-colors');
+  colors = require('ansi-colors'),
+  argv = require('yargs').argv,
+  sriHash = require('gulp-sri-hash'),
+  sort = require('gulp-sort'),
+  jsonlint = require("@prantlf/gulp-jsonlint");
 
 const paths = {
   license_md: ['./www/license/*.md'],
@@ -46,8 +50,6 @@ const paths = {
   ng_translate_plugin: ['./www/plugins/*/i18n/locale-*.json'],
   ng_annotate_plugin: ['./www/plugins/*/**/*.js', '!./www/plugins/*/js/vendor/*.js']
 };
-
-
 
 function appAndPluginWatch(done) {
 
@@ -67,9 +69,8 @@ function appAndPluginWatch(done) {
   gulp.watch(paths.ng_translate_plugin, () => pluginNgTranslate());
   gulp.watch(paths.css_plugin.concat(paths.leafletSass), () => pluginSass());
 
-  done();
+  if (done) done();
 }
-
 
 /**
  * Generate App CSS (using SASS)
@@ -130,6 +131,7 @@ function appNgTemplate() {
   log(colors.green('Building App template file...'));
 
   return gulp.src(paths.templatecache)
+    .pipe(sort())
     .pipe(templateCache({
       standalone: true,
       module:"cesium.templates",
@@ -138,13 +140,13 @@ function appNgTemplate() {
     .pipe(gulp.dest('./www/dist/dist_js/app'));
 }
 
-function appNgAnnotate(changes) {
+function appNgAnnotate(event) {
 
   // If watch, apply only on changes files
-  if (changes && changes.type === 'changed' && changes.path && changes.path.indexOf('/www/js/') !== -1) {
-    let path = changes.path.substring(changes.path.indexOf('/www/js') + 7);
+  if (event && event.type === 'changed' && event.path && event.path.indexOf('/www/js/') !== -1) {
+    let path = event.path.substring(event.path.indexOf('/www/js') + 7);
     path = path.substring(0, path.lastIndexOf('/'));
-    return gulp.src(changes.path)
+    return gulp.src(event.path)
       .pipe(ngAnnotate({single_quotes: true}))
       .pipe(gulp.dest('./www/dist/dist_js/app' + path));
   }
@@ -159,6 +161,9 @@ function appNgTranslate() {
   log(colors.green('Building App translation file...'));
 
   return gulp.src('www/i18n/locale-*.json')
+    .pipe(jsonlint())
+    .pipe(jsonlint.reporter())
+    .pipe(sort())
     .pipe(ngTranslate({standalone:true, module: 'cesium.translations'}))
     .pipe(gulp.dest('www/dist/dist_js/app'));
 }
@@ -166,7 +171,7 @@ function appNgTranslate() {
 function appLicense() {
   log(colors.green('Building License files...'));
 
-  return es.concat(
+  return merge(
     // Copy license into HTML
     gulp.src(paths.license_md)
       .pipe(markdown())
@@ -188,6 +193,7 @@ function pluginNgTemplate() {
   log(colors.green('Building Plugins template file...'));
 
   return gulp.src(paths.templatecache_plugin)
+    .pipe(sort())
     .pipe(templateCache({
       standalone:true,
       module:"cesium.plugins.templates",
@@ -204,7 +210,8 @@ function pluginNgAnnotate(event) {
     path = path.substring(0, path.lastIndexOf('/'));
     return gulp.src(event.path)
       .pipe(ngAnnotate({single_quotes: true}))
-      .pipe(gulp.dest('./www/dist/dist_js/app' + path));
+      .pipe(gulp.dest('./www/dist/dist_js/app' + path))
+      ;
   }
 
   log(colors.green('Building Plugins JS file...'));
@@ -217,27 +224,36 @@ function pluginNgTranslate() {
   log(colors.green('Building Plugins translation file...'));
 
   return gulp.src(paths.ng_translate_plugin)
+    .pipe(jsonlint())
+    .pipe(jsonlint.reporter())
+    .pipe(sort())
     .pipe(ngTranslate({standalone:true, module: 'cesium.plugins.translations'}))
     .pipe(gulp.dest('www/dist/dist_js/plugins'));
+}
+
+function pluginLeafletImages(dest) {
+  dest = dest || './www/img/';
+  // Leaflet images
+  return gulp.src(['scss/leaflet/images/*.*',
+    'www/lib/leaflet/dist/images/*.*',
+    'www/lib/leaflet-search/images/*.*',
+    '!www/lib/leaflet-search/images/back.png',
+    '!www/lib/leaflet-search/images/leaflet-search.jpg',
+    'www/lib/leaflet.awesome-markers/dist/images/*.*'])
+    .pipe(gulp.dest(dest));
 }
 
 function pluginSass() {
   log(colors.green('Building Plugins Sass...'));
 
-  return es.concat(
+  return merge(
 
     // Copy plugins CSS
     gulp.src(paths.css_plugin)
       .pipe(gulp.dest('www/dist/dist_css/plugins')),
 
     // Leaflet images
-    gulp.src(['scss/leaflet/images/*.*',
-      'www/lib/leaflet/dist/images/*.*',
-      'www/lib/leaflet-search/images/*.*',
-      '!www/lib/leaflet-search/images/back.png',
-      '!www/lib/leaflet-search/images/leaflet-search.jpg',
-      'www/lib/leaflet.awesome-markers/dist/images/*.*'])
-      .pipe(gulp.dest('./www/img/')),
+    pluginLeafletImages('./www/img/'),
 
     // Leaflet App style
     gulp.src('./scss/leaflet.app.scss')
@@ -251,7 +267,8 @@ function pluginSass() {
       .pipe(base64({
         baseDir: "./www/css/",
         extensions: ['png', 'gif', /\.jpg#datauri$/i],
-        maxImageSize: 14 * 1024
+        maxImageSize: 14 * 1024,
+        deleteAfterEncoding: false
       }))
       .pipe(gulp.dest('./www/css/'))
       .pipe(cleanCss({
@@ -268,17 +285,16 @@ function pluginSass() {
 
 function webClean() {
   return del([
-    './dist/web/www',
-    './dist/web/ext',
-    './dist/web/build'
+    './dist/web/www'
   ]);
 }
 
 function webCopyFiles() {
   log(colors.green('Preparing dist/web files...'));
+  let htmlminOptions = {removeComments: true, collapseWhitespace: true};
 
   var tmpPath = './dist/web/www';
-  return es.merge(
+  return merge(
     // Copy Js (and remove unused code)
     gulp.src('./www/js/**/*.js')
       .pipe(removeCode({"no-device": true}))
@@ -290,7 +306,7 @@ function webCopyFiles() {
       .pipe(removeCode({"no-device": true}))
       .pipe(removeHtml('.hidden-no-device'))
       .pipe(removeHtml('[remove-if][remove-if="no-device"]'))
-      .pipe(htmlmin())
+      .pipe(htmlmin(htmlminOptions))
       .pipe(gulp.dest(tmpPath + '/templates')),
 
     // Copy index.html (and remove unused code)
@@ -298,15 +314,7 @@ function webCopyFiles() {
       .pipe(removeCode({'no-device': true}))
       .pipe(removeHtml('.hidden-no-device'))
       .pipe(removeHtml('[remove-if][remove-if="no-device"]'))
-      .pipe(htmlmin())
-      .pipe(gulp.dest(tmpPath)),
-
-    // Copy index.html to debug.html (and remove unused code)
-    gulp.src('./www/index.html')
-      .pipe(removeCode({'no-device': true}))
-      .pipe(removeHtml('.hidden-no-device'))
-      .pipe(removeHtml('[remove-if][remove-if="no-device"]'))
-      .pipe(rename("debug.html"))
+      .pipe(htmlmin(/*no options, to keep comments*/))
       .pipe(gulp.dest(tmpPath)),
 
     // Copy API index.html
@@ -315,14 +323,6 @@ function webCopyFiles() {
       .pipe(removeHtml('.hidden-no-device'))
       .pipe(removeHtml('[remove-if][remove-if="no-device"]'))
       .pipe(htmlmin())
-      .pipe(gulp.dest(tmpPath + '/api')),
-
-    // Copy API index.html
-    gulp.src('./www/api/index.html')
-      .pipe(removeCode({'no-device': true}))
-      .pipe(removeHtml('.hidden-no-device'))
-      .pipe(removeHtml('[remove-if][remove-if="no-device"]'))
-      .pipe(rename("debug.html"))
       .pipe(gulp.dest(tmpPath + '/api')),
 
     // Copy fonts
@@ -335,6 +335,9 @@ function webCopyFiles() {
 
     // Copy i18n
     gulp.src('./www/i18n/locale-*.json')
+      .pipe(jsonlint())
+      .pipe(jsonlint.reporter())
+      .pipe(sort())
       .pipe(ngTranslate({standalone:true, module: 'cesium.translations'}))
       .pipe(gulp.dest(tmpPath + '/js')),
 
@@ -346,12 +349,8 @@ function webCopyFiles() {
     gulp.src('./www/manifest.json')
       .pipe(gulp.dest(tmpPath)),
 
-    // Copy feed*.json
-    //gulp.src('./www/feed*.json')
-    //  .pipe(gulp.dest(tmpPath)),
-
-    // Copy lib
-    gulp.src('./www/lib/**/*.*')
+    // Copy lib (JS, CSS and fonts)
+    gulp.src(['./www/lib/**/*.js', './www/lib/**/*.css', './www/lib/**/fonts/**/*.*'])
       .pipe(gulp.dest(tmpPath + '/lib')),
 
     // Copy license into HTML
@@ -372,6 +371,7 @@ function webCopyFiles() {
 function webNgTemplate() {
   var tmpPath = './dist/web/www';
   return gulp.src(tmpPath + '/templates/**/*.html')
+    .pipe(sort())
     .pipe(templateCache({
       standalone:true,
       module:"cesium.templates",
@@ -380,7 +380,7 @@ function webNgTemplate() {
     .pipe(gulp.dest(tmpPath + '/dist/dist_js/app'));
 }
 
-function webNgAnnotate() {
+function webAppNgAnnotate() {
   var tmpPath = './dist/web/www';
   var jsFilter = filter(["**/*.js", "!**/vendor/*"]);
 
@@ -391,8 +391,8 @@ function webNgAnnotate() {
 }
 
 function webPluginCopyFiles() {
-  var tmpPath = './dist/web/www';
-  return es.merge(
+  const tmpPath = './dist/web/www';
+  return merge(
     // Copy Js (and remove unused code)
     gulp.src('./www/plugins/**/*.js')
       .pipe(removeCode({"no-device": true}))
@@ -409,18 +409,30 @@ function webPluginCopyFiles() {
 
     // Transform i18n into JS
     gulp.src(paths.ng_translate_plugin)
+      .pipe(jsonlint())
+      .pipe(jsonlint.reporter())
+      .pipe(sort())
       .pipe(ngTranslate({standalone:true, module: 'cesium.plugins.translations'}))
       .pipe(gulp.dest(tmpPath + '/dist/dist_js/plugins')),
 
-    // Copy CSS
+    // Copy plugin CSS
     gulp.src(paths.css_plugin)
-      .pipe(gulp.dest(tmpPath + '/dist/dist_css/plugins'))
+      .pipe(gulp.dest(tmpPath + '/dist/dist_css/plugins')),
+
+    // Copy Leaflet images
+    pluginLeafletImages(tmpPath + '/img'),
+
+    // Copy Leaflet CSS
+    gulp.src('./www/css/**/leaflet.*')
+      .pipe(gulp.dest(tmpPath + '/css'))
+
   );
 }
 
 function webPluginNgTemplate() {
   var tmpPath = './dist/web/www';
   return gulp.src(tmpPath + '/plugins/**/*.html')
+    .pipe(sort())
     .pipe(templateCache({
       standalone:true,
       module:"cesium.plugins.templates",
@@ -436,171 +448,225 @@ function webPluginNgAnnotate() {
     .pipe(gulp.dest(tmpPath + '/dist/dist_js/plugins'));
 }
 
-function webDebugFile() {
-  log(colors.green('Building debug.html file...'));
-  const tmpPath = './dist/web/www';
-  return gulp.src(tmpPath + '/debug.html')
-    .pipe(useref())             // Concatenate with gulp-useref
-    .pipe(gulp.dest(tmpPath));
+function webUglify(done) {
+  const wwwPath = './dist/web/www';
+  const enableUglify = argv.release || argv.uglify || false;
+  const version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+
+  if (enableUglify) {
+
+    log(colors.green('Minify JS and CSS files...'));
+
+    const indexFilter = filter('**/index.html', {restore: true});
+    const jsFilter = filter(["**/*.js", '!**/config.js'], {restore: true});
+    const cssFilter = filter("**/*.css", {restore: true});
+    const uglifyOptions = {
+      toplevel: true,
+      warnings: true,
+      mangle: {
+        reserved: ['qrcode', 'Base58']
+      },
+      compress: {
+        global_defs: {
+          "@console.log": "alert"
+        },
+        passes: 2
+      },
+      output: {
+        beautify: false,
+        preamble: "/* minified */",
+        max_line_len: 120000
+      }
+    };
+
+    // Process index.html
+    return gulp.src(wwwPath + '/index.html')
+      .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))  // Concatenate with gulp-useref
+
+      // Process JS
+      .pipe(jsFilter)
+      .pipe(uglify(uglifyOptions)) // Minify javascript files
+      .pipe(jsFilter.restore)
+
+      // Process CSS
+      .pipe(cssFilter)
+      .pipe(csso())               // Minify any CSS sources
+      .pipe(cssFilter.restore)
+
+      // Add version to file path
+      .pipe(indexFilter)
+      .pipe(replace(/"(dist_js\/[a-zA-Z0-9]+).js"/g, '"$1.js?v=' + version + '"'))
+      .pipe(replace(/"(dist_css\/[a-zA-Z0-9]+).css"/g, '"$1.css?v=' + version + '"'))
+      .pipe(indexFilter.restore)
+
+      .pipe(sourcemaps.write('maps'))
+
+      .pipe(gulp.dest(wwwPath))
+      .on('end', done);
+  }
+
+  if (done) done();
 }
 
-function webUglify() {
-  log(colors.green('Optimizing JS and CSS files...'));
+function webIntegrity() {
+  const wwwPath = './dist/web/www';
 
-  const wwwPath = './dist/web/www';
-  const jsFilter = filter(["**/*.js", '!**/config.js'], { restore: true });
-  const cssFilter = filter("**/*.css", { restore: true });
-  const revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
-  const uglifyOptions = {
-    toplevel: true,
-    warnings: true,
-    compress: {
-      global_defs: {
-        "@console.log": "alert"
-      },
-      passes: 2
-    },
-    output: {
-      beautify: false,
-      preamble: "/* minified */",
-      max_line_len: 120000
-    }
-  };
+  log(colors.green('Add integrity hash to <script src> tag...'));
 
   // Process index.html
-  return gulp.src(wwwPath + '/index.html')
-    .pipe(useref())             // Concatenate with gulp-useref
+  return gulp.src(wwwPath + '/index.html', {base: wwwPath})
 
-    // Process JS
-    .pipe(jsFilter)
-    .pipe(uglify(uglifyOptions)) // Minify javascript files
-    .pipe(jsFilter.restore)
-
-    // Process CSS
-    .pipe(cssFilter)
-    .pipe(csso())               // Minify any CSS sources
-    .pipe(cssFilter.restore)
-
-    // Add revision to filename  (but not index.html and config.js)
-    .pipe(revFilesFilter)
-    .pipe(rev())                // Rename the concatenated files
-    .pipe(revFilesFilter.restore)
-
-    .pipe(revReplace())         // Substitute in new filenames
+    // Add an integrity hash
+    .pipe(sriHash())
+    .pipe(rename({ extname: '.integrity.html' }))
     .pipe(gulp.dest(wwwPath));
 }
 
-function webApiDebugFile() {
-  log(colors.green('API: Building debug.html...'));
-
-  var tmpPath = './dist/web/www';
-  var debugFilter = filter('**/debug.html', { restore: true });
-
-  return gulp.src(tmpPath + '/*/debug.html')
-    .pipe(useref())             // Concatenate with gulp-useref
-
-    .pipe(debugFilter)
-    .pipe(replace("dist_js", "../dist_js"))
-    .pipe(replace("dist_css", "../dist_css"))
-    .pipe(replace("config.js", "../config.js"))
-    .pipe(debugFilter.restore)
-
-    .pipe(gulp.dest(tmpPath));
-}
-
 function webApiUglify() {
-  log(colors.green('API: Optimizing JS and CSS files...'));
   const tmpPath = './dist/web/www';
-  const jsFilter = filter(["**/*.js", '!**/config.js'], { restore: true });
-  const cssFilter = filter("**/*.css", { restore: true });
-  const revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
-  const indexFilter = filter('**/index.html', { restore: true });
-  const uglifyOptions = {
-    toplevel: true,
-    warnings: true,
-    compress: {
-      global_defs: {
-        "@console.log": "alert"
+  const version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+
+  const jsFilter = filter(["**/*.js", '!**/config.js'], {restore: true});
+  const cssFilter = filter("**/*.css", {restore: true});
+  const indexFilter = filter('**/index.html', {restore: true});
+
+  // Skip if not required
+  const enableUglify = argv.release || argv.useref || argv.uglify || false;
+  if (enableUglify) {
+    log(colors.green('API: Minify JS and CSS files...'));
+    const uglifyOptions = {
+      toplevel: true,
+      warnings: true,
+      compress: {
+        global_defs: {
+          "@console.log": "alert"
+        },
+        passes: 2
       },
-      passes: 2
-    },
-    output: {
-      beautify: false,
-      preamble: "/* minified */",
-      max_line_len: 120000
-    }
-  };
+      output: {
+        beautify: false,
+        preamble: "/* minified */",
+        max_line_len: 120000
+      }
+    };
 
-  // Process api/index.html
-  return gulp.src(tmpPath + '/*/index.html')
-    .pipe(useref())             // Concatenate with gulp-useref
+    // Process api/index.html
+    return gulp.src(tmpPath + '/*/index.html')
 
-    // Process JS
-    .pipe(jsFilter)
-    .pipe(uglify(uglifyOptions)) // Minify any javascript sources
-    .pipe(jsFilter.restore)
+      .pipe(useref({}, lazypipe().pipe(sourcemaps.init, { loadMaps: true })))  // Concatenate with gulp-useref
 
-    // Process CSS
-    .pipe(cssFilter)
-    .pipe(csso())               // Minify any CSS sources
-    .pipe(cssFilter.restore)
+      // Process JS
+      .pipe(jsFilter)
+      .pipe(uglify(uglifyOptions)) // Minify any javascript sources
+      .pipe(jsFilter.restore)
 
-    // Add revision to filename  (but not index.html and config.js)
-    .pipe(revFilesFilter)
-    .pipe(rev())                // Rename the concatenated files
-    .pipe(revFilesFilter.restore)
+      // Process CSS
+      .pipe(cssFilter)
+      .pipe(csso())               // Minify any CSS sources
+      .pipe(cssFilter.restore)
 
-    .pipe(revReplace())         // Substitute in new filenames
+      .pipe(indexFilter)
 
-    .pipe(indexFilter)
-    .pipe(replace("dist_js", "../dist_js"))
-    .pipe(replace("dist_css", "../dist_css"))
-    .pipe(replace("config.js", "../config.js"))
-    .pipe(indexFilter.restore)
+      // Add version to files path
+      .pipe(replace(/"(dist_js\/[a-zA-Z0-9-.]+).js"/g, '"$1.js?v=' + version + '"'))
+      .pipe(replace(/"(dist_css\/[a-zA-Z0-9-.]+).css"/g, '"$1.css?v=' + version + '"'))
 
-    .pipe(gulp.dest(tmpPath));
+      .pipe(replace("dist_js", "../dist_js"))
+      .pipe(replace("dist_css", "../dist_css"))
+      .pipe(replace("config.js", "../config.js"))
+      .pipe(indexFilter.restore)
+
+      .pipe(sourcemaps.write('maps'))
+
+      .pipe(gulp.dest(tmpPath));
+  }
+
+  else {
+    log(colors.red('API: Minify JS and CSS files. Skip') + colors.grey(' (missing options --release or --uglify)'));
+
+    return gulp.src(tmpPath + '/*/index.html')
+      .pipe(useref())             // Concatenate with gulp-useref
+
+      .pipe(indexFilter)
+      .pipe(replace("dist_js", "../dist_js"))
+      .pipe(replace("dist_css", "../dist_css"))
+      .pipe(replace("config.js", "../config.js"))
+      .pipe(indexFilter.restore)
+
+      .pipe(gulp.dest(tmpPath));
+  }
 }
 
-function webCleanUnusedFiles() {
+function webCleanUnusedFiles(done) {
   log(colors.green('Clean unused files...'));
+  const cleanSources = argv.release || argv.uglify || false;
 
   const wwwPath = './dist/web/www';
 
-  return es.concat(
-    // Clean core JS + CSS
-    gulp.src(wwwPath + '/js/**/*.js', {read: false})
-      .pipe(clean()),
-    gulp.src(wwwPath + '/css/**/*.css', {read: false})
-      .pipe(clean()),
+  if (cleanSources) {
+    return merge(
+      // Clean core JS + CSS
+      gulp.src(wwwPath + '/js/**/*.js', {read: false})
+        .pipe(clean()),
+      gulp.src(wwwPath + '/css/**/*.css', {read: false})
+        .pipe(clean()),
 
-    // Clean plugins JS + CSS
-    gulp.src(wwwPath + '/plugins/**/*.js', {read: false})
-      .pipe(clean()),
-    gulp.src(wwwPath + '/plugins/**/*.css', {read: false})
-      .pipe(clean())
-  );
+      // Clean plugins JS + CSS
+      gulp.src(wwwPath + '/plugins/**/*.js', {read: false})
+        .pipe(clean()),
+      gulp.src(wwwPath + '/plugins/**/*.css', {read: false})
+        .pipe(clean()),
+
+      // Unused maps/config.js.map
+      gulp.src(wwwPath + '/maps/config.js.map', {read: false, allowEmpty: true})
+        .pipe(clean())
+    )
+      .on('end', done);
+  }
+
+  if (done) done();
 }
 
 
 function webCleanUnusedDirectories() {
   log(colors.green('Clean unused directories...'));
+  const enableUglify = argv.release || argv.uglify || false;
 
   // Clean dir
   const wwwPath = './dist/web/www';
-  return del.sync([
+
+  let patterns = [
+    wwwPath + '/templates',
+    wwwPath + '/js',
+    wwwPath + '/plugins'
+  ];
+
+  if (enableUglify) {
+    patterns = patterns.concat([
       wwwPath + '/css',
-      wwwPath + '/templates',
-      wwwPath + '/js',
-      wwwPath + '/plugins',
       wwwPath + '/dist',
       wwwPath + '/lib/*',
+      //  Keep IonIcons font
       '!' + wwwPath + '/lib/ionic',
-      '!' + wwwPath + '/lib/robotodraft',
       wwwPath + '/lib/ionic/*',
       '!' + wwwPath + '/lib/ionic/fonts',
+
+      //  Keep RobotoDraft font
+      '!' + wwwPath + '/lib/robotodraft',
       wwwPath + '/lib/robotodraft/*',
       '!' + wwwPath + '/lib/robotodraft/fonts'
     ]);
+  }
+  else {
+    patterns = patterns.concat([
+      wwwPath + '/dist_css',
+      wwwPath + '/dist_js'
+    ]);
+  }
+
+  return gulp.src(patterns, {read: false})
+    //.pipe(debug({title: 'deleting '}))
+    .pipe(clean());
 }
 
 function webZip() {
@@ -620,13 +686,13 @@ function webZip() {
     .pipe(gulp.dest('./dist/web/build'));
 }
 
-function webExtensionClean() {
+function webExtClean() {
   return del([
     './dist/web/ext'
   ]);
 }
 
-function webExtensionCopyFiles() {
+function webExtCopyFiles() {
   const wwwPath = './dist/web/www';
   const resourcesPath = './resources/web-ext';
   log(colors.green('Copy web extension files...'));
@@ -639,45 +705,31 @@ function webExtensionCopyFiles() {
   return gulp.src([
     wwwPath + '/**/*',
 
-    // Remove API
+    // Skip API files
     '!' + wwwPath + '/api',
+    '!' + wwwPath + '/dist_js/*-api.js',
+    '!' + wwwPath + '/dist_css/*-api.css',
+    '!' + wwwPath + '/maps/dist_js/*-api.js.map',
+    '!' + wwwPath + '/maps/dist_css/*-api.css.map',
 
-    // Remove JS debug files
-    wwwPath + '/dist_js/*.*',
-    '!' + wwwPath + '/dist_js/cesium.js',
-    '!' + wwwPath + '/dist_js/vendor.js',
-    '!' + wwwPath + '/dist_js/cesium-api*.js',
-    '!' + wwwPath + '/dist_js/vendor-api*.js',
-
-    // Remove CSS debug files
-    wwwPath + '/dist_css/*.*',
-    '!' + wwwPath + '/dist_css/cesium.css',
-    '!' + wwwPath + '/dist_css/cesium-api*.css',
-
-    // Remove HTML debug files
-    wwwPath + '/api/*',
-    '!' + wwwPath + '/api/debug.html',
-    '!' + wwwPath + '/debug.html',
-
-    // Remove unused files (feed.json) in extension
-    '!' + wwwPath + '/feed*.json',
+    // Skip web manifest
+    '!' + wwwPath + '/manifest.json',
 
     // Add specific resource (and overwrite the default 'manifest.json')
-    '!' + wwwPath + '/manifest.json',
     resourcesPath + '/**/*.*'
-   ])
+  ])
 
-    // Process TXT files: Add the UTF-8 BOM character
-    .pipe(txtFilter)
-    .pipe(header('\ufeff'))
-    .pipe(txtFilter.restore)
+  // Process TXT files: Add the UTF-8 BOM character
+  .pipe(txtFilter)
+  .pipe(header('\ufeff'))
+  .pipe(txtFilter.restore)
 
-    // Replace version in 'manifest.json' file
-    .pipe(manifestFilter)
-    .pipe(replace(/\"version\": \"[^\"]*\"/, '"version": "' + version + '"'))
-    .pipe(manifestFilter.restore)
+  // Replace version in 'manifest.json' file
+  .pipe(manifestFilter)
+  .pipe(replace(/\"version\": \"[^\"]*\"/, '"version": "' + version + '"'))
+  .pipe(manifestFilter.restore)
 
-    .pipe(gulp.dest('./dist/web/ext'));
+  .pipe(gulp.dest('./dist/web/ext'));
 }
 
 function webExtensionZip() {
@@ -692,67 +744,99 @@ function webExtensionZip() {
 
 function webBuildSuccess(done) {
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
-  log(colors.green("Web artifacts created at: 'dist/web/build/cesium-v" + version + "-web.zip' and 'dist/web/build/cesium-v" + version + "-extension.zip'"));
-  done();
+  log(colors.green("Web artifact created at: 'dist/web/build/cesium-v" + version + "-web.zip'"));
+  if (done) done();
 }
+
+function webExtBuildSuccess(done) {
+  var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+  log(colors.green("Web extension artifact created at: 'dist/web/build/cesium-v" + version + "-extension.zip'"));
+  if (done) done();
+}
+
+function help() {
+  log(colors.green("Usage: gulp {config|webBuild|webExtBuild} OPTIONS"));
+  log(colors.green(""));
+  log(colors.green("NAME"));
+  log(colors.green(""));
+  log(colors.green("  config --env <config_name>  Configure environment (create file `www/config.js`). "));
+  log(colors.green("  build                       Build from sources (CSS and JS)"));
+  log(colors.green("  webBuild                    Build ZIP artifact"));
+  log(colors.green("  webExtBuild                 Build web extension artifact (browser module)"));
+  log(colors.green(""));
+  log(colors.green("OPTIONS"));
+  log(colors.green(""));
+  log(colors.green("  --release                   Release build (with uglify and sourcemaps)"));
+  log(colors.green("  --uglify                    Build using uglify plugin"));
+}
+
+/* --------------------------------------------------------------------------
+   -- Combine task
+   --------------------------------------------------------------------------*/
+const translate = gulp.series(appNgTranslate, pluginNgTranslate);
+const template = gulp.series(appNgTemplate, pluginNgTemplate);
+const appAndPluginSass = gulp.series(appSass, pluginSass);
+const app = gulp.series(appSass, appNgTemplate, appNgAnnotate, appNgTranslate);
+const plugin = gulp.series(pluginSass, pluginNgTemplate, pluginNgAnnotate, pluginNgTranslate);
+const build = gulp.series(appLicense, app, plugin);
+
+const webApp = gulp.series(appSass, webCopyFiles, webNgTemplate, webAppNgAnnotate);
+const webPlugin = gulp.series(pluginSass, webPluginCopyFiles, webPluginNgTemplate, webPluginNgAnnotate);
+const webCompile = gulp.series(
+  webClean,
+  webApp,
+  webPlugin,
+  webUglify,
+  webIntegrity,
+  webApiUglify,
+  webCleanUnusedFiles,
+  webCleanUnusedDirectories
+);
+
+// note : Do not call config, to keep same config between web and webExt artifacts
+const webBuild = gulp.series(
+  webClean,
+  webCompile,
+  webZip,
+  webBuildSuccess
+);
+const webExtCompile = gulp.series(
+  webExtClean,
+  webCompile,
+  webExtCopyFiles
+);
+
+// note : Do not call config, to keep same config between web and webExt artifacts
+const webExtBuild = gulp.series(
+  webExtCompile,
+  webExtensionZip,
+  webExtBuildSuccess
+);
 
 /* --------------------------------------------------------------------------
    -- Define gulp public tasks
    --------------------------------------------------------------------------*/
 
-gulp.task('appSass', [], appSass);
-gulp.task('appNgTemplate', [], appNgTemplate);
-gulp.task('appNgAnnotate', [], appNgAnnotate);
-gulp.task('appNgTranslate', [], appNgTranslate);
-gulp.task('app', ['appSass', 'appNgTemplate', 'appNgAnnotate', 'appNgTranslate']);
+exports.help = help;
+exports.config = appConfig;
+exports.license = appLicense;
+exports.sass = appAndPluginSass;
+exports.translate = translate;
+exports.template = template;
+exports.annotate = appNgAnnotate;
+exports.watch = appAndPluginWatch;
+exports.build = build;
 
-gulp.task('pluginSass', [], pluginSass);
-gulp.task('pluginNgTemplate', [], pluginNgTemplate);
-gulp.task('pluginNgAnnotate', [], pluginNgAnnotate);
-gulp.task('pluginNgTranslate', [], pluginNgTranslate);
-gulp.task('plugin', ['pluginSass', 'pluginNgTemplate', 'pluginNgAnnotate', 'pluginNgTranslate']);
+exports.webCompile = webCompile;
+exports.webBuild = webBuild;
+exports['build:web'] = exports.webBuild; // Alias
 
-gulp.task('config', [], appConfig);
-gulp.task('license', [], appLicense);
-gulp.task('translate', ['appNgTranslate', 'pluginNgTranslate']);
-gulp.task('template', ['appNgTemplate', 'pluginNgTemplate']);
-gulp.task('annotate', ['appNgAnnotate', 'pluginNgAnnotate']);
-gulp.task('watch', [], appAndPluginWatch);
+exports.webExtClean = webExtClean;
+exports.webExtCompile = webExtCompile;
+exports.webExtBuild = webExtBuild;
+exports.webExtCopyFiles = webExtCopyFiles;
+exports['build:webExt'] = exports.webBuild; // Alias
 
-
-gulp.task('build', [
-  'license',
-  'sass',
-  'app',
-  'plugin'
-]);
-
-gulp.task('ionic:serve:before', ['build', 'watch'], done => done());
-gulp.task('sass', ['license', 'appSass', 'pluginSass'], done => done());
-gulp.task('default', ['config', 'build'], done => done());
-
-gulp.task('webClean', [], webClean);
-gulp.task('webCopyFiles', ['config', 'sass', 'webClean'], webCopyFiles);
-gulp.task('webNgTemplate', ['webCopyFiles'], webNgTemplate);
-gulp.task('webNgAnnotate', ['webNgTemplate'], webNgAnnotate);
-
-gulp.task('webPluginCopyFiles', ['webNgAnnotate'], webPluginCopyFiles);
-gulp.task('webPluginNgTemplate', ['webPluginCopyFiles'], webPluginNgTemplate);
-gulp.task('webPluginNgAnnotate', ['webPluginNgTemplate'],  webPluginNgAnnotate);
-
-gulp.task('webDebugFile', ['webPluginNgAnnotate'], webDebugFile);
-gulp.task('webUglify', ['webDebugFile'], webUglify);
-gulp.task('webApiDebugFile', ['webUglify'], webApiDebugFile);
-gulp.task('webApiUglify', ['webApiDebugFile'], webApiUglify);
-
-gulp.task('webCleanUnusedFiles', ['webApiUglify'], webCleanUnusedFiles);
-gulp.task('webCleanUnusedDirectories', ['webCleanUnusedFiles'], webCleanUnusedDirectories);
-gulp.task('webZip', ['webCleanUnusedDirectories'], webZip);
-
-gulp.task('webExtensionClean', [], webExtensionClean);
-gulp.task('webExtensionCopyFiles', ['webExtensionClean', 'webCleanUnusedDirectories'], webExtensionCopyFiles);
-gulp.task('webExtensionZip', ['webExtensionCopyFiles'], webExtensionZip);
-
-gulp.task('webBuild', ['webZip', 'webExtensionZip'], webBuildSuccess);
-gulp.task('build:web', ['webBuild']); // = webBuild
-
+exports.default = gulp.series(appConfig, build);
+exports.serveBefore = gulp.series(build, appAndPluginWatch);
+exports['ionic:serve:before'] = exports.serveBefore; // Alias need need by @ionic/cli

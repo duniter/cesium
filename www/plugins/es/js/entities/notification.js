@@ -11,14 +11,15 @@ function EsNotification(json, markAsReadCallback) {
   // Avoid undefined errors
   json = json || {};
 
+  that.id = json.id || ('' + Date.now()); // Keep id if exists, otherwise create it from timestamp
   that.type = json.type && json.type.toLowerCase();
   that.time = json.time;
   that.hash = json.hash;
   that.read = json.read_signature ? true : false;
 
-  that.message = json.reference && messagePrefixes[json.reference.index] ?
+  that.message = json.code && (json.reference && messagePrefixes[json.reference.index] ?
   messagePrefixes[json.reference.index] + json.code :
-  'EVENT.' + json.code;
+  'EVENT.' + json.code) || json.message;
   that.params = json.params;
 
   if (markAsReadCallback && (typeof markAsReadCallback === "function") ) {
@@ -165,7 +166,7 @@ function EsNotification(json, markAsReadCallback) {
       that.icon = 'ion-alert-circled energized';
 
       // If deletion has been asked, change the message
-      if (json.code === 'MODERATION_RECEIVED' && level == 5) {
+      if (json.code === 'MODERATION_RECEIVED' && json.level === 5) {
         that.message = 'EVENT.PAGE.DELETION_RECEIVED';
         that.icon = 'ion-trash-a assertive';
       }

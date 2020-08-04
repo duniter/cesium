@@ -66,6 +66,9 @@ $screen-md:                       992px;
 $screen-md-max:                   1199px;
 $screen-lg:                       1200px;
 
+// Resolution for left menu show/hide
+$screen-nomenu-max:               $screen-xs-max;
+$screen-menu:                     $screen-sm;
 
 // IE10 on Windows Phone 8
 // IE10 on WP8 doesn't report CSS pixels, but actual device pixels. In
@@ -86,6 +89,9 @@ $screen-lg:                       1200px;
 @media screen and (max-width: $screen-xxs-max) {
   @-ms-viewport {
     width: 320px;
+  }
+  .no-padding-xxs {
+    padding: 0 !important;
   }
 }
 
@@ -192,6 +198,9 @@ $screen-lg:                       1200px;
   }
   .button.hidden-sm {
     display: flex;
+  }
+  .button.button-icon.hidden-sm {
+    display: inline-block;
   }
   .pull-right,
   .pull-left {
@@ -368,53 +377,188 @@ $screen-lg:                       1200px;
  Left menu
 =============== */
 
-// Resolution for left menu show/hide
-$screen-nomenu-max:               844px;
-$screen-menu:                     845px;
 
 // Screen without left menu
 @media screen and (max-width: $screen-nomenu-max) {
-  .hidden-nomenu {
-    display: none !important;
-    visibility: hidden !important;
-  }
   .visible-nomenu {
     display: inherit !important;
     visibility: visible !important;
   }
 }
-
 @media screen and (min-width: $screen-menu) {
-  .hidden-nomenu {
-    display: inherit;
-    visibility: visible;
-  }
   .visible-nomenu {
     display: none !important;
     visibility: hidden !important;
   }
 }
+.menu.menu-left {
 
-// Screen WITH left menu
-@media screen and (min-width: $screen-menu) {
-  .hidden-menu {
-    display: none !important;
-    visibility: hidden !important;
+  background-color: whitesmoke;
+  .item {
+    opacity: 0.75;
+    color: black;
   }
-  .visible-menu {
-    display: inherit !important;
-    visibility: visible !important;
+
+  .item-button-right > .button,
+  .item-button-right .item-content > .button,
+  .item-button-right > .buttons,
+  .item-button-right .item-content > .buttons {
+    top: 8px !important;
+  }
+
+  .item.active {
+    background-color: $active !important;
+
+    .item-content {
+      background-color: transparent;
+    }
+  }
+
+  .item-menu-disable {
+    color: $dark !important;
+  }
+
+  .item-spacer {
+    flex: 1 1 auto;
+  }
+
+  .item-actions {
+    min-height: 55px !important;
+  }
+
+  .item-closeable:hover {
+    cursor: pointer;
+  }
+
+
+  .item-closeable {
+    .close {
+      position: absolute;
+      right: 5px;
+      top: 5px;
+    }
+  }
+  .item-closeable:hover {
+    .close {
+      @extend .ion-close;
+    }
   }
 }
 
-@media screen and (max-width: $screen-nomenu-max) {
-  .hidden-menu {
-    display: inherit;
-    visibility: visible;
+
+// Menu on small screens
+@media screen and (max-width: $screen-sm-max) {
+  .menu.menu-left {
+
+    // Compact menu item (reduce height, etc.)
+    .item.item-divider {
+      min-height: 2px;
+      height: 2px;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .item,
+    .item.item-complex .item-content {
+      height: 40px;
+      min-height: 40px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+
+      .badge {
+        top: 10px;
+        padding: 2px 6px;
+        font-size: 12px;
+      }
+    }
+
+    .item.item-complex {
+      padding-top: 0;
+    }
+
+    .item.item-button-right .button {
+      height: 30px;
+      min-height: 30px;
+      top: 4px;
+    }
+
+    .item-spacer {
+      display: none;
+      visibility: hidden;
+    }
+
+    // Hide footer on small screen
+    ion-content.has-footer {
+      bottom: 0 !important; /*ignore footer*/
+    }
+
+    .bar-header {
+      background-color: $positive-900-bg;
+      color: #fff;
+      height: 150px;
+      padding-right: 0 !important;
+
+      .platform-ios.platform-cordova & {
+        height: calc(constant(safe-area-inset-top) + 150px);
+        height: calc(env(safe-area-inset-top) + 150px);
+      }
+
+      .hero {
+        height: 150px;
+        box-shadow: none; // not need (define in bar-header)
+
+        .content {
+          bottom: 0;
+        }
+      }
+    }
+
+    .has-header {
+      top: 150px;
+
+      .platform-ios.platform-cordova & {
+        top: calc(constant(safe-area-inset-top) + 150px);
+        top: calc(env(safe-area-inset-top) + 150px);
+      }
+    }
+
   }
-  .visible-menu {
-    display: none;
-    visibility: hidden;
+
+}
+
+// Menu for NOT small screens
+@media screen and (min-width: $screen-md) {
+  .menu.menu-left {
+
+    .list {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .item.item-divider {
+      min-height: 5px;
+      height: 5px;
+    }
+
+    .footer a {
+      font-size: 14px ! important;
+      color: grey !important;
+    }
+  }
+}
+
+@media screen and (min-width: $screen-md) {
+  .menu.menu-left {
+    background-image: url('../../resources/logo/svg/white/logo.large.empty.transparent.svg');
+    background-repeat: no-repeat;
+    background-position: -500px -100px;
+    background-size: 1024px 1024px;
+    background-color: whitesmoke;
+    height: 100%;
   }
 }
 
@@ -708,7 +852,7 @@ html, body {
 .bar.bar-header {
   padding-right: 5px !important;
 
-  .buttons-right span {
+  .buttons-right .right-buttons {
     margin-left: 0 !important;
   }
 }
@@ -769,6 +913,33 @@ html, body {
  Home page
 =============== */
 
+#home .ribbon {
+  position: fixed;
+  top: 15px;
+  right: -110px;
+  z-index: 500;
+  transform: rotate(45deg);
+  text-align: center;
+  width: 300px;
+  text-decoration: none;
+  box-shadow: 0 0 5px #000;
+  a:first-child {
+    opacity: 1 !important;
+  }
+  a {
+    opacity: 0.7;
+    width: 100%;
+  }
+
+  a:hover {
+    opacity: 1;
+    font-size: 16px;
+  }
+}
+#home h4.welcome .badge {
+  display: inline-block !important;
+  vertical-align: bottom;
+}
 #home .logo {
   margin-top: 15px;
   width: 100%;
@@ -906,6 +1077,13 @@ html, body {
   }
 }
 
+.popup-container.large {
+  .popup {
+    min-width: 250px !important;
+    width: 350px !important;
+  }
+}
+
 /******
 * 'ion-refresher'
 *******/
@@ -975,7 +1153,9 @@ html, body {
 -- */
 
 .view-wallet,
-.view-identity {
+.view-wallet-tx,
+.view-identity,
+.view-identity-tx {
   .qrcode {
     position: absolute;
     display: block;
@@ -983,57 +1163,78 @@ html, body {
     right: 0;
     width: 0;
     height: 0;
-    background: #fff;
-    z-index: 1;
+    background: white;
+    z-index: 5;
     -webkit-backface-visibility: hidden !important;
     backface-visibility: hidden !important;
-    -webkit-transition: all 0.5s ease-out !important;
-    transition: all 0.5s ease-out !important;
+    -webkit-transition: all 0.2s ease-in-out !important;
+    transition: all 0.2s ease-in-out !important;
     overflow: hidden;
-    img {
-      display: float;
+    svg, img {
+      display: unset;
       float: right;
       width: 0;
       height: 0;
-      z-index: 1;
-      transition: all 0.5s ease-out !important;
+      z-index: 5;
+      transition: all 0.2s ease-in-out !important;
     }
   }
 
   .qrcode.on {
     width: 50px;
     height: 50px;
-    padding: 3px;
+    padding: 0;
     margin: 7px;
-    img {
-      width: 44px;
-      height: 44px;
+    svg, img {
+      width: 50px;
+      height: 50px;
     }
   }
 
   .qrcode.on.active {
     margin: 0 !important;
-    padding: 10px;
+    padding: 0;
     width: 200px;
     height: 200px;
-    img {
-      width: 180px;
-      height: 180px;
+    svg, img {
+      width: 224px;
+      height: 224px;
+      margin: -12px -12px;
     }
   }
 }
 
 @media screen and (max-width: $screen-sm-max) {
   .view-wallet,
-  .view-identity  {
-    .hero.hero-qrcode-active {
-      h1, h2, h3, h4, h5, i.avatar {
-        margin-right: 200px;
+  .view-wallet-tx,
+  .view-identity,
+  .view-identity-tx {
+
+    .qrcode.on.active {
+      width: calc(min(100vh - 125px, 100vw));
+      height: 100%;
+      z-index: 10001;
+      svg, img {
+        width: calc(100%);
+        height: 100%;
+        margin: 0;
       }
     }
   }
 }
 
+@media screen and (min-width: $screen-md) {
+  .view-wallet,
+  .view-wallet-tx,
+  .view-identity,
+  .view-identity-tx {
+
+    .qrcode.on.active .footer {
+      display: none;
+      visibility: hidden;
+    }
+  }
+}
 
 .popover-wallet-actions {
   height: 400px;
@@ -1512,6 +1713,10 @@ a.underline:hover,
   }
 }
 
+.item.item-no-border {
+  border-width: 0;
+}
+
 .list .item.item-border {
   border-bottom: solid 1px #ccc !important;
   margin-bottom: 1px;
@@ -1839,143 +2044,6 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   font-style: italic !important;
 }
 
-/**********
-   Screen - Left Menu
-**********/
-
-.menu.menu-left {
-
-  background-color: whitesmoke;
-  .item {
-    opacity: 0.75;
-    color: black;
-  }
-
-  .item-button-right > .button,
-  .item-button-right .item-content > .button,
-  .item-button-right > .buttons,
-  .item-button-right .item-content > .buttons {
-    top: 8px !important;
-  }
-
-  .item.active {
-    background-color: $active !important;
-
-    .item-content {
-      background-color: transparent;
-    }
-  }
-
-  .item-menu-disable {
-    color: $dark !important;
-  }
-}
-
-
-// Menu on small screens
-@media screen and (max-width: $screen-sm-max) {
-  .menu.menu-left {
-
-    // Compact menu item (reduce height, etc.)
-    .item.item-divider {
-      min-height: 2px;
-      height: 2px;
-      padding-top: 0;
-      padding-bottom: 0;
-    }
-
-    .item,
-    .item.item-complex .item-content {
-      height: 40px;
-      min-height: 40px;
-      padding-top: 10px;
-      padding-bottom: 10px;
-
-      .badge {
-        top: 10px;
-        padding: 2px 6px;
-        font-size: 12px;
-      }
-    }
-
-    .item.item-complex {
-      padding-top: 0;
-    }
-
-    .item.item-button-right .button {
-      height: 30px;
-      min-height: 30px;
-      top: 4px;
-    }
-
-
-    // Hide footer on small screen
-    ion-content.has-footer {
-      bottom: 0 !important; /*ignore footer*/
-    }
-
-    .bar-header {
-      background-color: $positive-900-bg;
-      color: #fff;
-      height: 150px;
-      padding-right: 0 !important;
-
-      .platform-ios.platform-cordova & {
-        height: calc(constant(safe-area-inset-top) + 150px);
-        height: calc(env(safe-area-inset-top) + 150px);
-      }
-
-      .hero {
-        height: 150px;
-        box-shadow: none; // not need (define in bar-header)
-
-        .content {
-          bottom: 0;
-        }
-      }
-    }
-
-    .has-header {
-      top: 150px;
-
-      .platform-ios.platform-cordova & {
-        top: calc(constant(safe-area-inset-top) + 150px);
-        top: calc(env(safe-area-inset-top) + 150px);
-      }
-    }
-  }
-}
-
-/**********
-   Menu
-**********/
-
-// Menu for NOT small screens
-@media screen and (min-width: $screen-sm) {
-  .menu.menu-left {
-
-    .item.item-divider {
-      min-height: 5px;
-      height: 5px;
-    }
-
-    .footer a {
-      font-size: 14px ! important;
-      color: grey !important;
-    }
-  }
-}
-
-@media screen and (min-width: $screen-md) {
-  .menu.menu-left {
-    background-image: url('../../resources/logo/svg/white/logo.large.empty.transparent.svg');
-    background-repeat: no-repeat;
-    background-position: -500px -100px;
-    background-size: 1024px 1024px;
-    background-color: whitesmoke;
-    height: 100%;
-  }
-}
 
 /**********
    Screen - identity Certifications
@@ -1996,7 +2064,80 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   border: solid 1px #D9D9D9;
 }
 
+/**********
+   Specific modes (demo, readonly)
+**********/
 
+/* -- readonly mode -- */
+
+.visible-readonly {
+  display: none;
+  visibility: hidden;
+}
+
+body.readonly {
+
+  .hidden-readonly {
+    display: none;
+    visibility: hidden;
+  }
+  .visible-readonly {
+    display: inherit !important;
+    visibility: visible !important;
+  }
+}
+
+/* -- demo mode -- */
+
+.visible-demo {
+  display: none;
+  visibility: hidden;
+}
+
+body.demo {
+
+  .hidden-demo {
+    display: none;
+    visibility: hidden;
+  }
+  .visible-demo {
+    display: inherit !important;
+    visibility: visible !important;
+  }
+}
+
+.badge-app-mode {
+  font-weight: bold;
+  color: whitesmoke !important;
+  top: 10px;
+  padding: 0 4px;
+  text-transform: uppercase;
+  user-select: none;
+}
+#menu .badge-app-mode.left {
+  position: absolute;
+  font-size: 12px;
+  left: 1px;
+  transform-origin: 26px 5px;
+  transform: rotate(-10deg);
+}
+#menu .badge-app-mode.right {
+  position: absolute;
+  font-size: 14px;
+  right: 1px;
+  transform-origin: 26px 5px;
+  transform: rotate(10deg);
+}
+#menu .badge-app-mode.left:hover {
+  padding: 1px 4px;
+  font-size: 13px;
+  transform: rotate(-15deg);
+}
+#menu .badge-app-mode.right:hover {
+  padding: 2px 5px;
+  font-size: 16px;
+  transform: rotate(15deg);
+}
 /**********
    Help
 **********/
@@ -2028,10 +2169,18 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   top: 8px;
   z-index: 99;
 }
+#menu .footer .icon-help:hover {
+  @extend .ion-ios-help;
+  color: $positive !important;
+  font-size: 31px !important;
+  top: 6px;
+  left: 11px;
+  transform: rotate(10deg);
+}
 
-/**********
-   Help Tip
-**********/
+  /**********
+     Help Tip
+  **********/
 
 .popover-helptip {
   background-color: rgba(68, 68, 68, 0.85) !important;
@@ -2049,6 +2198,10 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   a:hover {
     text-decoration: underline;
   }
+}
+
+.popover-helptip.popover-bottom {
+  margin-top: 12px !important;
 }
 
 // Empeche les clignotement du backdrop, pendant le feature tour
@@ -2188,7 +2341,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     height: 35px;
     width: 35px;
     position: relative;
-    left: 0;
+    left: 4px;
     top: 4px;
     border: solid 1px #D9D9D9;
   }
@@ -2203,6 +2356,33 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     position: relative;
     left: 0;
     top: 6px;
+  }
+
+}
+
+.bar-header .button-clear.button-peer {
+  display: block;
+  height: 44px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin: 0;
+
+  * {
+    height: 32px;
+    line-height: 32px;
+  }
+}
+
+// Locale flags
+.bar-header .button.flag  {
+  height: 44px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  .flag-image {
+    position: relative;
+    bottom: 0;
+    width: 32px !important;
+    height: 32px !important;
   }
 }
 
@@ -2321,7 +2501,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
    Drop zone component
 **********/
 
-div[dropzone] {
+div[drop-zone] {
   border: 2px dashed #bbb;
   border-radius: 5px;
   padding: 15px;
@@ -2337,7 +2517,7 @@ div[dropzone] {
   }
 }
 
-div[dropzone]:hover {
+div[drop-zone]:hover {
   background-color: $stable-100-bg;
 }
 
@@ -2491,6 +2671,11 @@ div[dropzone]:hover {
 
   .item {
     height: 48px;
+    padding-left: 60px;
+
+    .avatar {
+      border-radius: 0;
+    }
   }
 }
 

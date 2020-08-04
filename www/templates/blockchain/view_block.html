@@ -150,7 +150,7 @@
             <div class="padding-bottom item-icon-left-padding item-icon-right-padding" ng-if="formData.identitiesCount">
               <ion-item ng-repeat="identity in ::formData.identities"
                         class="item-border-large item-small-height"
-                        ng-include="'templates/blockchain/link_identity.html'">
+                        ng-include="::'templates/blockchain/link_identity.html'">
               </ion-item>
             </div>
           </ng-if>
@@ -167,7 +167,7 @@
             <div class="padding-bottom item-icon-left-padding item-icon-right-padding" ng-if="formData.joinersCount">
               <ion-item ng-repeat="identity in ::formData.joiners"
                         class="item-border-large item-small-height"
-                        ng-include="'templates/blockchain/link_identity.html'">
+                        ng-include="::'templates/blockchain/link_identity.html'">
               </ion-item>
             </div>
           </ng-if>
@@ -186,7 +186,7 @@
             <div class="padding-bottom item-icon-left-padding item-icon-right-padding" ng-if="formData.activesCount">
               <ion-item ng-repeat="identity in ::formData.actives"
                         class="item-border-large item-small-height"
-                        ng-include="'templates/blockchain/link_identity.html'">
+                        ng-include="::'templates/blockchain/link_identity.html'">
               </ion-item>
             </div>
           </ng-if>
@@ -205,7 +205,7 @@
             <div class="padding-bottom item-icon-left-padding item-icon-right-padding" ng-if="formData.excludedCount">
               <ion-item ng-repeat="identity in ::formData.excluded"
                         class="item-border-large item-small-height"
-                        ng-include="'templates/blockchain/link_identity.html'">
+                        ng-include="::'templates/blockchain/link_identity.html'">
               </ion-item>
             </div>
           </ng-if>
@@ -224,7 +224,7 @@
             <div class="padding-bottom item-icon-left-padding item-icon-right-padding" ng-if="formData.leaversCount">
               <ion-item ng-repeat="identity in ::formData.leavers"
                         class="item-border-large item-small-height"
-                        ng-include="'templates/blockchain/link_identity.html'">
+                        ng-include="::'templates/blockchain/link_identity.html'">
               </ion-item>
             </div>
           </ng-if>
@@ -243,7 +243,7 @@
             <div class="padding-bottom item-icon-left-padding item-icon-right-padding" ng-if="formData.revokedCount">
               <ion-item ng-repeat="identity in ::formData.revoked"
                         class="item-border-large item-small-height"
-                        ng-include="'templates/blockchain/link_identity.html'">
+                        ng-include="::'templates/blockchain/link_identity.html'">
               </ion-item>
             </div>
           </ng-if>
@@ -262,7 +262,7 @@
                 <div class="row no-padding">
                   <div class="col col-center no-padding">
                     <ng-repeat ng-repeat="cert in certs">
-                      <ng-include src="'templates/blockchain/link_identity.html'" onload="identity=cert.from"></ng-include>
+                      <ng-include src="::'templates/blockchain/link_identity.html'" onload="identity=cert.from"></ng-include>
                       <br/>
                     </ng-repeat>
                   </div>
@@ -270,7 +270,7 @@
                     <h2><i class="icon ion-arrow-right-a" ></i></h2>
                   </div>
                   <div class="col col-40 col-center no-padding"
-                       ng-include="'templates/blockchain/link_identity.html'"
+                       ng-include="::'templates/blockchain/link_identity.html'"
                        onload="identity=certs[0].to">
                   </div>
                 </div>

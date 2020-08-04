@@ -84,7 +84,7 @@ angular.module('cesium.cache.services', ['angular-cache'])
   }
 
   function onSettingsChanged(settings) {
-    var newStorageMode = getSettingsStorageMode(settings)
+    var newStorageMode = getSettingsStorageMode(settings);
     var hasChanged = (newStorageMode !== storageMode);
     if (hasChanged) {
       storageMode = newStorageMode;

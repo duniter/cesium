@@ -43,11 +43,16 @@ function LoginController($scope, $timeout, $controller, csWallet) {
 
 }
 
-function LoginModalController($scope, $timeout, $q, $ionicPopover, $document, CryptoUtils, csCrypto, ionicReady,
-                              UIUtils, BMA, Modals, csSettings, Device, parameters) {
+function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, CryptoUtils, csCrypto, ionicReady,
+                              UIUtils, BMA, Modals, csConfig, csSettings, Device, parameters) {
   'ngInject';
 
   parameters = parameters || {};
+
+  // Demo mode: force PUBKEY method
+  if (csConfig.demo) {
+    parameters.method = 'PUBKEY';
+  }
 
   $scope.computing = false;
   $scope.pubkey = null;
@@ -419,7 +424,11 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $document, Cr
   $scope.changeMethod = function(method, params){
     $scope.hideMethodsPopover();
 
-    if (!method || method == $scope.formData.method) return; // same method
+    if (method !== 'PUBKEY' && csConfig.demo) {
+      return UIUtils.alert.demo();
+    }
+
+    if (!method || method === $scope.formData.method) return; // same method
 
     console.debug("[login] method is: " + method);
     $scope.formData.method = method;
@@ -431,7 +440,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $document, Cr
     }
 
     // Scrypt (advanced or not)
-    if (method == 'SCRYPT_DEFAULT' || method == 'SCRYPT_ADVANCED') {
+    if (method === 'SCRYPT_DEFAULT' || method === 'SCRYPT_ADVANCED') {
       $scope.pubkey = null;
 
 
@@ -451,9 +460,9 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $document, Cr
       }
       $scope.changeScrypt(scrypt);
 
-      $scope.autoComputePubkey = $scope.autoComputePubkey && (method == 'SCRYPT_DEFAULT');
+      $scope.autoComputePubkey = $scope.autoComputePubkey && (method === 'SCRYPT_DEFAULT');
     }
-    else if (method == 'SCAN') {
+    else if (method === 'SCAN') {
       return $scope.doScan();
     }
     else {
@@ -506,14 +515,17 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $document, Cr
       });
   };
 
-  $scope.fileChanged = function(event) {
-    $scope.validatingFile = true;
-    $scope.formData.file = event && event.target && event.target.files && event.target.files.length && event.target.files[0];
-    if (!$scope.formData.file) {
+  $scope.onFileChanged = function(file) {
+    if (!file || !file.fileData) {
       $scope.validatingFile = false;
-      return;
+      return; // Skip
     }
-
+    $scope.formData.file = {
+      name: file.fileData.name,
+      size: file.fileData.size,
+      content: file.fileContent
+    };
+    $scope.validatingFile = true;
     $timeout(function() {
       console.debug("[login] key file changed: ", $scope.formData.file);
       $scope.validatingFile = true;
@@ -526,7 +538,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $document, Cr
           }
           else {
             $scope.formData.file.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-            $scope.formData.file.valid = !$scope.expectedPubkey || $scope.expectedPubkey == $scope.formData.file.pubkey;
+            $scope.formData.file.valid = !$scope.expectedPubkey || $scope.expectedPubkey === $scope.formData.file.pubkey;
             $scope.validatingFile = false;
           }
 
@@ -536,51 +548,6 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $document, Cr
             $scope.removeKeyFile();
             return;
           }
-          $scope.validatingFile = false;
-          $scope.formData.file.valid = false;
-          $scope.formData.file.pubkey = undefined;
-          UIUtils.onError('ERROR.AUTH_FILE_ERROR')(err);
-        });
-    });
-  };
-
-  /**
-   * On the file chooser
-   */
-  $scope.openFileChooser = function() {
-    var elements = angular.element(document.getElementById('loginImportFile'));
-    if (elements && elements.length) {
-      elements[0].click();
-    }
-  }
-
-  /**
-   * On file drop
-   */
-  $scope.onKeyFileDrop = function(file) {
-    if (!file || !file.fileData) return;
-
-    $scope.formData.file = {
-      name: file.fileData.name,
-      size: file.fileData.size,
-      content: file.fileContent
-    };
-    $scope.validatingFile = true;
-    $timeout(function() {
-      return $scope.readKeyFile($scope.formData.file, {withSecret: false})
-        .then(function (keypair) {
-          if (!keypair || !keypair.signPk) {
-            $scope.formData.file.valid = false;
-            $scope.formData.file.pubkey = undefined;
-          }
-          else {
-            $scope.formData.file.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-            $scope.formData.file.valid = !$scope.expectedPubkey || $scope.expectedPubkey == $scope.formData.file.pubkey;
-            $scope.validatingFile = false;
-          }
-
-        })
-        .catch(function (err) {
           $scope.validatingFile = false;
           $scope.formData.file.valid = false;
           $scope.formData.file.pubkey = undefined;
@@ -634,18 +601,25 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $document, Cr
   // TODO : for DEV only
   /*$timeout(function() {
     $scope.formData = {
-      username: 'benoit.lavenier@e-is.pro',
-      password: ''
+      method: 'SCRYPT_DEFAULT',
+      username: 'abc',
+      password: 'def'
     };
-    //$scope.form = {$valid:true};
-  }, 900);*/
+    $scope.form = {$valid:true};
+
+    $timeout($scope.doLogin, 500);
+  }, 900); */
 }
 
 
-function AuthController($scope, $controller){
+function AuthController($scope, $controller, csConfig){
+
+  var config = angular.copy(csConfig);
+  config.demo = false;
+  config.readonly = false;
 
   // Initialize the super class and extend it.
-  angular.extend(this, $controller('LoginModalCtrl', {$scope: $scope, parameters: {auth: true}}));
+  angular.extend(this, $controller('LoginModalCtrl', {$scope: $scope, parameters: {auth: true}, csConfig: config}));
 
   $scope.setForm = function(form) {
     $scope.form = form;

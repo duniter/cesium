@@ -275,6 +275,8 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
   };
 
   $scope.doTransfer = function() {
+    if ($scope.loading) return; // Skip
+
     $scope.form.$submitted=true;
 
     if(!$scope.form.$valid || !$scope.formData.destPub || !$scope.formData.amount) {

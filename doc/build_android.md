@@ -1,6 +1,6 @@
-# Android Builds
+# Build Cesium for Android
 
-Cesium can be build as Android App.
+Cesium can be build as an Android App.
 
 Cesium use [Ionic Framework v1.7.16](http://ionicframework.com/docs/v1/) with some Apache Cordova plugins.
 

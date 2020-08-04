@@ -34,7 +34,7 @@ fi
 echo "Current Android version: $currentAndroid"
 
 # Check version format
-if [[ ! $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ || ! $3 =~ ^[0-9]+$ ]]; then
+if [[ ! $2 =~ ^[0-9]+.[0-9]+.[0-9]+(-(alpha|beta|rc)[-0-9]*)?$ || ! $3 =~ ^[0-9]+$ ]]; then
   echo "Wrong version format"
   echo "Usage:"
   echo " > ./release.sh [pre|rel] <version>  <android-version> <release_description>"
@@ -81,11 +81,15 @@ if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
+
 echo "----------------------------------"
 echo "- Compiling sources..."
 echo "----------------------------------"
 cd ${PROJECT_DIR} || exit 1
 gulp config build --env default_fr || exit 1
+
+echo "Clean previous sha256 files..."
+rm -rf ${PROJECT_DIR}/dist/*.sha256
 
 echo "----------------------------------"
 echo "- Building Android artifact..."
@@ -94,9 +98,8 @@ mkdir -p ${DIST_ANDROID} || exit 1
 rm -rf ${DIST_ANDROID}/*.apk || exit 1
 rm -rf ${ANDROID_OUTPUT_APK_RELEASE}/*.apk || exit 1
 . scripts/build-android.sh --release
-if [[ $? -ne 0 ]]; then
-  exit 1
-fi
+[[ $? -ne 0 ]] && exit 1
+
 APK_RELEASE_FILE="${ANDROID_OUTPUT_APK_RELEASE}/android-release.apk"
 if [[ ! -f "${APK_RELEASE_FILE}" ]]; then
   echo "ERROR: Missing android artifact at ${APK_RELEASE_FILE}"
@@ -111,12 +114,15 @@ echo "- Building web and extension artifacts..."
 echo "----------------------------------"
 cd ${PROJECT_DIR} || exit 1
 
-# Run web build
+# Gnerate config (only once, to keep same config if web and web-extension artifacts)
 gulp config --env default
+
+# Run web build
 gulp webBuild --release
-if [[ $? -ne 0 ]]; then
-  exit 1
-fi
+[[ $? -ne 0 ]] && exit 1
+
+gulp webExtBuild --release
+[[ $? -ne 0 ]] && exit 1
 
 # check files exists
 DIST_WEB_FILE="${DIST_WEB}/${PROJECT_NAME}-v$2-web.zip"
@@ -156,7 +162,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 echo "----------------------------------"
-echo "- Uploading web extension to Modzilla ..."
+echo "- Uploading web extension to Mozilla ..."
 echo "----------------------------------"
 . ${PROJECT_DIR}/scripts/release-sign-extension.sh $1
 # FIXME: always failed: but continue

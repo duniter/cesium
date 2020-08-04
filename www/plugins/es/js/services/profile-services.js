@@ -10,7 +10,7 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
 
   })
 
-  .factory('esProfile', function($rootScope, $q, esHttp, SocialUtils, csWot, csWallet, csPlatform, esSettings, esLike) {
+  .factory('esProfile', function($rootScope, $q, esHttp, SocialUtils, csWot, csWallet, csCache, csPlatform, esSettings, esLike) {
     'ngInject';
 
     var
@@ -19,10 +19,11 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
 
     that.raw = {
       getFields: esHttp.get('/user/profile/:id?&_source_exclude=avatar._content&_source=:fields'),
-      get: esHttp.get('/user/profile/:id?&_source_exclude=avatar._content', esHttp.cache.MEDIUM),
-      getAll: esHttp.get('/user/profile/:id', esHttp.cache.MEDIUM),
-      search: esHttp.post('/user/profile/_search', esHttp.cache.MEDIUM),
-      mixedSearch: esHttp.post('/user,page,group/profile,record/_search', esHttp.cache.MEDIUM)
+      get: esHttp.get('/user/profile/:id?&_source_exclude=avatar._content', csCache.constants.MEDIUM),
+      getAll: esHttp.get('/user/profile/:id', csCache.constants.MEDIUM),
+      search: esHttp.post('/user/profile/_search', csCache.constants.MEDIUM),
+      mixedSearch: esHttp.post('/user,page,group/profile,record/_search', csCache.constants.MEDIUM),
+      remove: esHttp.record.remove("user","profile")
     };
 
     function getAvatarAndName(pubkey) {
@@ -69,9 +70,9 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
           // avatar
           profile.avatar = esHttp.image.fromHit(res, 'avatar');
 
-          // description
-          if (!options.raw) {
-            profile.description = esHttp.util.parseAsHtml(profile.source.description);
+          // convert description into html
+          if (!options.raw && profile.source.description) {
+            profile.descriptionHtml = esHttp.util.parseAsHtml(profile.source.description);
           }
 
           // Social url must be unique in socials links - Workaround for issue #306:
@@ -82,9 +83,9 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
           }
 
           if (!csWallet.isLogin()) {
-            // Exclude crypted socials
+            // Exclude encrypted socials items
             profile.source.socials = _.filter(profile.source.socials, function(social) {
-              return social.type != 'curve25519';
+              return social.type !== 'curve25519';
             });
           }
           else {
@@ -319,6 +320,8 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
         return deferred.promise;
       }
 
+      console.debug("[ES] [profile] Extending identity {{0}} ...".format(data.pubkey.substr(0,8)));
+
       $q.all([
         // Load full profile
         getProfile(data.pubkey)
@@ -326,8 +329,13 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
             if (profile) {
               data.name = profile.name;
               data.avatar = profile.avatar;
-              data.profile = profile.source;
-              data.profile.description = profile.description;
+              data.profile = data.profile || {};
+              angular.merge(data.profile, profile.source, {descriptionHtml: profile.descriptionHtml});
+            }
+            else {
+              data.name = null;
+              data.avatar = null;
+              data.profile = null;
             }
             deferred.resolve(data);
           }),
@@ -344,6 +352,15 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
           deferred.reject(err);
         });
       return deferred.promise;
+    }
+
+    function removeProfile(pubkey, options) {
+      return that.raw.remove(pubkey, options)
+        .then(function(res) {
+          csCache.clear('csWot-');
+          csCache.clear('csWot-');
+          return res;
+        });
     }
 
     function removeListeners() {
@@ -383,9 +400,9 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
     return {
       getAvatarAndName: getAvatarAndName,
       get: getProfile,
-      add: esHttp.record.post('/user/profile', {tagFields: ['title', 'description']}),
-      update: esHttp.record.post('/user/profile/:id/_update', {tagFields: ['title', 'description']}),
-      remove: esHttp.record.remove("user","profile"),
+      add: esHttp.record.post('/user/profile', {tagFields: ['title', 'description'], ignoreFields: ['enableGeoPoint', 'descriptionHtml', 'moderator']}),
+      update: esHttp.record.post('/user/profile/:id/_update', {tagFields: ['title', 'description'], ignoreFields: ['enableGeoPoint', 'descriptionHtml', 'moderator']}),
+      remove: removeProfile,
       avatar: esHttp.get('/user/profile/:id?_source=avatar'),
       fillAvatars: fillAvatars,
       like: esLike.instance('user', 'profile')

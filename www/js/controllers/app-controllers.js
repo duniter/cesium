@@ -62,7 +62,7 @@ function PluginExtensionPointController($scope, PluginService) {
  * Abstract controller (inherited by other controllers)
  */
 function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout,
-                       $ionicHistory, $controller, $window, csPlatform, CryptoUtils, csCrypto,
+                       $ionicHistory, $controller, $window, csPlatform, csSettings, CryptoUtils, csCrypto,
                        UIUtils, BMA, csWallet, Device, Modals, csConfig, csHttp
 ) {
   'ngInject';
@@ -161,17 +161,20 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Show Help tour
   ////////////////////////////////////////
 
-  $scope.createHelptipScope = function(isTour, helpController) {
+  $scope.createHelptipScope = function(isTour, ctrlName) {
     if (!isTour && ($rootScope.tour || !$rootScope.settings.helptip.enable || UIUtils.screen.isSmall())) {
       return; // avoid other helptip to be launched (e.g. csWallet)
     }
+    ctrlName = ctrlName || 'HelpTipCtrl';
     // Create a new scope for the tour controller
     var helptipScope = $scope.$new();
-    $controller(helpController||'HelpTipCtrl', { '$scope': helptipScope});
+    $controller(ctrlName, { '$scope': helptipScope});
     return helptipScope;
   };
 
-  $scope.startHelpTour = function(helpController, skipClearCache) {
+  $scope.startHelpTour = function(event, skipClearCache) {
+    if (event && event.defaultPrevented) return false; // Event stopped;
+
     $rootScope.tour = true; // to avoid other helptip to be launched (e.g. csWallet)
 
     // Clear cache history
@@ -179,11 +182,11 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       $ionicHistory.clearHistory();
       return $ionicHistory.clearCache()
         .then(function() {
-          $scope.startHelpTour(helpController, true/*continue*/);
+          $scope.startHelpTour(null, true/*continue*/);
         });
     }
 
-    var helptipScope = $scope.createHelptipScope(true/*is tour*/, helpController);
+    var helptipScope = $scope.createHelptipScope(true/*is tour*/);
     return helptipScope.startHelpTour()
       .then(function() {
         helptipScope.$destroy();
@@ -192,6 +195,19 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       .catch(function(err){
         delete $rootScope.tour;
       });
+  };
+
+  $scope.disableHelpTour = function(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    if (csSettings.data.helptip && csSettings.data.helptip.enable) {
+      $rootScope.settings.helptip.enable = false;
+      csSettings.store();
+    }
+
   };
 
   ////////////////////////////////////////
@@ -342,10 +358,10 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
             });
         }
         else {
-          UIUtils.loading.hide();
+          UIUtils.loading.hide(10);
         }
       })
-      .catch(UIUtils.onError());
+      .catch(UIUtils.onError('ERROR.LOGOUT'));
   };
   // Do authentification
   $scope.doAuth = function(options) {
@@ -489,7 +505,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     var skip = $scope.fullscreen || !UIUtils.screen.isSmall() || !Device.isWeb();
     if (skip) return;
 
-    return UIUtils.alert.confirm('CONFIRM.FULLSCREEN', null, {
+    return UIUtils.alert.confirm('CONFIRM.FULLSCREEN', undefined, {
       cancelText: 'COMMON.BTN_NO',
       okText: 'COMMON.BTN_YES'
     })
@@ -518,6 +534,7 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
   $scope.loading = true;
   $scope.locales = angular.copy(csSettings.locales);
   $scope.smallscreen = UIUtils.screen.isSmall();
+  $scope.showInstallHelp = false;
 
   $scope.enter = function(e, state) {
     if (ionic.Platform.isIOS()) {
@@ -578,7 +595,7 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
     $http.get(feedUrl, {responseType: 'json', cache: csCache.get(null, csCache.constants.LONG)})
       .success(function(feed) {
         console.debug('[home] Feeds loaded in {0}ms'.format(Date.now()-now));
-        if (!feed || !feed.items || !feed.items.length) return // skip if empty
+        if (!feed || !feed.items || !feed.items.length) return; // skip if empty
 
         feed.items = feed.items.reduce(function(res, item) {
           if (!item || (!item.title && !item.content_text && !item.content_html)) return res; // Skip
@@ -614,7 +631,7 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
         console.error('[home] Failed to load feeds.');
         $scope.feed = null;
       });
-  }
+  };
 
   /**
    * Catch click for quick fix
@@ -633,6 +650,7 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
     $translate.use(langKey);
     $scope.hideLocalesPopover();
     csSettings.data.locale = _.findWhere($scope.locales, {id: langKey});
+    csSettings.store();
     $scope.loadFeeds();
   };
 
@@ -640,7 +658,7 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
 
   $scope.showLocalesPopover = function(event) {
     UIUtils.popover.show(event, {
-      templateUrl: 'templates/api/locales_popover.html',
+      templateUrl: 'templates/common/popover_locales.html',
       scope: $scope,
       autoremove: true,
       afterShow: function(popover) {

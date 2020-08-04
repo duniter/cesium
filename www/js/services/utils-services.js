@@ -1,4 +1,6 @@
-angular.module('cesium.utils.services', [])
+// var qrcode;
+
+angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
 
 // Replace the '$ionicPlatform.ready()', to enable multiple calls
 // See http://stealthcode.co/multiple-calls-to-ionicplatform-ready/
@@ -41,17 +43,17 @@ angular.module('cesium.utils.services', [])
 
   function alertError(err, subtitle) {
     if (!err) {
-      return $q.when();
+      return $q.when(); // Silent
     }
 
     return $q(function(resolve) {
-      $translate([err, subtitle, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'])
+      $translate([err, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'].concat(subtitle ? [subtitle] : []))
         .then(function (translations) {
           var message = err.message || translations[err];
           return $ionicPopup.show({
             template: '<p>' + (message || translations['ERROR.UNKNOWN_ERROR']) + '</p>',
             title: translations['ERROR.POPUP_TITLE'],
-            subTitle: translations[subtitle],
+            subTitle: subtitle && translations[subtitle] || undefined,
             buttons: [
               {
                 text: '<b>'+translations['COMMON.BTN_OK']+'</b>',
@@ -66,17 +68,23 @@ angular.module('cesium.utils.services', [])
     });
   }
 
-  function alertInfo(message, subtitle) {
+  function alertInfo(message, subtitle, options) {
+    if (!message) return $q.reject("Missing 'message' argument");
+    options = options || {};
+    options.cssClass = options.cssClass || 'info';
+    options.okText = options.okText || 'COMMON.BTN_OK';
+
     return $q(function(resolve) {
-      $translate([message, subtitle, 'INFO.POPUP_TITLE', 'COMMON.BTN_OK'])
+      $translate([message, 'INFO.POPUP_TITLE', options.okText].concat(subtitle ? [subtitle] : []))
         .then(function (translations) {
           $ionicPopup.show({
             template: '<p>' + translations[message] + '</p>',
             title: translations['INFO.POPUP_TITLE'],
-            subTitle: translations[subtitle],
+            subTitle: subtitle && translations[subtitle] || undefined,
+            cssClass: options.cssClass,
             buttons: [
               {
-                text: translations['COMMON.BTN_OK'],
+                text: translations[options.okText],
                 type: 'button-positive',
                 onTap: function(e) {
                   resolve(e);
@@ -90,6 +98,14 @@ angular.module('cesium.utils.services', [])
 
   function alertNotImplemented() {
     return alertInfo('INFO.FEATURES_NOT_IMPLEMENTED');
+  }
+
+  function alertDemo() {
+    return $translate(["MODE.DEMO.FEATURE_NOT_AVAILABLE", "MODE.DEMO.INSTALL_HELP"])
+      .then(function(translations) {
+        var message = translations["MODE.DEMO.FEATURE_NOT_AVAILABLE"] + "<br/><br/>" + translations["MODE.DEMO.INSTALL_HELP"];
+        return alertInfo(message, undefined, {cssClass: 'large'});
+      });
   }
 
   function askConfirm(message, title, options) {
@@ -157,6 +173,7 @@ angular.module('cesium.utils.services', [])
   }
 
   function showToast(message, duration, position) {
+    if (!message) return $q.reject("Missing 'message' argument");
     duration = duration || 'short';
     position = position || 'bottom';
 
@@ -203,7 +220,7 @@ angular.module('cesium.utils.services', [])
         reject(fullMsg);
       }
       // If just a user cancellation: silent
-      else if (fullMsg == 'CANCELLED') {
+      else if (fullMsg === 'CANCELLED') {
         return hideLoading(10); // timeout, to avoid bug on transfer (when error on reference)
       }
 
@@ -740,6 +757,50 @@ angular.module('cesium.utils.services', [])
     toggleOff: toggleOff
   };
 
+  function createQRCodeObj(text, typeNumber,
+                        errorCorrectionLevel, mode, mb) {
+
+    mb = mb || 'default'; // default | SJIS | UTF-8
+    qrcode.stringToBytes = qrcode.stringToBytesFuncs[mb];
+
+    var qr = qrcode(typeNumber || 4, errorCorrectionLevel || 'M');
+    qr.addData(text, mode);
+    qr.make();
+
+    return qr;
+  }
+
+  /**
+   * Create a QRCode as an <svg> tag
+   * @param text
+   * @param typeNumber
+   * @param errorCorrectionLevel
+   * @param mode
+   * @param mb multibyte ? value: 'default' | 'SJIS' | 'UTF-8'
+   * @returns {string}
+   */
+  function getSvgQRCode(text, typeNumber,
+                        errorCorrectionLevel, mode, mb) {
+
+    var qr = createQRCodeObj(text, typeNumber, errorCorrectionLevel, mode, mb);
+    return qr.createSvgTag();
+  }
+
+  /**
+   * Create a QRCode as an <img> tag
+   * @param text
+   * @param typeNumber
+   * @param errorCorrectionLevel
+   * @param mode
+   * @param mb multibyte ? value: 'default' | 'SJIS' | 'UTF-8'
+   * @returns {string}
+   */
+  function getImgQRCode(text, typeNumber,
+                           errorCorrectionLevel, mode, mb) {
+
+    var qr = createQRCodeObj(text, typeNumber, errorCorrectionLevel, mode, mb);
+    return qr.createImgTag();
+  }
 
   function toggleOn(options, timeout) {
     // We have a single option, so it may be passed as a string or property
@@ -794,7 +855,8 @@ angular.module('cesium.utils.services', [])
       error: alertError,
       info: alertInfo,
       confirm: askConfirm,
-      notImplemented: alertNotImplemented
+      notImplemented: alertNotImplemented,
+      demo: alertDemo
     },
     loading: {
       show: showLoading,
@@ -812,6 +874,10 @@ angular.module('cesium.utils.services', [])
     ink: ionicMaterialInk.displayEffect,
     motion: raw.motion,
     setEffects: setEffects,
+    qrcode: {
+      svg: getSvgQRCode,
+      img: getImgQRCode
+    },
     fab: {
       show: showFab,
       hide: hideFab

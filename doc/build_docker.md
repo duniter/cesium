@@ -1,5 +1,7 @@
 # Cesium docker image
 
+> WARNING: This documentation need a review! (not up to date)
+
 ## Build
 
 ```bash

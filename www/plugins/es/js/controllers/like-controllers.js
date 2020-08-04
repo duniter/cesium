@@ -112,6 +112,17 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
     $scope.initLikes();
     if (!$scope.likeData.id) throw new Error("Missing 'likeData.id' in scope. Cannot apply toggle");
 
+    // Make sure to be auth before continue
+    if (!csWallet.isLogin()) {
+      return csWallet.auth({minData: true})
+        .then(function(data){
+          UIUtils.loading.hide();
+          if (!data) throw new Error('CANCELLED');
+          options.pubkey = options.pubkey || data.pubkey;
+          return $scope.toggleLike(event, options); // loop
+        });
+    }
+
     options = options || {};
     options.kind = options.kind && options.kind.toUpperCase() || 'LIKE';
     var key = options.kind.toLowerCase() + 's';
@@ -124,14 +135,19 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
       return $q.reject();
     }
 
-    // Select the wallet, if many
     if (!options.pubkey) {
-      return (csWallet.children.count() ? Modals.showSelectWallet({displayBalance: false}) : $q.when(csWallet))
-        .then(function(wallet) {
-          if (!wallet) throw 'CANCELLED';
-          options.pubkey = wallet.data.pubkey;
-          return $scope.toggleLike(event, options); // Loop
-        });
+      if (csWallet.children.count() === 0) {
+        options.pubkey = csWallet.data.pubkey;
+      }
+      // Select the wallet, if many
+      else {
+        return Modals.showSelectWallet({displayBalance: false})
+          .then(function (wallet) {
+            if (!wallet) throw new Error('CANCELLED');
+            options.pubkey = wallet.data.pubkey;
+            return $scope.toggleLike(event, options); // Loop
+          });
+      }
     }
 
     var wallet = csWallet.getByPubkey(options.pubkey);
@@ -170,7 +186,7 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
       })
       .catch(function(err) {
         $scope.likeData[key].loading = false;
-        if (err === 'CANCELLED') return; // User cancelled
+        if (err === 'CANCELLED') throw 'CANCELLED'; // User cancelled
         console.error(err);
         UIUtils.onError('LIKE.ERROR.FAILED_TOGGLE_LIKE')(err);
         event.preventDefault();
@@ -225,19 +241,36 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
   };
 
   $scope.reportAbuse = function(event, options) {
+
+    // Make sure to be auth before continue
+    if (!csWallet.isLogin()) {
+      return csWallet.auth({minData: true})
+        .then(function(data){
+          UIUtils.loading.hide();
+          if (!data) throw new Error('CANCELLED');
+          options.pubkey = options.pubkey || data.pubkey;
+          return $scope.reportAbuse(event, options); // loop
+        });
+    }
+
     if (!$scope.likeData || !$scope.likeData.abuses || $scope.likeData.abuses.wasHitCount) return; // skip
     if ($scope.likeData.abuses.wasHitCount) return; // already report
 
     options = options || {};
 
-    // Select the wallet, if many
     if (!options.pubkey) {
-      return (csWallet.children.count() ? Modals.showSelectWallet({displayBalance: false}) : $q.when(csWallet))
-        .then(function(wallet) {
-          if (!wallet) throw 'CANCELLED';
-          options.pubkey = wallet.data.pubkey;
-          return $scope.reportAbuse(event, options); // Loop
-        });
+      if (csWallet.children.count() === 0) {
+        options.pubkey = csWallet.data.pubkey;
+      }
+      // Select the wallet, if many
+      else {
+        return Modals.showSelectWallet({displayBalance: false})
+          .then(function (wallet) {
+            if (!wallet) throw 'CANCELLED';
+            options.pubkey = wallet.data.pubkey;
+            return $scope.reportAbuse(event, options); // Loop
+          });
+      }
     }
 
     var wallet = csWallet.getByPubkey(options.pubkey);
@@ -256,7 +289,7 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
           if (!res || !res.comment) return; // Empty comment: skip
           options.comment = res.comment;
           options.level = res.level || (res.delete && 5) || undefined;
-          return $scope.reportAbuse(event, options) // Loop, with the comment
+          return $scope.reportAbuse(event, options); // Loop, with the comment
         });
     }
 
@@ -264,8 +297,9 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
     options.kind = 'ABUSE';
     return $scope.toggleLike(event, options)
       .then(function() {
-        UIUtils.toast.show('COMMON.REPORT_ABUSE.CONFIRM.SENT')
-      })
+        console.log('BEFORE display toast');
+        UIUtils.toast.show('COMMON.REPORT_ABUSE.CONFIRM.SENT');
+      });
   };
 
   csWallet.api.data.on.reset($scope, function() {
@@ -275,7 +309,7 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
         $scope.likeData[key].wasHitByPubkey = {};
         $scope.likeData[key].wasHitCount = 0;
       }
-    })
+    });
     $scope.$broadcast('$$rebind::like'); // notify binder
   }, this);
 

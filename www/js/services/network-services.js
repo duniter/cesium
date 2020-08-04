@@ -498,6 +498,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       // Get current block
       return peer.api.blockchain.current(false/*no cache*/)
         .then(function(block) {
+          if (!block) throw new Error('Wrong response for /blockchain/current (empty)');
           peer.currentNumber = block.number;
           peer.online = true;
           peer.buid = buid(block);
@@ -665,12 +666,16 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         if (data.expertMode) {
           score += (100     * (peer.difficulty ? (10000-peer.difficulty) : 0));
           score += (1       * (peer.uid ? computeScoreAlphaValue(peer.uid, 2, true) : 0));
+          score += (0.001       * (!peer.uid ? computeScoreAlphaValue(peer.pubkey, 3, true) : 0));
         }
         else {
           score += (100     * (peer.uid ? computeScoreAlphaValue(peer.uid, 2, true) : 0));
-          score += (1       * (!peer.uid ? computeScoreAlphaValue(peer.pubkey, 2, true) : 0));
+          score += (0.001       * (!peer.uid ? computeScoreAlphaValue(peer.pubkey, 3, true) : 0));
         }
-        score += (peer.isBma() ? (peer.isSsl() ? 0.01 : 0.001) :0); // If many endpoints: BMAS first, then BMA
+        score += (0.00001     * (peer.isBma() ? (peer.isSsl() ? 1 : 0.5) :0)); // If many endpoints: BMAS first, then BMA
+
+        peer.score = score;
+
         return -score;
       });
 

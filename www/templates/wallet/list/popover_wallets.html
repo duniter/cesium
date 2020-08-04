@@ -24,7 +24,7 @@
       </ng-include>
 
       <ng-repeat ng-repeat="wallet in :rebind:wallets | filter:filterFn(formData) track by wallet.id"
-                 ng-include="'templates/wallet/list/item_wallet_light.html'">
+                 ng-include="::'templates/wallet/list/item_wallet_light.html'">
 
       </ng-repeat>
     </ion-list>

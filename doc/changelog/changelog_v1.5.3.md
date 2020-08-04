@@ -8,9 +8,8 @@
 - [fix] Home: fix logout button icons, on small device
 - [fix] Menu: badge alignment on small device
 - [fix] Wot identity: better fab compose id (UID is not safe)
-- [fix] Wallet (secondary): fix show certification link (for large screen)
-- [fix] Wallet (secondary): fix show certification link (for large screen)
-- [fix] Transfer: always hide the digitKeyboard when not a device - fix #866
+- [fix] Secondary wallet: allow to see certifications
+- [fix] Transfer: always hide the digitKeyboard when not a mobile device - fix #866
 - [fix] Network: add button to show Cesium+ network (if expert mode and Cesium+ plugin are enable)
 
 ### Cesium+ plugin

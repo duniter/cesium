@@ -1,6 +1,6 @@
 angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.http.services'])
 
-.factory('esBlockchain', function($rootScope, $q, $timeout, BMA, esHttp) {
+.factory('esBlockchain', function($rootScope, $q, $timeout, BMA, csCache, esHttp) {
   'ngInject';
 
   function EsBlockchain() {
@@ -31,9 +31,9 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
         block: {},
         raw: {
           block: {
-            search: esHttp.post('/:currency/block/_search', esHttp.cache.SHORT),
+            search: esHttp.post('/:currency/block/_search', csCache.constants.SHORT),
             searchText: esHttp.get('/:currency/block/_search?q=:text'),
-            get: esHttp.get('/:currency/block/:number/_source', esHttp.cache.SHORT)
+            get: esHttp.get('/:currency/block/:number/_source', csCache.constants.SHORT)
           }
         },
         regexp: {

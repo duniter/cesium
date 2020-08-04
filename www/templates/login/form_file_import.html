@@ -7,16 +7,13 @@
   <span class="positive" translate>LOGIN.FILE.HELP</span>
 </div>
 
-<div dropzone="onKeyFileDrop(file)">
-  <div ng-if="!formData.file" ng-click="openFileChooser()">
+<div drop-zone="onFileChanged(file)">
+  <div ng-if="!formData.file" file-select="onFileChanged(file)" accept=".dunikey,.yml">
     <h2 class="gray" translate>COMMON.CHOOSE_FILE</h2>
-    <input type="file" id="loginImportFile" accept=".dunikey,.yml"
-           style="visibility:hidden; position:absolute;"
-           onchange="angular.element(this).scope().fileChanged(event)"/>
   </div>
 
   <div class="item item-icon-left item-icon-right stable-bg"
-         ng-if="formData.file" >
+       ng-if="formData.file" >
     <i class="icon ion-document-text dark"></i>
     <div class="item-content row">
       <div class="col">

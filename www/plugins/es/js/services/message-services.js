@@ -48,7 +48,9 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       deferred = deferred || $q.defer();
 
       if (!data || !data.pubkey) {
-        deferred.resolve();
+        $timeout(function() {
+          deferred.resolve(data);
+        });
         return deferred.promise;
       }
 
@@ -59,7 +61,9 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       // (This is need to avoid reload on login AND load phases)
       if (data.messages && data.messages.time && (time - data.messages.time < 30 /*=30s*/)) {
         console.debug('[ES] [message] Skipping load (loaded '+(time - data.messages.time)+'s ago)');
-        deferred.resolve();
+        $timeout(function() {
+          deferred.resolve(data);
+        });
         return deferred.promise;
       }
 

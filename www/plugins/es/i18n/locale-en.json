@@ -301,8 +301,8 @@
       "RECORD_PUBKEY_HELP": "Public key to receive payments"
     },
     "WALLET": {
-      "REGISTRY_DIVIDER": "Pages",
-      "REGISTRY_HELP": "Pages refer to activities accepting money or promoting it: local shops, companies, associations, institutions."
+      "PAGE_DIVIDER": "Pages",
+      "PAGE_DIVIDER_HELP": "Pages refer to activities accepting money or promoting it: local shops, companies, associations, institutions. They are stored outside the currency network, in <a ui-sref=\"app.es_network\">the Cesium+ network</a>."
     },
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Loading main activities failed",
@@ -320,7 +320,7 @@
   },
   "PROFILE": {
     "PROFILE_DIVIDER": "Cesium+ profile",
-    "PROFILE_DIVIDER_HELP": "These are ancillary data, stored outside the currency network.",
+    "PROFILE_DIVIDER_HELP": "These are ancillary data, stored outside the currency network, in <a ui-sref=\"app.es_network\">the Cesium+ network</a>.",
     "NO_PROFILE_DEFINED": "No Cesium+ profile",
     "BTN_ADD": "Create my profile",
     "BTN_EDIT": "Edit my profile",
@@ -337,7 +337,7 @@
     "TECHNICAL_DIVIDER": "Technical data",
     "MODAL_AVATAR": {
       "TITLE": "Avatar",
-      "SELECT_FILE_HELP": "<b>Choose an image file</b>, by clicking on the button below:",
+      "SELECT_FILE_HELP": "<b>Choose an image file</b>:",
       "BTN_SELECT_FILE": "Choose an image",
       "RESIZE_HELP": "<b>Re-crop the image</b> if necessary. A click on the image allows to move it. Click on the area at the bottom left to zoom in.",
       "RESULT_HELP": "<b>Here is the result</b> as seen on your profile:"

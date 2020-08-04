@@ -4,7 +4,8 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
     'ngInject';
 
     var
-      currencyCache = csCache.get('gpData-currency-', csCache.constants.SHORT),
+      cachePrefix = 'gpData-',
+      currencyCache = csCache.get(cachePrefix + 'currency-', csCache.constants.SHORT),
       exports = {
         node: {},
         wot: {},
@@ -126,9 +127,9 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
       options = options || {};
       var withCache = angular.isDefined(options.withCache) ? options.withCache : true; // enable by default
 
-      var cachekKey = [currency, JSON.stringify(options)].join('-');
+      var cacheKey = [currency, JSON.stringify(options)].join('-');
       if (withCache) {
-        var result = currencyCache.get(cachekKey);
+        var result = currencyCache.get(cacheKey);
         if (result) {
           // should be already a promise (previous call still running)
           if (!result.blocks) {
@@ -213,10 +214,10 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           }, []);
 
           // replace promise in cache, with data
-          currencyCache.put(cachekKey, result);
+          currencyCache.put(cacheKey, result);
           return result;
         });
-      currencyCache.put(cachekKey, promise);
+      currencyCache.put(cacheKey, promise);
 
       return promise;
     };
@@ -277,7 +278,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           // prepare next loop
           ranges = [];
 
-          if (jobs.length == 10) {
+          if (jobs.length === 10) {
             console.error('Too many parallel jobs!');
             from = moment.unix(options.endTime).utc(); // stop while
           }
@@ -962,9 +963,15 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
         });
     };
 
+    function cleanAllCache() {
+      console.debug("[graph] Cleaning cache {prefix: '{0}'}...".format(cachePrefix));
+      csCache.clear(cachePrefix);
+    }
+
+    // Listen if node changed
+    esHttp.api.node.on.stop($rootScope, cleanAllCache, this);
+
     return exports;
   })
-
-
 
 ;

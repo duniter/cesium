@@ -50,22 +50,20 @@ function ESPicturesEditController($scope, UIUtils, $q, Device) {
       .catch(UIUtils.onError('ERROR.TAKE_PICTURE_FAILED'));
   };
 
-  $scope.fileChanged = function(event) {
-    if (!event.target.files || !event.target.files.length) return;
+  $scope.onFileChanged = function(event) {
+    if (!event || !event.file) return;
     UIUtils.loading.show();
-    var file = event.target.files[0];
+    var file = event.file;
     return UIUtils.image.resizeFile(file)
       .then(function(imageData) {
         $scope.pictures.push({
           src: imageData,
           isnew: true // use to prevent visibility hidden (if animation)
         });
-        event.target.value = ""; // reset input[type=file]
         UIUtils.loading.hide(100);
       })
       .catch(function(err) {
         console.error(err);
-        event.target.value = ""; // reset input[type=file]
         UIUtils.loading.hide();
       });
   };
@@ -427,7 +425,7 @@ function ESSocialsViewController($scope)  {
 
 
 
-function ESAvatarModalController($scope) {
+function ESAvatarModalController($scope, $sce) {
 
   $scope.formData = {
     initCrop: false,
@@ -437,34 +435,31 @@ function ESAvatarModalController($scope) {
     resultBlob: undefined
   };
 
-  $scope.openFileSelector = function() {
-    var fileInput = angular.element(document.querySelector('.modal-avatar #fileInput'));
-    if (fileInput && fileInput.length > 0) {
-      fileInput[0].click();
-    }
-  };
+  $scope.onFileChanged = function(event) {
+    if (!event || !event.file) return; // Skip
 
-  $scope.fileChanged = function(e) {
-
-    var files = e.target.files;
     var fileReader = new FileReader();
-    fileReader.readAsDataURL(files[0]);
+    fileReader.readAsDataURL(event.file);
 
     fileReader.onload = function(e) {
       var res = this.result;
       $scope.$applyAsync(function() {
-        $scope.formData.imgSrc = res;
+        $scope.formData.imgSrc = $sce.getTrustedHtml(res);
       });
     };
   };
 
   $scope.doNext = function() {
-    if ($scope.formData.imageCropStep == 2) {
+    if ($scope.formData.imageCropStep === 2) {
       $scope.doCrop();
     }
-    else if ($scope.formData.imageCropStep == 3) {
+    else if ($scope.formData.imageCropStep === 3) {
       $scope.closeModal($scope.formData.result);
     }
+  };
+
+  $scope.doPrevious = function() {
+    $scope.formData.imageCropStep -= 1;
   };
 
   $scope.doCrop = function() {
@@ -495,6 +490,7 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
     loading: false,
     enable: undefined
   };
+  $scope.searchModalOpened = false;
 
   $scope.tryToLocalize = function() {
     if ($scope.formPosition.loading || loadingCurrentPosition) return;
@@ -603,6 +599,9 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
 
   $scope.openSearchLocationModal = function(options) {
 
+    if ($scope.searchModalOpened) return; // Skip
+
+    $scope.searchModalOpened = true;
     options = options || {};
 
     var parameters = {
@@ -618,10 +617,16 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
       parameters,
       {
         focusFirstInput: true
-        //,scope: $scope
       }
     )
-      .then($scope.updateGeoPoint);
+      .then(function(res) {
+        $scope.searchModalOpened = false;
+        $scope.updateGeoPoint(res);
+      })
+      .catch(function() {
+        console.error(err);
+        $scope.searchModalOpened = false;
+      });
   };
 }
 

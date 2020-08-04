@@ -50,7 +50,7 @@
     <div class="row responsive-sm responsive-md responsive-lg">
       <!-- Received certifications -->
       <div class="col no-padding" ng-if="motions.receivedCertifications.enable">
-        <ng-include src="'templates/wot/items_received_certifications.html'"></ng-include>
+        <ng-include src="::'templates/wot/items_received_certifications.html'"></ng-include>
       </div>
 
       <!-- Avatar -->
@@ -91,19 +91,19 @@
 
       <!-- Given certifications -->
       <div class="col no-padding" ng-if="motions.givenCertifications.enable">
-        <ng-include src="'templates/wot/items_given_certifications.html'"></ng-include>
+        <ng-include src="::'templates/wot/items_given_certifications.html'"></ng-include>
       </div>
     </div>
   </ion-content>
 
     <!-- fab button -->
   <div class="visible-xs visible-sm">
-    <button id="fab-certify" class="button button-fab button-fab-bottom-right button-energized-900 spin"
+    <button id="fab-certify" class="button button-fab button-fab-bottom-right button-energized-900 spin hidden-readonly"
             ng-if="canCertify && !alreadyCertified"
             ng-click="certify()">
       <i class="icon ion-ribbon-b"></i>
     </button>
-    <button id="fab-select-certify" class="button button-fab button-fab-bottom-right button-energized-900 spin"
+    <button id="fab-select-certify" class="button button-fab button-fab-bottom-right button-energized-900 spin hidden-readonly"
             ng-if="canSelectAndCertify"
             ng-click="selectAndCertify()">
       <i class="icon ion-plus"></i>

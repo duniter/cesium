@@ -45,7 +45,14 @@
             </div>
           </div>
 
-          <ng-include src="'templates/login/form_login.html'"></ng-include>
+          <div class="no-padding energized-100-bg" ng-if="$root.config.demo">
+            <div class="item item-icon-left item-text-wrap no-border">
+              <i class="icon ion-android-alert assertive" ></i>
+              <p translate>MODE.DEMO.INSTALL_HELP</p>
+            </div>
+          </div>
+
+          <ng-include src="::'templates/login/form_login.html'"></ng-include>
 
         </div>
         <br class="hidden-xs"/>

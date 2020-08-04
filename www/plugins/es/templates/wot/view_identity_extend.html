@@ -2,29 +2,30 @@
 <ng-if ng-if=":state:enable && extensionPoint === 'hero'">
   <!-- likes -->
   <small class="light" style="display: inline-block;"
-         ng-include="'plugins/es/templates/common/view_likes.html'"></small>
+         ng-include="::'plugins/es/templates/common/view_likes.html'"></small>
 </ng-if>
 
 <!-- Top fab buttons -->
-<ng-if ng-if=":state:enable && extensionPoint === 'buttons-top-fab'">
+<ng-if ng-if=":state:enable && extensionPoint === 'buttons-top-fab' && !$root.config.readonly">
   <button id="fab-compose-{{:rebind:formData.pubkey}}"
           class="button button-fab button-fab-top-left button-fab-hero mini button-stable spin"
           style="left: 88px;"
           ng-click="showNewMessageModal()">
-    <i class="icon ion-compose"></i>
+    <i class="icon ion-email"></i>
   </button>
 </ng-if>
 
 <!-- Buttons section -->
-<ng-if ng-if=":state:enable && extensionPoint === 'buttons'">
-  <button class="button button-stable button-small-padding icon ion-compose"
+<ng-if ng-if=":state:enable && extensionPoint === 'buttons' && !$root.config.readonly">
+  <button class="button button-stable button-small-padding icon ion-email"
+          ng-disabled="loading"
           ng-click="showNewMessageModal()"
           title="{{'MESSAGE.BTN_WRITE' | translate}}">
   </button>
 </ng-if>
 
 <!-- End of buttons section -->
-<ng-if ng-if=":state:enable && extensionPoint === 'after-buttons'">
+<ng-if ng-if=":state:enable && extensionPoint === 'after-buttons' && !$root.config.readonly">
   <!-- options -->
   <button class="button button-stable button-small-padding icon ion-android-more-vertical"
           ng-click="showActionsPopover($event)">
@@ -48,6 +49,6 @@
     <small translate>PROFILE.PROFILE_DIVIDER_HELP</small>
   </div>
 
-  <ng-include src="'plugins/es/templates/user/items_profile.html'" ng-init="showName=false;"></ng-include>
+  <ng-include src="::'plugins/es/templates/user/items_profile.html'" ng-init="showName=false;"></ng-include>
 
 </ng-if>

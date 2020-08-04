@@ -1,6 +1,6 @@
 <ion-modal-view id="transfer" class="modal-full-height">
   <ion-header-bar class="bar-positive">
-    <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
+    <button class="button button-clear visible-xs" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
     <h1 class="title" translate>ACCOUNT.WALLET_LIST.IMPORT_MODAL.TITLE</h1>
   </ion-header-bar>
 
@@ -8,11 +8,11 @@
 
     <p translate>ACCOUNT.WALLET_LIST.IMPORT_MODAL.HELP</p>
 
-    <div dropzone="importFromFile(file)">
-      <div ng-if="!hasContent" onclick="angular.element(document.querySelector('#walletsImportFile'))[0].click();">
+    <div drop-zone="onFileChanged(file)">
+      <div ng-if="!hasContent"
+           file-select="onFileChanged(file)"
+           accept=".csv,.txt">
         <h2 class="gray" translate>COMMON.CHOOSE_FILE</h2>
-        <input type="file" id="walletsImportFile" accept=".csv,.txt"
-               style="visibility:hidden; position:absolute;" on-read-file="importFromFile(file)"/>
       </div>
 
       <div ng-if="hasContent" class="item item-icon-left item-icon-right stable-bg">

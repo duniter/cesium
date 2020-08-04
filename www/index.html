@@ -16,14 +16,14 @@
     <!-- build:css dist_css/cesium.css -->
     <link rel="stylesheet" type="text/css" href="css/ionic.app.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="stylesheet" type="text/css" href="lib/angular-image-crop/image-crop-styles.css">
+    <link rel="stylesheet" type="text/css" href="lib/angular-image-crop/dist/angular-image-crop.min.css">
     <!-- removeIf(device) -->
     <link rel="stylesheet" type="text/css" href="css/style-no-device.css">
     <!-- endRemoveIf(device) -->
 
     <!-- removeIf(no-plugin) -->
-    <link rel="stylesheet" type="text/css" href="css/leaflet.app.min.css">
-    <link rel="stylesheet" type="text/css" href="lib/chart.js/dist/Chart.min.css">
+    <link rel="stylesheet" type="text/css" href="css/leaflet.app.css">
+    <link rel="stylesheet" type="text/css" href="lib/chart.js/dist/Chart.css">
     <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/es/css/style.css">
     <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/graph/css/style.css">
     <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/map/css/style.css">
@@ -53,17 +53,17 @@
 
   </head>
   <body id="cesium" ng-strict-di="true" window-exit-unauth="true"
-        ng-class="{'nobackdrop': $root.tour, 'expert-mode': $root.settings.expertMode}">
+        ng-class="{'nobackdrop': $root.tour, 'expert-mode': $root.settings.expertMode, 'demo': $root.config.demo && !$root.config.readonly, 'readonly': $root.config.readonly}"
+        style="background-color: #1a237e;">
     <ion-nav-view>
       <div class="loader">
-        <h3 style="text-align: center; padding-top: 25px; "><b>Cesium</b></h3>
-        <h4 style="text-align: center;"><i class="icon ion-load-a"></i></h4>
+        <h3 style="text-align: center; padding-top: 25px; color: whitesmoke;"><b>Cesium</b></h3>
+        <h4 style="text-align: center; color: whitesmoke;"><i class="icon ion-load-a"></i></h4>
       </div>
     </ion-nav-view>
 
     <!-- build:js dist_js/vendor.js -->
     <!-- vendor js -->
-    <script src="lib/moment/min/moment-with-locales.min.js"></script>
 
     <script src="lib/numeral/numeral.js"></script>
     <script src="lib/numeral/languages/fr.js"></script>
@@ -72,10 +72,13 @@
     <script src="lib/numeral/languages/es.js"></script>
     <script src="lib/numeral/languages/it.js"></script>
     <script src="js/vendor/numeral.eo.js"></script>
+
+    <script src="lib/qrcode-generator/js/qrcode.js"></script>
+    <script src="lib/aes-js/index.js"></script>
+
+    <script src="lib/moment/min/moment-with-locales.min.js"></script>
     <script src="lib/socket.io-client/dist/socket.io.min.js"></script>
     <script src="lib/underscore/underscore-min.js"></script>
-    <script src="lib/qrcode.js/qrcode.min.js"></script>
-    <script src="lib/aes-js/index.js"></script>
     <script src="lib/chart.js/dist/Chart.min.js"></script>
 
     <!-- ionic/angular js -->
@@ -89,18 +92,18 @@
     <script src="lib/angular-resource/angular-resource.min.js"></script>
     <script src="lib/angular-translate/angular-translate.min.js"></script>
     <script src="lib/angular-messages/angular-messages.min.js"></script>
-    <script src="lib/angular-api/angular-api.js"></script>
+    <script src="lib/angular-expose-api/dist/angular-expose-api.min.js"></script>
     <script src="lib/angular-cache/dist/angular-cache.min.js"></script>
     <script src="lib/angular-screenmatch/dist/angular-screenmatch.min.js"></script>
     <script src="lib/angular-bind-notifier/dist/angular-bind-notifier.min.js"></script>
-    <script src="lib/angular-image-crop/image-crop.js"></script>
+    <script src="lib/angular-image-crop/dist/angular-image-crop.js"></script>
     <script src="lib/angular-file-saver/dist/angular-file-saver.bundle.min.js"></script>
     <script src="lib/ng-idle/angular-idle.min.js"></script>
     <script src="lib/angular-simple-logger/dist/angular-simple-logger.light.min.js"></script>
     <script src="lib/ui-leaflet/dist/ui-leaflet.min.no-header.js"></script>
     <script src="lib/ion-digit-keyboard/dist/ion-digit-keyboard.min.js"></script>
     <script src="lib/angular-chart.js/dist/angular-chart.min.js"></script>
-    <script src="lib/angular-fullscreen/src/angular-fullscreen.js"></script>
+    <script src="lib/angular-fullscreen-toggle/dist/angular-fullscreen-toggle.min.js"></script>
 
     <script src="js/vendor/base58.js" async></script>
     <!--removeIf(android)-->
@@ -249,6 +252,7 @@
     <script src="dist/dist_js/plugins/map/js/services/wot-services.js"></script>
     <script src="dist/dist_js/plugins/map/js/services/registry-services.js"></script>
     <script src="dist/dist_js/plugins/map/js/services/utils-services.js"></script>
+    <script src="dist/dist_js/plugins/map/js/controllers/common-controllers.js"></script>
     <script src="dist/dist_js/plugins/map/js/controllers/wot-controllers.js"></script>
     <script src="dist/dist_js/plugins/map/js/controllers/registry-controllers.js"></script>
     <script src="dist/dist_js/plugins/map/js/controllers/network-controllers.js"></script>

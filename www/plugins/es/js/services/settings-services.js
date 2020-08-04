@@ -41,6 +41,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
           es: {
             askEnable: false,
             useRemoteStorage: true,
+            latestReleaseUrl: "https://api.github.com/repos/duniter/cesium-plus-pod/releases/latest",
             notifications: {
               txSent: true,
               txReceived: true,

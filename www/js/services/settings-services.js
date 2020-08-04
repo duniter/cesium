@@ -6,13 +6,13 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
   // Define app locales
   var locales = [
-    {id:'en',    label:'English', country: 'us'},
-    {id:'en-GB', label:'English (UK)', country: 'gb'},
-    {id:'eo-EO', label:'Esperanto'},
-    {id:'fr-FR', label:'Français' , country: 'fr'},
-    {id:'nl-NL', label:'Nederlands', country: 'nl'},
-    {id:'es-ES', label:'Spanish', country: 'es'},
-    {id:'it-IT', label:'Italiano', country: 'it'}
+    {id:'en',    label:'English', flag: 'us'},
+    {id:'en-GB', label:'English (UK)', flag: 'gb'},
+    {id:'eo-EO', label:'Esperanto', flag: 'eo'},
+    {id:'fr-FR', label:'Français', flag: 'fr'},
+    {id:'nl-NL', label:'Nederlands', flag: 'nl'},
+    {id:'es-ES', label:'Spanish', flag: 'es'},
+    {id:'it-IT', label:'Italiano', flag: 'it'}
   ];
   var fallbackLocale = csConfig.fallbackLanguage ? fixLocale(csConfig.fallbackLanguage) : 'en';
 
@@ -59,6 +59,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     timeWarningExpireMembership: 2592000 * 2 /*=2 mois*/,
     timeWarningExpire: 2592000 * 3 /*=3 mois*/,
     minVersion: '1.1.0',
+    sourceUrl: 'https://git.duniter.org/clients/cesium-grp/cesium',
+    sourceLicenseUrl: 'https://git.duniter.org/clients/cesium-grp/cesium/-/raw/master/LICENSE',
     newIssueUrl: "https://git.duniter.org/clients/cesium-grp/cesium/issues/new",
     userForumUrl: "https://forum.monnaie-libre.fr",
     latestReleaseUrl: "https://api.github.com/repos/duniter/cesium/releases/latest",
@@ -90,6 +92,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
       wotCerts: 0,
       wallet: 0,
       walletCerts: 0,
+      wallets: 0,
       header: 0,
       settings: 0
     },

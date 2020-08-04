@@ -52,9 +52,10 @@
       <div class="col">
 
         <!-- Buttons bar-->
-        <div class="hidden-xs hidden-sm padding text-center" ng-if="existing && !saving">
+        <div class="hidden-xs hidden-sm padding text-center  animate-show-hide ng-hide" ng-show="existing">
 
           <button class="button button-stable icon-right ink"
+                  ng-disabled="saving"
                   ng-click="showActionsPopover($event)">
             &nbsp; <i class="icon ion-android-more-vertical"></i>&nbsp;
             {{'COMMON.BTN_OPTIONS' | translate}}
@@ -106,12 +107,12 @@
             </ion-item>
 
             <!-- position -->
-            <ng-include src="'plugins/es/templates/common/edit_position.html'" ng-controller="ESPositionEditCtrl as ctrl"></ng-include>
+            <ng-include src="::'plugins/es/templates/common/edit_position.html'" ng-controller="ESPositionEditCtrl as ctrl"></ng-include>
 
           </div>
 
           <!-- social networks -->
-          <ng-include src="'plugins/es/templates/common/edit_socials.html'" ng-controller="ESSocialsEditCtrl"></ng-include>
+          <ng-include src="::'plugins/es/templates/common/edit_socials.html'" ng-controller="ESSocialsEditCtrl"></ng-include>
 
           <div class="list item-text-wrap {{::motion.ionListClass}}">
 

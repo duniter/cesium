@@ -64,6 +64,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                 return sum - outputAmount;
               }
             }
+
           }
 
           // Complex unlock condition, on the issuer pubkey
@@ -95,8 +96,8 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
         var time = tx.time || tx.blockstampTime;
 
         // Avoid duplicated tx, or tx to him self
-        var txKey = amount + ':' + tx.hash + ':' + time;
-        if (!processedTxMap[txKey]) {
+        var txKey = (amount !== 0) && amount + ':' + tx.hash + ':' + time;
+        if (txKey && !processedTxMap[txKey]) {
           processedTxMap[txKey] = true; // Mark as processed
           var newTx = {
             time: time,
@@ -228,7 +229,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           tx.history.sort(function(tx1, tx2) {
             return (tx2.time - tx1.time);
           });
-          var firstValidatedTxIndex = tx.history.findIndex(function(tx){
+          var firstValidatedTxIndex = _.findIndex(tx.history, function(tx){
             return (tx.block_number <= current.number - csSettings.data.blockValidityWindow);
           });
           // remove validating from history
@@ -287,6 +288,13 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
   function loadData(pubkey, fromTime) {
     var now = Date.now();
 
+    var data;
+
+    // Alert user, when request is too long (> 2s)
+    $timeout(function() {
+      if (!data) UIUtils.loading.update({template: "COMMON.LOADING_WAIT"});
+    }, 2000);
+
     return $q.all([
 
       // Load Sources
@@ -298,7 +306,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
       .then(function(res) {
         // Copy sources and balance
-        var data = res[0];
+        data = res[0];
         data.tx = res[1];
 
         var txPendings = [];

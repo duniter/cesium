@@ -1,26 +1,27 @@
 <ion-content class="has-header padding" >
-  <h3 translate>ACCOUNT.SECURITY.RECOVER_ID</h3>
+  <p translate>ACCOUNT.SECURITY.RECOVER_ID_SELECT_FILE</p>
 
-  <div dropzone="recoverContent(file)">
-    <div ng-if="!hasContent" onclick="angular.element(document.querySelector('#saveIdFile'))[0].click();">
+  <div drop-zone="onFileChanged(file)">
+    <div ng-if="!hasContent" file-select="onFileChanged(file)" accept=".txt">
       <h2 class="gray" translate>COMMON.CHOOSE_FILE</h2>
-      <input type="file" id="saveIdFile" accept=".txt"
-             style="visibility:hidden; position:absolute;" on-read-file="recoverContent(file)"/>
     </div>
 
-    <div ng-if="hasContent" class="item row item-icon-left no-padding">
-     <i class="icon ion-document-text gray"></i>
-     <div class="col">
-       <span>{{fileData.name}}</span>
-       <br />
-       <small>{{fileData.size}} Ko</small>
-     </div>
-     <div class="col-10">
-       <b ng-class="{'ion-android-done balanced': isValidFile,'ion-close-circled assertive': !isValidFile}"
-          style="font-size: 28px; position: relative; top: 6px;"></b>
-        <button class="button-icon ion-close-round gray pull-right" style="font-size:10px;"
-                ng-click="restore()"></button>
-     </div>
+    <div ng-if="hasContent" class="item item-icon-left item-icon-right">
+     <i class="icon ion-document-text dark"></i>
+      <div class="item-content row">
+         <div class="col ">
+           <span>{{fileData.name}}</span>
+           <br />
+           <small>{{fileData.size}} Ko</small>
+         </div>
+         <div class="col-10">
+           <b ng-class="{'ion-close-circled assertive': !isValidFile}"
+              style="font-size: 28px; position: relative; top: 6px;"></b>
+         </div>
+      </div>
+      <!-- remove file button -->
+      <a class="ion-close-round gray pull-right" style="font-size: 10px; position: absolute; top: 6px; right: 6px;"
+         ng-click="restore()"></a>
    </div>
   </div>
 

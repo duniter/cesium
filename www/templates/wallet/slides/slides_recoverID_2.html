@@ -7,7 +7,9 @@
           <label class="item item-input {{smallscreen ? 'item-stacked-label' : 'item-floating-label'}}"
                  ng-class="{'item-input-error': recoverForm.$submitted && recoverForm['question{{$index}}'].$invalid}">
             <span class="input-label" style="{{smallscreen ? 'white-space: normal' : ''}}">{{question.value }}</span>
-            <input type="text" name="question{{$index}}" placeholder="{{smallscreen ? '' : question.value }}" ng-model="question.answer" required />
+            <input type="text"
+                   autocomplete="off"
+                   name="question{{$index}}" placeholder="{{smallscreen ? '' : question.value }}" ng-model="question.answer" required />
           </label>
           <div class="form-errors"
                ng-show="recoverForm.$submitted && recoverForm['question{{$index}}'].$error"

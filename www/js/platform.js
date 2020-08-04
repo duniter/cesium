@@ -35,7 +35,12 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
   .config(function($compileProvider, csConfig) {
     'ngInject';
-     $compileProvider.debugInfoEnabled(csConfig.debug === true);
+
+    $compileProvider.debugInfoEnabled(csConfig.debug === true);
+
+    // Fix issue #893
+    // See https://stackoverflow.com/questions/31859257/firefox-addon-using-angularjs-ng-src-not-working
+    $compileProvider.imgSrcSanitizationWhitelist(/^\s*(filesystem:resource|resource|moz-extension|chrome-extension|file|data):/);
   })
 
   .config(function($animateProvider) {
@@ -107,6 +112,10 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       listeners,
       removeChangeStateListener;
 
+    // Fix csConfig values
+    csConfig.demo = csConfig.demo === true || csConfig.demo === 'true' || false;
+    csConfig.readonly = csConfig.readonly === true || csConfig.readonly === 'true' || false;
+
     function disableChangeState() {
       if (removeChangeStateListener) return; // make sure to call this once
 
@@ -147,7 +156,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       var newServer = fallbackNode.host + ((!fallbackNode.port && fallbackNode.port != 80 && fallbackNode.port != 443) ? (':' + fallbackNode.port) : '');
 
       // Skip is same as actual node
-      if (BMA.node.same(fallbackNode.host, fallbackNode.port)) {
+      if (BMA.node.same(fallbackNode)) {
         console.debug('[platform] Skipping fallback node [{0}]: same as actual node'.format(newServer));
         return checkBmaNodeAlive(); // loop (= go to next node)
       }
@@ -434,7 +443,7 @@ if (typeof String.prototype.trim !== 'function') {
 if (Math && typeof Math.trunc !== 'function') {
   console.debug("Adding Math.trunc() -> was missing on this platform");
   Math.trunc = function(number) {
-    return (number - 0.5).toFixed();
+    return parseInt((number - 0.5).toFixed());
   };
 }
 

@@ -7,7 +7,7 @@
 - [fix] Fix scale change, on the network TX graph - fix #835 - thanks to @jiemme2
 - [fix] Fix ES translation - thanks to @scanlegentil
 - [fix] Fix NL translation - thanks to @RavanH
-- [fix] Fix develepment guide - thanks to @BorisPAING 
+- [fix] Fix development guide - thanks to @BorisPAING 
 
 ## Android
 

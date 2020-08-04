@@ -11,6 +11,11 @@ fi;
 cd ${PROJECT_DIR}
 . ${PROJECT_DIR}/scripts/env-global.sh
 
+XPI_BASENAME=${PROJECT_NAME}-$current-an+fx.xpi
+XPI_FILE=${PROJECT_DIR}/dist/web/build/${XPI_BASENAME}
+XPI_FINAL_BASENAME=${PROJECT_NAME}-v$current-extension-firefox.xpi
+XPI_FINAL_FILE=${PROJECT_DIR}/dist/web/build/${XPI_FINAL_BASENAME}
+
 ### Control that the script is run on `dev` branch
 branch=$(git rev-parse --abbrev-ref HEAD)
 if [[ ! "$branch" = "master" ]];
@@ -38,18 +43,22 @@ fi
 ### Sign extension
 case "$1" in
   pre)
-    web-ext sign "--api-key=${AMO_JWT_ISSUER}" "--api-secret=${AMO_JWT_SECRET}" "--source-dir=${PROJECT_DIR}/dist/web/ext" "--artifacts-dir=${PROJECT_DIR}/dist/web/build"  --id=${WEB_EXT_ID} --channel=unlisted
-    if [[ $? -ne 0 ]]; then
-      exit 1
-    fi
+      web-ext sign "--api-key=${AMO_JWT_ISSUER}" "--api-secret=${AMO_JWT_SECRET}" "--source-dir=${PROJECT_DIR}/dist/web/ext" "--artifacts-dir=${PROJECT_DIR}/dist/web/build"  --id=${WEB_EXT_ID} --channel=unlisted
+      if [[ $? -ne 0 ]]; then
+        if [[ -f "${XPI_FILE}" || -f "${XPI_FINAL_FILE}" ]]; then
+          echo "WARN: web-ext failed! Continue anyway, because output file exists"
+        else
+          exit 1
+        fi;
+      fi
     ;;
   rel)
-    web-ext sign "--api-key=${AMO_JWT_ISSUER}" "--api-secret=${AMO_JWT_SECRET}" "--source-dir=${PROJECT_DIR}/dist/web/ext" "--artifacts-dir=${PROJECT_DIR}/dist/web/build"  --id=${WEB_EXT_ID} --channel=listed
-    if [[ $? -ne 0 ]]; then
+      web-ext sign "--api-key=${AMO_JWT_ISSUER}" "--api-secret=${AMO_JWT_SECRET}" "--source-dir=${PROJECT_DIR}/dist/web/ext" "--artifacts-dir=${PROJECT_DIR}/dist/web/build"  --id=${WEB_EXT_ID} --channel=listed
       # Comment out, because always failed with message:
       #   "Your add-on has been submitted for review. It passed validation but could not be automatically signed because this is a listed add-on."
-      #exit 1
-    fi
+      #if [[ $? -ne 0 ]]; then
+      #  exit 1
+      #fi
     ;;
   *)
     echo "No task given"
@@ -60,11 +69,8 @@ case "$1" in
 esac
 
 ## Rename output file
-XPI_BASENAME=${PROJECT_NAME}-$current-an+fx.xpi
-XPI_FILE=${PROJECT_DIR}/dist/web/build/${XPI_BASENAME}
 if [[ -f "${XPI_FILE}" ]]; then
-  cd ${PROJECT_DIR}/dist/web/build/
 
   # add a 'v' before version
-  mv ${XPI_BASENAME} ${PROJECT_NAME}-v$current-an+fx.xpi
+  mv ${XPI_FILE} ${XPI_FINAL_FILE}
 fi

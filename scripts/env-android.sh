@@ -9,9 +9,7 @@ fi;
 
 # Preparing environment
 . ${PROJECT_DIR}/scripts/env-global.sh
-if [[ $? -ne 0 ]]; then
-  exit 1
-fi
+[[ $? -ne 0 ]] && exit 1
 
 if [[ "_" == "_${CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL}" ]]; then
   echo "Missing Gradle distribution URL - please export env variable 'CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL'"
@@ -36,9 +34,7 @@ fi
 if [[ ! -d "${ANDROID_SDK_TOOLS_ROOT}" ]]; then
   cd "${PROJECT_DIR}/scripts"
   ./install-android-sdk-tools.sh
-  if [[ $? -ne 0 ]]; then
-    exit 1
-  fi
+  [[ $? -ne 0 ]] && exit 1
 fi
 
 # Install Gradle
@@ -49,13 +45,9 @@ if [[ "_" == "_$(which gradle)" && ! -d "${GRADLE_HOME}" ]]; then
   GRADLE_PARENT=$(dirname $GRADLE_HOME)
   test -e "${GRADLE_PARENT}" || mkdir -p ${GRADLE_PARENT}
   test -e "${GRADLE_PARENT}/gradle-${GRADLE_VERSION}" || unzip -qq gradle-${GRADLE_VERSION}-all.zip -d "${GRADLE_PARENT}"
-  if [[ $? -ne 0 ]]; then
-      exit 1
-  fi
+  [[ $? -ne 0 ]] && exit 1
   test -e "${GRADLE_HOME}" || mv "${GRADLE_PARENT}/gradle-${GRADLE_VERSION}" "${GRADLE_HOME}"
-  if [[ $? -ne 0 ]]; then
-      exit 1
-  fi
+  [[ $? -ne 0 ]] && exit 1
   test -e "${GRADLE_PARENT}/gradle-${GRADLE_VERSION}" || rm "${GRADLE_PARENT}/gradle-${GRADLE_VERSION}"
 fi
 
@@ -65,19 +57,16 @@ if [[ ! -d "${PROJECT_DIR}/platforms/android" ]]; then
   echo "Adding Cordova Android platform..."
   cd "${PROJECT_DIR}"
   ionic cordova prepare android --color --verbose
-  if [[ $? -ne 0 ]]; then
-    exit 1
-  fi
+  [[ $? -ne 0 ]] && exit 1
 fi
 
 # Copy local files
 if [[ -d "${PROJECT_DIR}/.local/android" ]]; then
   echo "Copying files from directory '${PROJECT_DIR}/.local/android' into '${PROJECT_DIR}/platforms/android'..."
   cp -rf ${PROJECT_DIR}/.local/android/* ${PROJECT_DIR}/platforms/android
-  if [[ $? -ne 0 ]]; then
-    exit 1
-  fi
+  [[ $? -ne 0 ]] && exit 1
 else
   echo "No directory '${PROJECT_DIR}/.local/android' found. Please create it, with a file 'release-signing.properties' for release signing"
 fi
 
+ echo "Environment is ready!"

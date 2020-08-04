@@ -1,5 +1,4 @@
-<ion-view left-buttons="leftButtons"
-          class="view-wallet-tx">
+<ion-view left-buttons="leftButtons" class="view-wallet-tx">
   <ion-nav-title>
     <!-- no title on large screen-->
     <span class="visible-xs visible-sm" translate>
@@ -68,6 +67,9 @@
       </h2>
     </div>
 
+    <!-- QR code -->
+    <ng-include src="::'templates/common/qrcode.html'"></ng-include>
+
     <!-- Buttons bar-->
     <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
 
@@ -120,7 +122,7 @@
             <div class="item item-pending item-tx item-icon-left"
                  ng-repeat="tx in formData.tx.pendings"
                  ng-init="pending=true;"
-                 ng-include="'templates/wallet/item_tx.html'">
+                 ng-include="::'templates/wallet/item_tx.html'">
             </div>
           </ng-if>
 

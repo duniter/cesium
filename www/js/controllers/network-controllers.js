@@ -92,8 +92,9 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
     csCurrency.get()
       .then(function (currency) {
         if (currency) {
-          $scope.node = !BMA.node.same(currency.node.host, currency.node.port) ?
-            BMA.instance(currency.node.host, currency.node.port) : BMA;
+          var isDefaultNode = BMA.node.same(currency.node);
+          $scope.node = isDefaultNode ? BMA :
+            BMA.instance(currency.node.host, currency.node.port);
           if (state && state.stateParams) {
             if (state.stateParams.type && ['mirror', 'member', 'offline'].indexOf(state.stateParams.type) != -1) {
               $scope.search.type = state.stateParams.type;
@@ -116,6 +117,10 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
    * Leave the view
    */
   $scope.leave = function() {
+    // Close node, if not the default BMA
+    if ($scope.node !== BMA) {
+      $scope.node.close();
+    }
     if (!$scope.networkStarted) return;
     $scope.removeListeners();
     csNetwork.close();
@@ -452,6 +457,7 @@ function PeerInfoPopoverController($scope, $q, csSettings, csCurrency, csHttp, B
 
   $scope.load = function() {
 
+    console.debug("[peer-popover] Loading peer info...");
     $scope.loading = true;
     $scope.formData = {};
 

@@ -5,13 +5,13 @@
     <b class="icon-secondary ion-person" ng-if=":rebind:!peer.avatar"
        ng-class=":rebind:{'balanced': peer.online && peer.hasMainConsensusBlock, 'energized': peer.online && peer.hasConsensusBlock, 'gray': peer.online && !peer.hasConsensusBlock && !peer.hasMainConsensusBlock, 'stable': !peer.online}"
        style="left: 26px; top: -3px;"></b>
-    <i class="avatar" ng-if=":rebind:peer.avatar" style="background-image: url('{{:rebind:peer.avatar.src}}')"></i>
+    <i class="avatar" ng-if="::peer.avatar" style="background-image: url('{{::peer.avatar.src}}')"></i>
     <b class="icon-secondary assertive ion-close-circled" ng-if=":rebind:!peer.online" style="left: 37px; top: -10px;"></b>
 
     <div class="row no-padding">
       <div class="col no-padding">
         <h3 class="dark" ng-if=":rebind:!peer.bma.private">{{:rebind:peer.dns || peer.server}}</h3>
-        <h4 class="gray" ng-if=":rebind:peer.bma.private"><i class="ion-flash"></i> {{'NETWORK.VIEW.PRIVATE_ACCESS'|translate}}</h4>
+        <h4 class="gray" ng-if=":rebind:peer.bma.private"><i class="ion-flash"></i> {{:locale:'NETWORK.VIEW.PRIVATE_ACCESS'|translate}}</h4>
         <h4>
           <span class="gray" ng-if=":rebind:!peer.uid">
             <i class="ion-key"></i> {{:rebind:peer.pubkey|formatPubkey}}
@@ -61,7 +61,7 @@
       <div class="col col-20 no-padding text-center">
         <span id="{{$index === 0 ? helptipPrefix + '-peer-0-block' : ''}}"
             class="badge" ng-class=":rebind:{'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock, 'ng-hide': !peer.currentNumber && !peer.blockNumber }">
-          {{::!expertMode ? ('COMMON.BLOCK'|translate) : '' }}
+          {{:locale:!expertMode ? ('COMMON.BLOCK'|translate) : '' }}
           {{:rebind:(peer.currentNumber || peer.blockNumber) | formatInteger}}</span>
         <span class="badge badge-secondary" ng-if=":rebind:peer.consensusBlockDelta && expertMode">
           <i class="ion-clock"></i>&nbsp;

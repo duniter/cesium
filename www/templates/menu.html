@@ -1,5 +1,5 @@
 <ion-side-menus enable-menu-with-back-views="true"
-                bind-notifier="{locale:$root.settings.locale.id}">
+                bind-notifier="{locale: $root.settings.locale.id, peer: $root.currency.node.url}">
   <!-- HEADER -->
   <ion-side-menu-content>
     <ion-nav-bar class="bar-dark" title-align="left">
@@ -7,19 +7,24 @@
       </ion-nav-back-button>
 
       <ion-nav-buttons side="left">
-        <button class="button button-icon button-clear icon ion-navicon visible-nomenu" menu-toggle="left" ></button>
+        <button class="button button-clear visible-nomenu " menu-toggle="left" >
+          <i class="icon ion-navicon"></i>
+        </button>
       </ion-nav-buttons>
+
       <ion-nav-buttons side="right" >
 
         <!-- current node info -->
-        <button class="button button-clear hidden-xs hidden-sm gray icon-left"
-                ng-if="$root.settings.expertMode"
+        <button class="button button-clear button-peer hidden-xs hidden-sm gray"
+                ng-if="$root.config.readonly || $root.settings.expertMode"
                 style="max-width: 450px !important;"
                 ng-click="showPeerInfoPopover($event)">
-          <small class="ion-locked" ng-if="$root.currency.node.useSsl">&nbsp;</small>
-          {{$root.currency.node.host}}{{$root.currency.node.port != 80 && $root.currency.node.port != 443 ? ':'+$root.currency.node.port : ''}}
-          <small>&nbsp;</small>
-          <small class="ion-arrow-down-b"></small>
+          <span style="display: inline-flex;">
+            <small class="ion-locked" ng-if=":peer:$root.currency.node.useSsl">&nbsp;</small>
+            {{:peer:$root.currency.node.host}}{{:peer:$root.currency.node.port != 80 && $root.currency.node.port != 443 ? ':'+$root.currency.node.port : ''}}
+            <small>&nbsp;</small>
+            <small class="ion-arrow-down-b"></small>
+          </span>
         </button>
 
         <!-- Allow extension here -->
@@ -28,6 +33,7 @@
         <!-- profile -->
         <a id="helptip-header-bar-btn-profile"
            class="button button-icon button-clear hidden-xs hidden-sm"
+           ng-if="::!$root.config.readonly"
            ng-click="showProfilePopover($event)">
           <i class="avatar avatar-member"
              ng-if="!walletData.avatar"
@@ -56,6 +62,8 @@
         <span class="animate-fade-in animate-show-hide ng-hide" ng-show="$root.currency.name">
           {{:locale:'COMMON.APP_NAME'|translate}} {{$root.currency.name|abbreviate}}
         </span>
+        <a class="badge badge-assertive badge-app-mode left visible-demo" ng-click="showHelpModal('demo')">{{:locale:'MODE.DEMO.BADGE'|translate}}</a>
+        <a class="badge badge-balanced badge-app-mode right visible-readonly" ng-click="showHelpModal('readonly')">{{:locale:'MODE.READONLY.BADGE'|translate}}</a>
       </h1>
 
       <div class="visible-sm visible-xs hero">
@@ -77,10 +85,6 @@
           </h4>
           <cs-extension-point name="menu-profile-user"></cs-extension-point>
         </div>
-        <!-- logout -->
-        <a ng-if="login" class="button-icon" ng-click="logout({askConfirm: true})" style="position: absolute; top: 5px; left: 5px; z-index: 999;">
-          <i class="icon light ion-android-exit"></i>
-        </a>
 
         <!-- removeIf(device) -->
         <!-- Fullscreen button -->
@@ -91,128 +95,29 @@
           <i class="icon ion-arrow-expand dark" ng-class="{'ion-arrow-shrink': fullscreen}"></i>
         </a>
         <!-- endRemoveIf(device) -->
+
+
       </div>
+
+
     </ion-header-bar>
+
+
 
     <ion-content scroll="false" class="scroll-content ionic-scroll" ng-class="{'overflow-scroll': smallscreen, 'scroll-content-false': !smallscreen}">
       <ion-list class="list" ng-class="{'scroll': smallscreen}">
 
-        <!-- Home -->
-        <ion-item menu-close class="item-icon-left hidden-xs" ui-sref="app.home" active-link="active">
-          <i class="icon ion-home"></i>
-          {{:locale:'MENU.HOME'|translate}}
-        </ion-item>
+        <!-- *************** -->
+        <!-- Actions section -->
+        <!-- *************** -->
+
         <ion-item menu-close
-                  ng-if="!login"
-                  class="item-icon-left visible-xs" ui-sref="app.home" active-link="active">
-          <i class="icon ion-home"></i>
-          {{:locale:'MENU.HOME'|translate}}
-        </ion-item>
-
-        <!-- USER Section -->
-        <div class="item item-divider"></div>
-
-        <a menu-close
-           class="item item-icon-left"
-           active-link="active"
-           active-link-path-prefix="#/app/account"
-           ui-sref="app.view_wallet"
-           ng-class="{'item-menu-disable': !login}">
-          <i class="icon ion-person"></i>
-          {{:locale:'MENU.ACCOUNT'|translate}}
-        </a>
-        <a id="helptip-menu-btn-account"></a>
-
-        <a menu-close
-           class="item item-icon-left"
-           active-link="active"
-           active-link-path-prefix="#/app/history"
-           ui-sref="app.view_wallet_tx"
-           ng-class="{'item-menu-disable': !login}">
-          <i class="icon ion-card"></i>
-          {{:locale:'MENU.TRANSACTIONS'|translate}}
-        </a>
-        <a id="helptip-menu-btn-tx"></a>
-
-        <a menu-close
-           class="item item-icon-left "
-           active-link="active"
-           active-link-path-prefix="#/app/wallets"
-           ui-sref="app.view_wallets"
-           ng-class="{'item-menu-disable': !login}">
-          <i class="icon ion-card " style="top: -5px; left: 22px; font-size: 18px;"></i>
-          <i class="icon-secondary ion-card" style="top: 22px; left: 19px; font-size: 20px; background-color: white; width:17px; height: 14px;"></i>
-          {{:locale:'MENU.WALLETS'|translate}}
-        </a>
-
-        <!-- MAIN Section -->
-        <div class="item item-divider"></div>
-
-        <a menu-close class="item item-icon-left"
-           active-link="active"
-           active-link-path-prefix="#/app/wot"
-           ui-sref="app.wot_lookup.tab_search">
-          <i class="icon ion-person-stalker"></i>
-          {{:locale:'MENU.WOT'|translate}}
-        </a>
-        <a id="helptip-menu-btn-wot"></a>
-
-        <!-- Allow extension here -->
-        <cs-extension-point name="menu-main"></cs-extension-point>
-
-        <!-- POWER USER Section -->
-        <div class="item item-divider"></div>
-
-        <a menu-close
-           class="item item-icon-left"
-           active-link="active"
-           active-link-path-prefix="#/app/currency"
-           ui-sref="app.currency">
-          <i class="icon ion-ios-world-outline"></i>
-          {{:locale:'MENU.CURRENCY'|translate}}
-        </a>
-        <a id="helptip-menu-btn-currency"></a>
-
-        <a menu-close
-           class="item item-icon-left hidden-xs hidden-sm"
-           active-link="active"
-           active-link-path-prefix="#/app/network"
-           ui-sref="app.network">
-          <i class="icon ion-cloud"></i>
-          {{:locale:'MENU.NETWORK'|translate}}
-        </a>
-        <a id="helptip-menu-btn-network"></a>
-
-        <!-- Allow extension here -->
-        <cs-extension-point name="menu-discover"></cs-extension-point>
-
-
-
-
-        <div class="item item-divider visible-xs visible-sm"></div>
-
-        <!-- Allow extension here -->
-        <cs-extension-point name="menu-user"></cs-extension-point>
-
-        <a menu-close
-           class="item item-icon-left visible-xs visible-sm"
-           active-link="active"
-           active-link-path-prefix="#/app/settings"
-           ui-sref="app.settings">
-          <i class="icon ion-android-settings"></i>
-          {{:locale:'MENU.SETTINGS'|translate}}
-        </a>
-        <a id="helptip-menu-btn-settings"></a>
-
-        <!-- actions divider -->
-        <div class="item item-divider" ng-if="login"></div>
-
-
-        <ion-item menu-close class="item  item-button-right" ng-if="login"
-          ng-class="::{'item-button-left': $root.device.barcode.enable}">
+                  class="item item-actions item-button-right visible-xs visible-sm hidden-readonly"
+                  ng-if="login"
+                  ng-class="::{'item-button-left': $root.device.barcode.enable}">
           <!-- transfer -->
           <button
-            class="button button-positive ink-dark"
+            class="button button-positive ink-dark "
             ng-click="showTransferModal()">
             <i class="icon ion-paper-airplane"></i>
           </button>
@@ -225,7 +130,171 @@
           </button>
         </ion-item>
 
-        <cs-extension-point name="menu-actions"></cs-extension-point>
+        <!-- ************ -->
+        <!-- Home section -->
+        <!-- ************ -->
+        <ion-item menu-close class="item-icon-left hidden-xs" ui-sref="app.home" active-link="active">
+          <i class="icon ion-home"></i>
+          {{:locale:'MENU.HOME'|translate}}
+        </ion-item>
+        <ion-item menu-close
+                  class="item-icon-left visible-xs" ui-sref="app.home" active-link="active">
+          <i class="icon ion-home"></i>
+          {{:locale:'MENU.HOME'|translate}}
+        </ion-item>
+
+        <!-- ************ -->
+        <!-- User Section -->
+        <!-- ************ -->
+        <div class="item item-divider hidden-readonly"></div>
+
+        <a menu-close
+           class="item item-icon-left hidden-readonly"
+           active-link="active"
+           active-link-path-prefix="#/app/account"
+           ui-sref="app.view_wallet"
+           ng-class="{'item-menu-disable': !login}">
+          <i class="icon ion-person"></i>
+          {{:locale:'MENU.ACCOUNT'|translate}}
+        </a>
+        <a id="helptip-menu-btn-account"></a>
+
+        <a menu-close
+           class="item item-icon-left hidden-readonly"
+           active-link="active"
+           active-link-path-prefix="#/app/history"
+           ui-sref="app.view_wallet_tx"
+           ng-class="{'item-menu-disable': !login}">
+          <i class="icon ion-clock" style="top: calc(100%/4); left: 25px; font-size: 10pt; display: block;"></i>
+          <b class="icon-secondary ion-card" style="top: calc(100%/2.5); left: 19px; font-size: 17pt; background-color: whitesmoke; width:17px; height: 14px;"></b>
+          {{:locale:'MENU.TRANSACTIONS'|translate}}
+        </a>
+        <a id="helptip-menu-btn-tx"></a>
+
+        <a menu-close
+           class="item item-icon-left hidden-readonly"
+           active-link="active"
+           active-link-path-prefix="#/app/wallets"
+           ui-sref="app.view_wallets"
+           ng-class="{'item-menu-disable': !login}">
+          <i class="icon ion-card " style="top: calc(100%/5); left: 22px; font-size: 16pt; display: block;"></i>
+          <i class="icon-secondary ion-card" style="top: 20px; left: 19px; font-size: 16pt; background-color: whitesmoke; width:17px; height: 14px;"></i>
+          {{:locale:'MENU.WALLETS'|translate}}
+        </a>
+        <a id="helptip-menu-btn-wallets"></a>
+
+        <div class="item item-divider visible-xs visible-sm hidden-readonly" ></div>
+
+        <!-- Allow extension here -->
+        <cs-extension-point name="menu-user" ></cs-extension-point>
+
+        <!-- *************** -->
+        <!-- Actions section -->
+        <!-- *************** -->
+
+        <ion-item class="item hidden-xs hidden-sm hidden-readonly">
+          <!-- transfer -->
+          <button class="button button-block button-small button-small-padding  icon-left icon ion-paper-airplane no-margin"
+                  ng-class="{'button-positive': login, 'button-stable': !login}"
+                  ng-click="showTransferModal()">
+            {{:locale:'COMMON.BTN_SEND_MONEY'|translate}}
+          </button>
+        </ion-item>
+
+        <!-- Spacer (large screen only) -->
+        <div class="item-spacer hidden-readonly"></div>
+
+        <!-- ************ -->
+        <!-- Main section -->
+        <!-- ************ -->
+        <div class="item item-divider hidden-readonly"></div>
+
+        <!-- Help tour (NOT ready yet for small device) -->
+        <a  class="item item-icon-left item-closeable hidden-xs hidden-sm"
+                ng-show="$root.settings.helptip.enable"
+                title="{{:locale:'SETTINGS.DISABLE_HELPTIP'|translate}}"
+                ng-click="startHelpTour($event)">
+          <i class="icon ion-easel"></i>
+          {{:locale:'COMMON.BTN_HELP_TOUR'|translate}}
+
+          <span class="close"
+                ng-click="disableHelpTour($event)"></span>
+        </a>
+
+        <a menu-close class="item item-icon-left"
+           id="helptip-menu-btn-wot"
+           active-link="active"
+           active-link-path-prefix="#/app/wot"
+           ui-sref="app.wot_lookup.tab_search">
+          <i class="icon ion-person-stalker"></i>
+          {{:locale:'MENU.WOT'|translate}}
+        </a>
+
+        <!-- Allow extension here -->
+        <cs-extension-point name="menu-main"></cs-extension-point>
+
+        <!-- **************** -->
+        <!-- Discover section -->
+        <!-- **************** -->
+
+        <a menu-close
+           class="item item-icon-left"
+           id="helptip-menu-btn-currency"
+           active-link="active"
+           active-link-path-prefix="#/app/currency"
+           ui-sref="app.currency">
+          <i class="icon ion-ios-world-outline"></i>
+          {{:locale:'MENU.CURRENCY'|translate}}
+        </a>
+
+        <a menu-close
+           class="item item-icon-left hidden-xs hidden-sm"
+           id="helptip-menu-btn-network"
+           active-link="active"
+           active-link-path-prefix="#/app/network"
+           ui-sref="app.network">
+          <i class="icon ion-cloud"></i>
+          {{:locale:'MENU.NETWORK'|translate}}
+        </a>
+
+        <!-- Allow extension here -->
+        <cs-extension-point name="menu-discover"></cs-extension-point>
+
+
+        <div class="item-spacer visible-readonly"></div>
+
+        <div class="item item-divider visible-xs visible-sm"></div>
+
+
+        <a menu-close
+           class="item item-icon-left visible-xs visible-sm"
+           active-link="active"
+           active-link-path-prefix="#/app/help"
+           ui-sref="app.help">
+          <i class="icon ion-ios-help-outline"></i>
+          {{:locale:'HOME.BTN_HELP'|translate}}
+        </a>
+
+        <a menu-close
+           class="item item-icon-left visible-xs visible-sm visible-readonly"
+           active-link="active"
+           id="menu-btn-settings"
+           active-link-path-prefix="#/app/settings"
+           ui-sref="app.settings">
+          <i class="icon ion-android-settings"></i>
+          {{:locale:'MENU.SETTINGS'|translate}}
+        </a>
+        <a id="helptip-menu-btn-settings"></a>
+
+        <!-- logout -->
+        <div class="item item-divider visible-xs visible-sm margin-top"  ng-if="login"></div>
+        <a menu-close
+           ng-if="login"
+           class="item item-icon-left visible-xs visible-sm"
+           ng-click="logout({askConfirm: true})">
+          <i class="icon ion-log-out assertive"></i>
+          <span class="assertive" translate> {{:locale:'COMMON.BTN_LOGOUT'|translate}}</span>
+        </a>
 
       </ion-list>
 

@@ -1,4 +1,4 @@
-# iOS Builds
+# Build Cesium for iOS
 
 Cesium can be build as desktop application for iOS. .
 
@@ -82,7 +82,7 @@ npm install -g nw-gyp node-pre-gyp
 
 2. Install global dependencies (see [Development Guide](./development_guide.md) for versions to used) :
 ```
-npm install -g yarn gulp cordova@9.0.0 ionic@1.7.16
+npm install -g yarn gulp@3.9.1 cordova @ionic/cli@6.6.0
 ```
 
 3. Install project dependencies :
