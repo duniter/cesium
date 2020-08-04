@@ -118,14 +118,23 @@
   "HOME": {
     "TITLE": "Cesium",
     "WELCOME": "Bonvenon ĉe la programo Cesium!",
+    "WELCOME_READONLY": "Bonvenon ĉe Cesium <span class='badge badge-balanced'>Observo</span>!",
     "MESSAGE": "Ricevu kaj sendu liberan monon {{currency|abbreviate}}",
-    "BTN_CURRENCY": "Esploru la monon {{name|abbreviate}}",
+    "MESSAGE_READONLY": "Sekvu la staton de la libera mono {{currency|abbreviate}} en tuja tempo.",
+    "BTN_CURRENCY": "Esploru la monon {{currency|abbreviate}}",
     "BTN_ABOUT": "prie",
     "BTN_HELP": "Reta helpo",
+    "BTN_NETWORK": "Stato de la reto",
+    "FREE_SOFTWARE": "Libera programo",
+    "FORK_ME": "Duobligu min!",
+    "SHOW_LICENSE": "Vidi la licencon de la programo",
     "REPORT_ISSUE": "fuŝaĵo",
-    "NOT_YOUR_ACCOUNT_QUESTION" : "Vi ne posedas la konton <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b> ?",
+    "NOT_YOUR_ACCOUNT_QUESTION" : "Vi ne posedas la konton <b class=\"ion-key\"> {{pubkey|formatPubkey}}</b>&nbsp;?",
     "BTN_CHANGE_ACCOUNT": "Malkonektu tiun ĉi konton",
-    "CONNECTION_ERROR": "Nodo <b>{{server}}</b> neatingebla aŭ adreso nevalida.<br/><br/>Kontrolu vian retkonekton, aŭ elektu alian nodon <a class=\"positive\" ng-click=\"doQuickFix('settings')\">ĉe la parametroj</a>."
+    "CONNECTION_ERROR": "Nodo <b>{{server}}</b> neatingebla aŭ adreso nevalida.<br/><br/>Kontrolu vian retkonekton, aŭ elektu alian nodon <a class=\"positive\" ng-click=\"doQuickFix('settings')\">ĉe la parametroj</a>.",
+    "SHOW_ALL_FEED": "Vidi ĉion",
+    "READ_MORE": "Legi la sekvon",
+    "FEED_SOURCE": "Fonto"
   },
   "SETTINGS": {
     "TITLE": "Parametroj",
@@ -135,12 +144,15 @@
     "PEER": "Adreso de la nodo Duniter",
     "PEER_SHORT": "Adreso de la nodo",
     "PEER_CHANGED_TEMPORARY": "Adreso provizore uzata",
+    "PERSIST_CACHE": "Konservi la datenojn pri retumado (provaĵo)",
+    "PERSIST_CACHE_HELP": "Ebligas pli rapidan retumadon, loke konservante la ricevitajn datenojn, por uzi ilin de seanco al alia.",
     "USE_LOCAL_STORAGE": "Aktivigi lokan stokadon",
     "USE_LOCAL_STORAGE_HELP": "Ebligas konservi viajn parametrojn",
     "WALLETS_SETTINGS": "Miaj monujoj",
     "USE_WALLETS_ENCRYPTION": "Sekurigi la liston?",
     "USE_WALLETS_ENCRYPTION_HELP": "Ebligas sekurigi la liston de viaj monujoj (per ĉifrado), postulante aŭtentigado por aliri ilin.",
     "ENABLE_HELPTIP": "Aktivigi la rilatigajn help-vezikojn",
+    "DISABLE_HELPTIP": "Malaktivigi la rilatigajn help-vezikojn",
     "ENABLE_UI_EFFECTS": "Aktivigi la vid-efikojn",
     "HISTORY_SETTINGS": "Miaj spezoj",
     "DISPLAY_UD_HISTORY": "Afiŝi la produktitajn dividendojn?",
@@ -156,12 +168,12 @@
       "MINUTE": "Post {{value}}min de neatktiveco",
       "MINUTES": "Post {{value}}min de neatktiveco",
       "HOUR": "Post {{value}}h de neatktiveco",
-      "ALWAYS": "Fine de la sesio"
+      "ALWAYS": "Fine de la seanco"
     },
     "KEYRING_FILE": "Dosiero pri ŝlosilaro",
-    "KEYRING_FILE_HELP": "Ebligas <b>konektiĝi</b> aŭtomate por ĉiu ekuzo<br/>kaj eĉ <b>aŭtentiĝi</b> (nur se \"Finiĝo de la aŭtentiĝo\" estas agordita kiel \"fine de la sesio\").",
+    "KEYRING_FILE_HELP": "Ebligas <b>konektiĝi</b> aŭtomate por ĉiu ekuzo<br/>kaj eĉ <b>aŭtentiĝi</b> (nur se \"Finiĝo de la aŭtentiĝo\" estas agordita kiel \"fine de la seanco\").",
     "REMEMBER_ME": "Memori min?",
-    "REMEMBER_ME_HELP": "Ebligas resti identigita de sesio al alia, loke konservante la publikan ŝlosilon.",
+    "REMEMBER_ME_HELP": "Ebligas resti identigita de seanco al alia, loke konservante la publikan ŝlosilon.",
     "PLUGINS_SETTINGS": "Krom-programoj",
     "BTN_RESET": "Restarigi la originajn valorojn",
     "EXPERT_MODE": "Aktivigi la spertan moduson",
@@ -244,7 +256,7 @@
       "MEMBERS_VARIATION": "Variado depost la lasta UD",
       "MONEY_DIVIDER": "Mono",
       "MASS": "Mona maso",
-      "SHARE": "Maso por membro",
+      "SHARE": "Monkvanto por ĉiu membro",
       "UD": "Universala Dividendo",
       "C_ACTUAL": "Nuna kreskado",
       "MEDIAN_TIME": "Horo de la blokĉeno",
@@ -261,7 +273,7 @@
       "SIG_PERIOD": "Minimuma daŭro de atendado inter 2 sinsekvaj atestaĵoj senditaj de sama persono",
       "SIG_WINDOW": "Limdaŭro por akcepti atestaĵon",
       "SIG_VALIDITY": "Vivdaŭro de atestaĵo, kiu estis akceptita",
-      "MS_WINDOW": "Limdaŭro por akcepti aliĝ-peton kiel membron",
+      "MS_WINDOW": "Limdaŭro por la akcepto de aliĝ-peto",
       "MS_VALIDITY": "Vivdaŭro de aliĝo, kiu estis akceptita",
       "STEP_MAX": "Maksimuma distanco, per la atestaĵoj, inter nova eniranto kaj la referencaj membroj",
       "WOT_RULES_DIVIDER": "Reguloj de la reto de fido",
@@ -426,7 +438,7 @@
     "BTN_METHODS": "Aliaj metodoj",
     "BTN_METHODS_DOTS": "Ŝanĝi metodon...",
     "METHOD_POPOVER_TITLE": "Metodoj",
-    "MEMORIZE_AUTH_FILE": "Memorigi tiun ŝlosilaron por la daŭro de la sesio de retumado",
+    "MEMORIZE_AUTH_FILE": "Memorigi tiun ŝlosilaron por la daŭro de la retum-seanco",
     "SCRYPT_PARAMETERS": "Parametroj (Skripto):",
     "AUTO_LOGOUT": {
       "TITLE": "Informo",
@@ -509,7 +521,7 @@
       "TITLE": "Kreado de konto",
       "INTRO_WARNING_TIME": "La kreado de konto ĉe {{name|capitalize}} estas tre simpla. Bonvolu tamen dediĉi sufiĉe da tempo por ĝuste efektivigi tiun proceduron (por ne forgesi la identigilojn, pasvortojn, ktp.).",
       "INTRO_WARNING_SECURITY": "Kontrolu ke la aparatoj, kiujn vi nun uzas (komputilo, tabuleto, telefono), <b>estas sekurigitaj kaj fidindaj</b>.",
-      "INTRO_WARNING_SECURITY_HELP": "Senvirusigilo ĝisdata, fajroŝirmilo aktivigita, sesio protektita per pasvorto aŭ PIN-kodo, ktp.",
+      "INTRO_WARNING_SECURITY_HELP": "Senvirusigilo ĝisdata, fajroŝirmilo aktivigita, seanco protektita per pasvorto aŭ PIN-kodo, ktp.",
       "INTRO_HELP": "Alklaku <b>{{'COMMON.BTN_START'|translate}}</b> por ekigi la kreadon de konto. Vi estos gvidata paŝon post paŝo.",
       "REGISTRATION_NODE": "Via aliĝo estos registrita tra la nodo Duniter <b>{{server}}</b>, kiu dissendos ĝin poste al la cetero de la mon-reto.",
       "REGISTRATION_NODE_HELP": "Se vi ne fidas tiun nodon, bonvolu ŝanĝi ĝin <a ng-click=\"doQuickFix('settings')\">en la parametroj</a> de Cesium.",
@@ -612,6 +624,7 @@
       "QUESTION_19": "Kio estis la profesio de via avo?",
       "RECOVER_ID": "Retrovi mian pasvorton...",
       "RECOVER_ID_HELP": "Se vi disponas <b>konserv-dosieron pri viaj identigiloj</b>, vi povas retrovi ilin respondante ĝuste viajn personajn demandojn.",
+      "RECOVER_ID_SELECT_FILE": "Elektu la uzotan <b>konserv-dosieron pri viaj identigiloj</b>:",
       "REVOCATION_WITH_FILE": "Nuligi mian membro-konton...",
       "REVOCATION_WITH_FILE_DESCRIPTION": "Se vi <b>definitive perdis viajn identigilojn</b> pri via membro-konto (aŭ ke la sekureco de la konto estas endanĝerigita), vi povas uzi <b>la dosieron pri nuligo</b> de la konto por <b>trudi ties definitivan eliradon el la reto de fido</b>.",
       "REVOCATION_WITH_FILE_HELP": "Por <b>definitive nuligi</b> membro-konton, bonvolu glitigi en la ĉi-suban zonon vian dosieron pri nuligo, aŭ alklaki la zonon por serĉadi dosieron.",
@@ -764,6 +777,7 @@
     "CHECK_NETWORK_CONNECTION": "Neniu nodo ŝajnas atingebla.<br/><br/>Bonvolu <b>kontroli vian retkonekton</b>.",
     "ISSUE_524_TX_FAILED": "Malsukcesa elspezo.<br/><br/>Mesaĝo estis sendita al la programistoj por faciligi la solvadon de la problemo. <b>Dankon pro via helpo</b>.",
     "ADD_SECONDARY_WALLET_FAILED": "Malsukceso por aldoni kroman monujon.",
+    "REMOVE_SECONDARY_WALLET_FAILED": "Malsukceso por forigi la kroman monujon.",
     "UPDATE_WALLET_LIST_FAILED": "Malsukceso por ĝisdatigi la kromajn monujojn.",
     "LOAD_WALLET_LIST_FAILED": "Malsukceso por ŝarĝi la kromajn monujojn.",
     "SAVE_WALLET_LIST_FAILED": "Malsukceso por konservi la kromajn monujojn.",
@@ -771,7 +785,8 @@
     "COULD_NOT_ADD_EXISTING_WALLET": "Monujo jam ekzistanta en la listo.",
     "UNKNOWN_WALLET_ID": "Kroma monujo nekonata.",
     "RESTORE_WALLET_LIST_FAILED": "Malsukceso por restarigi la kromajn monujojn.",
-    "INVALID_FILE_FORMAT": "Strukturo de dosiero nevalida."
+    "INVALID_FILE_FORMAT": "Strukturo de dosiero nevalida.",
+    "SAME_TX_RECIPIENT": "La adresito devas malsami ol la sendanto."
   },
   "INFO": {
     "POPUP_TITLE": "Informo",
@@ -815,6 +830,21 @@
     "LOGOUT": "Ĉu vi certas, ke vi volas malkonektiĝi?",
     "USE_FALLBACK_NODE": "Nodo <b>{{old}}</b> neatingebla aŭ adreso nevalida.<br/><br/>Ĉu vi volas provizore uzi la nodon <b>{{new}}</b> ?",
     "ISSUE_524_SEND_LOG": "La spezo estis forĵetita, pro konata anomalio (petslipo #524) sed <b>ne ripetita</b>.<br/><br/>Por helpi la programistojn korekti tiun eraron, <b>ĉu vi akceptas la sendadon de viaj protokolaj dosieroj</b> per mesaĝo?<br/><small>(neniu konfidenca dateno estas sendita)</small>."
+  },
+  "MODE": {
+    "DEMO": {
+      "BADGE": "Provo",
+      "MODE": "Provmontra moduso",
+      "FEATURE_NOT_AVAILABLE": "Funkcio <b>ne disponebla</b> en tiu ĉi provmontra retejo.",
+      "MODE_HELP": "Cesium funkcias en <b>provmontra moduso</b>: Konsultado de konto eblas, sed neniu operacio povos esti registrita.",
+      "INSTALL_HELP": "Pro <b>sekurecaj kialoj</b> ni rekomendas al vi <b>instali</b> vian kopion de la programo Cesium. Vizitu la retejon <a href='https://cesium.app'>www.cesium.app</a> por ricevi helpon."
+    },
+    "READONLY": {
+      "BADGE": "Observo",
+      "MODE": "Observada moduso",
+      "MODE_HELP": "Cesium funkcias en <b>observada moduso</b>: disponeblas nur la funkciaro pri observado de la valuto.",
+      "INSTALL_HELP": "Se vi deziras <b>krei monuj-konton</b> por sendi aŭ ricevi monon, ni rekomendas al vi <b>instali vian kopion</b> de la programo Cesium. Vizitu la retejon <a href='https://cesium.app'>www.cesium.app</a> por ricevi helpon."
+    }
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Dosiero pri nuligo</b>",
@@ -863,7 +893,7 @@
       "NETWORK_PEERS": "La <b>nodoj</b> videblaj ĉi tie rilatas al la <b>komputiloj, kiuj ĝisdatigas kaj kontrolas</b> la blokĉenon.<br/><br/>Ju pli estas nodoj, des pli la mono havas administradon <b>malcentrigitan</b> kaj fidindan.",
       "NETWORK_PEERS_BLOCK_NUMBER": "Tiu ĉi <b>numero</b> (verda) indikas la <b>lastan blokon validigitan</b> por tiu ĉi nodo (lasta paĝo skribita en la granda konto-libro).<br/><br/>La verda koloro indikas, ke tiu ĉi bloko estas validigita ankaŭ de <b>la plej multaj el la aliaj nodoj</b>.",
       "NETWORK_PEERS_PARTICIPATE": "<b>Ĉiu membro</b>, ekipita per komputilo kun interreto, <b>povas partopreni aldonante nodon</b>. Sufiĉas <b>instali la programon Duniter</b> (libera kaj senpaga). <a href=\"{{installDocUrl}}\" target=\"_system\">Vidi la gvidilon pri instalado &gt;&gt;</a>.",
-      "MENU_BTN_ACCOUNT": "La menuo <b>{{'ACCOUNT.TITLE'|translate}}</b> ebligas aliri la administradon de via konto.",
+      "MENU_BTN_ACCOUNT": "La menuo <b>{{'MENU.ACCOUNT'|translate}}</b> ebligas aliri la administradon de via konto.",
       "MENU_BTN_ACCOUNT_MEMBER": "Konsultu ĉi tie la staton de via konto kaj la informojn pri viaj atestaĵoj.",
       "WALLET_CERTIFICATIONS": "Alklaku ĉi tien por konsulti la detalon pri viaj atestaĵoj (ricevitaj kaj senditaj).",
       "WALLET_RECEIVED_CERTIFICATIONS": "Alklaku ĉi tien por konsulti la detalon pri viaj <b>ricevitaj atestaĵoj</b>.",
@@ -878,7 +908,8 @@
       "WALLET_RECEIVED_CERTS": "Afiŝiĝos ĉi tie la listo de la personoj, kiuj atestis vin.",
       "WALLET_CERTIFY": "La butono <b>{{'WOT.BTN_SELECT_AND_CERTIFY'|translate}}</b> ebligas elekti identecon kaj atesti ĝin.<br/><br/>Nur uzantoj <b>jam membroj</b> povas atesti aliajn.",
       "WALLET_CERT_STOCK": "Via stoko da atestaĵoj (senditaj) estas limigita je <b>{{sigStock}} atestaĵoj</b>.<br/><br/>Tiu stoko plu evoluas laŭ la tempo, samtempe kiam la atestaĵoj malvalidiĝas.",
-      "MENU_BTN_TX": "La menuo <b>{{'MENU.TRANSACTIONS'|translate}}</b> ebligas konsulti vian konton, la liston de viaj spezoj, kaj sendi pagon.",
+      "MENU_BTN_WALLETS": "La menuo <b>{{'MENU.WALLETS'|translate}}</b> ebligas aldoni kromajn monujojn, kiujn vi mastrumas.",
+      "MENU_BTN_TX": "La menuo <b>{{'MENU.TRANSACTIONS'|translate}}</b> ebligas konsulti vian saldon, la histori-liston de viaj spezoj, kaj sendi pagon.",
       "MENU_BTN_WOT": "La menuo <b>{{'MENU.WOT'|translate}}</b> ebligas traserĉi inter la <b>uzantoj</b> de la mono (membroj aŭ ne).",
       "WOT_SEARCH_TEXT_XS": "Por traserĉi en la kontaro, tajpu la <b>unuajn literojn de pseŭdonimo</b> (aŭ de publika ŝlosilo).<br/><br/>La serĉado ekos aŭtomate.",
       "WOT_SEARCH_TEXT": "Por traserĉi en la kontaro, tajpu la <b>unuajn literojn de de pseŭdonimo</b> (aŭ de publika ŝlosilo). <br/><br/>Premu poste sur la klavon <b>Enigi</b> por ekigi la serĉadon.",
@@ -892,7 +923,8 @@
       "HEADER_BAR_BTN_PROFILE": "Alklaku ĉi tien por aliri vian <b>uzanto-profilon.</b>",
       "SETTINGS_CHANGE_UNIT": "Vi povos <b>ŝanĝi la afiŝ-unuon</b> de la sumoj alklakante ĉi-supren.<br/><br/>- Malaktivigu la kromaĵon por afiŝi sumojn en {{currency|capitalize}}.<br/>- Aktivigu la kromaĵon por relativa afiŝado en {{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub> (ĉiuj sumoj estos <b>dividitaj</b> per la Universala Dividendo aktuala).",
       "END_LOGIN": "Tiu ĉi gvidata vizito <b>finiĝis</b>!<br/><br/>Bonan daŭrigon al vi, en la nova mondo de la<b>libera ekonomio</b>!",
-      "END_NOT_LOGIN": "Tiu ĉi gvidata vizito <b>finiĝis</b>!<br/><br/>Se vi deziras partopreni en la mono {{currency|capitalize}}, sufiĉos al vi alklaki <b>{{'LOGIN.CREATE_ACCOUNT'|translate}}</b> ĉi-sube."
+      "END_NOT_LOGIN": "Tiu ĉi gvidata vizito <b>finiĝis</b>!<br/><br/>Se vi deziras partopreni en la mono {{currency|capitalize}}, sufiĉos al vi alklaki <b>{{'LOGIN.CREATE_FREE_ACCOUNT'|translate}}</b> ĉi-sube.",
+      "END_READONLY": "Tiu ĉi gvidata vizito <b>finiĝis</b>.<br/><br/>{{'MODE.READONLY.INSTALL_HELP'|translate}}."
     }
   },
   "API" :{
@@ -965,7 +997,7 @@
         "PARAM_REDIRECT_URL": "Retadreso por redirektiĝo",
         "PARAM_REDIRECT_URL_HELP": "Retadreso (URL) por redirektiĝo, alvokita kiam la pago estis sendita. Ĝi povas enteni la sekvantajn signojn, kiuj estos anstataŭigitaj per la valoroj de la spezo: \"{tx}\", \"{hash}\", \"{comment}\", \"{amount}\", \"{pubkey}\" kaj \"{node}\".",
         "PARAM_CANCEL_URL": "Retadreso por nuligo",
-        "PARAM_CANCEL_URL_HELP": "Retadreso (URL) kaze de nuligo de la pago, fare de la uzanto. Ĝi povas enteni la sekvantajn signojn, kiuj estos anstataŭigitaj lastmomente: \"{comment}\", \"{amount}\" kaj {pubkey}.",
+        "PARAM_CANCEL_URL_HELP": "Retadreso (URL) kaze de nuligo de la pago, fare de la uzanto. Ĝi povas enteni la sekvantajn signojn, kiuj estos anstataŭigitaj lastmomente: \"{comment}\", \"{amount}\" kaj \"{pubkey}\".",
         "PARAM_PREFERRED_NODE": "Adreso de la preferata nodo",
         "PARAM_PREFERRED_NODE_HELP": "Adreso (URL) de la nodo Duniter preferinde uzota (\"g1.domaine.com:443\" aŭ \"https://g1.domaine.com\").",
         "EXAMPLES_HELP": "Jen ekzemploj pri integrado:",
