@@ -145,7 +145,7 @@
     "PEER_SHORT": "Adreso de la nodo",
     "PEER_CHANGED_TEMPORARY": "Adreso provizore uzata",
     "PERSIST_CACHE": "Konservi la datenojn pri retumado (provaĵo)",
-    "PERSIST_CACHE_HELP": "Ebligas pli rapidan retumadon, loke konservante la ricevitajn datenojn, por uzi ilin de seanco al alia.",
+    "PERSIST_CACHE_HELP": "Ebligas pli rapidan retumadon, loke konservante la ricevitajn datenojn, por uzi ilin de sesio al alia.",
     "USE_LOCAL_STORAGE": "Aktivigi lokan stokadon",
     "USE_LOCAL_STORAGE_HELP": "Ebligas konservi viajn parametrojn",
     "WALLETS_SETTINGS": "Miaj monujoj",
@@ -642,7 +642,7 @@
         "WIF_FORMAT_HELP": "Tiu strukturo stokas vian ŝlosilaron inkluzivante en ĝin kontrol-sumon por kontroli la sendifektecon de la dosiero. Ĝi kongruas aparte kun la paper-monujoj (Duniter paper wallet).<br/><b>Atenton:</b>La dosiero <b>ne estas ĉifrita</b> (la sekreta ŝlosilo klare aperas en ĝi); bonvolu do stoki ĝin en sekura loko!",
         "EWIF_FORMAT": "Strukturo EWIF (Encrypted Wallet Import Format) - v1",
         "EWIF_FORMAT_HELP": "Tiu strukturo stokas vian ŝlosilaron <b>laŭ ĉifrita maniero</b> dank'al sekreta frazo elektita de vi. Ĝi ankaŭ inkluzivas kontrol-sumon por kontroli la sendifektecon de la dosiero.<br/><b>Atenton:</b> Zorgu, ke vi ĉiam rememoru vian sekretan frazon!",
-		"PASSWORD_POPUP": {
+	"PASSWORD_POPUP": {
           "TITLE": "Ĉifrita dosiero pri ŝlosilaro",
           "HELP": "Bonvolu indiki la la sekretan frazon:",
           "PASSWORD_HELP": "Sekreta frazo"
