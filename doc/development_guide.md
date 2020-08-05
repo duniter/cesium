@@ -1,6 +1,19 @@
 # Development Guide
 
-## Prerequisite  
+## In a post-it
+
+```bash
+nvm use 10
+git clone git@git.duniter.org:clients/cesium-grp/cesium.git
+cd cesium
+yarn
+yarn run start
+```
+
+
+## Step by step
+
+### Prerequisite  
 
 To build Cesium, you will have to: 
  
@@ -30,7 +43,7 @@ To build Cesium, you will have to:
       npm install -g yarn gulp@3.9.1 cordova@8.1.2 @ionic/cli@6.6.0 web-ext
    ```
    
-## Get the source code and dependencies
+### Get the source code and dependencies
    
 1. Getting the source code:    
   ```bash
@@ -57,7 +70,7 @@ To build Cesium, you will have to:
    > - and working with NodeJs **v10**: `nvm use 10` (please check using the command `node --version`)
     
 
-## Prepare Cesium default config
+### Prepare Cesium default config
 
 Configure Cesium default settings :
  
@@ -70,7 +83,7 @@ Configure Cesium default settings :
 
   This will update a configuration file `www/js/config.json`.
  
-## Compile and launch
+### Compile and launch
 
 To compile and launch Cesium, run :
 ```bash
@@ -82,7 +95,7 @@ or alternative: `npm start` or `ionic serve`
 The application should be running at [localhost:8100](http://localhost:8100)!
 
 
-## Build artifacts 
+### Build artifacts 
 
 Cesium can be build:
 - [as an unhosted web applicationa](build_web.md);
@@ -91,16 +104,16 @@ Cesium can be build:
 - [as a Web extension](build_web_extension.md) for Mozilla Firefox or Chrome/Chomium;
 - [as a Desktop application](build_desktop.md) for Linux (`.deb`), Windows and MacOSx;
 
-You may also [use Docker image](./build_docker.md) to simplify this task;   
+You may also [use Docker image](build_docker.md) to simplify this task;   
 
 
-## Time to code !
+### Time to code !
 
-### Pull request
+#### Pull request
 
 For each pull request, please create a issue first.
 
-### Best practices for development
+#### Best practices for development
 
 Cesium could be run on phone devices. Please read [performance tips on AgularJS + Ionic ](http://julienrenaux.fr/2015/08/24/ultimate-angularjs-and-ionic-performance-cheat-sheet/)
 before starting to contribute.
