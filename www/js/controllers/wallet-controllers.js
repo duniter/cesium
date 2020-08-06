@@ -471,7 +471,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
 
   $scope.showQRCode = function(timeout) {
-    if (!wallet || !$scope.qrcodeId) return; // Skip
+    if (!wallet || !$scope.qrcodeId) return; // Skip
 
     // Get the DIV element
     var element = angular.element(document.querySelector('#' + $scope.qrcodeId + ' .content'));

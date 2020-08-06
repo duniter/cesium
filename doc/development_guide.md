@@ -40,7 +40,7 @@ To build Cesium, you will have to:
       
 3. Installing node build tools, as global dependencies:
    ```bash
-      npm install -g yarn gulp@3.9.1 cordova@8.1.2 @ionic/cli@6.6.0 web-ext
+      npm install -g yarn gulp cordova@8.1.2 @ionic/cli web-ext
    ```
    
 ### Get the source code and dependencies
@@ -70,7 +70,7 @@ To build Cesium, you will have to:
    > - and working with NodeJs **v10**: `nvm use 10` (please check using the command `node --version`)
     
 
-### Prepare Cesium default config
+### Prepare configuration file
 
 Configure Cesium default settings :
  
@@ -85,7 +85,7 @@ Configure Cesium default settings :
  
 ### Compile and launch
 
-To compile and launch Cesium, run :
+To compile and launch Cesium, run:
 ```bash
   yarn run start
 ```
@@ -111,11 +111,11 @@ You may also [use Docker image](build_docker.md) to simplify this task;
 
 #### Pull request
 
-For each pull request, please create a issue first.
+For each pull request, please create an issue first.
 
 #### Best practices for development
 
-Cesium could be run on phone devices. Please read [performance tips on AgularJS + Ionic ](http://julienrenaux.fr/2015/08/24/ultimate-angularjs-and-ionic-performance-cheat-sheet/)
+Cesium could be run on phone devices. Please read [performance tips on AgularJS + Ionic](http://julienrenaux.fr/2015/08/24/ultimate-angularjs-and-ionic-performance-cheat-sheet/)
 before starting to contribute.
 
 Read also [Angular performance for large applicatoins](https://www.airpair.com/angularjs/posts/angularjs-performance-large-applications). 

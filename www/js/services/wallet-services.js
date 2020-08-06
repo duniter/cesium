@@ -2450,9 +2450,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       isNew: isNew,
       isUserPubkey: isUserPubkey,
       getData: getData,
+      loadQrCode: loadQrCode,
       loadData: loadData,
       refreshData: refreshData,
-      loadQrCode: loadQrCode,
       // internal
       internal: {
         addListener: addListener,

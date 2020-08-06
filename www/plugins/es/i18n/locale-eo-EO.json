@@ -394,7 +394,7 @@
       "RESULT_HELP": "<b>Jen la rezulto</b> tiel videbla ĉe via profilo:"
     },
     "CONFIRM": {
-      "DELETE": "Ĉu vi certas, ke vi volas <b>forigi vian profilon Cesium+ ?</b><br/><br/>Tiu ago estas neinversigebla."
+      "DELETE": "Ĉu vi certas, ke vi volas <b>forigi vian profilon Cesium+ ?</b><br/><br/>Tiu ago estas neinversigebla.",
       "DELETE_BY_MODERATOR": "Ĉu vi certas, ke vi volas <b>forigi tiun ĉi profilon Cesium+ ?</b><br/><br/>Tiu ago estas neinversigebla."
     },
     "ERROR": {

@@ -192,7 +192,7 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
         // Use the $ionicLoading toast.
         // First, make sure to convert duration in number
         if (typeof duration == 'string') {
-          if (duration == 'short') {
+          if (duration === 'short') {
             duration = 2000;
           }
           else {
@@ -237,7 +237,7 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
   }
 
   function selectElementText(el) {
-    if (el.value || el.type == "text" || el.type == "textarea") {
+    if (el.value || el.type === "text" || el.type === "textarea") {
       // Source: http://stackoverflow.com/questions/14995884/select-text-on-input-focus
       if ($window.getSelection && !$window.getSelection().toString()) {
         el.setSelectionRange(0, el.value.length);

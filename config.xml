@@ -128,7 +128,6 @@
     <plugin name="cordova-plugin-ionic-webview" spec="^4.1.3">
         <variable name="ANDROID_SUPPORT_ANNOTATIONS_VERSION" value="28.+" />
     </plugin>
-    <plugin name="cordova-plugin-console" spec="^1.1.0" />
     <plugin name="cordova-plugin-device" spec="^2.0.3" />
     <plugin name="cordova-plugin-dialogs" spec="^2.0.2" />
     <plugin name="cordova-clipboard" spec="^1.3.0" />

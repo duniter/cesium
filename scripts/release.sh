@@ -148,27 +148,21 @@ fi
 cd ${PROJECT_DIR} || exit 1
 git reset HEAD
 git add package.json config.xml install.sh www/js/config.js www/manifest.json resources/web-ext/manifest.json
-if [[ $? -ne 0 ]]; then
-  exit 1
-fi
+[[ $? -ne 0 ]] && exit 1
 git commit -m "v$2"
 git tag -f -a "v$2" -m "${description}"
 # Push the tag
 git push -f origin "v$2"
 # Push the master branch
 git push -f origin
-if [[ $? -ne 0 ]]; then
-  exit 1
-fi
+[[ $? -ne 0 ]] && exit 1
 
 echo "----------------------------------"
 echo "- Uploading web extension to Mozilla ..."
 echo "----------------------------------"
 . ${PROJECT_DIR}/scripts/release-sign-extension.sh $1
 # FIXME: always failed: but continue
-#if [[ $? -ne 0 ]]; then
-#    exit 1
-#fi
+#[[ $? -ne 0 ]] && exit 1
 
 echo "----------------------------------"
 echo "- Uploading artifacts to Github ..."
@@ -176,20 +170,15 @@ echo "----------------------------------"
 # Pause (wait propagation to from git.duniter.org to github)
 echo " Waiting 40s, for propagation to github..." && sleep 40s
 . ${PROJECT_DIR}/scripts/release-to-github.sh $1 ''"$description"''
-if [[ $? -ne 0 ]]; then
-    exit 1
-fi
+[[ $? -ne 0 ]] && exit 1
+
 
 echo "----------------------------------"
 echo "- Building desktop artifacts..."
 echo "----------------------------------"
 . ${PROJECT_DIR}/scripts/release-desktop.sh $1
-if [[ $? -ne 0 ]]; then
-    exit 1
-fi
+[[ $? -ne 0 ]] && exit 1
 
-# Back to nodejs project version
-nvm use ${NODEJS_VERSION}
 
 echo "----------------------------------"
 echo "- Push git android project..."
@@ -199,6 +188,8 @@ echo "----------------------------------"
 echo "**********************************"
 echo "* Build release succeed !"
 echo "**********************************"
+
+cd ${PROJECT_DIR}
 
 # Back to nodejs project version
 nvm use ${NODEJS_VERSION}
