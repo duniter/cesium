@@ -637,12 +637,12 @@ function webCleanUnusedDirectories() {
 
   let patterns = [
     wwwPath + '/templates',
-    wwwPath + '/js',
     wwwPath + '/plugins'
   ];
 
   if (enableUglify) {
     patterns = patterns.concat([
+      wwwPath + '/js',
       wwwPath + '/css',
       wwwPath + '/dist',
       wwwPath + '/lib/*',
@@ -659,12 +659,14 @@ function webCleanUnusedDirectories() {
   }
   else {
     patterns = patterns.concat([
+      wwwPath + '/js/*',
+      '!' + wwwPath + '/js/vendor',
       wwwPath + '/dist_css',
       wwwPath + '/dist_js'
     ]);
   }
 
-  return gulp.src(patterns, {read: false})
+  return gulp.src(patterns, {read: false, allowEmpty: true})
     //.pipe(debug({title: 'deleting '}))
     .pipe(clean());
 }
