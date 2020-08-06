@@ -2,7 +2,7 @@
 ===================
 
 :date: 2017-04-04 12:59
-:modified: 2019-07-14 12:00
+:modifié: 2019-07-14 12:00
 
 **Licence de la monnaie et engagement de responsabilité.**
 
@@ -21,7 +21,7 @@ Bien connaître une personne suppose que vous êtes en mesure de la contacter pa
 
 Ne certifiez jamais seul, mais accompagné d'au moins un autre membre de la TdC Ğ1 afin d'éviter toute erreur de manipulation. En cas d'erreur, prévenez immédiatement d'autres membres de la TdC Ğ1.
 
-Avant toute certification, assurez vous de vérifier si son compte (qu'il soit en cours de validation ou déjà membre) a déjà reçu une ou plusieurs certifications. Le cas échéant demandez des informations pour entrer en contact avec ces autres certificateurs afin de vérifier ensemble que vous connaissez bien la personne concernée par la création du nouveau compte, ainsi que la clé publique correspondante.
+Avant toute certification, assurez-vous de vérifier si son compte (qu'il soit en cours de validation ou déjà membre) a déjà reçu une ou plusieurs certifications. Le cas échéant demandez des informations pour entrer en contact avec ses autres certificateurs afin de vérifier ensemble que vous connaissez bien la personne concernée par la création du nouveau compte, ainsi que la clé publique correspondante.
 
 Vérifiez que le futur certifié maîtrise bien son compte : un bon moyen de vérifier cela est de transférer quelques Ğ1 vers le compte cible, et de demander ensuite un renvoi vers votre propre compte, cela assure de la bonne maîtrise par le futur certifié de sa clé privée.
 
@@ -92,6 +92,6 @@ Logiciels Ğ1 et licence Ğ1
 
 Les logiciels Ğ1 permettant aux utilisateurs de gérer leur utilisation de Ğ1 doivent transmettre cette licence avec le logiciel ainsi que l'ensemble des paramètres techniques de la monnaie Ğ1 et de la TdC Ğ1 qui sont inscrits dans le bloc 0 de Ğ1. Un logiciel qui ne remplirait pas ces obligations de la licence n'est pas compatible Ğ1.
 
-Pour plus de précisions dans les détails techniques il est possible de consulter directement le code de Duniter qui est un logiciel libre ainsi que les données de la blockchain Ğ1 en la récupérant via une instance (ou nœud) Duniter Ğ1.
+Pour plus de précisions dans les détails techniques il est possible de consulter directement le code de Duniter qui est un logiciel libre ainsi que les données de la blockchain Ğ1 en les récupérant via une instance (ou nœud) Duniter Ğ1.
 
 Plus d'informations sur le site de l'équipe Duniter https://www.duniter.org
