@@ -1,6 +1,7 @@
 
 angular.module('cesium.controllers', [
     'cesium.app.controllers',
+    'cesium.home.controllers',
     'cesium.join.controllers',
     'cesium.login.controllers',
     'cesium.help.controllers',

@@ -229,6 +229,16 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       return $q.when();
     }
 
+    function registerProtocol() {
+      console.debug("[platform] Register protocol g1://")
+      try {
+        navigator.registerProtocolHandler("web+june", "#/app/home?uri=%s", "Cesium");
+      }
+      catch(err) {
+        console.error(err)
+      }
+    }
+
     function addListeners() {
       listeners = [
         // Listen if node changed
@@ -260,6 +270,8 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
       // Avoid change state
       disableChangeState();
+
+      registerProtocol();
 
       // We use 'ionicReady()' instead of '$ionicPlatform.ready()', because this one is callable many times
       startPromise = ionicReady()

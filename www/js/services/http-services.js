@@ -318,9 +318,11 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
   // See doc : https://gist.github.com/jlong/2428561
   function parseUri(uri) {
     var protocol;
-    if (uri.startsWith('duniter://')) {
-      protocol = 'duniter';
-      uri = uri.replace('duniter://', 'http://');
+
+    // G1 URI (see G1lien)
+    if (uri.startsWith('web+june://') || uri.startsWith('g1://')) {
+      protocol = 'g1:';
+      uri = uri.replace(/^(g1|web+june):\/\//, 'http:');
     }
 
     var parser = document.createElement('a');
