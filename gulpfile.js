@@ -14,7 +14,6 @@ const gulp = require('gulp'),
   templateCache = require('gulp-angular-templatecache'),
   ngTranslate = require('gulp-angular-translate'),
   ngAnnotate = require('gulp-ng-annotate'),
-  es = require('event-stream'),
   zip = require('gulp-zip'),
   del = require('del'),
   useref = require('gulp-useref'),
@@ -33,8 +32,16 @@ const gulp = require('gulp'),
   colors = require('ansi-colors'),
   argv = require('yargs').argv,
   sriHash = require('gulp-sri-hash'),
-  sort = require('gulp-sort'),
-  jsonlint = require("@prantlf/gulp-jsonlint");
+  sort = require('gulp-sort');
+
+  // Workaround because @ioni/v1-toolkit use gulp v3.9.2 instead of gulp v4
+  let jsonlint;
+  try {
+    jsonlint = require('@prantlf/gulp-jsonlint');
+  } catch(e) {
+    log(colors.red("Cannot load 'gulp-jsonlint'. Retrying using project path"), e);
+  }
+
 
 const paths = {
   license_md: ['./www/license/*.md'],
@@ -239,7 +246,9 @@ function pluginLeafletImages(dest) {
     'www/lib/leaflet-search/images/*.*',
     '!www/lib/leaflet-search/images/back.png',
     '!www/lib/leaflet-search/images/leaflet-search.jpg',
-    'www/lib/leaflet.awesome-markers/dist/images/*.*'])
+    'www/lib/leaflet.awesome-markers/dist/images/*.*'],
+      {read: false, allowEmpty: true}
+    )
     .pipe(gulp.dest(dest));
 }
 
@@ -249,7 +258,7 @@ function pluginSass() {
   return merge(
 
     // Copy plugins CSS
-    gulp.src(paths.css_plugin)
+    gulp.src(paths.css_plugin, {read: false})
       .pipe(gulp.dest('www/dist/dist_css/plugins')),
 
     // Leaflet images
