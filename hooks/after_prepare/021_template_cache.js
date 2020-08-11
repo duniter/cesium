@@ -16,7 +16,8 @@ if (rootdir) {
     let platform = platforms[x].trim().toLowerCase();
 
     let wwwPath;
-    if(platform == 'android') {
+    if (platform === 'android') {
+      //wwwPath = path.join(rootdir, 'platforms', platform, 'app', 'src', 'main', 'assets', 'www');
       wwwPath = path.join(rootdir, 'platforms', platform, 'assets', 'www');
     } else {
       wwwPath = path.join(rootdir, 'platforms', platform, 'www');

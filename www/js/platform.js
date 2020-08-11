@@ -229,14 +229,18 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       return $q.when();
     }
 
-    function registerProtocol() {
-      console.debug("[platform] Register protocol g1://")
-      try {
-        navigator.registerProtocolHandler("web+june", "#/app/home?uri=%s", "Cesium");
-      }
-      catch(err) {
-        console.error(err)
-      }
+    function registerProtocols() {
+      var protocols = ['web+june'/*, 'web+g1', 'g1'*/];
+
+      _.each(protocols, function(protocol) {
+        console.debug("[platform] Registering protocol '%s'...".format(protocol));
+        try {
+          navigator.registerProtocolHandler(protocol, "#/app/home?uri=%s", "Cesium");
+        }
+        catch(err) {
+          console.error("[platform] Error while registering protocol '%s'".format(protocol), err);
+        }
+      });
     }
 
     function addListeners() {
@@ -271,7 +275,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       // Avoid change state
       disableChangeState();
 
-      registerProtocol();
+      registerProtocols();
 
       // We use 'ionicReady()' instead of '$ionicPlatform.ready()', because this one is callable many times
       startPromise = ionicReady()

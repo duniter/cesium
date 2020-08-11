@@ -76,7 +76,8 @@ if (rootdir) {
       const platform = platforms[x].trim().toLowerCase();
       let indexPath;
 
-      if(platform == 'android') {
+      if(platform === 'android') {
+        //indexPath = path.join(rootdir, 'platforms', platform, 'app', 'src', 'main', 'assets', 'www', 'index.html');
         indexPath = path.join('platforms', platform, 'assets', 'www', 'index.html');
       } else {
         indexPath = path.join('platforms', platform, 'www', 'index.html');

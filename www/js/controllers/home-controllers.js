@@ -26,7 +26,7 @@ angular.module('cesium.home.controllers', ['cesium.platform', 'cesium.services']
   .controller('HomeCtrl', HomeController)
 ;
 
-function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $http, UIUtils,
+function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $http, UIUtils, BMA,
                         csConfig, csCache, csPlatform, csCurrency, csSettings, csHttp) {
   'ngInject';
 
@@ -185,39 +185,62 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
     console.debug("[home] Detecting external uri: ", uri);
     var parts = csHttp.uri.parse(uri);
 
-    if (parts.protocol === 'g1:') {
-      console.debug("[home] Applying g1 uri...", parts);
+    var state,stateParams;
 
-      // Transfer
-      if (parts.hostname && parts.search.indexOf('amount=') !== -1) {
-        return $state.go('app.new_transfer_pubkey', {
-          pubkey: parts.hostname
-        });
-      }
+    if (parts.protocol === 'g1:' || parts.protocol === 'june:') {
+      console.debug("[home] Applying uri...", parts);
 
       // Pubkey
-      else if (parts.hostname && BMA.regexp.PUBKEY.test(parts.hostname)) {
-        var pubkey = parts.hostname;
-        return $state.go('app.wot_identity', {
-          pubkey: pubkey
-        });
+      if (parts.hostname && BMA.regexp.PUBKEY.test(parts.hostname)) {
+        state = 'app.wot_identity';
+        stateParams = {pubkey: parts.hostname};
+      }
+      else if ((parts.hostname === 'wallet' || parts.hostname === 'pubkey') && BMA.regexp.PUBKEY.test(parts.pathSegments[0])) {
+        state = 'app.wot_identity';
+        stateParams = {pubkey: parts.pathSegments[0]};
       }
 
-      // Search by uid
-      else if (parts.hostname && BMA.regexp.USER_ID.test(parts.hostname)) {
-        var uid = parts.hostname;
-        return $state.go('app.wot_lookup.tab_search', {
-          q: uid
-        });
+      // Block
+      else if (parts.hostname === 'block') {
+        state = 'app.view_block';
+        stateParams = {number: parts.pathSegments[0]};
       }
+
+      // Otherwise, try to a wot lookup
+      else if (parts.hostname && BMA.regexp.USER_ID.test(parts.hostname)) {
+        state = 'app.wot_lookup.tab_search';
+        stateParams = {q: parts.hostname};
+      }
+    }
+
+    if (state === 'app.wot_identity' && parts.searchParams && (angular.isDefined(parts.searchParams.action) || angular.isDefined(parts.searchParams.amount))) {
+      stateParams = angular.merge(stateParams,
+        // Add default actions
+        { action: 'transfer'},
+        // Add path params
+        parts.searchParams);
+    }
+
+    // Open the state
+    if (state) {
+      $ionicHistory.clearHistory();
+      $ionicHistory.nextViewOptions({
+        disableAnimate: false,
+        disableBack: true,
+        historyRoot: true
+      });
+      return $state.go(state, stateParams, {
+        reload: true,
+        inherit: false,
+        notify: true
+      });
     }
     else {
-      console.error("[home] Unknown protocol, in URI: " + uri);
+      console.error("[home] Unknown URI format: " + uri);
+      this.loading = false;
+      return UIUtils.alert.error("ERROR.UNKNOWN_URI_FORMAT", uri);
     }
-
-    // Redirect to home
-    return $state.go('app.home');
-  }
+  };
 
   // For DEV ONLY
   /*$timeout(function() {

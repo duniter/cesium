@@ -317,12 +317,22 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
   // See doc : https://gist.github.com/jlong/2428561
   function parseUri(uri) {
-    var protocol;
+    var protocol, hostname;
 
     // G1 URI (see G1lien)
-    if (uri.startsWith('web+june://') || uri.startsWith('g1://')) {
-      protocol = 'g1:';
-      uri = uri.replace(/^(g1|web+june):\/\//, 'http:');
+    if (uri.startsWith('g1:') || uri.startsWith('june:') || uri.startsWith('web+june:')) {
+      protocol = 'june:';
+      var path = uri.replace(/^(g1|web\+june|june):(\/\/)?/, '');
+
+      // Store hostname here, because parse will apply a lowercase
+      hostname = path;
+      if (hostname.indexOf('/') !== -1) {
+        hostname = hostname.substr(0, path.indexOf('/'));
+      }
+      if (hostname.indexOf('?') !== -1) {
+        hostname = hostname.substr(0, path.indexOf('?'));
+      }
+      uri = 'http://' + path;
     }
 
     var parser = document.createElement('a');
@@ -333,15 +343,33 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       pathname = pathname.substring(1);
     }
 
+    var searchParams;
+    if (parser.search && parser.search.startsWith('?')) {
+      searchParams = parser.search.substr(1).split('&')
+        .reduce(function(res, searchParam) {
+          if (searchParam.indexOf('=') !== -1) {
+            var key = searchParam.substr(0, searchParam.indexOf('='));
+            var value = searchParam.substr(searchParam.indexOf('=') + 1);
+            res[key] = value;
+          }
+          else {
+            res[searchParam] = true; // default value
+          }
+          return res;
+        }, {});
+    }
+
     var result = {
       protocol: protocol ? protocol : parser.protocol,
-      hostname: parser.hostname,
+      hostname: hostname ? hostname : parser.hostname,
       host: parser.host,
       port: parser.port,
       username: parser.username,
       password: parser.password,
       pathname: pathname,
+      pathSegments: pathname ? pathname.split('/') : [],
       search: parser.search,
+      searchParams: searchParams,
       hash: parser.hash
     };
     parser.remove();

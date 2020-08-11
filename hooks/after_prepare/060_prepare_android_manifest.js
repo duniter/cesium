@@ -15,9 +15,10 @@ if (rootdir) {
 
     let platform = platforms[x].trim().toLowerCase();
 
-    if(platform = 'android') {
-      let platformPath = path.join(rootdir, 'platforms', platform);
-      let androidManifestFile = path.join(platformPath, 'AndroidManifest.xml');
+    if (platform === 'android') {
+      //let srcMainPath = path.join(rootdir, 'platforms', platform, 'app', 'src', 'main');
+      let srcMainPath = path.join(rootdir, 'platforms', platform);
+      let androidManifestFile = path.join(srcMainPath, 'AndroidManifest.xml');
 
       // Clean unused directories
       console.log('-----------------------------------------');
@@ -38,7 +39,7 @@ if (rootdir) {
         // add <uses-sdk> (replace 'targetSdkversion' and add tools:overrideLibrary)
         .pipe(replace(/(<\/manifest>)/, '    <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="29" tools:overrideLibrary="org.kaliumjni.lib" />\n$1'))
 
-        .pipe(gulp.dest(platformPath));
+        .pipe(gulp.dest(srcMainPath));
 
       console.log('-----------------------------------------');
 

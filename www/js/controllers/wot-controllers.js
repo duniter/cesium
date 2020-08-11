@@ -43,7 +43,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wot_identity', {
-        url: "/wot/:pubkey/:uid?action&block",
+        url: "/wot/:pubkey/:uid?action&block&amount&comment",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_identity.html",
@@ -943,6 +943,8 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
 
     // Reset action param
     stateParams.action = null;
+    stateParams.amount = null;
+    stateParams.comment = null;
 
     // Update location href
     $ionicHistory.nextViewOptions({
@@ -959,10 +961,10 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
   };
 
   $scope.doAction = function(action, options) {
-    if (action == 'certify') {
+    if (action === 'certify') {
       return $scope.certify();
     }
-    if (action == 'transfer') {
+    if (action === 'transfer') {
       $scope.showTransferModal(options);
     }
   };
@@ -1057,7 +1059,7 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
       $scope.doMotion();
       if (state.stateParams && state.stateParams.action) {
         $timeout(function() {
-          $scope.doAction(state.stateParams.action.trim());
+          $scope.doAction(state.stateParams.action.trim(), state.stateParams);
         }, 100);
 
         $scope.removeActionParamInLocationHref(state);

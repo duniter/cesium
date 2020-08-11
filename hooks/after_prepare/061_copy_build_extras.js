@@ -65,13 +65,13 @@ if (rootdir) {
           }
 
           const signing_file = build_dir + '/release-signing.properties';
-          if (!fs.existsSync(signing_file)) {
+          if (!fs.existsSync(signing_file) && !fs.existsSync(android_dir + '/release-signing.properties')) {
             log(colors.red(' File ' + signing_file + 'not found. Skipping copy to ' + android_dir));
             log(colors.red('   WARNING: Release APK files will not be signed !'));
           }
 
         } else {
-          log(colors.orange(' Directory ' + build_dir + 'not found. Skipping copy to ' + android_dir));
+          log(colors.red(' Directory ' + build_dir + 'not found. Skipping copy to ' + android_dir));
         }
       }
     } catch (e) {

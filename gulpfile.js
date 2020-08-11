@@ -16,6 +16,7 @@ const gulp = require('gulp'),
   ngAnnotate = require('gulp-ng-annotate'),
   zip = require('gulp-zip'),
   del = require('del'),
+  debug = require('gulp-debug'),
   useref = require('gulp-useref'),
   filter = require('gulp-filter'),
   uglify = require('gulp-uglify-es').default,
@@ -302,10 +303,19 @@ function webCopyFiles() {
   log(colors.green('Preparing dist/web files...'));
   let htmlminOptions = {removeComments: true, collapseWhitespace: true};
 
+  const debugOptions = {
+    title: 'Copying',
+    minimal: true,
+    showFiles: argv.debug || false,
+    showCount: argv.debug || false,
+    logger: m => log(colors.grey(m))
+  };
+
   var tmpPath = './dist/web/www';
   return merge(
     // Copy Js (and remove unused code)
     gulp.src('./www/js/**/*.js')
+      .pipe(debug(debugOptions))
       .pipe(removeCode({"no-device": true}))
       .pipe(jshint())
       .pipe(gulp.dest(tmpPath + '/js')),
@@ -336,10 +346,12 @@ function webCopyFiles() {
 
     // Copy fonts
     gulp.src('./www/fonts/**/*.*')
+      .pipe(debug(debugOptions))
       .pipe(gulp.dest(tmpPath + '/fonts')),
 
     // Copy CSS
     gulp.src('./www/css/**/*.*')
+      .pipe(debug(debugOptions))
       .pipe(gulp.dest(tmpPath + '/css')),
 
     // Copy i18n
@@ -348,18 +360,22 @@ function webCopyFiles() {
       .pipe(jsonlint.reporter())
       .pipe(sort())
       .pipe(ngTranslate({standalone:true, module: 'cesium.translations'}))
+      .pipe(debug(debugOptions))
       .pipe(gulp.dest(tmpPath + '/js')),
 
     // Copy img
     gulp.src('./www/img/**/*.*')
+      .pipe(debug(debugOptions))
       .pipe(gulp.dest(tmpPath + '/img')),
 
     // Copy manifest.json
     gulp.src('./www/manifest.json')
+      .pipe(debug(debugOptions))
       .pipe(gulp.dest(tmpPath)),
 
     // Copy lib (JS, CSS and fonts)
     gulp.src(['./www/lib/**/*.js', './www/lib/**/*.css', './www/lib/**/fonts/**/*.*'])
+      .pipe(debug(debugOptions))
       .pipe(gulp.dest(tmpPath + '/lib')),
 
     // Copy license into HTML
@@ -517,18 +533,32 @@ function webUglify(done) {
   if (done) done();
 }
 
-function webIntegrity() {
+function webIntegrity(done) {
   const wwwPath = './dist/web/www';
 
-  log(colors.green('Add integrity hash to <script src> tag...'));
+  const enableIntegrity = argv.release || false;
 
-  // Process index.html
-  return gulp.src(wwwPath + '/index.html', {base: wwwPath})
+  if (enableIntegrity) {
+    log(colors.green('Add integrity hash to <script src> tag...'));
 
-    // Add an integrity hash
-    .pipe(sriHash())
-    .pipe(rename({ extname: '.integrity.html' }))
-    .pipe(gulp.dest(wwwPath));
+    // Process index.html
+    return gulp.series(
+      gulp.src(wwwPath + '/index.html', {base: wwwPath})
+
+      // Add an integrity hash
+      .pipe(sriHash())
+
+      .pipe(rename({ extname: '.integrity.html' }))
+      .pipe(gulp.dest(wwwPath)),
+
+      gulp.src(wwwPath + '/index.html', {base: wwwPath})
+        .pipe(rename({ extname: '.test.html' }))
+        .pipe(gulp.dest(wwwPath))
+    )
+      .on('end', done);
+  }
+
+  if (done) done();
 }
 
 function webApiUglify() {
@@ -591,7 +621,7 @@ function webApiUglify() {
   }
 
   else {
-    log(colors.red('API: Minify JS and CSS files. Skip') + colors.grey(' (missing options --release or --uglify)'));
+    log(colors.red('API: Skipping minify JS and CSS files') + colors.grey(' (missing options --release or --uglify)'));
 
     return gulp.src(tmpPath + '/*/index.html')
       .pipe(useref())             // Concatenate with gulp-useref
@@ -608,26 +638,36 @@ function webApiUglify() {
 
 function webCleanUnusedFiles(done) {
   log(colors.green('Clean unused files...'));
-  const cleanSources = argv.release || argv.uglify || false;
+  const enableUglify = argv.release || argv.useref || argv.uglify || false;
+  const cleanSources = enableUglify;
+  const debugOptions = {
+    title: 'Deleting',
+    minimal: true,
+    showFiles: argv.debug || false,
+    showCount: !argv.debug,
+    logger: m => log(colors.grey(m))
+  };
 
   const wwwPath = './dist/web/www';
 
   if (cleanSources) {
     return merge(
-      // Clean core JS + CSS
+      // Clean core JS
       gulp.src(wwwPath + '/js/**/*.js', {read: false})
-        .pipe(clean()),
-      gulp.src(wwwPath + '/css/**/*.css', {read: false})
+        .pipe(debug(debugOptions))
         .pipe(clean()),
 
       // Clean plugins JS + CSS
       gulp.src(wwwPath + '/plugins/**/*.js', {read: false})
+        .pipe(debug(debugOptions))
         .pipe(clean()),
       gulp.src(wwwPath + '/plugins/**/*.css', {read: false})
+        .pipe(debug(debugOptions))
         .pipe(clean()),
 
       // Unused maps/config.js.map
       gulp.src(wwwPath + '/maps/config.js.map', {read: false, allowEmpty: true})
+        .pipe(debug(debugOptions))
         .pipe(clean())
     )
       .on('end', done);
@@ -640,6 +680,13 @@ function webCleanUnusedFiles(done) {
 function webCleanUnusedDirectories() {
   log(colors.green('Clean unused directories...'));
   const enableUglify = argv.release || argv.uglify || false;
+  const debugOptions = {
+    title: 'Deleting',
+    minimal: true,
+    showFiles: argv.debug || false,
+    showCount: !argv.debug,
+    logger: m => log(colors.grey(m))
+  };
 
   // Clean dir
   const wwwPath = './dist/web/www';
@@ -676,7 +723,7 @@ function webCleanUnusedDirectories() {
   }
 
   return gulp.src(patterns, {read: false, allowEmpty: true})
-    //.pipe(debug({title: 'deleting '}))
+    .pipe(debug(debugOptions))
     .pipe(clean());
 }
 
