@@ -1,26 +1,27 @@
-#!/bin/bash
+#!/bin/sh
 
 # Get to the root project
-if [[ "_" == "_${PROJECT_DIR}" ]]; then
-  SCRIPT_DIR=$(dirname $0)
-  PROJECT_DIR=$(cd ${SCRIPT_DIR}/.. && pwd)
-  export PROJECT_DIR
+SCRIPT_DIR=$(dirname "$(readlink "$BASH_SOURCE" || echo "$BASH_SOURCE")")
+PROJECT_DIR=$(cd "${SCRIPT_DIR}/.." && pwd -P)
+export PROJECT_DIR
+
+echo "Project dir: $PROJECT_DIR"
+
+
+if ! test -f "${PROJECT_DIR}/package.json"; then
+  echo "ERROR: Invalid project dir: file 'package.json' not found in ${PROJECT_DIR}"
+  echo "       -> Make sure to run the script inside his directory, or export env variable 'PROJECT_DIR'"
+  #exit 1
 fi;
 
-if [[ ! -f "${PROJECT_DIR}/package.json" ]]; then
-  echo "Invalid project dir: file 'package.json' not found in ${PROJECT_DIR}"
-  echo "-> Make sure to run the script inside his directory, or export env variable 'PROJECT_DIR'"
-  exit 1
-fi;
-
-echo "Preparing project environment.."
+echo "Preparing project environment..."
 
 PROJECT_NAME="cesium"
 REPO="duniter/cesium"
 REPO_API_URL="https://api.github.com/repos/${REPO}"
 REPO_PUBLIC_URL="https://github.com/${REPO}"
 
-NODEJS_VERSION=10
+NODEJS_VERSION=12
 
 ANDROID_NDK_VERSION=r19c
 ANDROID_SDK_VERSION=r29.0.2
@@ -46,43 +47,40 @@ GRADLE_HOME=${HOME}/.gradle/${GRADLE_VERSION}
 CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL=https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-all.zip
 
 # Override with a local file, if any
-if [[ -f "${PROJECT_DIR}/.local/env.sh" ]]; then
+if test -f "${PROJECT_DIR}/.local/env.sh"; then
   echo "Loading environment variables from: '.local/env.sh'"
-  source ${PROJECT_DIR}/.local/env.sh
-  [[ $? -ne 0 ]] && exit 1
+  . ${PROJECT_DIR}/.local/env.sh
 else
   echo "No file '${PROJECT_DIR}/.local/env.sh' found. Will use defaults"
 fi
 
 # Checking Java installed
-if [[ "_" == "_${JAVA_HOME}" ]]; then
+if test -z "${JAVA_HOME}"; then
   JAVA_CMD=`which java`
-  if [[ "_" == "_${JAVA_CMD}" ]]; then
-    echo "No Java installed. Please install java, or set env variable JAVA_HOME "
-    exit 1
+  if test -z "${JAVA_CMD}"; then
+    echo "ERROR: No Java installed. Please install java, or set env variable JAVA_HOME "
+    #exit 1
   fi
 
   # Check the Java version
-  JAVA_VERSION=`java -version 2>&1 | egrep "(java|openjdk) version" | awk '{print $3}' | tr -d \"`
-  if [[ $? -ne 0 ]]; then
+  JAVA_VERSION=$(java -version 2>&1 | egrep "(java|openjdk) version" | awk '{print $3}' | tr -d \")
+  if test $? -ne 0 || test -z "${JAVA_VERSION}"; then
     echo "No Java JRE 1.8 found in machine. This is required for Android artifacts."
-    exit 1
-  fi
-  JAVA_MAJOR_VERSION=`echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[1]}'`
-  JAVA_MINOR_VERSION=`echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[2]}'`
-  if [[ ${JAVA_MAJOR_VERSION} -ne 1 ]] || [[ ${JAVA_MINOR_VERSION} -ne 8 ]]; then
-    echo "Require a Java JRE in version 1.8, but found ${JAVA_VERSION}. You can override your default JAVA_HOME in '.local/env.sh'."
-    exit 1
+  else
+    JAVA_MAJOR_VERSION=$(echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[1]}')
+    JAVA_MINOR_VERSION=$(echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[2]}')
+    if ! test "${JAVA_MAJOR_VERSION}" == "1" || ! test "${JAVA_MINOR_VERSION}" == "8"; then
+      echo "ERROR: Require a Java JRE in version 1.8, but found ${JAVA_VERSION}. You can override your default JAVA_HOME in '.local/env.sh'."
+    fi
   fi
 fi
 
 # Check Android SDK root path
-if [[ "_" == "_${ANDROID_SDK_ROOT}" || ! -d "${ANDROID_SDK_ROOT}" ]]; then
-  if [[ -d "${ANDROID_ALTERNATIVE_SDK_ROOT}" ]]; then
+if test -z "${ANDROID_SDK_ROOT}" || ! test -d "${ANDROID_SDK_ROOT}"; then
+  if test -d "${ANDROID_ALTERNATIVE_SDK_ROOT}"; then
     export ANDROID_SDK_ROOT="${ANDROID_ALTERNATIVE_SDK_ROOT}"
   else
-    echo "Please set env variable ANDROID_SDK_ROOT to an existing directory"
-    exit 1
+    echo "ERROR: Please set env variable ANDROID_SDK_ROOT to an existing directory"
   fi
 fi
 
@@ -100,22 +98,20 @@ export PATH \
 
 # Node JS
 export NVM_DIR="$HOME/.nvm"
-if [[ -d "${NVM_DIR}" ]]; then
+if test -d "${NVM_DIR}"; then
 
     # Load NVM
-    . ${NVM_DIR}/nvm.sh
+    . "${NVM_DIR}/nvm.sh"
 
     # Switch to expected version
     nvm use ${NODEJS_VERSION}
 
     # Or install it
-    if [[ $? -ne 0 ]]; then
+    if test $? -ne 0; then
         nvm install ${NODEJS_VERSION}
-        [[ $? -ne 0 ]] && exit 1
     fi
 else
     echo "nvm (Node version manager) not found (directory ${NVM_DIR} not found). Please install, and retry"
-    exit -1
 fi
 
 # Install global dependencies
@@ -125,29 +121,40 @@ CORDOVA_PATH=`which cordova`
 CORDOVA_RES_PATH=`which cordova-res`
 NATIVE_RUN_PATH=`which native-run`
 WEB_EXT_PATH=`which web-ext`
-if [[ "_" == "_${YARN_PATH}" || "_" == "_${IONIC_PATH}" || "_" == "_${CORDOVA_PATH}" || "_" == "_${CORDOVA_RES_PATH}" || "_" == "_${NATIVE_RUN_PATH}" || "_" == "_${WEB_EXT_PATH}" ]]; then
+if test -z "${YARN_PATH}" || test -z "${IONIC_PATH}" || test -z "${CORDOVA_PATH}" || test -z "${CORDOVA_RES_PATH}" || test -z "${NATIVE_RUN_PATH}" || test -z "${WEB_EXT_PATH}"; then
   echo "Installing global dependencies..."
   npm install -g yarn cordova cordova-res @ionic/cli web-ext native-run
-   [[ $? -ne 0 ]] && exit 1
+  if ! test $? == 0; then
+    echo "ERROR: Unable to install global dependencies"
+    #exit 1
+  fi
 
   # Make sure Ionic use yarn
   ionic config set -g yarn true
 fi
 
 # Install project dependencies
-if [[ ! -d "${PROJECT_DIR}/node_modules" ]]; then
+if ! test -d "${PROJECT_DIR}/node_modules"; then
     echo "Installing project dependencies..."
-    cd ${PROJECT_DIR}
+    cd "${PROJECT_DIR}"
     yarn install
 fi
 
 # Install project submodules
-if [[ ! -d "${PROJECT_DIR}/platforms/android" || ! -d "${PROJECT_DIR}/dist/desktop" ]]; then
+if ! test -d "${PROJECT_DIR}/platforms/android" || ! test -d "${PROJECT_DIR}/dist/desktop"; then
   echo "Installing project submodules..."
-  cd ${PROJECT_DIR}
+  cd "${PROJECT_DIR}"
   git submodule init && git submodule sync && git submodule update --remote --merge
-  if [[ $? -ne 0 ]]; then
-    echo "Unable to sync git submodule. Will not be able to build android and desktop artifacts!"
-    exit 1
+  if ! test $? == 0; then
+    echo "ERROR: Unable to sync git submodule. Will not be able to build android and desktop artifacts!"
+    #exit 1
   fi
 fi
+
+
+export PROJECT_DIR PROJECT_NAME REPO REPO_API_URL REPO_PUBLIC_URL NODEJS_VERSION \
+  ANDROID_NDK_VERSION ANDROID_SDK_VERSION ANDROID_SDK_TOOLS_VERSION ANDROID_SDK_ROOT ANDROID_ALTERNATIVE_SDK_ROOT \
+  ANDROID_SDK_TOOLS_ROOT ANDROID_OUTPUT_APK ANDROID_OUTPUT_APK_DEBUG ANDROID_OUTPUT_APK_RELEASE DIST_WEB \
+  DIST_ANDROID WEB_EXT_ID
+
+echo "Project environment is ready!"
