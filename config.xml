@@ -37,6 +37,7 @@
     <preference name="StatusBarOverlaysWebView" value="false" />
     <preference name="StatusBarBackgroundColor" value="#000" />
     <preference name="StatusBarStyle" value="lightcontent" />
+    <preference name="loadUrlTimeoutValue" value="700000" />
     <allow-navigation href="*" />
     <feature name="StatusBar">
         <param name="ios-package" onload="true" value="CDVStatusBar" />
@@ -48,6 +49,19 @@
         <param name="android-package" onload="true" value="me.lockate.plugins.MiniSodium" />
     </feature>
     <platform name="android">
+        <preference name="AndroidXEnabled" value="true" />
+        <preference name="cdvMinSdkVersion" value="16" />
+        <preference name="cdvCompileSdkVersion" value="29" />
+        <preference name="cdvBuildToolsVersion" value="29.0.2" />
+        <hook src="scripts/hooks/before_prepare/061_copy_build_extras.js" type="before_prepare" />
+        <hook src="scripts/hooks/after_prepare/010_add_platform_class.js" type="after_prepare" />
+        <hook src="scripts/hooks/after_prepare/021_template_cache.js" type="after_prepare" />
+        <hook src="scripts/hooks/after_prepare/022_translate.js" type="after_prepare" />
+        <hook src="scripts/hooks/after_prepare/040_useref.js" type="after_prepare" />
+        <hook src="scripts/hooks/after_prepare/040_useref.js" type="after_prepare" />
+        <hook src="scripts/hooks/after_prepare/050_clean_unused_directories.js" type="after_prepare" />
+        <hook src="scripts/hooks/after_prepare/061_copy_build_extras.js" type="after_prepare" />
+        <hook src="scripts/hooks/before_compile/060_prepare_android_manifest.js" type="after_prepare" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
         <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
         <icon density="hdpi" src="resources/android/icon/drawable-hdpi-icon.png" />
@@ -129,8 +143,6 @@
         <icon height="512" src="resources/osx/icon-512.png" width="512" />
         <icon height="1024" src="resources/osx/icon-1024.png" width="1024" />
     </platform>
-    <plugin name="cordova-plugin-minisodium" spec="git+https://github.com/duniter-cesium/cordova-plugin-minisodium.git#v1.0.1" />
-    <plugin name="cordova-plugin-secure-storage-android10" spec="git+https://github.com/duniter-cesium/cordova-plugin-secure-storage-android10#6.0.4" />
     <plugin name="cordova-plugin-camera" spec="^4.1.0">
         <variable name="CAMERA_USAGE_DESCRIPTION" value="Add picture to the user profile" />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="Take a picture for the user profile" />
@@ -162,8 +174,6 @@
     </plugin>
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
     <plugin name="cordova-plugin-androidx" spec="^1.0.2" />
-    <plugin name="cordova-plugin-androidx-adapter" spec="^1.1.0" />
-    <engine name="ios" spec="git+https://github.com/duniter-cesium/cordova-ios.git#5.1.0" />
-    <engine name="osx" spec="^5.0.0" />
-    <engine name="android" spec="^9.0.0" />
+    <engine name="ios" spec="^6.1.0" />
+    <engine name="osx" spec="^6.0.0" />
 </widget>

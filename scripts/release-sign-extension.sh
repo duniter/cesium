@@ -9,7 +9,7 @@ fi;
 
 # Preparing Android environment
 cd ${PROJECT_DIR}
-. ${PROJECT_DIR}/scripts/env-global.sh
+source ${PROJECT_DIR}/scripts/env-global.sh
 
 XPI_BASENAME=${PROJECT_NAME}-$current-an+fx.xpi
 XPI_FILE=${PROJECT_DIR}/dist/web/build/${XPI_BASENAME}

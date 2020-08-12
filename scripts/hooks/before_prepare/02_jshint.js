@@ -66,9 +66,9 @@ function lintFile(file, callback) {
   });
 }
 
-function getJSFolder() {
+function getJSFolder(rootDir) {
   // Get folders, from files
-  const jsFolders =  glob.sync("www/**/*.js", {nonull: true})
+  const jsFolders =  glob.sync(rootDir + "/www/**/*.js", {nonull: true})
     // Map to file's folder
     .map(file => file.substring(0, file.lastIndexOf('/')))
     // Reduce to a map of folders
@@ -87,17 +87,25 @@ function getJSFolder() {
 }
 
 
-// Process each folder with Js file
-const errors = [];
-getJSFolder().forEach(folder => {
-  try {
-    processFiles(folder)
-  } catch(err) {
-    errors.push(err);
-  }
-});
+module.exports = function(context) {
+  const rootdir = context.opts.projectRoot;
 
-if (errors.length) {
-  log(colors.red(`Some JS files have errors`));
-  process.exit(1);
+  if (rootdir) {
+    const errors = [];
+
+    // Process each folder with Js file
+    getJSFolder(rootdir).forEach(folder => {
+      try {
+        processFiles(folder)
+      } catch (err) {
+        errors.push(err);
+      }
+    });
+
+    if (errors.length) {
+      log(colors.red(`Some JS files have errors`));
+      process.exit(1);
+    }
+  }
+
 }

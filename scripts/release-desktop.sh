@@ -10,10 +10,8 @@ fi;
 cd ${PROJECT_DIR}
 
 # Preparing the environment
-. ${PROJECT_DIR}/scripts/env-global.sh
-if [[ $? -ne 0 ]]; then
-  exit 1
-fi
+source ${PROJECT_DIR}/scripts/env-global.sh
+[[ $? -ne 0 ]] && exit 1
 
 ### Control that the script is run on `dev` branch
 branch=$(git rev-parse --abbrev-ref HEAD)
@@ -64,7 +62,5 @@ fi
 
 # Build desktop assets
 ./release.sh $current
-if [[ $? -ne 0 ]]; then
-    exit 1
-fi
+[[ $? -ne 0 ]] && exit 1
 

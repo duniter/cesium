@@ -127,7 +127,7 @@ cd cesium
 Puis, lancez le téléchargement et l'installation des modules Cesium à l'aide de la commande : 
 
 ```bash
-npm install -g yarn gulp@3.9.1 cordova@8.1.2 @ionic/cli@6.6.0 web-ext
+npm install -g yarn gulp cordova@10.0.0 @ionic/cli web-ext
 ```
 
 Puis pour les dépendances non globales :

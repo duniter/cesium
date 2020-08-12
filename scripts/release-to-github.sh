@@ -9,7 +9,7 @@ fi;
 
 # Preparing Android environment
 cd ${PROJECT_DIR}
-. ${PROJECT_DIR}/scripts/env-global.sh
+source ${PROJECT_DIR}/scripts/env-global.sh
 
 ### Control that the script is run on `dev` branch
 branch=$(git rev-parse --abbrev-ref HEAD)

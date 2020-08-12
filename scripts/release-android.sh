@@ -8,23 +8,15 @@ if [[ "_" == "_${PROJECT_DIR}" ]]; then
 fi;
 
 # Preparing Android environment
-. ${PROJECT_DIR}/scripts/env-android.sh
-if [[ $? -ne 0 ]]; then
-  exit 1
-fi
+source ${PROJECT_DIR}/scripts/env-android.sh
+[[ $? -ne 0 ]] && exit 1
 
 cd ${PROJECT_DIR}
 
 # Run the build
 echo "Running cordova build..."
-
 ionic cordova build android --warning-mode=none --color --prod --release
-# TODO: try this :
-#ionic cordova build android --warning-mode=none --color --prod --release --optimizejs --minifyjs --minifycss
-
-if [[ $? -ne 0 ]]; then
-  exit 1
-fi
+[[ $? -ne 0 ]] && exit 1
 
 # Signature
 KEYSTORE_FILE=${PROJECT_DIR}/.local/Cesium.keystore

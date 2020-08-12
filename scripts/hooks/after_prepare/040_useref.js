@@ -1,0 +1,83 @@
+#!/usr/bin/env node
+
+const gulp = require('gulp'),
+  path = require("path"),
+  es = require('event-stream'),
+  useref = require('gulp-useref'),
+  filter = require('gulp-filter'),
+  uglify = require('gulp-uglify-es').default,
+  csso = require('gulp-csso'),
+  log = require('fancy-log'),
+  colors = require('ansi-colors');
+
+module.exports = function(context) {
+
+  let skip = true;
+  if (context.cmdLine.indexOf("--release") > -1 || context.cmdLine.indexOf("--useref") > -1) {
+    skip = false;
+  } else {
+    log(colors.grey('Skipping useref'));
+  }
+
+  const rootdir = context.opts.projectRoot;
+  const platforms = context.opts.platforms;
+
+  if (rootdir && platforms && !skip) {
+
+    // go through each of the platform directories that have been prepared
+    const platforms = (process.env.CORDOVA_PLATFORMS ? process.env.CORDOVA_PLATFORMS.split(',') : []);
+
+    for (let x = 0; x < platforms.length; x++) {
+
+      let platform = platforms[x].trim().toLowerCase();
+
+      let wwwPath;
+      if (platform === 'android') {
+        wwwPath = path.join(rootdir, 'platforms', platform, 'app/src/main/assets/www');
+      } else {
+        wwwPath = path.join(rootdir, 'platforms', platform, 'www');
+      }
+
+      let indexPath = path.join(wwwPath, 'index.html');
+
+      const jsFilter = filter(['*/lib/**/*.js', '*/js/vendor/**/*.js'], {restore: true});
+      const cssFilter = filter('**/*.css', {restore: true});
+      const uglifyOptions = {
+        toplevel: true,
+        warnings: true,
+        ecma: '5',
+        mangle: {
+          reserved: ['qrcode', 'Base58']
+        },
+        compress: {
+          global_defs: {
+            "@console.log": "alert"
+          },
+          passes: 2
+        },
+        output: {
+          beautify: false,
+          preamble: "/* minified */",
+          max_line_len: 120000
+        }
+      };
+
+      // Removing unused code for device...
+      es.concat(
+        gulp.src(indexPath)
+          .pipe(useref())      // Concatenate with gulp-useref
+
+          .pipe(jsFilter)
+          .pipe(uglify(uglifyOptions)) // Minify any javascript sources
+          .pipe(jsFilter.restore)
+
+          .pipe(cssFilter)
+          .pipe(csso())               // Minify any CSS sources
+          .pipe(cssFilter.restore)
+
+          .pipe(gulp.dest(wwwPath))
+      );
+    }
+  }
+
+}

@@ -40,7 +40,7 @@ To build Cesium, you will have to:
       
 3. Installing node build tools, as global dependencies:
    ```bash
-      npm install -g yarn gulp cordova@8.1.2 @ionic/cli web-ext
+      npm install -g yarn gulp cordova@10.0.0 @ionic/cli web-ext
    ```
    
 ### Get the source code and dependencies

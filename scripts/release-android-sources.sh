@@ -10,10 +10,8 @@ fi;
 cd ${PROJECT_DIR}
 
 # Preparing the environment
-. ${PROJECT_DIR}/scripts/env-global.sh
-if [[ $? -ne 0 ]]; then
-  exit 1
-fi
+source ${PROJECT_DIR}/scripts/env-global.sh
+[[ $? -ne 0 ]] && exit 1
 
 # Commit android project
 cd ${PROJECT_DIR}/platforms/android || exit 1
