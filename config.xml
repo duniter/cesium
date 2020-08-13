@@ -55,9 +55,9 @@
     </feature>
     <platform name="android">
         <preference name="AndroidXEnabled" value="true" />
-        <preference name="cdvMinSdkVersion" value="16" />
-        <preference name="cdvCompileSdkVersion" value="29" />
-        <preference name="cdvBuildToolsVersion" value="29.0.2" />
+        <preference name="AndroidLaunchMode" value="singleTask" />
+        <preference name="android-minSdkVersion" value="16" />
+        <preference name="android-targetSdkVersion" value="29" />
         <hook src="scripts/hooks/before_prepare.js" type="before_prepare" />
         <hook src="scripts/hooks/after_prepare.js" type="after_prepare" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />

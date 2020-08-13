@@ -15,7 +15,7 @@
     "lint": "node scripts/node/jshint.js",
     "install-platforms": "ionic cordova prepare",
     "start": "ionic serve",
-    "start:firefox": "gulp webExtCompile && web-ext run --source-dir ./dist/web/ext/",
+    "start:webExt": "gulp webExtCompile && web-ext run --source-dir ./dist/web/ext/",
     "start:android": "ionic cordova run android --color",
     "docker:build": "sudo docker build . -t cesium/release",
     "docker:run": "sudo docker run -ti --rm -p 8100:8100 -p 35729:35729 -v .:/cesium:rw cesium/release",
@@ -203,9 +203,9 @@
       "cordova-plugin-androidx-adapter": {},
       "cordova-plugin-customurlscheme": {
         "URL_SCHEME": "june",
-        "ANDROID_SCHEME": " ",
-        "ANDROID_HOST": " ",
-        "ANDROID_PATHPREFIX": "/"
+        "ANDROID_SCHEME": "http",
+        "ANDROID_HOST": "g1.duniter.org",
+        "ANDROID_PATHPREFIX": "/wallet"
       },
       "cordova-plugin-secure-storage-android10": {},
       "cordova-plugin-minisodium": {}

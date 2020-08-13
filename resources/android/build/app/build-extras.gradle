@@ -9,12 +9,3 @@ dependencies {
     exclude group: 'com.android.support', module:'support-v4'
   }
 }
-
-// Overrides the value of minSdkVersion set in AndroidManifest.xml. Useful when creating multiple APKs based on SDK version
-ext.cdvMinSdkVersion=16
-
-  // Overrides the automatically detected android.compileSdkVersion value
-ext.cdvCompileSdkVersion=29
-
-  // Overrides the automatically detected android.buildToolsVersion value
-ext.cdvBuildToolsVersion='29.0.2'

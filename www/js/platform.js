@@ -100,7 +100,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
   })
 
 
-  .factory('csPlatform', function (ionicReady, $rootScope, $q, $state, $translate, $timeout, UIUtils,
+  .factory('csPlatform', function (ionicReady, $rootScope, $q, $state, $translate, $timeout, $ionicHistory, UIUtils,
                                    BMA, Device, csHttp, csConfig, csCache, csSettings, csCurrency, csWallet) {
 
     'ngInject';
@@ -113,8 +113,8 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       removeChangeStateListener;
 
     // Fix csConfig values
-    csConfig.demo = csConfig.demo === true || csConfig.demo === 'true' || false;
-    csConfig.readonly = csConfig.readonly === true || csConfig.readonly === 'true' || false;
+    csConfig.demo = csConfig.demo === true || csConfig.demo === 'true' || false;
+    csConfig.readonly = csConfig.readonly === true || csConfig.readonly === 'true' || false;
 
     function disableChangeState() {
       if (removeChangeStateListener) return; // make sure to call this once
@@ -123,11 +123,10 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         if (!event.defaultPrevented && next.name !== 'app.home' && next.name !== 'app.settings') {
           event.preventDefault();
           if (startPromise) {
-            startPromise.then(function() {
+            startPromise.then(function () {
               $state.go(next.name, nextParams);
             });
-          }
-          else {
+          } else {
             UIUtils.loading.hide();
           }
         }
@@ -162,12 +161,12 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       }
 
       // Try to get summary
-      return csHttp.get(fallbackNode.host, fallbackNode.port, '/node/summary', fallbackNode.port==443 || BMA.node.forceUseSsl)()
-        .catch(function(err) {
+      return csHttp.get(fallbackNode.host, fallbackNode.port, '/node/summary', fallbackNode.port == 443 || BMA.node.forceUseSsl)()
+        .catch(function (err) {
           console.error('[platform] Could not reach fallback node [{0}]: skipping'.format(newServer));
           // silent, but return no result (will loop to the next fallback node)
         })
-        .then(function(res) {
+        .then(function (res) {
           if (!res) return checkBmaNodeAlive(); // Loop
 
           // Force to show port/ssl, if this is the only difference
@@ -175,14 +174,13 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
           if (messageParam.old === messageParam.new) {
             if (BMA.port != fallbackNode.port) {
               messageParam.new += ':' + fallbackNode.port;
-            }
-            else if (BMA.useSsl == false && (fallbackNode.useSsl || fallbackNode.port==443)) {
+            } else if (BMA.useSsl == false && (fallbackNode.useSsl || fallbackNode.port == 443)) {
               messageParam.new += ' (SSL)';
             }
           }
 
           return $translate('CONFIRM.USE_FALLBACK_NODE', messageParam)
-            .then(function(msg) {
+            .then(function (msg) {
               return UIUtils.alert.confirm(msg);
             })
             .then(function (confirm) {
@@ -220,7 +218,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
               };
             }
           })
-          .catch(function(err) {
+          .catch(function (err) {
             // silent (just log it)
             console.error('[platform] Failed to get Cesium latest version', err);
           })
@@ -229,7 +227,71 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       return $q.when();
     }
 
-    function registerProtocols() {
+    /**
+     * Parse an external URI (see g1lien), and open the expected state
+     * @param uri
+     * @returns {*}
+     */
+    function openUri(uri) {
+      if (!uri) return $q.when(); // Skip
+
+      console.info('[platform] Detecting external uri: ', uri);
+
+      var parts = csHttp.uri.parse(uri),
+        state, stateParams;
+
+      // G1 lien
+      if (parts.protocol === 'june:') {
+        console.debug("[home] Applying uri...", parts);
+
+        // Pubkey
+        if (parts.hostname && BMA.regexp.PUBKEY.test(parts.hostname)) {
+          state = 'app.wot_identity';
+          stateParams = {pubkey: parts.hostname};
+        } else if ((parts.hostname === 'wallet' || parts.hostname === 'pubkey') && BMA.regexp.PUBKEY.test(parts.pathSegments[0])) {
+          state = 'app.wot_identity';
+          stateParams = {pubkey: parts.pathSegments[0]};
+        }
+
+        // Block
+        else if (parts.hostname === 'block') {
+          state = 'app.view_block';
+          stateParams = {number: parts.pathSegments[0]};
+        }
+
+        // Otherwise, try to a wot lookup
+        else if (parts.hostname && BMA.regexp.USER_ID.test(parts.hostname)) {
+          state = 'app.wot_lookup.tab_search';
+          stateParams = {q: parts.hostname};
+        }
+      }
+
+      if (state === 'app.wot_identity' && parts.searchParams && (angular.isDefined(parts.searchParams.action) || angular.isDefined(parts.searchParams.amount))) {
+        stateParams = angular.merge(stateParams,
+          // Add default actions
+          {action: 'transfer'},
+          // Add path params
+          parts.searchParams);
+      }
+
+      if (state) {
+        // Open the state, after cleaning current location URI
+        return $state.go(state, stateParams, {
+          reload: true
+        })
+          .then(function () {
+            // This is need to make back button working again
+            return $timeout(function () {
+              if ($ionicHistory.backView()) $ionicHistory.removeBackView();
+            }, 400);
+          });
+      } else {
+        console.error("[home] Unknown URI format: " + uri);
+        return UIUtils.alert.error("ERROR.UNKNOWN_URI_FORMAT", uri);
+      }
+    }
+
+    function registerProtocolHandlers() {
       var protocols = ['web+june'/*, 'web+g1', 'g1'*/];
 
       _.each(protocols, function(protocol) {
@@ -246,7 +308,10 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     function addListeners() {
       listeners = [
         // Listen if node changed
-        BMA.api.node.on.restart($rootScope, restart, this)
+        BMA.api.node.on.restart($rootScope, restart, this),
+
+        // Listen for new intent
+        Device.api.intent.on.new($rootScope, handleOpenUri, this)
       ];
     }
 
@@ -275,7 +340,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       // Avoid change state
       disableChangeState();
 
-      registerProtocols();
+      registerProtocolHandlers();
 
       // We use 'ionicReady()' instead of '$ionicPlatform.ready()', because this one is callable many times
       startPromise = ionicReady()
@@ -302,6 +367,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         .then(function(){
           enableChangeState();
           addListeners();
+          processLaunchUri();
           startPromise = null;
           started = true;
         })
@@ -332,6 +398,20 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       }, 500);
     }
 
+    /**
+     * Process launch intent, as it could have been triggered BEFORE addListeners()
+     * @returns {*}
+     */
+    function processLaunchUri() {
+      return Device.intent.last()
+        .then(function(intent) {
+          if (intent) {
+            Device.intent.clear();
+            return openUri(intent);
+          }
+        });
+    }
+
     return  {
       disableChangeState: disableChangeState,
       isStarted: isStarted,
@@ -341,6 +421,9 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       stop: stop,
       version: {
         latest: getLatestRelease
+      },
+      uri: {
+        open: openUri
       }
     };
   })
@@ -423,6 +506,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         if ($ionicHistory.backView()) {
           return $ionicHistory.goBack();
         }
+
         event.preventDefault();
         return UIUtils.alert.confirm('CONFIRM.EXIT_APP')
           .then(function (confirm) {

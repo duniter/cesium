@@ -1264,6 +1264,11 @@ function cdvAndroidManifest() {
     // add <uses-sdk> (tools:overrideLibrary)
     .pipe(replace(/(<\/manifest>)/, '    <uses-sdk tools:overrideLibrary="org.kaliumjni.lib,org.apache.cordova" />\n$1'))
 
+    // Add URI scheme web+june
+    // Patch invalid intent-filter (should be a bug of cordova-plugin-customurlschema)
+    // FIXME : this cause too many intent-filter are appended, on each build
+    //.pipe(replace('<data android:host=" " android:pathPrefix="/" android:scheme=" " />', '<data android:scheme="web+june" />'))
+
     .pipe(gulp.dest(srcMainPath));
 }
 

@@ -320,9 +320,9 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     var protocol, hostname;
 
     // G1 URI (see G1lien)
-    if (uri.startsWith('g1:') || uri.startsWith('june:') || uri.startsWith('web+june:')) {
+    if (uri.startsWith('june:') || uri.startsWith('web+june:')) {
       protocol = 'june:';
-      var path = uri.replace(/^(g1|web\+june|june):(\/\/)?/, '');
+      var path = uri.replace(/^(web\+june|june):(\/\/)?/, '');
 
       // Store hostname here, because parse will apply a lowercase
       hostname = path;

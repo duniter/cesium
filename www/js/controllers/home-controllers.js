@@ -26,7 +26,7 @@ angular.module('cesium.home.controllers', ['cesium.platform', 'cesium.services']
   .controller('HomeCtrl', HomeController)
 ;
 
-function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $http, UIUtils, BMA,
+function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $http, $q, UIUtils, BMA,
                         csConfig, csCache, csPlatform, csCurrency, csSettings, csHttp) {
   'ngInject';
 
@@ -46,21 +46,17 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
     }
 
     if (state && state.stateParams && state.stateParams.uri) {
-      return $scope.redirectFromUri(state.stateParams.uri);
+
+      return csPlatform.uri.open(state.stateParams.uri)
+        .then(function() {
+          $scope.loading = false;
+        });
     }
     else if (state && state.stateParams && state.stateParams.error) { // Error query parameter
       $scope.error = state.stateParams.error;
       $scope.node = csCurrency.data.node;
       $scope.loading = false;
-      $ionicHistory.nextViewOptions({
-        disableAnimate: true,
-        disableBack: true,
-        historyRoot: true
-      });
-      $state.go('app.home', {error: undefined}, {
-        reload: false,
-        inherit: true,
-        notify: false});
+      $scope.cleanLocationHref(state);
     }
     else {
       // Wait platform to be ready
@@ -176,69 +172,24 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
     }
   };
 
-  /**
-   * Parse an URI (see g1lien)
-   * @param uri
-   * @returns {*}
-   */
-  $scope.redirectFromUri = function(uri) {
-    console.debug("[home] Detecting external uri: ", uri);
-    var parts = csHttp.uri.parse(uri);
+  // remove '?uri&error' from the location URI, and inside history
+  $scope.cleanLocationHref = function(state) {
+    if (state && state.stateParams) {
+      var stateParams = angular.copy(state.stateParams);
+      delete stateParams.uri;
+      delete stateParams.error;
 
-    var state,stateParams;
-
-    if (parts.protocol === 'g1:' || parts.protocol === 'june:') {
-      console.debug("[home] Applying uri...", parts);
-
-      // Pubkey
-      if (parts.hostname && BMA.regexp.PUBKEY.test(parts.hostname)) {
-        state = 'app.wot_identity';
-        stateParams = {pubkey: parts.hostname};
-      }
-      else if ((parts.hostname === 'wallet' || parts.hostname === 'pubkey') && BMA.regexp.PUBKEY.test(parts.pathSegments[0])) {
-        state = 'app.wot_identity';
-        stateParams = {pubkey: parts.pathSegments[0]};
-      }
-
-      // Block
-      else if (parts.hostname === 'block') {
-        state = 'app.view_block';
-        stateParams = {number: parts.pathSegments[0]};
-      }
-
-      // Otherwise, try to a wot lookup
-      else if (parts.hostname && BMA.regexp.USER_ID.test(parts.hostname)) {
-        state = 'app.wot_lookup.tab_search';
-        stateParams = {q: parts.hostname};
-      }
-    }
-
-    if (state === 'app.wot_identity' && parts.searchParams && (angular.isDefined(parts.searchParams.action) || angular.isDefined(parts.searchParams.amount))) {
-      stateParams = angular.merge(stateParams,
-        // Add default actions
-        { action: 'transfer'},
-        // Add path params
-        parts.searchParams);
-    }
-
-    // Open the state
-    if (state) {
-      $ionicHistory.clearHistory();
+      // Update location href
       $ionicHistory.nextViewOptions({
-        disableAnimate: false,
-        disableBack: true,
-        historyRoot: true
+        disableAnimate: true,
+        disableBack: false,
+        historyRoot: false
       });
-      return $state.go(state, stateParams, {
-        reload: true,
-        inherit: false,
-        notify: true
-      });
-    }
-    else {
-      console.error("[home] Unknown URI format: " + uri);
-      this.loading = false;
-      return UIUtils.alert.error("ERROR.UNKNOWN_URI_FORMAT", uri);
+      return $state.go(state.stateName, stateParams, {
+          reload: false,
+          inherit: true,
+          notify: false
+        });
     }
   };
 
