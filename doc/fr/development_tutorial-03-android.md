@@ -119,7 +119,7 @@ node --version
 Si vous n'êtes pas sur une v6, utilisez la commande 
 
 ```
-nvm use 10
+nvm use 12
 ```
 
 Vous pouvez maintenant lancer l'instalaltion du projet Cesium pour Android :

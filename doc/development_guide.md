@@ -3,7 +3,7 @@
 ## In a post-it
 
 ```bash
-nvm use 10
+nvm use 12
 git clone git@git.duniter.org:clients/cesium-grp/cesium.git
 cd cesium
 yarn
@@ -22,7 +22,7 @@ To build Cesium, you will have to:
       sudo apt-get install git wget curl unzip build-essential software-properties-common ruby ruby-dev ruby-ffi gcc make
    ```
 
-2. Installing node.js v10 :
+2. Installing node.js v12 :
 
   * First, install [nvm](https://github.com/nvm-sh/nvm) (Node Version Manager) :    
     ```bash
@@ -35,7 +35,7 @@ To build Cesium, you will have to:
 
   * Configure nvm to use the expected version: (**WARNING**: upper version will NOT work !) 
     ```bash
-       nvm install 10
+       nvm install 12
     ```
       
 3. Installing node build tools, as global dependencies:
@@ -65,9 +65,9 @@ To build Cesium, you will have to:
 
    This should create new directories `platforms/android` and `platforms/ios`.
 
-   > As a reminder: check that your command line is configured correctly:
+   > As a reminder: check that your command line is well configured:
    > - You must place yourself in the directory of the application: `cd cesium`
-   > - and working with NodeJs **v10**: `nvm use 10` (please check using the command `node --version`)
+   > - and working with NodeJs **v12**: `nvm use 12` (please check using the command `node --version`)
     
 
 ### Prepare configuration file
