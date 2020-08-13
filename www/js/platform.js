@@ -275,15 +275,20 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       }
 
       if (state) {
+
+        var fromHomeState = $state.current && $state.current.name === 'app.home';
+
         // Open the state, after cleaning current location URI
         return $state.go(state, stateParams, {
           reload: true
         })
           .then(function () {
-            // This is need to make back button working again
-            return $timeout(function () {
-              if ($ionicHistory.backView()) $ionicHistory.removeBackView();
-            }, 400);
+            if (fromHomeState) {
+              // This is need to make back button working again
+              return $timeout(function () {
+                if ($ionicHistory.backView()) $ionicHistory.removeBackView();
+              }, 400);
+            }
           });
       } else {
         console.error("[home] Unknown URI format: " + uri);
@@ -311,7 +316,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         BMA.api.node.on.restart($rootScope, restart, this),
 
         // Listen for new intent
-        Device.api.intent.on.new($rootScope, handleOpenUri, this)
+        Device.api.intent.on.new($rootScope, openUri, this)
       ];
     }
 

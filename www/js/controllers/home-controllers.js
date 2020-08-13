@@ -26,8 +26,8 @@ angular.module('cesium.home.controllers', ['cesium.platform', 'cesium.services']
   .controller('HomeCtrl', HomeController)
 ;
 
-function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $http, $q, UIUtils, BMA,
-                        csConfig, csCache, csPlatform, csCurrency, csSettings, csHttp) {
+function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $http, $q, $location,
+                        UIUtils, BMA, csConfig, csCache, csPlatform, csCurrency, csSettings) {
   'ngInject';
 
   $scope.loading = true;
@@ -178,6 +178,8 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
       var stateParams = angular.copy(state.stateParams);
       delete stateParams.uri;
       delete stateParams.error;
+
+      $location.search(stateParams).replace();
 
       // Update location href
       $ionicHistory.nextViewOptions({
