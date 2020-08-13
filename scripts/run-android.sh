@@ -15,13 +15,17 @@ cd ${PROJECT_DIR}
 
 # Run the build
 echo "Building Android application..."
-ionic cordova build android --warning-mode=none --verbose --color $*
+ionic cordova build android --warning-mode=none --color $*
 [[ $? -ne 0 ]] && exit 1
 
 echo "Running Android application..."
 if [[ "$1" == "--release" ]]; then
-  native-run android --app ${ANDROID_OUTPUT_APK_RELEASE}/app-release.apk
+  if [[ -f ${ANDROID_OUTPUT_APK_RELEASE}/app-release.apk ]]; then
+    native-run android --app ${ANDROID_OUTPUT_APK_RELEASE}/app-release-unsigned.apk
+  elif [[ -f ${ANDROID_OUTPUT_APK_RELEASE}/app-release.apk ]]; then
+    native-run android --app ${ANDROID_OUTPUT_APK_RELEASE}/app-release-unsigned.apk
+  fi
 else
-  native-run android --app ${ANDROID_OUTPUT_APK_DEBUG}/app-debug.apk
+  native-run android --app ${ls }/app-debug.apk
 fi
 

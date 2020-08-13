@@ -31,5 +31,17 @@
   "theme_color": "black",
   "dir": "ltr",
   "start_url": "/#/app/home",
-  "display": "standalone"
+  "display": "standalone",
+  "protocol_handlers": [
+    {
+      "protocol": "june",
+      "name": "Cesium",
+      "uriTemplate": "/#/app/home?uri=%s"
+    },
+    {
+      "protocol": "web+june",
+      "name": "Cesium",
+      "uriTemplate": "/#/app/home?uri=%s"
+    }
+  ]
 }

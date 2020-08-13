@@ -73,8 +73,14 @@ public class MainActivity extends CordovaActivity
       pathSegments = uri.getPathSegments();
     } else if ("web+june".equals(scheme) || "june".equals(scheme)) {
       pathSegments = new ArrayList<String>();
-      // Use the host as first path segment
-      pathSegments.add(uri.getHost());
+      // Use the host as first path segment, if any
+      if (uri.getHost() != null) {
+        pathSegments.add(uri.getHost());
+      }
+      // Or use
+      else if (uri.getEncodedSchemeSpecificPart() != null) {
+        pathSegments.add(uri.getEncodedSchemeSpecificPart());
+      }
       if (uri.getPathSegments() != null) pathSegments.addAll(uri.getPathSegments());
     } else {
       return; // Skip
@@ -92,11 +98,15 @@ public class MainActivity extends CordovaActivity
     if (appView == null) {
       init();
     }
-    this.appView.loadUrlIntoView(url, false);
+    runOnUiThread(new Runnable() {
+      public void run() {
+        MainActivity.this.appView.loadUrlIntoView(url, false);
+      }
+    });
   }
 
   protected String getLaunchUrlNoHash() {
-    String url = this.launchUrl;
+    String url = "http://localhost/";//this.launchUrl;
     // Remove hash path
     int hashIndex = url.indexOf('#');
     if (hashIndex != -1) {
@@ -116,90 +126,5 @@ public class MainActivity extends CordovaActivity
       sb.setLength(sb.length() - separator.length());
 
       return sb.toString();
-  }
-
-  // Taken from commons StringEscapeUtils
-  protected void escapeJavaStyleString(Writer out, String str, boolean escapeSingleQuote,
-                                       boolean escapeForwardSlash) throws IOException {
-    if (out == null) {
-      throw new IllegalArgumentException("The Writer must not be null");
-    }
-    if (str == null) {
-      return;
-    }
-    int sz;
-    sz = str.length();
-    for (int i = 0; i < sz; i++) {
-      char ch = str.charAt(i);
-
-      // handle unicode
-      if (ch > 0xfff) {
-        out.write("\\u" + hex(ch));
-      } else if (ch > 0xff) {
-        out.write("\\u0" + hex(ch));
-      } else if (ch > 0x7f) {
-        out.write("\\u00" + hex(ch));
-      } else if (ch < 32) {
-        switch (ch) {
-          case '\b':
-            out.write('\\');
-            out.write('b');
-            break;
-          case '\n':
-            out.write('\\');
-            out.write('n');
-            break;
-          case '\t':
-            out.write('\\');
-            out.write('t');
-            break;
-          case '\f':
-            out.write('\\');
-            out.write('f');
-            break;
-          case '\r':
-            out.write('\\');
-            out.write('r');
-            break;
-          default:
-            if (ch > 0xf) {
-              out.write("\\u00" + hex(ch));
-            } else {
-              out.write("\\u000" + hex(ch));
-            }
-            break;
-        }
-      } else {
-        switch (ch) {
-          case '\'':
-            if (escapeSingleQuote) {
-              out.write('\\');
-            }
-            out.write('\'');
-            break;
-          case '"':
-            out.write('\\');
-            out.write('"');
-            break;
-          case '\\':
-            out.write('\\');
-            out.write('\\');
-            break;
-          case '/':
-            if (escapeForwardSlash) {
-              out.write('\\');
-            }
-            out.write('/');
-            break;
-          default:
-            out.write(ch);
-            break;
-        }
-      }
-    }
-  }
-
-  private static String hex(char ch) {
-    return Integer.toHexString(ch).toUpperCase(Locale.ENGLISH);
   }
 }

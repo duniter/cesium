@@ -12,6 +12,7 @@
   "scripts": {
     "clean": "trash www/dist/** dist/web/* dist/desktop/**/*.deb platforms/android/**/*.apk",
     "postinstall": "node scripts/node/postinstall.js",
+    "lint": "node scripts/node/jshint.js",
     "install-platforms": "ionic cordova prepare",
     "start": "ionic serve",
     "start:firefox": "gulp webExtCompile && web-ext run --source-dir ./dist/web/ext/",
