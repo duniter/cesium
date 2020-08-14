@@ -100,10 +100,16 @@ rm -rf ${ANDROID_OUTPUT_APK_RELEASE}/*.apk || exit 1
 . scripts/build-android.sh --release
 [[ $? -ne 0 ]] && exit 1
 
-APK_RELEASE_FILE="${ANDROID_OUTPUT_APK_RELEASE}/android-release.apk"
+APK_RELEASE_FILE="${ANDROID_OUTPUT_APK_RELEASE}/app-release.apk"
+  APK_RELEASE_UNSIGNED_FILE="${ANDROID_OUTPUT_APK_RELEASE}/app-release-unsigned.apk"
 if [[ ! -f "${APK_RELEASE_FILE}" ]]; then
-  echo "ERROR: Missing android artifact at ${APK_RELEASE_FILE}"
-  exit 1
+  if [[ ! -f "${APK_RELEASE_UNSIGNED_FILE}" ]]; then
+    echo "ERROR: Missing android artifact at ${APK_RELEASE_FILE}"
+    exit 1
+  else
+    . scripts/release-android-sign.sh
+    [[ $? -ne 0 ]] && exit 1
+  fi
 fi
 mkdir -p ${DIST_ANDROID} || exit 1
 cp ${APK_RELEASE_FILE} "${DIST_ANDROID}/${PROJECT_NAME}-v$2-android.apk" || exit 1

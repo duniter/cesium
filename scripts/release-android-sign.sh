@@ -11,16 +11,14 @@ fi;
 KEYSTORE_FILE=${PROJECT_DIR}/.local/android/Cesium.keystore
 KEY_ALIAS=Cesium
 KEYSTORE_PWD=
-APK_RELEASE_DIR=${PROJECT_DIR}/platforms/android/build/outputs/apk/release
-APK_UNSIGNED_FILE=${APK_RELEASE_DIR}/android-release-unsigned.apk
-APK_SIGNED_FILE=${APK_RELEASE_DIR}/android-release-signed.apk
+APK_RELEASE_DIR=${PROJECT_DIR}/platforms/android/app/build/outputs/apk/release
+APK_UNSIGNED_FILE=${APK_RELEASE_DIR}/app-release-unsigned.apk
+APK_SIGNED_FILE=${APK_RELEASE_DIR}/app-release.apk
 
 
 # Preparing Android environment
 . ${PROJECT_DIR}/scripts/env-android.sh
-if [[ $? -ne 0 ]]; then
-  exit 1
-fi
+[[ $? -ne 0 ]] && exit 1
 
 cd ${PROJECT_DIR}
 
