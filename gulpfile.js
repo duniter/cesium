@@ -570,7 +570,7 @@ function webUglify() {
   }
 }
 
-function webIntegrity(done) {
+function webIntegrity() {
   const targetPath = './dist/web/www';
 
   const enableIntegrity = argv.release || false;
@@ -579,8 +579,7 @@ function webIntegrity(done) {
     log(colors.green('Create index.integrity.html... '));
 
     // Process index.html
-    return gulp.series(
-      gulp.src(targetPath + '/index.html', {base: targetPath})
+    return gulp.src(targetPath + '/index.html', {base: targetPath})
 
       // Add an integrity hash
       .pipe(sriHash())
@@ -590,9 +589,7 @@ function webIntegrity(done) {
 
       gulp.src(targetPath + '/index.html', {base: targetPath})
         .pipe(rename({ extname: '.test.html' }))
-        .pipe(gulp.dest(targetPath))
-    )
-      .on('end', done);
+        .pipe(gulp.dest(targetPath));
   }
 
   if (done) done();
