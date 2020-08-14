@@ -592,7 +592,9 @@ function webIntegrity() {
         .pipe(gulp.dest(targetPath));
   }
 
-  if (done) done();
+  else {
+    return Promise.resolve();
+  }
 }
 
 function webApiUglify() {
