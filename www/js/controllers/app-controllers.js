@@ -507,7 +507,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         console.error("[home] Error while handle auth data", err);
         return UIUtils.onError('ERROR.AUTH_INVALID_FILE')(err);
       });
-  }
+  };
 
   $scope.registerProtocolHandlers = function() {
     var protocols = ['web+june', /*'june' - NOT yet accepted by web browser */];
@@ -592,7 +592,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
             console.error("[app] Failed to parse as URI: " + (e && e.message || e));
 
             // Try as an auth data
-            return $scope.handleAuthData(data, throwIfError)
+            return $scope.handleAuthData(data, throwIfError);
           })
 
           // Both failed

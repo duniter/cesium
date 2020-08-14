@@ -10,5 +10,5 @@ angular.module('cesium.desktop.services', ['cesium.device.services', 'cesium.set
         if (!Device.isDesktop()) return;
         console.info("[desktop-service] Starting desktop service...");
         console.debug("[desktop-service] TODO: manage menu and other specific stuff here");
-      })
+      });
   });
