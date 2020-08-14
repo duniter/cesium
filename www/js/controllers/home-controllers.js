@@ -14,9 +14,7 @@ angular.module('cesium.home.controllers', ['cesium.platform', 'cesium.services']
             controller: 'HomeCtrl'
           }
         }
-      })
-
-    ;
+      });
 
     // if none of the above states are matched, use this as the fallback
     $urlRouterProvider.otherwise('/app/home');

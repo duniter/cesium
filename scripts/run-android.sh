@@ -26,6 +26,6 @@ if [[ "$1" == "--release" ]]; then
     native-run android --app ${ANDROID_OUTPUT_APK_RELEASE}/app-release-unsigned.apk
   fi
 else
-  native-run android --app ${ls }/app-debug.apk
+  native-run android --app ${ANDROID_OUTPUT_APK_DEBUG}/app-debug.apk
 fi
 

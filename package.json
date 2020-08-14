@@ -10,7 +10,7 @@
     "url": "git@git.duniter.org:clients/cesium/cesium.git"
   },
   "scripts": {
-    "clean": "trash www/dist/** dist/web/* dist/desktop/**/*.deb platforms/android/**/*.apk",
+    "clean": "clean webClean webExtClean && trash dist/desktop/**/*.deb platforms/android/**/*.apk",
     "postinstall": "node scripts/node/postinstall.js",
     "lint": "gulp lint",
     "install-platforms": "ionic cordova prepare",
@@ -19,6 +19,7 @@
     "start:android": "ionic cordova run android --color",
     "docker:build": "sudo docker build . -t cesium/release",
     "docker:run": "sudo docker run -ti --rm -p 8100:8100 -p 35729:35729 -v .:/cesium:rw cesium/release",
+    "build": "gulp build",
     "build:web": "gulp config --env default && gulp webBuild --release",
     "build:webExt": "gulp config --env default && gulp webExtBuild --release",
     "build:android": "ionic cordova build android --color --release",

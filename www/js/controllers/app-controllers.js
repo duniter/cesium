@@ -393,12 +393,13 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   /**
    * Parse an external URI (see g1lien), and open the expected state
    * @param uri
+   * @param reject optional function, to avoid error to be displayed
    * @returns {*}
    */
-  $scope.handleUri = function(uri) {
+  $scope.handleUri = function(uri, reject) {
     if (!uri) return $q.when(); // Skip
 
-    console.info('[app] Parsing external uri: ', uri);
+    console.info('[app] Trying to parse as uri: ', uri);
     var fromHomeState = $state.current && $state.current.name === 'app.home';
 
     // Parse the URI
@@ -448,21 +449,76 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       })
 
       .catch(function(err) {
+        if (reject) {
+          reject(err);
+          return;
+        }
         console.error("[home] Error while handle uri {" + uri + "': ", err);
         return UIUtils.onError(uri)(err);
       });
   };
 
+  /**
+   * Try to parse as auth data (e.g. WIF/EWIF format)
+   * @param data
+   * @param reject optional function, to avoid error to be displayed
+   * @returns {*}
+   */
+  $scope.handleAuthData = function(data, reject) {
+    console.debug("[app] Trying to parse as a auth data (WIF, EWIF)...");
+
+    return csCrypto.keyfile.parseData(data)
+      .then(function (keypair) {
+        if (!keypair || !keypair.signPk || !keypair.signSk) throw err; // rethrow the first error (e.g. Bad URI)
+
+        var pubkey = CryptoUtils.base58.encode(keypair.signPk);
+        console.debug("[app] Detected WIF/EWIF format. Will login to wallet {" + pubkey.substring(0, 8) + "}");
+
+        // Create a new wallet (if default wallet is already used)
+        var wallet = !csWallet.isLogin() ? csWallet : csWallet.children.create({store: false});
+
+        // Login using keypair
+        return wallet.login({
+          silent: true,
+          forceAuth: true,
+          minData: false,
+          authData: {
+            pubkey: pubkey,
+            keypair: keypair
+          }
+        })
+          .then(function () {
+
+            // Open transfer all wallet
+            $ionicHistory.nextViewOptions({
+              historyRoot: true
+            });
+            return $state.go('app.new_transfer', {
+              all: true, // transfer all sources
+              wallet: !wallet.isDefault() ? wallet.id : undefined
+            });
+          });
+      })
+      .catch(function(err) {
+        if (reject) {
+          reject(err);
+          return;
+        }
+        console.error("[home] Error while handle auth data", err);
+        return UIUtils.onError('ERROR.AUTH_INVALID_FILE')(err);
+      });
+  }
+
   $scope.registerProtocolHandlers = function() {
     var protocols = ['web+june', /*'june' - NOT yet accepted by web browser */];
 
     _.each(protocols, function(protocol) {
-      console.debug("[app] Registering protocol '%s'...".format(protocol));
+      console.debug("[app] Registering protocol '{0}'...".format(protocol));
       try {
         navigator.registerProtocolHandler(protocol, "#/app/home?uri=%s", "Cesium");
       }
       catch(err) {
-        console.error("[app] Error while registering protocol '%s'".format(protocol), err);
+        console.error("[app] Error while registering protocol '{0}'".format(protocol), err);
       }
     });
   };
@@ -522,59 +578,30 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       .then(function(data) {
         if (!data) return;
 
-        // Try to parse as an URI
-        return BMA.uri.parse(data)
-          .then(function(res){
-            if (!res || !res.pubkey) throw {message: 'ERROR.SCAN_UNKNOWN_FORMAT'};
-            // If pubkey: open the identity
-            return $state.go('app.wot_identity', {
-              pubkey: res.pubkey,
-              node: res.host ? res.host: null}
-            );
+        var throwIfError = function (err) {
+          if (err) throw err;
+        };
+
+        // First, try to handle as an URI
+        var firstError;
+        return $scope.handleUri(data, throwIfError)
+
+          // If failed
+          .catch(function(e) {
+            firstError = e;
+            console.error("[app] Failed to parse as URI: " + (e && e.message || e));
+
+            // Try as an auth data
+            return $scope.handleAuthData(data, throwIfError)
           })
 
-          // Not an URI: try WIF or EWIF format
-          .catch(function(err) {
-            console.debug("[app] Scan data is not an URI (get error: " + (err && err.message || err) + "). Trying to decode as a WIF or EWIF format...");
-
-            // Try to read as WIF format
-            return csCrypto.keyfile.parseData(data)
-              .then(function(keypair) {
-                if (!keypair || !keypair.signPk || !keypair.signSk) throw err; // rethrow the first error (e.g. Bad URI)
-
-                var pubkey = CryptoUtils.base58.encode(keypair.signPk);
-                console.debug("[app] Detected WIF/EWIF format. Will login to wallet {" + pubkey.substring(0, 8) + "}");
-
-                // Create a new wallet (if default wallet is already used)
-                var wallet = !csWallet.isLogin() ? csWallet : csWallet.children.create({store: false});
-
-                // Login using keypair
-                return wallet.login({
-                  silent: true,
-                  forceAuth: true,
-                  minData: false,
-                  authData: {
-                    pubkey: pubkey,
-                    keypair: keypair
-                  }
-                })
-                  .then(function () {
-
-                    // Open transfer all wallet
-                    $ionicHistory.nextViewOptions({
-                      historyRoot: true
-                    });
-                    return $state.go('app.new_transfer', {
-                      all: true, // transfer all sources
-                      wallet: !wallet.isDefault() ? wallet.id : undefined
-                    });
-                  });
-              })
-              // Unknown format (nor URI, nor WIF/EWIF)
-              .catch(UIUtils.onError('ERROR.SCAN_UNKNOWN_FORMAT'));
+          // Both failed
+          .catch(function(e) {
+            // Log second error, then display the first error
+            console.error("[app] Failed to parse as Auth data: " + (e && e.message || e));
+            return UIUtils.onError('ERROR.SCAN_UNKNOWN_FORMAT')(firstError);
           });
-      })
-      .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
+      });
   };
 
   /**

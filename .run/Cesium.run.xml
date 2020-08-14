@@ -1,6 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Cesium" type="JavascriptDebugType" uri="http://localhost:8100/">
-    <mapping url="http://localhost:8100" local-file="$PROJECT_DIR$/www" />
-    <method v="2" />
-  </configuration>
-</component>

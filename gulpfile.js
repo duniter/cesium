@@ -8,7 +8,6 @@ const gulp = require('gulp'),
   rename = require('gulp-rename'),
   ngConstant = require('gulp-ng-constant'),
   fs = require("fs"),
-  es = require('event-stream'),
   header = require('gulp-header'),
   footer = require('gulp-footer'),
   removeCode = require('gulp-remove-code'),
@@ -149,7 +148,7 @@ function appConfig() {
   const env = argv.env || 'default';
   const config = allConfig[env];
 
-  if(!config) {
+  if (!config) {
     throw new Error(colors.red("=> Could not load `" + env + "` environment!"));
   }
 
@@ -197,7 +196,7 @@ function appNgTemplate() {
     .pipe(sort())
     .pipe(templateCache({
       standalone: true,
-      module:"cesium.templates",
+      module: "cesium.templates",
       root: "templates/"
     }))
     .pipe(gulp.dest('./www/dist/dist_js/app'));
@@ -258,8 +257,8 @@ function pluginNgTemplate() {
   return gulp.src(paths.templatecache_plugin)
     .pipe(sort())
     .pipe(templateCache({
-      standalone:true,
-      module:"cesium.plugins.templates",
+      standalone: true,
+      module: "cesium.plugins.templates",
       root: "plugins/"
     }))
     .pipe(gulp.dest('./www/dist/dist_js/plugins'));
@@ -273,8 +272,7 @@ function pluginNgAnnotate(event) {
     path = path.substring(0, path.lastIndexOf('/'));
     return gulp.src(event.path)
       .pipe(ngAnnotate({single_quotes: true}))
-      .pipe(gulp.dest('./www/dist/dist_js/app' + path))
-      ;
+      .pipe(gulp.dest('./www/dist/dist_js/app' + path));
   }
 
   log(colors.green('Building Plugins JS file...'));
@@ -295,7 +293,7 @@ function pluginNgTranslate() {
 }
 
 function pluginLeafletImages(dest) {
-  dest = dest || './www/img/';
+  dest = dest || './www/img/';
   // Leaflet images
   return gulp.src(['scss/leaflet/images/*.*',
     'www/lib/leaflet/dist/images/*.*',
@@ -358,13 +356,7 @@ function webCopyFiles() {
   log(colors.green('Preparing dist/web files...'));
   let htmlminOptions = {removeComments: true, collapseWhitespace: true};
 
-  const debugOptions = {
-    title: 'Copying',
-    minimal: true,
-    showFiles: argv.debug || false,
-    showCount: argv.debug || false,
-    logger: m => log(colors.grey(m))
-  };
+  const debugOptions = { ...debugBaseOptions, title: 'Copying' };
 
   var targetPath = './dist/web/www';
   return merge(
@@ -453,8 +445,8 @@ function webNgTemplate() {
   return gulp.src(targetPath + '/templates/**/*.html')
     .pipe(sort())
     .pipe(templateCache({
-      standalone:true,
-      module:"cesium.templates",
+      standalone: true,
+      module: "cesium.templates",
       root: "templates/"
     }))
     .pipe(gulp.dest(targetPath + '/dist/dist_js/app'));
@@ -585,13 +577,8 @@ function webIntegrity() {
       .pipe(sriHash())
 
       .pipe(rename({ extname: '.integrity.html' }))
-      .pipe(gulp.dest(targetPath)),
-
-      gulp.src(targetPath + '/index.html', {base: targetPath})
-        .pipe(rename({ extname: '.test.html' }))
-        .pipe(gulp.dest(targetPath));
+      .pipe(gulp.dest(targetPath));
   }
-
   else {
     return Promise.resolve();
   }
@@ -662,18 +649,20 @@ function webCleanUnusedFiles(done) {
   const targetPath = './dist/web/www';
   const enableUglify = argv.release || argv.uglify || false;
   const cleanSources = enableUglify;
-  const debugOptions = {
+  const debugOptions = {...debugBaseOptions,
     title: 'Deleting',
-    minimal: true,
-    showFiles: argv.debug || false,
-    showCount: !argv.debug,
-    logger: m => log(colors.grey(m))
+    showCount: !argv.debug
   };
 
   if (cleanSources) {
     return merge(
       // Clean core JS
       gulp.src(targetPath + '/js/**/*.js', {read: false})
+        .pipe(debug(debugOptions))
+        .pipe(clean()),
+
+      // Clean core CSS
+      gulp.src(targetPath + '/css/**/*.css', {read: false})
         .pipe(debug(debugOptions))
         .pipe(clean()),
 
@@ -700,12 +689,9 @@ function webCleanUnusedFiles(done) {
 function webCleanUnusedDirectories() {
   log(colors.green('Clean unused directories...'));
   const enableUglify = argv.release || argv.uglify || false;
-  const debugOptions = {
+  const debugOptions = { ...debugBaseOptions,
     title: 'Deleting',
-    minimal: true,
-    showFiles: argv.debug || false,
-    showCount: !argv.debug,
-    logger: m => log(colors.grey(m))
+    showCount: !argv.debug
   };
 
   // Clean dir
@@ -913,18 +899,7 @@ function cdvNgAnnotate() {
     // Ng annotate app JS file
     gulp.src(wwwPath + '/plugins/**/*.js')
       .pipe(ngAnnotate({single_quotes: true}))
-      .pipe(gulp.dest(wwwPath + '/dist/dist_js/plugins')),
-/*
-    // Copy plugin CSS
-    gulp.src(wwwPath + '/plugins/!*!/css/!**!/!*.css')
-      .pipe(gulp.dest(wwwPath + '/dist/dist_css/plugins')),
-
-    // Copy Leaflet images
-    pluginLeafletImages(wwwPath + '/img'),
-
-    // Copy Leaflet CSS
-    gulp.src('./www/css/!**!/leaflet.*')
-      .pipe(gulp.dest(wwwPath + '/css'))*/
+      .pipe(gulp.dest(wwwPath + '/dist/dist_js/plugins'))
 
   );
 }
@@ -948,12 +923,8 @@ function cdvRemoveCode() {
   removeCodeOptions[platform] = true; // = {<platform>: true}
 
   const htmlminOptions = {removeComments: true, collapseWhitespace: true};
-  const debugOptions = {
-    title: 'Processing',
-    minimal: true,
-    showFiles: argv.debug || false,
-    showCount: false,
-    logger: m => log(colors.grey(m))
+  const debugOptions = {...debugBaseOptions,
+    showCount: false
   };
 
   // Do not remove desktop code for iOS and macOS (support for tablets and desktop macs)
@@ -1239,7 +1210,6 @@ function cdvCleanUnusedDirectories() {
 
 
 function cdvCopyBuildFiles() {
-
   log(colors.green('Copy build files... '));
 
   const projectRoot = argv.root || '.';
@@ -1247,12 +1217,9 @@ function cdvCopyBuildFiles() {
 
   const srcPath = path.join(projectRoot, 'resources', platform, 'build');
   const targetPath = path.join(projectRoot, 'platforms', platform);
-  const debugOptions = {
-    title: 'Copying',
-    minimal: true,
+  const debugOptions = { ...debugBaseOptions, title: 'Copying',
     showFiles: argv.debug || false,
-    showCount: !argv.debug,
-    logger: m => log(colors.grey(m))
+    showCount: !argv.debug
   };
 
   if (fs.existsSync(srcPath)) {
@@ -1424,7 +1391,7 @@ exports.webExtClean = webExtClean;
 exports.webExtCompile = webExtCompile;
 exports.webExtBuild = webExtBuild;
 exports.webExtCopyFiles = webExtCopyFiles;
-exports['build:webExt'] = exports.webBuild; // Alias
+exports['build:webExt'] = exports.webExtBuild; // Alias
 
 // Cordova (hooks)
 const cdvAfterPrepare = gulp.series(
