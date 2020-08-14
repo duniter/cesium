@@ -1439,6 +1439,14 @@ const cdvAfterPrepare = gulp.series(
 );
 exports.cdvAfterPrepare = cdvAsHook(cdvAfterPrepare);
 
+const cdvBeforeCompile = gulp.series(
+  cdvCleanUnusedDirectories,
+  cdvCopyBuildFiles,
+  cdvAndroidManifest,
+  cdvAndroidCheckSigning
+);
+exports.cdvBeforeCompile = cdvAsHook(cdvBeforeCompile);
+
 exports.default = gulp.series(appConfig, build);
 exports.serveBefore = gulp.series(build, appAndPluginWatch);
 exports['ionic:serve:before'] = exports.serveBefore; // Alias need need by @ionic/cli
