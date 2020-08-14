@@ -5,8 +5,8 @@ SCRIPT_DIR=$(dirname "$(readlink "$BASH_SOURCE" || echo "$BASH_SOURCE")")
 PROJECT_DIR=$(cd "${SCRIPT_DIR}/.." && pwd -P)
 export PROJECT_DIR
 
-echo "Project dir: $PROJECT_DIR"
-
+echo "Preparing project environment..."
+echo " - using Project dir: $PROJECT_DIR"
 
 if ! test -f "${PROJECT_DIR}/package.json"; then
   echo "ERROR: Invalid project dir: file 'package.json' not found in ${PROJECT_DIR}"
@@ -14,7 +14,6 @@ if ! test -f "${PROJECT_DIR}/package.json"; then
   #exit 1
 fi;
 
-echo "Preparing project environment..."
 
 PROJECT_NAME="cesium"
 REPO="duniter/cesium"

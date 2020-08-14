@@ -5,6 +5,7 @@ SCRIPT_DIR=$(dirname "$(readlink "$BASH_SOURCE" || echo "$BASH_SOURCE")")
 PROJECT_DIR=$(cd "${SCRIPT_DIR}/.." && pwd -P)
 export PROJECT_DIR
 
+
 # Preparing environment
 . "${PROJECT_DIR}/scripts/env-global.sh"
 
