@@ -241,12 +241,6 @@ $screen-menu:                     $screen-sm;
   }
 }
 
-@media screen and (max-width: $screen-sm-max) {
-  body {
-      cursor: url('http://ionicframework.com/img/finger.png'), auto;
-  }
-}
-
 @media screen and (min-width: $screen-md) {
   body {
     cursor: inherit;

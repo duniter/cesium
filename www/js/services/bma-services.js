@@ -838,115 +838,78 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     };
 
     exports.uri.parse = function(uri) {
-      return $q(function(resolve, reject) {
-        var pubkey;
+      if (!uri) return $q.reject("Missing required argument 'uri'");
 
-        // If pubkey: not need to parse
-        if (exact(regexp.PUBKEY).test(uri)) {
+      return $q(function(resolve, reject) {
+        // Pubkey or pubkey+checksum
+        if (exports.regexp.PUBKEY.test(uri) || exports.regexp.PUBKEY_WITH_CHECKSUM.test(uri)) {
           resolve({
             pubkey: uri
           });
         }
-        // If pubkey+checksum
-        else if (exact(regexp.PUBKEY_WITH_CHECKSUM).test(uri)) {
-          console.debug("[BMA.parse] Detecting a pubkey with checksum: " + uri);
-          var matches = exports.regexp.PUBKEY_WITH_CHECKSUM.exec(uri);
-          pubkey = matches[1];
-          var checksum = matches[2];
-          console.debug("[BMA.parse] Detecting a pubkey {"+pubkey+"} with checksum {" + checksum + "}");
-          var expectedChecksum = csCrypto.util.pkChecksum(pubkey);
-          console.debug("[BMA.parse] Expecting checksum for pubkey is {" + expectedChecksum + "}");
-          if (checksum != expectedChecksum) {
-            reject( {message: 'ERROR.PUBKEY_INVALID_CHECKSUM'});
+
+        // Uid
+        else if (uri.startsWith('@') && exports.regexp.USER_ID.test(uid.substr(1))) {
+          resolve({
+            uid: uid.substr(1)
+          });
+        }
+
+        // G1 protocols
+        else if(uri.startsWith('june:') || uri.startsWith('web+june:')) {
+          var parser = csHttp.uri.parse(uri);
+
+          // Pubkey (explicit path)
+          var pubkey;
+          if (parser.hostname === 'wallet' || parser.hostname === 'pubkey') {
+            if (exports.regexp.PUBKEY.test(parser.pathSegments[0]) || exports.regexp.PUBKEY_WITH_CHECKSUM.test(parser.pathSegments[0])) {
+              pubkey = parser.pathSegments[0];
+              parser.pathSegments = parser.pathSegments.slice(1);
+            }
+            else {
+              reject({message: 'ERROR.INVALID_PUBKEY'});
+              return;
+            }
           }
-          else {
+          else if (parser.hostname &&
+            (exports.regexp.PUBKEY.test(parser.hostname) || exports.regexp.PUBKEY_WITH_CHECKSUM.test(parser.hostname))) {
+            pubkey = parser.hostname;
+          }
+
+          if (pubkey) {
             resolve({
-              pubkey: pubkey
+              pubkey: pubkey,
+              pathSegments: parser.pathSegments,
+              params: parser.searchParams
             });
           }
-        }
-        else if(uri.startsWith('duniter://')) {
-          var parser = csHttp.uri.parse(uri),
-            uid,
-            currency = parser.host.indexOf('.') === -1 ? parser.host : null,
-            host = parser.host.indexOf('.') !== -1 ? parser.host : null;
-          if (parser.username) {
-            if (parser.password) {
-              uid = parser.username;
-              pubkey = parser.password;
-            }
-            else {
-              pubkey = parser.username;
-            }
-          }
-          if (parser.pathname) {
-            var paths = parser.pathname.split('/');
-            var pathCount = !paths ? 0 : paths.length;
-            var index = 0;
-            if (!currency && pathCount > index) {
-              currency = paths[index++];
-            }
-            if (!pubkey && pathCount > index) {
-              pubkey = paths[index++];
-            }
-            if (!uid && pathCount > index) {
-              uid = paths[index++];
-            }
-            if (pathCount > index) {
-              reject( {message: 'Bad Duniter URI format. Invalid path (incomplete or redundant): '+ parser.pathname}); return;
-            }
+
+          // UID
+          else if (parser.hostname && parser.hostname.startsWith('@') && exports.regexp.USER_ID.test(parser.hostname.substr(1))) {
+            resolve({
+              uid: parser.hostname.substr(1),
+              pathSegments: parser.pathSegments,
+              params: parser.searchParams
+            });
           }
 
-          if (!currency){
-            if (host) {
-              csHttp.get(host + '/blockchain/parameters')()
-              .then(function(parameters){
-                resolve({
-                  uid: uid,
-                  pubkey: pubkey,
-                  host: host,
-                  currency: parameters.currency
-                });
-              })
-              .catch(function(err) {
-                console.error(err);
-                reject({message: 'Could not get node parameter. Currency could not be retrieve'});
-              });
-            }
-            else {
-              reject({message: 'Bad Duniter URI format. Missing currency name (or node address).'}); return;
-            }
+          // Block
+          else if (parser.hostname === 'block') {
+            resolve({
+              block: {number: parser.pathSegments[0]},
+              pathSegments: parser.pathSegments.slice(1),
+              params: parser.searchParams
+            });
           }
+
+          // Other case
           else {
-            if (!host) {
-              resolve({
-                uid: uid,
-                pubkey: pubkey,
-                currency: currency
-              });
-            }
-
-            // Check if currency are the same (between node and uri)
-            return csHttp.get(host + '/blockchain/parameters')()
-              .then(function(parameters){
-                if (parameters.currency !== currency) {
-                  reject( {message: "Node's currency ["+parameters.currency+"] does not matched URI's currency ["+currency+"]."}); return;
-                }
-                resolve({
-                  uid: uid,
-                  pubkey: pubkey,
-                  host: host,
-                  currency: currency
-                });
-              })
-              .catch(function(err) {
-                console.error(err);
-                reject({message: 'Could not get node parameter. Currency could not be retrieve'});
-              });
+            console.debug("[BMA.parse] Unknown URI format: " + uri);
+            reject({message: 'ERROR.UNKNOWN_URI_FORMAT'});
           }
         }
         else {
-          console.debug("[BMA.parse] Could not parse URI: " + uri);
+          console.debug("[BMA.parse] Unknown URI format: " + uri);
           reject({message: 'ERROR.UNKNOWN_URI_FORMAT'});
         }
       })
@@ -954,14 +917,20 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       // Check values against regex
       .then(function(result) {
         if (!result) return;
-        if (result.pubkey && !(exact(regexp.PUBKEY).test(result.pubkey))) {
-          throw {message: "Invalid pubkey format [" + result.pubkey + "]"};
-        }
-        if (result.uid && !(exact(regexp.USER_ID).test(result.uid))) {
-          throw {message: "Invalid uid format [" + result.uid + "]"};
-        }
-        if (result.currency && !(exact(regexp.CURRENCY).test(result.currency))) {
-          throw {message: "Invalid currency format ["+result.currency+"]"};
+
+        // Validate checksum
+        if (result.pubkey && exports.regexp.PUBKEY_WITH_CHECKSUM.test(result.pubkey)) {
+          console.debug("[BMA.parse] Validating pubkey checksum... ");
+          var matches = exports.regexp.PUBKEY_WITH_CHECKSUM.exec(uri);
+          pubkey = matches[1];
+          var checksum = matches[2];
+          var expectedChecksum = csCrypto.util.pkChecksum(pubkey);
+          if (checksum !== expectedChecksum) {
+            console.warn("[BMA.parse] Detecting a pubkey {"+pubkey+"} with checksum {" + checksum + "}, but expecting checksum is {" + expectedChecksum + "}");
+            throw {message: 'ERROR.PUBKEY_INVALID_CHECKSUM'};
+          }
+          result.pubkey = pubkey;
+          result.pubkeyChecksum = checksum;
         }
         return result;
       });

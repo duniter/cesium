@@ -36,7 +36,7 @@ const gulp = require('gulp'),
   argv = require('yargs').argv,
   sriHash = require('gulp-sri-hash'),
   sort = require('gulp-sort'),
-  gulpfile = this;
+  map = require('map-stream');
 
   // Workaround because @ioni/v1-toolkit use gulp v3.9.2 instead of gulp v4
   let jsonlint;
@@ -62,7 +62,7 @@ const paths = {
   ng_annotate_plugin: ['./www/plugins/*/**/*.js', '!./www/plugins/*/js/vendor/*.js']
 };
 
-const uglifyOptions = {
+const uglifyBaseOptions = {
   toplevel: true,
   warnings: true,
   mangle: {
@@ -79,6 +79,13 @@ const uglifyOptions = {
     preamble: "/* minified */",
     max_line_len: 120000
   }
+};
+const debugBaseOptions = {
+  title: 'Processing',
+  minimal: true,
+  showFiles: argv.debug || false,
+  showCount: argv.debug || false,
+  logger: m => log(colors.grey(m))
 };
 
 function appAndPluginWatch(done) {
@@ -100,6 +107,15 @@ function appAndPluginWatch(done) {
   gulp.watch(paths.css_plugin.concat(paths.leafletSass), () => pluginSass());
 
   if (done) done();
+}
+
+
+function appAndPluginClean() {
+  return del([
+    './www/dist',
+    './www/css/ionic.app*.css',
+    './www/css/leaflet.app*.css'
+  ]);
 }
 
 /**
@@ -157,8 +173,25 @@ function appConfig() {
     .pipe(gulp.dest('www/js'));
 }
 
+function appAndPluginLint(done) {
+  log(colors.green('Linting JS files...'));
+
+  // Copy Js (and remove unused code)
+  return gulp.src(paths.ng_annotate.concat(paths.ng_annotate_plugin))
+    .pipe(debug({...debugBaseOptions, title: 'Linting'}))
+    .pipe(jshint())
+    .pipe(jshint.reporter(require('jshint-stylish')))
+    .pipe(map( (file, cb) => {
+      if (!file.jshint.success) {
+        console.error('jshint failed');
+        process.exit(1);
+      }
+    }))
+    .on('end', done);
+}
+
 function appNgTemplate() {
-  log(colors.green('Building App template file...'));
+  log(colors.green('Building template file...'));
 
   return gulp.src(paths.templatecache)
     .pipe(sort())
@@ -188,7 +221,7 @@ function appNgAnnotate(event) {
 }
 
 function appNgTranslate() {
-  log(colors.green('Building App translation file...'));
+  log(colors.green('Building translation file...'));
 
   return gulp.src('www/i18n/locale-*.json')
     .pipe(jsonlint())
@@ -281,7 +314,7 @@ function pluginSass() {
   return merge(
 
     // Copy plugins CSS
-    gulp.src(paths.css_plugin, {read: false})
+    gulp.src(paths.css_plugin)
       .pipe(gulp.dest('www/dist/dist_css/plugins')),
 
     // Leaflet images
@@ -481,8 +514,8 @@ function webPluginNgTemplate() {
   return gulp.src(targetPath + '/plugins/**/*.html')
     .pipe(sort())
     .pipe(templateCache({
-      standalone:true,
-      module:"cesium.plugins.templates",
+      standalone: true,
+      module: "cesium.plugins.templates",
       root: "plugins/"
     }))
     .pipe(gulp.dest(targetPath + '/dist/dist_js/plugins'));
@@ -514,7 +547,7 @@ function webUglify() {
 
       // Process JS
       .pipe(jsFilter)
-      .pipe(uglify(uglifyOptions)) // Minify javascript files
+      .pipe(uglify(uglifyBaseOptions)) // Minify javascript files
       .pipe(jsFilter.restore)
 
       // Process CSS
@@ -585,7 +618,7 @@ function webApiUglify() {
 
       // Process JS
       .pipe(jsFilter)
-      .pipe(uglify(uglifyOptions)) // Minify any javascript sources
+      .pipe(uglify(uglifyBaseOptions)) // Minify any javascript sources
       .pipe(jsFilter.restore)
 
       // Process CSS
@@ -856,8 +889,8 @@ function cdvAddPlatformToBodyTag() {
   }
 }
 
-function cdvCopyFiles() {
-  log(colors.green('Copying files... '));
+function cdvNgAnnotate() {
+  log(colors.green('Building JS files... '));
 
   const projectRoot = argv.root || '.';
   const platform = argv.platform || 'android';
@@ -882,17 +915,17 @@ function cdvCopyFiles() {
     gulp.src(wwwPath + '/plugins/**/*.js')
       .pipe(ngAnnotate({single_quotes: true}))
       .pipe(gulp.dest(wwwPath + '/dist/dist_js/plugins')),
-
+/*
     // Copy plugin CSS
-    gulp.src(wwwPath + '/plugins/*/css/**/*.css')
+    gulp.src(wwwPath + '/plugins/!*!/css/!**!/!*.css')
       .pipe(gulp.dest(wwwPath + '/dist/dist_css/plugins')),
 
     // Copy Leaflet images
     pluginLeafletImages(wwwPath + '/img'),
 
     // Copy Leaflet CSS
-    gulp.src('./www/css/**/leaflet.*')
-      .pipe(gulp.dest(wwwPath + '/css'))
+    gulp.src('./www/css/!**!/leaflet.*')
+      .pipe(gulp.dest(wwwPath + '/css'))*/
 
   );
 }
@@ -1099,7 +1132,7 @@ function cdvUglify() {
     const jsLibFilter = filter(['*/lib/**/*.js', '*/js/vendor/**/*.js'], {restore: true}); // External libs only
     const cssFilter = filter("**/*.css", {restore: true});
     const cdvUglifyOptions = {
-      ...uglifyOptions,
+      ...uglifyBaseOptions,
       ecma: '5'
     };
     const debugOptions = {
@@ -1238,11 +1271,12 @@ function cdvAndroidManifest() {
 
   const projectRoot = argv.root || '.';
   const platform = argv.platform || 'android';
+  if (platform !== 'android') return Promise.resolve(); // Skip
 
   const srcMainPath = path.join(projectRoot, 'platforms', platform, 'app', 'src', 'main');
   const androidManifestFile = path.join(srcMainPath, 'AndroidManifest.xml');
 
-  log(colors.green(' Updating Android manifest... ') + colors.grey(androidManifestFile));
+  log(colors.green('Patch Android manifest... ') + colors.grey(androidManifestFile));
 
   if (!fs.existsSync(androidManifestFile)) {
     throw Error("Missing required file " + androidManifestFile);
@@ -1276,6 +1310,8 @@ function cdvAndroidCheckSigning() {
 
   const projectRoot = argv.root || '.';
   const platform = argv.platform || 'android';
+  if (platform !== 'android') return Promise.resolve(); // Skip
+
   const targetPath = path.join(projectRoot, 'platforms', platform);
   const signingFile = path.join(targetPath, 'release-signing.properties');
 
@@ -1288,28 +1324,18 @@ function cdvAndroidCheckSigning() {
   return Promise.resolve();
 }
 
-function cdvAfterPrepare(done, projectRoot, platform) {
+function cdvAsHook(wrapper) {
 
-  projectRoot = (typeof projectRoot === 'string' && projectRoot) || argv.root || '.';
-  platform = ((typeof platform === 'string' && platform) || argv.platform || 'android').toLowerCase();
+  return (done, projectRoot, platform) => {
+    projectRoot = (typeof projectRoot === 'string' && projectRoot) || argv.root || '.';
+    platform = ((typeof platform === 'string' && platform) || argv.platform || 'android').toLowerCase();
 
-  // Override arguments, to pass it to other tasks
-  argv.root = projectRoot;
-  argv.platform = platform;
+    // Override arguments, to pass it to other tasks
+    argv.root = projectRoot;
+    argv.platform = platform;
 
-  let wrapper = gulp.series(
-    gulp.parallel(cdvCopyFiles, cdvAddPlatformToBodyTag),
-    cdvRemoveCode,
-    gulp.parallel(cdvNgTemplate, cdvNgTranslate),
-    cdvUglify,
-    gulp.parallel(cdvCleanUnusedDirectories,cdvCopyBuildFiles)
-  );
-
-  if (platform === 'android') {
-    wrapper = gulp.series(wrapper, cdvAndroidManifest, cdvAndroidCheckSigning);
+    wrapper(done);
   }
-
-  wrapper(done);
 }
 
 function help() {
@@ -1372,15 +1398,6 @@ const webExtBuild = gulp.series(
 );
 
 
-exports.cdvRemoveCode = cdvRemoveCode;
-exports.cdvNgTemplate = cdvNgTemplate;
-exports.cdvNgTranslate = cdvNgTranslate;
-exports.cdvUglify = cdvUglify;
-exports.cdvCleanUnusedDirectories = cdvCleanUnusedDirectories;
-exports.cdvCopyBuildFiles = cdvCopyBuildFiles;
-exports.cdvAndroidManifest = cdvAndroidManifest;
-exports.cdvAndroidCheckSigning = cdvAndroidCheckSigning;
-exports.cdvAfterPrepare = cdvAfterPrepare;
 
 /* --------------------------------------------------------------------------
    -- Define public tasks
@@ -1392,19 +1409,35 @@ exports.license = appLicense;
 exports.sass = appAndPluginSass;
 exports.translate = translate;
 exports.template = template;
-exports.annotate = appNgAnnotate;
+exports.clean = appAndPluginClean;
+exports.lint = appAndPluginLint;
+exports.annotate = gulp.series(appNgAnnotate, pluginNgAnnotate);
 exports.watch = appAndPluginWatch;
 exports.build = build;
 
+// Web
 exports.webCompile = webCompile;
 exports.webBuild = webBuild;
 exports['build:web'] = exports.webBuild; // Alias
 
+// Web extension
 exports.webExtClean = webExtClean;
 exports.webExtCompile = webExtCompile;
 exports.webExtBuild = webExtBuild;
 exports.webExtCopyFiles = webExtCopyFiles;
 exports['build:webExt'] = exports.webBuild; // Alias
+
+// Cordova (hooks)
+const cdvAfterPrepare = gulp.series(
+  gulp.parallel(cdvNgAnnotate, cdvAddPlatformToBodyTag),
+  cdvRemoveCode,
+  gulp.parallel(cdvNgTemplate, cdvNgTranslate),
+  cdvUglify,
+  gulp.parallel(cdvCleanUnusedDirectories, cdvCopyBuildFiles),
+  // Android tasks
+  gulp.parallel(cdvAndroidManifest, cdvAndroidCheckSigning),
+);
+exports.cdvAfterPrepare = cdvAsHook(cdvAfterPrepare);
 
 exports.default = gulp.series(appConfig, build);
 exports.serveBefore = gulp.series(build, appAndPluginWatch);

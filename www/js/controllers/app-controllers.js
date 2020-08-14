@@ -67,81 +67,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       .then(UIUtils.loading.hide);
   };
 
-  // removeIf(no-device)
-  ////////////////////////////////////////
-  // Device only methods
-  // (code removed when NO device)
-  ////////////////////////////////////////
-
-  $scope.scanQrCodeAndGo = function() {
-
-    if (!Device.barcode.enable) return;
-
-    // Run scan cordova plugin, on device
-    return Device.barcode.scan()
-      .then(function(data) {
-        if (!data) return;
-
-        // Try to parse as an URI
-        return BMA.uri.parse(data)
-          .then(function(res){
-            if (!res || !res.pubkey) throw {message: 'ERROR.SCAN_UNKNOWN_FORMAT'};
-            // If pubkey: open the identity
-            return $state.go('app.wot_identity', {
-              pubkey: res.pubkey,
-              node: res.host ? res.host: null}
-            );
-          })
-
-          // Not an URI: try WIF or EWIF format
-          .catch(function(err) {
-            console.debug("[app] Scan data is not an URI (get error: " + (err && err.message || err) + "). Trying to decode as a WIF or EWIF format...");
-
-            // Try to read as WIF format
-            return csCrypto.keyfile.parseData(data)
-              .then(function(keypair) {
-                if (!keypair || !keypair.signPk || !keypair.signSk) throw err; // rethrow the first error (e.g. Bad URI)
-
-                var pubkey = CryptoUtils.base58.encode(keypair.signPk);
-                console.debug("[app] Detected WIF/EWIF format. Will login to wallet {" + pubkey.substring(0, 8) + "}");
-
-                // Create a new wallet (if default wallet is already used)
-                var wallet = !csWallet.isLogin() ? csWallet : csWallet.children.create({store: false});
-
-                // Login using keypair
-                return wallet.login({
-                  silent: true,
-                  forceAuth: true,
-                  minData: false,
-                  authData: {
-                    pubkey: pubkey,
-                    keypair: keypair
-                  }
-                })
-                  .then(function () {
-
-                    // Open transfer all wallet
-                    $ionicHistory.nextViewOptions({
-                      historyRoot: true
-                    });
-                    return $state.go('app.new_transfer', {
-                      all: true, // transfer all sources
-                      wallet: !wallet.isDefault() ? wallet.id : undefined
-                    });
-                  });
-              })
-              // Unknown format (nor URI, nor WIF/EWIF)
-              .catch(UIUtils.onError('ERROR.SCAN_UNKNOWN_FORMAT'));
-          });
-      })
-      .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
-  };
-
-  ////////////////////////////////////////
-  // End of device only methods
-  ////////////////////////////////////////
-  // endRemoveIf(no-device)
-
   ////////////////////////////////////////
   // Show Help tour
   ////////////////////////////////////////
@@ -465,6 +390,83 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     return false;
   };
 
+  /**
+   * Parse an external URI (see g1lien), and open the expected state
+   * @param uri
+   * @returns {*}
+   */
+  $scope.handleUri = function(uri) {
+    if (!uri) return $q.when(); // Skip
+
+    console.info('[app] Parsing external uri: ', uri);
+    var fromHomeState = $state.current && $state.current.name === 'app.home';
+
+    // Parse the URI
+    return BMA.uri.parse(uri)
+      .then(function(res) {
+        if (!res) throw {message: 'ERROR.UNKNOWN_URI_FORMAT'}; // Continue
+
+        if (res.pubkey) {
+           $state.go('app.wot_identity',
+            angular.merge({
+              pubkey: res.pubkey,
+              action: res.params && res.params.amount ? 'transfer' : undefined
+            }, res.params),
+            {reload: true});
+        }
+        else if (res.uid) {
+          return $state.go('app.wot_identity_uid',
+            angular.merge({
+              uid: res.uid,
+              action: res.params && res.params.amount ? 'transfer' : undefined
+            }, res.params),
+            {reload: true});
+        }
+        else if (angular.isDefined(res.block)) {
+          return $state.go('app.view_block',
+            angular.merge(res.block, res.params),
+            {reload: true});
+        }
+        // Default: wot lookup
+        else {
+          console.warn('[app] TODO implement state redirection from URI result: ', res, uri);
+          return $state.go('app.wot_lookup.tab_search',
+            {q: uri},
+            {reload: true});
+        }
+      })
+
+      // After state change
+      .then(function() {
+        if (fromHomeState) {
+          // Wait 500ms, then remove /app/home?uri from the history
+          // to make sure the back button will work fine
+          return $timeout(function () {
+            if ($ionicHistory.backView()) $ionicHistory.removeBackView();
+          }, 500);
+        }
+      })
+
+      .catch(function(err) {
+        console.error("[home] Error while handle uri {" + uri + "': ", err);
+        return UIUtils.onError(uri)(err);
+      });
+  };
+
+  $scope.registerProtocolHandlers = function() {
+    var protocols = ['web+june', /*'june' - NOT yet accepted by web browser */];
+
+    _.each(protocols, function(protocol) {
+      console.debug("[app] Registering protocol '%s'...".format(protocol));
+      try {
+        navigator.registerProtocolHandler(protocol, "#/app/home?uri=%s", "Cesium");
+      }
+      catch(err) {
+        console.error("[app] Error while registering protocol '%s'".format(protocol), err);
+      }
+    });
+  };
+
   ////////////////////////////////////////
   // Layout Methods
   ////////////////////////////////////////
@@ -505,8 +507,114 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     UIUtils.screen.fullscreen.toggleAll();
   };
 
+  // removeIf(no-device)
+  ////////////////////////////////////////
+  // Device only methods
+  // (code removed when NO device)
+  ////////////////////////////////////////
+
+  $scope.scanQrCodeAndGo = function() {
+
+    if (!Device.barcode.enable) return;
+
+    // Run scan cordova plugin, on device
+    return Device.barcode.scan()
+      .then(function(data) {
+        if (!data) return;
+
+        // Try to parse as an URI
+        return BMA.uri.parse(data)
+          .then(function(res){
+            if (!res || !res.pubkey) throw {message: 'ERROR.SCAN_UNKNOWN_FORMAT'};
+            // If pubkey: open the identity
+            return $state.go('app.wot_identity', {
+              pubkey: res.pubkey,
+              node: res.host ? res.host: null}
+            );
+          })
+
+          // Not an URI: try WIF or EWIF format
+          .catch(function(err) {
+            console.debug("[app] Scan data is not an URI (get error: " + (err && err.message || err) + "). Trying to decode as a WIF or EWIF format...");
+
+            // Try to read as WIF format
+            return csCrypto.keyfile.parseData(data)
+              .then(function(keypair) {
+                if (!keypair || !keypair.signPk || !keypair.signSk) throw err; // rethrow the first error (e.g. Bad URI)
+
+                var pubkey = CryptoUtils.base58.encode(keypair.signPk);
+                console.debug("[app] Detected WIF/EWIF format. Will login to wallet {" + pubkey.substring(0, 8) + "}");
+
+                // Create a new wallet (if default wallet is already used)
+                var wallet = !csWallet.isLogin() ? csWallet : csWallet.children.create({store: false});
+
+                // Login using keypair
+                return wallet.login({
+                  silent: true,
+                  forceAuth: true,
+                  minData: false,
+                  authData: {
+                    pubkey: pubkey,
+                    keypair: keypair
+                  }
+                })
+                  .then(function () {
+
+                    // Open transfer all wallet
+                    $ionicHistory.nextViewOptions({
+                      historyRoot: true
+                    });
+                    return $state.go('app.new_transfer', {
+                      all: true, // transfer all sources
+                      wallet: !wallet.isDefault() ? wallet.id : undefined
+                    });
+                  });
+              })
+              // Unknown format (nor URI, nor WIF/EWIF)
+              .catch(UIUtils.onError('ERROR.SCAN_UNKNOWN_FORMAT'));
+          });
+      })
+      .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
+  };
+
+  /**
+   * Process launch intent, as it could have been triggered BEFORE addListeners()
+   * @returns {*}
+   */
+  $scope.processLaunchUri = function() {
+    return Device.intent.last()
+      .then(function(intent) {
+        if (intent) {
+          Device.intent.clear();
+          return $scope.handleUri(intent);
+        }
+      });
+  };
+
+  // Listen for new intent
+  Device.api.intent.on.new($scope, $scope.handleUri);
+  $scope.processLaunchUri();
+
+  ////////////////////////////////////////
+  // End of device only methods
+  ////////////////////////////////////////
+  // endRemoveIf(no-device)
+
+
   // removeIf(device)
+  ////////////////////////////////////////
+  // NOT-Device only methods (web or desktop)
+  // (code removed when build for device - eg. Android, iOS)
+  ////////////////////////////////////////
+
   // Ask switching fullscreen
   $scope.askFullscreen();
+
+  // Register protocol handlers
+  $scope.registerProtocolHandlers();
+
+  ////////////////////////////////////////
+  // End of NOT-device only methods
+  ////////////////////////////////////////
   // endRemoveIf(device)
 }

@@ -153,26 +153,24 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
         return deferred.promise;
       }
 
-      function handleOpenUri(intent) {
-        if (intent) {
-          console.info('[platform] Received new intent: ', intent);
-          cache.lastIntent = intent; // Remember, for last()
-          api.intent.raise.new(intent);
-        }
+    // WARN: Need by cordova-plugin-customurlscheme
+    window.handleOpenURL = function(intent) {
+      if (intent) {
+        console.info('[device] Received new intent: ', intent);
+        cache.lastIntent = intent; // Remember, for last()
+        api.intent.raise.new(intent);
       }
+    };
 
-      exports.intent = {
+    exports.intent = {
         enable: false,
         last: function() {
           return $q.when(cache.lastIntent);
         },
-        handle: handleOpenUri,
         clear: function() {
           cache.lastIntent = undefined;
         }
       };
-
-      window.handleOpenURL = handleOpenUri; // Need by cordova-plugin-customurlscheme
 
       // Numerical keyboard - fix #30
       exports.keyboard.digit = {

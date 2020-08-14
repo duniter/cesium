@@ -47,7 +47,7 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
 
     if (state && state.stateParams && state.stateParams.uri) {
 
-      return csPlatform.uri.open(state.stateParams.uri)
+      return $scope.handleUri(state.stateParams.uri)
         .then(function() {
           $scope.loading = false;
         });

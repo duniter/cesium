@@ -227,96 +227,12 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       return $q.when();
     }
 
-    /**
-     * Parse an external URI (see g1lien), and open the expected state
-     * @param uri
-     * @returns {*}
-     */
-    function openUri(uri) {
-      if (!uri) return $q.when(); // Skip
 
-      console.info('[platform] Detecting external uri: ', uri);
-
-      var parts = csHttp.uri.parse(uri),
-        state, stateParams;
-
-      // G1 lien
-      if (parts.protocol === 'june:') {
-        console.debug("[home] Applying uri...", parts);
-
-        // Pubkey
-        if (parts.hostname && BMA.regexp.PUBKEY.test(parts.hostname)) {
-          state = 'app.wot_identity';
-          stateParams = {pubkey: parts.hostname};
-        } else if ((parts.hostname === 'wallet' || parts.hostname === 'pubkey') && BMA.regexp.PUBKEY.test(parts.pathSegments[0])) {
-          state = 'app.wot_identity';
-          stateParams = {pubkey: parts.pathSegments[0]};
-        }
-
-        // Block
-        else if (parts.hostname === 'block') {
-          state = 'app.view_block';
-          stateParams = {number: parts.pathSegments[0]};
-        }
-
-        // Otherwise, try to a wot lookup
-        else if (parts.hostname && BMA.regexp.USER_ID.test(parts.hostname)) {
-          state = 'app.wot_lookup.tab_search';
-          stateParams = {q: parts.hostname};
-        }
-      }
-
-      if (state === 'app.wot_identity' && parts.searchParams && (angular.isDefined(parts.searchParams.action) || angular.isDefined(parts.searchParams.amount))) {
-        stateParams = angular.merge(stateParams,
-          // Add default actions
-          {action: 'transfer'},
-          // Add path params
-          parts.searchParams);
-      }
-
-      if (state) {
-
-        var fromHomeState = $state.current && $state.current.name === 'app.home';
-
-        // Open the state, after cleaning current location URI
-        return $state.go(state, stateParams, {
-          reload: true
-        })
-          .then(function () {
-            if (fromHomeState) {
-              // This is need to make back button working again
-              return $timeout(function () {
-                if ($ionicHistory.backView()) $ionicHistory.removeBackView();
-              }, 400);
-            }
-          });
-      } else {
-        console.error("[home] Unknown URI format: " + uri);
-        return UIUtils.alert.error("ERROR.UNKNOWN_URI_FORMAT", uri);
-      }
-    }
-
-    function registerProtocolHandlers() {
-      var protocols = ['web+june'/*, 'web+g1', 'g1'*/];
-
-      _.each(protocols, function(protocol) {
-        console.debug("[platform] Registering protocol '%s'...".format(protocol));
-        try {
-          navigator.registerProtocolHandler(protocol, "#/app/home?uri=%s", "Cesium");
-        }
-        catch(err) {
-          console.error("[platform] Error while registering protocol '%s'".format(protocol), err);
-        }
-      });
-    }
 
     function addListeners() {
       listeners = [
         // Listen if node changed
-        BMA.api.node.on.restart($rootScope, restart, this),
-
-        // Listen for new intent
-        Device.api.intent.on.new($rootScope, openUri, this)
+        BMA.api.node.on.restart($rootScope, restart, this)
       ];
     }
 
@@ -345,7 +261,6 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       // Avoid change state
       disableChangeState();
 
-      registerProtocolHandlers();
 
       // We use 'ionicReady()' instead of '$ionicPlatform.ready()', because this one is callable many times
       startPromise = ionicReady()
@@ -372,7 +287,6 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         .then(function(){
           enableChangeState();
           addListeners();
-          processLaunchUri();
           startPromise = null;
           started = true;
         })
@@ -403,20 +317,6 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       }, 500);
     }
 
-    /**
-     * Process launch intent, as it could have been triggered BEFORE addListeners()
-     * @returns {*}
-     */
-    function processLaunchUri() {
-      return Device.intent.last()
-        .then(function(intent) {
-          if (intent) {
-            Device.intent.clear();
-            return openUri(intent);
-          }
-        });
-    }
-
     return  {
       disableChangeState: disableChangeState,
       isStarted: isStarted,
@@ -426,9 +326,6 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       stop: stop,
       version: {
         latest: getLatestRelease
-      },
-      uri: {
-        open: openUri
       }
     };
   })
