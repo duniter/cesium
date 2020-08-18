@@ -1053,48 +1053,47 @@ function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHis
   });
 
   $scope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
-    if ($scope.dirty && !$scope.saving) {
+    if (!$scope.dirty || $scope.saving || event.defaultPrevented) return;
 
-      // stop the change state action
-      event.preventDefault();
+    // stop the change state action
+    event.preventDefault();
 
-      if (!$scope.loading) {
-        $scope.loading = true;
-        return UIUtils.alert.confirm('CONFIRM.SAVE_BEFORE_LEAVE',
-          'CONFIRM.SAVE_BEFORE_LEAVE_TITLE', {
-            cancelText: 'COMMON.BTN_NO',
-            okText: 'COMMON.BTN_YES_SAVE'
-          })
-          .then(function(confirmSave) {
-            $scope.loading = false;
-            if (confirmSave) {
-              $scope.form.$submitted=true;
-              return $scope.save(false/*silent*/, true/*haswait debounce*/)
-                .then(function(saved){
-                  if (saved) {
-                    $scope.dirty = false;
-                  }
-                  return saved; // change state only if not error
-                });
-            }
-            else {
-              $scope.dirty = false;
-              return true; // ok, change state
-            }
-          })
-          .then(function(confirmGo) {
-            if (confirmGo) {
-              // continue to the order state
-              $ionicHistory.nextViewOptions({
-                historyRoot: true
+    if (!$scope.loading) {
+      $scope.loading = true;
+      return UIUtils.alert.confirm('CONFIRM.SAVE_BEFORE_LEAVE',
+        'CONFIRM.SAVE_BEFORE_LEAVE_TITLE', {
+          cancelText: 'COMMON.BTN_NO',
+          okText: 'COMMON.BTN_YES_SAVE'
+        })
+        .then(function(confirmSave) {
+          $scope.loading = false;
+          if (confirmSave) {
+            $scope.form.$submitted=true;
+            return $scope.save(false/*silent*/, true/*haswait debounce*/)
+              .then(function(saved){
+                if (saved) {
+                  $scope.dirty = false;
+                }
+                return saved; // change state only if not error
               });
-              $state.go(next.name, nextParams);
-            }
-          })
-          .catch(function(err) {
-            // Silent
-          });
-      }
+          }
+          else {
+            $scope.dirty = false;
+            return true; // ok, change state
+          }
+        })
+        .then(function(confirmGo) {
+          if (confirmGo) {
+            // continue to the order state
+            $ionicHistory.nextViewOptions({
+              historyRoot: true
+            });
+            $state.go(next.name, nextParams);
+          }
+        })
+        .catch(function(err) {
+          // Silent
+        });
     }
   });
 
