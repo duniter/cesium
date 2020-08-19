@@ -371,13 +371,15 @@ $screen-menu:                     $screen-sm;
  Left menu
 =============== */
 
-
 // Screen without left menu
 @media screen and (max-width: $screen-nomenu-max) {
-  .visible-nomenu {
-    display: inherit !important;
-    visibility: visible !important;
+  .hidden-nomenu {
+    display: none !important;
+    visibility: hidden !important;
   }
+  .visible-nomenu {
+    display: unset;
+    visibility: visible !important; }
 }
 @media screen and (min-width: $screen-menu) {
   .visible-nomenu {
