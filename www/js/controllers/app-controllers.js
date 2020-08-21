@@ -365,7 +365,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Link management
   ////////////////////////////////////////
 
-  $scope.openLink = function($event, uri, options) {
+  // WARN: publish to root scope, to make sure popover (with new scope) can use it
+  $rootScope.openLink = function($event, uri, options) {
     $event.stopPropagation();
     $event.preventDefault();
 
@@ -411,7 +412,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
            $state.go('app.wot_identity',
             angular.merge({
               pubkey: res.pubkey,
-              action: res.params && res.params.amount ? 'transfer' : undefined
+              action: res.params && (res.params.amount || res.params.comment) ? 'transfer' : undefined
             }, res.params),
             {reload: true});
         }
