@@ -13,8 +13,7 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content class="circle-bg-dark positive-900-bg"
-  ng-class="::{'calm-bg': $root.config.readonly}">
+  <ion-content class="circle-bg-dark positive-900-bg" ng-class="::{'calm-bg': $root.config.readonly}">
 
     <div class="ribbon" ng-if="::$root.config.demo || $root.config.readonly">
       <a class="badge badge-assertive" ng-if="::$root.config.demo"  ng-click="showHelpModal('demo')">{{:locale:'MODE.DEMO.BADGE'|translate}}</a>
@@ -177,7 +176,7 @@
           <!-- feed items -->
           <div class="animate-show-hide ng-hide" ng-show="feed">
             <div ng-repeat="item in feed.items"
-               class="card padding no-margin-xs">
+                 class="card padding no-margin-xs">
 
               <div class="header ">
                 <!-- author -->

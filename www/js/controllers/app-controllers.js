@@ -510,7 +510,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   $scope.registerProtocolHandlers = function() {
-    var protocols = ['web+june', /*'june' - NOT yet accepted by web browser */];
+    var protocols = ['web+june'];
 
     _.each(protocols, function(protocol) {
       console.debug("[app] Registering protocol '{0}'...".format(protocol));
