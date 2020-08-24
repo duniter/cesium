@@ -82,6 +82,7 @@
                      id="profile-name"
                      ng-model="formData.title"
                      ng-model-options="{ debounce: 350 }"
+                     ng-minlength="3"
                      ng-maxlength="50"
                      required>
             </ion-item>
@@ -90,6 +91,9 @@
                  ng-messages="form.title.$error">
               <div class="form-error" ng-message="required">
                 <span translate="ERROR.FIELD_REQUIRED"></span>
+              </div>
+              <div class="form-error" ng-message="minlength">
+                <span translate="ERROR.FIELD_TOO_SHORT"></span>
               </div>
               <div class="form-error" ng-message="maxlength">
                 <span translate="ERROR.FIELD_TOO_LONG_WITH_LENGTH" translate-values="{maxLength: 50}"></span>

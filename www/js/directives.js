@@ -121,8 +121,9 @@ angular.module('cesium.directives', [])
       link: function (scope, element, attrs) {
         var showCopyPopover = function (event) {
           var value = attrs.copyOnClick;
-          if (value && Device.clipboard.enable) {
-            // copy to clipboard
+          if (value === undefined || value === null) return; // Skip if no value
+          if (Device.clipboard.enable) {
+            // copy to clipboard, using cordova
             Device.clipboard.copy(value)
               .then(function(){
                  UIUtils.toast.show('INFO.COPY_TO_CLIPBOARD_DONE');
@@ -138,7 +139,17 @@ angular.module('cesium.directives', [])
                 value: attrs.copyOnClick,
                 rows: rows
               },
-              autoselect: '.popover-copy ' + (rows <= 1 ? 'input' : 'textarea')
+              autoselect: '.popover-copy ' + (rows <= 1 ? 'input' : 'textarea'),
+
+              // After popover, try to copy the selection
+              afterShow: document.execCommand ? function(popover) {
+                try {
+                  document.execCommand("copy");
+                  UIUtils.toast.show('INFO.COPY_TO_CLIPBOARD_DONE', 1000);
+                } catch (err) {
+                  console.error("[copy-on-click] Failed to copy using document.execCommand('copy')", err);
+                }
+              } : undefined
             });
           }
         };
