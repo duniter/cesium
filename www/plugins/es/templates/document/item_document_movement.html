@@ -1,0 +1,54 @@
+<ion-item id="doc-{{::doc.id}}"
+          class="item item-document item-icon-left ink {{::ionItemClass}} no-padding-top no-padding-bottom"
+          ng-click="selectDocument($event, doc)">
+
+  <i class="icon ion-document stable" ng-if=":rebind:!doc.avatar"></i>
+  <i class="avatar" ng-if=":rebind:doc.avatar" style="background-image: url('{{:rebind:doc.avatar.src}}')"></i>
+
+  <div class="row no-padding">
+    <div class="col">
+      <h3 class="dark">
+        {{:rebind:doc.medianTime|formatDate}}</h3>
+      <h4 class="gray" ng-if="doc.reference">
+        <span translate>COMMON.BLOCK</span> #{{doc.reference.id | formatInteger}}
+      </h4>
+    </div>
+
+    <div class="col">
+      <h3>
+        <a ui-sref="app.wot_identity({pubkey: doc.pubkey, uid: doc.uid})">
+          <span class="gray">
+            <i class="ion-key"></i> {{:rebind:doc.pubkey|formatPubkey}}
+          </span>
+          <span class="positive" ng-if=":rebind:doc.uid">
+            <i class="ion-person"></i> {{:rebind:doc.name||doc.uid}}
+          </span>
+        </a>
+      </h3>
+    </div>
+
+    <!-- recipient -->
+    <div class="col">
+
+      <h3 ng-if=":rebind:doc.recipient">
+          <a ui-sref="app.wot_identity({pubkey: doc.recipient.pubkey, uid: doc.recipient.uid})">
+          <span class="gray">
+            <i class="ion-key"></i> {{:rebind:doc.recipient.pubkey|formatPubkey}}
+          </span>
+            <span class="positive" ng-if=":rebind:doc.recipient.uid">
+            <i class="ion-person"></i> {{:rebind:doc.recipient.name||doc.recipient.uid}}
+          </span>
+          </a>
+      </h3>
+    </div>
+
+    <!-- amount -->
+    <div class="col col-10">
+      <div class="badge item-note" ng-class=":rebind:{'badge-calm': doc.amount > 0, 'badge-white': doc.amount < 0}">
+        {{:rebind:doc.amount|formatAmount: {currency: doc.currency} }}
+      </div>
+
+    </div>
+
+  </div>
+</ion-item>

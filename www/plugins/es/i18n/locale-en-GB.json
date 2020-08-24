@@ -220,6 +220,7 @@
       "HEADER_BLOCK": "Block #",
       "HEADER_ISSUER": "Peer owner",
       "BTN_LAST": "Last blocks",
+      "BTN_TX": "Transactions",
       "DISPLAY_QUERY": "View query",
       "HIDE_QUERY": "Hide query",
       "TX_SEARCH_FILTER": {
@@ -438,6 +439,7 @@
       "HEADER_TIME": "Time/Hour",
       "HEADER_ISSUER": "Issuer",
       "HEADER_RECIPIENT": "Recipient",
+      "HEADER_AMOUNT": "Amount",
       "READ": "Read",
       "BTN_REMOVE": "Delete this document",
       "BTN_COMPACT": "Compact",

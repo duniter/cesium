@@ -54,6 +54,7 @@
       "HEADER_TIME": "Fecha/Hora",
       "HEADER_ISSUER": "Emisor",
       "HEADER_RECIPIENT": "Destinatario",
+      "HEADER_AMOUNT": "Importe",
       "READ": "Leído",
       "BTN_REMOVE": "Sumprimer este documento",
       "POPOVER_ACTIONS": {

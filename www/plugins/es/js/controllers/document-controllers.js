@@ -46,7 +46,10 @@ function ESDocumentLookupController($scope, $ionicPopover, $location, $timeout,
   $scope.defaultSizeLimit = $scope.defaultSizeLimit || (UIUtils.screen.isSmall() ? 50 : 100);
   $scope.helptipPrefix = 'helptip-document';
   $scope.compactMode = angular.isDefined($scope.compactMode) ? $scope.compactMode : true;
-  $scope._source = $scope._source || ["issuer", "hash", "time", "creationTime", "title", "message"];
+  $scope._source = $scope._source || ["issuer", "hash", "time", "creationTime", "title", "message", "recipient",
+    // Movement field:
+    "medianTime", "amount", "currency", "reference"
+  ];
   $scope.showHeaders = angular.isDefined($scope.showHeaders) ? $scope.showHeaders : true;
 
   /**
@@ -394,6 +397,7 @@ function ESLastDocumentsController($scope, $controller, $timeout, $state, $filte
     }
 
     options._source = options._source || $scope._source;
+
     options.getTimeFunction = function(doc) {
       doc.time = doc.creationTime || doc.time;
       return doc.time;

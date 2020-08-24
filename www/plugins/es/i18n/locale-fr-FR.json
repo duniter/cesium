@@ -220,6 +220,7 @@
       "HEADER_BLOCK": "Bloc #",
       "HEADER_ISSUER": "Noeud émetteur",
       "BTN_LAST": "Derniers blocs",
+      "BTN_TX": "Transactions",
       "DISPLAY_QUERY": "Afficher la requête",
       "HIDE_QUERY": "Masquer la requête",
       "TX_SEARCH_FILTER": {
@@ -491,6 +492,7 @@
       "HEADER_TIME": "Date/Heure",
       "HEADER_ISSUER": "Emetteur",
       "HEADER_RECIPIENT": "Destinataire",
+      "HEADER_AMOUNT": "Montant",
       "READ": "Lu",
       "BTN_REMOVE": "Supprimer ce document",
       "BTN_COMPACT": "Compacter",
