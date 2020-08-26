@@ -395,9 +395,8 @@ function ESSocialsEditController($scope, $focus, $filter, UIUtils, SocialUtils) 
     $focus('socialUrl');
   };
 
-
   $scope.reorderSocialNetwork = function(social, fromIndex, toIndex) {
-    if (!social || fromIndex == toIndex) return; // no changes
+    if (!social || fromIndex === toIndex) return; // no changes
     $scope.formData.socials.splice(fromIndex, 1);
     $scope.formData.socials.splice(toIndex, 0, social);
   };
@@ -415,7 +414,6 @@ function ESSocialsViewController($scope)  {
       type: social.type
     });
   };
-
 
   $scope.filterFn = function(social) {
     return !social.recipient || social.valid;
@@ -532,17 +530,17 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
       });
   };
 
-    $scope.onCityChanged = function() {
-        if ($scope.loading) return;
-        if ($scope.formPosition.enable) {
-          if ($scope.formData.geoPoint) {
-            // Invalidate the position
-            $scope.formData.geoPoint.lat = undefined;
-            $scope.formData.geoPoint.lon = undefined;
-          }
-          return $scope.tryToLocalize();
+  $scope.onCityChanged = function() {
+      if ($scope.loading) return;
+      if ($scope.formPosition.enable) {
+        if ($scope.formData.geoPoint) {
+          // Invalidate the position
+          $scope.formData.geoPoint.lat = undefined;
+          $scope.formData.geoPoint.lon = undefined;
         }
-    };
+        return $scope.tryToLocalize();
+      }
+  };
 
   $scope.onUseGeopointChanged = function() {
     if ($scope.loading) return;
@@ -623,7 +621,7 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
         $scope.searchModalOpened = false;
         $scope.updateGeoPoint(res);
       })
-      .catch(function() {
+      .catch(function(err) {
         console.error(err);
         $scope.searchModalOpened = false;
       });
@@ -737,7 +735,6 @@ function ESSearchPositionItemController($scope, $timeout, ModalUtils, csConfig, 
 
   // The default country used for address localisation
   var defaultCountry = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.defaultCountry;
-  //$scope.smallscreen = angular.isDefined($scope.smallscreen) ? $scope.smallscreen : UIUtils.screen.isSmall();
 
   var loadingPosition = false;
   var minLength = 3;
@@ -800,7 +797,7 @@ function ESSearchPositionItemController($scope, $timeout, ModalUtils, csConfig, 
     }
 
     _.forEach($scope.locations||[], function(item, index) {
-      item.selected = (index == $scope.selectLocationIndex);
+      item.selected = (index === $scope.selectLocationIndex);
     });
 
     // TODO: scroll to item ?
@@ -828,7 +825,7 @@ function ESSearchPositionItemController($scope, $timeout, ModalUtils, csConfig, 
     // Execute the given query
     return esGeo.point.searchByAddress(text)
       .then(function(res) {
-        if ($scope.requestId != requestId) return; // Skip apply if not same request:
+        if ($scope.requestId !== requestId) return; // Skip apply if not same request:
 
         loadingPosition = false;
         $scope.locations = res||[];

@@ -79,7 +79,7 @@ function ESViewEditProfileController($scope, $q, $timeout, $state, $focus, $tran
       })
       .then($scope.load)
       .catch(function(err){
-        if (err == 'CANCELLED') {
+        if (err === 'CANCELLED') {
           UIUtils.loading.hide(10);
           $scope.cancel();
           return;
@@ -191,6 +191,7 @@ function ESViewEditProfileController($scope, $q, $timeout, $state, $focus, $tran
     }
 
     if (!hasWaitDebounce) {
+      console.debug('[ES] [profile] Waiting debounce end, before saving...');
       $scope.saving = true;
       return $timeout(function() {
         return $scope.save(silent, true);

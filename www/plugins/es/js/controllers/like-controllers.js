@@ -297,7 +297,6 @@ function ESLikesController($scope, $q, $timeout, $translate, $ionicPopup, UIUtil
     options.kind = 'ABUSE';
     return $scope.toggleLike(event, options)
       .then(function() {
-        console.log('BEFORE display toast');
         UIUtils.toast.show('COMMON.REPORT_ABUSE.CONFIRM.SENT');
       });
   };

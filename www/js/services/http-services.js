@@ -8,7 +8,12 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
   var
     sockets = [],
     defaultCachePrefix = 'csHttp-',
-    allCachePrefixes = {};
+    allCachePrefixes = {},
+    regexp = {
+      POSITIVE_INTEGER: /^\d+$/,
+      VERSION_PART_REGEXP: /^[0-9]+|alpha[0-9]+|beta[0-9]+|rc[0-9]+|[0-9]+-SNAPSHOT$/
+    }
+  ;
 
   if (!timeout) {
     timeout=4000; // default
@@ -335,6 +340,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       uri = 'http://' + path;
     }
 
+    // Use a <a> element to parse
     var parser = document.createElement('a');
     parser.href = uri;
 
@@ -389,13 +395,13 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       var parts = parseUri(uri);
 
       if (!parts.protocol && options.type) {
-        parts.protocol = (options.type == 'email')  ? 'mailto:' :
-          ((options.type == 'phone') ? 'tel:' : '');
+        parts.protocol = (options.type === 'email')  ? 'mailto:' :
+          ((options.type === 'phone') ? 'tel:' : '');
         uri = parts.protocol + uri;
       }
 
       // On desktop, open into external tool
-      if (parts.protocol == 'mailto:'  && Device.isDesktop()) {
+      if (parts.protocol === 'mailto:'  && Device.isDesktop()) {
         try {
           nw.Shell.openExternal(uri);
           return;
@@ -405,10 +411,10 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
         }
       }
 
-      // Check if device is enable, on special tel: or mailto: protocole
-      var validProtocol = (parts.protocol == 'mailto:' || parts.protocol == 'tel:') && Device.enable;
+      // Check if device is enable, on special tel: or mailto: protocol
+      var validProtocol = (Device.enable && (parts.protocol === 'mailto:' || parts.protocol === 'tel:'));
       if (!validProtocol) {
-        if (options.onError && typeof options.onError == 'function') {
+        if (options.onError && typeof options.onError === 'function') {
           options.onError(uri);
         }
         return;
@@ -491,11 +497,15 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
     // First, validate both numbers are true version numbers
     function validateParts(parts) {
-      for (var i = 0; i < parts.length; ++i) {
-        if (!isPositiveInteger(parts[i])) {
-          return false;
-        }
-        parts[i] = parseInt(parts[i]);
+      for (var i = 0; i < parts.length; i++) {
+        var isNumber = regexp.POSITIVE_INTEGER.test(parts[i]);
+        // First part MUST be an integer
+        if (i === 0 && !isNumber) return false;
+        // If not integer, should be 'alpha', 'beta', etc.
+        if (!isNumber && !regexp.VERSION_PART_REGEXP.test(parts[i])) return false;
+
+        // Convert string to int (need by compare operators)
+        if (isNumber) parts[i] = parseInt(parts[i]);
       }
       return true;
     }

@@ -21,7 +21,7 @@
             ng-repeat="social in formData.socials | filter:filterFn track by social.url"
             id="social-{{social.url|formatSlug}}">
     <i class="icon ion-social-{{social.type}}"
-       ng-class="{'ion-bookmark': social.type == 'other', 'ion-link': social.type == 'web', 'ion-email': social.type == 'email', 'ion-iphone': social.type == 'phone'}"></i>
+       ng-class="{'ion-bookmark': social.type === 'other', 'ion-link': social.type === 'web', 'ion-email': social.type === 'email', 'ion-iphone': social.type === 'phone'}"></i>
     <p ng-if="social.type && social.type != 'web'">
       {{social.type}}
       <i class="ion-locked" ng-if="social.recipient"></i>
