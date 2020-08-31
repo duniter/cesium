@@ -238,8 +238,8 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
         maxClusterRadius: 65,
         showCoverageOnHover: false,
         iconCreateFunction: function (cluster) {
-          //var countByLayer = _.countBy(cluster.getAllChildMarkers(), extractMarkerLayer);
-          var markerColor = 'blue'; //countByLayer.member ? 'blue' : (countByLayer.pending ? 'lightgreen' : 'lightgray');
+          var countByLayer = _.countBy(cluster.getAllChildMarkers(), extractMarkerLayer);
+          var markerColor = countByLayer.member ? 'blue' : (countByLayer.pending ? 'lightgreen' : 'lightgray');
           var childCount = cluster.getChildCount();
           var className = 'marker-cluster ' + markerColor + ' marker-cluster-';
           if (childCount < 10) {

@@ -130,14 +130,16 @@ angular.module('cesium.directives', [])
               })
               .catch(UIUtils.onError('ERROR.COPY_CLIPBOARD'));
           }
-          else if (value) {
+          else {
+
             var rows = value && value.indexOf('\n') >= 0 ? value.split('\n').length : 1;
             UIUtils.popover.show(event, {
               scope: scope,
               templateUrl: 'templates/common/popover_copy.html',
               bindings: {
                 value: attrs.copyOnClick,
-                rows: rows
+                rows: rows,
+                copied: false
               },
               autoselect: '.popover-copy ' + (rows <= 1 ? 'input' : 'textarea'),
 
@@ -152,6 +154,7 @@ angular.module('cesium.directives', [])
               } : undefined
             });
           }
+
         };
         element.bind('click', showCopyPopover);
         element.bind('hold', showCopyPopover);
