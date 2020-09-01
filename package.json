@@ -88,8 +88,8 @@
     "uuid": "3.2.1"
   },
   "devDependencies": {
-    "@ionic/cli": "^6.11.0",
-    "@ionic/v1-toolkit": "^3.2.3",
+    "@ionic/cli": "^6.11.7",
+    "@ionic/v1-toolkit": "^3.2.8",
     "@prantlf/gulp-jsonlint": "^2.4.0",
     "ansi-colors": "^4.1.1",
     "cordova": "^10.0.0",

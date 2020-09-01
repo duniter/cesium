@@ -332,56 +332,67 @@
     normalize-path "^2.0.1"
     through2 "^2.0.3"
 
-"@ionic/cli-framework-prompts@2.1.3":
-  version "2.1.3"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/@ionic/cli-framework-prompts/-/cli-framework-prompts-2.1.3.tgz#e2777daa9e7ad6c5dbc8979f3b753f8d219b9c1c"
-  integrity sha512-tYjXIkoUdl6SPDuLHsUXbIyXLiwofsqNjkrNhbJ2Ed8oSiBlhfio/XZ1nKAEHaoHpud+UfD5t++goYnGVa4fBw==
+"@ionic/cli-framework-output@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/@ionic/cli-framework-output/-/cli-framework-output-2.1.0.tgz#0e16dfa27b656947da90e698267f872af281db57"
+  integrity sha512-PiMhJDrXn3h2SK2dW4YJvyiTx6zjV/TDftegJh1UWsTlwWuYFNKgm7shWJlDHTAOe1E5aRY4BeQzAriXqm2RQg==
   dependencies:
-    "@ionic/utils-terminal" "2.1.3"
+    "@ionic/utils-terminal" "2.2.1"
     debug "^4.0.0"
-    inquirer "^7.0.0"
-    tslib "1.11.2"
-
-"@ionic/cli-framework@4.2.0":
-  version "4.2.0"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/@ionic/cli-framework/-/cli-framework-4.2.0.tgz#3dce3ca2142fb46ef75aebe9572618bde6387954"
-  integrity sha512-CLtcY3nhyKeRRX8HRI4dXD9Tgyv0krD4upDjd7k9UQizkkN8eipP0vO7QpZ+AKl43tMZqDhBNqTO2efJHqtxHw==
-  dependencies:
-    "@ionic/utils-array" "2.1.3"
-    "@ionic/utils-fs" "3.1.3"
-    "@ionic/utils-object" "2.1.3"
-    "@ionic/utils-process" "2.1.3"
-    "@ionic/utils-stream" "3.1.3"
-    "@ionic/utils-subprocess" "2.1.3"
-    "@ionic/utils-terminal" "2.1.3"
-    chalk "^4.0.0"
-    debug "^4.0.0"
-    lodash "^4.17.5"
-    log-update "^4.0.0"
-    minimist "^1.2.0"
-    rimraf "^3.0.0"
+    signal-exit "^3.0.3"
     slice-ansi "^4.0.0"
     string-width "^4.1.0"
     strip-ansi "^6.0.0"
-    tslib "1.11.2"
-    untildify "^4.0.0"
+    tslib "^2.0.1"
     wrap-ansi "^7.0.0"
+
+"@ionic/cli-framework-prompts@2.1.6":
+  version "2.1.6"
+  resolved "https://registry.npmjs.org/@ionic/cli-framework-prompts/-/cli-framework-prompts-2.1.6.tgz#52c2735e4d3d91a32e51c49c5d5e5f7ff47bf215"
+  integrity sha512-hKyXyBlOA4KBHGKSIX1uHiaviZ/V7cGTlB3ZmmfXu7xqEmSuT8NXwP3VTazIm0tXuVXMXlgKEewikaH6P9VrVA==
+  dependencies:
+    "@ionic/utils-terminal" "2.2.1"
+    debug "^4.0.0"
+    inquirer "^7.0.0"
+    tslib "^2.0.1"
+
+"@ionic/cli-framework@5.0.3":
+  version "5.0.3"
+  resolved "https://registry.npmjs.org/@ionic/cli-framework/-/cli-framework-5.0.3.tgz#c195a0f9642f51c08a12adc661a6cfb39834a522"
+  integrity sha512-y9dneWk0fIs/j8rtxQVVKZ6JpmMmfArxvysfh5XqsytOA6FUJ1OT4/K3tUuuWww4vh1V89HW0GxBN1eUT3hEkg==
+  dependencies:
+    "@ionic/cli-framework-output" "2.1.0"
+    "@ionic/utils-array" "2.1.5"
+    "@ionic/utils-fs" "3.1.5"
+    "@ionic/utils-object" "2.1.5"
+    "@ionic/utils-process" "2.1.6"
+    "@ionic/utils-stream" "3.1.5"
+    "@ionic/utils-subprocess" "2.1.6"
+    "@ionic/utils-terminal" "2.2.1"
+    chalk "^4.0.0"
+    debug "^4.0.0"
+    lodash "^4.17.5"
+    minimist "^1.2.0"
+    rimraf "^3.0.0"
+    tslib "^2.0.1"
+    untildify "^4.0.0"
     write-file-atomic "^3.0.0"
 
-"@ionic/cli@^6.11.0":
-  version "6.11.0"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/@ionic/cli/-/cli-6.11.0.tgz#e22284afd256d2976138495c5cec31762f9aad3c"
-  integrity sha512-Fd1hfUZ1Hko1qfodm35/jJIt8ihG5sWifpfguD+nHnLh+zuetaISR+yJXHY/GNhWZtKZYCIAIx0TMBz21MsCYQ==
+"@ionic/cli@^6.11.7":
+  version "6.11.7"
+  resolved "https://registry.npmjs.org/@ionic/cli/-/cli-6.11.7.tgz#68be3b9c0818f6330479554aad6aee5b339c669f"
+  integrity sha512-wbdVOAxlL8Lqd5GTTIhma9xDFgzv6P626+NRisY8aMiZNC8NLh/F4d4GW4kJczlFD7zQNLsPY/u7QrvlXKfUlg==
   dependencies:
-    "@ionic/cli-framework" "4.2.0"
-    "@ionic/cli-framework-prompts" "2.1.3"
-    "@ionic/utils-array" "2.1.3"
-    "@ionic/utils-fs" "3.1.3"
-    "@ionic/utils-network" "2.1.3"
-    "@ionic/utils-process" "2.1.3"
-    "@ionic/utils-stream" "3.1.3"
-    "@ionic/utils-subprocess" "2.1.3"
-    "@ionic/utils-terminal" "2.1.3"
+    "@ionic/cli-framework" "5.0.3"
+    "@ionic/cli-framework-output" "2.1.0"
+    "@ionic/cli-framework-prompts" "2.1.6"
+    "@ionic/utils-array" "2.1.5"
+    "@ionic/utils-fs" "3.1.5"
+    "@ionic/utils-network" "2.1.5"
+    "@ionic/utils-process" "2.1.6"
+    "@ionic/utils-stream" "3.1.5"
+    "@ionic/utils-subprocess" "2.1.6"
+    "@ionic/utils-terminal" "2.2.1"
     chalk "^4.0.0"
     debug "^4.0.0"
     diff "^4.0.1"
@@ -397,100 +408,98 @@
     superagent "^5.2.1"
     superagent-proxy "^2.0.0"
     tar "^6.0.1"
-    through2 "^3.0.0"
-    tslib "1.11.2"
+    tslib "^2.0.1"
 
-"@ionic/utils-array@2.1.3":
-  version "2.1.3"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/@ionic/utils-array/-/utils-array-2.1.3.tgz#bdabe2d97983d44ffee42b13a504ede7bdbd530c"
-  integrity sha512-IV7oK7kj6UZEkZ5lbS78gNSUSTqZtLOEKu9G+MqBpRTX+YKKnmsAxQuvZrnsy/pHmzJ7aKlj1V0gNAFO6w/NOA==
+"@ionic/utils-array@2.1.5":
+  version "2.1.5"
+  resolved "https://registry.npmjs.org/@ionic/utils-array/-/utils-array-2.1.5.tgz#15e4119b01e3978d58324a06d816959c25e248b6"
+  integrity sha512-HD72a71IQVBmQckDwmA8RxNVMTbxnaLbgFOl+dO5tbvW9CkkSFCv41h6fUuNsSEVgngfkn0i98HDuZC8mk+lTA==
   dependencies:
     debug "^4.0.0"
-    tslib "1.11.2"
+    tslib "^2.0.1"
 
-"@ionic/utils-fs@3.1.3":
-  version "3.1.3"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/@ionic/utils-fs/-/utils-fs-3.1.3.tgz#db8e5813f41d90b6a378f3ad63a9f0775e278b63"
-  integrity sha512-xMZhlB1XgZQchvKZFQt6NcKgLsCdSTt3lmU0Gl0HIWdGHjwI5QSyLCYPTvfa8Wm4vCn7XYiMy05bWxWtY0+FxQ==
+"@ionic/utils-fs@3.1.5":
+  version "3.1.5"
+  resolved "https://registry.npmjs.org/@ionic/utils-fs/-/utils-fs-3.1.5.tgz#fb87be5bd5089ca43a29bbbcab87b9907e6da4b1"
+  integrity sha512-a41bY2dHqWSEQQ/80CpbXSs8McyiCFf2DnIWWLukrhYWf46h4qi6M/8dxcMKrofRiqI/3F+cL3S2mOm9Zz/o2Q==
   dependencies:
     debug "^4.0.0"
     fs-extra "^9.0.0"
-    through2 "^3.0.0"
-    tslib "1.11.2"
+    tslib "^2.0.1"
 
-"@ionic/utils-network@2.1.3":
-  version "2.1.3"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/@ionic/utils-network/-/utils-network-2.1.3.tgz#6db04da046abe382daeb16246790ed373be7b085"
-  integrity sha512-6R40gzy8vr2CTV/gvq4uTSZrkviR1IEtT1M4T+9KnTO6+tFLg08oilpJrxPvZh4SMr+VdIIus+LSOtdBzI+Dwg==
+"@ionic/utils-network@2.1.5":
+  version "2.1.5"
+  resolved "https://registry.npmjs.org/@ionic/utils-network/-/utils-network-2.1.5.tgz#e5d939b01f207e3ce36db575cd6047806386b07b"
+  integrity sha512-HUQ1Ec4Mh2MXzzKdbbbDS6xYKwpFJ2XRY7SYXbaZT8+jiNahfHbsOfe62/p8bk41Yil7E9EagzGC2JvIFJh01w==
   dependencies:
     debug "^4.0.0"
-    tslib "1.11.2"
+    tslib "^2.0.1"
 
-"@ionic/utils-object@2.1.3":
-  version "2.1.3"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/@ionic/utils-object/-/utils-object-2.1.3.tgz#d5cb6731c18dbbeabd22fdf57c8200d4863daf73"
-  integrity sha512-iJQjC2RBWACCgwafsKKJN+G2hxTxRhVT0gtdGK29jH8ZZMIJGEEIA2hlpPsL9OR/yRMwByATyO1usC2jEM8qDQ==
+"@ionic/utils-object@2.1.5":
+  version "2.1.5"
+  resolved "https://registry.npmjs.org/@ionic/utils-object/-/utils-object-2.1.5.tgz#c1e58a711cdd4a30f46d23e241faf924424e010e"
+  integrity sha512-XnYNSwfewUqxq+yjER1hxTKggftpNjFLJH0s37jcrNDwbzmbpFTQTVAp4ikNK4rd9DOebX/jbeZb8jfD86IYxw==
   dependencies:
     debug "^4.0.0"
-    tslib "1.11.2"
+    tslib "^2.0.1"
 
-"@ionic/utils-process@2.1.3":
-  version "2.1.3"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/@ionic/utils-process/-/utils-process-2.1.3.tgz#24cf63cc31cdc076d3abd7024eb7a28721feef67"
-  integrity sha512-FMW9kc+waKv01/dNuMOP3NrJLyhMv8Ij73B2KVlZyI6UiFMjghvEApttQVi2ewKw6z1ipbkSFRaICxPIvGwABw==
+"@ionic/utils-process@2.1.6":
+  version "2.1.6"
+  resolved "https://registry.npmjs.org/@ionic/utils-process/-/utils-process-2.1.6.tgz#7dff48d976e35dd466cce2d27d226d172c0c5439"
+  integrity sha512-HuMTJp6lkzMZAI+FUEqLoOx6wxd29ysmk0Q9dCHABbIEP4hM5zAXTIuv4qUYelzT6lBywS/TAdfz+XB1TM6umg==
   dependencies:
-    "@ionic/utils-object" "2.1.3"
-    "@ionic/utils-terminal" "2.1.3"
+    "@ionic/utils-object" "2.1.5"
+    "@ionic/utils-terminal" "2.2.1"
     debug "^4.0.0"
-    lodash "^4.17.5"
+    signal-exit "^3.0.3"
     tree-kill "^1.2.2"
-    tslib "1.11.2"
+    tslib "^2.0.1"
 
-"@ionic/utils-stream@3.1.3":
-  version "3.1.3"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/@ionic/utils-stream/-/utils-stream-3.1.3.tgz#7d36811adc6ec9da27d16a042b53c9603ad9a5e2"
-  integrity sha512-vhYVJMT/5HNhTe3ypPkgll4e4O6fRXqAEXntJzBy3COWllXkERB/tWn2x8TSLcosmzN8f8FONCjznnq6Uq54LQ==
+"@ionic/utils-stream@3.1.5":
+  version "3.1.5"
+  resolved "https://registry.npmjs.org/@ionic/utils-stream/-/utils-stream-3.1.5.tgz#c8ec9fba30952d5e53a62ff2a3dad0d4283f2775"
+  integrity sha512-hkm46uHvEC05X/8PHgdJi4l4zv9VQDELZTM+Kz69odtO9zZYfnt8DkfXHJqJ+PxmtiE5mk/ehJWLnn/XAczTUw==
   dependencies:
     debug "^4.0.0"
-    tslib "1.11.2"
+    tslib "^2.0.1"
 
-"@ionic/utils-subprocess@2.1.3":
-  version "2.1.3"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/@ionic/utils-subprocess/-/utils-subprocess-2.1.3.tgz#41f6328b1db6c75f6487b1eb0320400d3d6a048e"
-  integrity sha512-jTEz97eFxNLj+Cw8CQvfkNThEBT98wrbPfE2C3MO9E+gw+h7gX2/KWoUgg9U0lAyiOUggCVir/44SLbevhtPBw==
+"@ionic/utils-subprocess@2.1.6":
+  version "2.1.6"
+  resolved "https://registry.npmjs.org/@ionic/utils-subprocess/-/utils-subprocess-2.1.6.tgz#d0fc4a8e92a47ab43ee855a8a9483132ec423bd5"
+  integrity sha512-osM2CaD+bxf4WXfQEjkPXHPqzg4xUqg7Rm9FK/DKddIuL6fHPoeLOwP7t0L3J4417dYsvtssTjxbSQnm/V5aWw==
   dependencies:
-    "@ionic/utils-array" "2.1.3"
-    "@ionic/utils-fs" "3.1.3"
-    "@ionic/utils-process" "2.1.3"
-    "@ionic/utils-stream" "3.1.3"
-    "@ionic/utils-terminal" "2.1.3"
+    "@ionic/utils-array" "2.1.5"
+    "@ionic/utils-fs" "3.1.5"
+    "@ionic/utils-process" "2.1.6"
+    "@ionic/utils-stream" "3.1.5"
+    "@ionic/utils-terminal" "2.2.1"
     cross-spawn "^7.0.0"
     debug "^4.0.0"
-    tslib "1.11.2"
+    tslib "^2.0.1"
 
-"@ionic/utils-terminal@2.1.3":
-  version "2.1.3"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/@ionic/utils-terminal/-/utils-terminal-2.1.3.tgz#19167e3bef38093dfed34143d4dabac2d7cd4ab0"
-  integrity sha512-By0tp8pBcghIqTMKnRQw55cnUhDGrE+UTfdY81iDiXaMxRy8vwJjXgq9jiCKLF/qH1elQpIzDo2ePdu+MrNMFg==
+"@ionic/utils-terminal@2.2.1":
+  version "2.2.1"
+  resolved "https://registry.npmjs.org/@ionic/utils-terminal/-/utils-terminal-2.2.1.tgz#d2faa9e0762117b4b2af064d1b948b0349ffa2ca"
+  integrity sha512-YBXSpK5rHu3XlQCF01S23Y4Rz1msBRqNBgGDo8lXekeRmI2WgeCxMHFZfKTEh30DQNYibnkwaeLacHp6ohd+8g==
   dependencies:
     debug "^4.0.0"
-    tslib "1.11.2"
+    tslib "^2.0.1"
 
-"@ionic/v1-toolkit@^3.2.3":
-  version "3.2.3"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/@ionic/v1-toolkit/-/v1-toolkit-3.2.3.tgz#6df9914387e0e71906349c9c28dd5b74f96153ec"
-  integrity sha512-8jLn06P068WtZYwOOKgLTd28myXr+btkOgTNitIpc99oQiVvRqXkcw70RzfzP0c9yTnxEbmC8oY6UdzLaOQtOw==
+"@ionic/v1-toolkit@^3.2.8":
+  version "3.2.10"
+  resolved "https://registry.npmjs.org/@ionic/v1-toolkit/-/v1-toolkit-3.2.10.tgz#6d60b61d8113b3bc9ee0dbdf68fa34c5e343229b"
+  integrity sha512-zuOvlrJQMMaRTKIA+VDnGVohBNhLcmQyciLK/7ALC2Rm6jTtLfCfvZ/MgnxA6fj6daXRgPS81NpGtAB00Z1NLw==
   dependencies:
-    "@ionic/cli-framework" "4.2.0"
-    "@ionic/utils-fs" "3.1.3"
+    "@ionic/cli-framework" "5.0.3"
+    "@ionic/utils-fs" "3.1.5"
     chalk "^4.0.0"
     chokidar "^3.0.1"
     debug "^4.0.0"
     express "^4.16.2"
-    gulp "^3.9.1"
+    gulp "^4.0.2"
     http-proxy-middleware "^0.20.0"
     tiny-lr "^1.1.0"
-    tslib "1.11.2"
+    tslib "^2.0.1"
     ws "^7.0.0"
 
 "@netflix/nerror@^1.1.3":
@@ -842,7 +851,7 @@ ansi-escapes@^3.2.0:
   resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/ansi-escapes/-/ansi-escapes-3.2.0.tgz#8780b98ff9dbf5638152d1f1fe5c1d7b4442976b"
   integrity sha512-cBhpre4ma+U0T1oM5fXg7Dy1Jw7zzwv7lt/GoCpr+hDQJoYnKVPLL4dCvSEFMmQurOQvSrwT7SL/DAlhBI97RQ==
 
-ansi-escapes@^4.2.1, ansi-escapes@^4.3.0:
+ansi-escapes@^4.2.1:
   version "4.3.1"
   resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/ansi-escapes/-/ansi-escapes-4.3.1.tgz#a5c47cc43181f1f38ffd7076837700d395522a61"
   integrity sha512-JWF7ocqNrp8u9oqpgV+wH5ftbt+cfvv+PTjOvKLT3AdYly/LmORARfEVT1iyjwN+4MqE5UmVKoAdIBqeoCHgLA==
@@ -1369,7 +1378,7 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
-beeper@^1.0.0:
+beeper@^1.0.0, beeper@^1.1.0:
   version "1.1.1"
   resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/beeper/-/beeper-1.1.1.tgz#e6d5ea8c5dad001304a70b22638447f69cb2f809"
   integrity sha1-5tXqjF2tABMEpwsiY4RH9pyy+Ak=
@@ -5211,7 +5220,7 @@ gulp-zip@^5.0.2:
     vinyl "^2.1.0"
     yazl "^2.5.1"
 
-gulp@4.0.2, gulp@^3.7.0, gulp@^3.9.1, gulp@^4.0.2:
+gulp@4.0.2, gulp@^3.7.0, gulp@^4.0.2:
   version "4.0.2"
   resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/gulp/-/gulp-4.0.2.tgz#543651070fd0f6ab0a0650c6a3e6ff5a7cb09caa"
   integrity sha512-dvEs27SCZt2ibF29xYgmnwwCYZxdxhQ/+LFWlbAW8y7jt68L/65402Lz3+CKy0Ov4rOs+NERmDq7YlZaDqUIfA==
@@ -7047,16 +7056,6 @@ log-symbols@^1.0.0:
   integrity sha1-N2/3tY6jCGoPCfrMdGF+ylAeGhg=
   dependencies:
     chalk "^1.0.0"
-
-log-update@^4.0.0:
-  version "4.0.0"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/log-update/-/log-update-4.0.0.tgz#589ecd352471f2a1c0c570287543a64dfd20e0a1"
-  integrity sha512-9fkkDevMefjg0mmzWFBW8YkFP91OrizzkW3diF7CpG+S2EYdy4+TVfGwz1zeF8x7hCx1ovSPTOE9Ngib74qqUg==
-  dependencies:
-    ansi-escapes "^4.3.0"
-    cli-cursor "^3.1.0"
-    slice-ansi "^4.0.0"
-    wrap-ansi "^6.2.0"
 
 loud-rejection@^1.0.0:
   version "1.6.0"
@@ -9590,7 +9589,7 @@ sign-addon@2.0.5:
     source-map-support "0.5.16"
     stream-to-promise "2.2.0"
 
-signal-exit@^3.0.0, signal-exit@^3.0.2:
+signal-exit@^3.0.0, signal-exit@^3.0.2, signal-exit@^3.0.3:
   version "3.0.3"
   resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/signal-exit/-/signal-exit-3.0.3.tgz#a1410c2edd8f077b08b4e253c8eacfcaf057461c"
   integrity sha512-VUJ49FC8U1OxwZLxIbTTrDvLnf/6TDgxZcK8wxR8zs13xpx7xbG60ndBlhNrFi2EMuFRoeDoJO7wthSLq42EjA==
@@ -10434,7 +10433,7 @@ through2@^0.6.1, through2@^0.6.3, through2@^0.6.5:
     readable-stream ">=1.0.33-1 <1.1.0-0"
     xtend ">=4.0.0 <4.1.0-0"
 
-through2@^3.0.0, through2@^3.0.1:
+through2@^3.0.1:
   version "3.0.2"
   resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/through2/-/through2-3.0.2.tgz#99f88931cfc761ec7678b41d5d7336b5b6a07bf4"
   integrity sha512-enaDQ4MUyP2W6ZyT6EsMzqBPZaM/avg8iuo+l2d3QCs0J+6RaqkHV/2/lOwDTueBHeJ/2LG9lrLW3d5rWPucuQ==
@@ -10663,15 +10662,15 @@ tryor@~0.1.2:
   resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/tryor/-/tryor-0.1.2.tgz#8145e4ca7caff40acde3ccf946e8b8bb75b4172b"
   integrity sha1-gUXkynyv9ArN48z5Rui4u3W0Fys=
 
-tslib@1.11.2:
-  version "1.11.2"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/tslib/-/tslib-1.11.2.tgz#9c79d83272c9a7aaf166f73915c9667ecdde3cc9"
-  integrity sha512-tTSkux6IGPnUGUd1XAZHcpu85MOkIl5zX49pO+jfsie3eP0B6pyhOlLXm3cAC6T7s+euSDDUUV+Acop5WmtkVg==
-
 tslib@^1.9.0:
   version "1.13.0"
   resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/tslib/-/tslib-1.13.0.tgz#c881e13cc7015894ed914862d276436fa9a47043"
   integrity sha512-i/6DQjL8Xf3be4K/E6Wgpekn5Qasl1usyw++dAA35Ue5orEn65VIxOA+YvNNl9HV3qv70T7CNwjODHZrLwvd1Q==
+
+tslib@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/tslib/-/tslib-2.0.1.tgz#410eb0d113e5b6356490eec749603725b021b43e"
+  integrity sha512-SgIkNheinmEBgx1IUNirK0TUD4X9yjjBRTqqjggWCU3pUEqIk3/Uwl3yRixYKT6WjQuGiwDv4NomL3wqRCj+CQ==
 
 tunnel-agent@^0.6.0:
   version "0.6.0"
