@@ -11,7 +11,8 @@ angular.module('cesium.cache.services', ['angular-cache'])
       SHORT: csSettings.defaultSettings.cacheTimeMs // around 1min
     },
     storageMode = getSettingsStorageMode(),
-    cacheNames = []
+    cacheNames = [],
+    listeners = []
   ;
 
   function getSettingsStorageMode(settings) {
@@ -100,7 +101,7 @@ angular.module('cesium.cache.services', ['angular-cache'])
 
   function addListeners() {
     listeners = [
-      // Listen if node changed
+      // Listen for settings changed (e.g. the storage mode)
       csSettings.api.data.on.changed($rootScope, onSettingsChanged, this)
     ];
   }
