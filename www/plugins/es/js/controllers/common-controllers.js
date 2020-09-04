@@ -461,6 +461,10 @@ function ESAvatarModalController($scope, $sce) {
 
   $scope.doPrevious = function() {
     $scope.formData.imageCropStep -= 1;
+    // Reset the image
+    if ($scope.formData.imageCropStep === 1) {
+      $scope.formData.imgSrc = undefined;
+    }
   };
 
   $scope.doCrop = function() {

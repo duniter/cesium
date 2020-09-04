@@ -464,6 +464,10 @@ angular.module('cesium.directives', [])
                   fileContent: onLoadEvent.target.result,
                   fileData : fileData}
               });
+
+              // Reset the input file
+              fileInput[0].value = '';
+
             });
           };
           reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
