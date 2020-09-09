@@ -32,7 +32,7 @@ const gulp = require('gulp'),
   merge = require('merge2'),
   log = require('fancy-log'),
   colors = require('ansi-colors'),
-  argv = require('yargs').argv,
+  {argv} = require('yargs'),
   sriHash = require('gulp-sri-hash'),
   sort = require('gulp-sort'),
   map = require('map-stream');
@@ -916,7 +916,11 @@ function cdvRemoveCode() {
     wwwPath = path.join(projectRoot, 'platforms', platform, 'www');
   }
 
-  const pluginPath = path.join(wwwPath, 'plugins', 'es');
+  const appJsPath = [path.join(wwwPath, 'js', '**', '*.js'),
+      // Exclude vendor libs
+      "!" + path.join(wwwPath, 'js', 'vendor', '**', '*.js')];
+  const pluginPath = path.join(wwwPath, 'plugins', '*');
+  const pluginJsPath = path.join(pluginPath, '**', '*.js');
 
   // Compute options {device-<platform>: true}
   let removeCodeOptions = {};
@@ -963,14 +967,14 @@ function cdvRemoveCode() {
         .pipe(gulp.dest(wwwPath)),
 
       // Remove unused JS code + add ng annotations
-      gulp.src(path.join(wwwPath, 'js', '**', '*.js'))
+      gulp.src(appJsPath)
         .pipe(debug(debugOptions))
         .pipe(removeCode({device: true}))
         .pipe(removeCode(removeCodeOptions))
         .pipe(ngAnnotate({single_quotes: true}))
         .pipe(gulp.dest(wwwPath + '/dist/dist_js/app')),
 
-      gulp.src([pluginPath + '/js/**/*.js'])
+      gulp.src(pluginJsPath)
         .pipe(debug(debugOptions))
         .pipe(removeCode({device: true}))
         .pipe(removeCode(removeCodeOptions))
@@ -980,21 +984,25 @@ function cdvRemoveCode() {
   } else {
     return merge(
       gulp.src(path.join(wwwPath, 'templates', '**', '*.html'))
+        .pipe(debug(debugOptions))
         .pipe(htmlmin(htmlminOptions))
         .pipe(gulp.dest(wwwPath + '/templates')),
 
       gulp.src(path.join(pluginPath, '**', '*.html'))
+        .pipe(debug(debugOptions))
         .pipe(htmlmin(htmlminOptions))
         .pipe(gulp.dest(pluginPath)),
 
       gulp.src(path.join(wwwPath, 'index.html'))
         .pipe(gulp.dest(wwwPath)),
 
-      gulp.src(path.join(wwwPath, 'js', '**', '*.js'))
+      gulp.src(appJsPath)
+        .pipe(debug(debugOptions))
         .pipe(ngAnnotate({single_quotes: true}))
         .pipe(gulp.dest(wwwPath + '/dist/dist_js/app')),
 
-      gulp.src([pluginPath + '/js/**/*.js'])
+      gulp.src(pluginJsPath)
+        .pipe(debug(debugOptions))
         .pipe(gulp.dest(wwwPath + '/dist/dist_js/plugins'))
     );
   }
@@ -1014,12 +1022,8 @@ function cdvNgTemplate() {
   }
   let distJsPath = path.join(wwwPath, 'dist', 'dist_js', 'app');
   let pluginDistJsPath = path.join(wwwPath, 'dist', 'dist_js', 'plugins');
-  const debugOptions = {
-    title: 'Processing',
-    minimal: true,
-    showFiles: argv.debug || false,
-    showCount: false,
-    logger: m => log(colors.grey(m))
+  const debugOptions = { ...debugBaseOptions,
+    showCount: false
   };
 
   // Concat templates into a JS
@@ -1105,12 +1109,9 @@ function cdvUglify() {
       ...uglifyBaseOptions,
       ecma: '5'
     };
-    const debugOptions = {
+    const debugOptions = { ...debugBaseOptions,
       title: 'Minifying',
-      minimal: true,
-      showFiles: argv.debug || false,
-      showCount: false,
-      logger: m => log(colors.grey(m))
+      showCount: false
     };
 
     return gulp.src(indexPath)
@@ -1382,6 +1383,7 @@ exports.watch = appAndPluginWatch;
 exports.build = build;
 
 // Web
+exports.webClean = webClean;
 exports.webCompile = webCompile;
 exports.webBuild = webBuild;
 exports['build:web'] = exports.webBuild; // Alias
