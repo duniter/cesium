@@ -220,6 +220,7 @@
       "HEADER_BLOCK": "Bloko #",
       "HEADER_ISSUER": "Nodo elsendinta",
       "BTN_LAST": "Lastaj blokoj",
+      "BTN_TX": "Spezoj",
       "DISPLAY_QUERY": "Afiŝi la informpeton",
       "HIDE_QUERY": "Kaŝi la informpeton",
       "TX_SEARCH_FILTER": {
@@ -491,6 +492,7 @@
       "HEADER_TIME": "Dato/Horo",
       "HEADER_ISSUER": "Sendanto",
       "HEADER_RECIPIENT": "Ricevonto",
+      "HEADER_AMOUNT": "Sumo",
       "READ": "Legita",
       "BTN_REMOVE": "Forigi tiun ĉi dokumenton",
       "BTN_COMPACT": "Densigi",
