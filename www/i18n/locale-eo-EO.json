@@ -145,7 +145,7 @@
     "PEER_SHORT": "Adreso de la nodo",
     "PEER_CHANGED_TEMPORARY": "Adreso provizore uzata",
     "PERSIST_CACHE": "Konservi la datenojn pri retumado (provaĵo)",
-    "PERSIST_CACHE_HELP": "Ebligas pli rapidan retumadon, loke konservante la ricevitajn datenojn, por uzi ilin de sesio al alia.",
+    "PERSIST_CACHE_HELP": "Ebligas pli rapidan retumadon, loke konservante la ricevitajn datenojn, por uzi ilin de seanco al alia.",
     "USE_LOCAL_STORAGE": "Aktivigi lokan stokadon",
     "USE_LOCAL_STORAGE_HELP": "Ebligas konservi viajn parametrojn",
     "WALLETS_SETTINGS": "Miaj monujoj",
