@@ -330,7 +330,8 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
                     pubkey: hit.pubke,
                     uid: hit.uid,
                     name: title,
-                    profile: hit
+                    profile: hit,
+                    isMember: type == 'member'			  
                   };
                   markerScope.loadingMarker = false;
                 });
