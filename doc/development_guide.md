@@ -3,10 +3,16 @@
 ## In a post-it
 
 ```bash
+# Install NodeJS v12
 nvm use 12
+npm install -g yarn 
+
+# Clone and compile from source
 git clone git@git.duniter.org:clients/cesium-grp/cesium.git
 cd cesium
 yarn
+
+# Run the App !
 yarn run start
 ```
 
