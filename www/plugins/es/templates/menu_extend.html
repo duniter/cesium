@@ -18,7 +18,7 @@
   <button class="button button-clear icon ion-email"
           ng-if="login"
           active-link="gray"
-          active-link-path-prefix="#/app/user/message"
+          active-link-path-prefix="#/app/message"
           ng-click="showMessagesPopover($event)">
     <span
       ng-if="walletData.messages.unreadCount"
@@ -52,7 +52,7 @@
   </a>
 
   <a menu-close class="item item-icon-left" active-link="active"
-     active-link-path-prefix="#/app/user/message"
+     active-link-path-prefix="#/app/message"
      ng-class="{'item-menu-disable': !login}"
      ui-sref="app.user_message.tab_inbox">
     <i class="icon ion-email"></i>
