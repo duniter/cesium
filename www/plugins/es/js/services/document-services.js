@@ -66,7 +66,6 @@ angular.module('cesium.es.document.services', ['ngResource', 'cesium.platform', 
     function _readSearchHits(res, options) {
       options.issuerField = options.issuerField || 'pubkey';
 
-      console.log("TODO: ", res);
       var hits = (res && res.hits && res.hits.hits || []).reduce(function(res, hit) {
         var doc = hit._source || {};
         doc.docType = doc.type; // Save source.type, before replacement

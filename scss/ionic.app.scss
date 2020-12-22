@@ -1983,7 +1983,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 }
 
 .item.item-thumbnail-left, .item-thumbnail-left {
-  min-height: 100px !important;
+  min-height: 100px;
 }
 
 .item-thumbnail-left > i:first-child,
