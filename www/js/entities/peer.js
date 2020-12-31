@@ -176,5 +176,5 @@ Peer.prototype.isBma = function() {
 };
 
 Peer.prototype.hasBma = function() {
-  return this.hasEndpoint('(BASIC_MERKLE_API|BMAS|BMATOR)');
+  return this.hasEndpoint('(BASIC_MERKLED_API|BMAS|BMATOR)');
 };

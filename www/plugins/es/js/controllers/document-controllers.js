@@ -6,7 +6,7 @@ angular.module('cesium.es.document.controllers', ['cesium.es.services'])
     $stateProvider
 
       .state('app.document_search', {
-        url: "/data/search/:index/:type?q",
+        url: "/data/search/:index/:type?q&sort",
         views: {
           'menuContent': {
             templateUrl: "plugins/es/templates/document/lookup.html",
@@ -47,8 +47,10 @@ function ESDocumentLookupController($scope, $ionicPopover, $location, $timeout,
   $scope.helptipPrefix = 'helptip-document';
   $scope.compactMode = angular.isDefined($scope.compactMode) ? $scope.compactMode : true;
   $scope._source = $scope._source || ["issuer", "hash", "time", "creationTime", "title", "message", "recipient",
-    // Movement field:
-    "medianTime", "amount", "currency", "reference"
+    // Movement fields:
+    "medianTime", "amount", "currency", "reference",
+    // Pending fields:
+    "pubkey", "uid", "blockNumber"
   ];
   $scope.showHeaders = angular.isDefined($scope.showHeaders) ? $scope.showHeaders : true;
 
@@ -62,6 +64,14 @@ function ESDocumentLookupController($scope, $ionicPopover, $location, $timeout,
       $scope.entered = true;
       $scope.search.index = state.stateParams && state.stateParams.index || $scope.search.index;
       $scope.search.type = state.stateParams && state.stateParams.type || $scope.search.type;
+      $scope.search.text = state.stateParams && state.stateParams.q || $scope.search.text;
+      $scope.search.sort = state.stateParams && state.stateParams.sort || $scope.search.sort;
+      $scope.search.last = !$scope.search.text;
+      $scope.load();
+    }
+
+    // Reload only if params changed (.e.g if comes from a graph click)
+    else if (state.stateParams && state.stateParams.q && $scope.search.text !== state.stateParams.q) {
       $scope.search.text = state.stateParams && state.stateParams.q || $scope.search.text;
       $scope.search.last = !$scope.search.text;
       $scope.load();

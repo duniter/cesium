@@ -1,4 +1,4 @@
-<ion-popover-view class="has-header popover-graph-currency">
+<ion-popover-view class="has-header popover-graph-range">
   <ion-header-bar>
     <h1 class="title" translate>COMMON.POPOVER_ACTIONS_TITLE</h1>
   </ion-header-bar>
@@ -8,7 +8,7 @@
       <!-- scale -->
       <a class="item item-icon-left ink"
          ng-click="toggleScale()">
-        <i class="icon ion-ios-checkmark-empty" ng-show="formData.scale=='logarithmic'"></i>
+        <i class="icon ion-ios-checkmark-empty" ng-show="formData.scale==='logarithmic'"></i>
         <span ng-bind-html="'GRAPH.COMMON.LOGARITHMIC_SCALE' | translate"></span>
       </a>
 
@@ -20,21 +20,21 @@
       <!-- duration: hour -->
       <a class="item item-icon-left ink"
          ng-click="setRangeDuration('hour')">
-        <i class="icon ion-ios-checkmark-empty" ng-show="formData.rangeDuration=='hour'"></i>
+        <i class="icon ion-ios-checkmark-empty" ng-show="formData.rangeDuration==='hour'"></i>
         <span ng-bind-html="'GRAPH.COMMON.RANGE_DURATION.HOUR' | translate"></span>
       </a>
 
       <!-- duration: day -->
       <a class="item item-icon-left ink"
          ng-click="setRangeDuration('day')">
-        <i class="icon ion-ios-checkmark-empty" ng-show="formData.rangeDuration=='day'"></i>
+        <i class="icon ion-ios-checkmark-empty" ng-show="formData.rangeDuration==='day'"></i>
         <span ng-bind-html="'GRAPH.COMMON.RANGE_DURATION.DAY' | translate"></span>
       </a>
 
       <!-- duration: month -->
       <a class="item item-icon-left ink"
          ng-click="setRangeDuration('month')">
-        <i class="icon ion-ios-checkmark-empty" ng-show="formData.rangeDuration=='month'"></i>
+        <i class="icon ion-ios-checkmark-empty" ng-show="formData.rangeDuration==='month'"></i>
         <span ng-bind-html="'GRAPH.COMMON.RANGE_DURATION.MONTH' | translate"></span>
       </a>
 

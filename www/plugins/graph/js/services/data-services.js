@@ -58,13 +58,13 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
     }
 
     function _initRangeOptions(options) {
-      options = options || {};
+      options = angular.copy(options);
       options.maxRangeSize = options.maxRangeSize || 30;
       options.defaultTotalRangeCount = options.defaultTotalRangeCount || options.maxRangeSize*2;
 
       options.rangeDuration = options.rangeDuration || 'day';
-      options.endTime = options.endTime || moment().utc().add(1, options.rangeDuration).unix();
-      options.startTime = options.startTime ||
+      options.endTime = angular.isDefined(options.endTime) ? options.endTime : moment().utc().add(1, options.rangeDuration).unix();
+      options.startTime = angular.isDefined(options.startTime) ? options.startTime :
         moment.unix(options.endTime).utc().subtract(options.defaultTotalRangeCount, options.rangeDuration).unix();
       // Make to sure startTime is never before the currency starts - fix #483
       if (options.firstBlockTime && options.startTime < options.firstBlockTime) {
@@ -73,12 +73,48 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
       return options;
     }
 
+    function _getManyRanges(options) {
+
+      var from = moment.unix(options.startTime).utc().startOf(options.rangeDuration);
+      var to = moment.unix(options.endTime).utc().startOf(options.rangeDuration);
+      var result = [];
+      var ranges = [];
+      while (from.isBefore(to)) {
+
+        ranges.push({
+          from: from.unix(),
+          to: from.add(1, options.rangeDuration).unix()
+        });
+
+        // Flush if max range count, or just before loop condition end (fix #483)
+        var flush = (ranges.length === options.maxRangeSize) || !from.isBefore(to);
+        if (flush) {
+          result.push(ranges);
+          ranges = [];
+        }
+      }
+
+      if (ranges.length) {
+        result.push(ranges);
+      }
+
+      return result;
+    }
+
     /**
      * Graph: "blocks count by issuer"
      * @param currency
      * @returns {*}
      */
-    exports.blockchain.countByIssuer = function(currency) {
+    exports.blockchain.countByIssuer = function(currency, options) {
+      options = options || {};
+
+      var filters = [];
+      if (options.startTime > 0) {
+        // Round to hour, to be able to use cache
+        var startTime = Math.floor(options.startTime / 60 / 60 ) * 60 * 60;
+        filters.push({range: {time: {gte: startTime}}});
+      }
 
       var request = {
         size: 0,
@@ -92,7 +128,17 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
         }
       };
 
-      return exports.raw.block.search(request, {currency: currency})
+      if (filters.length) {
+        request.query = {bool: {}};
+        request.query.bool.filter = filters;
+      }
+
+      var params = {
+        currency: currency,
+        request_cache: angular.isDefined(options.cache) ? options.cache : true // enable by default
+      };
+
+      return exports.raw.block.search(request, params)
         .then(function(res) {
           var aggs = res.aggregations;
           if (!aggs.blocksByIssuer || !aggs.blocksByIssuer.buckets || !aggs.blocksByIssuer.buckets.length) return;
@@ -695,7 +741,6 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
 
       options = _initRangeOptions(options);
 
-      var searchRequest = exports.raw.docstat.search;
       if (options.server) {
         var serverParts = options.server.split(':');
         var host = serverParts[0];
@@ -703,96 +748,123 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
         searchRequest = rawLightInstance(host, port, options.useSsl).docstat.search;
       }
 
-      var jobs = [];
-
-      var from = moment.unix(options.startTime).utc().startOf(options.rangeDuration);
-      var to = moment.unix(options.endTime).utc().startOf(options.rangeDuration);
-      var ranges = [];
-
-      var processSearchResult = function (res) {
-        var aggs = res.aggregations;
-        return (aggs.range && aggs.range.buckets || []).reduce(function (res, agg) {
-          var item = {
-            from: agg.from,
-            to: agg.to
-          };
-          _.forEach(agg.index && agg.index.buckets || [], function (agg) {
-            var index = agg.key;
-            _.forEach(agg.type && agg.type.buckets || [], function (agg) {
-              var key = (index + '_' + agg.key);
-              item[key] = agg.max.value;
-              if (!indices[key]) indices[key] = true;
-            });
-          });
-          return res.concat(item);
-        }, []);
+      var filters = [];
+      if (options.index) {
+        console.debug('[graph] filter on index:', options.index);
+        filters.push({term : { index: options.index}});
+      }
+      if (options.types) {
+        console.debug('[graph] filter on types:', options.types);
+        filters.push({terms : { type: options.types}});
+      }
+      var request = {
+        size: 0,
+        aggs: {
+          range: {
+            range: {
+              field: "time",
+              ranges: [] // Will be replace
+            }
+          }
+        }
       };
 
-      while(from.isBefore(to)) {
 
-        ranges.push({
-          from: from.unix(),
-          to: from.add(1, options.rangeDuration).unix()
-        });
-
-        // Flush if max range count, or just before loop condition end (fix #483)
-        var flush = (ranges.length === options.maxRangeSize) || !from.isBefore(to);
-        if (flush) {
-          var request = {
-            size: 0,
+      if (options.queryNames) {
+        console.debug('[graph] filter on queryNames:', options.queryNames);
+        filters.push({terms : { queryName: options.queryNames }});
+        request.aggs.range.aggs = {
+          queryName: {
+            terms: {
+              field: "queryName",
+              size: 0
+            },
             aggs: {
-              range: {
-                range: {
-                  field: "time",
-                  ranges: ranges
+              max: {
+                max: {
+                  field: "count"
+                }
+              }
+            }
+          }
+        };
+      }
+      else {
+        request.aggs.range.aggs = {
+          index: {
+            terms: {
+              field: "index",
+              size: 0
+            },
+            aggs: {
+              type: {
+                terms: {
+                  field: "type",
+                  size: 0
                 },
                 aggs: {
-                  index : {
-                    terms: {
-                      field: "index",
-                      size: 0
-                    },
-                    aggs: {
-                      type: {
-                        terms: {
-                          field: "type",
-                          size: 0
-                        },
-                        aggs: {
-                          max: {
-                            max: {
-                              field : "count"
-                            }
-                          }
-                        }
-                      }
+                  max: {
+                    max: {
+                      field: "count"
                     }
                   }
                 }
               }
             }
-
-          };
-
-          // prepare next loop
-          ranges = [];
-          var indices = {};
-          var params = {
-            request_cache: angular.isDefined(options.cache) ? options.cache : true // enable by default
-          };
-
-          if (jobs.length === 10) {
-            console.error('Too many parallel jobs!');
-            from = moment.unix(options.endTime).utc(); // stop while
           }
-          else {
-            jobs.push(
-              searchRequest(request, params)
-                  .then(processSearchResult)
-            );
+        };
+      }
+
+      // Add filter on request
+      if (filters.length > 0) {
+        request.query = request.query || {};
+        request.query.bool = request.query.bool || {};
+        request.query.bool.filter =  filters;
+      }
+
+      var params = {
+        request_cache: angular.isDefined(options.cache) ? options.cache : true // enable by default
+      };
+
+      var indices = {};
+      var processSearchResult = function (res) {
+        var aggs = res.aggregations;
+        return _.map(aggs.range && aggs.range.buckets || [], function (agg) {
+          var item = { from: agg.from, to: agg.to };
+          if (agg.queryName) {
+            _.forEach(agg.queryName && agg.queryName.buckets || [], function (agg) {
+              var key = agg.key;
+              item[key] = agg.max.value;
+              if (!indices[key]) indices[key] = true;
+            });
           }
-        }
-      } // loop
+          else{
+            _.forEach(agg.index && agg.index.buckets || [], function (agg) {
+              var key = agg.key;
+              if (agg.max) {
+                item[key] = agg.max.value;
+                if (!indices[key]) indices[key] = true;
+              } else {
+                _.forEach(agg.type && agg.type.buckets || [], function (agg) {
+                  var typeKey = key + '_' + agg.key;
+                  item[typeKey] = agg.max.value;
+                  if (!indices[typeKey]) indices[typeKey] = true;
+                });
+              }
+            });
+          }
+          return item;
+        });
+      };
+
+      var jobs = _.map(_getManyRanges(options), function(ranges) {
+        var req = angular.copy(request);
+        req.aggs.range.range.ranges = ranges;
+
+        // Execute request
+        return exports.raw.docstat.search(req, params)
+          .then(processSearchResult);
+      });
 
       return $q.all(jobs)
         .then(function(res) {

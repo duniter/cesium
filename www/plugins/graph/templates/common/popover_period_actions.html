@@ -1,0 +1,47 @@
+<ion-popover-view class="has-header popover-graph-period">
+  <ion-header-bar>
+    <h1 class="title" translate>COMMON.POPOVER_ACTIONS_TITLE</h1>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <div class="list item-text-wrap">
+
+      <!-- each durations -->
+      <a class="item item-icon-left ink"
+         ng-click="setMaxAge('day')">
+        <i class="icon ion-ios-checkmark-empty" ng-show="formData.maxAge==='day'"></i>
+        <span translate>GRAPH.COMMON.MAX_AGE.DAY</span>
+      </a>
+      <a class="item item-icon-left ink"
+         ng-click="setMaxAge('week')">
+        <i class="icon ion-ios-checkmark-empty" ng-show="formData.maxAge==='week'"></i>
+        <span translate>GRAPH.COMMON.MAX_AGE.WEEK</span>
+      </a>
+      <a class="item item-icon-left ink"
+         ng-click="setMaxAge('month')">
+        <i class="icon ion-ios-checkmark-empty" ng-show="formData.maxAge==='month'"></i>
+        <span translate>GRAPH.COMMON.MAX_AGE.MONTH</span>
+      </a>
+      <a class="item item-icon-left ink"
+         ng-click="setMaxAge('quarter')">
+        <i class="icon ion-ios-checkmark-empty" ng-show="formData.maxAge==='quarter'"></i>
+        <span translate>GRAPH.COMMON.MAX_AGE.QUARTER</span>
+      </a>
+      <a class="item item-icon-left ink"
+         ng-click="setMaxAge('semester')">
+        <i class="icon ion-ios-checkmark-empty" ng-show="formData.maxAge==='semester'"></i>
+        <span translate>GRAPH.COMMON.MAX_AGE.SEMESTER</span>
+      </a>
+      <a class="item item-icon-left ink"
+         ng-click="setMaxAge('year')">
+        <i class="icon ion-ios-checkmark-empty" ng-show="formData.maxAge==='year'"></i>
+        <span translate>GRAPH.COMMON.MAX_AGE.YEAR</span>
+      </a>
+      <a class="item item-icon-left ink"
+         ng-click="setMaxAge()">
+        <i class="icon ion-ios-checkmark-empty" ng-show="!formData.maxAge"></i>
+        <span translate>GRAPH.COMMON.MAX_AGE.FOREVER</span>
+      </a>
+
+    </div>
+  </ion-content>
+</ion-popover-view>

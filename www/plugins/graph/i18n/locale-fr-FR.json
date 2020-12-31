@@ -15,6 +15,15 @@
         "HOUR": "Heure",
         "DAY": "Jour",
         "MONTH": "Mois"
+      },
+      "MAX_AGE": {
+        "DAY": "Depuis 24h",
+        "WEEK": "Depuis une semaine",
+        "MONTH": "Depuis un mois",
+        "QUARTER": "Depuis 3 mois",
+        "SEMESTER": "Depuis 6 mois",
+        "YEAR": "Depuis un an",
+        "FOREVER": "Depuis toujours"
       }
     },
     "ACCOUNT": {
@@ -50,7 +59,6 @@
       "TX_COUNT_TITLE": "Nombre de transactions écrites",
       "TX_COUNT_LABEL": "Nombre de transactions",
       "TX_AVG_BY_BLOCK": "Nombre moyen de transactions / bloc"
-
     },
     "CURRENCY": {
       "MONETARY_MASS_TITLE": "Evolution de la masse monétaire",
@@ -58,7 +66,11 @@
       "MONETARY_MASS_SHARE_LABEL": "Moyenne par membre",
       "UD_TITLE": "Evolution du dividende universel",
       "MEMBERS_COUNT_TITLE": "Evolution du nombre de membres",
-      "MEMBERS_COUNT_LABEL": "Nombre de membres"
+      "MEMBERS_COUNT_LABEL": "Nombre de membres",
+      "MEMBERS_DELTA_TITLE": "Variation du nombre de membres",
+      "IS_MEMBER_DELTA_LABEL": "Prises en compte d'adhésion",
+      "WAS_MEMBER_DELTA_LABEL": "Pertes d'adhésion",
+      "PENDING_DELTA_LABEL": "Demandes d'adhésion"
     },
     "PEER": {
       "VIEW": {
@@ -106,13 +118,18 @@
       },
       "PEER": {
         "TITLE": "Noeuds requêtés",
-        "ES_USER_API": "Noeuds données utilisateurs",
-        "ES_SUBSCRIPTION_API": "Noeuds services en ligne"
+        "ES_USER_API": "Noeuds avec données utilisateurs",
+        "ES_SUBSCRIPTION_API": "Noeuds avec services en ligne"
       },
       "PERFORMANCE": {
         "TITLE": "Performances d'exécution",
         "DURATION": "Temps d'exécution (ms)"
       }
+    },
+    "NETWORK": {
+      "TITLE": "Statistiques réseau",
+      "ENDPOINT_COUNT_TITLE": "Nombre de points d'accès",
+      "ENDPOINT_DELTA_TITLE": "Variation du nombre de points d'accès"
     }
   }
 }

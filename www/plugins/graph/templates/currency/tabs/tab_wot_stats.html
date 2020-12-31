@@ -5,10 +5,19 @@
     </div>
 
     <div class="list no-padding">
-      <div class="item no-padding-top"
-           ng-include="::'plugins/graph/templates/currency/graph_members_count.html'"
-           ng-init="setSize(600,700,false)">
-      </div>
+      <ng-controller ng-controller="GpCurrencyMembersCountCtrl" >
+        <div class="item no-padding-top"
+             ng-include="::'plugins/graph/templates/currency/graph_members_count.html'"
+             ng-init="setSize(600,700,false)">
+        </div>
+      </ng-controller>
+
+      <ng-controller ng-controller="GpCurrencyPendingCountCtrl" >
+        <div class="item"
+             ng-include="::'plugins/graph/templates/docstats/graph.html'"
+             ng-init="setSize(600,700,false)">
+        </div>
+      </ng-controller>
     </div>
   </ion-content>
 </ion-view>

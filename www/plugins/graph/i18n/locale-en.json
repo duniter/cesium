@@ -15,6 +15,15 @@
         "HOUR": "Group by <b>hour</b>",
         "DAY": "Group by <b>day</b>",
         "MONTH": "Group by <b>month</b>"
+      },
+      "MAX_AGE": {
+        "DAY": "For 24h",
+        "WEEK": "For a week",
+        "MONTH": "For a month",
+        "QUARTER": "For 3 months",
+        "SEMESTER": "For 6 months",
+        "YEAR": "For a year",
+        "FOREVER": "Forever"
       }
     },
     "ACCOUNT": {
@@ -49,7 +58,11 @@
       "MONETARY_MASS_SHARE_LABEL": "Average per member",
       "UD_TITLE": "Evolution of the universal dividend",
       "MEMBERS_COUNT_TITLE": "Evolution of the number of members",
-      "MEMBERS_COUNT_LABEL": "Number of members"
+      "MEMBERS_COUNT_LABEL": "Number of members",
+      "MEMBERS_DELTA_TITLE": "variation in the number of members",
+      "IS_MEMBER_DELTA_LABEL": "Validated memberships",
+      "WAS_MEMBER_DELTA_LABEL": "Membership losses",
+      "PENDING_DELTA_LABEL": "Membership requests"
     },
     "PEER": {
       "VIEW": {
@@ -85,6 +98,24 @@
       "OTHER": {
         "TITLE": "Other documents",
         "HISTORY_DELETE": "Deletion of documents"
+      }
+    },
+    "SYNCHRO": {
+      "TITLE": "Synchronization statistics",
+      "COUNT": {
+        "TITLE": "Synchronized volume",
+        "INSERTS": "Insertions",
+        "UPDATES": "Updates",
+        "DELETES": "Deletions"
+      },
+      "PEER": {
+        "TITLE": "Requested peers",
+        "ES_USER_API": "Peers with with user data",
+        "ES_SUBSCRIPTION_API": "Peers with subscription"
+      },
+      "PERFORMANCE": {
+        "TITLE": "Execution performance",
+        "DURATION": "Execution time (ms)"
       }
     }
   }

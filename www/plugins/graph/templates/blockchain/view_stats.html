@@ -35,7 +35,10 @@
       <!-- Blocks issuer -->
       <ng-controller ng-controller="GpBlockchainIssuersCtrl">
 
-        <div class="item item-divider" ng-if="!loading" translate>GRAPH.BLOCKCHAIN.BLOCKS_ISSUERS_DIVIDER</div>
+        <div class="item item-divider" ng-if="!loading">
+          <span translate>GRAPH.BLOCKCHAIN.BLOCKS_ISSUERS_DIVIDER</span>
+          <span ng-if="formData.maxAge">({{'GRAPH.COMMON.MAX_AGE.' + formData.maxAge | uppercase | translate | lowercase }})</span>
+        </div>
 
         <div class="item no-padding-xs no-padding-sm"
              ng-if="!loading"

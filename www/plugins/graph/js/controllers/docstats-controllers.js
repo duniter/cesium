@@ -262,6 +262,9 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
   };
 
   $scope.load = function(updateTimePct) {
+    updateTimePct = angular.isDefined(updateTimePct) ? updateTimePct : true;
+
+    console.debug("[graph] Loading docstats data...");
 
     return $q.all([
       // Get i18n keys (chart title, series labels, date patterns)

@@ -86,12 +86,11 @@ function GpBlockchainTxCountController($scope, $controller, $q, $state, $filter,
         if (!result || !result.times) return; // no data
         $scope.times = result.times;
 
-        var formatInteger = $filter('formatInteger');
         var formatAmount =  $filter('formatDecimal');
         $scope.currencySymbol = $filter('currencySymbolNoHtml')($scope.formData.currency, $scope.formData.useRelative);
 
         // Data
-        if ($scope.formData.rangeDuration != 'hour') {
+        if ($scope.formData.rangeDuration !== 'hour') {
           $scope.data = [
             result.amount,
             result.count
@@ -207,13 +206,18 @@ function GpBlockchainIssuersController($scope, $controller, $q, $state, $transla
   // Initialize the super class and extend it.
   angular.extend(this, $controller('GpCurrencyAbstractCtrl', {$scope: $scope}));
 
+  // Change defaults
+  $scope.formData.maxAge = 'day';
+  $scope.computeStartTimeByAge();
+
   $scope.load = function() {
+
     return $q.all([
       $translate([
         'GRAPH.BLOCKCHAIN.BLOCKS_ISSUERS_TITLE',
         'GRAPH.BLOCKCHAIN.BLOCKS_ISSUERS_LABEL'
       ]),
-      gpData.blockchain.countByIssuer($scope.formData.currency)
+      gpData.blockchain.countByIssuer($scope.formData.currency, {startTime: $scope.formData.startTime})
     ])
       .then(function(result) {
         var translations =  result[0];

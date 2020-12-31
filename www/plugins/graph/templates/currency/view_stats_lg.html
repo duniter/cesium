@@ -45,12 +45,21 @@
 
       <!-- Member count  -->
       <ng-controller ng-controller="GpCurrencyMembersCountCtrl" >
-      <div class="item no-padding-xs"
-           ng-if="!loading"
-           ng-include="::'plugins/graph/templates/currency/graph_members_count.html'"
-           ng-init="setSize(250, 1000)">
-      </div>
+        <div class="item no-padding-xs"
+             ng-if="!loading"
+             ng-include="::'plugins/graph/templates/currency/graph_members_count.html'"
+             ng-init="setSize(250, 1000)">
+        </div>
+      </ng-controller>
 
+      <!-- Pending count  -->
+      <ng-controller ng-controller="GpCurrencyPendingCountCtrl" >
+        <div class="item no-padding-xs"
+             ng-if="chart"
+             ng-include="::'plugins/graph/templates/docstats/graph.html'"
+             ng-init="setSize(250, 1000)">
+        </div>
+      </ng-controller>
 
     </div>
 
