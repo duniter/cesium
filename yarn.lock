@@ -332,67 +332,61 @@
     normalize-path "^2.0.1"
     through2 "^2.0.3"
 
-"@ionic/cli-framework-output@2.1.0":
-  version "2.1.0"
-  resolved "https://registry.npmjs.org/@ionic/cli-framework-output/-/cli-framework-output-2.1.0.tgz#0e16dfa27b656947da90e698267f872af281db57"
-  integrity sha512-PiMhJDrXn3h2SK2dW4YJvyiTx6zjV/TDftegJh1UWsTlwWuYFNKgm7shWJlDHTAOe1E5aRY4BeQzAriXqm2RQg==
+"@ionic/cli-framework-output@2.2.2":
+  version "2.2.2"
+  resolved "https://registry.npmjs.org/@ionic/cli-framework-output/-/cli-framework-output-2.2.2.tgz#d03367e2b767a32fa7046c455843555b4971cd4a"
+  integrity sha512-eQYkqIW1/tCwSC6Bd0gjse96U11lDX/ikf3jvsjX7a8z/zwSmGzCHRizb7xogV65Ey+1/zyAZR71cpDRQuFLBQ==
   dependencies:
-    "@ionic/utils-terminal" "2.2.1"
+    "@ionic/utils-terminal" "2.3.1"
     debug "^4.0.0"
-    signal-exit "^3.0.3"
-    slice-ansi "^4.0.0"
-    string-width "^4.1.0"
-    strip-ansi "^6.0.0"
     tslib "^2.0.1"
-    wrap-ansi "^7.0.0"
 
-"@ionic/cli-framework-prompts@2.1.6":
-  version "2.1.6"
-  resolved "https://registry.npmjs.org/@ionic/cli-framework-prompts/-/cli-framework-prompts-2.1.6.tgz#52c2735e4d3d91a32e51c49c5d5e5f7ff47bf215"
-  integrity sha512-hKyXyBlOA4KBHGKSIX1uHiaviZ/V7cGTlB3ZmmfXu7xqEmSuT8NXwP3VTazIm0tXuVXMXlgKEewikaH6P9VrVA==
+"@ionic/cli-framework-prompts@2.1.8":
+  version "2.1.8"
+  resolved "https://registry.npmjs.org/@ionic/cli-framework-prompts/-/cli-framework-prompts-2.1.8.tgz#5445f08a1d5641fd4c58fac9eecc1ab27d519912"
+  integrity sha512-DjO4lQsmvficsZbPmpGqSSx+F1BfgSTQBwRqL5bl9Dkh9rIZ/ckcJcKqCciVOw9kIY7WTeNFOTwj2vWrkFn7+Q==
   dependencies:
-    "@ionic/utils-terminal" "2.2.1"
+    "@ionic/utils-terminal" "2.3.1"
     debug "^4.0.0"
     inquirer "^7.0.0"
     tslib "^2.0.1"
 
-"@ionic/cli-framework@5.0.3":
-  version "5.0.3"
-  resolved "https://registry.npmjs.org/@ionic/cli-framework/-/cli-framework-5.0.3.tgz#c195a0f9642f51c08a12adc661a6cfb39834a522"
-  integrity sha512-y9dneWk0fIs/j8rtxQVVKZ6JpmMmfArxvysfh5XqsytOA6FUJ1OT4/K3tUuuWww4vh1V89HW0GxBN1eUT3hEkg==
+"@ionic/cli-framework@5.1.0":
+  version "5.1.0"
+  resolved "https://registry.npmjs.org/@ionic/cli-framework/-/cli-framework-5.1.0.tgz#b5cf65e86b55157de2d6cdacc7dbd9c185666757"
+  integrity sha512-Hb/P2zuHB3zQZN0qG7Lxda8IlP2mHisfb0KR+wc9cw2BSiH+rtXRd/A4JxndPznjWs00PHbWiEm0Ehas2pA/nw==
   dependencies:
-    "@ionic/cli-framework-output" "2.1.0"
+    "@ionic/cli-framework-output" "2.2.2"
     "@ionic/utils-array" "2.1.5"
     "@ionic/utils-fs" "3.1.5"
     "@ionic/utils-object" "2.1.5"
-    "@ionic/utils-process" "2.1.6"
+    "@ionic/utils-process" "2.1.8"
     "@ionic/utils-stream" "3.1.5"
-    "@ionic/utils-subprocess" "2.1.6"
-    "@ionic/utils-terminal" "2.2.1"
+    "@ionic/utils-subprocess" "2.1.8"
+    "@ionic/utils-terminal" "2.3.1"
     chalk "^4.0.0"
     debug "^4.0.0"
     lodash "^4.17.5"
     minimist "^1.2.0"
     rimraf "^3.0.0"
     tslib "^2.0.1"
-    untildify "^4.0.0"
     write-file-atomic "^3.0.0"
 
-"@ionic/cli@^6.11.7":
-  version "6.11.7"
-  resolved "https://registry.npmjs.org/@ionic/cli/-/cli-6.11.7.tgz#68be3b9c0818f6330479554aad6aee5b339c669f"
-  integrity sha512-wbdVOAxlL8Lqd5GTTIhma9xDFgzv6P626+NRisY8aMiZNC8NLh/F4d4GW4kJczlFD7zQNLsPY/u7QrvlXKfUlg==
+"@ionic/cli@^6.12.3":
+  version "6.12.3"
+  resolved "https://registry.npmjs.org/@ionic/cli/-/cli-6.12.3.tgz#a093678092bd49deb11717865fd5773ed6ee229b"
+  integrity sha512-o4gm4ZoKrlzL8Gs1XZR+kVaMYghvKX8t/XJrQKr4EN/DQAM03KNMxsfm+RV3wFTnM8dgFywHzCuiw+5hY1oxEg==
   dependencies:
-    "@ionic/cli-framework" "5.0.3"
-    "@ionic/cli-framework-output" "2.1.0"
-    "@ionic/cli-framework-prompts" "2.1.6"
+    "@ionic/cli-framework" "5.1.0"
+    "@ionic/cli-framework-output" "2.2.2"
+    "@ionic/cli-framework-prompts" "2.1.8"
     "@ionic/utils-array" "2.1.5"
     "@ionic/utils-fs" "3.1.5"
     "@ionic/utils-network" "2.1.5"
-    "@ionic/utils-process" "2.1.6"
+    "@ionic/utils-process" "2.1.8"
     "@ionic/utils-stream" "3.1.5"
-    "@ionic/utils-subprocess" "2.1.6"
-    "@ionic/utils-terminal" "2.2.1"
+    "@ionic/utils-subprocess" "2.1.8"
+    "@ionic/utils-terminal" "2.3.1"
     chalk "^4.0.0"
     debug "^4.0.0"
     diff "^4.0.1"
@@ -400,7 +394,7 @@
     leek "0.0.24"
     lodash "^4.17.5"
     open "^7.0.4"
-    os-name "^3.1.0"
+    os-name "^4.0.0"
     semver "^7.1.1"
     split2 "^3.0.0"
     ssh-config "^1.1.1"
@@ -443,13 +437,13 @@
     debug "^4.0.0"
     tslib "^2.0.1"
 
-"@ionic/utils-process@2.1.6":
-  version "2.1.6"
-  resolved "https://registry.npmjs.org/@ionic/utils-process/-/utils-process-2.1.6.tgz#7dff48d976e35dd466cce2d27d226d172c0c5439"
-  integrity sha512-HuMTJp6lkzMZAI+FUEqLoOx6wxd29ysmk0Q9dCHABbIEP4hM5zAXTIuv4qUYelzT6lBywS/TAdfz+XB1TM6umg==
+"@ionic/utils-process@2.1.8":
+  version "2.1.8"
+  resolved "https://registry.npmjs.org/@ionic/utils-process/-/utils-process-2.1.8.tgz#e86d162d0ace28b33959fb7e65fccc58f6f36d81"
+  integrity sha512-VBBoyTzi+m6tgKAItl+jiTQneGwTOsctcrTG4CsEgmVOVOEhUYkPhddXqzD+oC54hPDU9ROsd3I014P5CWEuhQ==
   dependencies:
     "@ionic/utils-object" "2.1.5"
-    "@ionic/utils-terminal" "2.2.1"
+    "@ionic/utils-terminal" "2.3.1"
     debug "^4.0.0"
     signal-exit "^3.0.3"
     tree-kill "^1.2.2"
@@ -463,35 +457,42 @@
     debug "^4.0.0"
     tslib "^2.0.1"
 
-"@ionic/utils-subprocess@2.1.6":
-  version "2.1.6"
-  resolved "https://registry.npmjs.org/@ionic/utils-subprocess/-/utils-subprocess-2.1.6.tgz#d0fc4a8e92a47ab43ee855a8a9483132ec423bd5"
-  integrity sha512-osM2CaD+bxf4WXfQEjkPXHPqzg4xUqg7Rm9FK/DKddIuL6fHPoeLOwP7t0L3J4417dYsvtssTjxbSQnm/V5aWw==
+"@ionic/utils-subprocess@2.1.8":
+  version "2.1.8"
+  resolved "https://registry.npmjs.org/@ionic/utils-subprocess/-/utils-subprocess-2.1.8.tgz#c8d7ee39ff3f49171d727ecfd263c66b67cf8638"
+  integrity sha512-pkmtf1LtXcEMPn6/cctREL2aZtZoy0+0Sl+nT0NIkOHIoBUcqrcfMWdctCSM4Mp6+2/hLWtgpHE3TOIibkWfIg==
   dependencies:
     "@ionic/utils-array" "2.1.5"
     "@ionic/utils-fs" "3.1.5"
-    "@ionic/utils-process" "2.1.6"
+    "@ionic/utils-process" "2.1.8"
     "@ionic/utils-stream" "3.1.5"
-    "@ionic/utils-terminal" "2.2.1"
+    "@ionic/utils-terminal" "2.3.1"
     cross-spawn "^7.0.0"
     debug "^4.0.0"
     tslib "^2.0.1"
 
-"@ionic/utils-terminal@2.2.1":
-  version "2.2.1"
-  resolved "https://registry.npmjs.org/@ionic/utils-terminal/-/utils-terminal-2.2.1.tgz#d2faa9e0762117b4b2af064d1b948b0349ffa2ca"
-  integrity sha512-YBXSpK5rHu3XlQCF01S23Y4Rz1msBRqNBgGDo8lXekeRmI2WgeCxMHFZfKTEh30DQNYibnkwaeLacHp6ohd+8g==
+"@ionic/utils-terminal@2.3.1":
+  version "2.3.1"
+  resolved "https://registry.npmjs.org/@ionic/utils-terminal/-/utils-terminal-2.3.1.tgz#57bb2f6e4015cb655d004bd2891629b2aea9f06b"
+  integrity sha512-cglsSd2AckI3Ldtdfczeq64vIIDjtPspV5QJtky8f8uIdxkeOIGeRV7bCj1+BEf1hyo+ZuggQxLviHnbMZhiRw==
   dependencies:
     debug "^4.0.0"
+    signal-exit "^3.0.3"
+    slice-ansi "^4.0.0"
+    string-width "^4.1.0"
+    strip-ansi "^6.0.0"
     tslib "^2.0.1"
+    untildify "^4.0.0"
+    wrap-ansi "^7.0.0"
 
-"@ionic/v1-toolkit@^3.2.8":
-  version "3.2.10"
-  resolved "https://registry.npmjs.org/@ionic/v1-toolkit/-/v1-toolkit-3.2.10.tgz#6d60b61d8113b3bc9ee0dbdf68fa34c5e343229b"
-  integrity sha512-zuOvlrJQMMaRTKIA+VDnGVohBNhLcmQyciLK/7ALC2Rm6jTtLfCfvZ/MgnxA6fj6daXRgPS81NpGtAB00Z1NLw==
+"@ionic/v1-toolkit@^3.2.15":
+  version "3.2.15"
+  resolved "https://registry.npmjs.org/@ionic/v1-toolkit/-/v1-toolkit-3.2.15.tgz#ede6bbafdc1972064d3527ffe9bbfe949d359fc6"
+  integrity sha512-JyozCq924VVVHgs7r6cGNCLnYT6JBbiUGz5cgdb897B5sc6dKrh3MxcpuIKljbQWS1y0PDPXz5+fwXVMpTLpRg==
   dependencies:
-    "@ionic/cli-framework" "5.0.3"
+    "@ionic/cli-framework" "5.1.0"
     "@ionic/utils-fs" "3.1.5"
+    "@ionic/utils-terminal" "2.3.1"
     chalk "^4.0.0"
     chokidar "^3.0.1"
     debug "^4.0.0"
@@ -2466,12 +2467,12 @@ cordova-fetch@^3.0.0:
     semver "^7.1.3"
     which "^2.0.2"
 
-cordova-ios@^6.1.0:
-  version "6.1.0"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/cordova-ios/-/cordova-ios-6.1.0.tgz#24f52007dddadabcfcec3a0cade7ff7646d43ecc"
-  integrity sha512-FlX17lC2w78CqEQXypSeFIW3vUFF7VkCjNNLN+EbvOlLld5LUIbNJWepBdKlEg1/ZMmTwAuucMuKSZTr37ra+Q==
+cordova-ios@^6.1.1:
+  version "6.1.1"
+  resolved "https://registry.npmjs.org/cordova-ios/-/cordova-ios-6.1.1.tgz#3347303ddbc3a98073fcb5e0d3af47db66ea2491"
+  integrity sha512-WHNvjVhkuwRpq95rISVXtcRyd6UGZapbmU+hO/CAn1c0AIT5WnO8mg2mOjv0WDNa0mt/V5P+N2Vig1UWwfxa5Q==
   dependencies:
-    cordova-common "^4.0.1"
+    cordova-common "^4.0.2"
     fs-extra "^9.0.0"
     ios-sim "^8.0.2"
     nopt "^4.0.3"
@@ -2518,24 +2519,23 @@ cordova-osx@^6.0.0:
     unorm "^1.4.1"
     xcode "^3.0.1"
 
-cordova-plugin-androidx-adapter@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.npmjs.org/cordova-plugin-androidx-adapter/-/cordova-plugin-androidx-adapter-1.1.1.tgz#67c1553b4358a54827b5930d2590569749ad0f47"
-  integrity sha512-ePt0WG7Y8jOFx2x3A6oXQyxzavis2ANw2hFlm7MU/H7ez1QKPXmWjA1zIIx4T/QdKWM5D8fLH60t2PyJmKSsOg==
+cordova-plugin-androidx-adapter@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.npmjs.org/cordova-plugin-androidx-adapter/-/cordova-plugin-androidx-adapter-1.1.3.tgz#aa7e673ee342de208a6a34a50986ee2ac4b5ba60"
+  integrity sha512-W1SImn0cCCvOSTSfWWp5TnanIQrSuh2Bch+dcZXIzEn0km3Qb7VryeAqHhgBQYwwzC5Ollk1DtUAk/AJSojuZA==
   dependencies:
-    performance-now "^2.1.0"
-    q "^1.4.1"
+    q "^1.5.1"
     recursive-readdir "^2.2.2"
 
-cordova-plugin-androidx@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.npmjs.org/cordova-plugin-androidx/-/cordova-plugin-androidx-2.0.0.tgz#ac7bd51ba0ae42dbfe4090a3cd4b8fac32f35ad1"
-  integrity sha512-n5QA1LJ/wT9qpDCHAw2GwqVXVlEajRPnDH5CKZGpv90M1FYVMydYlFwCEbpp263e5I5QloPjyoyWagiKLB+JMg==
+cordova-plugin-androidx@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/cordova-plugin-androidx/-/cordova-plugin-androidx-3.0.0.tgz#03785d95d1c0e3ab42a45dd36fd4132e44e162f7"
+  integrity sha512-niMnhcxKsu4/oKTUbL0jRAnh6/cdoIVxRxJqj3uEyv8CVOlAj1sWhX+9b1XiAo9+bejAM9BbA21YK0mChfbVTA==
 
-cordova-plugin-camera@^4.1.0:
-  version "4.1.0"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/cordova-plugin-camera/-/cordova-plugin-camera-4.1.0.tgz#6474a3e080c4662aa00fd7425705d301c693ddc0"
-  integrity sha512-fCLhWjWYn49q3X5xaypAPgTz6MAWSKFFQvD2Gpi5SuVlrRPRphtX2jIqR2zCBuDTBR082QVnlc+yUDXt65Mjgw==
+cordova-plugin-camera@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.npmjs.org/cordova-plugin-camera/-/cordova-plugin-camera-5.0.1.tgz#9e0e94a7d29b15e6708f186bf9e59a28fcc0ee53"
+  integrity sha512-9gXyZvI8u9KzsZuqmB8Yw+uheF+7f+usMAwvOMw7L7pqbykg+bm9US5zjhJbwit3A1cSblgZkpBafe5cFiMcTA==
 
 cordova-plugin-compat@^1.2.0:
   version "1.2.0"
@@ -2567,10 +2567,10 @@ cordova-plugin-ionic-keyboard@^2.2.0:
   resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/cordova-plugin-ionic-keyboard/-/cordova-plugin-ionic-keyboard-2.2.0.tgz#53ba9ccd5e765165446a094cfe042a2ddd87d81d"
   integrity sha512-yDUG+9ieKVRitq5mGlNxjaZh/MgEhFFIgTIPhqSbUaQ8UuZbawy5mhJAVClqY97q8/rcQtL6dCDa7x2sEtCLcA==
 
-cordova-plugin-ionic-webview@^4.2.1:
-  version "4.2.1"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/cordova-plugin-ionic-webview/-/cordova-plugin-ionic-webview-4.2.1.tgz#42a67bef248472659d421494feb8245ef27becfa"
-  integrity sha512-7KrmqLaOGq1RP8N2z1ezN1kqkWFzTwwMvQ3/qAkd+exxFZuOe3DIN4eaU1gdNphsxdirI8Ajnr9q4So5vQbWqw==
+cordova-plugin-ionic-webview@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.npmjs.org/cordova-plugin-ionic-webview/-/cordova-plugin-ionic-webview-5.0.0.tgz#d58741af85754d80da82c7f673842a3e71bde630"
+  integrity sha512-Wq0kCanxubK/JroTW4Mp5soayScnRyiY1eCkbwiz1Dyt1xHOiOW/v+1miqtBHtnZhcXw25TulCKAVJzkNBdmyg==
 
 "cordova-plugin-minisodium@git+https://github.com/duniter-cesium/cordova-plugin-minisodium.git#v1.0.2":
   version "1.0.1"
@@ -8092,6 +8092,14 @@ os-name@^3.1.0:
     macos-release "^2.2.0"
     windows-release "^3.1.0"
 
+os-name@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/os-name/-/os-name-4.0.0.tgz#6c05c09c41c15848ea74658d12c9606f0f286599"
+  integrity sha512-caABzDdJMbtykt7GmSogEat3faTKQhmZf0BS5l/pZGmP0vPWQjXWqOhbLyK+b6j2/DQPmEvYdzLXJXXLJNVDNg==
+  dependencies:
+    macos-release "^2.2.0"
+    windows-release "^4.0.0"
+
 os-shim@^0.1.2:
   version "0.1.3"
   resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/os-shim/-/os-shim-0.1.3.tgz#6b62c3791cf7909ea35ed46e17658bb417cb3917"
@@ -11251,6 +11259,13 @@ windows-release@^3.1.0:
   integrity sha512-OSOGH1QYiW5yVor9TtmXKQvt2vjQqbYS+DqmsZw+r7xDwLXEeT3JGW0ZppFmHx4diyXmxt238KFR3N9jzevBRg==
   dependencies:
     execa "^1.0.0"
+
+windows-release@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/windows-release/-/windows-release-4.0.0.tgz#4725ec70217d1bf6e02c7772413b29cdde9ec377"
+  integrity sha512-OxmV4wzDKB1x7AZaZgXMVsdJ1qER1ed83ZrTYd5Bwq2HfJVg3DJS8nqlAG4sMoJ7mu8cuRmLEYyU13BKwctRAg==
+  dependencies:
+    execa "^4.0.2"
 
 winreg@0.0.12:
   version "0.0.12"
