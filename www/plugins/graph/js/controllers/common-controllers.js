@@ -238,7 +238,7 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
       }
       $scope.formData.startTime = moment.utc().unix() - ageInSecond;
     }
-  }
+  };
 
   $scope.updateHiddenDataset = function(datasetOverride) {
     datasetOverride = datasetOverride || $scope.datasetOverride || {};

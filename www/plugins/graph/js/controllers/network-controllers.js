@@ -256,7 +256,6 @@ function GpNetworkStatsController($scope, $controller, $q, $state, $translate, g
           type: 'peer',
           q: 'blockNumber:>={0} AND blockNumber:<{1}'.format(minBlockNumber, maxBlockNumber)
         });
-      })
-
+      });
   };
 }

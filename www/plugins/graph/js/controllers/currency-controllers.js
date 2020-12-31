@@ -649,7 +649,7 @@ function GpCurrencyPendingCountController($scope, $controller, $q, $state, $tran
           type: 'pending',
           q: 'blockNumber:>={0} AND blockNumber:<{1}'.format(minBlockNumber, maxBlockNumber)
         });
-      })
+      });
 
   };
 }
