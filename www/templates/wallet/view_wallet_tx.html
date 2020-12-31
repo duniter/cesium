@@ -137,7 +137,7 @@
             <div class="item item-pending item-tx item-icon-left"
                  ng-repeat="tx in formData.tx.validating"
                  ng-init="validating=true;"
-                 ng-include="::'templates/wallet/item_tx.html'">
+                 ng-include="::!tx.isUD ? 'templates/wallet/item_tx.html' : 'templates/wallet/item_ud.html'">
             </div>
           </ng-if>
 
