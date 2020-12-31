@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="106090" id="fr.duniter.cesium" ios-CFBundleIdentifier="org.duniter.cesium" version="1.6.9" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="106010" id="fr.duniter.cesium" ios-CFBundleIdentifier="org.duniter.cesium" version="1.6.10" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Cesium</name>
     <description>
     An simple App for Duniter wallet
