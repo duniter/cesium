@@ -14,11 +14,11 @@ if test -z "${CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL}"; then
 fi
 
 echo "Preparing Android environment:"
-echo " - using Android SDK: ${ANDROID_SDK_ROOT}"
-echo " - using Android SDK tools: ${ANDROID_SDK_TOOLS_ROOT}"
-echo " - using Gradle: ${GRADLE_HOME}"
-echo " - using Java: ${JAVA_HOME}"
-echo " - project dir: ${PROJECT_DIR}"
+echo "        Root: ${PROJECT_DIR}"
+echo "      NodeJS: version ${NODE_VERSION} with options: ${NODE_OPTIONS}"
+echo " Android SDK: ${ANDROID_SDK_ROOT} with CLI: ${ANDROID_SDK_CLI_ROOT}"
+echo "      Gradle: ${GRADLE_HOME} with options: ${GRADLE_OPTS}"
+echo "        Java: ${JAVA_HOME}"
 
 # Make sure javac exists
 JAVAC_PATH=$(which javac)
@@ -28,11 +28,10 @@ if test -z "${JAVAC_PATH}"; then
 fi
 
 # Prepare Android SDK tools
-if ! test -d "${ANDROID_SDK_TOOLS_ROOT}"; then
-  cd "${PROJECT_DIR}/scripts"
-  ./install-android-sdk-tools.sh
+if ! test -d "${ANDROID_SDK_ROOT}/build-tools/${ANDROID_SDK_VERSION}" || ! test -d "${ANDROID_SDK_CLI_ROOT}/tools/bin"; then
+  . ${PROJECT_DIR}/scripts/install-android-sdk.sh
   if test $? -ne 0; then
-    echo "ERROR: Unable to install Android SDK Tools"
+    echo "ERROR: Unable to install Android SDK Tools & CLI"
   fi
 fi
 
@@ -55,7 +54,6 @@ if test -z "$(which gradle)" && ! test -d "${GRADLE_HOME}"; then
   fi
 fi
 
-
 # Prepare Android platform
 if ! test -d "${PROJECT_DIR}/platforms/android"; then
   echo "Adding Cordova Android platform..."
@@ -76,6 +74,13 @@ if test -d "${ANDROID_OVERWRITE_DIR}"; then
   fi
 else
   echo "No directory '${ANDROID_OVERWRITE_DIR}' not found. Please create it, with a file 'release-signing.properties' for release signing"
+fi
+
+echo
+echo "Check Requirements"
+cordova requirements android --verbose
+if test $? -ne 0; then
+  echo "ERROR: Check Cordova requirements failed"
 fi
 
 export PATH=${GRADLE_HOME}/bin:${PATH}

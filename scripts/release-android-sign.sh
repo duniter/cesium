@@ -44,7 +44,7 @@ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ${KEYSTORE_FILE
 [[ $? -ne 0 ]] && exit 1
 echo "Executing jarsigner [OK]"
 
-BUILD_TOOLS_DIR="${ANDROID_SDK_ROOT}/build-tools/28.*/"
+BUILD_TOOLS_DIR="${ANDROID_SDK_ROOT}/build-tools/${ANDROID_SDK_VERSION}/"
 cd ${BUILD_TOOLS_DIR}
 
 echo "Executing zipalign..."
