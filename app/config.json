@@ -62,14 +62,6 @@
         "port": 443
       },
       {
-        "host": "g1.le-sou.org",
-        "port": 443
-      },
-      {
-        "host": "duniter.normandie-libre.fr",
-        "port": 443
-      },
-      {
         "host": "g1.duniter.org",
         "port": 443
       }
@@ -87,10 +79,6 @@
         "fallbackNodes": [
           {
             "host": "g1.data.presles.fr",
-            "port": 443
-          },
-          {
-            "host": "g1.data.le-sou.org",
             "port": 443
           },
           {
@@ -302,7 +290,7 @@
       "eo-EO": "license/license_g1-eo-EO"
     },
     "node": {
-      "host": "g1.duniter.fr",
+      "host": "g1.e-is.pro",
       "port": 443
     },
     "fallbackNodes": [{
@@ -310,7 +298,7 @@
         "port": 443
       },
       {
-        "host": "g1.duniter.fr",
+        "host": "g1.e-is.pro",
         "port": 443
       }
     ],
