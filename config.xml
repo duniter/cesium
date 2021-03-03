@@ -132,15 +132,6 @@
             <false />
         </config-file>
     </platform>
-    <platform name="osx">
-        <icon height="16" src="resources/osx/icon-16.png" width="16" />
-        <icon height="32" src="resources/osx/icon-32.png" width="32" />
-        <icon height="64" src="resources/osx/icon-64.png" width="64" />
-        <icon height="128" src="resources/osx/icon-128.png" width="128" />
-        <icon height="256" src="resources/osx/icon-256.png" width="256" />
-        <icon height="512" src="resources/osx/icon-512.png" width="512" />
-        <icon height="1024" src="resources/osx/icon-1024.png" width="1024" />
-    </platform>
     <plugin name="cordova-plugin-camera" spec="^4.1.0">
         <variable name="CAMERA_USAGE_DESCRIPTION" value="Add picture to the user profile" />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="Take a picture for the user profile" />
@@ -169,6 +160,4 @@
     </plugin>
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
     <plugin name="cordova-plugin-androidx" spec="^1.0.2" />
-    <engine name="ios" spec="^6.1.0" />
-    <engine name="osx" spec="^6.0.0" />
 </widget>
