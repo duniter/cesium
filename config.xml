@@ -58,7 +58,7 @@
     <platform name="android">
         <preference name="AndroidXEnabled" value="true" />
         <preference name="AndroidLaunchMode" value="singleTask" />
-        <preference name="android-minSdkVersion" value="16" />
+        <preference name="android-minSdkVersion" value="22" />
         <preference name="android-targetSdkVersion" value="29" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
         <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
