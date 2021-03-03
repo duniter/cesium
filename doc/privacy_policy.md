@@ -7,5 +7,5 @@ Cesium Android allow user to upload user profile (avatar, pictures), when the Ce
 Privacy policy are : 
  
 - Profile data and avatar are public data;
-- Profile data and avatar on an [ES Duniter4j node](https://github.com/duniter/duniter4j); Open Cesium+ settings to known the node address;  
+- Profile data and avatar on an [Cesium+ node](https://github.com/duniter/cesium-plus-pod); Open Cesium+ settings to know the node address;  
 - User can remove profile and avatar (open the Settings page, then use the options menu).
