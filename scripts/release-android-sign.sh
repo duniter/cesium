@@ -7,18 +7,18 @@ if [[ "_" == "_${PROJECT_DIR}" ]]; then
   export PROJECT_DIR
 fi;
 
-# Default env (can be override in file <PROJECT>/.local/env.sh)
+# Default env variables (can be override in '.local/env.sh' file)
 KEYSTORE_FILE=${PROJECT_DIR}/.local/android/Cesium.keystore
 KEY_ALIAS=Cesium
 KEYSTORE_PWD=
-APK_RELEASE_DIR=${PROJECT_DIR}/platforms/android/app/build/outputs/apk/release
-APK_UNSIGNED_FILE=${APK_RELEASE_DIR}/app-release-unsigned.apk
-APK_SIGNED_FILE=${APK_RELEASE_DIR}/app-release.apk
-
 
 # Preparing Android environment
-. ${PROJECT_DIR}/scripts/env-android.sh
+source ${PROJECT_DIR}/scripts/env-android.sh
 [[ $? -ne 0 ]] && exit 1
+
+APK_UNSIGNED_FILE=${ANDROID_OUTPUT_APK_RELEASE}/app-release-unsigned.apk
+APK_SIGNED_FILE=${ANDROID_OUTPUT_APK_RELEASE}/app-release.apk
+
 
 cd ${PROJECT_DIR}
 

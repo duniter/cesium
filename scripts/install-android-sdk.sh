@@ -45,6 +45,7 @@ echo y | sdkmanager "extras;google;m2repository" "--sdk_root=${ANDROID_SDK_ROOT}
 
 # Install build tools
 echo "Installing Android build-tools..."
+echo y | sdkmanager "build-tools;21.1.1" --sdk_root=${ANDROID_SDK_ROOT}  | tee -a sdkmanager.log
 echo y | sdkmanager "build-tools;${ANDROID_SDK_VERSION}" --sdk_root=${ANDROID_SDK_ROOT}  | tee -a sdkmanager.log
 [[ $? -ne 0 ]] && exit 1
 

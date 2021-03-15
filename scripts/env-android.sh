@@ -9,6 +9,8 @@ export PROJECT_DIR
 # Preparing environment
 . "${PROJECT_DIR}/scripts/env-global.sh"
 
+BUILD_TOOLS_DIR="${ANDROID_SDK_ROOT}/build-tools/${ANDROID_SDK_VERSION}/"
+
 if test -z "${CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL}"; then
   echo "ERROR: Missing Gradle distribution URL - please export env variable 'CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL'"
 fi
@@ -28,7 +30,7 @@ if test -z "${JAVAC_PATH}"; then
 fi
 
 # Prepare Android SDK tools
-if ! test -d "${ANDROID_SDK_ROOT}/build-tools/${ANDROID_SDK_VERSION}" || ! test -d "${ANDROID_SDK_CLI_ROOT}/tools/bin"; then
+if ! test -d "${BUILD_TOOLS_DIR}" || ! test -d "${ANDROID_SDK_CLI_ROOT}/tools/bin"; then
   . ${PROJECT_DIR}/scripts/install-android-sdk.sh
   if test $? -ne 0; then
     echo "ERROR: Unable to install Android SDK Tools & CLI"
@@ -83,6 +85,11 @@ if test $? -ne 0; then
   echo "ERROR: Check Cordova requirements failed"
 fi
 
-export PATH=${GRADLE_HOME}/bin:${PATH}
+# Add Gradle to path
+PATH=${GRADLE_HOME}/bin:${PATH}
+
+# Export useful variables
+export PATH \
+  BUILD_TOOLS_DIR
 
 echo "Android environment is ready!"

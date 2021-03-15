@@ -7,9 +7,17 @@ if [[ "_" == "_${PROJECT_DIR}" ]]; then
   export PROJECT_DIR
 fi;
 
+# Default env variables (can be override in '.local/env.sh' file)
+KEYSTORE_FILE=${PROJECT_DIR}/.local/Cesium.keystore
+KEY_ALIAS=Cesium
+KEY_PWD=
+
 # Preparing Android environment
 source ${PROJECT_DIR}/scripts/env-android.sh
 [[ $? -ne 0 ]] && exit 1
+
+APK_UNSIGNED_FILE=${ANDROID_OUTPUT_APK_RELEASE}/app-release-unsigned.apk
+APK_SIGNED_FILE=${ANDROID_OUTPUT_APK_RELEASE}/app-release.apk
 
 cd ${PROJECT_DIR}
 
@@ -18,13 +26,6 @@ echo "Running cordova build..."
 ionic cordova build android --warning-mode=none --color --prod --release
 [[ $? -ne 0 ]] && exit 1
 
-# Signature
-KEYSTORE_FILE=${PROJECT_DIR}/.local/Cesium.keystore
-KEY_ALIAS=Cesium
-KEY_PWD=
-APK_DIR=${PROJECT_DIR}/platforms/android/build/outputs/apk/release
-APK_UNSIGNED_FILE=${APK_DIR}/android-release.apk
-BUILD_TOOLS_DIR="${ANDROID_SDK_ROOT}/build-tools/28.*/"
 
 if [[ ! -f "${APK_UNSIGNED_FILE}" ]]; then
   echo "APK file not found at: ${APK_UNSIGNED_FILE}"
@@ -48,7 +49,7 @@ if [[ $? -ne 0 ]]; then
 
   jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ${KEYSTORE_FILE} ${APK_UNSIGNED_FILE} Cesium
 
-  BUILD_TOOLS_DIR="${ANDROID_SDK_ROOT}/build-tools/28.*/"
+  BUILD_TOOLS_DIR="${ANDROID_SDK_ROOT}/build-tools/${ANDROID_SDK_VERSION}/"
   cd ${BUILD_TOOLS_DIR}
   ./zipalign -v 4 ${APK_UNSIGNED_FILE} ${APK_SIGNED_FILE}
 
