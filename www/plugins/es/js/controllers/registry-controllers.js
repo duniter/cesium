@@ -888,7 +888,7 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
 
       // Load other data (from child controller)
       $timeout(function() {
-        return $scope.$broadcast('$recordView.load', id, esRegistry.record.comment);
+        return $scope.$broadcast('$recordView.load', id, esRegistry.record);
       })
     ])
     .then(function() {
