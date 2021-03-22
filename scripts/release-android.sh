@@ -17,7 +17,6 @@ source ${PROJECT_DIR}/scripts/env-android.sh
 [[ $? -ne 0 ]] && exit 1
 
 APK_UNSIGNED_FILE=${ANDROID_OUTPUT_APK_RELEASE}/app-release-unsigned.apk
-APK_SIGNED_FILE=${ANDROID_OUTPUT_APK_RELEASE}/app-release.apk
 
 cd ${PROJECT_DIR}
 
@@ -32,34 +31,6 @@ if [[ ! -f "${APK_UNSIGNED_FILE}" ]]; then
   exit 1
 fi
 
-# Check if signed
-cd ${BUILD_TOOLS_DIR}
-./apksigner verify ${APK_UNSIGNED_FILE}
-
-# Not signed ? Do it !
-if [[ $? -ne 0 ]]; then
-  echo "It seems that the APK file ${APK_UNSIGNED_FILE} is not signed !"
-  if [[ ! -f "${KEYSTORE_FILE}" ]]; then
-    echo "ERROR: Unable to sign: no keystore file found at ${KEYSTORE_FILE} !"
-    exit 1
-  fi
-
-  echo "Signing APK file ${APK_UNSIGNED_FILE}..."
-  APK_SIGNED_FILE=${APK_DIR}/android-release-signed.apk
-
-  jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ${KEYSTORE_FILE} ${APK_UNSIGNED_FILE} Cesium
-
-  BUILD_TOOLS_DIR="${ANDROID_SDK_ROOT}/build-tools/${ANDROID_SDK_VERSION}/"
-  cd ${BUILD_TOOLS_DIR}
-  ./zipalign -v 4 ${APK_UNSIGNED_FILE} ${APK_SIGNED_FILE}
-
-  ./apksigner verify ${APK_SIGNED_FILE}
-  if [[ $? -ne 0 ]]; then
-    echo "Signing failed !"
-    exit 1
-  fi
-
-  # Do file replacement
-  rm ${APK_UNSIGNED_FILE}
-  mv ${APK_SIGNED_FILE} ${APK_UNSIGNED_FILE}
-fi
+# Sign APK file
+. ./script/release-android-sign.sh
+[[ $? -ne 0 ]] && exit 1

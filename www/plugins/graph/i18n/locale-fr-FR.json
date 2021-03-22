@@ -53,7 +53,7 @@
       "BLOCKS_ISSUERS_TITLE": "Nombre de blocs calculés par membre",
       "BLOCKS_ISSUERS_LABEL": "Nombre de blocs",
       "TX_DIVIDER": "Analyse des transactions",
-      "TX_AMOUNT_TITLE": "Volume des transactions",
+      "TX_AMOUNT_TITLE": "Volume des transactions {{currency|abbreviate}}",
       "TX_AMOUNT_PUBKEY_TITLE": "Volume des transactions calculées par {{issuer | formatPubkey}}",
       "TX_AMOUNT_LABEL": "Volume échangé",
       "TX_COUNT_TITLE": "Nombre de transactions écrites",
