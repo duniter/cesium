@@ -493,6 +493,7 @@
     "EMPTY_TX_HISTORY": "Aucune operatie à exporteur"
   },
   "CONFIRM": {
+    "CAN_CONTINUE": "<b>Weet je zeker</b> dat je door wil gaan?",
     "POPUP_TITLE": "<b>Bevestiging</b>",
     "POPUP_WARNING_TITLE": "<b>Waarschuwing</b>",
     "CERTIFY_RULES_TITLE_UID": "Certificeer {{uid}}",
@@ -501,7 +502,7 @@
     "MEMBERSHIP_OUT": "<b>Waarschuwing</b>:<br/>Je staat op het punt je lidmaatschap te beëindigen. Dit kan <b>niet ongedaan</b> worden gemaakt.<br/></br/><b>Weet je zeker dat je door wil gaan?</b>",
     "LOGIN_UNUSED_WALLET_TITLE": "Typefout?",
     "LOGIN_UNUSED_WALLET": "Je bent ingelogged op een rekening die <b>inactief</b> lijkt te zijn.<br/><br/>Als deze rekening niet met de jouwe overeenkomt, komt dat waarschijnlijk door een <b>typefout</b> bij het inloggen.<br/><br/><b>Wilt u toch doorgaan met deze rekening?</b>",
-    "FIX_IDENTITY": "De pseudoniem <b>{{uid}}</b> zal opnieuw gepubliceerd worden, waarmee de oude verlopen publicatie wordt vervangen.<br/></br/><bWeet je zeker</b> dat je door wil gaan?",
+    "FIX_IDENTITY": "De pseudoniem <b>{{uid}}</b> zal opnieuw gepubliceerd worden, waarmee de oude verlopen publicatie wordt vervangen.<br/></br/><b>Weet je zeker</b> dat je door wil gaan?",
     "FIX_MEMBERSHIP": "Je verzoek to lidmaatschap zal verstuurd worden.<br/></br/><b>Weet je het zeker?</b>",
     "RENEW_MEMBERSHIP": "Je lidmaatschap zal verlengd worden.<br/></br/><b>Weet je het zeker?</b>",
     "REVOKE_IDENTITY": "<b>Beveiligingswaarschuwing:</b><br/>You will <b>definitely revoke this identity</b>.<br/><br/>The public key and the associated nickname <b>will never be used again</b> (for a member account).<br/></br/><b>Are you sure</b> you want to continue?",

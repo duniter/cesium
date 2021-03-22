@@ -805,6 +805,7 @@
     "EMPTY_TX_HISTORY": "No operations to export"
   },
   "CONFIRM": {
+    "CAN_CONTINUE": "<b>Are you sure</b> you want to continue?",
     "POPUP_TITLE": "<b>Confirmation</b>",
     "POPUP_WARNING_TITLE": "<b>Warning</b>",
     "POPUP_SECURITY_WARNING_TITLE": "<i class=\"icon ion-alert-circled\"></i> <b>Security warning</b>",

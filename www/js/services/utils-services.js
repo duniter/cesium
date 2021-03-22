@@ -47,7 +47,11 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
     }
 
     return $q(function(resolve) {
-      $translate([err, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'].concat(subtitle ? [subtitle] : []))
+      $translate(['ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK']
+        // avoid error "translationId must be a not empty string"
+        .concat(typeof err === 'string' ? [err] : [])
+        .concat(subtitle ? [subtitle] : [])
+      )
         .then(function (translations) {
           var message = err.message || translations[err];
           return $ionicPopup.show({
@@ -109,6 +113,7 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
   }
 
   function askConfirm(message, title, options) {
+    message = message || 'CONFIRM.CAN_CONTINUE';
     title = title || 'CONFIRM.POPUP_TITLE';
 
     options = options || {};

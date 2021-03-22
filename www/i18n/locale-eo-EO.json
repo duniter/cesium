@@ -805,6 +805,7 @@
     "EMPTY_TX_HISTORY": "Neniu spezo elportota"
   },
   "CONFIRM": {
+    "CAN_CONTINUE": "<b>Ĉu vi certas</b>, ke vi volas daŭrigi?",
     "POPUP_TITLE": "<b>Konfirmo</b>",
     "POPUP_WARNING_TITLE": "<b>Averto</b>",
     "POPUP_SECURITY_WARNING_TITLE": "<i class=\"icon ion-alert-circled\"></i> <b>Averto pri sekureco</b>",
