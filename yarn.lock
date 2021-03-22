@@ -2571,7 +2571,7 @@ cordova-fetch@^3.0.0:
     semver "^7.1.3"
     which "^2.0.2"
 
-cordova-ios@^6.1.1:
+cordova-ios@^6.2.0:
   version "6.2.0"
   resolved "https://registry.npmjs.org/cordova-ios/-/cordova-ios-6.2.0.tgz#3aaec7376b9a202cdcaf28faab6a79823b04c519"
   integrity sha512-sLjZg2QBI1SpQVwfe0MSn89YNVkBGLW9Q1vcFJBsqKBrhvoEOJ5Ytq0gwqdhgTOGzlwJUfxC6OHM3jcsRjtYrw==
@@ -2608,20 +2608,6 @@ cordova-lib@^10.0.0:
     semver "^7.3.2"
     stringify-package "^1.0.1"
     write-file-atomic "^3.0.3"
-
-cordova-osx@^6.0.0:
-  version "6.0.0"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/cordova-osx/-/cordova-osx-6.0.0.tgz#28aea6c9d3c86ec339a1dc1b4996aae4282cf0fc"
-  integrity sha512-WQTJSh0E2HymwIQF2mTGXYE8i8uG5RaRjE2CFJt/VXTn1xs/nnjcSsALsPLh7en2kv/N6YKe5bBesYYNULrWdQ==
-  dependencies:
-    cordova-common "^4.0.0"
-    nopt "^4.0.1"
-    plist "^3.0.1"
-    q "^1.4.1"
-    shelljs "^0.5.3"
-    underscore "^1.9.1"
-    unorm "^1.4.1"
-    xcode "^3.0.1"
 
 cordova-plugin-androidx-adapter@^1.1.3:
   version "1.1.3"
@@ -9154,7 +9140,7 @@ pupa@^2.0.1:
   dependencies:
     escape-goat "^2.0.0"
 
-q@^1.1.2, q@^1.4.1, q@^1.5.1:
+q@^1.1.2, q@^1.5.1:
   version "1.5.1"
   resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
@@ -10031,11 +10017,6 @@ shelljs@^0.2.6:
   version "0.2.6"
   resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/shelljs/-/shelljs-0.2.6.tgz#90492d72ffcc8159976baba62fb0f6884f0c3378"
   integrity sha1-kEktcv/MgVmXa6umL7D2iE8MM3g=
-
-shelljs@^0.5.3:
-  version "0.5.3"
-  resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/shelljs/-/shelljs-0.5.3.tgz#c54982b996c76ef0c1e6b59fbdc5825f5b713113"
-  integrity sha1-xUmCuZbHbvDB5rWfvcWCX1txMRM=
 
 shelljs@^0.8.3:
   version "0.8.4"
@@ -11293,7 +11274,7 @@ underscore@1.2.1:
   resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/underscore/-/underscore-1.2.1.tgz#fc5c6b0765673d92a2d4ac8b4dc0aa88702e2bd4"
   integrity sha1-/FxrB2VnPZKi1KyLTcCqiHAuK9Q=
 
-underscore@^1.9.1, underscore@^1.9.2:
+underscore@^1.9.2:
   version "1.10.2"
   resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/underscore/-/underscore-1.10.2.tgz#73d6aa3668f3188e4adb0f1943bd12cfd7efaaaf"
   integrity sha512-N4P+Q/BuyuEKFJ43B9gYuOj4TQUHXX+j2FqguVOpjkssLUUrnJofCcBccJSCoeturDoZU6GorDTHSvUDlSQbTg==
@@ -11372,7 +11353,7 @@ universalify@^2.0.0:
   resolved "https://registry.npmjs.org/universalify/-/universalify-2.0.0.tgz#75a4984efedc4b08975c5aeb73f530d02df25717"
   integrity sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==
 
-unorm@^1.4.1, unorm@^1.6.0:
+unorm@^1.6.0:
   version "1.6.0"
   resolved "https://nexus.e-is.pro/nexus/content/repositories/npmjs/unorm/-/unorm-1.6.0.tgz#029b289661fba714f1a9af439eb51d9b16c205af"
   integrity sha512-b2/KCUlYZUeA7JFUuRJZPUtr4gZvBh7tavtv4fvk4+KV9pfGiR6CQAQAWl49ZpR3ts2dk4FYkP7EIgDJoiOLDA==
