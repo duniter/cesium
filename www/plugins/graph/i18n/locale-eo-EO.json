@@ -15,6 +15,15 @@
         "HOUR": "Horo",
         "DAY": "Tago",
         "MONTH": "Monato"
+      },
+      "MAX_AGE": {
+        "DAY": "Depost 24h",
+        "WEEK": "Depost unu semajno",
+        "MONTH": "Depost unu monato",
+        "QUARTER": "Depost 3 monatoj",
+        "SEMESTER": "Depost 6 monatoj",
+        "YEAR": "Depost unu jaro",
+        "FOREVER": "Depost ĉiam"
       }
     },
     "ACCOUNT": {
@@ -50,7 +59,6 @@
       "TX_COUNT_TITLE": "Nombro de spezoj skribitaj",
       "TX_COUNT_LABEL": "Nombro de spezoj",
       "TX_AVG_BY_BLOCK": "Meza nombro de spezoj / bloko"
-
     },
     "CURRENCY": {
       "MONETARY_MASS_TITLE": "Evoluo de la mona maso",
@@ -58,7 +66,11 @@
       "MONETARY_MASS_SHARE_LABEL": "Mezumo por membro",
       "UD_TITLE": "Evoluo de la universala dividendo",
       "MEMBERS_COUNT_TITLE": "Evoluo de la nombro de membroj",
-      "MEMBERS_COUNT_LABEL": "Nombro de membroj"
+      "MEMBERS_COUNT_LABEL": "Nombro de membroj",
+      "MEMBERS_DELTA_TITLE": "Variado de la nombro de membroj",
+      "IS_MEMBER_DELTA_LABEL": "Novaj aliĝoj",
+      "WAS_MEMBER_DELTA_LABEL": "Aliĝo-perdoj",
+      "PENDING_DELTA_LABEL": "Aliĝo-petoj"
     },
     "PEER": {
       "VIEW": {
@@ -106,13 +118,18 @@
       },
       "PEER": {
         "TITLE": "Nodoj informpetitaj",
-        "ES_USER_API": "Nodoj pri datenoj de uzantoj",
-        "ES_SUBSCRIPTION_API": "Nodoj pri retaj servoj"
+        "ES_USER_API": "Nodoj kun datenoj de uzantoj",
+        "ES_SUBSCRIPTION_API": "Nodoj kun retaj servoj"
       },
       "PERFORMANCE": {
         "TITLE": "Efikecoj pri efektiviĝo",
         "DURATION": "Tempo por efektiviĝo (ms)"
       }
+    },
+    "NETWORK": {
+      "TITLE": "Statistikoj pri la reto",
+      "ENDPOINT_COUNT_TITLE": "Nombro de alir-punktoj",
+      "ENDPOINT_DELTA_TITLE": "Variado de la nombro de alir-punktoj"
     }
   }
 }
