@@ -67,8 +67,8 @@ install_from_github() {
 
 do_install() {
 
-  if ! is_installed "curl"; then
-    echo "=> curl is not available. You will likely need to install 'curl' package."
+  if [! is_installed "curl"] | [! is_installed "wget"]; then
+    echo "=> curl is not available. You will likely need to install 'curl' or 'wget' package."
     exit 1
   fi
   if ! is_installed "unzip"; then
