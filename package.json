@@ -84,6 +84,7 @@
     "@bower_components/socket.io-client": "socketio/socket.io-client#^1.7.4",
     "@bower_components/ui-leaflet": "angular-ui/ui-leaflet#v2.0.0",
     "@bower_components/underscore": "jashkenas/underscore#1.10.2",
+    "@bower_components/jdenticon": "dmester/jdenticon#3.1.0",
     "through2": "^4.0.2",
     "uuid": "3.2.1"
   },
