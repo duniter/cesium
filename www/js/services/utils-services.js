@@ -713,7 +713,7 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
   }
 
   function setEffects(enable) {
-    if (exports.motion.enable === enable) return; // same
+    if (exports.motion.enable === enable) return; // unchanged
     console.debug('[UI] [effects] ' + (enable ? 'Enable' : 'Disable'));
 
     exports.motion.enable = enable;

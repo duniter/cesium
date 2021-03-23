@@ -154,6 +154,7 @@
     "ENABLE_HELPTIP": "Enable contextual help tips",
     "DISABLE_HELPTIP": "Disable contextual help tips",
     "ENABLE_UI_EFFECTS": "Enable visual effects",
+    "ENABLE_UI_EFFECTS_HELP": "Transition between pages, animation of lists",
     "HISTORY_SETTINGS": "Account operations",
     "DISPLAY_UD_HISTORY": "Display produced dividends?",
     "TX_HISTORY_AUTO_REFRESH": "Enable automatic refresh?",
