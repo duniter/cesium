@@ -683,7 +683,7 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
       // but many fabs can have the same id (many view could be loaded at the same time)
       var fabs = document.getElementsByClassName('button-fab');
       _.forEach(fabs, function(fab){
-        if (fab.id == id) {
+        if (fab.id === id) {
           fab.classList.toggle('on', false);
         }
       });
@@ -724,7 +724,7 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
     else {
       $ionicConfig.views.transition('none');
       var nothing = {
-        class: undefined,
+        ionListClass: '',
         show: function(){}
       };
       angular.merge(exports.motion, {
