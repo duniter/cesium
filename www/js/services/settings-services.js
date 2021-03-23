@@ -328,6 +328,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
         startPromise = null;
         // Emit event (used by plugins)
         api.data.raise.ready(data);
+
+        return data;
       });
 
     return startPromise;

@@ -271,6 +271,12 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
           // Start settings
           csSettings.ready()
+            .then(function(settingsData) {
+              // Applying UI effects, if now already disable (e.g. because of poor platform grade)
+              if (UIUtils.motion.enable) {
+                UIUtils.setEffects(settingsData.uiEffects);
+              }
+            })
         ]))
 
         // Load BMA
