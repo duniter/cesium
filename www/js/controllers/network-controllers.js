@@ -403,6 +403,8 @@ function NetworkLookupModalController($scope, $controller, parameters) {
   $scope.enableLocationHref = false;
   $scope.helptipPrefix = '';
 
+  //$scope.compactMode = false; // Always false, because no toggle button in the modal
+
   $scope.selectPeer = function(peer) {
     $scope.closeModal(peer);
   };

@@ -100,8 +100,9 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
   })
 
 
-  .factory('csPlatform', function (ionicReady, $rootScope, $q, $state, $translate, $timeout, $ionicHistory, UIUtils,
-                                   BMA, Device, csHttp, csConfig, csCache, csSettings, csCurrency, csWallet) {
+  .factory('csPlatform', function (ionicReady, $rootScope, $q, $state, $translate, $timeout, $ionicHistory, $window,
+                                   UIUtils, Modals, BMA, Device,
+                                   csHttp, csConfig, csCache, csSettings, csCurrency, csWallet) {
 
     'ngInject';
     var
@@ -201,6 +202,38 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         });
     }
 
+    // User can select a node
+    function selectBmaNode() {
+      var parameters = {
+        enableFilter: false,
+        type: 'all',
+        bma: true,
+        expertMode: true
+      };
+      if ($window.location.protocol === 'https:') {
+        parameters.ssl = true;
+      }
+      return Modals.showNetworkLookup(parameters)
+        .then(function(peer) {
+          if (!peer) return true; // User cancelled (= keep the default node)
+
+          var node = {
+            host: peer.getHost(),
+            port: peer.getPort(),
+            useSsl: peer.isSsl()
+          };
+          console.info("[platform] Selected peer:", node);
+
+          // Only change BMA node in settings
+          csSettings.data.node = node;
+
+          // Add a marker, for UI
+          csSettings.data.node.temporary = true;
+
+          return BMA.copy(node);
+        });
+    }
+
     function isStarted() {
       return started;
     }
@@ -275,7 +308,9 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
         // Load BMA
         .then(function(){
-          return BMA.ready().then(checkBmaNodeAlive);
+          return BMA.ready()
+            .then(checkBmaNodeAlive)
+            .then(selectBmaNode);
         })
 
         // Load currency
