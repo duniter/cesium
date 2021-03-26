@@ -3,7 +3,7 @@
   <span ng-if="search.type=='text'" translate>COMMON.SEARCH_NO_RESULT</span>
 </div>
 
-<ion-list class="{{::motion.ionListClass}}"
+<ion-list ng-class="::motion.ionListClass"
           can-swipe="$root.device.enable">
 
   <ion-item

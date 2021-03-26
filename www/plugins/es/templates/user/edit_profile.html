@@ -64,7 +64,8 @@
 
         <form name="profileForm" novalidate="" ng-submit="saveAndClose()">
 
-          <div class="list item-text-wrap {{::motion.ionListClass}}" ng-init="setForm(profileForm)">
+          <div class="list item-text-wrap" ng-class="::motion.ionListClass"
+               ng-init="setForm(profileForm)">
 
             <!-- Public info -->
             <div class="item item-icon-left item-text-wrap">
@@ -118,7 +119,7 @@
           <!-- social networks -->
           <ng-include src="::'plugins/es/templates/common/edit_socials.html'" ng-controller="ESSocialsEditCtrl"></ng-include>
 
-          <div class="list item-text-wrap {{::motion.ionListClass}}">
+          <div class="list item-text-wrap" ng-class="::motion.ionListClass">
 
             <div class="item item-divider" translate>PROFILE.TECHNICAL_DIVIDER</div>
 

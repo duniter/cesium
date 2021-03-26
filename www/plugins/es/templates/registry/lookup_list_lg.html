@@ -1,7 +1,7 @@
 
 
-<div class="list {{::motion.ionListClass}}"
-          ng-if="!search.loading && search.results && search.results.length > 0">
+<div ng-if="!search.loading && search.results && search.results.length > 0"
+     class="list {{::motion.ionListClass}}" ng-class="::motion.ionListClass">
 
   <a ng-repeat="item in search.results"
      class="item item-record item-border-large ink padding-xs"
