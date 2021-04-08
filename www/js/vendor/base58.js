@@ -61,6 +61,7 @@
     while (i < string.length) {
       c = string[i];
       if (!(c in Base58.alphabetMap)) {
+        console.error("Base58.decode received unacceptable input. Character '" + c + "' is not in the Base58 alphabet.");
         throw "Base58.decode received unacceptable input. Character '" + c + "' is not in the Base58 alphabet.";
       }
       j = 0;
