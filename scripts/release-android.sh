@@ -32,5 +32,5 @@ if [[ ! -f "${APK_UNSIGNED_FILE}" ]]; then
 fi
 
 # Sign APK file
-. ./script/release-android-sign.sh
+. ./scripts/release-android-sign.sh
 [[ $? -ne 0 ]] && exit 1

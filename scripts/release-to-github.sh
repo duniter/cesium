@@ -13,17 +13,19 @@ source ${PROJECT_DIR}/scripts/env-global.sh
 
 ### Control that the script is run on `dev` branch
 branch=$(git rev-parse --abbrev-ref HEAD)
-if [[ ! "$branch" = "master" ]];
+if [[ ! "$branch" = "master" ]] && [[ ! "$branch" =~ ^release/[0-9]+.[0-9]+.[0-9]+(-(alpha|beta|rc)[0-9]+)?$ ]];
 then
-  echo ">> This script must be run under \`master\` branch"
+  echo ">> This script must be run under \`master\` or a \`release\` branch"
   exit 1
 fi
 
 ### Get version to release
-current=$(grep -P "version\": \"\d+.\d+.\d+(\w*)" package.json | grep -m 1 -oP "\d+.\d+.\d+(\w*)")
+current=$(grep -m1 -P "version\": \"\d+.\d+.\d+(-\w+[0-9]+)?" package.json | grep -oP "\d+.\d+.\d+(-\w+[0-9]+)?")
 if [[ "_$current" == "_" ]]; then
-  echo "Unable to read the current version in 'package.json'. Please check version format is: x.y.z (x and y should be an integer)."
-  exit 1;
+  echo "ERROR: Unable to read 'version' in the file 'package.json'."
+  echo " - Make sure the file 'package.json' exists and is readable."
+  echo " - Check version format is: x.y.z (x and y should be an integer)"
+  exit 1
 fi
 echo "Sending v$current extension to Github..."
 
