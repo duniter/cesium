@@ -120,7 +120,7 @@ Peer.prototype.getIPv6 = function() {
 
 Peer.prototype.getPort = function() {
   var bma = this.bma || this.getBMA();
-  return bma.port ? bma.port : null;
+  return bma.port ? parseInt(bma.port) : null;
 };
 
 Peer.prototype.getHost = function(getHost) {

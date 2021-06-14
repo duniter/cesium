@@ -12,6 +12,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
     },
     isHttpsMode = $window.location.protocol === 'https:',
     api = new Api(this, "csNetwork"),
+    startPromise,
 
     data = {
       bma: null,
@@ -169,7 +170,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           // The peer lookup end, we can make a clean final report
           sortPeers(true/*update main buid*/);
 
-          console.debug('[network] Finish: {0} peers found.'.format(data.peers.length));
+          console.debug('[network] {0} peers found.'.format(data.peers.length));
         }
       }, 1000);
 
@@ -286,6 +287,11 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         })
         .then(function(){
           data.searchingPeersOnNetwork = false;
+          data.loading = false;
+          if (newPeers.length) {
+            flushNewPeersAndSort(newPeers, true/*update main buid*/);
+          }
+          return data.peers;
         })
         .catch(function(err){
           console.error(err);
@@ -755,7 +761,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
 
     start = function(bma, options) {
       options = options || {};
-      return BMA.ready()
+      startPromise = BMA.ready()
         .then(function() {
           close();
 
@@ -775,17 +781,18 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           }
         })
         .then(function() {
-          console.info('[network] Starting network from [{0}]'.format(bma.server));
+          console.info('[network] Starting from [{0}]'.format(bma.server));
           var now = Date.now();
 
           addListeners();
 
           return loadPeers()
             .then(function(peers){
-              console.debug('[network] Started in '+(Date.now() - now)+'ms');
-              return peers;
+              console.debug('[network] Started in {0}ms, {1} peers found'.format(Date.now() - now, peers.length));
+              return data;
             });
         });
+      return startPromise;
     },
 
     close = function() {
@@ -797,36 +804,47 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
     },
 
     isStarted = function() {
-      return !data.bma;
+      return !!data.bma;
     },
 
-    $q_started = function(callback) {
-      if (!isStarted()) { // start first
-        return start()
+    startIfNeed = function(bma, options) {
+      if (startPromise) return startPromise;
+      if (!isStarted()) {
+        // Start (then stop) if need
+        return start(bma, options)
           .then(function() {
-            return $q(callback);
+            close();
+            return data;
           });
       }
       else {
-        return $q(callback);
+        return $q.resolve(data);
       }
     },
 
-    getMainBlockUid = function() {
-      return $q_started(function(resolve, reject){
-        resolve (data.mainBuid);
-      });
+    getMainBlockUid = function(bma, options) {
+      return startIfNeed(bma, options)
+        .then(function(data) {
+          return data.mainBlock && data.mainBlock.buid;
+        });
     },
 
     // Get peers on the main consensus blocks
-    getTrustedPeers = function() {
-      return $q_started(function(resolve, reject){
-        resolve(data.peers.reduce(function(res, peer){
-          return (peer.hasMainConsensusBlock && peer.uid) ? res.concat(peer) : res;
-        }, []));
-      });
-    }
-    ;
+    getSynchronizedBmaPeers = function(bma, options) {
+      options = options || {};
+      options.filter = options.filter || {};
+      options.filter.bma = angular.isDefined(options.filter.bma) ? options.filter.bma : true;
+      options.filter.ssl = isHttpsMode ? true : undefined;
+      options.filter.online = true;
+      options.filter.expertMode = false;
+
+      return startIfNeed(bma, options)
+        .then(function(data){
+          return _.filter(data.peers, function(peer) {
+            return peer.hasMainConsensusBlock && peer.isBma();
+          });
+        });
+    };
 
   // Register extension points
   api.registerEvent('data', 'changed');
@@ -840,7 +858,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
     hasPeers: hasPeers,
     getPeers: getPeers,
     sort: sort,
-    getTrustedPeers: getTrustedPeers,
+    getSynchronizedBmaPeers: getSynchronizedBmaPeers,
     getKnownBlocks: getKnownBlocks,
     getMainBlockUid: getMainBlockUid,
     loadPeers: loadPeers,

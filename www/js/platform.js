@@ -102,15 +102,14 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
   .factory('csPlatform', function (ionicReady, $rootScope, $q, $state, $translate, $timeout, $ionicHistory, $window,
                                    UIUtils, Modals, BMA, Device,
-                                   csHttp, csConfig, csCache, csSettings, csCurrency, csWallet) {
+                                   csHttp, csConfig, csCache, csSettings, csNetwork, csCurrency, csWallet) {
 
     'ngInject';
     var
-      fallbackNodeIndex = 0,
-      defaultSettingsNode,
+      checkBmaNodeAliveCounter = 0,
       started = false,
       startPromise,
-      listeners,
+      listeners = [],
       removeChangeStateListener;
 
     // Fix csConfig values
@@ -146,58 +145,120 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     function checkBmaNodeAlive(alive) {
       if (alive) return true;
 
-      // Remember the default node
-      defaultSettingsNode = defaultSettingsNode || csSettings.data.node;
+      checkBmaNodeAliveCounter++;
+      if (checkBmaNodeAliveCounter > 3)  throw 'ERROR.CHECK_NETWORK_CONNECTION'; // Avoid infinite loop
 
-      var fallbackNode = csSettings.data.fallbackNodes && fallbackNodeIndex < csSettings.data.fallbackNodes.length && csSettings.data.fallbackNodes[fallbackNodeIndex++];
-      if (!fallbackNode) {
-        throw 'ERROR.CHECK_NETWORK_CONNECTION';
-      }
-      var newServer = fallbackNode.host + ((!fallbackNode.port && fallbackNode.port != 80 && fallbackNode.port != 443) ? (':' + fallbackNode.port) : '');
-
-      // Skip is same as actual node
-      if (BMA.node.same(fallbackNode)) {
-        console.debug('[platform] Skipping fallback node [{0}]: same as actual node'.format(newServer));
-        return checkBmaNodeAlive(); // loop (= go to next node)
-      }
-
-      // Try to get summary
-      return csHttp.get(fallbackNode.host, fallbackNode.port, '/node/summary', fallbackNode.port == 443 || BMA.node.forceUseSsl)()
-        .catch(function (err) {
-          console.error('[platform] Could not reach fallback node [{0}]: skipping'.format(newServer));
-          // silent, but return no result (will loop to the next fallback node)
+      return BMA.filterAliveNodes(csSettings.data.fallbackNodes, Math.min(csConfig.timeout, 3000)/*3s max*/)
+        .then(function (fallbackNodes) {
+          if (!fallbackNodes.length) {
+            throw 'ERROR.CHECK_NETWORK_CONNECTION';
+          }
+          var randomIndex = Math.floor(Math.random() * fallbackNodes.length);
+          var fallbackNode = fallbackNodes[randomIndex];
+          return fallbackNode;
         })
-        .then(function (res) {
-          if (!res) return checkBmaNodeAlive(); // Loop
+        .then(function (fallbackNode) {
+
+          // Not expert mode: continue with the fallback node
+          if (!csSettings.data.expertMode) {
+            console.info("[platform] Switching to fallback node: {}".format(fallbackNode.server));
+            return fallbackNode;
+          }
+
+          // If expert mode: ask user to confirm, before switching to fallback node
+          var confirmMsgParams = {old: BMA.server, new: fallbackNode.server};
 
           // Force to show port/ssl, if this is the only difference
-          var messageParam = {old: BMA.server, new: newServer};
-          if (messageParam.old === messageParam.new) {
+          if (confirmMsgParams.old === confirmMsgParams.new) {
             if (BMA.port != fallbackNode.port) {
-              messageParam.new += ':' + fallbackNode.port;
+              confirmMsgParams.new += ':' + fallbackNode.port;
             } else if (BMA.useSsl == false && (fallbackNode.useSsl || fallbackNode.port == 443)) {
-              messageParam.new += ' (SSL)';
+              confirmMsgParams.new += ' (SSL)';
             }
           }
 
-          return $translate('CONFIRM.USE_FALLBACK_NODE', messageParam)
-            .then(function (msg) {
-              return UIUtils.alert.confirm(msg);
-            })
+          return $translate('CONFIRM.USE_FALLBACK_NODE', confirmMsgParams)
+            .then(UIUtils.alert.confirm)
             .then(function (confirm) {
-              if (!confirm) return;
+              if (!confirm) return; // Stop
+              return fallbackNode;
+            });
+        })
+        .then(function (fallbackNode) {
+          if (!fallbackNode) return; // Skip
 
+          // Only change BMA node in settings
+          csSettings.data.node = fallbackNode;
+
+          // Add a marker, for UI
+          csSettings.data.node.temporary = true;
+
+          csHttp.cache.clear();
+
+          // loop
+          return BMA.copy(fallbackNode)
+            .then(checkBmaNodeAlive);
+        });
+    }
+
+    // Make sure the BMA node is synchronized (is on the main consensus block)
+    function checkBmaNodeSynchronized() {
+      var now = Date.now();
+      console.info("[platform] Checking if node is synchronized...");
+
+      csNetwork.getSynchronizedBmaPeers(BMA, {
+        timeout:  Math.min(csConfig.timeout, 3000 /*3s max*/)
+      })
+        .then(function(peers) {
+          console.info("[platform] Network scanned in {0}ms, {1} peers (UP and synchronized) found".format(Date.now() - now, peers.length));
+
+          // TODO: store sync peers in storage ?
+
+          // Try to find the current peer in the list of synchronized peers
+          var synchronized = _.some(peers, function(peer) {
+            return BMA.node.same({
+              host: peer.getHost(),
+              port: peer.getPort(),
+              useSsl: peer.isSsl()
+            });
+          });
+
+          // OK (BMA node is sync): continue
+          if (synchronized) {
+            console.info("[platform] Default peer [{0}] is well synchronized.".format(BMA.server));
+            return true;
+          }
+
+          var consensusBlockNumber = peers.length ? peers[0].currentNumber : undefined;
+          return csCurrency.blockchain.current()
+            .then(function(block) {
+
+              // Only one block late: keep current node
+              if (Math.abs(block.number - consensusBlockNumber) <= 2) {
+                console.info("[platform] Keep BMA node [{0}], as current block #{1} is closed to consensus block #{2}".format(BMA.server, block.number, consensusBlockNumber));
+                return true;
+              }
+
+              // If Expert mode: ask user to select a node
+              if (csSettings.data.expertMode) {
+                return selectBmaNode();
+              }
+
+              var randomIndex = Math.floor(Math.random() * peers.length);
+              var randomPeer = peers[randomIndex];
+              var node = {
+                host: randomPeer.getHost(),
+                port: randomPeer.getPort(),
+                useSsl: randomPeer.isSsl()
+              };
+              console.info("[platform] Randomly selected peer {0}".format(randomPeer.server));
               // Only change BMA node in settings
-              csSettings.data.node = fallbackNode;
+              csSettings.data.node = node;
 
               // Add a marker, for UI
               csSettings.data.node.temporary = true;
 
-              csHttp.cache.clear();
-
-              // loop
-              return BMA.copy(fallbackNode)
-                .then(checkBmaNodeAlive);
+              return BMA.copy(node);
             });
         });
     }
@@ -263,10 +324,10 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
 
     function addListeners() {
-      listeners = [
-        // Listen if node changed
+      // Listen if node changed
+      listeners.push(
         BMA.api.node.on.restart($rootScope, restart, this)
-      ];
+      );
     }
 
     function removeListeners() {
@@ -294,7 +355,6 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       // Avoid change state
       disableChangeState();
 
-
       // We use 'ionicReady()' instead of '$ionicPlatform.ready()', because this one is callable many times
       startPromise = ionicReady()
 
@@ -308,9 +368,10 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
         // Load BMA
         .then(function(){
+          checkBmaNodeAliveCounter = 0;
           return BMA.ready()
             .then(checkBmaNodeAlive)
-            .then(selectBmaNode);
+            .then(checkBmaNodeSynchronized);
         })
 
         // Load currency

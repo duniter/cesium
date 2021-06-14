@@ -234,13 +234,13 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       };
     }
 
-    that.isAlive = function(node) {
+    that.isAlive = function(node, timeout) {
       node = node || that;
       // WARN:
       //  - Cannot use previous get() function, because
       //    node can be !=that, or not be started yet
       //  - Do NOT use cache here
-      return csHttp.get(node.host, node.port, '/node/summary', node.useSsl)()
+      return csHttp.get(node.host, node.port, '/node/summary', node.useSsl || that.forceUseSsl, timeout)()
         .then(function(json) {
           var software = json && json.duniter && json.duniter.software;
           var isCompatible = true;
@@ -259,7 +259,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           return isCompatible;
         })
         .catch(function() {
-          return false;
+          return false; // Unreacheable
         });
     };
 
@@ -381,6 +381,31 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           return alive;
         });
     };
+
+    that.filterAliveNodes = function(fallbackNodes, timeout) {
+      var fallbackNodes = _.filter(fallbackNodes || [], function(node) {
+        node.server = node.server || node.host + ((!node.port && node.port != 80 && node.port != 443) ? (':' + node.port) : '');
+        var same = that.node.same(node);
+        if (same) console.debug('[BMA] Skipping fallback node [{0}]: same as current BMA node'.format(node.server));
+        return !same;
+      });
+
+      var aliveNodes = [];
+      return $q.all(_.map(fallbackNodes, function(node) {
+        return that.isAlive(node, timeout)
+          .then(function(alive) {
+            if (alive) {
+              aliveNodes.push(node);
+            }
+            else {
+              console.error('[BMA] Unreacheable (or not compatible) fallback node [{0}]: skipping'.format(node.server));
+            }
+          })
+        }))
+        .then(function() {
+          return aliveNodes;
+        });
+    }
 
     that.api.registerEvent('node', 'start');
     that.api.registerEvent('node', 'stop');
