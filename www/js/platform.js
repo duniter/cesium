@@ -161,7 +161,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
           // Not expert mode: continue with the fallback node
           if (!csSettings.data.expertMode) {
-            console.info("[platform] Switching to fallback node: {}".format(fallbackNode.server));
+            console.info("[platform] Switching to fallback node: {0}".format(fallbackNode.server));
             return fallbackNode;
           }
 
@@ -190,8 +190,8 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
           // Only change BMA node in settings
           csSettings.data.node = fallbackNode;
 
-          // Add a marker, for UI
-          csSettings.data.node.temporary = true;
+          // Add a marker, for UI (only if not expert mode)
+          csSettings.data.node.temporary = !csSettings.data.expertMode;
 
           csHttp.cache.clear();
 
@@ -213,6 +213,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
           console.info("[platform] Network scanned in {0}ms, {1} peers (UP and synchronized) found".format(Date.now() - now, peers.length));
 
           // TODO: store sync peers in storage ?
+          //csSettings.data.
 
           // Try to find the current peer in the list of synchronized peers
           var synchronized = _.some(peers, function(peer) {

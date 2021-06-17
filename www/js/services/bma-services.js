@@ -259,7 +259,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           return isCompatible;
         })
         .catch(function() {
-          return false; // Unreacheable
+          return false; // Unreachable
         });
     };
 
@@ -398,14 +398,14 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
               aliveNodes.push(node);
             }
             else {
-              console.error('[BMA] Unreacheable (or not compatible) fallback node [{0}]: skipping'.format(node.server));
+              console.error('[BMA] Unreachable (or not compatible) fallback node [{0}]: skipping'.format(node.server));
             }
           })
         }))
         .then(function() {
           return aliveNodes;
         });
-    }
+    };
 
     that.api.registerEvent('node', 'start');
     that.api.registerEvent('node', 'stop');

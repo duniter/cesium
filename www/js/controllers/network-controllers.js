@@ -157,11 +157,25 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
   $scope.load = function() {
 
     if ($scope.search.loading){
+      $scope.refreshing = false;
+
       // Start network scan
-      csNetwork.start($scope.node, $scope.computeOptions());
+      csNetwork.start($scope.node, $scope.computeOptions())
+        .then(function(){
+          if (!$scope.refreshing) {
+            $scope.refreshing = true;
+            csWot.extendAll(csNetwork.data.peers)
+              .then(function() {
+                // Avoid to refresh if view has been leaving
+                if ($scope.networkStarted) {
+                  $scope.updateView(csNetwork.data);
+                }
+                $scope.refreshing = false;
+              });
+          }
+        });
 
       // Catch event on new peers
-      $scope.refreshing = false;
       $scope.listeners.push(
         csNetwork.api.data.on.changed($scope, function(data){
           if (!$scope.refreshing) {
