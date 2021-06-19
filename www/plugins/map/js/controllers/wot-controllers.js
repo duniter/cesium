@@ -109,25 +109,6 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
     loading: true
   }, $scope.mapId);
 
-  var layers = {
-    // User profile
-    member: {
-      type: 'featureGroup',
-      name: 'MAP.WOT.VIEW.LAYER.MEMBER',
-      visible: true
-    },
-    pending: {
-      type: 'featureGroup',
-      name: 'MAP.WOT.VIEW.LAYER.PENDING',
-      visible: true
-    },
-    wallet: {
-      type: 'featureGroup',
-      name: 'MAP.WOT.VIEW.LAYER.WALLET',
-      visible: true
-    }
-  };
-
   // Variables for marker
   $scope.showDescription = false;
   ionicReady().then(function() {
@@ -331,7 +312,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
                     uid: hit.uid,
                     name: title,
                     profile: hit,
-                    isMember: type == 'member'			  
+                    isMember: type === 'member'
                   };
                   markerScope.loadingMarker = false;
                 });
