@@ -1,7 +1,7 @@
 stages:
   - build
   - alt_build
-  #- publish
+  - publish
 
 fast-build:
   stage: build
@@ -75,6 +75,7 @@ pages:
       - public
   only:
     - master
+
 mirror:
   stage: publish
   image: liaohuqiu/rsync
@@ -92,7 +93,6 @@ mirror:
     - ssh gammanu@1000i100.fr "~/g1.money/update-cesium.sh"
   only:
     - master
-
 
 release-web:
   stage: publish
