@@ -1,11 +1,37 @@
+# ---------------------------------------------------------------
+# Global
+# ---------------------------------------------------------------
+
+# default image
+image: node:12
+
+# stages (main steps of pipeline)
 stages:
   - build
   - alt_build
-  - publish
+  - deploy
+
+# ---------------------------------------------------------------
+# Global variables
+# ---------------------------------------------------------------
+
+variables:
+    CONTAINER_BUILD_IMAGE: $CI_REGISTRY_IMAGE:build
+    CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+
+# ---------------------------------------------------------------
+# Jobs templates
+# ---------------------------------------------------------------
+
+
+# ---------------------------------------------------------------
+# Build jobs
+# ---------------------------------------------------------------
 
 fast-build:
   stage: build
-  image: $CI_REGISTRY_IMAGE
+  image: ${CONTAINER_BUILD_IMAGE}
   before_script:
     - mv /customCache/node_modules ./
     - cp -rf /customCache/www ./
@@ -21,13 +47,11 @@ fast-build:
       - dist/web
     expire_in: 60 minutes
   only:
-    - master
-    - tags
+    - develop
 
 failsafe-build:
   stage: alt_build
   when: on_failure
-  image: node:12
   script:
     - yarn
     - yarn run build:web
@@ -37,8 +61,7 @@ failsafe-build:
       - dist/web
     expire_in: 60 minutes
   only:
-    - master
-    - tags
+    - develop
 
 docker-for-fast-build:
   stage: alt_build
@@ -57,13 +80,16 @@ docker-for-fast-build:
     - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/after.txt' >> Dockerfile
     - echo 'WORKDIR /build' >> Dockerfile
     - echo "RUN diff /before.txt /after.txt || true" >> Dockerfile
-    - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
-    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
-    - docker push "$CI_REGISTRY_IMAGE"
+    - docker login -u gitlab-ci-token -p "${CI_BUILD_TOKEN}" ${CI_REGISTRY}
+    - docker build --pull -t "${CONTAINER_BUILD_IMAGE}" .
+    - docker push "${CONTAINER_BUILD_IMAGE}"
+
+# ---------------------------------------------------------------
+# Deploy jobs
+# ---------------------------------------------------------------
 
 pages:
-  stage: publish
-  image: node:12
+  stage: deploy
   variables:
     GIT_STRATEGY: none
   script:
@@ -77,7 +103,7 @@ pages:
     - master
 
 mirror:
-  stage: publish
+  stage: deploy
   image: liaohuqiu/rsync
   before_script:
     - eval $(ssh-agent -s)
@@ -94,9 +120,8 @@ mirror:
   only:
     - master
 
-release-web:
-  stage: publish
-  image: node:12
+release:
+  stage: deploy
   variables:
     GIT_STRATEGY: none
   script:
