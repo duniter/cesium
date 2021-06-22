@@ -24,18 +24,9 @@ variables:
 # Jobs templates
 # ---------------------------------------------------------------
 
-
-# ---------------------------------------------------------------
-# Build jobs
-# ---------------------------------------------------------------
-
-fast-build:
+.build:
   stage: build
-  image: ${CONTAINER_BUILD_IMAGE}
-  before_script:
-    - mv /customCache/node_modules ./
-    - cp -rf /customCache/www ./
-    - cp -rf /customCache/hooks ./
+  tags: [ redshift ]
   script:
     - yarn run build:web
   after_script:
@@ -46,32 +37,46 @@ fast-build:
     paths:
       - dist/web
     expire_in: 60 minutes
+
+.docker:
+  image: docker:latest
+  tags: [ redshift ]
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u gitlab-ci-token -p ${CI_BUILD_TOKEN} ${CI_REGISTRY} || true
+  allow_failure: false
+
+
+# ---------------------------------------------------------------
+# Build jobs
+# ---------------------------------------------------------------
+
+fast-build:
+  extends: .build
+  image: ${CONTAINER_BUILD_IMAGE}
+  before_script:
+    - mv /customCache/node_modules ./
+    - cp -rf /customCache/www ./
+    - cp -rf /customCache/hooks ./
   only:
     - develop
 
 failsafe-build:
+  extends: .build
   stage: alt_build
   when: on_failure
-  script:
+  before_script:
     - yarn
-    - yarn run build:web
-  artifacts:
-    untracked: true
-    paths:
-      - dist/web
-    expire_in: 60 minutes
   only:
     - develop
 
 docker-for-fast-build:
+  extends: .docker
   stage: alt_build
   when: on_failure
   allow_failure: true
-  tags: [doppler-docker]
-  image: docker:latest
-  services:
-    - docker:dind
-  script:
+  before_script:
     - echo 'FROM node:12' > Dockerfile
     - echo 'WORKDIR /customCache' >> Dockerfile
     - echo 'COPY ./ ./' >> Dockerfile
@@ -80,9 +85,9 @@ docker-for-fast-build:
     - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/after.txt' >> Dockerfile
     - echo 'WORKDIR /build' >> Dockerfile
     - echo "RUN diff /before.txt /after.txt || true" >> Dockerfile
-    - docker login -u gitlab-ci-token -p "${CI_BUILD_TOKEN}" ${CI_REGISTRY}
-    - docker build --pull -t "${CONTAINER_BUILD_IMAGE}" .
-    - docker push "${CONTAINER_BUILD_IMAGE}"
+  script:
+    - docker build --pull -t ${CONTAINER_BUILD_IMAGE} .
+    - docker push ${CONTAINER_BUILD_IMAGE}
 
 # ---------------------------------------------------------------
 # Deploy jobs
