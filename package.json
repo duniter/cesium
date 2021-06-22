@@ -10,7 +10,7 @@
     "url": "git@git.duniter.org:clients/cesium/cesium.git"
   },
   "scripts": {
-    "clean": "clean webClean webExtClean && trash dist/desktop/**/*.deb platforms/android/**/*.apk",
+    "clean": "gulp clean webClean webExtClean && rm -rf dist/web dist/android && rm -f desktop/**/cesium-*.deb desktop/**/cesium-*.exe platforms/android/**/*.apk",
     "postinstall": "node scripts/node/postinstall.js",
     "lint": "gulp lint",
     "install-platforms": "ionic cordova prepare",

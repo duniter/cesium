@@ -1,6 +1,6 @@
 stages:
-  #- build
-  #- alt_build
+  - build
+  - alt_build
   #- publish
 
 fast-build:
@@ -11,7 +11,7 @@ fast-build:
     - cp -rf /customCache/www ./
     - cp -rf /customCache/hooks ./
   script:
-    - node ./node_modules/gulp/bin/gulp webBuild
+    - yarn run build:web
   after_script:
     - ls -la dist/web/
     - du -csh dist/web/
@@ -23,14 +23,14 @@ fast-build:
   only:
     - master
     - tags
+
 failsafe-build:
   stage: alt_build
   when: on_failure
-  image: node:10
+  image: node:12
   script:
     - yarn
-    - node ./node_modules/gulp/bin/gulp config --env default
-    - node ./node_modules/gulp/bin/gulp webBuild
+    - yarn run build:web
   artifacts:
     untracked: true
     paths:
@@ -39,17 +39,17 @@ failsafe-build:
   only:
     - master
     - tags
+
 docker-for-fast-build:
   stage: alt_build
   when: on_failure
   allow_failure: true
-  tags:
-    - doppler-docker
+  tags: [doppler-docker]
   image: docker:latest
   services:
     - docker:dind
   script:
-    - echo 'FROM node:10' > Dockerfile
+    - echo 'FROM node:12' > Dockerfile
     - echo 'WORKDIR /customCache' >> Dockerfile
     - echo 'COPY ./ ./' >> Dockerfile
     - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/before.txt' >> Dockerfile
@@ -61,10 +61,9 @@ docker-for-fast-build:
     - docker build --pull -t "$CI_REGISTRY_IMAGE" .
     - docker push "$CI_REGISTRY_IMAGE"
 
-
 pages:
   stage: publish
-  image: node:10
+  image: node:12
   variables:
     GIT_STRATEGY: none
   script:
@@ -97,7 +96,7 @@ mirror:
 
 release-web:
   stage: publish
-  image: node:10
+  image: node:12
   variables:
     GIT_STRATEGY: none
   script:
