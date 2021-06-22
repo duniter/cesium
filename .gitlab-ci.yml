@@ -44,7 +44,8 @@ variables:
   services:
     - docker:dind
   before_script:
-    - docker login -u "${CI_BUILD_USER}" -p "${CI_BUILD_TOKEN}"
+    - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
+    #- docker login -u "${CI_BUILD_USER}" -p "${CI_BUILD_TOKEN}"
   allow_failure: false
 
 
