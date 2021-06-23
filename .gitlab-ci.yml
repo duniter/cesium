@@ -16,9 +16,7 @@ stages:
 # ---------------------------------------------------------------
 
 variables:
-    CONTAINER_BUILD_IMAGE: $CI_REGISTRY_IMAGE:build
-    CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-    CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+    CONTAINER_BUILD_IMAGE: $CI_REGISTRY_IMAGE/build:develop
 
 # ---------------------------------------------------------------
 # Jobs templates
@@ -75,7 +73,8 @@ docker-for-fast-build:
   stage: alt_build
   when: on_failure
   allow_failure: true
-  before_script:
+  script:
+    # Prepare the Dockerfile
     - echo 'FROM node:12' > Dockerfile
     - echo 'WORKDIR /.build-cache' >> Dockerfile
     - echo 'COPY ./ ./' >> Dockerfile
@@ -84,7 +83,7 @@ docker-for-fast-build:
     - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/after.txt' >> Dockerfile
     - echo "RUN diff /before.txt /after.txt || true" >> Dockerfile
     - echo 'WORKDIR /build' >> Dockerfile
-  script:
+    # Build image
     - docker build --pull -t ${CONTAINER_BUILD_IMAGE} .
     - docker push ${CONTAINER_BUILD_IMAGE}
 
