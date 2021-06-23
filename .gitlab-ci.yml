@@ -82,8 +82,8 @@ docker-for-fast-build:
     - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/before.txt' >> Dockerfile
     - echo 'RUN yarn' >> Dockerfile
     - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/after.txt' >> Dockerfile
-    - echo 'WORKDIR /build' >> Dockerfile
     - echo "RUN diff /before.txt /after.txt || true" >> Dockerfile
+    - echo 'WORKDIR /build' >> Dockerfile
   script:
     - docker build --pull -t ${CONTAINER_BUILD_IMAGE} .
     - docker push ${CONTAINER_BUILD_IMAGE}
