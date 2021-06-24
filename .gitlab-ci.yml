@@ -16,15 +16,33 @@ stages:
 # ---------------------------------------------------------------
 
 variables:
-    CONTAINER_BUILD_IMAGE: $CI_REGISTRY_IMAGE/build:develop
+    CI_BUILD_IMAGE: $CI_REGISTRY_IMAGE/build:develop
 
 # ---------------------------------------------------------------
 # Jobs templates
 # ---------------------------------------------------------------
 
+
+.docker:
+  image: docker:latest
+  tags: [redshift]
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+    #- docker login -u "duniterteam" -p "$DUNITERTEAM_PASSWD"
+  after_script:
+    - docker logout ${CI_REGISTRY}
+    #- docker logout
+  allow_failure: false
+
+# ---------------------------------------------------------------
+# Build jobs
+# ---------------------------------------------------------------
+
 .build:
   stage: build
-  tags: [ redshift ]
+  tags: [redshift]
   script:
     - yarn run build:web
   after_script:
@@ -36,26 +54,12 @@ variables:
       - dist/web
     expire_in: 60 minutes
 
-.docker:
-  image: docker:latest
-  tags: [redshift]
-  services:
-    - docker:dind
-  before_script:
-    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY} || true
-  after_script:
-    - docker logout ${CI_REGISTRY}
-  allow_failure: false
-
-# ---------------------------------------------------------------
-# Build jobs
-# ---------------------------------------------------------------
-
-fast-build:
+build:
   extends: .build
-  image: ${CONTAINER_BUILD_IMAGE}
+  image: ${CI_BUILD_IMAGE}
   before_script:
     - mv /.build-cache/node_modules ./
+    - yarn run postinstall
   only:
     - develop
 
@@ -68,7 +72,7 @@ failsafe-build:
   only:
     - develop
 
-docker-for-fast-build:
+docker:ci:
   extends: .docker
   stage: alt_build
   when: on_failure
@@ -77,15 +81,16 @@ docker-for-fast-build:
     # Prepare the Dockerfile
     - echo 'FROM node:12' > Dockerfile
     - echo 'WORKDIR /.build-cache' >> Dockerfile
+    - echo 'RUN mkdir -p /.build-cache' >> Dockerfile
     - echo 'COPY ./ ./' >> Dockerfile
-    - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/before.txt' >> Dockerfile
+    - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"` > /.build-cache/install-before.txt' >> Dockerfile
     - echo 'RUN yarn' >> Dockerfile
-    - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/after.txt' >> Dockerfile
-    - echo "RUN diff /before.txt /after.txt || true" >> Dockerfile
+    - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"` > /.build-cache/install-after.txt' >> Dockerfile
+    - echo "RUN diff /.build-cache/install-before.txt /.build-cache/install-after.txt || true" >> Dockerfile
     - echo 'WORKDIR /build' >> Dockerfile
     # Build image
-    - docker build --pull -t ${CONTAINER_BUILD_IMAGE} .
-    - docker push ${CONTAINER_BUILD_IMAGE}
+    - docker build --no-cache -t ${CI_BUILD_IMAGE} .
+    - docker push ${CI_BUILD_IMAGE}
 
 # ---------------------------------------------------------------
 # Deploy jobs
