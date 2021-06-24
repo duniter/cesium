@@ -44,6 +44,7 @@ variables:
   stage: build
   tags: [redshift]
   script:
+    - yarn install
     - yarn run build:web
   after_script:
     - ls -la dist/web/
@@ -59,7 +60,6 @@ build:
   image: ${CI_BUILD_IMAGE}
   before_script:
     - mv /tmp/.build-cache/node_modules ./
-    - yarn run postinstall
   only:
     - develop
 
@@ -68,7 +68,7 @@ failsafe-build:
   stage: alt_build
   when: on_failure
   before_script:
-    - yarn
+    - yarn global add gulp
   only:
     - develop
 
@@ -89,8 +89,8 @@ docker:ci:
     - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"` > /tmp/before.txt' >> Dockerfile
     - echo 'RUN du -s `find /tmp/.cache/yarn -maxdepth 1 | egrep -v "^\.$"` >> /tmp/before.txt' >> Dockerfile
     # Install dependencies
-    #- echo 'RUN yarn global add gulp web-ext @ionic/cli' >> Dockerfile
-    - echo 'RUN yarn' >> Dockerfile
+    - echo 'RUN yarn global add gulp web-ext @ionic/cli' >> Dockerfile
+    - echo 'RUN yarn install' >> Dockerfile
     # Store disk usage (after install)
     - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"` > /tmp/after.txt' >> Dockerfile
     - echo 'RUN du -s `find /tmp/.cache/yarn -maxdepth 1 | egrep -v "^\.$"` >> /tmp/after.txt' >> Dockerfile

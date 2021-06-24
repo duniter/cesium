@@ -12,6 +12,7 @@
   "scripts": {
     "clean": "gulp clean webClean webExtClean && rm -rf dist/web dist/android && rm -f desktop/**/cesium-*.deb desktop/**/cesium-*.exe platforms/android/**/*.apk",
     "postinstall": "node scripts/node/postinstall.js",
+    "gulp": "gulp",
     "lint": "gulp lint",
     "install-platforms": "ionic cordova prepare",
     "start": "ionic serve",
