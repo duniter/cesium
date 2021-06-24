@@ -58,7 +58,7 @@ build:
   extends: .build
   image: ${CI_BUILD_IMAGE}
   before_script:
-    - mv /.build-cache/node_modules ./
+    - mv /tmp/.build-cache/node_modules ./
     - yarn run postinstall
   only:
     - develop
@@ -80,13 +80,19 @@ docker:ci:
   script:
     # Prepare the Dockerfile
     - echo 'FROM node:12' > Dockerfile
-    - echo 'WORKDIR /.build-cache' >> Dockerfile
-    - echo 'RUN mkdir -p /.build-cache' >> Dockerfile
+    - echo 'WORKDIR /tmp/.build-cache' >> Dockerfile
     - echo 'COPY ./ ./' >> Dockerfile
-    - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"` > /.build-cache/install-before.txt' >> Dockerfile
-    - echo 'RUN yarn' >> Dockerfile
-    - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"` > /.build-cache/install-after.txt' >> Dockerfile
-    - echo "RUN diff /.build-cache/install-before.txt /.build-cache/install-after.txt || true" >> Dockerfile
+    # Store disk usage (before install)
+    - echo 'RUN du -s `find /tmp/.cache/yarn -maxdepth 1 | egrep -v "^\.$"` > before.txt' >> Dockerfile
+    - echo 'RUN du -s `find node_modules -maxdepth 1 | egrep -v "^\.$"` >> before.txt' >> Dockerfile
+    # Install dependencies
+    - echo 'RUN npm install -g yarn @ionic/cli' >> Dockerfile
+    - echo 'RUN yarn install' >> Dockerfile
+    # Store disk usage (after install)
+    - echo 'RUN du -s `find /tmp/.cache/yarn -maxdepth 1 | egrep -v "^\.$"` > after.txt' >> Dockerfile
+    - echo 'RUN du -s `find node_modules -maxdepth 1 | egrep -v "^\.$"` >> after.txt' >> Dockerfile
+    # Force docker to detect any changes
+    - echo "RUN diff before.txt after.txt || true" >> Dockerfile
     - echo 'WORKDIR /build' >> Dockerfile
     # Build image
     - docker build --no-cache -t ${CI_BUILD_IMAGE} .
