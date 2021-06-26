@@ -3,8 +3,8 @@
           ng-class="{'positive-100-bg': doc.updated}"
           ng-click="selectDocument($event, doc)">
 
-  <i ng-if=":rebind:doc.thumbnail" class="avatar" style="background-image: url({{:rebind:doc.thumbnail.src}})"></i>
-  <i ng-if=":rebind:!doc.thumbnail" class="avatar icon dark cion-registry-{{doc.docType}}" ></i>
+  <i ng-if=":rebind:doc.avatar" class="avatar" style="background-image: url({{:rebind:doc.avatar.src}})"></i>
+  <i ng-if=":rebind:!doc.avatar" class="avatar icon dark cion-registry-{{doc.docType}}" ></i>
 
   <div class="row no-padding">
     <div class="col">

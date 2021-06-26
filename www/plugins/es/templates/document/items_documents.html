@@ -35,7 +35,7 @@
 <ng-repeat ng-repeat="doc in :rebind:search.results track by doc.id"
            ng-switch on="doc.type">
   <div ng-switch-when="comment">
-    <ng-include  src="::'plugins/es/templates/document/item_document_comment.html'"></ng-include>
+    <ng-include src="::'plugins/es/templates/document/item_document_comment.html'"></ng-include>
   </div>
   <div ng-switch-when="profile">
     <ng-include src="::'plugins/es/templates/document/item_document_profile.html'"></ng-include>
@@ -44,8 +44,7 @@
     <ng-include src="::'plugins/es/templates/document/item_document_movement.html'"></ng-include>
   </div>
   <div ng-switch-when="record">
-    <ng-include ng-if="doc.index === 'page'" src="::'plugins/es/templates/document/item_document_page.html'"></ng-include>
-    <ng-include ng-if="doc.index !== 'page'" src="::'plugins/es/templates/document/item_document.html'"></ng-include>
+    <ng-include src="::doc.index === 'page' ? 'plugins/es/templates/document/item_document_page.html' : 'plugins/es/templates/document/item_document.html'"></ng-include>
   </div>
   <div ng-switch-default>
     <ng-include src="::'plugins/es/templates/document/item_document.html'"></ng-include>
