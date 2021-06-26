@@ -2419,6 +2419,10 @@ body.demo {
   height: 204px;
 }
 
+.popover.popover-login-methods.auth.scan {
+  height: 252px;
+}
+
 @media (max-width: $screen-xs-max) {
   .popover.popover-login-methods {
     height: 256px;
