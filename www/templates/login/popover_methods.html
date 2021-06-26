@@ -1,5 +1,5 @@
 <ion-popover-view class="fit has-header popover-login-methods"
-  ng-class="{'auth': isAuth}">
+  ng-class="{'auth': isAuth, 'scan': $root.device.barcode.enable}">
   <ion-header-bar>
     <h1 class="title" translate>LOGIN.METHOD_POPOVER_TITLE</h1>
   </ion-header-bar>
