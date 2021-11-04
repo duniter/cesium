@@ -1,0 +1,13 @@
+
+<ion-list class="list" ng-class="::motion.ionListClass">
+
+  <ng-include src="::'plugins/es/templates/document/items_documents.html'"></ng-include>
+
+</ion-list>
+
+<ion-infinite-scroll
+        ng-if="!search.loading && search.hasMore"
+        spinner="android"
+        on-infinite="showMore()"
+        distance="1%">
+</ion-infinite-scroll>

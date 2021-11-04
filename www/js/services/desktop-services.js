@@ -5,7 +5,10 @@ angular.module('cesium.desktop.services', ['cesium.device.services', 'cesium.set
   .factory('csDesktop',  function($rootScope, Device) {
     'ngInject';
 
-    if (!Device.isDesktop()) return;
-
-    console.info("Starting desktop mode...");
+    Device.ready()
+      .then(function() {
+        if (!Device.isDesktop()) return;
+        console.info("[desktop-service] Starting desktop service...");
+        console.debug("[desktop-service] TODO: manage menu and other specific stuff here");
+      });
   });

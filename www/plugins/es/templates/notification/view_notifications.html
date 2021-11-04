@@ -10,7 +10,7 @@
       </button>
   </ion-nav-buttons>
 
-  <ion-content class="padding no-padding-xs" scroll="true">
+  <ion-content scroll="true">
     <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
                    on-refresh="refresh(true)">
     </ion-refresher>
@@ -31,7 +31,7 @@
     <div class="row no-padding">
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
 
-      <div class="col no-padding-xs">
+      <div class="col no-padding-xs no-padding-sm">
 
         <div class="center padding" ng-if="search.loading">
           <ion-spinner icon="android"></ion-spinner>
@@ -41,7 +41,7 @@
           COMMON.NOTIFICATIONS.NO_RESULT
         </div>
 
-        <ng-include src="'plugins/es/templates/notification/list_notification.html'"></ng-include>
+        <ng-include src="::'plugins/es/templates/notification/list_notification.html'"></ng-include>
 
 
       </div>

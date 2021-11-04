@@ -9,7 +9,10 @@
          ng-class="{'item-input-error': form.$submitted && !formData.destPub}"
          ng-click="showWotLookupModal()">
           <span class="gray" translate>MESSAGE.COMPOSE.TO</span>
-          <span class="badge badge-royal">{{destUid}}{{destPub | formatPubkey}}</span>&nbsp;
+          <span class="badge badge-royal" ng-if="destUid"><i class="ion-person"></i> {{destName||destUid}}</span>&nbsp;
+          <span class="badge badge-stable" ng-if="!destUid && destPub">{{destName}}
+            <span ng-if="!destName"><i class="ion-key"></i>{{destPub | formatPubkey}}</span>
+          </span>&nbsp;
           <i class="gray icon ion-ios-arrow-right"></i>
       </a>
       <div class="form-errors"
@@ -38,14 +41,14 @@
       <!-- Object -->
       <div class="item item-input"
              ng-class="{'item-input-error': form.$submitted && form.title.$invalid}">
-        <!--<span class="input-label">{{'MESSAGE.COMPOSE.OBJECT' | translate}}</span>-->
         <input type="text"
+               autocomplete="off"
                placeholder="{{'MESSAGE.COMPOSE.OBJECT_HELP' | translate}}"
                name="title"
                ng-model="formData.title"
                ng-maxlength="256"
                required>
-        </input>
+        <span class="badge item-note" ng-if="isReply">({{'MESSAGE.COMPOSE.OBJECT' | translate}})</span>
       </div>
       <div class="form-errors"
            ng-show="form.$submitted && form.title.$error"
@@ -63,6 +66,7 @@
              ng-class="{'item-input-error': form.$submitted && form.content.$invalid}">
         <span class="input-label">{{'MESSAGE.COMPOSE.MESSAGE' | translate}}</span>
         <textarea placeholder="{{'MESSAGE.COMPOSE.MESSAGE_HELP' | translate}}"
+                  autocomplete="off"
                   name="content"
                   ng-model="formData.content"
                   rows="8"

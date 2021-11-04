@@ -4,8 +4,8 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate',
-  'ngApi', 'angular-cache', 'angular.screenmatch', 'angular.bind.notifier', 'ImageCropper', 'ion-digit-keyboard',
+angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngSanitize', 'pascalprecht.translate',
+  'ngApi', 'angular-cache', 'angular.screenmatch', 'angular.bind.notifier', 'ImageCropper', 'ion-digit-keyboard', 'angular-fullscreen-toggle',
   // removeIf(no-device)
   'ngCordova',
   // endRemoveIf(no-device)
@@ -74,7 +74,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
           .catch(function(err) {
             preventStateChange = false;
             // If cancel, redirect to home, if no current state
-            if (err == 'CANCELLED' && !$state.current.name) {
+            if (err === 'CANCELLED' && !$state.current.name) {
               return $state.go('app.home');
             }
           });
@@ -93,7 +93,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
           .catch(function(err) {
             preventStateChange = false;
             // If cancel, redirect to home, if no current state
-            if (err == 'CANCELLED' && !$state.current.name) {
+            if (err === 'CANCELLED' && !$state.current.name) {
               return $state.go('app.home');
             }
           });
@@ -130,10 +130,24 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
         if (sameUrl) event.preventDefault();
       }
     });
+
     // Configures $urlRouter's listener *after* the previous listener
     $urlRouter.listen();
 
     // Start plugins eager services
     PluginService.start();
+
+    ionicReady().then(function() {
+      if (ionic.Platform.isIOS()) {
+        if(window.StatusBar) {
+          // fix font color not white on iOS 11+
+          StatusBar.styleLightContent();
+        }
+      }
+    });
   })
 ;
+
+window.ionic.Platform.ready(function() {
+  angular.bootstrap(document, ['cesium']);
+});

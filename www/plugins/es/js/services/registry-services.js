@@ -1,4 +1,4 @@
-angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 'cesium.es.http.services'])
+angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 'cesium.es.http.services', 'cesium.es.like.services'])
 .config(function(PluginServiceProvider, csConfig) {
   'ngInject';
 
@@ -10,7 +10,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
 
 })
 
-.factory('esRegistry', function($rootScope, $q, csPlatform, csSettings, csWallet, csWot, esHttp, esComment, esGeo) {
+.factory('esRegistry', function($rootScope, $q, csPlatform, csSettings, csWallet, csWot, esHttp, esComment, esLike, esGeo) {
   'ngInject';
 
   var
@@ -289,6 +289,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
       picture: {
         all: esHttp.get('/page/record/:id?_source=pictures')
       },
+      like: esLike.instance('page', 'record'),
       comment: esComment.instance('page')
     };
   that.currency = {

@@ -33,11 +33,14 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     // endRemoveIf(no-device)
   })
 
-
   .config(function($compileProvider, csConfig) {
     'ngInject';
 
-    $compileProvider.debugInfoEnabled(!!csConfig.debug);
+    $compileProvider.debugInfoEnabled(csConfig.debug === true);
+
+    // Fix issue #893
+    // See https://stackoverflow.com/questions/31859257/firefox-addon-using-angularjs-ng-src-not-working
+    $compileProvider.imgSrcSanitizationWhitelist(/^\s*(filesystem:resource|resource|moz-extension|chrome-extension|file|data):/);
   })
 
   .config(function($animateProvider) {
@@ -46,10 +49,20 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     $animateProvider.classNameFilter( /\banimate-/ );
   })
 
-  // Configure cache (used by HTTP requests) default max age
+  // Configure cache (used by HTTP requests) default options
   .config(function (CacheFactoryProvider, csConfig) {
     'ngInject';
-    angular.extend(CacheFactoryProvider.defaults, { maxAge: csConfig.cacheTimeMs || 60 * 1000 /*1min*/});
+
+    angular.extend(CacheFactoryProvider.defaults, {
+      // Fixed options:
+      recycleFreq: 60 * 1000, // Scan expired items every 1min
+      storagePrefix: 'caches.', // Override storage key prefix
+      capacity: 100, // Force to use a LRU cache, to avoid size exceed max
+
+      // Options overwritten by the csCache service:
+      maxAge: csConfig.cacheTimeMs || 60 * 1000, // from config if exists, or 1min
+      storageMode: 'memory' // Do NOT use local Storage by default
+    });
   })
 
   // Configure screen size detection
@@ -77,18 +90,18 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     IdleProvider.timeout(csConfig.logoutTimeout||15); // display warning during 15s
   })
 
-  .factory('$exceptionHandler', function() {
+  .factory('$exceptionHandler', function($log) {
     'ngInject';
 
     return function(exception, cause) {
-      if (cause) console.error(exception, cause);
-      else console.error(exception);
+      if (cause) $log.error(exception, cause);
+      else $log.error(exception);
     };
   })
 
 
-  .factory('csPlatform', function (ionicReady, $rootScope, $q, $state, $translate, $timeout, UIUtils,
-                                   BMA, Device, csHttp, csConfig, csSettings, csCurrency, csWallet) {
+  .factory('csPlatform', function (ionicReady, $rootScope, $q, $state, $translate, $timeout, $ionicHistory, UIUtils,
+                                   BMA, Device, csHttp, csConfig, csCache, csSettings, csCurrency, csWallet) {
 
     'ngInject';
     var
@@ -99,6 +112,10 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       listeners,
       removeChangeStateListener;
 
+    // Fix csConfig values
+    csConfig.demo = csConfig.demo === true || csConfig.demo === 'true' || false;
+    csConfig.readonly = csConfig.readonly === true || csConfig.readonly === 'true' || false;
+
     function disableChangeState() {
       if (removeChangeStateListener) return; // make sure to call this once
 
@@ -106,11 +123,10 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         if (!event.defaultPrevented && next.name !== 'app.home' && next.name !== 'app.settings') {
           event.preventDefault();
           if (startPromise) {
-            startPromise.then(function() {
+            startPromise.then(function () {
               $state.go(next.name, nextParams);
             });
-          }
-          else {
+          } else {
             UIUtils.loading.hide();
           }
         }
@@ -139,22 +155,32 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       var newServer = fallbackNode.host + ((!fallbackNode.port && fallbackNode.port != 80 && fallbackNode.port != 443) ? (':' + fallbackNode.port) : '');
 
       // Skip is same as actual node
-      if (BMA.node.same(fallbackNode.host, fallbackNode.port)) {
+      if (BMA.node.same(fallbackNode)) {
         console.debug('[platform] Skipping fallback node [{0}]: same as actual node'.format(newServer));
         return checkBmaNodeAlive(); // loop (= go to next node)
       }
 
       // Try to get summary
-      return csHttp.get(fallbackNode.host, fallbackNode.port, '/node/summary', fallbackNode.port==443 || BMA.node.forceUseSsl)()
-        .catch(function(err) {
+      return csHttp.get(fallbackNode.host, fallbackNode.port, '/node/summary', fallbackNode.port == 443 || BMA.node.forceUseSsl)()
+        .catch(function (err) {
           console.error('[platform] Could not reach fallback node [{0}]: skipping'.format(newServer));
           // silent, but return no result (will loop to the next fallback node)
         })
-        .then(function(res) {
+        .then(function (res) {
           if (!res) return checkBmaNodeAlive(); // Loop
 
-          return $translate('CONFIRM.USE_FALLBACK_NODE', {old: BMA.server, new: newServer})
-            .then(function(msg) {
+          // Force to show port/ssl, if this is the only difference
+          var messageParam = {old: BMA.server, new: newServer};
+          if (messageParam.old === messageParam.new) {
+            if (BMA.port != fallbackNode.port) {
+              messageParam.new += ':' + fallbackNode.port;
+            } else if (BMA.useSsl == false && (fallbackNode.useSsl || fallbackNode.port == 443)) {
+              messageParam.new += ' (SSL)';
+            }
+          }
+
+          return $translate('CONFIRM.USE_FALLBACK_NODE', messageParam)
+            .then(function (msg) {
               return UIUtils.alert.confirm(msg);
             })
             .then(function (confirm) {
@@ -182,7 +208,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     function getLatestRelease() {
       var latestRelease = csSettings.data.latestReleaseUrl && csHttp.uri.parse(csSettings.data.latestReleaseUrl);
       if (latestRelease) {
-        return csHttp.get(latestRelease.host, latestRelease.protocol == 'https:' ? 443 : latestRelease.port, "/" + latestRelease.pathname)()
+        return csHttp.getWithCache(latestRelease.host, latestRelease.protocol === 'https:' ? 443 : latestRelease.port, "/" + latestRelease.pathname, undefined, csCache.constants.LONG)()
           .then(function (json) {
             if (json && json.name && json.tag_name && json.html_url) {
               return {
@@ -192,7 +218,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
               };
             }
           })
-          .catch(function(err) {
+          .catch(function (err) {
             // silent (just log it)
             console.error('[platform] Failed to get Cesium latest version', err);
           })
@@ -200,6 +226,8 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       }
       return $q.when();
     }
+
+
 
     function addListeners() {
       listeners = [
@@ -233,6 +261,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       // Avoid change state
       disableChangeState();
 
+
       // We use 'ionicReady()' instead of '$ionicPlatform.ready()', because this one is callable many times
       startPromise = ionicReady()
 
@@ -264,8 +293,8 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         .catch(function(err) {
           startPromise = null;
           started = false;
-          if($state.current.name !== 'app.home') {
-            $state.go('app.home', {error: 'peer'});
+          if($state.current.name !== $rootScope.errorState) {
+            $state.go($rootScope.errorState, {error: 'peer'});
           }
           throw err;
         });
@@ -301,7 +330,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     };
   })
 
-  .run(function($rootScope, $translate, $state, $window, $urlRouter, ionicReady,
+  .run(function($rootScope, $state, $window, $urlRouter, ionicReady, $ionicPlatform, $ionicHistory,
                 Device, UIUtils, $ionicConfig, PluginService, csPlatform, csWallet, csSettings, csConfig, csCurrency) {
     'ngInject';
 
@@ -310,16 +339,18 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     $rootScope.settings = csSettings.data;
     $rootScope.currency = csCurrency.data;
     $rootScope.device = Device;
+    $rootScope.errorState = 'app.home';
+    $rootScope.smallscreen = UIUtils.screen.isSmall();
 
     // Compute the root path
     var hashIndex = $window.location.href.indexOf('#');
-    $rootScope.rootPath = (hashIndex != -1) ? $window.location.href.substr(0, hashIndex) : $window.location.href;
+    $rootScope.rootPath = (hashIndex !== -1) ? $window.location.href.substr(0, hashIndex) : $window.location.href;
     console.debug('[app] Root path is [' + $rootScope.rootPath + ']');
 
     // removeIf(device)
     // -- Automatic redirection to HTTPS
-    if ((csConfig.httpsMode === true || csConfig.httpsMode == 'true' ||csConfig.httpsMode === 'force') &&
-      $window.location.protocol != 'https:') {
+    if ((csConfig.httpsMode === true || csConfig.httpsMode === 'true' ||csConfig.httpsMode === 'force') &&
+      $window.location.protocol !== 'https:') {
       $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
         var path = 'https' + $rootScope.rootPath.substr(4) + $state.href(next, nextParams);
         if (csConfig.httpsModeDebug) {
@@ -350,15 +381,14 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       }
 
       // Ionic Platform Grade is not A, disabling views transitions
-      if (ionic.Platform.grade.toLowerCase() != 'a') {
+      if (ionic.Platform.grade.toLowerCase() !== 'a') {
         console.info('[app] Disabling UI effects, because plateform\'s grade is [' + ionic.Platform.grade + ']');
         UIUtils.setEffects(false);
       }
 
       // Status bar style
       if (window.StatusBar) {
-        // org.apache.cordova.statusbar required
-        StatusBar.styleDefault();
+        console.debug("[app] Status bar plugin enable");
       }
 
       // Get latest release
@@ -373,6 +403,20 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
           }
         });
 
+      // Prevent BACK button to exit without confirmation
+      $ionicPlatform.registerBackButtonAction(function(event) {
+        if ($ionicHistory.backView()) {
+          return $ionicHistory.goBack();
+        }
+
+        event.preventDefault();
+        return UIUtils.alert.confirm('CONFIRM.EXIT_APP')
+          .then(function (confirm) {
+            if (!confirm) return; // user cancelled
+            ionic.Platform.exitApp();
+          });
+      }, 100);
+
       // Make sure platform is started
       return csPlatform.ready();
     });
@@ -382,8 +426,8 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 // Workaround to add "".startsWith() if not present
 if (typeof String.prototype.startsWith !== 'function') {
   console.debug("Adding String.prototype.startsWith() -> was missing on this platform");
-  String.prototype.startsWith = function(prefix) {
-    return this.indexOf(prefix) === 0;
+  String.prototype.startsWith = function(prefix, position) {
+    return this.indexOf(prefix, position) === 0;
   };
 }
 
@@ -401,7 +445,7 @@ if (typeof String.prototype.trim !== 'function') {
 if (Math && typeof Math.trunc !== 'function') {
   console.debug("Adding Math.trunc() -> was missing on this platform");
   Math.trunc = function(number) {
-    return (number - 0.5).toFixed();
+    return parseInt((number - 0.5).toFixed());
   };
 }
 

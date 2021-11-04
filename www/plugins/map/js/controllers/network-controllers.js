@@ -179,12 +179,14 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
             else
               this._map.panTo(lnglat);
             var popupMarkerId = lnglat.layer && lnglat.layer.options && lnglat.layer.options.popupMarkerId;
-            popupMarkerId && $timeout(function(){
-              var popupMarker = _.find(map._layers, function(layer) {
+            if (popupMarkerId) {
+              $timeout(function(){
+                var popupMarker = _.find(map._layers, function(layer) {
                   return (layer.options && layer.options.id === popupMarkerId);
                 });
-              popupMarker && popupMarker.openPopup();
-            }, 400);
+                if (popupMarker) popupMarker.openPopup();
+              }, 400);
+            }
           },
           firstTipSubmit: true,
           tooltipLimit: 50

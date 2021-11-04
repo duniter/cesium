@@ -9,9 +9,9 @@
 
     <div class="list item-wrap-text">
       <ion-item class="item-icon-left item-text-wrap">
-        {{'COMMON.APP_NAME'|translate}}&nbsp;<b>{{'COMMON.APP_VERSION'|translate:$root.config}}</b>
+        <span>{{'COMMON.APP_NAME'|translate}}&nbsp;<b>{{'COMMON.APP_VERSION'|translate:$root.config}}</b> - <a ng-click="openLink($event, 'http://cesium.app')">www.cesium.app</a></span>
         <i ng-if="$root.newRelease" class="assertive ion-alert-circled"></i>
-        <h3 ng-if="$root.config.build" class="gray">{{'COMMON.APP_BUILD'|translate:$root.config}}</h3>
+        <h3 ng-if="buildDate" class="gray">{{'COMMON.APP_BUILD'|translate:{build: buildDate} }}</h3>
         <span translate>ABOUT.LICENSE</span>
       </ion-item>
 
@@ -28,21 +28,13 @@
         </h3>
       </ion-item>
 
-      <!-- report issue -->
+      <!-- official web site -->
       <ion-item class="item-icon-left item-text-wrap">
-        <i class="item-image icon ion-bug"></i>
-        <span translate>ABOUT.PLEASE_REPORT_ISSUE</span>
+        <i class="item-image icon ion-android-laptop"></i>
+        <span translate>ABOUT.OFFICIAL_WEB_SITE</span>
         <h3>
-          <a ng-click="openLink($event, $root.settings.newIssueUrl)" translate>ABOUT.REPORT_ISSUE</a>
+          <a ng-click="openLink($event, 'https://www.cesium.app')">https://www.cesium.app</a>
         </h3>
-      </ion-item>
-
-
-      <!-- source code -->
-      <ion-item class="item-icon-left">
-        <i class="item-image icon ion-network"></i>
-        {{'ABOUT.CODE' | translate}}
-        <h3><a ng-click="openLink($event, 'https://git.duniter.org/clients/cesium-grp/cesium')">https://git.duniter.org/clients/cesium-grp/cesium</a></h3>
       </ion-item>
 
       <!-- forum -->
@@ -52,12 +44,29 @@
         <h3><a ng-click="openLink($event, $root.settings.userForumUrl)">{{::$root.settings.userForumUrl}}</a></h3>
       </ion-item>
 
+      <!-- report issue -->
+      <ion-item class="item-icon-left item-text-wrap">
+        <i class="item-image icon ion-bug"></i>
+        <span translate>ABOUT.PLEASE_REPORT_ISSUE</span>
+        <h3>
+          <a ng-click="openLink($event, $root.settings.newIssueUrl)" translate>ABOUT.REPORT_ISSUE</a>
+        </h3>
+      </ion-item>
+
+      <!-- source code -->
+      <ion-item class="item-icon-left">
+        <i class="item-image icon ion-network"></i>
+        {{'ABOUT.CODE' | translate}}
+        <h3><a ng-click="openLink($event, $root.settings.sourceUrl)">{{$root.settings.sourceUrl}}</a></h3>
+      </ion-item>
+
       <!-- team -->
       <ion-item class="item-icon-left">
         <i class="item-image icon ion-person-stalker"></i>
         {{'ABOUT.DEVELOPERS' | translate}}
         <h3>
           <a href="https://github.com/blavenie" target="_system">Benoit Lavenier</a>,
+          <a href="https://github.com/bpresles" target="_system">bpresles</a>,
           <a href="https://github.com/c-geek" target="_system">cgeek</a>,
           <a href="https://github.com/devingfx" target="_system">DiG</a>,
           <a href="https://git.duniter.org/ji_emme" target="_system">Ji_emme</a>

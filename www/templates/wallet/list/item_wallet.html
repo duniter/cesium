@@ -27,8 +27,8 @@
 
   <cs-extension-point name="item-wallet"></cs-extension-point>
 
-  <span class="badge" ng-if="formData.showBalance"
-        ng-class=":rebind:{'badge-assertive': (walletData.balance <= 0), 'badge-balanced': (walletData.balance > 0) }">
+  <span class="badge" ng-if=":rebind:formData.showBalance && walletData.sources"
+        ng-class=":rebind:{'badge-calm': (walletData.balance > 0) }">
     <ion-spinner class="ion-spinner-small" ng-if="formData.updatingWalletId==wallet.id" icon="android"></ion-spinner>
     <span ng-bind-html=":rebind:walletData.balance|formatAmount:{useRelative: formData.useRelative, currency: currency}"></span>
   </span>

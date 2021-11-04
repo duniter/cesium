@@ -7,7 +7,12 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
   var
     sockets = [],
-    cachePrefix = 'csHttp'
+    defaultCachePrefix = 'csHttp-',
+    allCachePrefixes = {},
+    regexp = {
+      POSITIVE_INTEGER: /^\d+$/,
+      VERSION_PART_REGEXP: /^[0-9]+|alpha[0-9]+|beta[0-9]+|rc[0-9]+|[0-9]+-SNAPSHOT$/
+    }
   ;
 
   if (!timeout) {
@@ -34,10 +39,14 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       reject(data);
     }
     else {
-      if (status == 404) {
+      if (status == 403) {
+        reject({ucode: 403, message: 'Resource is forbidden' + (url ? ' ('+url+')' : '')});
+      }
+      else if (status == 404) {
         reject({ucode: 404, message: 'Resource not found' + (url ? ' ('+url+')' : '')});
       }
       else if (url) {
+        console.error('[http] Get HTTP error {status: ' + status + '} on [' + url + ']');
         reject('Error while requesting [' + url + ']');
       }
       else {
@@ -48,14 +57,14 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
   function prepare(url, params, config, callback) {
     var pkeys = [], queryParams = {}, newUri = url;
-    if (typeof params == 'object') {
+    if (typeof params === 'object') {
       pkeys = _.keys(params);
     }
 
     _.forEach(pkeys, function(pkey){
       var prevURI = newUri;
       newUri = newUri.replace(':' + pkey, params[pkey]);
-      if (prevURI == newUri) {
+      if (prevURI === newUri) {
         queryParams[pkey] = params[pkey];
       }
     });
@@ -89,9 +98,12 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     };
   }
 
-  function getResourceWithCache(host, port, path, useSsl, maxAge, autoRefresh, forcedTimeout) {
+  function getResourceWithCache(host, port, path, useSsl, maxAge, autoRefresh, forcedTimeout, cachePrefix) {
     var url = getUrl(host, port, path, useSsl);
+    cachePrefix = cachePrefix || defaultCachePrefix;
     maxAge = maxAge || csCache.constants.LONG;
+    allCachePrefixes[cachePrefix] = true;
+
     //console.debug('[http] will cache ['+url+'] ' + maxAge + 'ms' + (autoRefresh ? ' with auto-refresh' : ''));
 
     return function(params) {
@@ -101,11 +113,12 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
           responseType: 'json'
         };
         if (autoRefresh) { // redo the request if need
-          config.cache = csCache.get(cachePrefix, maxAge, function (key, value) {
-              console.debug('[http] Refreshing cache for ['+key+'] ');
+          config.cache = csCache.get(cachePrefix, maxAge, function (key, value, done) {
+              console.debug('[http] Refreshing cache for {{0}} '.format(key));
               $http.get(key, config)
                 .success(function (data) {
                   config.cache.put(key, data);
+                  if (done) done(key, data);
               });
             });
         }
@@ -157,7 +170,9 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     timeout = timeout || csSettings.data.timeout;
 
     function _waitOpen(self) {
-      if (!self.delegate) throw new Error('Websocket not opened');
+      if (!self.delegate) {
+        throw new Error('Websocket {0} was closed!'.format(uri));
+      }
       if (self.delegate.readyState == 1) {
         return $q.when(self.delegate);
       }
@@ -166,11 +181,11 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       }
 
       if (self.waitDuration >= timeout) {
-        console.debug("[http] Will retry opening websocket later...");
-        self.waitRetryDelay = 2000; // 2 seconds
+        self.waitRetryDelay = self.waitRetryDelay && Math.min(self.waitRetryDelay + 2000, 30000) || 2000; // add 2 seconds, until 30s)
+        console.debug("[http] Will retry websocket [{0}] in {1}s...".format(self.path, Math.round(self.waitRetryDelay/1000)));
       }
-      else {
-        console.debug('[http] Waiting websocket ['+self.path+'] opening...');
+      else if (Math.round(self.waitDuration / 1000) % 10 === 0){
+        console.debug('[http] Waiting websocket ['+self.path+']...');
       }
 
       return $timeout(function(){
@@ -202,7 +217,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
             sockets.push(self);
             self.delegate.openTime = Date.now();
           };
-          self.delegate.onclose = function() {
+          self.delegate.onclose = function(closeEvent) {
 
             // Remove from sockets arrays
             var index = _.findIndex(sockets, function(socket){return socket.path === self.path;});
@@ -217,12 +232,24 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
             // If unexpected close event, reopen the socket (fix #535)
             else {
-              console.debug('[http] Unexpected close of websocket ['+path+'] (open '+ (Date.now() - self.delegate.openTime) +'ms ago): re-opening...');
+              if (self.delegate.openTime) {
+                console.debug('[http] Unexpected close of websocket [{0}] (open {1} ms ago): re-opening...', path, (Date.now() - self.delegate.openTime));
 
-              self.delegate = null;
+                // Force new connection
+                self.delegate = null;
 
-              // Loop, but without the already registered callback
-              _open(self, null, params);
+                // Loop, but without the already registered callback
+                _open(self, null, params);
+              }
+              else if (closeEvent) {
+                console.debug('[http] Unexpected close of websocket [{0}]: error code: '.format(path), closeEvent && closeEvent.code || closeEvent);
+
+                // Force new connection
+                self.delegate = null;
+
+                // Loop, but without the already registered callback
+                _open(self, null, params);
+              }
             }
           };
         });
@@ -295,12 +322,25 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
   // See doc : https://gist.github.com/jlong/2428561
   function parseUri(uri) {
-    var protocol;
-    if (uri.startsWith('duniter://')) {
-      protocol = 'duniter';
-      uri = uri.replace('duniter://', 'http://');
+    var protocol, hostname;
+
+    // G1 URI (see G1lien)
+    if (uri.startsWith('june:') || uri.startsWith('web+june:')) {
+      protocol = 'june:';
+      var path = uri.replace(/^(web\+june|june):(\/\/)?/, '');
+
+      // Store hostname here, because parse will apply a lowercase
+      hostname = path;
+      if (hostname.indexOf('/') !== -1) {
+        hostname = hostname.substr(0, path.indexOf('/'));
+      }
+      if (hostname.indexOf('?') !== -1) {
+        hostname = hostname.substr(0, path.indexOf('?'));
+      }
+      uri = 'http://' + path;
     }
 
+    // Use a <a> element to parse
     var parser = document.createElement('a');
     parser.href = uri;
 
@@ -309,15 +349,33 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       pathname = pathname.substring(1);
     }
 
+    var searchParams;
+    if (parser.search && parser.search.startsWith('?')) {
+      searchParams = parser.search.substr(1).split('&')
+        .reduce(function(res, searchParam) {
+          if (searchParam.indexOf('=') !== -1) {
+            var key = searchParam.substr(0, searchParam.indexOf('='));
+            var value = searchParam.substr(searchParam.indexOf('=') + 1);
+            res[key] = value;
+          }
+          else {
+            res[searchParam] = true; // default value
+          }
+          return res;
+        }, {});
+    }
+
     var result = {
       protocol: protocol ? protocol : parser.protocol,
-      hostname: parser.hostname,
+      hostname: hostname ? hostname : parser.hostname,
       host: parser.host,
       port: parser.port,
       username: parser.username,
       password: parser.password,
       pathname: pathname,
+      pathSegments: pathname ? pathname.split('/') : [],
       search: parser.search,
+      searchParams: searchParams,
       hash: parser.hash
     };
     parser.remove();
@@ -337,13 +395,13 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       var parts = parseUri(uri);
 
       if (!parts.protocol && options.type) {
-        parts.protocol = (options.type == 'email')  ? 'mailto:' :
-          ((options.type == 'phone') ? 'tel:' : '');
+        parts.protocol = (options.type === 'email')  ? 'mailto:' :
+          ((options.type === 'phone') ? 'tel:' : '');
         uri = parts.protocol + uri;
       }
 
       // On desktop, open into external tool
-      if (parts.protocol == 'mailto:'  && Device.isDesktop()) {
+      if (parts.protocol === 'mailto:'  && Device.isDesktop()) {
         try {
           nw.Shell.openExternal(uri);
           return;
@@ -353,10 +411,10 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
         }
       }
 
-      // Check if device is enable, on special tel: or mailto: protocole
-      var validProtocol = (parts.protocol == 'mailto:' || parts.protocol == 'tel:') && Device.enable;
+      // Check if device is enable, on special tel: or mailto: protocol
+      var validProtocol = (Device.enable && (parts.protocol === 'mailto:' || parts.protocol === 'tel:'));
       if (!validProtocol) {
-        if (options.onError && typeof options.onError == 'function') {
+        if (options.onError && typeof options.onError === 'function') {
           options.onError(uri);
         }
         return;
@@ -439,10 +497,15 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
     // First, validate both numbers are true version numbers
     function validateParts(parts) {
-      for (var i = 0; i < parts.length; ++i) {
-        if (!isPositiveInteger(parts[i])) {
-          return false;
-        }
+      for (var i = 0; i < parts.length; i++) {
+        var isNumber = regexp.POSITIVE_INTEGER.test(parts[i]);
+        // First part MUST be an integer
+        if (i === 0 && !isNumber) return false;
+        // If not integer, should be 'alpha', 'beta', etc.
+        if (!isNumber && !regexp.VERSION_PART_REGEXP.test(parts[i])) return false;
+
+        // Convert string to int (need by compare operators)
+        if (isNumber) parts[i] = parseInt(parts[i]);
       }
       return true;
     }
@@ -472,16 +535,22 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
   }
 
   function isVersionCompatible(minVersion, actualVersion) {
-    // TODO: add implementation
-    console.debug('[http] TODO: implement check version [{0}] compatible with [{1}]'.format(actualVersion, minVersion));
+    console.debug('[http] Checking actual version [{0}] is compatible with min expected version [{1}]'.format(actualVersion, minVersion));
     return compareVersionNumbers(minVersion, actualVersion) <= 0;
   }
 
-  var cache = angular.copy(csCache.constants);
-  cache.clear = function() {
-    console.debug('[http] Cleaning cache...');
+  function clearCache(cachePrefix) {
+    cachePrefix = cachePrefix || defaultCachePrefix;
+    console.debug("[http] Cleaning cache {prefix: '{0}'}...".format(cachePrefix));
     csCache.clear(cachePrefix);
-  };
+  }
+
+  function clearAllCache() {
+    console.debug('[http] Cleaning all caches...');
+    _.keys(allCachePrefixes).forEach(function(cachePrefix) {
+      csCache.clear(cachePrefix);
+    });
+  }
 
   return {
     get: getResource,
@@ -502,7 +571,10 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       compare: compareVersionNumbers,
       isCompatible: isVersionCompatible
     },
-    cache: cache
+    cache:  angular.merge({
+      clear: clearCache,
+      clearAll: clearAllCache
+    }, csCache.constants)
   };
 })
 ;

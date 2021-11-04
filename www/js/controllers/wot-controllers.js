@@ -43,7 +43,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wot_identity', {
-        url: "/wot/:pubkey/:uid?action",
+        url: "/wot/:pubkey/:uid?action&block&amount&comment",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_identity.html",
@@ -73,7 +73,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wot_cert', {
-        url: "/wot/:pubkey/:uid/:type",
+        url: "/wot/:pubkey/:uid/:type?block",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
@@ -86,7 +86,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wot_cert_lg', {
-        url: "/wot/cert/lg/:pubkey/:uid",
+        url: "/wot/cert/lg/:pubkey/:uid?block",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
@@ -133,7 +133,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         }
       })
 
-      .state('app.wallet_cert_by_id_lg', {
+      .state('app.wallet_cert_lg_by_id', {
         url: "/wallets/:id/cert/lg",
         views: {
           'menuContent': {
@@ -254,7 +254,7 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
       type: undefined
     };
 
-    if ($scope.search.type == 'text') {
+    if ($scope.search.type === 'text') {
       var text = $scope.search.text.trim();
       if (text.match(/^#[\wḡĞǦğàáâãäåçèéêëìíîïðòóôõöùúûüýÿ]+$/)) {
         stateParams.hash = text.substr(1);
@@ -283,16 +283,15 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
   };
 
   $scope.doSearch = function() {
-    $scope.search.loading = true;
     var text = $scope.search.text.trim();
     if ((UIUtils.screen.isSmall() && text.length < 3) || !text.length) {
       $scope.search.results = undefined;
-      $scope.search.loading = false;
       $scope.search.type = 'none';
       $scope.search.total = undefined;
       return $q.when();
     }
 
+    $scope.search.loading = true;
     $scope.search.type = 'text';
     return csWot.search(text)
       .then(function(idties){
@@ -334,7 +333,7 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
 
     return  csWot.newcomers(offset, size)
       .then(function(res){
-        if ($scope.search.type != 'newcomers') return false; // could have change
+        if ($scope.search.type !== 'newcomers') return false; // could have change
         $scope.doDisplayResult(res && res.hits, offset, size, res && res.total);
         return true;
       })
@@ -590,29 +589,22 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
   /* -- show/hide popup -- */
 
   $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('templates/wot/lookup_popover_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'templates/wot/lookup_popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.actionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
-        });
-        $scope.actionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.actionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
-
 }
 
 function WotLookupModalController($scope, $controller, $focus, csWallet, parameters){
@@ -653,7 +645,8 @@ function WotLookupModalController($scope, $controller, $focus, csWallet, paramet
   $scope.select = function(identity){
     $scope.closeModal({
       pubkey: identity.pubkey,
-      uid: identity.uid
+      uid: identity.uid,
+      name: identity.name && identity.name.replace(/<\/?em>/ig, '')
     });
   };
 
@@ -702,8 +695,8 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
     viewData.enableBack = UIUtils.screen.isSmall() ? true : viewData.enableBack;
   });
 
-  $scope.load = function(pubkey, withCache, uid) {
-    return csWot.load(pubkey, withCache, uid)
+  $scope.load = function(pubkey, uid, options) {
+    return csWot.load(pubkey, uid, options)
       .then(function(identity){
         if (!identity) return UIUtils.onError('ERROR.IDENTITY_NOT_FOUND')().then($scope.showHome);
         $scope.formData = identity;
@@ -730,7 +723,11 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
       $scope.loading = true;
       UIUtils.loading.show();
     }
-    return $scope.load($scope.formData.pubkey, false/*no cache*/, $scope.formData.uid)
+    var options = {
+      cache: false, // No cache
+      blockUid: $scope.formData.blockUid || undefined
+    };
+    return $scope.load($scope.formData.pubkey, $scope.formData.uid, options)
       .then(UIUtils.loading.hide);
   };
 
@@ -817,7 +814,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               });
           })
           .catch(function(err) {
-            if (err == 'CANCELLED') return;
+            if (err === 'CANCELLED') return;
             UIUtils.onError('ERROR.LOGIN_FAILED')(err);
           });
       });
@@ -852,8 +849,10 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
 
             UIUtils.loading.show();
 
+            var options = {cache: false, blockUid: idty.blockUid};
+
             // load selected identity
-            return csWot.load(idty.pubkey, false /*no cache*/);
+            return csWot.load(idty.pubkey, idty.uid, options);
           })
 
           .then(function (identity) {
@@ -922,7 +921,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               });
           })
           .catch(function (err) {
-            if (err == 'CANCELLED') return;
+            if (err === 'CANCELLED') return;
             UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED')(err);
           });
       });
@@ -944,6 +943,8 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
 
     // Reset action param
     stateParams.action = null;
+    stateParams.amount = null;
+    stateParams.comment = null;
 
     // Update location href
     $ionicHistory.nextViewOptions({
@@ -960,10 +961,10 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
   };
 
   $scope.doAction = function(action, options) {
-    if (action == 'certify') {
+    if (action === 'certify') {
       return $scope.certify();
     }
-    if (action == 'transfer') {
+    if (action === 'transfer') {
       $scope.showTransferModal(options);
     }
   };
@@ -971,35 +972,41 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
   /* -- open screens -- */
 
   $scope.showCertifications = function() {
+    var block = $scope.formData.requirements && $scope.formData.requirements.alternatives && $scope.formData.blockUid || undefined;
     // Warn: do not use a simple link here (a ng-click is mandatory for help tour)
     if (UIUtils.screen.isSmall() ) {
       $state.go('app.wot_cert', {
         pubkey: $scope.formData.pubkey,
         uid: $scope.formData.uid,
-        type: 'received'
+        type: 'received',
+        block: block
       });
     }
     else {
       $state.go('app.wot_cert_lg', {
         pubkey: $scope.formData.pubkey,
-        uid: $scope.formData.uid
+        uid: $scope.formData.uid,
+        block: block
       });
     }
   };
 
   $scope.showGivenCertifications = function() {
+    var block = $scope.formData.requirements && $scope.formData.requirements.alternatives && $scope.formData.blockUid || undefined;
     // Warn: do not use a simple link here (a ng-click is mandatory for help tour)
     if (UIUtils.screen.isSmall() ) {
       $state.go('app.wot_cert', {
         pubkey: $scope.formData.pubkey,
         uid: $scope.formData.uid,
-        type: 'given'
+        type: 'given',
+        block: block
       });
     }
     else {
       $state.go('app.wot_cert_lg', {
         pubkey: $scope.formData.pubkey,
-        uid: $scope.formData.uid
+        uid: $scope.formData.uid,
+        block: block
       });
     }
   };
@@ -1032,6 +1039,19 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
   angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
 
   $scope.motion = UIUtils.motion.fadeSlideInRight;
+  $scope.qrcodeId = 'qrcode-wot-' + $scope.$id;
+
+  // Init likes here, to be able to use in extension
+  $scope.options = $scope.options || {};
+  $scope.options.like = {
+    kinds: ['LIKE', 'ABUSE'],
+    index: 'user',
+    type: 'profile'
+  };
+  $scope.likeData = {
+    likes: {},
+    abuses: {}
+  };
 
   $scope.$on('$ionicView.enter', function(e, state) {
 
@@ -1039,19 +1059,30 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
       $scope.doMotion();
       if (state.stateParams && state.stateParams.action) {
         $timeout(function() {
-          $scope.doAction(state.stateParams.action.trim());
+          $scope.doAction(state.stateParams.action.trim(), state.stateParams);
         }, 100);
 
         $scope.removeActionParamInLocationHref(state);
+
+        // Need by like controller
+        $scope.likeData.id = $scope.formData.pubkey;
       }
+
+      $scope.showQRCode();
+    };
+    var options = {
+      cache: true,
+      blockUid: state.stateParams && state.stateParams.block || undefined
     };
 
     if (state.stateParams &&
       state.stateParams.pubkey &&
       state.stateParams.pubkey.trim().length > 0) {
       if ($scope.loading) { // load once
-        return $scope.load(state.stateParams.pubkey.trim(), true /*withCache*/, state.stateParams.uid)
-          .then(onLoadSuccess);
+
+        return $scope.load(state.stateParams.pubkey.trim(), state.stateParams.uid, options)
+          .then(onLoadSuccess)
+          .catch(UIUtils.onError("ERROR.LOAD_IDENTITY_FAILED"));
       }
     }
 
@@ -1059,16 +1090,7 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
       state.stateParams.uid &&
       state.stateParams.uid.trim().length > 0) {
       if ($scope.loading) { // load once
-        return $scope.load(null, true /*withCache*/, state.stateParams.uid)
-          .then(onLoadSuccess);
-      }
-    }
-
-    // Load from wallet pubkey
-    else if (csWallet.isLogin()){
-
-      if ($scope.loading) {
-        return $scope.load(csWallet.data.pubkey, true /*withCache*/, csWallet.data.uid)
+        return $scope.load(null, state.stateParams.uid, options)
           .then(onLoadSuccess);
       }
     }
@@ -1095,7 +1117,7 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
   };
 
   $scope.doQuickFix = function(event) {
-    if (event == "showSelectIdentities") {
+    if (event === 'showSelectIdentities') {
       return $scope.showSelectIdentities();
     }
   };
@@ -1111,9 +1133,36 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
       // open the identity
       return $state.go('app.wot_identity', {
         pubkey: res.pubkey,
-        uid: res.uid
+        uid: res.uid,
+        block: res.meta && res.meta.timestamp || res.blockUid
       });
     });
+  };
+
+  $scope.showQRCode = function(timeout) {
+    if (!$scope.qrcodeId || !$scope.formData.pubkey) return; // Skip
+
+    // Get the DIV element
+    var element = angular.element(document.querySelector('#' + $scope.qrcodeId + ' .content'));
+    if (!element) {
+      console.error("[wot-controller] Cannot found div #{0} for the QRCode. Skipping.".format($scope.qrcodeId));
+      return;
+    }
+
+    console.debug("[wot-controller] Generating QR code for identity...");
+    $timeout(function() {
+      var svg = UIUtils.qrcode.svg($scope.formData.pubkey);
+      element.html(svg);
+      UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
+    });
+  };
+
+  $scope.hideQRCode = function() {
+    if (!$scope.qrcodeId) return;
+    var element = angular.element(document.querySelector('#' + $scope.qrcodeId));
+    if (element) {
+      UIUtils.motion.toggleOff({selector: '#'+$scope.qrcodeId});
+    }
   };
 }
 
@@ -1168,8 +1217,8 @@ function WotIdentityTxViewController($scope, $timeout, $q, BMA, csSettings, csWo
 
   // Update view
   $scope.updateView = function() {
-    $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
-    $scope.$broadcast('$$rebind::' + 'rebind'); // force rebind
+    $scope.$broadcast('$$rebind::balance'); // force rebind balance
+    $scope.$broadcast('$$rebind::rebind'); // force rebind
     $scope.motion.show();
   };
 
@@ -1238,11 +1287,16 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
 
     // First load
     if ($scope.loading) {
+      var options = {
+        cache: true,
+        blockUid: state.stateParams && state.stateParams.block || undefined
+      };
+
       if (state.stateParams &&
         state.stateParams.pubkey &&
         state.stateParams.pubkey.trim().length > 0) {
 
-        return $scope.load(state.stateParams.pubkey.trim(), true /*withCache*/, state.stateParams.uid)
+        return $scope.load(state.stateParams.pubkey.trim(), state.stateParams.uid, options)
           .then(function () {
             $scope.doMotion();
             $scope.showHelpTip();
@@ -1258,7 +1312,7 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
         if (!wallet.isLogin()) {
           return $scope.showHome();
         }
-        return $scope.load(wallet.data.pubkey, true /*withCache*/, csWallet.data.uid)
+        return $scope.load(wallet.data.pubkey, wallet.data.uid, options)
           .then(function () {
             $scope.doMotion();
             $scope.showHelpTip();
@@ -1277,7 +1331,11 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
 
   // Updating data
   $scope.doUpdate = function() {
-    return $scope.load($scope.formData.pubkey, false /*no cache*/, $scope.formData.uid)
+    var options = {
+      cache: false, // No cache
+      blockUid: $scope.formData.blockUid || undefined
+    };
+    return $scope.load($scope.formData.pubkey, $scope.formData.uid, options)
       .then(function() {
         $scope.doMotion();
         $scope.showHelpTip();
@@ -1373,7 +1431,7 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
 
 
 /**
- * Select identities from a pubkey (yusfull when many self on the same pubkey)
+ * Select identities from a pubkey (useful when many self on the same pubkey)
  * @param $scope
  * @param $q
  * @param csWot

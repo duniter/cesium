@@ -1,6 +1,9 @@
-<ion-view left-buttons="leftButtons">
+<ion-view left-buttons="leftButtons" class="view-identity-tx">
   <ion-nav-title>
-    <span class="visible-xs visible-sm">{{::formData.name||formData.uid||(formData.pubkey|formatPubkey)}}</span>
+    <span class="visible-xs visible-sm" ng-if="!loading">
+      <span ng-if="formData.name || formData.uid">{{formData.name || formData.uid}} </span>
+      <span ng-if="!formData.name && !formData.uid"><i class="ion-key"></i> {{formData.pubkey|formatPubkey}}</span>
+    </span>
     <span class="hidden-xs hidden-sm"
           ng-if="!loading">
       <ng-if ng-if="formData.name || formData.uid">{{'WOT.OPERATIONS.TITLE'|translate: {uid: formData.name || formData.uid} }}</ng-if>
@@ -33,6 +36,7 @@
     <div class="center padding" ng-if="loading">
       <ion-spinner icon="android"></ion-spinner>
     </div>
+
 
     <div class="list {{motion.ionListClass}}" ng-if="!loading">
 

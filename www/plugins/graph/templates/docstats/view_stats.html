@@ -13,9 +13,9 @@
         <ion-spinner icon="android"></ion-spinner>
       </div>
 
-      <div class="item no-padding-xs" ng-if="!loading"
+      <div class="item no-padding-xs no-padding-sm" ng-if="!loading"
            ng-repeat="chart in charts"
-           ng-include="'plugins/graph/templates/docstats/graph.html'"
+           ng-include="::'plugins/graph/templates/docstats/graph.html'"
            ng-init="setSize(250, 1000)">
       </div>
 

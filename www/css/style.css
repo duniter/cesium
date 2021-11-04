@@ -10,24 +10,14 @@
     line-height: inherit;
 }
 
-#home h1 {
+#home .main-container h1 {
     padding-top: 15px;
     text-align: center;
 }
-
-#home h2 {
-    font-size: 22px;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    text-align: center;
+#home .main-container h4 {
     color: #fff;
 }
-
-#home h4 {
-    color: #fff;
-}
-
-#home h4 a {
+#home .main-container h4 a {
   color: inherit;
 }
 
@@ -48,7 +38,9 @@
   min-width: 44px !important;
   max-width: 90px !important;
 }
-.bar .button.button-clear:first-child {
+
+.bar.bar-header .left-buttons > .button.button-clear:first-child,
+.bar.bar-header > .button.button-clear:first-child {
   margin-left: 5px;
 }
 
@@ -87,7 +79,6 @@
 .center {
     text-align: center;
 }
-
 
 .col-pubkey {
   min-width: 130px !important;
@@ -145,12 +136,32 @@
     display:none;
 }
 
+.no-margin {
+  margin: 0 !important;
+}
+
+/**********
+   Settings items
+**********/
+
 .settings .item-divider {
     background-color: #f5f5f5;
 }
-
-.no-margin {
-  margin: 0 !important;
+.settings .item .input-label{
+  width: 80%;
+}
+.settings .item-toggle .input-label{
+  display: inline;
+  width: auto;
+  max-width: 50%;
+}
+.settings .item-select .input-label{
+  display: inline;
+  width: auto;
+  max-width: 50%;
+}
+.settings .item .badge {
+  top: 22px;
 }
 
 /**********
@@ -181,6 +192,18 @@
   padding-right: 6px;
 }
 
+.list .item-peer.compacted {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  min-height: 3px !important;
+  max-height: 3px !important;
+  border-bottom: double 1px #ddd !important;
+}
+.list .item-peer.compacted > * {
+  display: none;
+}
+
+
 /**********
    Block items
 **********/
@@ -199,17 +222,17 @@
 .item-block.item-block-empty {
   min-height: 24px !important;
   max-height: 24px !important;
-  padding-top: 0px;
-  padding-bottom: 0px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .item-block.item-block-empty .badge {
-  padding-top: 0px !important;
+  padding-top: 0 !important;
   top: inherit;
 }
 
 .item-block.item-block-empty .badge.badge-balanced {
-  top: 0px !important;
+  top: 0 !important;
   padding-top: 3px !important;
   padding-bottom: 2px !important;
 }
@@ -217,49 +240,12 @@
 .item-block-empty.compacted {
   min-height: 3px !important;
   max-height: 3px !important;
-  border-bottom: 0px !important;
+  border-bottom: 0 !important;
 }
 
 .item-block.item-block-empty.compacted {
   border-bottom: double 1px #eee !important;
 }
-
-
-/**********
-   TX items
-**********/
-
-.item-tx{
-  border-top: solid 1px lightgray !important;
-  margin-bottom: 4px ;
-  padding-bottom: 6px;
-  padding-top: 8px;
-  margin: 0 !important;
-}
-
-.item-tx .badge{
-  right : 1%;
-  top: 13px;
-}
-
-.item-tx .vertical-center{
-  position: absolute;
-  top: 30%;
-  width: 40%;
-}
-
-.item-tx .width-cup{
-  width: 175px;
-}
-
-.expert-mode .item-tx .item-note {
-  top : 8%;
-}
-
-.expert-mode .item-tx .badge-secondary {
-  top : 52% !important;
-}
-
 
 /**********
    List of wallet

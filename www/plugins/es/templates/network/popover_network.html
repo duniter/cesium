@@ -1,0 +1,38 @@
+<ion-popover-view class="fit hidden-xs hidden-sm popover-notification popover-network"
+                  ng-controller="NetworkLookupPopoverCtrl">
+  <ion-header-bar class="stable-bg block">
+    <div class="title">
+      {{'MENU.NETWORK'|translate}}
+      <ion-spinner class="ion-spinner-small" icon="android" ng-if="search.loading"></ion-spinner>
+    </div>
+
+    <div class="pull-right">
+      <a ng-class="{'positive': search.type=='member', 'dark': search.type!=='member'}"
+         ng-click="toggleSearchType('member')"
+         translate>PEER.MEMBERS</a>
+    </div>
+  </ion-header-bar>
+  <ion-content  scroll="true">
+    <div class="list no-padding">
+      <ng-include src="::'plugins/es/templates/network/items_peers.html'"></ng-include>
+    </div>
+  </ion-content>
+
+  <ion-footer-bar class="stable-bg block">
+    <!-- settings -->
+    <div class="pull-left">
+      <a class="positive"
+         ui-sref="app.settings"
+         ng-click="closePopover()"
+         translate>COMMON.NOTIFICATIONS.SETTINGS</a>
+    </div>
+
+    <!-- show all -->
+    <div class="pull-right">
+      <a class="positive"
+         ui-sref="app.es_network"
+         ng-click="closePopover()"
+         translate>COMMON.NOTIFICATIONS.SHOW_ALL</a>
+    </div>
+  </ion-footer-bar>
+</ion-popover-view>

@@ -26,22 +26,22 @@
 
       <!-- Form content, depending of the login method -->
       <div ng-switch-when="SCRYPT_DEFAULT">
-        <ng-include src="'templates/login/form_scrypt.html'"></ng-include>
+        <ng-include src="::'templates/login/form_scrypt.html'"></ng-include>
       </div>
       <div ng-switch-when="SCRYPT_ADVANCED">
-        <ng-include src="'templates/login/form_scrypt_advanced.html'"></ng-include>
+        <ng-include src="::'templates/login/form_scrypt_advanced.html'"></ng-include>
       </div>
       <div ng-switch-when="PUBKEY">
-        <ng-include src="'templates/login/form_pubkey.html'"></ng-include>
+        <ng-include src="::'templates/login/form_pubkey.html'"></ng-include>
       </div>
       <div ng-switch-when="FILE">
-        <ng-include src="'templates/login/form_file_import.html'"></ng-include>
+        <ng-include src="::'templates/login/form_file_import.html'"></ng-include>
       </div>
        <div ng-switch-when="SCAN">
-         <ng-include src="'templates/login/form_scan.html'"></ng-include>
+         <ng-include src="::'templates/login/form_scan.html'"></ng-include>
        </div>
       <div ng-switch-default>
-        <ng-include src="'templates/login/form_scrypt.html'"></ng-include>
+        <ng-include src="::'templates/login/form_scrypt.html'"></ng-include>
       </div>
     </div>
 

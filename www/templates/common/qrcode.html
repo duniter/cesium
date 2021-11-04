@@ -1,0 +1,14 @@
+<a ng-attr-id="{{ qrcodeId }}" ng-show="!loading"
+   class="qrcode fade-in pull-right"
+   ng-class="{'active': toggleQRCode}"
+   ng-click="toggleQRCode = !toggleQRCode">
+  <div class="content"></div>
+  <div class="footer item item-icon-left item-text-wrap ink"
+       on-hold="copy(formData.pubkey)"
+       copy-on-click="{{:rebind:formData.pubkey}}"
+       ng-click="$event.stopPropagation()">
+    <i class="icon ion-key"></i>
+    <span>{{:locale:'COMMON.PUBKEY'|translate}}</span>
+    <h4 id="pubkey" class="dark">{{:rebind:formData.pubkey}}</h4>
+  </div>
+</a>

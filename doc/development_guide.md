@@ -1,78 +1,127 @@
 # Development Guide
 
-## Prerequisite  
+## In a post-it
+
+```bash
+# Install NodeJS v12
+nvm use 12
+npm install -g yarn 
+
+# Clone and compile from source
+git clone git@git.duniter.org:clients/cesium-grp/cesium.git
+cd cesium
+yarn
+
+# Run the App !
+yarn run start
+```
+
+
+## Step by step
+
+### Prerequisite  
 
 To build Cesium, you will have to: 
  
-  - Installing build tools:
-```
- sudo apt-get install build-essential
-```
+1. Installing build tools:
+   ```bash
+      sudo apt-get install git wget curl unzip build-essential software-properties-common ruby ruby-dev ruby-ffi gcc make
+   ```
 
-  - Installing [nvm](https://github.com/creationix/nvm)
-```
-  wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
-```
+2. Installing node.js v12 :
 
-> Then reload your terminal, for instance by executing the commande `bash`
+  * First, install [nvm](https://github.com/nvm-sh/nvm) (Node Version Manager) :    
+    ```bash
+       wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
+    ```
 
-  - Configure NodeJS to use a version 5: (**WARNING**: upper version will NOT work !) 
-```
-  nvm install 5
-```
+    > Alternatively, if you are using `fish shell`, there is a [dedicated plugin](https://github.com/jorgebucaran/fish-nvm).
+
+  * Then, reload your terminal (for instance by executing the command `bash`);
+
+  * Configure nvm to use the expected version: (**WARNING**: upper version will NOT work !) 
+    ```bash
+       nvm install 12
+    ```
       
-  - Installing node.js build tools:
-```
-   npm install -g gulp bower@1.8.0 cordova@6.5.0 ionic@1.7.16
-```
+3. Installing node build tools, as global dependencies:
+   ```bash
+      npm install -g yarn gulp cordova@10.0.0 @ionic/cli web-ext
+   ```
    
-## Get the source code and dependencies
+### Get the source code and dependencies
    
-  - Getting source and installing project dependencies:    
-```
-  git clone git@git.duniter.org:clients/cesium-grp/cesium.git
-  cd cesium
-  npm install
-```
-
-  - Installing Cordova plugins (need for platforms specific builds)   
-```
-  ionic state restore
-  ionic browser add crosswalk@12.41.296.5
-```
-
-- This should create a new directory `platforms/android`
-
-> To remind: check that your command line is configured:
-> - You must place yourself in the directory of the application: `cd cesium`
-> - and be configured for NodeJs v5: `nvm use 5` (please check using the command `node --version`)
-
-
-## Prepare environment, then compile and launch
-
- - To configure your build environment :
- 
-    * Add your environment config into `app/config.json`
-   
-    * Update default configuration, using the command:
-    
-```
-  gulp config --env <your_env_name> 
-```
-
-> This will update the configuration file used by cesium, at `www/js/config.json`.
- 
-  - Compiling and running Cesium:
-```
-  npm start
-```
- 
-> or alternative: `ionic serve` 
-
-  - Open a web browser at address: [localhost:8100](http://localhost:8100). The application should be running.
+1. Getting the source code:    
+  ```bash
+     git clone git@git.duniter.org:clients/cesium-grp/cesium.git
+  ```
   
-## Best practices for development
+2. Install project dependencies:    
+   ```bash
+      cd cesium
+      yarn
+   ```
 
- Cesium could be run on phone devices. Please read [performance tips on AgularJS + Ionic ](http://julienrenaux.fr/2015/08/24/ultimate-angularjs-and-ionic-performance-cheat-sheet/)
- before starting to contribute.
- Read also [Angular performance for large applicatoins](https://www.airpair.com/angularjs/posts/angularjs-performance-large-applications). 
+3. Installing Cordova plugins (required to build Android and iOS artifacts): 
+   ```bash
+      export JAVA_HOME=/path/to/jdk-8
+      export PATH=$JAVA_HOME/bin:$PATH
+      ionic cordova prepare
+   ```
+
+   This should create new directories `platforms/android` and `platforms/ios`.
+
+   > As a reminder: check that your command line is well configured:
+   > - You must place yourself in the directory of the application: `cd cesium`
+   > - and working with NodeJs **v12**: `nvm use 12` (please check using the command `node --version`)
+    
+
+### Prepare configuration file
+
+Configure Cesium default settings :
+ 
+1. Add your environment config into `app/config.json`
+   
+2. Update default configuration, using the command:    
+   ```bash
+      gulp config --env <your_env_name> 
+   ```
+
+  This will update a configuration file `www/js/config.json`.
+ 
+### Compile and launch
+
+To compile and launch Cesium, run:
+```bash
+  yarn run start
+```
+
+or alternative: `npm start` or `ionic serve` 
+
+The application should be running at [localhost:8100](http://localhost:8100)!
+
+
+### Build artifacts 
+
+Cesium can be build:
+- [as an unhosted web applicationa](build_web.md);
+- [for Android](build_android.md);
+- [for iOS](build_ios.md);
+- [as a Web extension](build_web_extension.md) for Mozilla Firefox or Chrome/Chomium;
+- [as a Desktop application](build_desktop.md) for Linux (`.deb`), Windows and MacOSx;
+
+You may also [use Docker image](build_docker.md) to simplify this task;   
+
+
+### Time to code !
+
+#### Pull request
+
+For each pull request, please create an issue first.
+
+#### Best practices for development
+
+Cesium could be run on phone devices. Please read [performance tips on AgularJS + Ionic](http://julienrenaux.fr/2015/08/24/ultimate-angularjs-and-ionic-performance-cheat-sheet/)
+before starting to contribute.
+
+Read also [Angular performance for large applicatoins](https://www.airpair.com/angularjs/posts/angularjs-performance-large-applications). 

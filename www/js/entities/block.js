@@ -31,6 +31,8 @@ function Block(json, attributes) {
   that.transactionsCount = that.transactions ? that.transactions.length : 0;
 
   that.empty = that.isEmpty();
+
+  that.id = [that.number, that.hash].join('-');
 }
 
 Block.prototype.isEmpty = function(){

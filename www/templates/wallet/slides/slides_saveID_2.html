@@ -7,7 +7,10 @@
           <label class="item item-input item-text-wrap {{smallscreen ? 'item-stacked-label' : 'item-floating-label'}}"
                  ng-class="{'item-input-error': answersForm.$submitted && answersForm['question{{$index}}'].$invalid}">
             <span class="input-label" style="width: 100%; max-width: inherit;">{{question.value | translate}}</span>
-            <input type="text" name="question{{$index}}" placeholder="{{smallscreen ? '' : question.value | translate}}" ng-model="question.answer" required />
+            <input type="text"
+                   autocomplete="off"
+                   name="question{{$index}}" placeholder="{{smallscreen ? '' : question.value | translate}}" ng-model="question.answer"
+                   required/>
           </label>
           <div class="form-errors"
                ng-show="answersForm.$submitted && answersForm['question{{$index}}'].$error"

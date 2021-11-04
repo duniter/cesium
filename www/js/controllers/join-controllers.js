@@ -40,7 +40,7 @@ function JoinController($scope, $timeout, $controller, Modals, csWallet) {
 
 }
 
-function JoinChooseAccountTypeModalController($scope, $state, Modals, UIUtils, csCurrency) {
+function JoinChooseAccountTypeModalController($scope, $state, Modals, UIUtils, csConfig, csCurrency) {
   'ngInject';
 
   $scope.formData = {};
@@ -86,6 +86,9 @@ function JoinChooseAccountTypeModalController($scope, $state, Modals, UIUtils, c
   };
 
   $scope.selectAccountTypeAndClose = function(type) {
+    if (csConfig.demo) {
+      return UIUtils.alert.demo();
+    }
     $scope.formData.accountType = type;
     $scope.closeModal($scope.formData);
   };
@@ -113,18 +116,21 @@ function JoinChooseAccountTypeModalController($scope, $state, Modals, UIUtils, c
 }
 
 
-function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtils, CryptoUtils, csSettings, Modals, csWallet, BMA, parameters) {
+function JoinModalController($scope, $state, $interval, $q, $timeout, Device, UIUtils, CryptoUtils, csSettings, Modals, csWallet, BMA, parameters) {
   'ngInject';
 
   $scope.formData = {
-    pseudo: ''
+    pseudo: parameters.uid || '',
+    pubkey: parameters.pubkey || undefined
   };
   $scope.slides = {
     slider: null,
     options: {
       loop: false,
       effect: 'slide',
-      speed: 500
+      speed: 500,
+      pager: false,
+      showPager: false
     }
   };
   $scope.slideBehavior = {};
@@ -135,16 +141,27 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
   $scope.showPassword = false;
   $scope.formData.computing=false;
   $scope.smallscreen = UIUtils.screen.isSmall();
-  $scope.userIdPattern = BMA.constants.regex.USER_ID;
+  $scope.userIdPattern = BMA.constants.regexp.USER_ID;
+  $scope.accountAvailable = !!parameters.pubkey;
 
   // Read input parameters
   $scope.currency = parameters.currency;
   $scope.accountType = parameters.accountType || 'member';
 
+  var wallet;
+
   $scope.load = function() {
     if ($scope.loading) {
 
-      if ($scope.accountType == 'member') {
+      // Get the wallet
+      wallet = (parameters.walletId && csWallet.children.get(parameters.walletId)) ||
+        (parameters.pubkey && csWallet.children.getByPubkey(parameters.pubkey)) ||
+        ((!parameters.pubkey || csWallet.isUserPubkey(parameters.pubkey)) && csWallet);
+      if (!wallet) throw new Error("Cannot found the corresponding wallet, from parameters.pubkey or parameters.walletId");
+
+      console.debug("[join] Starting join modal on wallet {0}".format(wallet.id));
+
+      if ($scope.accountType === 'member') {
         $scope.licenseFileUrl = csSettings.getLicenseUrl();
         if ($scope.licenseFileUrl) {
           // Use HTML in iframe, when original file is markdown (fix #538)
@@ -188,6 +205,12 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
   };
 
   $scope.showAccountPubkey = function() {
+    if (parameters.pubkey && parameters.pseudo === $scope.formData.pseudo) {
+      $scope.formData.pubkey = parameters.pubkey;
+      $scope.formData.computing = false;
+      return;
+    }
+
     $scope.formData.computing=true;
 
     CryptoUtils.scryptKeypair($scope.formData.username, $scope.formData.password)
@@ -216,6 +239,7 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
     var index = $scope.slides.slider.activeIndex;
     if($scope.accountType === 'member') {
       index += ($scope.licenseFileUrl ? 0 : 1); // skip index 0, when no license file
+      index += (parameters.pubkey && index >= 2 ? 2 : 0); // skip salt+pass, if already a pubkey
       if (index === 0) return "licenseForm";
       if (index === 1) return "pseudoForm";
       if (index === 2) return "saltForm";
@@ -233,14 +257,14 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
     var formName = $scope.getCurrentFormName();
 
     var behavior;
-    if (formName == "licenseForm") {
+    if (formName === "licenseForm") {
       behavior = {
         hasPreviousButton: false,
         hasNextButton: false,
         hasAcceptButton: true
       };
     }
-    else if (formName == "pseudoForm") {
+    else if (formName === "pseudoForm") {
       behavior = {
         helpAnchor: 'join-pseudo',
         hasPreviousButton: $scope.licenseFileUrl && true,
@@ -248,7 +272,7 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
         focus: 'pseudo'
       };
     }
-    else if (formName == "saltForm") {
+    else if (formName === "saltForm") {
       behavior = {
         helpAnchor: 'join-salt',
         hasPreviousButton: $scope.accountType === 'member',
@@ -256,7 +280,7 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
         focus: 'salt'
       };
     }
-    else if (formName == "passwordForm") {
+    else if (formName === "passwordForm") {
       behavior = {
         helpAnchor: 'join-password',
         hasPreviousButton: true,
@@ -264,7 +288,7 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
         focus: 'password'
       };
     }
-    else if (formName == "confirmForm") {
+    else if (formName === "confirmForm") {
       behavior = {
         hasPreviousButton: true,
         hasNextButton: false,
@@ -340,16 +364,25 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
 
     var onErrorLogout = function(message) {
       return function(err) {
-        csWallet.logout()
-        .then(function(){
-          UIUtils.onError(message)(err);
-        });
+        if (parameter.uid) {
+          wallet.unauth()
+            .then(function(){
+              UIUtils.onError(message)(err);
+            });
+        }
+        else {
+          wallet.logout()
+            .then(function(){
+              UIUtils.onError(message)(err);
+            });
+        }
+        throw new Error('CANCELLED');
       };
     };
 
     UIUtils.loading.show();
 
-    return csWallet.login({
+    return wallet.login({
         auth: true,
         isNew: true,
         method: 'SCRYPT_DEFAULT',
@@ -362,44 +395,74 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
           csSettings.data.wallet = csSettings.data.wallet || {};
           csSettings.data.wallet.alertIfUnusedWallet = false; // do not alert if empty
 
-          // Send self
-          return csWallet.self($scope.formData.pseudo, false/*do NOT load membership here*/)
+          var needSelf = angular.isUndefined(parameters.uid) || angular.isUndefined(parameters.blockUid) ||
+            (parameters.uid.toUpperCase() !== $scope.formData.pseudo.toUpperCase());
+          if (!needSelf) {
+            wallet.setSelf(parameters.uid, parameters.blockUid);
+          }
+
+          // Self promise (if need)
+          var selfPromise = needSelf ?
+            wallet.self($scope.formData.pseudo, false/*do NOT load membership here*/)
+              .catch(onErrorLogout('ERROR.SEND_IDENTITY_FAILED')) :
+            $q.when();
+
+          return selfPromise
             .then(function() {
               // Send membership IN
-              csWallet.membership.inside()
-              .then(function() {
-
-                $scope.closeModal();
-
-                // Redirect to wallet
-                $state.go('app.view_wallet')
-                  .then(function() {
-                    // Wait 12s (for wallet load)
-                    // then ask to download revocation file
-                    return $timeout(
-                      $scope.downloadRevocationRegistration,
-                      2000);
-                  });
-              })
-              .catch(function(err) {
-                if (err && err.ucode != BMA.errorCodes.MEMBERSHIP_ALREADY_SEND) return;
-                onErrorLogout('ERROR.SEND_MEMBERSHIP_IN_FAILED')(err);
-              });
+              return wallet.membership.inside()
+                .catch(function(err) {
+                  if (err && err.ucode != BMA.errorCodes.MEMBERSHIP_ALREADY_SEND) return;
+                  onErrorLogout('ERROR.SEND_MEMBERSHIP_IN_FAILED')(err);
+                });
             })
-            .catch(onErrorLogout('ERROR.SEND_IDENTITY_FAILED'));
+            .then(function() {
+
+              $scope.closeModal();
+
+              // Redirect to wallet
+              if (wallet.isDefault()) {
+                return $state.go('app.view_wallet');
+              } else {
+                return $state.go('app.view_wallet_by_id', {id: wallet.id});
+              }
+            })
+            .then(function() {
+              // Wait 2s (for wallet load)
+              // then ask to download revocation file
+              return $timeout(function() {
+                // Hide the loading indicator, if wallet already loaded
+                if (wallet.isDataLoaded({requirements: true})) {
+                  UIUtils.loading.hide();
+                }
+                return $scope.downloadRevocationRegistration();
+              },
+              2000);
+            });
         }
         else{
           $scope.closeModal();
 
           // Redirect to wallet
-          $state.go('app.view_wallet');
+          if (wallet.isDefault()) {
+            $state.go('app.view_wallet');
+          }
+          else {
+            $state.go('app.view_wallet_by_id', {id: wallet.id});
+          }
 
         }
       })
       .catch(function(err) {
         UIUtils.loading.hide();
-        console.error('>>>>>>>' , err);
-        UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
+        if (err === 'CANCELLED') return;
+        if (err && err.ucode != BMA.errorCodes.MEMBERSHIP_ALREADY_SEND) {
+          console.error("[wallet] Node: already membership", err);
+          return; // OK
+        }
+        else {
+          UIUtils.alert.error('ERROR.UNKNOWN_ERROR');
+        }
       });
   };
 
@@ -412,7 +475,7 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
       })
     .then(function(confirm) {
       if (!confirm) return;
-      return csWallet.downloadRevocation();
+      return wallet.downloadRevocation();
     });
   };
 
@@ -458,25 +521,38 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
     var uid = $scope.formData.pseudo.toUpperCase();
     $scope.formData.computing=true;
 
-    // search on uid
-    BMA.wot.lookup({ search: uid })
-      .then(function(res) {
-        $scope.uiAlreadyUsed = (res.results || []).some(function(pub){
-            return (pub.uids || []).some(function(idty) {
-                return (idty.uid.toUpperCase() === uid); // same Uid
-              });
-          });
-        $scope.formData.computing=false;
-      })
-      .catch(function(err){
-        console.error(err);
-        $scope.formData.computing=false;
-        $scope.uiAlreadyUsed = false;
-      });
+    // Same has given uid + self block: skip control
+    if (parameters.uid && uid === parameters.uid.toUpperCase()) {
+      $scope.formData.computing=false;
+      $scope.uiAlreadyUsed = false;
+      return;
+    }
+    else {
+      // search on uid
+      BMA.wot.lookup({ search: uid })
+        .then(function(res) {
+          $scope.uiAlreadyUsed = (res.results || []).some(function(pub){
+              return (pub.uids || []).some(function(idty) {
+                  return (idty.uid.toUpperCase() === uid); // same Uid
+                });
+            });
+          $scope.formData.computing=false;
+        })
+        .catch(function(err){
+          console.error(err);
+          $scope.formData.computing=false;
+          $scope.uiAlreadyUsed = false;
+        });
+    }
   };
   $scope.$watch('formData.pseudo', $scope.checkUid, true);
 
   $scope.checkAccountAvailable = function() {
+    if (parameters.pubkey) {
+      $scope.accountAvailable = true;
+      return;
+    }
+
     delete $scope.accountAvailable;
     // Search for tx source, from pubkey
     return BMA.tx.sources({ pubkey:  $scope.formData.pubkey })

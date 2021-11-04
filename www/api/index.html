@@ -3,9 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width, minimal-ui">
-  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Cesium API</title>
   <link rel="icon" href="../img/favicon.ico">
+
+  <meta name="theme-color" content="black">
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon" href="../img/logo_57px.png">
 
   <!-- build:css dist_css/cesium-api.css -->
   <link rel="stylesheet" type="text/css" href="../css/ionic.app.min.css">
@@ -18,49 +23,57 @@
 </head>
 </head>
 <body ng-app="cesium-api" id="cesium-api" ng-strict-di="true">
-<ion-nav-view>
-  <h3 style="text-align: center; padding-top: 25px; "><b>Cesium API</b></h3>
-  <h4 style="text-align: center;">Loading...</h4>
-</ion-nav-view>
+  <ion-nav-view>
+    <h3 style="text-align: center; padding-top: 25px; "><b>Cesium API</b></h3>
+    <h4 style="text-align: center;">Loading...</h4>
+  </ion-nav-view>
 
-<!-- build:js dist_js/vendor-api.js -->
-<!-- vendor js -->
-<script src="../js/vendor/moment.min.js"></script>
-<script src="../js/vendor/moment.fr.js"></script>
-<script src="../js/vendor/moment.nl.js"></script>
-<script src="../js/vendor/moment.es.js"></script>
-<script src="../js/vendor/numeral.js"></script>
-<script src="../js/vendor/numeral.fr.js"></script>
-<script src="../js/vendor/numeral.en.js"></script>
-<script src="../js/vendor/numeral.nl.js"></script>
-<script src="../js/vendor/numeral.es.js"></script>
-<script src="../js/vendor/socket-io.js"></script>
-<script src="../js/vendor/underscore.js"></script>
+  <!-- build:js dist_js/vendor-api.js -->
+  <!-- vendor js -->
+  <script src="../lib/moment/min/moment-with-locales.min.js"></script>
+  <script src="../lib/numeral/numeral.js"></script>
+  <script src="../lib/numeral/languages/fr.js"></script>
+  <script src="../lib/numeral/languages/en-gb.js"></script>
+  <script src="../lib/numeral/languages/nl-nl.js"></script>
+  <script src="../lib/numeral/languages/es.js"></script>
+  <script src="../lib/numeral/languages/it.js"></script>
+  <script src="../js/vendor/numeral.eo.js"></script>
+  <script src="../lib/qrcode-generator/js/qrcode.js"></script> <!-- FIXME remove this lib (see #903) -->
 
-<!-- ionic/angularjs js -->
-<script src="../lib/ionic/js/ionic.bundle.js"></script>
-<script src="../lib/ionic/js/ionic.material.js"></script>
-<script src="../lib/ionic/js/angular/angular-resource.js"></script>
-<script src="../lib/ionic/js/angular/angular-translate.js"></script>
-<script src="../lib/ionic/js/angular/angular-messages.js"></script>
-<script src="../lib/ionic/js/angular/angular-api.js"></script>
-<script src="../lib/ionic/js/angular/angular-cache.js"></script>
-<script src="../lib/ionic/js/angular/angular-screenmatch.min.js"></script>
-<script src="../lib/ionic/js/angular/angular-bind-notifier.min.js"></script>
-<script src="../lib/ionic/js/angular/angular-file-saver.bundle.js"></script>
-<script src="../lib/ionic/js/angular/angular-idle.js"></script>
+  <script src="../lib/socket.io-client/dist/socket.io.min.js"></script>
+  <script src="../lib/underscore/underscore-min.js"></script>
+
+
+  <!-- ionic/angularjs js -->
+  <script src="../lib/ionic/js/ionic.min.js"></script>
+  <script src="../lib/angular/angular.min.js"></script>
+  <script src="../lib/angular-animate/angular-animate.min.js"></script>
+  <script src="../lib/angular-sanitize/angular-sanitize.min.js"></script>
+  <script src="../lib/angular-ui-router/release/angular-ui-router.min.js"></script>
+  <script src="../lib/ionic/js/ionic-angular.min.js"></script>
+  <script src="../lib/ionic-material/dist/ionic.material.min.js"></script>
+  <script src="../lib/angular-resource/angular-resource.min.js"></script>
+  <script src="../lib/angular-translate/angular-translate.min.js"></script>
+  <script src="../lib/angular-messages/angular-messages.min.js"></script>
+  <script src="../lib/angular-expose-api/dist/angular-expose-api.min.js"></script>
+  <script src="../lib/angular-cache/dist/angular-cache.min.js"></script>
+  <script src="../lib/angular-screenmatch/dist/angular-screenmatch.min.js"></script>
+  <script src="../lib/angular-bind-notifier/dist/angular-bind-notifier.min.js"></script>
+  <script src="../lib/angular-file-saver/dist/angular-file-saver.bundle.min.js"></script>
+  <script src="../lib/ng-idle/angular-idle.min.js"></script>
+  <script src="../lib/angular-fullscreen-toggle/dist/angular-fullscreen-toggle.min.js"></script>
 
   <script src="../js/vendor/base58.js" async></script>
   <!--removeIf(android)-->
   <!--removeIf(ios)-->
-  <script src="../js/vendor/nacl_factory.js" async></script>
-  <script src="../js/vendor/scrypt-em.js" async></script>
+  <script src="../lib/js-nacl/lib/nacl_factory.js" async></script>
+  <script src="../lib/js-scrypt/browser/scrypt.js" async></script>
   <script src="../js/vendor/base64.js" async></script>
   <!--endRemoveIf(ios)-->
   <!--endRemoveIf(android)-->
   <!--removeIf(no-device)-->
   <script src="../js/vendor/sha256.min.js" async></script>
-  <script src="../js/vendor/ng-cordova.min.js"></script>
+  <script src="../lib/ngCordova/dist/ng-cordova.min.js"></script>
   <!--endRemoveIf(no-device)-->
 
 <!-- endbuild -->
@@ -73,6 +86,7 @@
 <!-- services -->
 <script src="../dist/dist_js/app/services/settings-services.js"></script>
 <script src="../dist/dist_js/app/services/network-services.js"></script>
+<script src="../dist/dist_js/app/services/desktop-services.js"></script>
 <script src="../dist/dist_js/app/services/crypto-services.js"></script>
 <script src="../dist/dist_js/app/services/utils-services.js"></script>
 <script src="../dist/dist_js/app/services/cache-services.js"></script>
@@ -85,14 +99,15 @@
 <script src="../dist/dist_js/app/services/wot-services.js"></script>
 <script src="../dist/dist_js/app/services/tx-services.js"></script>
 <script src="../dist/dist_js/app/services/wallet-services.js"></script>
-<script src="../dist/dist_js/app/services/plugin-services.js"></script>
 <script src="../dist/dist_js/app/services/help-services.js"></script>
+<script src="../dist/dist_js/app/services/plugin-services.js"></script>
 <script src="../dist/dist_js/app/services.js"></script>
 <script src="../dist/dist_js/app/api/api-demo-services.js"></script>
 
 <!-- entities -->
 <script src="../dist/dist_js/app/entities/peer.js"></script>
 <script src="../dist/dist_js/app/entities/block.js"></script>
+<script src="../dist/dist_js/app/entities/ws2pmessage.js"></script>
 
 <!-- controllers -->
 <script src="../dist/dist_js/app/controllers/login-controllers.js"></script>

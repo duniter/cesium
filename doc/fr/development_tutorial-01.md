@@ -93,10 +93,10 @@ Vous pouvez installer nvm avec la commande suivante :
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
 ```
 
-Fermez puis rouvrez votre terminal, comme indiqué. Puis, installez Node.js (choisissez la version 5) : 
+Fermez puis rouvrez votre terminal, comme indiqué. Puis, installez Node.js (choisissez la version 6) : 
 
 ```bash
-nvm install 5
+nvm install 6
 ```
 
 Vous aurez alors la dernière version de la branche 5.x de Node.js prête à l'emploi.
@@ -110,13 +110,13 @@ sudo apt-get install build-essential
 
 #### Sous Windows
 
-Pour Windows, téléchargez la version 5 disponible sur le site officiel de Node.js : https://nodejs.org
+Pour Windows, téléchargez la version 6 disponible sur le site officiel de Node.js : https://nodejs.org
 
 Puis lancez l'installeur ainsi téléchargé.
 
 ### Installer les modules Node.js de Cesium
 
-Cesium repose sur des librairies tierce pour fonctionner appelées *dépendances*, comme par exemple des librairies de compilation (gulp, bower, ionic).
+Cesium repose sur des librairies tierce pour fonctionner appelées *dépendances*, comme par exemple des librairies de compilation (gulp, ionic, angularJS).
 
 Le fait d'avoir cloné les sources n'est en réalité pas suffisant pour lancer l'application. Nous devons obtenir le code des dépendances pour obtenir ainsi l'ensemble du code exécutable du programme. Pour ce faire, retournez dans la console Git et déplacez-vous dans le répertoire cloné : 
 
@@ -127,13 +127,13 @@ cd cesium
 Puis, lancez le téléchargement et l'installation des modules Cesium à l'aide de la commande : 
 
 ```bash
-npm install -g gulp bower@1.8.0 cordova@6.5.0 ionic@1.7.16
+npm install -g yarn gulp cordova@10.0.0 @ionic/cli web-ext
 ```
 
 Puis pour les dépendances non globales :
 
 ```bash
-npm install
+yarn
 ```
 
 > Le processus d'installation peut prendre plusieurs minutes. En effet, il faut télécharger toutes les dépendances de Cesium et même en compiler certaines.
@@ -141,23 +141,11 @@ npm install
 Si tout s'est bien passé, vous devriez obtenir une fin d'arborescence dans la console, et l'invité de commande devrait vous avoir rendu la main : 
 
 ```bash
-├── bower@1.7.9 
-├─┬ gulp@3.9.1 
-│ ├── archy@1.0.0 
-│ ├─┬ chalk@1.1.3 
- (...)
-│ ├─┬ through2@0.5.1 
-│ │ ├── readable-stream@1.0.34 
-│ │ └── xtend@3.0.0 
-│ └─┬ vinyl@0.2.3 
-│   └── clone-stats@0.0.1 
-└── shelljs@0.3.0 
-
-
-npm WARN cesium@0.0.1 No repository field.
-npm WARN cesium@0.0.1 No license field.
-
-user1@~$
+yarn install v1.15.2
+[1/4] Resolving packages...
+  (...)
+$ node -e "try { require('fs').symlinkSync(require('path').resolve('node_modules/@bower_components'), 'www/lib', 'junction') } catch (e) { }"
+Done in 0.82s.
 ```
 
 > Il se peut que vous obteniez des messages `npm WARN [...]`. Rien de grave : comme le nom du message l'indique, il s'agit simplement d'un avertissement non bloquant pour la suite des événements.

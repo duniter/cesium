@@ -17,40 +17,30 @@ angular.module('cesium.es.settings.controllers', ['cesium.es.services'])
       });
 
       $stateProvider
-      .state('app.es_settings', {
-        url: "/settings/es",
-        views: {
-          'menuContent': {
-            templateUrl: "plugins/es/templates/settings/plugin_settings.html",
-            controller: 'ESPluginSettingsCtrl'
+        .state('app.es_settings', {
+          url: "/settings/es",
+          views: {
+            'menuContent': {
+              templateUrl: "plugins/es/templates/settings/plugin_settings.html",
+              controller: 'ESPluginSettingsCtrl'
+            }
           }
-        }
-      });
+        });
     }
   })
 
- .controller('ESExtendSettingsCtrl', ESExtendSettingsController)
-
- .controller('ESPluginSettingsCtrl', ESPluginSettingsController)
-
+  .controller('ESPluginSettingsCtrl', ESPluginSettingsController)
 ;
 
-/*
- * Settings extend controller
- */
-function ESExtendSettingsController ($scope, PluginService) {
-  'ngInject';
-
-  $scope.extensionPoint = PluginService.extensions.points.current.get();
-
-}
 
 /*
  * Settings extend controller
  */
-function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUtils, Modals, csHttp, csSettings, esHttp, esSettings) {
+function ESPluginSettingsController ($scope, $window, $q,  $translate, $ionicPopup,
+                                     UIUtils, Modals, csHttp, csConfig, csSettings, esHttp, esSettings, esModals) {
   'ngInject';
 
+  $scope.hasWindowNotification = !!("Notification" in window);
   $scope.formData = {};
   $scope.popupData = {}; // need for the node popup
   $scope.loading = true;
@@ -66,10 +56,10 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
     var wasEnable = $scope.formData.enable;
     $scope.formData = csSettings.data.plugins && csSettings.data.plugins.es ?
       angular.copy(csSettings.data.plugins.es) : {
-      enable: false,
-      host: undefined,
-      port: undefined
-    };
+        enable: false,
+        host: undefined,
+        port: undefined
+      };
     if (keepEnableState && wasEnable) {
       $scope.formData.enable = wasEnable;
     }
@@ -91,60 +81,54 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
   // Change ESnode
   $scope.changeEsNode= function(node) {
     node = node || {
-        host: $scope.formData.host,
-        port: $scope.formData.port && $scope.formData.port != 80 && $scope.formData.port != 443 ? $scope.formData.port : undefined,
-        wsPort: $scope.formData.wsPort && $scope.formData.wsPort != $scope.formData.port ? $scope.formData.wsPort : undefined,
-        useSsl: angular.isDefined($scope.formData.useSsl) ?
-          $scope.formData.useSsl :
-          ($scope.formData.port == 443)
-      };
+      host: $scope.formData.host,
+      port: $scope.formData.port && $scope.formData.port != 80 && $scope.formData.port != 443 ? $scope.formData.port : undefined,
+      useSsl: angular.isDefined($scope.formData.useSsl) ?
+        $scope.formData.useSsl :
+        ($scope.formData.port == 443)
+    };
 
     $scope.showNodePopup(node)
-    .then(function(newNode) {
-      if (newNode.host == $scope.formData.host &&
-        newNode.port == $scope.formData.port &&
-        newNode.wsPort == $scope.formData.wsPort &&
-        newNode.useSsl == $scope.formData.useSsl) {
-        UIUtils.loading.hide();
-        return; // same node = nothing to do
-      }
-      UIUtils.loading.show();
-
-      var newEsNode = esHttp.instance(newNode.host, newNode.port, newNode.wsPort, newNode.useSsl);
-      return newEsNode.isAlive() // ping the node
-        .then(function(alive) {
-          if (!alive) {
-            UIUtils.loading.hide();
-            return UIUtils.alert.error('ERROR.INVALID_NODE_SUMMARY')
-              .then(function(){
-                $scope.changeEsNode(newNode); // loop
-              });
-          }
-
-          $scope.formData.host = newEsNode.host;
-          $scope.formData.port = newEsNode.port;
-          $scope.formData.wsPort = newEsNode.wsPort;
-          $scope.formData.useSsl = newEsNode.useSsl;
-
-          return esHttp.copy(newEsNode);
-        })
-        .then(function() {
-          $scope.server = $scope.getServer(esHttp);
-          $scope.isFallbackNode = false;
+      .then(function(newNode) {
+        if (newNode.host === $scope.formData.host &&
+          newNode.port == $scope.formData.port &&
+          newNode.useSsl == $scope.formData.useSsl) {
           UIUtils.loading.hide();
-        });
-    });
+          return; // same node = nothing to do
+        }
+        UIUtils.loading.show();
+
+        var newEsNode = esHttp.instance(newNode.host, newNode.port, newNode.useSsl);
+        return newEsNode.isAlive() // ping the node
+          .then(function(alive) {
+            if (!alive) {
+              UIUtils.loading.hide();
+              return UIUtils.alert.error('ERROR.INVALID_NODE_SUMMARY')
+                .then(function(){
+                  $scope.changeEsNode(newNode); // loop
+                });
+            }
+
+            $scope.formData.host = newEsNode.host;
+            $scope.formData.port = newEsNode.port;
+            $scope.formData.useSsl = newEsNode.useSsl;
+
+            return esHttp.copy(newEsNode);
+          })
+          .then(function() {
+            $scope.server = $scope.getServer(esHttp);
+            $scope.isFallbackNode = false;
+            UIUtils.loading.hide();
+          });
+      });
   };
 
   // Show node popup
   $scope.showNodePopup = function(node) {
+
     return $q(function(resolve, reject) {
       var parts = [node.host];
-      if (node.wsPort && node.wsPort != (node.port||80)) {
-        parts.push(node.port||80);
-        parts.push(node.wsPort);
-      }
-      else if (node.port && node.port != 80) {
+      if (node.port && node.port != 80) {
         parts.push(node.port);
       }
       $scope.popupData.newNode = parts.join(':');
@@ -171,64 +155,69 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
                     //don't allow the user to close unless he enters a node
                     e.preventDefault();
                   } else {
-                    return $scope.popupData.newNode;
+                    return {
+                      server: $scope.popupData.newNode,
+                      useSsl: $scope.popupData.useSsl
+                    };
                   }
                 }
               }
             ]
           })
-          .then(function(node) {
-            if (!node) { // user cancel
-              UIUtils.loading.hide();
-              return;
-            }
-            var parts = node.split(':');
-            var useSsl = $scope.popupData.useSsl || (parts[1] == 443);
-            resolve({
-              host: parts[0],
-              port: parts[1] || (useSsl ? 443 : 80),
-              wsPort: parts[2] || parts[1] || (useSsl ? 443 : 80),
-              useSsl: useSsl
+            .then(function(res) {
+              if (!res) { // user cancel
+                UIUtils.loading.hide();
+                return;
+              }
+              var parts = res.server.split(':');
+              parts[1] = parts[1] ? parts[1] : (res.useSsl ? 443 : 80);
+              resolve({
+                host: parts[0],
+                port: parts[1],
+                useSsl: res.useSsl
+              });
             });
-          });
         });
     });
   };
 
   $scope.showNodeList = function() {
+    // Check if need a filter on SSL node
+    var forceUseSsl = (csConfig.httpsMode === 'true' || csConfig.httpsMode === true || csConfig.httpsMode === 'force') ||
+    ($window.location && $window.location.protocol === 'https:') ? true : false;
+
     $ionicPopup._popupStack[0].responseDeferred.promise.close();
-    return Modals.showNetworkLookup({
+    return esModals.showNetworkLookup({
       enableFilter: true,
-      endpointFilter: esHttp.constants.ES_USER_API_ENDPOINT
+      endpoint: esHttp.constants.ES_USER_API_ENDPOINT,
+      ssl: forceUseSsl ? true: undefined
     })
       .then(function (peer) {
         if (!peer) return;
-          var esEps = peer.getEndpoints().reduce(function(res, ep){
-            var esEp = esHttp.node.parseEndPoint(ep);
-            return esEp ? res.concat(esEp) : res;
-          }, []);
-          if (!esEps.length) return;
-          var ep = esEps[0];
-          return {
-            host: (ep.dns ? ep.dns :
-                   (peer.hasValid4(ep) ? ep.ipv4 : ep.ipv6)),
-            port: ep.port || 80
-          };
+        var esEps = (peer.getEsEndpoints() || []).reduce(function(res, ep){
+          var esEp = esHttp.node.parseEndPoint(ep);
+          return esEp ? res.concat(esEp) : res;
+        }, []);
+        if (!esEps.length) return;
+        var ep = esEps[0];
+        return {
+          host: (ep.dns ? ep.dns :
+                 (peer.hasValid4(ep) ? ep.ipv4 : ep.ipv6)),
+          port: ep.port || 80,
+          useSsl: ep.useSsl || ep.port == 443
+        };
       })
       .then(function(newEsNode) {
-        if (!newEsNode) {
-          UIUtils.alert.error('ERROR.INVALID_NODE_SUMMARY');
-          return;
-        }
-        $scope.changeEsNode(newEsNode);
+        $scope.changeEsNode(newEsNode); // get back to node popup
       });
   };
 
   $scope.onFormChanged = function() {
     if ($scope.loading) return;
 
-    if ($scope.formData.notifications.emitHtml5 !== (!!("Notification" in window) && Notification.permission === "granted")){
-      Notification.requestPermission(function (permission) {
+    if ($scope.hasWindowNotification &&
+      $scope.formData.notifications.emitHtml5 !== (window.Notification.permission === "granted")){
+      window.Notification.requestPermission(function (permission) {
         // If the user accepts, let's create a notification
         $scope.formData.notifications.emitHtml5 = (permission === "granted"); // revert to false if permission not granted
         $scope.onFormChanged(); // Loop
@@ -245,8 +234,6 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
     // Fix old settings (unused)
     delete csSettings.data.plugins.es.newNode;
 
-
-
     csSettings.store()
       .then(function() {
         $scope.loading = false;
@@ -257,7 +244,6 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
   $scope.getServer = function(node) {
     node = node || $scope.formData;
     if (!node.host) return undefined;
-    var server = csHttp.getServer(node.host, node.port);
-    return server + (node.wsPort && node.wsPort != node.port ? ':' + node.wsPort : '');
+    return csHttp.getServer(node.host, node.port);
   };
 }

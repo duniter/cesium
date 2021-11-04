@@ -23,7 +23,9 @@
           <a class="dark"><i class="icon ion-android-add" ng-click="addQuestion()"></i></a>
           <div class="list list-inset">
             <label class="item item-input">
-              <input type="text" placeholder="{{'ACCOUNT.SECURITY.ADD_QUESTION' | translate}}" ng-model="formData.addQuestion"/>
+              <input type="text"
+                     autocomplete="off"
+                     placeholder="{{'ACCOUNT.SECURITY.ADD_QUESTION' | translate}}" ng-model="formData.addQuestion"/>
             </label>
           </div>
         </div>

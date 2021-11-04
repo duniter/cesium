@@ -100,7 +100,7 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
       .then(function(res) {
         var uids = res[1];
         var memberships = res[2];
-        var res = res[0];
+        res = res[0];
         if (!res.hits || !res.hits.total) return [];
 
         // Transform pending MS into a map by pubkey
@@ -128,12 +128,13 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
 
         // Additional slice requests
         request.from += request.size;
+        var processRequestResultFn = function(subRes) {
+          if (!subRes.hits || !subRes.hits.hits.length) return [];
+          return processLoadHits(options, uids, memberships, subRes);
+        };
         while (request.from < res.hits.total) {
-          jobs.push(search(angular.copy(request))
-            .then(function(res) {
-              if (!res.hits || !res.hits.hits.length) return [];
-              return processLoadHits(options, uids, memberships, res);
-            }));
+          var searchRequest = search(angular.copy(request)).then(processRequestResultFn);
+          jobs.push(searchRequest);
           request.from += request.size;
         }
         return $q.all(jobs)

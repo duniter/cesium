@@ -14,16 +14,18 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content scroll="true" class="refresher-top-bg refresher-light"
+  <ion-content scroll="true" class="refresher-positive-900-bg"
                bind-notifier="{ rebind:settings.useRelative, locale:$root.settings.locale.id}">
 
     <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
                    on-refresh="doUpdate(true)">
     </ion-refresher>
 
-    <div class="positive-900-bg hero" id="wallet-header"
-         ng-class="{'hero-qrcode-active': toggleQRCode}">
-      <div class="content" ng-if="!loading">
+    <div class="positive-900-bg hero"
+         style="max-width: 100%; display: block">
+      <div class="content" ng-if="!loading"
+           style="max-width: 100%">
+
 
         <i class="avatar"
            ng-if=":rebind:!formData.avatar"
@@ -31,29 +33,54 @@
         <i class="avatar"
            ng-if=":rebind:formData.avatar"
            style="background-image: url({{:rebind:formData.avatar.src}})"></i>
-        <h3 class="light">
-          <ng-if ng-if=":rebind:formData.name">{{:rebind:formData.name}}</ng-if>
-          <ng-if ng-if=":rebind:!formData.name && formData.uid">{{:rebind:formData.uid}}</ng-if>
-          <ng-if ng-if=":rebind:!formData.name && !formData.uid"><i class="ion-key"></i> {{:rebind:formData.pubkey | formatPubkey}}</ng-if>
+
+        <h3 class="light" ng-if=":rebind:!enableSelectWallet">
+          <span ng-if=":rebind:formData.name">{{:rebind:formData.name}}</span>
+          <span ng-if=":rebind:!formData.name && formData.uid">{{:rebind:formData.uid}}</span>
+          <span ng-if=":rebind:!formData.name && !formData.uid"><i class="ion-key"></i> {{:rebind:formData.pubkey | formatPubkey}}</span>
         </h3>
 
-        <h4 class="assertive"><ng-if ng-if=":rebind:(formData.name || formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</ng-if></h4>
+        <!-- select wallet button -->
+        <h3 class="light " ng-if=":rebind:enableSelectWallet">
+          <a class="hidden-xs hidden-sm"
+           style="color: lightgray;"
+           title="{{:locale:'ACCOUNT.SELECT_WALLET_MODAL.TITLE'|translate}}"
+           ng-click="showSelectWalletPopover($event)">
+            <span ng-if=":rebind:formData.name">{{:rebind:formData.name}}</span>
+            <span ng-if=":rebind:!formData.name && formData.uid">{{:rebind:formData.uid}}</span>
+            <span ng-if=":rebind:!formData.name && !formData.uid"><i class="ion-key"></i> {{:rebind:formData.pubkey | formatPubkey}}</span>
+            <small><i class="ion-arrow-down-b"></i></small>
+          </a>
+          <a class="visible-xs visible-sm"
+             style="color: lightgray;"
+             title="{{:locale:'ACCOUNT.SELECT_WALLET_MODAL.TITLE'|translate}}"
+             ng-click="showSelectWalletModal($event)">
+            <span ng-if=":rebind:formData.name">{{:rebind:formData.name}}</span>
+            <span ng-if=":rebind:!formData.name && formData.uid">{{:rebind:formData.uid}}</span>
+            <span ng-if=":rebind:!formData.name && !formData.uid"><i class="ion-key"></i> {{:rebind:formData.pubkey | formatPubkey}}</span>
+            <small><i class="ion-arrow-down-b"></i></small>
+          </a>
+        </h3>
+
+        <h4>
+          <span class="assertive" ng-if=":rebind:(formData.name || formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</span>
+          <cs-extension-point name="hero"></cs-extension-point>
+        </h4>
       </div>
       <h4 class="content light" ng-if="loading">
         <ion-spinner icon="android"></ion-spinner>
       </h4>
+
     </div>
 
-    <div ng-attr-id="{{ qrcodeId }}"
-         class="qrcode spin"
-         ng-class="{'active': toggleQRCode}"
-         ng-click="toggleQRCode = !toggleQRCode"></div>
+    <ng-include src="::'templates/common/qrcode.html'"></ng-include>
 
     <!-- Buttons bar-->
     <a id="wallet-share-anchor"></a>
     <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
 
       <button class="button button-stable button-small-padding icon ion-android-share-alt ink"
+              ng-disabled="loading"
               ng-click="showSharePopover($event)"
               title="{{'COMMON.BTN_SHARE' | translate}}">
       </button>
@@ -84,21 +111,12 @@
       </div>
     </div>
 
-    <div class="visible-xs visible-sm padding text-center" ng-if="!loading">
-      <button class="button button-assertive button-small-padding ink"
-              ng-if="isDefaultWallet"
-              ng-click="logout({askConfirm: true})">
-        <i class="icon ion-log-out"></i>
-        {{'COMMON.BTN_LOGOUT' | translate}}
+    <div class="visible-xs visible-sm padding text-center" ng-if="!loading && formData.requirements.needRenew">
+      <button class="button button-raised icon-left button-stable button-small-padding ink"
+              ng-click="renewMembership()">
+        <i class="icon ion-loop assertive"></i>
+        <span class="assertive">{{:locale:'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}</span>
       </button>
-      <div ng-if="formData.requirements.needRenew">
-        <br/>
-        <button class="button button-raised icon-left button-stable button-small-padding ink"
-                ng-click="renewMembership()">
-          <i class="icon ion-loop assertive"></i>
-          <span class="assertive">{{:locale:'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}</span>
-        </button>
-      </div>
     </div>
 
     <div class="row no-padding">
@@ -106,7 +124,7 @@
 
       <div class="col">
 
-        <div class="list" ng-class="::motion.ionListClass" ng-hide="loading">
+        <div class="list {{::motion.ionListClass}}" ng-hide="loading">
 
           <span class="item item-divider" translate>WOT.GENERAL_DIVIDER</span>
 
@@ -160,17 +178,6 @@
              ng-click="showTxHistory()">
             <i class="icon ion-card"></i>
             <span translate>WOT.ACCOUNT_OPERATIONS</span>
-            <i class="gray icon ion-ios-arrow-right"></i>
-          </a>
-
-          <!-- Other wallets -->
-          <a class="item item-icon-left item-icon-right ink visible-xs visible-sm"
-             ng-if="isDefaultWallet"
-             ui-sref="app.view_wallets">
-            <i class="icon ion-card " style="top: -5px; left: 22px; font-size: 18px;"></i>
-            <i class="icon-secondary ion-card" style="top: 22px; left: 19px; font-size: 20px; background-color: white; width:17px; height: 14px;"></i>
-            <span translate>ACCOUNT.WALLET_LIST.TITLE</span>
-            <span class="badge badge-calm" ng-if="formData.children.length>0">{{:rebind:formData.children.length}}</span>
             <i class="gray icon ion-ios-arrow-right"></i>
           </a>
 

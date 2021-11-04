@@ -1,0 +1,69 @@
+
+    <i class="icon ion-android-desktop"
+       ng-class=":rebind:{'balanced': peer.online && peer.hasMainConsensusBlock, 'energized': peer.online && peer.hasConsensusBlock, 'gray': peer.online && !peer.hasConsensusBlock && !peer.hasMainConsensusBlock, 'stable': !peer.online}"
+       ng-if=":rebind:!peer.avatar"></i>
+    <b class="icon-secondary ion-person" ng-if=":rebind:!peer.avatar"
+       ng-class=":rebind:{'balanced': peer.online && peer.hasMainConsensusBlock, 'energized': peer.online && peer.hasConsensusBlock, 'gray': peer.online && !peer.hasConsensusBlock && !peer.hasMainConsensusBlock, 'stable': !peer.online}"
+       style="left: 26px; top: -3px;"></b>
+    <i class="avatar" ng-if=":rebind:peer.avatar" style="background-image: url('{{:rebind:peer.avatar.src}}')"></i>
+    <b class="icon-secondary assertive ion-close-circled" ng-if=":rebind:!peer.online" style="left: 37px; top: -10px;"></b>
+
+    <div class="row no-padding">
+      <div class="col no-padding">
+        <h3 class="dark">{{:rebind:peer.dns || peer.server}}</h3>
+        <h4>
+          <span class="gray" ng-if=":rebind:!peer.name">
+            <i class="ion-key"></i> {{:rebind:peer.pubkey|formatPubkey}}
+          </span>
+          <span class="positive" ng-if=":rebind:peer.name">
+            <i class="ion-person"></i> {{:rebind:peer.name}}
+          </span>
+          <span class="gray">{{:rebind:peer.dns && (' | ' + peer.server) + (peer.ep.path||'') }}</span>
+        </h4>
+      </div>
+      <div class="col col-15 no-padding text-center hidden-xs hidden-sm" ng-if="::expertMode">
+        <div style="min-width: 50px; padding-top: 5px;" >
+          <span ng-if=":rebind:peer.isSsl()" title="SSL">
+            <i class="ion-locked"></i><small class="hidden-md"> SSL</small>
+          </span>
+          <span ng-if=":rebind:peer.hasEndpoint('ES_SUBSCRIPTION_API')"
+               title="{{'ES_PEER.EMAIL_SUBSCRIPTION_COUNT'|translate: peer.docCount }}">
+            <i class="ion-email"></i> {{:rebind:peer.docCount.emailSubscription}}
+          </span>
+        </div>
+        <div ng-if=":rebind:peer.isTor()">
+          <i class="ion-bma-tor-api"></i>
+        </div>
+        <div ng-if=":rebind:peer.isWs2p()&&peer.isTor()" ng-click="showWs2pPopover($event, peer)">
+          <i class="ion-bma-tor-api"></i>
+        </div>
+      </div>
+      <div class="col col-20 no-padding text-center" ng-if="::!expertMode && search.type != 'offline'">
+        <div style="min-width: 50px; padding-top: 5px;" ng-if=":rebind:peer.docCount.emailSubscription!==undefined">
+          <span ng-if=":rebind:peer.hasEndpoint('ES_SUBSCRIPTION_API')"
+              title="{{'ES_PEER.EMAIL_SUBSCRIPTION_COUNT'|translate: peer.docCount }}">
+            <i class="ion-email"></i> {{:rebind:peer.docCount.emailSubscription || '?'}}
+          </span>
+        </div>
+      </div>
+      <div class="col col-20 no-padding text-center" ng-if="::expertMode && search.type != 'offline'">
+        <h4 class="hidden-sm hidden-xs gray">
+          {{:rebind:peer.software||'?'}}
+        </h4>
+        <h4 class="hidden-sm hidden-xs gray">{{:rebind: peer.version ? ('v'+peer.version) : ''}}</h4>
+      </div>
+      <div class="col col-20 no-padding text-center" id="{{$index === 0 ? helptipPrefix + '-peer-0-block' : ''}}">
+        <span class="badge badge-stable">
+          {{:rebind:peer.docCount.record !== undefined ? (peer.docCount.record|formatInteger) : '?'}}
+          <span ng-if=":rebind:!expertMode && peer.docCount.record!==undefined">
+            {{::'ES_PEER.DOCUMENTS'|translate|lowercase }}
+          </span>
+        </span>
+        <span class="badge badge-secondary"
+              ng-class=":rebind:{'balanced': peer.hasMainConsensusBlock, 'energized': peer.hasConsensusBlock, 'ng-hide': !peer.currentNumber }"
+              ng-if="::expertMode">
+          {{:rebind:'BLOCKCHAIN.VIEW.TITLE'|translate: {number:peer.currentNumber} }}
+        </span>
+
+      </div>
+    </div>

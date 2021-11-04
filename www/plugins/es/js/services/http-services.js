@@ -4,7 +4,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
  * Elastic Search Http
  */
 .factory('esHttp', function($q, $timeout, $rootScope, $state, $sce, $translate, $window, $filter,
-                            CryptoUtils, UIUtils, csHttp, csConfig, csSettings, BMA, csWallet, csPlatform, Api) {
+                            CryptoUtils, UIUtils, csHttp, csConfig, csSettings, csCache, BMA, csWallet, csPlatform, Api) {
   'ngInject';
 
   // Allow to force SSL connection with port different from 443
@@ -14,19 +14,25 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     console.debug('[ES] [https] Enable SSL (forced by config or detected in URL)');
   }
 
-  function Factory(host, port, wsPort, useSsl) {
+  function EsHttp(host, port, useSsl, enableCache) {
 
     var
       that = this,
+      cachePrefix = 'esHttp-',
       constants = {
-        ES_USER_API_ENDPOINT: 'ES_USER_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))'
+        ES_USER_API: 'ES_USER_API',
+        ES_SUBSCRIPTION_API: 'ES_SUBSCRIPTION_API',
+        ES_USER_API_ENDPOINT: 'ES_USER_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))',
+        ANY_API_ENDPOINT: '([A-Z_]+)(?:[ ]+([a-z_][a-z0-9-_.ğĞ]*))?(?:[ ]+([0-9.]+))?(?:[ ]+([0-9a-f:]+))?(?:[ ]+([0-9]+))(?:\\/[^\\/]+)?',
+        MAX_UPLOAD_BODY_SIZE: csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.maxUploadBodySize || 2097152 /*=2M*/
       },
       regexp = {
         IMAGE_SRC: exact('data:([A-Za-z//]+);base64,(.+)'),
         URL: match('(www\\.|https?:\/\/(www\\.)?)[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)'),
-        HASH_TAG: match('(?:^|[\t\n\r\s ])#([\\wḡĞǦğàáâãäåçèéêëìíîïðòóôõöùúûüýÿ]+)'),
+        HASH_TAG: match('(?:^|[\t\n\r\s ])#([0-9_-\\wḡĞǦğàáâãäåçèéêëìíîïðòóôõöùúûüýÿ]+)'),
         USER_TAG: match('(?:^|[\t\n\r\s ])@('+BMA.constants.regexp.USER_ID+')'),
-        ES_USER_API_ENDPOINT: exact(constants.ES_USER_API_ENDPOINT)
+        ES_USER_API_ENDPOINT: exact(constants.ES_USER_API_ENDPOINT),
+        API_ENDPOINT: exact(constants.ANY_API_ENDPOINT),
       },
       fallbackNodeIndex = 0,
       listeners,
@@ -36,27 +42,31 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     that.data = {
       isFallback: false
     };
-    that.cache = _emptyCache();
+    that.useCache = angular.isDefined(enableCache) ? enableCache : false; // need here because used in get() function
+    that.raw = {
+      getByPath: {},
+      postByPath: {},
+      wsByPath: {}
+    };
     that.api = new Api(this, "esHttp");
     that.started = false;
     that.init = init;
 
-    init(host, port, wsPort, useSsl);
+    init(host, port, useSsl);
 
-    function init(host, port, wsPort, useSsl) {
+    function init(host, port, useSsl) {
       // Use settings as default
       if (!host && csSettings.data) {
         host = host || (csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null);
         port = port || (host ? csSettings.data.plugins.es.port : null);
-        wsPort = wsPort || (host ? csSettings.data.plugins.es.wsPort : null);
         useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443 || csSettings.data.plugins.es.useSsl || forceUseSsl);
       }
 
       that.alive = false;
       that.host = host;
       that.port = port || ((useSsl || forceUseSsl) ? 443 : 80);
-      that.wsPort = wsPort || that.port;
       that.useSsl = angular.isDefined(useSsl) ? useSsl : (that.port == 443 || forceUseSsl);
+
       that.server = csHttp.getServer(host, port);
     }
 
@@ -67,15 +77,13 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       var host = data.plugins.es.host;
       var useSsl = data.plugins.es.port == 443 || data.plugins.es.useSsl || forceUseSsl;
       var port = data.plugins.es.port || (useSsl ? 443 : 80);
-      var wsPort = data.plugins.es.wsPort || port;
 
-      return isSameNode(host, port, wsPort, useSsl);
+      return isSameNode(host, port, useSsl);
     }
 
-    function isSameNode(host, port, wsPort, useSsl) {
-      return (that.host == host) &&
-        (that.port == port) &&
-        (!wsPort || that.wsPort == wsPort) &&
+    function isSameNode(host, port, useSsl) {
+      return (that.host === host) &&
+        (that.port === port) &&
         (angular.isUndefined(useSsl) || useSsl == that.useSsl);
     }
 
@@ -96,14 +104,6 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       return new RegExp(regexpContent);
     }
 
-    function _emptyCache() {
-      return {
-        getByPath: {},
-        postByPath: {},
-        wsByPath: {}
-      };
-    }
-
     function onSettingsReset(data, deferred) {
       deferred = deferred || $q.defer();
 
@@ -122,48 +122,76 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       return deferred.promise;
     }
 
-    that.cleanCache = function() {
-      console.debug('[ES] [http] Cleaning requests cache...');
-      _.keys(that.cache.wsByPath).forEach(function(key) {
-        var sock = that.cache.wsByPath[key];
+    that.closeWs = function() {
+
+      if (!that.raw) return;
+
+      console.warn('[ES] [http] Closing all websockets...');
+      _.keys(that.raw.wsByPath||{}).forEach(function(key) {
+        var sock = that.raw.wsByPath[key];
         sock.close();
       });
-      that.cache = _emptyCache();
+      that.raw.wsByPath = {};
+    };
+
+    that.cleanCache = function() {
+      console.debug("[ES] [http] Cleaning cache {prefix: '{0}'}...".format(cachePrefix));
+      csCache.clear(cachePrefix);
+
+      that.raw.getByPath = {};
+      that.raw.postByPath = {};
+      that.raw.wsByPath = {};
     };
 
     that.copy = function(otherNode) {
       if (that.started) that.stop();
-      that.init(otherNode.host, otherNode.port, otherNode.wsPort, otherNode.useSsl || otherNode.port == 443);
+      that.init(otherNode.host, otherNode.port, otherNode.useSsl || otherNode.port == 443);
       that.data.isTemporary = false; // reset temporary flag
       return that.start(true /*skipInit*/);
+    };
+
+    // Get node time (UTC) FIXME: get it from the node
+    that.date = { now : csHttp.date.now };
+
+    that.byteCount = function (s) {
+      s = (typeof s == 'string') ? s : JSON.stringify(s);
+      return encodeURI(s).split(/%(?:u[0-9A-F]{2})?[0-9A-F]{2}|./).length - 1;
     };
 
     that.getUrl  = function(path) {
       return csHttp.getUrl(that.host, that.port, path, that.useSsl);
     };
 
-    that.get = function (path) {
+    that.get = function (path, cacheTime) {
 
-      var getRequest = function(params) {
+      cacheTime = that.useCache && cacheTime;
+      var requestKey = path + (cacheTime ? ('#'+cacheTime) : '');
+
+      var getRequestFn = function(params) {
         if (!that.started) {
           if (!that._startPromise) {
-            console.error('[ES] [http] Trying to get [{0}] before start()...'.format(path));
+            console.warn('[ES] [http] Trying to get [{0}] before start(). Waiting...'.format(path));
           }
           return that.ready().then(function(start) {
             if (!start) return $q.reject('ERROR.ES_CONNECTION_ERROR');
-            return getRequest(params); // loop
+            return getRequestFn(params); // loop
           });
         }
 
-        var request = that.cache.getByPath[path];
+        var request = that.raw.getByPath[requestKey];
         if (!request) {
-          request =  csHttp.get(that.host, that.port, path, that.useSsl);
-          that.cache.getByPath[path] = request;
+          if (cacheTime) {
+            request =  csHttp.getWithCache(that.host, that.port, path, that.useSsl, cacheTime, null, null, cachePrefix);
+          }
+          else {
+            request =  csHttp.get(that.host, that.port, path, that.useSsl);
+          }
+          that.raw.getByPath[requestKey] = request;
         }
         return request(params);
       };
 
-      return getRequest;
+      return getRequestFn;
     };
 
     that.post = function(path) {
@@ -178,10 +206,10 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
           });
         }
 
-        var request = that.cache.postByPath[path];
+        var request = that.raw.postByPath[path];
         if (!request) {
           request =  csHttp.post(that.host, that.port, path, that.useSsl);
-          that.cache.postByPath[path] = request;
+          that.raw.postByPath[path] = request;
         }
         return request(obj, params);
       };
@@ -190,13 +218,38 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
     that.ws = function(path) {
       return function() {
-        var sock = that.cache.wsByPath[path];
-        if (!sock) {
-          sock =  csHttp.ws(that.host, that.wsPort, path, that.useSsl);
-          that.cache.wsByPath[path] = sock;
+        var sock = that.raw.wsByPath[path];
+        if (!sock || sock.isClosed()) {
+          sock =  csHttp.ws(that.host, that.port, path, that.useSsl);
+
+          // When close, remove from cache
+          sock.onclose = function() {
+            delete that.raw.wsByPath[path];
+          };
+
+          that.raw.wsByPath[path] = sock;
         }
         return sock;
       };
+    };
+
+    that.wsChanges = function(source) {
+      var wsChanges = that.ws('/ws/_changes')();
+      if (!source) return wsChanges;
+
+      // If a source is given, send it just after connection open
+      var _inheritedOpen = wsChanges.open;
+      wsChanges.open = function() {
+        return _inheritedOpen.call(wsChanges).then(function(sock) {
+          if(sock) {
+            sock.send(source);
+          }
+          else {
+            console.warn('Trying to access ws changes, but no sock anymore... already open ?');
+          }
+        });
+      };
+      return wsChanges;
     };
 
     that.isAlive = function() {
@@ -204,7 +257,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         .then(function(json) {
           var software = json && json.duniter && json.duniter.software || 'unknown';
           if (software === "cesium-plus-pod" || software === "duniter4j-elasticsearch") return true;
-          console.error("[ES] [http] Not a Duniter4j ES node, but a {0} node".format(software));
+          console.error("[ES] [http] Not a Cesium+ Pod, but a {0} node. Please check '/node/summary'".format(software));
           return false;
         })
         .catch(function() {
@@ -227,8 +280,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       // Remember the default node
       defaultSettingsNode = defaultSettingsNode || {
         host: settings.host,
-        port: settings.port,
-        wsPort: settings.wsPort
+        port: settings.port
       };
 
       var fallbackNode = settings.fallbackNodes && fallbackNodeIndex < settings.fallbackNodes.length && settings.fallbackNodes[fallbackNodeIndex++];
@@ -246,7 +298,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
           that.cleanCache();
 
-          that.init(fallbackNode.host, fallbackNode.port, fallbackNode.wsPort, fallbackNode.useSsl || fallbackNode.port == 443);
+          that.init(fallbackNode.host, fallbackNode.port, fallbackNode.useSsl || fallbackNode.port == 443);
 
           // check is alive then loop
           return that.isAlive().then(that.checkNodeAlive);
@@ -298,7 +350,6 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
               console.debug('[ES] [http] Started in '+(Date.now()-now)+'ms');
               that.api.node.raise.start();
 
-
               that.started = true;
               delete that._startPromise;
               fallbackNodeIndex = 0; // reset the fallback node counter
@@ -311,6 +362,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     };
 
     that.stop = function() {
+      if (!that.started && !that._startPromise) return $q.when(); // Skip multiple call
+
       console.debug('[ES] [http] Stopping...');
 
       removeListeners();
@@ -318,6 +371,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       setIsFallbackNode(false); // will be re-computed during start phase
       delete that._startPromise;
       if (that.alive) {
+        that.closeWs();
         that.cleanCache();
         that.alive = false;
         that.started = false;
@@ -364,6 +418,28 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       return urls;
     }
 
+    function parseMarkdownTitlesFromText(value, prefix, suffix) {
+      prefix = prefix || '##';
+      var reg = match('(?:^|[\\r\\s])('+prefix+'([^#></]+)' + (suffix||'') + ')');
+      var matches = value && reg.exec(value);
+      var lines = matches && [];
+      var res = matches && [];
+      while(matches) {
+        var line = matches[1];
+        if (!_.contains(lines, line)) {
+          lines.push(line);
+          res.push({
+            line: line,
+            title: matches[2]
+          });
+        }
+        value = value.substr(matches.index + matches[1].length + 1);
+        matches = value.length > 0 && reg.exec(value);
+      }
+      return res;
+    }
+
+
     function escape(text) {
       if (!text) return text;
       return text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -383,6 +459,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         // Replace URL in description
         var urls = parseUrlsFromText(content);
         _.forEach(urls, function(url){
+          // Make sure protocol is defined
           var href = (url.startsWith('http://') || url.startsWith('https://')) ? url : ('http://' + url);
           // Redirect URL to the function 'openLink', to open a new window if need (e.g. desktop app)
           var link = '<a on-tap=\"openLink($event, \'{0}\')\" href=\"{1}\" target="_blank">{2}</a>'.format(href, href, truncUrlFilter(url));
@@ -398,9 +475,16 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
         // Replace user tags
         var userTags = parseTagsFromText(content, '@');
-        _.forEach(userTags, function(uid){
-          var link = '<a ui-sref=\"{0}({uid: \'{1}\'})\">@{2}</a>'.format(options.uidState, uid, uid);
-          content = content.replace('@'+uid, link);
+        _.forEach(userTags, function(tag){
+          var link = '<a ui-sref=\"{0}({uid: \'{1}\'})\">@{2}</a>'.format(options.uidState, tag, tag);
+          content = content.replace('@'+tag, link);
+        });
+
+        // Replace markdown titles
+        var titles = parseMarkdownTitlesFromText(content, '#+[ ]*', '<br>');
+        _.forEach(titles, function(matches){
+          var size = matches.line.lastIndexOf('#', 5)+1;
+          content = content.replace(matches.line, '<h{0}>{1}</h{2}>'.format(size, matches.title, size));
         });
       }
       return content;
@@ -435,19 +519,28 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       options = options || {};
       var postRequest = that.post(path);
       return function(record, params) {
-
-        var wallet = (params && params.wallet || csWallet);
         params = params || {};
-        params.pubkey = params.pubkey || wallet.data.pubkey;
-        var keypair = params.keypair || wallet.data.keypair;
-        // make sure to hide some params
-        if (params) {
-          delete params.wallet;
-          delete params.keypair;
+        var wallet = params.wallet || (params.walletId && csWallet.children.get(params.walletId)) ||
+          ((!params.pubkey || csWallet.isUserPubkey(params.pubkey)) && csWallet) ||
+          (params.pubkey && csWallet.children.getByPubkey(params.pubkey));
+
+        var keypair = params.keypair || wallet && wallet.data && wallet.data.keypair;
+
+        if (!keypair && !wallet) {
+          throw new Error('Missing wallet or keypair, to sign record');
         }
+
+        // Create the POSt request params,
+        // but BEFORE, remove protected options
+        delete params.wallet;
+        delete params.walletId;
+        delete params.keypair;
+        var postParams = angular.copy(params);
+        postParams.pubkey = postParams.pubkey || wallet.data.pubkey;
+
         return (wallet.isAuth() ? $q.when(wallet.data) : wallet.auth({silent: true, minData: true}))
           .then(function() {
-            if (options.creationTime && !record.creationTime) {
+            if (params.creationTime && !record.creationTime) {
               record.creationTime = moment().utc().unix();
             }
             // Always update the time - fix #572
@@ -458,7 +551,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
             var obj = angular.copy(record);
             delete obj.signature;
             delete obj.hash;
-            obj.issuer = params.pubkey; // force keypair pubkey
+            obj.issuer = postParams.pubkey; // force keypair pubkey
             if (!obj.version) {
               obj.version = 2;
             }
@@ -468,7 +561,15 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
               fillRecordTags(obj, options.tagFields);
             }
 
-            //console.debug("Will send obj: ", obj);
+            // Remove unused fields
+            if (options.ignoreFields) {
+              _.forEach(options.ignoreFields, function(key) {
+                if (angular.isDefined(obj[key])) {
+                  delete obj[key];
+                }
+              });
+            }
+
             var str = JSON.stringify(obj);
 
             return CryptoUtils.util.hash(str)
@@ -478,9 +579,20 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
                     // Prepend hash+signature
                     str = '{"hash":"{0}","signature":"{1}",'.format(hash, signature) + str.substring(1);
                     // Send data
-                    return postRequest(str, params)
+                    return postRequest(str, postParams)
                       .then(function (id){
+
+                        // Clear cache
+                        csCache.clear(cachePrefix);
+
                         return id;
+                      })
+                      .catch(function(err) {
+                        var bodyLength = that.byteCount(obj);
+                        if (bodyLength > constants.MAX_UPLOAD_BODY_SIZE) {
+                          throw {message: 'ERROR.ES_MAX_UPLOAD_BODY_SIZE', length: bodyLength};
+                        }
+                        throw err;
                       });
                   });
               });
@@ -488,11 +600,20 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       };
     }
 
+    function countRecords(index, type, cacheTime) {
+      var getRequest = that.get("/{0}/{1}/_search?size=0".format(index, type), cacheTime);
+      return function(params) {
+        return getRequest(params)
+            .then(function(res) {
+              return res && res.hits && res.hits.total;
+            });
+      };
+    }
+
     function removeRecord(index, type) {
       return function(id, options) {
         options = options || {};
-        var wallet = (options && options.wallet || csWallet);
-        delete options.wallet;
+        var wallet = options.wallet || options.walletId && csWallet.children.get(options.walletId) || csWallet;
         return (wallet.isAuth() ? $q.when(wallet.data) : wallet.auth({silent: true, minData: true}))
           .then(function(walletData) {
 
@@ -591,24 +712,59 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     };
 
     function parseEndPoint(endpoint) {
-      var matches = regexp.ES_USER_API_ENDPOINT.exec(endpoint);
+      var matches = regexp.API_ENDPOINT.exec(endpoint);
       if (!matches) return;
       return {
+        "api": matches[1] || '',
         "dns": matches[2] || '',
-        "ipv4": matches[4] || '',
-        "ipv6": matches[6] || '',
-        "port": matches[8] || 80
+        "ipv4": matches[3] || '',
+        "ipv6": matches[4] || '',
+        "port": matches[5] || 80,
+        "path": matches[6] || '',
+        "useSsl": matches[5] == 443
       };
     }
 
     function emptyHit() {
       return {
-         _id: null,
-         _index: null,
-         _type: null,
-         _version: null,
-         _source: {}
+        _id: null,
+        _index: null,
+        _type: null,
+        _version: null,
+        _source: {}
       };
+    }
+
+    // Get latest release, of Cesium+ pod
+    function getLatestVersion() {
+      var getRequest = that.raw.getLatestRelease;
+      if (!getRequest) {
+        var url = csHttp.uri.parse(csSettings.data.plugins.es.latestReleaseUrl);
+        var useSsl = (url.port == 443 || url.protocol === 'https:' || forceUseSsl);
+        getRequest = csHttp.getWithCache(url.host, url.port, "/" + url.pathname, useSsl, csCache.constants.LONG);
+        that.raw.getLatestRelease = getRequest;
+      }
+
+      return getRequest()
+        .then(function (json) {
+          if (!json) return;
+          if (json.name && json.html_url) {
+            return {
+              version: json.name,
+              url: json.html_url
+            };
+          }
+          if (json.tag_name && json.html_url) {
+            return {
+              version: json.tag_name.substring(1),
+              url: json.html_url
+            };
+          }
+        })
+        .catch(function(err) {
+          // silent (just log it)
+          console.error('[BMA] Failed to get Duniter latest version', err);
+        });
     }
 
     function addListeners() {
@@ -629,18 +785,43 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     that.api.registerEvent('node', 'start');
     that.api.registerEvent('node', 'stop');
 
+
     var exports = {
       getServer: csHttp.getServer,
       node: {
         summary: that.get('/node/summary'),
+        moderators: that.get('/node/moderators'),
         parseEndPoint: parseEndPoint,
         same: isSameNode,
         sameAsSettings: isSameNodeAsSettings,
         isFallback: isFallbackNode
       },
+      version: {
+        latest: getLatestVersion
+      },
+      websocket: {
+        changes: that.wsChanges,
+        block: that.ws('/ws/block'),
+        peer: that.ws('/ws/peer')
+      },
+      wot: {
+        member: {
+          uids : that.get('/wot/members')
+        }
+      },
+      network: {
+        peering: {
+          self: that.get('/network/peering')
+        },
+        peers: that.get('/network/peers')
+      },
+      blockchain: {
+        current: that.get('/blockchain/current?_source=number,hash,medianTime')
+      },
       record: {
         post: postRecord,
-        remove: removeRecord
+        remove: removeRecord,
+        count : countRecords
       },
       image: {
         fromAttachment: imageFromAttachment,
@@ -661,10 +842,57 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
   }
 
 
-  var service = new Factory();
+  var service = new EsHttp(undefined, undefined, undefined, true);
 
-  service.instance = function(host, port, wsPort, useSsl) {
-    return new Factory(host, port, wsPort, useSsl);
+  service.instance = function(host, port, useSsl, enableCache) {
+    return new EsHttp(host, port, useSsl, enableCache);
+  };
+
+  service.lightInstance = function(host, port, useSsl, timeout) {
+    port = port || 80;
+    useSsl = angular.isDefined(useSsl) ? useSsl : (+port === 443);
+
+    function countHits(path, params) {
+      return csHttp.get(host, port, path)(params)
+        .then(function(res) {
+          return res && res.hits && res.hits.total;
+        });
+    }
+
+    function countRecords(index, type) {
+      return countHits("/{0}/{1}/_search?size=0".format(index, type));
+    }
+
+    function countSubscriptions(params) {
+      var queryString = _.keys(params||{}).reduce(function(res, key) {
+        return (res && (res + " AND ") || "") + key + ":" + params[key];
+      }, '');
+      return countHits("/subscription/record/_search?size=0&q=" + queryString);
+    }
+
+    return {
+      host: host,
+      port: port,
+      useSsl: useSsl,
+      node: {
+        summary: csHttp.getWithCache(host, port, '/node/summary', useSsl, csHttp.cache.LONG, false, timeout)
+      },
+      network: {
+        peering: {
+          self: csHttp.get(host, port, '/network/peering', useSsl, timeout)
+        },
+        peers: csHttp.get(host, port, '/network/peers', useSsl, timeout)
+      },
+      blockchain: {
+        current: csHttp.get(host, port, '/blockchain/current?_source=number,hash,medianTime', useSsl, timeout)
+      },
+      record: {
+        count: countRecords
+      },
+      subscription: {
+        count: countSubscriptions
+      }
+    };
   };
 
   return service;

@@ -3,7 +3,11 @@
    Graph currency popover
 **********/
 
-.popover-graph-currency {
+.popover-graph-range {
   height: 300px !important;
+  max-width: 250px !important;
+}
+.popover-graph-period {
+  height: 420px !important;
   max-width: 250px !important;
 }

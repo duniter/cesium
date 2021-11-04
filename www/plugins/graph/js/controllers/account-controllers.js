@@ -12,16 +12,16 @@ angular.module('cesium.graph.account.controllers', ['chart.js', 'cesium.graph.se
           points: {
             'buttons': {
               templateUrl: "plugins/graph/templates/account/view_wallet_tx_extend.html",
-              controller: 'GpExtendCtrl'
+              controller: 'ESExtensionCtrl'
             }
           }
         })
 
-        .extendState('app.wot_identity', {
+        .extendState('app.view_wallet_tx_by_id', {
           points: {
             'buttons': {
-              templateUrl: "plugins/graph/templates/account/view_identity_extend.html",
-              controller: 'GpExtendCtrl'
+              templateUrl: "plugins/graph/templates/account/view_wallet_tx_extend.html",
+              controller: 'ESExtensionCtrl'
             }
           }
         })
@@ -30,7 +30,7 @@ angular.module('cesium.graph.account.controllers', ['chart.js', 'cesium.graph.se
           points: {
             'buttons': {
               templateUrl: "plugins/graph/templates/account/view_identity_tx_extend.html",
-              controller: 'GpExtendCtrl'
+              controller: 'ESExtensionCtrl'
             }
           }
         })
@@ -39,6 +39,18 @@ angular.module('cesium.graph.account.controllers', ['chart.js', 'cesium.graph.se
       $stateProvider
         .state('app.view_wallet_stats', {
           url: "/wallet/stats?t&stepUnit&hide&scale",
+          views: {
+            'menuContent': {
+              templateUrl: "plugins/graph/templates/account/view_stats.html"
+            }
+          },
+          data: {
+            auth: true
+          }
+        })
+
+        .state('app.view_wallet_stats_by_id', {
+          url: "/wallets/:id/stats?t&stepUnit&hide&scale",
           views: {
             'menuContent': {
               templateUrl: "plugins/graph/templates/account/view_stats.html"
@@ -60,39 +72,12 @@ angular.module('cesium.graph.account.controllers', ['chart.js', 'cesium.graph.se
     }
   })
 
-  .controller('GpExtendCtrl', GpExtendController)
-
   .controller('GpAccountBalanceCtrl', GpAccountBalanceController)
 
   .controller('GpAccountSumTxCtrl', GpAccountSumTxController)
 
   .controller('GpAccountCertificationCtrl', GpAccountCertificationController)
-
 ;
-
-function GpExtendController($scope, PluginService, esSettings, $state, csWallet) {
-  'ngInject';
-
-  $scope.extensionPoint = PluginService.extensions.points.current.get();
-  $scope.enable = esSettings.isEnable();
-
-  esSettings.api.state.on.changed($scope, function(enable) {
-    $scope.enable = enable;
-  });
-
-  $scope.showIdentityStats = function() {
-    if ($scope.formData && $scope.formData.pubkey) {
-      $state.go('app.wot_identity_stats', {pubkey: $scope.formData.pubkey});
-    }
-  };
-
-  $scope.showWalletStats = function() {
-    if (csWallet.isLogin()) {
-      $state.go('app.wot_identity_stats', {pubkey: csWallet.data.pubkey});
-    }
-  };
-}
-
 
 function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $translate, csWot, gpData, gpColor, csWallet) {
   'ngInject';
@@ -136,7 +121,7 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
 
     var withUD = true;
 
-    return csWot.load($scope.formData.pubkey)
+    return csWot.load($scope.formData.pubkey, null/*uid*/, {cache: true})
       .then(function(identity) {
         $scope.identity = identity;
         withUD = $scope.identity.isMember || $scope.identity.wasMember;
@@ -157,7 +142,7 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
             'COMMON.DATE_MONTH_YEAR_PATTERN']),
 
           // get data
-          gpData.blockchain.movement($scope.formData.currency, angular.copy($scope.formData))
+          gpData.blockchain.movement($scope.formData.currency, angular.copy($scope.formData, {withUD: withUD}))
         ]);
       })
       .then(function(result) {
@@ -168,8 +153,7 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
         if (!result || !result.times) return; // no data
         $scope.times = result.times;
 
-        var formatInteger = $filter('formatInteger');
-        var formatAmount =  $filter('formatDecimal');
+        var formatDecimal =  $filter('formatDecimal');
         $scope.currencySymbol = $filter('currencySymbolNoHtml')($scope.formData.currency, $scope.formData.useRelative);
 
         // Data
@@ -230,7 +214,7 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
                 return data.datasets[tooltipItems.datasetIndex].label +
                   ': ' +
                   (!tooltipItems.yLabel ? '0' :
-                    (formatAmount(tooltipItems.yLabel) + ' ' + $scope.currencySymbol));
+                    (formatDecimal(tooltipItems.yLabel) + ' ' + $scope.currencySymbol));
               }
             }
           }
@@ -323,8 +307,6 @@ function GpAccountSumTxController($scope, $controller, $filter, $state, csTx, gp
   $scope.load = function(e, state) {
     if (!$scope.pubkey) return;
 
-    var formatDecimal = $filter('formatDecimal');
-
     // Load account TX data
     return csTx.load($scope.pubkey, -1)
       .then(function(result) {
@@ -354,11 +336,16 @@ function GpAccountSumTxController($scope, $controller, $filter, $state, csTx, gp
           pubkey: tx.pubkey,
           sum: 0
         };
-      sumByPubkeys[tx.pubkey].sum += Math.abs(tx.amount/100);
+      sumByPubkeys[tx.pubkey].sum += Math.abs(tx.amount);
     });
 
     // Get values (from the map), then sort (desc) on sum
     var sumItems = _.sortBy(_.values(sumByPubkeys), 'sum').reverse();
+
+    // Divide total amount by 100
+    _.each(sumItems, function(item) {
+      item.sum = item.sum / 100;
+    });
 
     // Return arrays expected by angular-chart
     return {

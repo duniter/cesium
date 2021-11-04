@@ -59,7 +59,8 @@ Peer.prototype.json = function() {
 Peer.prototype.getBMA = function() {
   if (this.bma) return this.bma;
   var bma = null;
-  var bmaRegex = this.regex.BMA_REGEXP;
+  var bmaRegex = this.regexp.BMA_REGEXP;
+  var bmasRegex = this.regexp.BMAS_REGEXP;
   this.endpoints.forEach(function(ep){
     var matches = !bma && bmaRegex.exec(ep);
     if (matches) {
@@ -67,7 +68,20 @@ Peer.prototype.getBMA = function() {
         "dns": matches[2] || '',
         "ipv4": matches[4] || '',
         "ipv6": matches[6] || '',
-        "port": matches[8] || 80
+        "port": matches[8] || 80,
+        "useSsl": matches[8] == 443,
+        "useBma": true
+      };
+    }
+    matches = !bma && bmasRegex.exec(ep);
+    if (matches) {
+      bma = {
+        "dns": matches[2] || '',
+        "ipv4": matches[4] || '',
+        "ipv6": matches[6] || '',
+        "port": matches[8] || 80,
+        "useSsl": true,
+        "useBma": true
       };
     }
   });
@@ -87,7 +101,6 @@ Peer.prototype.hasEndpoint = function(endpoint){
   var endpoints = this.getEndpoints(regExp);
   if (!endpoints.length) return false;
   else return true;
-
 };
 
 Peer.prototype.getDns = function() {
@@ -110,24 +123,24 @@ Peer.prototype.getPort = function() {
   return bma.port ? bma.port : null;
 };
 
-Peer.prototype.getHost = function() {
-  var bma = this.bma || this.getBMA();
+Peer.prototype.getHost = function(getHost) {
+  bma = getHost || this.bma || this.getBMA();
   return ((bma.port == 443 || bma.useSsl) && bma.dns) ? bma.dns :
     (this.hasValid4(bma) ? bma.ipv4 :
         (bma.dns ? bma.dns :
           (bma.ipv6 ? '[' + bma.ipv6 + ']' :'')));
 };
 
-Peer.prototype.getURL = function() {
-  var bma = this.bma || this.getBMA();
-  var host = this.getHost();
+Peer.prototype.getURL = function(bma) {
+  bma = bma || this.bma || this.getBMA();
+  var host = this.getHost(bma);
   var protocol = (bma.port == 443 || bma.useSsl) ? 'https' : 'http';
   return protocol + '://' + host + (bma.port ? (':' + bma.port) : '');
 };
 
-Peer.prototype.getServer = function() {
-  var bma = this.bma || this.getBMA();
-  var host = this.getHost();
+Peer.prototype.getServer = function(bma) {
+  bma = bma || this.bma || this.getBMA();
+  var host = this.getHost(bma);
   return host + (host && bma.port ? (':' + bma.port) : '');
 };
 
@@ -152,7 +165,6 @@ Peer.prototype.isTor = function() {
   return bma.useTor;
 };
 
-
 Peer.prototype.isWs2p = function() {
   var bma = this.bma || this.getBMA();
   return bma.useWs2p;
@@ -161,4 +173,8 @@ Peer.prototype.isWs2p = function() {
 Peer.prototype.isBma = function() {
   var bma = this.bma || this.getBMA();
   return !bma.useWs2p && !bma.useTor;
+};
+
+Peer.prototype.hasBma = function() {
+  return this.hasEndpoint('(BASIC_MERKLED_API|BMAS|BMATOR)');
 };

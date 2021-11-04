@@ -1,0 +1,44 @@
+<ion-item id="doc-{{::doc.id}}"
+          class="item item-document item-document-comment item-icon-left ink {{::ionItemClass}} no-padding-top no-padding-bottom"
+          ng-class="{'compacted': compactMode}"
+          ng-click="selectDocument($event, doc)">
+
+  <i ng-show=":rebind:!compactMode" ng-if=":rebind:!doc.avatar" class="icon ion-ios-chatbubble-outline stable" ></i>
+  <i ng-show=":rebind:!compactMode" ng-if=":rebind:doc.avatar" class="avatar" style="background-image: url('{{:rebind:doc.avatar.src}}')"></i>
+
+  <div class="row no-padding">
+    <div class="col">
+      <h4 >
+        <i class="ion-ios-chatbubble-outline dark"></i>
+        <span class="gray" ng-if=":rebind:doc.name">
+          <i class="ion-person" ng-show=":rebind:!compactMode"></i>
+          {{:rebind:doc.name}}:
+        </span>
+        <span class="dark">
+          <i class="ion-quote" ng-if=":rebind:!compactMode"></i>
+          {{:rebind:doc.message|truncText:50}}
+        </span>
+      </h4>
+      <h4 class="gray"> <i class="ion-clock"></i> {{:rebind:doc.time|formatDate}}</h4>
+    </div>
+
+    <div class="col">
+      <h3>
+        <a ui-sref="app.wot_identity({pubkey: doc.pubkey, uid: doc.name})">
+
+        </a>
+      </h3>
+    </div>
+
+    <div class="col" ng-if=":rebind:!compactMode">
+      <a
+        ng-if=":rebind:login && doc.pubkey==walletData.pubkey"
+        ng-click="remove($event, $index)"
+        class="gray pull-right hidden-xs hidden-sm"
+         title="{{'DOCUMENT.LOOKUP.BTN_REMOVE'|translate}}">
+        <i class="ion-trash-a"></i>
+      </a>
+    </div>
+
+  </div>
+</ion-item>

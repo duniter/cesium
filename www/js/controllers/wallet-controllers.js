@@ -64,6 +64,11 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   $scope.loading = true;
   $scope.settings = csSettings.data;
   $scope.qrcodeId = 'qrcode-wallet-' + $scope.$id;
+  $scope.toggleQRCode = false;
+  $scope.likeData = {
+    likes: {},
+    abuses: {}
+  };
 
   var wallet;
 
@@ -86,7 +91,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     }
     else {
       // update view (to refresh avatar + plugin data, such as profile, subscriptions...)
-      UIUtils.loading.hide();
+      UIUtils.loading.hide(10);
       $timeout($scope.updateView, 300);
     }
   };
@@ -100,21 +105,25 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         $scope.formData = walletData;
         $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
         $scope.updateView();
-        $scope.showQRCode();
-        $scope.showHelpTip();
         $scope.addListeners();
-        UIUtils.loading.hide(); // loading could have be open (e.g. new account)
+
+        $scope.showQRCode();
+        if (wallet.isDefault()) $scope.showHelpTip();
+
+        UIUtils.loading.hide(10); // loading could have be open (e.g. new account)
       })
       .catch(function(err){
-        if (err == 'CANCELLED') {
+        if (err === 'CANCELLED') {
           $scope.showHome();
+          return;
         }
+        UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR')(err);
       });
   };
 
   $scope.updateView = function() {
     $scope.motion.show({selector: '#wallet .item'});
-    $scope.$broadcast('$$rebind::' + 'rebind'); // force rebind
+    $scope.$broadcast('$$rebind::rebind'); // force rebind
   };
 
 
@@ -186,6 +195,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
             if (!uid) { // user cancel
               delete $scope.formData.uid;
               UIUtils.loading.hide();
+              reject('CANCELLED');
               return;
             }
             resolve(uid);
@@ -200,6 +210,8 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
     return $scope.showUidPopup()
     .then(function(uid) {
+      if (!uid) return;
+
       UIUtils.loading.show();
 
       return wallet.self(uid)
@@ -223,7 +235,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         UIUtils.loading.hide();
       })
       .catch(function(err) {
-        if (err == 'CANCELLED') throw err;
+        if (err === 'CANCELLED') throw err;
         if (err && err.ucode != BMA.errorCodes.MEMBERSHIP_ALREADY_SEND) {
           console.error("[wallet] Node: already membership", err);
           UIUtils.loading.hide();
@@ -247,44 +259,23 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       return UIUtils.alert.info("INFO.NOT_NEED_MEMBERSHIP");
     }
 
-    // Select uid (or reuse it)
-    return ((keepSelf && !!$scope.formData.blockUid) ?
-        $q.when($scope.formData.uid) :
-        $scope.showUidPopup())
+    var uid = angular.isDefined($scope.formData.blockUid) && $scope.formData.uid || undefined;
 
-      // Ask user confirmation
-      .then(function(uid) {
-        return UIUtils.alert.confirm("CONFIRM.MEMBERSHIP")
-          .then(function(confirm) {
-            if (!confirm) throw 'CANCELLED';
-            return uid;
-          });
-      })
-
-      // Send self (identity) - if need
-      .then(function (uid) {
-        UIUtils.loading.show();
-
-        // If uid changed, or self blockUid not retrieve : do self() first
-        if (!$scope.formData.blockUid || uid != $scope.formData.uid) {
-          $scope.formData.blockUid = null;
-          $scope.formData.uid = uid;
-
-          return wallet.self(uid, false/*do NOT load membership here*/);
-        }
-      })
-
-      // Send membership
-      .then($scope.doMembershipIn)
-      .catch(function(err) {
-        if (err == 'CANCELLED') return;
-        if (!wallet.data.uid) {
-          UIUtils.onError('ERROR.SEND_IDENTITY_FAILED')(err);
-        }
-        else {
-          UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED')(err);
-        }
-      });
+    // Approve the license
+    return Modals.showJoinMember({
+      uid : uid,
+      blockUid: uid && $scope.formData.blockUid,
+      pubkey: $scope.formData.pubkey
+    })
+    .catch(function(err) {
+      if (err === 'CANCELLED') return;
+      if (!wallet.data.uid) {
+        UIUtils.onError('ERROR.SEND_IDENTITY_FAILED')(err);
+      }
+      else {
+        UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED')(err);
+      }
+    });
   };
 
   // Send membership OUT
@@ -372,7 +363,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         }
       })
       .catch(function(err){
-        if (err == 'CANCELLED') return;
+        if (err === 'CANCELLED') return;
         UIUtils.loading.hide();
         UIUtils.alert.error(err);
       });
@@ -403,7 +394,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       })
       .then($scope.doMembershipIn)
       .catch(function(err){
-        if (err == 'CANCELLED') return;
+        if (err === 'CANCELLED') return;
         UIUtils.loading.hide();
         UIUtils.alert.error(err);
       });
@@ -436,7 +427,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       })
       .then($scope.doMembershipIn)
       .catch(function(err){
-        if (err == 'CANCELLED') return;
+        if (err === 'CANCELLED') return;
         UIUtils.loading.hide();
         UIUtils.alert.error(err);
       });
@@ -447,16 +438,16 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
    * @param fix
    */
   $scope.doQuickFix = function(event) {
-    if (event == 'renew') {
+    if (event === 'renew') {
       $scope.renewMembership();
     }
-    else if (event == 'membership') {
+    else if (event === 'membership') {
       $scope.membershipIn(true/*keep self*/);
     }
-    else if (event == 'fixMembership') {
-      $scope.fixMembership();
+    else if (event === 'fixMembership') {
+      $scope.fixMembership(false);
     }
-    else if (event == 'fixIdentity') {
+    else if (event === 'fixIdentity') {
       $scope.fixIdentity();
     }
   };
@@ -480,27 +471,26 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
 
   $scope.showQRCode = function(timeout) {
-    if (!$scope.qrcode) {
-      $scope.qrcode = new QRCode(
-        $scope.qrcodeId,
-        {
-          text: $scope.formData.pubkey,
-          width: 200,
-          height: 200,
-          correctLevel: QRCode.CorrectLevel.L
-        });
-      UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
+    if (!wallet || !$scope.qrcodeId) return; // Skip
+
+    // Get the DIV element
+    var element = angular.element(document.querySelector('#' + $scope.qrcodeId + ' .content'));
+    if (!element) {
+      console.error("[wallet-controller] Cannot found div #{0} for the QRCode. Skipping.".format($scope.qrcodeId));
+      return;
     }
-    else {
-      $scope.qrcode.clear();
-      $scope.qrcode.makeCode($scope.formData.pubkey);
-      UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
-    }
+
+    wallet.loadQrCode()
+      .then(function(svg) {
+        element.html(svg);
+        UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
+      });
   };
 
   $scope.hideQRCode = function() {
-    if ($scope.qrcode) {
-      $scope.qrcode.clear();
+    if (!$scope.qrcodeId) return;
+    var element = angular.element(document.querySelector('#' + $scope.qrcodeId));
+    if (element) {
       UIUtils.motion.toggleOff({selector: '#'+$scope.qrcodeId});
     }
   };
@@ -513,7 +503,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       });
     }
     else {
-      $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert_by_id' : 'app.wallet_cert_by_id_lg', {
+      $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert_by_id' : 'app.wallet_cert_lg_by_id', {
         id: $scope.walletId,
         type: 'received'
       });
@@ -528,7 +518,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       });
     }
     else {
-      $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert_by_id' : 'app.wallet_cert_by_id_lg', {
+      $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert_by_id' : 'app.wallet_cert_lg_by_id', {
         id: $scope.walletId,
         type: 'given'
       });
@@ -558,7 +548,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       .then(function(done){
         if (done) {
           UIUtils.toast.show('INFO.TRANSFER_SENT');
-          $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
+          $scope.$broadcast('$$rebind::balance'); // force rebind balance
           $scope.motion.show({selector: '.item-pending'});
         }
       });
@@ -600,30 +590,44 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       });
   };
 
+  $scope.showSelectWalletModal = function() {
+    if (!csWallet.children.count()) return;
+
+    return Modals.showSelectWallet({
+      parameters: {
+        showDefault: true,
+        showBalance: false,
+        excludedWalletId: $scope.walletId
+      }
+    })
+      .then(function(newWallet) {
+        if (!newWallet || wallet && newWallet.id === wallet.id) return;
+        $scope.removeListeners();
+        $scope.loading = true;
+        wallet = newWallet;
+        console.debug("[transfer] Using wallet {" + wallet.id + "}");
+        $scope.formData = {};
+        return $scope.load();
+      });
+  };
 
   /* -- popovers -- */
 
   $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('templates/wallet/popover_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'templates/wallet/popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.actionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
-        });
-        $scope.actionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.actionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
 
@@ -650,11 +654,13 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
 
   $scope.showSelectWalletPopover = function(event) {
+
     return csPopovers.showSelectWallet(event, {
-        scope: $scope
-      })
+      parameters: {
+        excludedWalletId: $scope.walletId
+      }})
       .then(function(newWallet) {
-        if (!newWallet || newWallet.id === wallet.id) return;
+        if (!newWallet || newWallet.id === $scope.walletId) return; // nothing changed
         if (newWallet.isDefault()) {
           return $state.go('app.view_wallet');
         }
@@ -683,6 +689,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
   $scope.loading = true;
   $scope.settings = csSettings.data;
   $scope.listeners = [];
+  $scope.qrcodeId = 'qrcode-wallet-tx-' + $scope.$id;
 
   var wallet;
 
@@ -696,6 +703,8 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
         UIUtils.alert.error('ERROR.UNKNOWN_WALLET_ID');
         return $scope.showHome();
       }
+
+      $scope.walletId = wallet.id;
 
       $scope.cleanLocationHref(state);
 
@@ -715,7 +724,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
   $scope.$on('$ionicView.leave', $scope.leave);
 
   $scope.load = function() {
-    if (!wallet) return;
+    if (!wallet) return $q.reject('Missing wallet');
 
     var hasMinData = wallet.isDataLoaded({minData: true});
     var options = {
@@ -732,15 +741,21 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
         $scope.formData = walletData;
         $scope.loading = false; // very important, to avoid TX to be display before wallet.currentUd is loaded
         $scope.updateView();
-        $scope.showFab('fab-transfer');
-        $scope.showHelpTip();
         $scope.addListeners();
-        UIUtils.loading.hide(); // loading could have be open (e.g. during login phase)
+
+        $scope.showFab('fab-transfer');
+        $scope.showQRCode();
+        if (wallet.isDefault()) $scope.showHelpTip();
+
+        return UIUtils.loading.hide(10); // loading could have be open (e.g. during login phase)
       })
       .catch(function(err){
-        if (err == 'CANCELLED') {
+        if (err === 'CANCELLED') {
           $scope.showHome();
+          return;
         }
+        console.error(err);
+        UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR')(err);
       });
   };
 
@@ -759,8 +774,8 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
   // Update view
   $scope.updateView = function() {
     if (!$scope.formData || $scope.loading) return;
-    $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
-    $scope.$broadcast('$$rebind::' + 'rebind'); // force rebind
+    $scope.$broadcast('$$rebind::balance'); // force rebind balance
+    $scope.$broadcast('$$rebind::rebind'); // force rebind
     $scope.motion.show({selector: '.view-wallet-tx .item', ink: false});
   };
 
@@ -795,6 +810,31 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
       )
       .then($scope.updateView)
       .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
+  };
+
+  $scope.showQRCode = function(timeout) {
+    if (!wallet || !$scope.qrcodeId) return; // Skip
+
+    // Get the DIV element
+    var element = angular.element(document.querySelector('#' + $scope.qrcodeId + ' .content'));
+    if (!element) {
+      console.error("[wallet-controller] Cannot found div #{0} for the QRCode. Skipping.".format($scope.qrcodeId));
+      return;
+    }
+
+    wallet.loadQrCode()
+      .then(function(svg) {
+        element.html(svg);
+        UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
+      });
+  };
+
+  $scope.hideQRCode = function() {
+    if (!$scope.qrcodeId) return;
+    var element = angular.element(document.querySelector('#' + $scope.qrcodeId));
+    if (element) {
+      UIUtils.motion.toggleOff({selector: '#'+$scope.qrcodeId});
+    }
   };
 
   /* -- add listeners -- */
@@ -846,7 +886,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
       .then(function(done){
         if (done) {
           UIUtils.toast.show('INFO.TRANSFER_SENT');
-          $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
+          $scope.$broadcast('$$rebind::balance'); // force rebind balance
           $scope.motion.show({selector: '.item-pending'});
         }
       });
@@ -892,8 +932,11 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
     if (!csWallet.children.count()) return;
 
     return Modals.showSelectWallet({
-      showDefault: true,
-      showBalance: false
+      parameters: {
+        showDefault: true,
+        showBalance: false,
+        excludedWalletId: $scope.walletId
+      }
     })
     .then(function(newWallet) {
       if (!newWallet || wallet && newWallet.id === wallet.id) return;
@@ -957,21 +1000,14 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
     }, []);
 
     // Open popover
-    if (!$scope.lockedOutputsPopover) {
-      $ionicPopover.fromTemplateUrl('templates/wallet/tx_locked_outputs_popover.html', {
-        scope: $scope
-      }).then(function(popover) {
-        $scope.lockedOutputsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.lockedOutputsPopover.remove();
-        });
-        $scope.lockedOutputsPopover.show(event);
-      });
-    }
-    else {
-      $scope.lockedOutputsPopover.show(event);
-    }
+    UIUtils.popover.show(event, {
+      templateUrl: 'templates/wallet/tx_locked_outputs_popover.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
+        $scope.actionsPopover = popover;
+      }
+    });
   };
 
   $scope.hideLockedOutputsPopover = function() {
@@ -980,6 +1016,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
       if ($scope.popoverData) {
         delete $scope.popoverData.unlockConditions;
       }
+      $scope.lockedOutputsPopover = null;
     }
   };
 
@@ -1072,7 +1109,7 @@ function WalletTxErrorController($scope, UIUtils, csSettings, csWallet) {
 
 }
 
-function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, parameters){
+function WalletSecurityModalController($scope, UIUtils, csConfig, csWallet, $translate, parameters){
 
   var wallet = parameters && parameters.wallet || csWallet;
 
@@ -1114,6 +1151,10 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
       });
     });
 
+  $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
+    // Disable swipe
+    data.slider.lockSwipes();
+  });
 
   $scope.slidePrev = function() {
     $scope.slides.slider.unlockSwipes();
@@ -1183,7 +1224,10 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
     }
   };
 
-  $scope.selectOption = function(option){
+  $scope.selectOption = function(option, enableOnDemo){
+    if (!enableOnDemo && csConfig.demo) {
+      return UIUtils.alert.demo();
+    }
     $scope.option = option;
     $scope.slideNext();
   };
@@ -1230,13 +1274,12 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
   };
 
   /**
-   * Recover Id
+   * Set the file content
    */
-
-  $scope.recoverContent = function(file) {
+  $scope.onFileChanged = function(file) {
     $scope.hasContent = angular.isDefined(file) && file !== '';
     $scope.fileData = file.fileData ? file.fileData : '';
-    $scope.isValidFile = $scope.fileData !== '' && $scope.fileData.type == 'text/plain';
+    $scope.isValidFile = $scope.fileData !== '' && $scope.fileData.type === 'text/plain';
 
     if ($scope.isValidFile && $scope.option === 'recoverID') {
       $scope.content = file.fileContent.split('\n');
@@ -1288,7 +1331,8 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
         else {
           UIUtils.alert.error('ERROR.RECOVER_ID_FAILED');
         }
-      });
+      })
+      .catch(UIUtils.onError('ERROR.RECOVER_ID_FAILED'));
 
   };
 
@@ -1314,7 +1358,7 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
         }
       })
       .catch(function(err) {
-        if (err && err == 'CANCELLED') return;
+        if (err && err === 'CANCELLED') return;
         UIUtils.alert.error('ERROR.SALT_OR_PASSWORD_NOT_CONFIRMED', 'ERROR.LOGIN_FAILED');
         return;
       })
@@ -1378,7 +1422,7 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
       })
 
       .catch(function(err){
-        if (err && err == 'CANCELLED') return;
+        if (err && err === 'CANCELLED') return;
         UIUtils.onError('ERROR.DOWNLOAD_REVOCATION_FAILED')(err);
       })
       ;
@@ -1401,7 +1445,7 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
         return $scope.revokeIdentity();
       })
       .catch(function (err) {
-        if (err == 'CANCELLED') return;
+        if (err === 'CANCELLED') return;
         UIUtils.onError('ERROR.REVOCATION_FAILED')(err);
       });
   };
@@ -1445,7 +1489,16 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, pa
         $scope.closeModal();
         return UIUtils.loading.hide();
       })
-      .catch(UIUtils.onError('ERROR.REVOCATION_FAILED'));
+      .catch(function(err) {
+        if ($scope.revocation){
+          $scope.isValidFile = false;
+          $scope.revocationError = err && err.message || err || 'ERROR.REVOCATION_FAILED';
+          UIUtils.loading.hide(10);
+        }
+        else {
+          UIUtils.onError('ERROR.REVOCATION_FAILED')(err);
+        }
+      });
   };
 
 

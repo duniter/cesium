@@ -16,9 +16,9 @@
         <div class="padding padding-xs" style="display: block; height: 60px;">
           <div class="pull-left">
             <h4>
-              <span ng-if="enableFilter && search.type=='member'" translate>PEER.MEMBERS</span>
-              <span ng-if="enableFilter && search.type=='mirror'" translate>PEER.MIRRORS</span>
-              <span ng-if="enableFilter && search.type=='offline'" translate>PEER.OFFLINE</span>
+              <span ng-if="enableFilter && search.type=='member'" translate>PEER.MEMBER_PEERS</span>
+              <span ng-if="enableFilter && search.type=='mirror'" translate>PEER.MIRROR_PEERS</span>
+              <span ng-if="enableFilter && search.type=='offline'" translate>PEER.OFFLINE_PEERS</span>
               <span ng-if="!enableFilter || !search.type" translate>PEER.ALL_PEERS</span>
               <span ng-if="search.results.length">({{search.results.length}})</span>
               <ion-spinner ng-if="search.loading" class="icon ion-spinner-small" icon="android"></ion-spinner>
@@ -29,7 +29,17 @@
 
             <div class="pull-right" ng-if="enableFilter">
               <a class="button button-text button-small hidden-xs hidden-sm ink"
+                 ng-class="{'button-text-positive': compactMode}"
+                 ng-click="toggleCompactMode()">
+                <i class="icon ion-navicon"></i>
+                <b class="ion-arrow-down-b" style="position: absolute; top: -2px; left: 4px; font-size: 8px;"></b>
+                <b class="ion-arrow-up-b" style="position: absolute; top: 10px; left: 4px; font-size: 8px;"></b>
+                <span>{{:locale:'BLOCKCHAIN.LOOKUP.BTN_COMPACT'|translate}}</span>
+              </a>
+
+              <a class="button button-text button-small hidden-xs hidden-sm ink"
                  ng-class="{'button-text-positive': search.type=='member'}"
+                 title="{{:locale:'PEER.MEMBER_PEERS'|translate}}"
                  ng-click="toggleSearchType('member')">
                 <i class="icon ion-person-stalker"></i>
                 {{'PEER.MEMBERS'|translate}}
@@ -37,20 +47,23 @@
               &nbsp;
               <a class="button button-text button-small hidden-xs hidden-sm ink"
                  ng-class="{'button-text-positive': search.type=='mirror'}"
+                 title="{{'PEER.MIRROR_PEERS'|translate}}"
                  ng-click="toggleSearchType('mirror')" >
                 <i class="icon ion-radio-waves"></i>
-                {{'PEER.MIRRORS'|translate}}
+                {{:locale:'PEER.MIRRORS'|translate}}
               </a>
 
               <a class="button button-text button-small hidden-xs hidden-sm ink"
                  ng-class="{'button-text-positive': search.type=='offline', 'button-text-stable': search.type!='offline'}"
+                 title="{{'PEER.OFFLINE_PEERS'|translate}}"
                  ng-click="toggleSearchType('offline')" >
                 <i class="icon ion-close-circled light-gray"></i>
-                <span>{{'PEER.OFFLINE'|translate}}</span>
+                <span>{{:locale:'PEER.OFFLINE'|translate}}</span>
               </a>
 
               <!-- Allow extension here -->
-              <cs-extension-point name="filter-buttons"></cs-extension-point>
+              <cs-extension-point name="network-buttons"></cs-extension-point>
+
             </div>
           </div>
         </div>
@@ -58,7 +71,7 @@
         <div id="helptip-network-blockchain" style="display: block"></div>
         <div id="helptip-network-peers" style="display: block"></div>
 
-        <ng-include src="'templates/network/items_peers.html'"></ng-include>
+        <ng-include src="::'templates/network/items_peers.html'"></ng-include>
       </div>
 
       <div class="col col-33" ng-controller="BlockLookupCtrl">
@@ -73,16 +86,16 @@
               <i class="icon ion-navicon"></i>
               <b class="icon-secondary ion-arrow-down-b" style="top: -8px; left: 5px; font-size: 8px;"></b>
               <b class="icon-secondary ion-arrow-up-b" style="top: 4px; left: 5px; font-size: 8px;"></b>
-              <span>{{'BLOCKCHAIN.LOOKUP.BTN_COMPACT'|translate}}</span>
+              <span>{{:locale:'BLOCKCHAIN.LOOKUP.BTN_COMPACT'|translate}}</span>
             </a>
 
             <!-- Allow extension here -->
-            <cs-extension-point name="buttons"></cs-extension-point>
+            <cs-extension-point name="blockchain-buttons"></cs-extension-point>
 
           </div>
         </div>
 
-        <ng-include src="'templates/blockchain/list_blocks.html'"></ng-include>
+        <ng-include src="::'templates/blockchain/list_blocks.html'"></ng-include>
       </div>
     </div>
   </ion-content>

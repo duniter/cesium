@@ -1,6 +1,6 @@
 angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.http.services'])
 
-.factory('esBlockchain', function($rootScope, $q, $timeout, BMA, esHttp) {
+.factory('esBlockchain', function($rootScope, $q, $timeout, BMA, csCache, esHttp) {
   'ngInject';
 
   function EsBlockchain() {
@@ -31,22 +31,23 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
         block: {},
         raw: {
           block: {
-            search: esHttp.post('/:currency/block/_search'),
+            search: esHttp.post('/:currency/block/_search', csCache.constants.SHORT),
             searchText: esHttp.get('/:currency/block/_search?q=:text'),
-            get: esHttp.get('/:currency/block/:number/_source')
+            get: esHttp.get('/:currency/block/:number/_source', csCache.constants.SHORT)
           }
         },
-        regex: {
+        regexp: {
           ES_CORE_API_ENDPOINT: exact(CONSTANTS.ES_CORE_API_ENDPOINT)
         }
       };
+    exports.regex = exports.regexp;  // deprecated
 
     function exact(regexpContent) {
       return new RegExp('^' + regexpContent + '$');
     }
 
     exports.node.parseEndPoint = function(endpoint) {
-      var matches = REGEX.ES_CORE_API_ENDPOINT.exec(endpoint);
+      var matches = exports.regexp.ES_CORE_API_ENDPOINT.exec(endpoint);
       if (!matches) return;
       return {
         dns: matches[2] || '',

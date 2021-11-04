@@ -20,8 +20,8 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
   .controller('SettingsCtrl', SettingsController)
 ;
 
-function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $translate, $ionicPopover,
-                            UIUtils, Modals, BMA, csHttp, csCurrency, csSettings, csPlatform) {
+function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $timeout, $translate, $ionicPopover,
+                            UIUtils, Modals, BMA, csHttp, csConfig, csCurrency, csSettings, csPlatform) {
   'ngInject';
 
   $scope.formData = angular.copy(csSettings.data);
@@ -84,24 +84,24 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
     $q.all([
       csSettings.ready(),
       csCurrency.parameters()
-        .then(function(parameters) {
-          return parameters && parameters.avgGenTime;
-        })
-        // Make sure to continue even if node is down - Fix #788
         .catch(function(err) {
-          console.error("[settings] Could not not currency parameters. Using default 'avgGenTime' (300)", err);
-          return {avgGenTime: 300};
+          // Continue (will use default value)
+          // Make sure to continue even if node is down - Fix #788
         })
         .then(function(parameters) {
+          var avgGenTime = parameters && parameters.avgGenTime;
+          if (!avgGenTime || avgGenTime < 0) {
+            console.warn("[settings] Could not not currency parameters. Using default G1 'avgGenTime' (300s)");
+            avgGenTime = 300; /* = G1 value = 5min */
+          }
           _.each($scope.blockValidityWindows, function(blockCount) {
             if (blockCount > 0) {
-              $scope.blockValidityWindowLabels[blockCount].labelParams.time= parameters.avgGenTime * blockCount;
+              $scope.blockValidityWindowLabels[blockCount].labelParams.time = avgGenTime * blockCount;
             }
           });
         })
     ])
-      .then($scope.load)
-    ;
+    .then($scope.load);
   });
 
   $scope.setPopupForm = function(popupForm) {
@@ -121,9 +121,9 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
     $scope.formData.locale = (csSettings.data.locale && csSettings.data.locale.id && _.findWhere($scope.locales, {id: csSettings.data.locale.id})) ||
       _.findWhere($scope.locales, {id: csSettings.defaultSettings.locale.id});
 
-    $scope.loading = false;
 
-    $timeout(function() {
+    return $timeout(function() {
+      $scope.loading = false;
       // Set Ink
       UIUtils.ink({selector: '.item'});
       $scope.showHelpTip();
@@ -167,8 +167,7 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
       }
       UIUtils.loading.show();
 
-      var nodeBMA = BMA.instance(newNode.host, newNode.port, newNode.useSsl, true /*cache*/);
-      nodeBMA.isAlive()
+      BMA.isAlive(newNode)
         .then(function(alive) {
           if (!alive) {
             UIUtils.loading.hide();
@@ -180,10 +179,11 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
           UIUtils.loading.hide();
           angular.merge($scope.formData.node, newNode);
           delete $scope.formData.node.temporary;
-          BMA.copy(nodeBMA);
+          BMA.stop();
+          BMA.copy(newNode);
           $scope.bma = BMA;
 
-          // Start platform is not already started
+          // Restart platform (or start if not already started)
           csPlatform.restart();
 
           // Reset history cache
@@ -193,8 +193,16 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
   };
 
   $scope.showNodeList = function() {
+    // Check if need a filter on SSL node
+    var forceUseSsl = (csConfig.httpsMode === 'true' || csConfig.httpsMode === true || csConfig.httpsMode === 'force') ||
+    ($window.location && $window.location.protocol === 'https:') ? true : false;
+
     $ionicPopup._popupStack[0].responseDeferred.promise.close();
-    return Modals.showNetworkLookup({enableFilter: true, type: 'member'})
+    return Modals.showNetworkLookup({
+      enableFilter: true, // enable filter button
+      bma: true, // only BMA node
+      ssl: forceUseSsl ? true : undefined
+    })
       .then(function (peer) {
         if (peer) {
           var bma = peer.getBMA();
@@ -202,7 +210,7 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
             host: (bma.dns ? bma.dns :
                    (peer.hasValid4(bma) ? bma.ipv4 : bma.ipv6)),
             port: bma.port || 80,
-            useSsl: bma.useSsl
+            useSsl: bma.useSsl || bma.port == 443
           };
         }
       })
@@ -276,14 +284,22 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
     $scope.saving = true;
 
     // Async - to avoid UI lock
-    $timeout(function() {
+    return $timeout(function() {
       // Make sure to format helptip
       $scope.cleanupHelpTip();
 
+      // Applying
       csSettings.apply($scope.formData);
-      csSettings.store();
-      $scope.saving = false;
-    }, 100);
+
+      // Store
+      return csSettings.store();
+
+    }, 100)
+    .then(function() {
+      //return $timeout(function() {
+        $scope.saving = false;
+      //}, 100);
+    });
   };
 
   $scope.onDataChanged = function(oldValue, newValue, scope) {
@@ -297,13 +313,23 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
       }, 500);
     }
 
-    var updated = !angular.equals(oldValue, newValue);
-    if (updated) {
-      //console.debug('Detected settings update: will save it');
+    // Changes from the current scope: save changes
+    if ((scope === $scope) && !angular.equals(oldValue, newValue)) {
       $scope.save();
     }
   };
   $scope.$watch('formData', $scope.onDataChanged, true);
+
+  // Detected changes from outside (e.g. enabling encryption on wallet can be rollback if user cancel auth)
+  csSettings.api.data.on.changed($scope, function(data) {
+    if ($scope.loading || $scope.saving || $scope.pendingSaving) return;
+
+    var updated = !angular.equals(data.useLocalStorageEncryption, $scope.formData.useLocalStorageEncryption);
+    if (updated) {
+      console.debug('[settings] Settings changed (outside the settings page). Reloading...');
+      $scope.load();
+    }
+  });
 
   $scope.getServer = function() {
     if (!$scope.formData.node || !$scope.formData.node.host) return '';
@@ -324,26 +350,20 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
   /* -- modals & popover -- */
 
   $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('templates/settings/popover_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'templates/settings/popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.actionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
-        });
-        $scope.actionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.actionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
 

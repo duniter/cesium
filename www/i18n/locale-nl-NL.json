@@ -87,8 +87,6 @@
     "CURRENCY": "Valuta",
     "CURRENCIES": "Valuta's",
     "ACCOUNT": "Mijn rekening",
-    "TRANSFER": "Overmaken",
-    "SCAN": "Scannen",
     "SETTINGS": "Instellingen",
     "NETWORK": "Netwerk",
     "TRANSACTIONS": "Mijn transacties"
@@ -434,7 +432,6 @@
     "SEND_CERTIFICATION_FAILED": "Could not certify identity.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY": "You could not send certification, because your account is <b>not a member account</b>.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF": "You could not send certification now, because your are <b>not a member</b> yet.<br/><br/>You still need certification to become a member.",
-    "NOT_MEMBER_FOR_CERTIFICATION": "Your account is not a member account yet.",
     "IDENTITY_TO_CERTIFY_HAS_NO_SELF": "This account could not be certified. No registration found, or need to renew.",
     "LOGIN_FAILED": "Error while sign in.",
     "LOAD_IDENTITY_FAILED": "Could not load identity.",
@@ -489,7 +486,11 @@
     "COPY_TO_CLIPBOARD_DONE": "Kopie geslaagd",
     "MEMBERSHIP_OUT_SENT": "Opzegging lidmaatschap succesvol verzonden",
     "NOT_NEED_MEMBERSHIP": "Je bent al lid.",
-    "IDENTITY_WILL_MISSING_CERTIFICATIONS": "Deze identiteit heeft binnenkort onvoldoende certificaties (ten minste {{willNeedCertificationCount}} nodig)."
+    "IDENTITY_WILL_MISSING_CERTIFICATIONS": "Deze identiteit heeft binnenkort onvoldoende certificaties (ten minste {{willNeedCertificationCount}} nodig).",
+    "REVOCATION_SENT": "Intrekking succesvol verzonden",
+    "REVOCATION_SENT_WAITING_PROCESS": "Intrekking <b>is succesvol verzonden</b>. Het wacht op verwerking.",
+    "FEATURE_NOT_AVAILABLE_ON_DEMO": "Functionaliteit niet beschikbaar op deze demonstratiesite.<br/>Om <b>veiligheidsredenen</b> raden we u aan uw kopie van de software te <b>installeren</b>.<br/>Bezoek de website <a href='https://cesium.app'>www.cesium.app</a> voor hulp.",
+    "EMPTY_TX_HISTORY": "Aucune operatie à exporteur"
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Bevestiging</b>",

@@ -2,114 +2,53 @@
 
 # Cesium
 
-[Unhosted webapp](https://unhosted.org) client for any [Duniter](https://duniter.org) crypto-currency.
+Cesium is wallet client software for [Duniter](https://duniter.org) crypto-currency, like Ğ1.
+Cesium allow you to manage your wallet, certify your friends, and more!
 
-Manage your wallet, certify your friends, and more ! 
+Cesium is an [Unhosted](https://unhosted.org) Progressive Web Application (PWA), using AngularJS and Ionic.
 
+Please visit th Cesium web site: [cesium.app](https://cesium.app)
 
-## Try it !
+## Install
 
- - on Ğ1-test currency: https://g1-test.duniter.fr
- - on Ğ1 currency (production use): https://g1.duniter.fr
+### As a web extension (Firefox, Chrome)
 
-
-## Installation
-
-### On a desktop computer
+ - Download the [latest extension release](https://github.com/duniter/cesium/releases/latest)
  
- To use Cesium from your desktop computer :
+ - Drag/drop the file into your browser;
  
- - Debian or Windows: 
-    * Download the [latest release](https://github.com/duniter/cesium/releases/latest).
-    * Choose the desktop packaging (`cesium-desktop-vX.Y.Z-*`)
-    * Execute the downloaded file, and follow installation steps;
- - Other operating systems: 
-    * Choose the web packaging (`cesium-vX.Y.Z-web.zip`);
-    * Unpack the archive into a empty folder;
-    * Open the file `index.html` in your web browser;
-
-### On a Yunohost installation
-
-There is a [package](https://github.com/duniter/cesium_ynh) for [YunoHost self-hosting distribution](https://yunohost.org).
-
-### On a web server
-
-#### Installation
-
-Cesium can be easily installed on most web server : 
-
- - Download the [latest release](https://github.com/duniter/cesium/releases/latest). Choose the web packaging (`cesium-vX.Y.Z-web.zip`); 
- - Unpack in a empty directory;
- - Configure a virtual host, to use previous directory as root. Check the file `index.html` exist in the root directory.
-
-For Linux distribution, a installation script could also be used to:
+ - Confirm the installation.
+ 
+ That's it! A new button is appeared, on the top right corner.
+ 
+### On desktop computer
 
  - Download the [latest release](https://github.com/duniter/cesium/releases/latest)
- - Unpack archive into the directory `./cesium`. Existing files will be override.  
-
-```
-curl -kL https://git.duniter.org/clients/cesium-grp/cesium/raw/master/install.sh | bash
-```
-or:
-
-```
-wget -qO- https://git.duniter.org/clients/cesium-grp/cesium/raw/master/install.sh | bash
-```
-
-
-**Note**: You may need root permission to write files. If so just replace `| bash` with `| sudo bash`.
-
-#### Configuration
-
-To change default configuration, on a web server installation:
-
-  - Edit the file `config.js`, and set default properties:
-  
-```js
-angular.module("cesium.config", [])
-.constant("csConfig", {
-  "fallbackLanguage": "en",
-  "rememberMe": false,
-  "timeWarningExpireMembership": 5184000,
-  "timeWarningExpire": 7776000,
-  "useLocalStorage": true,
-  "useRelative": true,
-  "decimalCount": 4,
-  "helptip": {
-    "enable": true,
-    "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
-  },
-  "node": {
-    "host": "gtest.duniter.org",
-    "port": "10900"
-  },
-	"plugins": {
-		"es": {
-			"enable": "false",
-			"host": "data.gtest.duniter.fr",
-			"port": "80"
-		}
-	},
-	"version": "0.9.7",
-	"build": "2017-01-17T08:27:57.915Z"
-});
-```
-
-  - Configure a Duniter node:
  
-     * set `node.host` and `node.port` to the default node address. 
-   
-  - Configure the optional extension for [ElasticSearch Duniter4j node](https://github.com/duniter/duniter4j)
- 
-     * set `plugins.es.host` and `plugins.es.port` to the default ES node address.
-   
-     * set `plugins.es.enable` with [true|false] to change the default extension state. 
-   
-To learn more about configuration options, see the [detailed documentation](doc/configuration.md).
- 
-## Developement
+ - Then install, depending on your operating system:  
+    * Ubuntu: Double click the `.deb` file
+    * Debian: Run the command `sudo dpkg -i *.deb`
+    * Windows: Double click on the `.exe` file
+    * Mac OSx: Unzip the osx `.zip` file, then drop Cesium into your `Applications` folder 
+    * Other operating systems:  
+       * Unpack the ZIP archive (file `cesium-vX.Y.Z-web.zip`) into an empty folder;
+       * Open the file `index.html` in your web browser;
 
-Wants to compile Cesium ? or contribute ?
+### On smartphone
+
+ - Android: 
+    * Manual installation: download then install the `.apk` from your smartphone;
+    * [Play Store](https://play.google.com/store/apps/details?id=fr.duniter.cesium);
+ - iOS
+    * Coming soon...;
+
+
+ 
+#### Yunohost package
+    
+There is a [package](https://github.com/duniter/cesium_ynh) for [YunoHost self-hosting distribution](https://yunohost.org).
+
+## Contribute
 
 A [Development Guide](doc/development_guide.md) is available to learn :
  - How to install your development environment.
@@ -117,16 +56,10 @@ A [Development Guide](doc/development_guide.md) is available to learn :
  
 A [development tutorial](doc/fr/development_tutorial-01.md) (in French) is also available.
 
+## Donate
+
+To help developers with donation, use the [Cesium Team Ğ1 account](https://g1.duniter.fr#/app/wot/CitdnuQgZ45tNFCagay7Wh12gwwHM8VLej1sWmfHWnQX/) (public key: `CitdnuQgZ45tNFCagay7Wh12gwwHM8VLej1sWmfHWnQX`) 
+
 ## License
 
 This software is distributed under [GNU AGPL-3.0](https://raw.github.com/duniter/cesium/master/LICENSE).
-
-## Troubleshooting
-
-#### I'm having errors on Ubuntu/Debian (desktop version)
-
-Install these dependencies:
-
-```
-sudo apt-get install -y libgconf-2-4
-```

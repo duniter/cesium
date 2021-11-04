@@ -1,0 +1,15 @@
+<ion-popover-view class="fit popover-locales" style="height: {{locales.length*48}}px;">
+  <ion-content scroll="false">
+    <div class="list item-text-wrap block">
+
+      <a  ng-repeat="l in locales track by l.id"
+        class="item item-icon-left ink"
+         ng-click="changeLanguage(l.id)">
+        <i class="item-image avatar"
+           style="background-image: url(../img/flag-{{l.flag}}.png)"></i>
+        {{l.label | translate}}
+      </a>
+
+    </div>
+  </ion-content>
+</ion-popover-view>

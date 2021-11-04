@@ -20,7 +20,9 @@ $dark:                            #444 !default;
 //$balanced:                        #33cd5f !default;
 
 //$dark:                              #030055 !default; // bleu foncé uCoin App
-//$assertive:                       #94c11f !default;
+//$assertive:
+//
+// #94c11f !default;
 //$balanced:                        #94c11f !default;
 
 $light:                           #fff !default;
@@ -37,7 +39,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 @import "www/lib/ionic/scss/ionic";
 
 // Add robotodraft fonts (need for ionic material)
-$RobotoDraftFontPath: "../lib/ionic/fonts/robotdraft";
+$RobotoDraftFontPath: "../lib/robotodraft/fonts";
 $RobotoDraftFontName: "RobotoDraft";
 $RobotoDraftFontVersion: "1.1.0";
 
@@ -52,8 +54,7 @@ $cesiumicons-font-path: "../fonts" !default;
 @import "./icons/cesiumicons";
 
 // Include ion-digit-keyboard
-// FIXME: how to remove style from HTML doc insertion ?
-//@import "www/lib/ion-digit-keyboard/src/ion-digit-keyboard";
+@import "www/lib/ion-digit-keyboard/src/ion-digit-keyboard";
 
 // --------------------------------------------------
 // Responsive: Utility classes
@@ -67,6 +68,9 @@ $screen-md:                       992px;
 $screen-md-max:                   1199px;
 $screen-lg:                       1200px;
 
+// Resolution for left menu show/hide
+$screen-nomenu-max:               $screen-xs-max;
+$screen-menu:                     $screen-sm;
 
 // IE10 on Windows Phone 8
 // IE10 on WP8 doesn't report CSS pixels, but actual device pixels. In
@@ -85,8 +89,11 @@ $screen-lg:                       1200px;
 // Smaller device: Phones (<401px)
 // ----------------------------------
 @media screen and (max-width: $screen-xxs-max) {
-  @-ms-viewport{
+  @-ms-viewport {
     width: 320px;
+  }
+  .no-padding-xxs {
+    padding: 0 !important;
   }
 }
 
@@ -95,149 +102,151 @@ $screen-lg:                       1200px;
 // ----------------------------------
 @media screen and (max-width: $screen-xs-max) {
   .hidden-xs {
-      display: none !important;
-      visibility: hidden !important;
+    display: none !important;
+    visibility: hidden !important;
   }
 
   .padding-top-xs {
     padding-top: 10px;
   }
 }
+
 @media screen and (min-width: $screen-sm) {
-    .hidden-xs {
-        display: inherit;
-        visibility: visible;
-    }
-    .row.hidden-xs {
-      display: flex !important;
-    }
-    .button.hidden-xs {
-      display: inline-block;
-    }
-    .item-toggle .toggle {
-      right: 32px;
-    }
+  .hidden-xs {
+    display: inherit;
+    visibility: visible;
+  }
+  .row.hidden-xs {
+    display: flex !important;
+  }
+  .button.hidden-xs {
+    display: inline-block;
+  }
 }
+
 @media screen and (max-width: $screen-xs-max) {
-    .visible-xs {
-        display: inherit !important;
-        visibility: visible !important;
-    }
-    .button.visible-xs {
-      display: inline-block !important;
-    }
+  .visible-xs {
+    display: inherit !important;
+    visibility: visible !important;
+  }
+  .button.visible-xs {
+    display: inline-block !important;
+  }
 }
+
 @media screen and (min-width: $screen-sm) {
-    .visible-xs {
-        display: none !important;
-        visibility: hidden !important;
-    }
+  .visible-xs {
+    display: none !important;
+    visibility: hidden !important;
+  }
 }
+
 @media screen and (max-width: $screen-xs-max) {
-    .padding-xs {
-        padding: 16px !important;
-    }
-}
-@media screen and (min-width: $screen-sm) {
-    .padding-xs {
-        padding: inherit;
-    }
-}
-@media screen and (max-width: $screen-xs-max) {
-    .no-padding-xs {
-        padding: 0px !important;
-    }
-}
-@media screen and (min-width: $screen-sm) {
-    .no-padding-xs {
-        padding: inherit;
-    }
-}
-@media screen and (max-width: $screen-xs-max) {
-    .no-margin-xs {
-        margin: 0px !important;
-    }
-}
-@media screen and (min-width: $screen-sm) {
-    .no-margin-xs {
-        margin: inherit;
-    }
+  .padding-xs {
+    padding: 16px !important;
+  }
+  .no-padding-xs {
+    padding: 0 !important;
+  }
+  .no-margin-xs {
+    margin: 0 !important;
+  }
 }
 
 // ----------------------------------
 // Small devices: Tablets (≥768px)
 // ----------------------------------
-@media screen and (max-width: $screen-sm-max) and (min-width: $screen-sm){
-    .hidden-sm, .row-header.hidden-sm {
-        display: none !important;
-        visibility: hidden !important;
-    }
-    .badge {
-      text-overflow: ellipsis !important;
-      white-space: nowrap;
-      overflow: hidden !important;
-      max-width: 400px !important;
-      display: inline-block !important;
-    }
-    .badge:empty {
-      display: none !important;
-    }
+@media screen and (min-width: $screen-sm) and (max-width: $screen-sm-max) {
+  .hidden-sm,
+  .row.hidden-sm,
+  .row-header.hidden-sm {
+    display: none !important;
+    visibility: hidden !important;
   }
-@media screen and (min-width: $screen-md) {
-    .hidden-sm {
-        display: inherit;
-        visibility: visible;
-    }
-    .row.hidden-sm {
-      display: flex !important;
-    }
-    .button.hidden-sm {
-      display: flex;
-    }
-    .pull-right,
-    .pull-left {
-      .button.hidden-sm {
-        display: inline-block;
-      }
-    }
-}
-@media screen and (max-width: $screen-xs-max) {
-    .hidden-sm {
-        display: inherit;
-        visibility: visible;
-    }
-}
-@media screen and (max-width: $screen-sm-max) {
-    .visible-sm {
-        display: inherit !important;
-        visibility: visible !important;
-    }
-    .button.visible-sm {
-      display: inline-block !important;
-    }
-}
-@media screen and (min-width: $screen-md) {
-    .visible-sm {
-        display: none;
-        visibility: hidden;
-    }
-}
-@media screen and (max-width: $screen-xs-max) {
-    .visible-sm {
-        display: none;
-        visibility: hidden;
-    }
-}
-@media screen and (max-width: $screen-sm-max) {
-  body {
-      cursor: url('http://ionicframework.com/img/finger.png'), auto;
+  .badge {
+    text-overflow: ellipsis !important;
+    white-space: nowrap;
+    overflow: hidden !important;
+    max-width: 400px !important;
+    display: inline-block !important;
+  }
+  .badge:empty {
+    display: none !important;
+  }
+  .padding-sm {
+    padding: 16px !important;
+  }
+  .no-padding-sm {
+    padding: 0 !important;
+  }
+  .no-margin-sm {
+    margin: 0 !important;
   }
 }
-@media screen and (min-width: $screen-md) {
-  body {
-      cursor: inherit;
-  }
 
+@media screen and (min-width: $screen-sm) {
+  .item-toggle .toggle {
+    right: 32px;
+  }
+}
+
+@media screen and (min-width: $screen-md) {
+  .hidden-sm {
+    display: inherit;
+    visibility: visible;
+  }
+  .row.hidden-sm {
+    display: flex !important;
+  }
+  .button.hidden-sm {
+    display: flex;
+  }
+  .button.button-icon.hidden-sm {
+    display: inline-block;
+  }
+  .pull-right,
+  .pull-left {
+    .button.hidden-sm {
+      display: inline-block;
+    }
+  }
+}
+
+@media screen and (max-width: $screen-xs-max) {
+  .hidden-sm {
+    display: inherit;
+    visibility: visible;
+  }
+}
+
+@media screen and (max-width: $screen-sm-max) {
+  .visible-sm {
+    display: inherit !important;
+    visibility: visible !important;
+  }
+  .button.visible-sm {
+    display: inline-block !important;
+  }
+}
+
+@media screen and (min-width: $screen-md) {
+  .visible-sm {
+    display: none;
+    visibility: hidden;
+  }
+}
+
+@media screen and (max-width: $screen-xs-max) {
+  .visible-sm {
+    display: none;
+    visibility: hidden;
+  }
+}
+
+@media screen and (min-width: $screen-md) {
+  body {
+    cursor: inherit;
+  }
 }
 
 // ----------------------------------
@@ -245,8 +254,8 @@ $screen-lg:                       1200px;
 // ----------------------------------
 @media screen and (min-width: $screen-md) and (max-width: $screen-md-max) {
   .hidden-md {
-      display: none !important;
-      visibility: hidden !important;
+    display: none !important;
+    visibility: hidden !important;
   }
   .badge {
     text-overflow: ellipsis !important;
@@ -259,34 +268,39 @@ $screen-lg:                       1200px;
     display: none !important;
   }
 }
+
 @media screen and (min-width: $screen-lg) {
   .hidden-md {
-      display: inherit;
-      visibility: visible;
+    display: inherit;
+    visibility: visible;
   }
 }
+
 @media screen and (max-width: $screen-sm-max) {
   .hidden-md {
-      display: inherit;
-      visibility: visible;
+    display: inherit;
+    visibility: visible;
   }
 }
+
 @media screen and (min-width: $screen-md) and (max-width: $screen-md-max) {
   .visible-md {
-      display: inherit !important;
-      visibility: visible !important;
+    display: inherit !important;
+    visibility: visible !important;
   }
 }
+
 @media screen and (min-width: $screen-lg) {
   .visible-md {
-      display: none;
-      visibility: hidden;
+    display: none;
+    visibility: hidden;
   }
 }
+
 @media screen and (max-width: $screen-sm-max) {
   .visible-md {
-      display: none;
-      visibility: hidden;
+    display: none;
+    visibility: hidden;
   }
 }
 
@@ -295,12 +309,12 @@ $screen-lg:                       1200px;
 // ----------------------------------
 @media screen and (min-width: $screen-lg) {
   .hidden-lg {
-      display: none !important;
-      visibility: hidden !important;
+    display: none !important;
+    visibility: hidden !important;
   }
   .visible-lg {
-      display: inherit !important;
-      visibility: visible !important;
+    display: inherit !important;
+    visibility: visible !important;
   }
   .badge {
     text-overflow: ellipsis !important;
@@ -313,28 +327,31 @@ $screen-lg:                       1200px;
     display: none !important;
   }
 }
+
 @media screen and (max-width: $screen-md-max) {
-    .hidden-lg {
-        display: inherit;
-        visibility: visible;
-    }
+  .hidden-lg {
+    display: inherit;
+    visibility: visible;
+  }
 }
+
 @media screen and (max-width: $screen-md-max) {
-    .visible-lg {
-        display: none;
-        visibility: hidden;
-    }
+  .visible-lg {
+    display: none;
+    visibility: hidden;
+  }
 }
 
 @media screen and (max-width: $screen-sm) {
-    .no-padding-xs {
-        padding: inherit;
-    }
+  .no-padding-xs {
+    padding: inherit;
+  }
 }
+
 @media screen and (max-width: $screen-xs-max) {
-    .no-margin-xs {
-        margin: 0px !important;
-    }
+  .no-margin-xs {
+    margin: 0 !important;
+  }
 }
 
 @media screen and (min-width: $screen-md) {
@@ -356,57 +373,203 @@ $screen-lg:                       1200px;
  Left menu
 =============== */
 
-// Resolution for left menu show/hide
-$screen-nomenu-max:               844px;
-$screen-menu:                     845px;
-
 // Screen without left menu
 @media screen and (max-width: $screen-nomenu-max) {
-    .hidden-nomenu {
-        display: none !important;
-        visibility: hidden !important;
-    }
-    .visible-nomenu {
-        display: inherit !important;
-        visibility: visible !important;
-    }
+  .hidden-nomenu {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  .visible-nomenu {
+    display: unset;
+    visibility: visible !important; }
 }
 @media screen and (min-width: $screen-menu) {
-    .hidden-nomenu {
-        display: inherit;
-        visibility: visible;
+  .visible-nomenu {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
+.menu.menu-left {
+
+  background-color: whitesmoke;
+  .item {
+    opacity: 0.75;
+    color: black;
+  }
+
+  .item-button-right > .button,
+  .item-button-right .item-content > .button,
+  .item-button-right > .buttons,
+  .item-button-right .item-content > .buttons {
+    top: 8px !important;
+  }
+
+  .item.active {
+    background-color: $active !important;
+
+    .item-content {
+      background-color: transparent;
     }
-    .visible-nomenu {
-        display: none !important;
-        visibility: hidden !important;
+  }
+
+  .item-menu-disable {
+    color: $dark !important;
+  }
+
+  .item-spacer {
+    flex: 1 1 auto;
+  }
+
+  .item-actions {
+    min-height: 55px !important;
+  }
+
+  .item-closeable:hover {
+    cursor: pointer;
+  }
+
+
+  .item-closeable {
+    .close {
+      position: absolute;
+      right: 5px;
+      top: 5px;
     }
+  }
+  .item-closeable:hover {
+    .close {
+      @extend .ion-close;
+    }
+  }
 }
 
-// Screen WITH left menu
-@media screen and (min-width: $screen-menu) {
-    .hidden-menu {
-        display: none !important;
-        visibility: hidden !important;
+
+// Menu on small screens
+@media screen and (max-width: $screen-sm-max) {
+  .menu.menu-left {
+
+    // Compact menu item (reduce height, etc.)
+    .item.item-divider {
+      min-height: 2px;
+      height: 2px;
+      padding-top: 0;
+      padding-bottom: 0;
     }
-    .visible-menu {
-        display: inherit !important;
-        visibility: visible !important;
+
+    .item,
+    .item.item-complex .item-content {
+      height: 40px;
+      min-height: 40px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+
+      .badge {
+        top: 10px;
+        padding: 2px 6px;
+        font-size: 12px;
+      }
     }
+
+    .item.item-complex {
+      padding-top: 0;
+    }
+
+    .item.item-button-right .button {
+      height: 30px;
+      min-height: 30px;
+      top: 4px;
+    }
+
+    .item-spacer {
+      display: none;
+      visibility: hidden;
+    }
+
+    // Hide footer on small screen
+    ion-content.has-footer {
+      bottom: 0 !important; /*ignore footer*/
+    }
+
+    .bar-header {
+      background-color: $positive-900-bg;
+      color: #fff;
+      height: 150px;
+      padding-right: 0 !important;
+
+      .platform-ios.platform-cordova & {
+        height: calc(constant(safe-area-inset-top) + 150px);
+        height: calc(env(safe-area-inset-top) + 150px);
+      }
+
+      .hero {
+        height: 150px;
+        box-shadow: none; // not need (define in bar-header)
+
+        .content {
+          bottom: 0;
+        }
+      }
+    }
+
+    .has-header {
+      top: 150px;
+
+      .platform-ios.platform-cordova & {
+        top: calc(constant(safe-area-inset-top) + 150px);
+        top: calc(env(safe-area-inset-top) + 150px);
+      }
+    }
+
+  }
+
 }
-@media screen and (max-width: $screen-nomenu-max) {
-    .hidden-menu {
-        display: inherit;
-        visibility: visible;
+
+// Menu for NOT small screens
+@media screen and (min-width: $screen-md) {
+  .menu.menu-left {
+
+    .list {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
-    .visible-menu {
-        display: none;
-        visibility: hidden;
+
+    .item.item-divider {
+      min-height: 5px;
+      height: 5px;
     }
+
+    .footer a {
+      font-size: 14px ! important;
+      color: grey !important;
+    }
+  }
+}
+
+@media screen and (min-width: $screen-md) {
+  .menu.menu-left {
+    background-image: url('../../resources/logo/svg/white/logo.large.empty.transparent.svg');
+    background-repeat: no-repeat;
+    background-position: -500px -100px;
+    background-size: 1024px 1024px;
+    background-color: whitesmoke;
+    height: 100%;
+  }
 }
 
 /**********
    Fix or extend generic CSS
 **********/
+html, body {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
 
 .item.item-icon-right.item-select,
 .item.item-icon-right .item-select {
@@ -440,41 +603,51 @@ $screen-menu:                     845px;
   }
 }
 
+// Fix for iOS 11+
+.ios ion-content {
+  pointer-events: auto;
+}
+
 .popover-share {
   height: 110px;
 
   .bar {
     box-shadow: none !important;
   }
+
   .bar-header {
     height: 20px;
+
     .title {
       font-size: 12px;
       font-weight: bold;
       height: 20px;
       line-height: 19px;
       max-width: 260px;
-      margin: 0px 5px;
+      margin: 0 5px;
       text-align: left;
     }
+
     span {
       @extend .gray;
       font-size: 10px;
-      margin: 5px;
       height: 20px;
       position: absolute;
       right: 0;
       top: 0;
-      margin: 0px 5px;
+      margin: 0 5px;
       display: block;
     }
   }
+
   .has-header {
     top: 20px;
   }
+
   .has-footer {
     bottom: 40px;
   }
+
   .bar-footer {
     color: $positive;
     height: 40px;
@@ -500,18 +673,18 @@ $screen-menu:                     845px;
     input {
       border: 1px solid grey;
       border-radius: 3px;
-      box-shadow: inset 0 1px 1px rgba(0,0,0,0.3);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.3);
     }
 
     input:focus {
       border-color: $positive;
       outline: 0;
-      box-shadow: inset 0 1px 1px rgba(0,0,0,0.3),0 0 8px #08c;
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.3), 0 0 8px #08c;
     }
   }
 
   .list .item {
-    border-bottom: 0px !important;
+    border-bottom: 0 !important;
   }
 }
 
@@ -519,8 +692,6 @@ $screen-menu:                     845px;
 /**********
    Notifications popover
 **********/
-
-
 .popover-light,
 .popover-notification {
 
@@ -530,16 +701,19 @@ $screen-menu:                     845px;
     .title {
       color: black;
       text-align: left;
-      left: 0px !important;
+      left: 0 !important;
       font-size: 14px;
       line-height: 30px;
     }
+
     .pull-right {
       margin-right: 10px;
     }
+
     .pull-left {
       margin-left: 10px;
     }
+
     a {
       font-size: 14px;
       text-decoration: none;
@@ -588,7 +762,7 @@ $screen-menu:                     845px;
   .button.button-small {
     height: 30px;
     font-size: 12px;
-    padding: 0px 5px !important;
+    padding: 0 5px !important;
     line-height: 30px;
   }
 }
@@ -597,6 +771,15 @@ $screen-menu:                     845px;
 .popover-network,
 .popover-peer-info {
   width: 420px;
+}
+
+.popover-wallets {
+  .item-avatar {
+    padding-left: 95px !important;
+    .icon:last-child {
+      display: none;
+    }
+  }
 }
 
 /**********
@@ -612,7 +795,6 @@ $screen-menu:                     845px;
     top: 35px !important;
   }
 }
-
 
 
 /**********
@@ -647,7 +829,6 @@ $screen-menu:                     845px;
 }
 
 
-
 /* ============
  Buttons
 =============== */
@@ -661,16 +842,16 @@ $screen-menu:                     845px;
 }
 
 // Avoid to have not align button on bar-header
-.bar .buttons.pull-right, .bar .title+.button:last-child, .bar .title+.buttons, .bar>.button+.button:last-child, .bar>.button.pull-right {
-  top: 0px !important;
+.bar .buttons.pull-right, .bar .title + .button:last-child, .bar .title + .buttons, .bar > .button + .button:last-child, .bar > .button.pull-right {
+  top: 0 !important;
 }
 
 // Avoid different between home view and other view (space between last button and left border)
 .bar.bar-header {
   padding-right: 5px !important;
 
-  .buttons-right span {
-    margin-left: 0px !important;
+  .buttons-right .right-buttons {
+    margin-left: 0 !important;
   }
 }
 
@@ -695,6 +876,7 @@ $screen-menu:                     845px;
   color: grey !important;
   font-size: 12px;
 }
+
 .button-text.button-small {
   @extend .button-small;
   padding: 5px 2px;
@@ -704,22 +886,58 @@ $screen-menu:                     845px;
 .button-text-positive {
   color: $positive !important;
 }
+
 .button-text-stable {
   color: #b2b2b2 !important;
 }
+
 .button-text-dark {
   @extend .dark;
 }
+
 .popup-buttons .button.icon-right,
 .popup-buttons .button.icon-left {
   padding-left: 32px !important;
   padding-right: 32px !important;
   line-height: 42px;
 }
+
+.button-fab-bottom-left.has-footer,
+.button-fab-bottom-right.has-footer {
+  bottom: 64px !important;
+}
+
 /* ============
  Home page
 =============== */
 
+#home .ribbon {
+  position: fixed;
+  top: 15px;
+  right: -110px;
+  z-index: 500;
+  transform: rotate(45deg);
+  text-align: center;
+  width: 300px;
+  text-decoration: none;
+  box-shadow: 0 0 5px #000;
+  a:first-child {
+    opacity: 1 !important;
+  }
+  a {
+    opacity: 0.7;
+    width: 100%;
+  }
+
+  a:hover {
+    opacity: 1;
+    font-size: 16px;
+  }
+}
+#home h4.welcome .badge {
+  display: inline-block !important;
+  vertical-align: bottom;
+}
 #home .logo {
   margin-top: 15px;
   width: 100%;
@@ -732,6 +950,7 @@ $screen-menu:                     845px;
   text-align: center;
   display: inline-block;
 }
+
 #home .center .button {
   display: inline-block;
 }
@@ -743,9 +962,10 @@ $screen-menu:                     845px;
     background-size: 96px 96px;
   }
   #home .footer {
-    display:none;
+    display: none;
   }
 }
+
 @media screen and (min-width: $screen-sm) and (max-width: $screen-sm-max) {
   #home .logo {
     height: 144px;
@@ -757,6 +977,7 @@ $screen-menu:                     845px;
     margin-top: 20px;
   }
 }
+
 @media screen and (min-width: $screen-md) {
   #home .logo {
     height: 200px;
@@ -771,7 +992,6 @@ $screen-menu:                     845px;
 }
 
 
-
 @media screen and (min-width: $screen-md) {
 
   .circle-bg-dark {
@@ -781,38 +1001,6 @@ $screen-menu:                     845px;
     background-size: 1024px 1024px;
   }
 
-  .menu.menu-left {
-    background-image: url('../../resources/logo/svg/white/logo.large.empty.transparent.svg');
-    background-repeat: no-repeat;
-    background-position: -500px -100px;
-    background-size: 1024px 1024px;
-    background-color: whitesmoke;
-    height: 100%;
-
-    .item.active {
-      background-color: $active !important;
-
-      .item-content {
-        background-color: transparent;
-        opacity: 1;
-        color: black;
-      }
-    }
-
-    .item {
-      opacity: 0.75;
-      color: black;
-
-      .item-content {
-        background-color: transparent;
-        opacity: 1;
-      }
-    }
-
-    .item-menu-disable {
-      color: $dark !important;
-    }
-  }
 }
 
 .gray {
@@ -831,16 +1019,18 @@ $screen-menu:                     845px;
   a:hover {
     color: inherit;
   }
+
   a:visited {
     color: inherit;
   }
 }
+
 .item a {
   text-decoration: none;
 }
 
 .no-padding {
-  padding: 0px !important;
+  padding: 0 !important;
 }
 
 .avatar-member {
@@ -855,44 +1045,6 @@ $screen-menu:                     845px;
   background-image: url('../img/card.png');
 }
 
-/**************
- Item icons
-**************/
-
-.item.item-icon-left > i.avatar:first-child {
-  position: absolute;
-  display: flex;
-  height: 100%;
-  align-items: center;
-  font-size: 16px;
-  left: 16px;
-  top: 8px;
-  max-height: 32px;
-  max-width: 32px;
-}
-
-.item.item-checkbox.item-avatar > i.avatar:first-child,
-.item.item-checkbox.item-avatar > i.item-image:first-child,
-.item.item-checkbox.item-avatar .item-content > i.avatar:first-child,
-.item.item-checkbox.item-avatar .item-content > i.item-image:first-child,
-.item.item-checkbox.item-avatar * > i.avatar:first-child,
-.item.item-checkbox.item-avatar * > i.item-image:first-child,
-.item.item-checkbox.item-avatar * .item-content > i.avatar:first-child,
-.item.item-checkbox.item-avatar * .item-content > i.item-image:first-child {
-  left: 65px;
-}
-
-.item.item-checkbox.item-avatar .item-content,
-.item.item-checkbox .item-content .item-avatar {
-  padding-left: 65px;
-}
-
-@media screen and (max-width: $screen-xs-max) {
-  .item.item-icon-right > i.icon:last-child {
-    right: 1px;
-  }
-}
-
 /* ----
     Popup alert
    ---- */
@@ -903,20 +1055,30 @@ $screen-menu:                     845px;
     min-width: 250px !important;
     width: 350px !important;
   }
+
   .popup-head {
     h1, h2, h3, h5, h6, p {
       color: white;
     }
   }
 }
+
 .popup-container.warning {
   .popup-head {
     background-color: $assertive;
   }
 }
+
 .popup-container.confirm {
   .popup-head {
     background-color: $positive;
+  }
+}
+
+.popup-container.large {
+  .popup {
+    min-width: 250px !important;
+    width: 350px !important;
   }
 }
 
@@ -924,27 +1086,9 @@ $screen-menu:                     845px;
 * 'ion-refresher'
 *******/
 
-// Workaround to control background of 'ion-refresher'
-.refresher-top-bg:before {
-  position: absolute;
-  display: block;
-  top: 0;
-  width: 100%;
-  height: 100px;
-  z-index: -10;
-  content: " ";
-}
-.refresher-top-bg .scroll-refresher {
-  z-index: 50;
-}
-// Set refresher color (icon and text)
-.refresher-light .scroll-refresher {
-  .ionic-refresher-content {
-    color: $light;
-  }
-  .spinner {
-    stroke: $light;
-    fill: $light;
+.platform-android {
+  .scroll-refresher {
+    z-index: 50;
   }
 }
 
@@ -953,54 +1097,24 @@ $screen-menu:                     845px;
 *******/
 .view-wallet {
 
-  /* set 'ion-refresher' background color */
-  .refresher-top-bg {
-    @extend .refresher-light;
-  }
-  .refresher-top-bg:before {
-    @extend .positive-900-bg;
+  .hero {
     height: 200px;
-  }
 
-  .qrcode {
-    position: absolute;
-    top: 30px;
-    padding: 3px;
-    background: #fff;
-    width: 90px;
-    max-width: 30%;
-    right: -170px;
-    -webkit-backface-visibility: hidden !important;
-    backface-visibility: hidden !important;
-    -webkit-transition: all 0.5s ease-out !important;
-    transition: all 0.5s ease-out !important;
-
-    img {
-      width: 100%;
+    h4:after {
+      content: ' ';
+      display: inline-block;
     }
-  }
-
-  .qrcode.on {
-    right: 30px;
-  }
-
-  .qrcode.active {
-    top: 0px !important;
-    right: 0px !important;
-    padding: 10px;
-    width: 200px;
-    max-width: 50%;
   }
 
   .item-text-wrap {
     white-space: normal !important;
   }
 
-  .item .comment{
+  .item .comment {
     font-style: italic !important;
   }
 
-  .item h3 .gray{
+  .item h3 .gray {
     font-size: 11px ! important;
   }
 
@@ -1009,7 +1123,7 @@ $screen-menu:                     845px;
   }
 
   .item-divider .badge {
-    top:16px !important;
+    top: 16px !important;
   }
 
   .item.item-wallet-event {
@@ -1032,27 +1146,93 @@ $screen-menu:                     845px;
 
 }
 
+/* --
+  QR code
+-- */
+
+.view-wallet,
+.view-wallet-tx,
+.view-identity,
+.view-identity-tx {
+  .qrcode {
+    position: absolute;
+    display: block;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    background: white;
+    z-index: 5;
+    -webkit-backface-visibility: hidden !important;
+    backface-visibility: hidden !important;
+    -webkit-transition: all 0.2s ease-in-out !important;
+    transition: all 0.2s ease-in-out !important;
+    overflow: hidden;
+    svg, img {
+      display: unset;
+      float: right;
+      width: 0;
+      height: 0;
+      z-index: 5;
+      transition: all 0.2s ease-in-out !important;
+    }
+  }
+
+  .qrcode.on {
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    margin: 7px;
+    svg, img {
+      width: 50px;
+      height: 50px;
+    }
+  }
+
+  .qrcode.on.active {
+    margin: 0 !important;
+    padding: 0;
+    width: 200px;
+    height: 200px;
+    svg, img {
+      width: 224px;
+      height: 224px;
+      margin: -12px -12px;
+    }
+  }
+}
 
 @media screen and (max-width: $screen-sm-max) {
-  .view-wallet {
-    .qrcode {
-      top: 8px;
-      width: 60px;
-      max-width: 30%;
-    }
+  .view-wallet,
+  .view-wallet-tx,
+  .view-identity,
+  .view-identity-tx {
 
-    .qrcode.on {
-      right: 8px;
-    }
-
-    .hero.hero-qrcode-active {
-      h1,h2,h3,h4,h5,i {
-        margin-right:200px;
+    .qrcode.on.active {
+      width: calc(min(100vh - 125px, 100vw));
+      height: 100%;
+      z-index: 10001;
+      svg, img {
+        width: calc(100%);
+        height: 100%;
+        margin: 0;
       }
     }
   }
 }
 
+@media screen and (min-width: $screen-md) {
+  .view-wallet,
+  .view-wallet-tx,
+  .view-identity,
+  .view-identity-tx {
+
+    .qrcode.on.active .footer {
+      display: none;
+      visibility: hidden;
+    }
+  }
+}
 
 .popover-wallet-actions {
   height: 400px;
@@ -1063,37 +1243,33 @@ $screen-menu:                     845px;
 *******/
 @media screen and (max-width: $screen-sm-max) {
   .view-wallet-tx {
+
     .hero {
       height: 100px;
     }
   }
 }
+
 @media screen and (min-width: $screen-md) {
   .view-wallet-tx {
+
     .hero {
       height: 140px;
     }
   }
 }
+
 .view-wallet-tx {
-  /* set 'ion-refresher' background color */
-  .refresher-top-bg {
-    @extend .refresher-light;
-  }
-  .refresher-top-bg:before {
-    @extend .positive-900-bg;
-    height: 100px;
-  }
 
   .item-text-wrap {
     white-space: normal !important;
   }
 
-  .item .comment{
+  .item .comment {
     font-style: italic !important;
   }
 
-  .item h3 .gray{
+  .item h3 .gray {
     font-size: 11px ! important;
   }
 
@@ -1102,11 +1278,11 @@ $screen-menu:                     845px;
   }
 
   .item-divider .badge {
-    top:16px !important;
+    top: 16px !important;
   }
 }
 
-.stable-100-bg{
+.stable-100-bg {
   background-color: $stable-100-bg !important;
 }
 
@@ -1114,30 +1290,89 @@ $screen-menu:                     845px;
 * TX view (wallet or identity)
 *******/
 
-.item-tx .badge-energized {
-  background-color: rgba(255,201,0,0.3);
-  color: #888 !important;
+.item-tx{
+  border-top: solid 1px lightgray !important;
+  padding-bottom: 6px;
+  padding-top: 8px;
+  margin: 0 !important;
+
+
+  .badge-energized {
+    background-color: rgba(255, 201, 0, 0.3);
+    color: #888 !important;
+  }
+  .badge {
+    right : 1% !important;
+    top: 13px;
+  }
+  .badge-white {
+    background-color: white; // Fix issue #847
+  }
+
+  .vertical-center{
+    position: absolute;
+    top: 30%;
+    width: 40%;
+  }
+
+  p.comment{
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  p.text-wrap {
+    white-space: normal;
+    a {
+      white-space: nowrap;
+    }
+  }
+
+  .col-pubkey {
+    max-width: 80%;
+
+    .pubkeys {
+      display: block;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-height: 130px;
+      overflow: hidden;
+    }
+  }
 }
+
+
+
+.expert-mode .item-tx {
+  .item-note {
+    top : 8%;
+  }
+  .badge-secondary {
+    top : calc(8% + 23px) !important;
+  }
+}
+
 
 /******
 * Identity view
 *******/
 
 .view-identity {
-  .hero,
-  .refresher-top-bg:before {
-    @extend .dark-bg;
-    height: 200px;
-  }
-  .member .hero,
-  .member.refresher-top-bg:before {
-    @extend .positive-900-bg;
-  }
-  .refresher-top-bg {
-    @extend .refresher-light;
+  // Default wallet color
+  --background-color: #{$dark-100-bg};
+
+  .member {
+    --background-color: #{$positive-900-bg};
   }
 
+  .hero {
+    height: 200px;
+    background-color: var(--background-color);
+  }
+
+
 }
+
 
 /******
 * Cards
@@ -1145,7 +1380,7 @@ $screen-menu:                     845px;
 
 
 .card .card-header,
-.card .card-header{
+.card .card-header {
   font-size: 90%;
   opacity: 0.8;
   filter: alpha(opacity=80);
@@ -1156,9 +1391,10 @@ $screen-menu:                     845px;
 .item.stable-900-bg,
 .item .stable-900-bg,
 .item-complex .item-content .stable-900-bg,
-.item-radio .item-content .stable-900-bg{
+.item-radio .item-content .stable-900-bg {
   background-color: $stable-900-bg !important;
 }
+
 .card .item {
   background: inherit;
 }
@@ -1168,13 +1404,14 @@ $screen-menu:                     845px;
 .item.stable-bg,
 .item .stable-bg,
 .item-complex .item-content .stable-bg,
-.item-radio .item-content .stable-bg{
+.item-radio .item-content .stable-bg {
   background-color: $stable !important;
 }
 
+
 .card .card-header {
   padding-top: 5px !important;
-  padding-bottom: 0px !important;
+  padding-bottom: 0 !important;
   min-height: 25px;
 }
 
@@ -1185,7 +1422,7 @@ $screen-menu:                     845px;
 .card .card-avatar,
 .card.card-avatar {
   .avatar {
-    box-shadow: 0px 3px 4px 0 rgba(0, 0, 0, 0.26);
+    box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.26);
     top: 7px;
     background-color: #D9D9D9;
   }
@@ -1200,8 +1437,9 @@ $screen-menu:                     845px;
     padding-top: 10px;
     padding-bottom: 2px;
     min-height: 45px !important;
-
+    margin-bottom: 1px;
   }
+
   .card-footer {
     padding-left: 88px;
     overflow: hidden;
@@ -1229,12 +1467,11 @@ a.underline:hover,
 .animate-fade-slide-in-right .expanded .item,
 .animate-fade-slide-in-right .expanded.item,
 .animate-ripple .expanded .item,
-.animate-ripple .expanded.item
-.card-avatar-small.expanded .item
-.card-avatar-small .expanded .item
-.card-avatar-small.expanded .card.card-comment
-.card-avatar-small .expanded .card.card-comment
-{
+.animate-ripple .expanded.item,
+.card-avatar-small.expanded .item,
+.card-avatar-small .expanded .item,
+.card-avatar-small.expanded .card.card-comment,
+.card-avatar-small .expanded .card.card-comment {
   @extend .done;
   @extend .in;
 }
@@ -1248,7 +1485,7 @@ a.underline:hover,
 
   .avatar,
   .item-avatar .avatar {
-    box-shadow: 0px 2px 2px 0 rgba(0, 0, 0, 0.26);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.26);
     height: 30px !important;
     width: 30px !important;
     left: 5px !important;
@@ -1258,15 +1495,16 @@ a.underline:hover,
     min-height: 25px !important;
     padding-left: 42px !important;
   }
+
   .card-footer {
-    padding-top: 0px;
+    padding-top: 0;
     padding-left: 42px !important;
   }
 }
 
 
 .gallery .card-gallery,
-.gallery .card.card-gallery{
+.gallery .card.card-gallery {
   margin-bottom: 15px !important;
   float: left;
   display: block;
@@ -1340,7 +1578,7 @@ a.underline:hover,
   min-height: 80px !important;
 }
 
-.item-avatar > i:first-child ,
+.item-avatar > i:first-child,
 .item-avatar > img:first-child,
 .item-avatar i.item-image:first-child,
 .item-avatar img.item-image:first-child,
@@ -1355,7 +1593,7 @@ a.underline:hover,
 .item-avatar-left .item-content > i:first-child,
 .item-avatar-left .item-content > img:first-child,
 .item-avatar-left .item-content i.item-image:first-child,
-.item-avatar-left .item-content img.item-image:first-child  {
+.item-avatar-left .item-content img.item-image:first-child {
   color: #D9D9D9;
   background-color: #f8f8f8;
   border: solid 1px #D9D9D9;
@@ -1368,7 +1606,7 @@ a.underline:hover,
   top: 12px !important;
 }
 
-.item-avatar > .icon:first-child:before ,
+.item-avatar > .icon:first-child:before,
 .item-avatar .icon.item-image:first-child:before,
 .item-avatar .item-content > .icon:first-child:before,
 .item-avatar.item-icon-right .icon:first-child:before,
@@ -1383,44 +1621,112 @@ a.underline:hover,
 .item-avatar.item-icon-right .icon:last-child,
 .item-avatar.item-icon-right .icon-help:last-child,
 .item-avatar.item-icon-right .icon-alert:last-child,
+.item-avatar.item-icon-right.ink .icon.ion-ios-arrow-right,
 .item-avatar.item-icon-right #menu .footer .icon-help:last-child,
 #menu .footer .item-avatar.item-icon-right .icon-help:last-child {
   left: auto;
 }
 
 /**********
-   Item > Other
+   Item > Left icon position
+**********/
+
+.item.item-icon-left > i.avatar:first-child {
+  position: absolute;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  font-size: 16px;
+  left: 16px;
+  top: 8px;
+  max-height: 32px;
+  max-width: 32px;
+}
+
+.item.item-checkbox.item-avatar > i.avatar:first-child,
+.item.item-checkbox.item-avatar > i.item-image:first-child,
+.item.item-checkbox.item-avatar .item-content > i.avatar:first-child,
+.item.item-checkbox.item-avatar .item-content > i.item-image:first-child,
+.item.item-checkbox.item-avatar * > i.avatar:first-child,
+.item.item-checkbox.item-avatar * > i.item-image:first-child,
+.item.item-checkbox.item-avatar * .item-content > i.avatar:first-child,
+.item.item-checkbox.item-avatar * .item-content > i.item-image:first-child {
+  left: 65px;
+}
+
+.item.item-checkbox.item-avatar .item-content,
+.item.item-checkbox .item-content .item-avatar {
+  padding-left: 65px;
+}
+
+/**********
+   Item > Right icon position
+**********/
+
+// Workaround to force the right arrow to stay on the left
+// (because the ink effect, a div.ink-ripple can be the last-child)
+.item-icon-left.item-icon-right.ink .icon.ion-ios-arrow-right {
+  left: auto;
+}
+
+@media screen and (max-width: $screen-xs-max) {
+  // Reduce right space on the right icon
+  .item.item-icon-right > .icon:last-child,
+    // Workaround to force the right arrow to stay on the left
+    // (because the ink effect, a div.ink-ripple can be the last-child)
+  .item.item-icon-right > .icon.ion-ios-arrow-right {
+    right: 1px;
+  }
+}
+
+/**********
+   Item > Other properties
 **********/
 
 .item em {
   font-weight: bold !important;
 }
 
+@media screen and (max-width: $screen-sm-max) {
+  .item .badge {
+    right: 16px;
+  }
+}
+
+
 @media screen and (min-width: $screen-md) {
   .list .item.item-border-large {
+    margin-bottom: 1px;
     border-bottom: solid 1px #ccc !important;
   }
   .list.item-border-large {
     .item {
       border-bottom: solid 1px #ccc !important;
-      margin: 0px;
+      margin: 0 0px 1px;
     }
+
     .item-divider {
       border-top: 0;
     }
   }
 }
+
+.item.item-no-border {
+  border-width: 0;
+}
+
 .list .item.item-border {
   border-bottom: solid 1px #ccc !important;
+  margin-bottom: 1px;
 }
 
 .list .item.item-small-height {
   padding-top: 2px;
-  padding-bottom: 0px;
+  padding-bottom: 0;
   min-height: 24px;
 
   .badge {
-    padding-top: 0px !important;
+    padding-top: 0 !important;
     top: inherit;
   }
 
@@ -1429,8 +1735,7 @@ a.underline:hover,
   .badge.badge-assertive,
   .badge.badge-royal,
   .badge.badge-calm,
-  .badge.badge-energized
-  {
+  .badge.badge-energized {
     top: 1px !important;
     padding-top: 3px !important;
     padding-bottom: 2px !important;
@@ -1450,12 +1755,12 @@ a.underline:hover,
 }
 
 .form-error {
-  padding: 0px 16px;
+  padding: 0 16px;
   font-size: 12px;
   color: red;
   vertical-align: middle;
   text-align: end;
-  top: 0px;
+  top: 0;
   position: relative;
 }
 
@@ -1475,6 +1780,7 @@ a.underline:hover,
     top: 6px;
   }
 }
+
 .item-input.item-button-right.item-floating-label {
   input,
   textarea {
@@ -1499,8 +1805,7 @@ a.underline:hover,
  Badge inside an item
 */
 .item.item-icon-right .badge,
-.item.item-button-right .badge
-{
+.item.item-button-right .badge {
   right: 43px;
 }
 
@@ -1512,10 +1817,13 @@ a.underline:hover,
     max-width: 300px !important;
     display: block !important;
   }
+
   .badge:empty {
     display: none !important;
   }
-  .item .badge {
+
+  .item.item-button-right .badge,
+  .item.item-icon-right .badge {
     right: 26px !important;
   }
 }
@@ -1530,6 +1838,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   cursor: pointer;
   @extend .badge-assertive;
 }
+
 .badge-editable:hover:before {
   @extend .ion;
   content: $ionicon-var-badge-editable;
@@ -1538,11 +1847,25 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 /*
  Badge inside toolbar's button
 */
+.platform-ipad {
+  .bar-title {
+    border-color: $button-dark-border;
+    background-color: $dark;
+    background-image: linear-gradient(0deg,$button-dark-border,$button-dark-border 50%,transparent 50%);
+
+    .title {
+      background-color: white;
+      margin-left: 0;
+      margin-right: 0;
+      height: 44px;
+    }
+  }
+}
 
 .bar {
   .badge-button {
     margin: 0 !important;
-    padding: 0px 4px !important;
+    padding: 0 4px !important;
     font-size: 10px;
     position: absolute !important;
     top: 5px;
@@ -1558,10 +1881,12 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   cursor: pointer;
   @extend .positive;
 }
+
 .text-editable:hover:after {
   @extend .ion;
   content: $ionicon-var-edit;
 }
+
 .item h2 .text-editable:hover:after {
   font-size: 14px;
 }
@@ -1571,11 +1896,49 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 **********/
 
 .modal.modal-full-height {
-  bottom: 0px;
+  bottom: 0;
 }
 
+// Force modal as fullscreen, on xs screen
+@media screen and (max-width: $screen-xs-max) {
+  .modal {
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0;
+    min-height: 100% !important;
+    width: 100% !important;
+  }
+}
+
+@media screen and (max-width: $screen-sm-max) {
+  .modal {
+    bottom: 0;
+
+    // Hide swiper on tablet
+    .swiper-pagination {
+      visibility: hidden !important;
+    }
+  }
+  // Force 'full-height' modals to be align on top
+  // Otherwise
+  .modal.modal-full-height {
+    top: 0;
+
+    ion-content.keyboard-up .scroll {
+      min-height: calc(100% + 67px);
+    }
+  }
+}
+
+@media (min-width: $screen-md) {
+  .modal.modal-full-height {
+    min-height: 80%;
+  }
+}
+
+
 .modal.about .bar.bar-header .button + .title {
-  left: 0px !important; /* avoid title offset on large screens, if button are 'visible-xs')'*/
+  left: 0 !important; /* avoid title offset on large screens, if button are 'visible-xs')'*/
 }
 
 /**********
@@ -1620,7 +1983,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 }
 
 .item.item-thumbnail-left, .item-thumbnail-left {
-  min-height: 100px !important;
+  min-height: 100px;
 }
 
 .item-thumbnail-left > i:first-child,
@@ -1679,106 +2042,13 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   font-style: italic !important;
 }
 
-/**********
-   Screen - Left Menu
-**********/
-
-#menu .item-button-right > .button,
-.item-button-right .item-content > .button,
-.item-button-right > .buttons,
-.item-button-right .item-content > .buttons {
-  top: 8px !important;
-}
-
-// very small screens
-@media screen and (max-width: $screen-xxs-max) {
-  #menu {
-    .item.item-divider {
-      min-height: 2px;
-      height: 2px;
-      padding-top: 0px;
-      padding-bottom: 0px;
-    }
-
-    .item,
-    .item.item-complex .item-content{
-      height: 40px;
-      min-height: 40px;
-      padding-top: 12px;
-    }
-
-    .item.item-complex{
-      padding-top: 0px;
-    }
-
-    .item.item-button-right .button {
-      height: 30px;
-      min-height: 30px;
-      top: 4px;
-    }
-
-    .item.active a {
-      background-color: $active !important;
-    }
-
-    ion-content.has-footer {
-      bottom: 0px !important; /*ignore footer*/
-    }
-  }
-
-}
-
-// other screen
-@media screen and (min-width: $screen-xs) {
-  #menu .item.active a {
-    background-color: $active !important;
-  }
-
-  #menu .item.item-divider {
-    min-height: 5px;
-    height: 5px;
-  }
-
-  #menu .footer a {
-    font-size: 14px ! important;
-    color: grey !important;
-  }
-}
-
-@media screen and (max-width: $screen-sm-max) {
-
-  #menu .bar-header {
-    background-color: $positive-900-bg;
-    color: #fff;
-    height: 150px;
-    padding-right: 0px !important;
-
-    .hero {
-      height: 150px;
-      box-shadow: none; // not need (define in bar-header)
-
-      .content {
-        bottom: 0px;
-      }
-    }
-  }
-
-  #menu .has-header {
-    top: 150px;
-  }
-}
-
-
-.hero.stable-bg {
-  background-color: #f8f8f8 !important;
-}
 
 /**********
    Screen - identity Certifications
 **********/
 
 .certifications .item-divider .badge {
-  top:16px !important;
+  top: 16px !important;
 }
 
 .certifications-lg .avatar-large {
@@ -1792,7 +2062,80 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   border: solid 1px #D9D9D9;
 }
 
+/**********
+   Specific modes (demo, readonly)
+**********/
 
+/* -- readonly mode -- */
+
+.visible-readonly {
+  display: none;
+  visibility: hidden;
+}
+
+body.readonly {
+
+  .hidden-readonly {
+    display: none;
+    visibility: hidden;
+  }
+  .visible-readonly {
+    display: inherit !important;
+    visibility: visible !important;
+  }
+}
+
+/* -- demo mode -- */
+
+.visible-demo {
+  display: none;
+  visibility: hidden;
+}
+
+body.demo {
+
+  .hidden-demo {
+    display: none;
+    visibility: hidden;
+  }
+  .visible-demo {
+    display: inherit !important;
+    visibility: visible !important;
+  }
+}
+
+.badge-app-mode {
+  font-weight: bold;
+  color: whitesmoke !important;
+  top: 10px;
+  padding: 0 4px;
+  text-transform: uppercase;
+  user-select: none;
+}
+#menu .badge-app-mode.left {
+  position: absolute;
+  font-size: 12px;
+  left: 1px;
+  transform-origin: 26px 5px;
+  transform: rotate(-10deg);
+}
+#menu .badge-app-mode.right {
+  position: absolute;
+  font-size: 14px;
+  right: 1px;
+  transform-origin: 26px 5px;
+  transform: rotate(10deg);
+}
+#menu .badge-app-mode.left:hover {
+  padding: 1px 4px;
+  font-size: 13px;
+  transform: rotate(-15deg);
+}
+#menu .badge-app-mode.right:hover {
+  padding: 2px 5px;
+  font-size: 16px;
+  transform: rotate(15deg);
+}
 /**********
    Help
 **********/
@@ -1824,13 +2167,21 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   top: 8px;
   z-index: 99;
 }
+#menu .footer .icon-help:hover {
+  @extend .ion-ios-help;
+  color: $positive !important;
+  font-size: 31px !important;
+  top: 6px;
+  left: 11px;
+  transform: rotate(10deg);
+}
 
-/**********
-   Help Tip
-**********/
+  /**********
+     Help Tip
+  **********/
 
 .popover-helptip {
-  background-color:rgba(68, 68, 68, 0.85) !important;
+  background-color: rgba(68, 68, 68, 0.85) !important;
   height: auto !important;
 
   .button-close {
@@ -1847,29 +2198,37 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   }
 }
 
+.popover-helptip.popover-bottom {
+  margin-top: 12px !important;
+}
+
 // Empeche les clignotement du backdrop, pendant le feature tour
-.nobackdrop .popover-backdrop.active{
+.nobackdrop .popover-backdrop.active {
   background-color: transparent !important;
 }
 
 .helptip-anchor {
-  display:block;
+  display: block;
   position: absolute;
   width: 100%;
   bottom: 0;
 }
+
 .helptip-anchor-center {
   @extend .helptip-anchor;
   text-align: center;
 }
+
 .helptip-anchor-left {
   @extend .helptip-anchor;
   text-align: left;
 }
+
 .helptip-anchor-right {
   @extend .helptip-anchor;
   text-align: right;
 }
+
 .helptip-anchor a:before,
 .helptip-anchor-left a:before,
 .helptip-anchor-right a:before {
@@ -1882,6 +2241,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     width: auto;
   }
 }
+
 .popover-helptip {
   .icon.icon-left {
     @extend .pull-left;
@@ -1890,6 +2250,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     top: 8px;
     left: 8px;
   }
+
   .icon.icon-right {
     @extend .pull-right;
     font-size: 30px;
@@ -1897,6 +2258,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     top: 8px;
     right: 8px;
   }
+
   .icon.icon-center {
     @extend .pull-right;
     font-size: 30px;
@@ -1904,8 +2266,9 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     text-align: center;
     position: relative;
     top: 8px;
-    height: 0px;
+    height: 0;
   }
+
   .icon.icon-bottom-right {
     @extend .pull-right;
     font-size: 30px;
@@ -1913,6 +2276,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     bottom: 8px;
     right: 8px;
   }
+
   .icon.icon-bottom-left {
     @extend .pull-left;
     font-size: 30px;
@@ -1920,6 +2284,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     bottom: 8px;
     left: 8px;
   }
+
   .icon.icon-bottom-center {
     @extend .pull-right;
     font-size: 30px;
@@ -1927,7 +2292,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     width: 100%;
     bottom: 8px;
     text-align: center;
-    height: 0px;
+    height: 0;
   }
 }
 
@@ -1937,22 +2302,25 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 
 .popover.popover-profile {
   height: 200px;
+
   .avatar {
     height: 90px;
     width: 90px;
     left: 20px;
     top: 20px;
   }
+
   .avatar {
     border: solid 1px #D9D9D9;
   }
+
   .bar.bar-footer {
     height: 58px;
 
     .col .button {
       max-width: inherit;
       width: 100%;
-      padding: 5px 0px;
+      padding: 5px 0;
       margin: 0;
     }
   }
@@ -1971,7 +2339,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     height: 35px;
     width: 35px;
     position: relative;
-    left: 0px;
+    left: 4px;
     top: 4px;
     border: solid 1px #D9D9D9;
   }
@@ -1984,8 +2352,35 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     height: 31px;
     width: 31px;
     position: relative;
-    left: 0px;
+    left: 0;
     top: 6px;
+  }
+
+}
+
+.bar-header .button-clear.button-peer {
+  display: block;
+  height: 44px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin: 0;
+
+  * {
+    height: 32px;
+    line-height: 32px;
+  }
+}
+
+// Locale flags
+.bar-header .button.flag  {
+  height: 44px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  .flag-image {
+    position: relative;
+    bottom: 0;
+    width: 32px !important;
+    height: 32px !important;
   }
 }
 
@@ -1996,16 +2391,17 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     font-style: italic;
     top: 37px;
     font-weight: normal !important;
-    margin-right: 0px;
-    padding-right: 0px;
+    margin-right: 0;
+    padding: 3px 8px;
   }
+
   .item-avatar .badge.badge-avatar {
-    position: absolute!important;
-    left: 60px!important;
-    right: inherit!important;
+    position: absolute !important;
+    left: 60px !important;
+    right: inherit !important;
     top: 15px !important;
     margin: 0 !important;
-    padding: 0px 4px !important;
+    padding: 0 4px !important;
     font-size: 10px;
   }
 }
@@ -2018,9 +2414,15 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   height: 280px;
   width: 290px;
 }
+
 .popover.popover-login-methods.auth {
   height: 204px;
 }
+
+.popover.popover-login-methods.auth.scan {
+  height: 252px;
+}
+
 @media (max-width: $screen-xs-max) {
   .popover.popover-login-methods {
     height: 256px;
@@ -2030,7 +2432,6 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     height: 204px;
   }
 }
-
 
 
 /**********
@@ -2046,13 +2447,13 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 }
 
 
-.row-header{
+.row-header {
   border-bottom: solid 1px #ccc !important;
-  margin: 0px;
+  margin: 0;
   min-height: 28px !important;
 }
 
-.col-header{
+.col-header {
   text-align: center;
   display: block !important;
 }
@@ -2081,11 +2482,13 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   line-height: 14px;
   margin: 0;
   padding: 0;
+
   svg {
     height: 14px;
     width: 14px;
   }
 }
+
 .icon-secondary {
   position: absolute;
   height: 100%;
@@ -2100,7 +2503,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
    Drop zone component
 **********/
 
-div[dropzone] {
+div[drop-zone] {
   border: 2px dashed #bbb;
   border-radius: 5px;
   padding: 15px;
@@ -2115,7 +2518,8 @@ div[dropzone] {
     text-align: left;
   }
 }
-div[dropzone]:hover {
+
+div[drop-zone]:hover {
   background-color: $stable-100-bg;
 }
 
@@ -2135,7 +2539,7 @@ div[dropzone]:hover {
 .hero .button-fab-top-right.mini,
 .hero .button-fab-top-left.mini,
 .button-fab-hero.button-fab-top-right.mini,
-.button-fab-hero.button-fab-top-left.mini{
+.button-fab-hero.button-fab-top-left.mini {
   top: 178px !important;
 }
 
@@ -2158,11 +2562,16 @@ div[dropzone]:hover {
 /**********
   Wot identity
 **********/
-.hero.dark-bg {
-  background-color: #555;
+.hero.dark-100-bg {
+  background-color: $dark-100-bg;
 }
+
 .hero.positive-900-bg {
   background-color: $positive-900-bg !important;
+}
+
+.hero.stable-bg {
+  background-color: #f8f8f8 !important;
 }
 
 .popover-locked-outputs {
@@ -2186,21 +2595,30 @@ div[dropzone]:hover {
 /**********
   join wizard modal
 **********/
-@media screen and (max-width: $screen-sm-max) {
+.modal iframe.iframe-license {
+  width: 100%;
+  height: calc(100% - 171px) !important;
+}
+
+@media screen and (max-width: $screen-xs-max) {
   .modal iframe.iframe-license {
-    width: 100%;
-    height: 78%;
+    height: calc(100% - 104px);
   }
 }
+
+@media screen and (min-width: $screen-sm) and (max-width: $screen-sm-max) and (min-height: 600px) {
+  .modal iframe.iframe-license {
+    height: calc(100% - 171px);
+  }
+}
+
 @media screen and (min-width: $screen-md) {
   .modal iframe.iframe-license {
-    width: 100%;
-    height: 70%;
+    height: calc(100% - 171px);
   }
 
   .modal.modal-license iframe.iframe-license {
-    width: 100%;
-    height: 85% !important;
+    height: calc(100% - 111px) !important;
   }
 }
 
@@ -2217,6 +2635,7 @@ div[dropzone]:hover {
     }
   }
 }
+
 @media screen and (max-width: $screen-xs-max) {
   .modal.modal-help {
     .row .col:first-child {
@@ -2254,6 +2673,11 @@ div[dropzone]:hover {
 
   .item {
     height: 48px;
+    padding-left: 60px;
+
+    .avatar {
+      border-radius: 0;
+    }
   }
 }
 
@@ -2271,6 +2695,7 @@ div[dropzone]:hover {
   .button.button-tab:first-child {
     border-top-left-radius: 15px;
   }
+
   .button.button-tab:last-child {
     border-top-right-radius: 15px;
   }
@@ -2292,4 +2717,87 @@ div[dropzone]:hover {
       padding: 2px 10px 0 10px !important;
     }
   }
+}
+
+/* -- likes -- */
+.hero .likes {
+  .gray {
+    color: white !important;
+  }
+  a.positive,
+  .positive a,
+  .positive i,
+  .positive {
+    color: $calm !important;
+  }
+}
+
+.view-wallet .hero .likes a {
+  user-select: none !important;
+  pointer-events: none;
+}
+
+/**********
+  feed (home page)
+**********/
+
+.feed {
+  .card {
+    background-color: rgba(0,0,0,0.3);
+    color: lightgrey;
+  }
+
+  h1, h2, h3, h4, h5 {
+    color: white !important;
+  }
+
+  ul {
+    list-style: unset;
+    padding-left: 40px;
+  }
+  a  {
+    color: inherit;
+  }
+
+  .feed-header,
+  .card .header {
+    height: 25px;
+    color: grey !important;
+    a:hover {
+      color: $positive !important;
+    }
+    .avatar {
+      margin-top: -6px;
+      margin-left: -6px;
+      height: 30px;
+      width: 30px;
+      border: 1px solid $positive;
+    }
+    .avatar-left-padding {
+      padding-left: 30px;
+    }
+  }
+
+  .feed-title,
+  .card .title {
+    margin-top: 5px;
+    font-size: 18pt;
+    a {
+      color: white !important;;
+    }
+  }
+
+  .feed-content,
+  .card .content {
+    text-align: start;
+    color: lightgrey !important;
+  }
+  .feed-footer,
+  .card .footer {
+    a:hover {
+      color: $positive !important;
+    }
+  }
+
+
 }

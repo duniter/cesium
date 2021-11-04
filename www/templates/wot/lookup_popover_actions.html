@@ -6,6 +6,13 @@
     <div class="list item-text-wrap">
 
       <a class="item item-icon-left ink"
+         ng-if="enableWallets"
+         ng-click="doGetWallets()">
+        <i class="icon ion-card"></i>
+        {{'MENU.WALLETS' | translate}}
+      </a>
+
+      <a class="item item-icon-left ink"
          ng-click="doGetNewcomers()">
         <i class="icon ion-person"></i>
         {{'WOT.LOOKUP.BTN_NEWCOMERS' | translate}}
@@ -16,6 +23,7 @@
         <i class="icon ion-clock"></i>
         {{'WOT.LOOKUP.BTN_PENDING' | translate}}
       </a>
+
 
     </div>
   </ion-content>

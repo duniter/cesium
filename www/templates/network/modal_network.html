@@ -19,14 +19,11 @@
       <div class="padding padding-xs" style="display: block; height: 60px;">
 
         <div class="pull-left">
-          <h4 ng-if="enableFilter && search.type=='member'">
-            {{'PEER.MEMBERS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
-          </h4>
-          <h4 ng-if="enableFilter && search.type=='mirror'">
-            {{'PEER.MIRRORS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
-          </h4>
-          <h4 ng-if="!enableFilter || !search.type">
-            {{'PEER.ALL_PEERS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
+          <h4>
+            <span ng-if="enableFilter && search.type=='member'" translate>PEER.MEMBER_PEERS</span>
+            <span ng-if="enableFilter && search.type=='mirror'" translate>PEER.MIRROR_PEERS</span>
+            <span ng-if="!enableFilter || !search.type" translate>PEER.ALL_PEERS</span>
+            <span ng-if="!search.loading">({{search.results.length}})</span>
           </h4>
         </div>
 
@@ -53,7 +50,7 @@
         </div>
       </div>
 
-      <ng-include src="'templates/network/items_peers.html'"></ng-include>
+      <ng-include src="::'templates/network/items_peers.html'"></ng-include>
 
 	  </div>
   </ion-content>

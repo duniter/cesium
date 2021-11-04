@@ -108,17 +108,30 @@ sudo apt-get install lib32stdc++6 lib32z1
 
 ### Configuration du projet
 
-Dans la ligne de commande (utilisée précédemment pour lancer `ionic serve`) lancer l'instalaltion du projet Cesium pour android :
+Placez-vous dans le dossier dans lequel vous avez installé cesium via la commande `cd` suivie du chemin vers le répertoire idoine.
+
+Vérifiez que vous utilisez bien la version de NodeJs dont Cesium a besoin à l'aide de la commande  
 
 ```
-ionic state restore
+node --version
+```
+
+Si vous n'êtes pas sur une v6, utilisez la commande 
+
+```
+nvm use 12
+```
+
+Vous pouvez maintenant lancer l'instalaltion du projet Cesium pour Android :
+
+
+```
+ionic cordova prepare
 ```
 
 Normalement, cette commande devrait initialiser (entre autre) un répertoire `platforms/android`.
 
-> Pour rappel: vérifier que votre ligne de commande est bien configurée :
-> - Vous devez vous placer dans le répertoire de l'application : `cd cesium`
-> - et fonctionner sous nodeJs v5 : `nvm use 5` (vérifier à l'aide de `node --version`)
+> Cette commande peut prendre un moment à se terminer.
 
 Lancez maintenant la compilation pour Android :
 
@@ -136,15 +149,15 @@ Sélectionnez "Open an existing Android Studio project" et indiquez le dossier v
 
 Pour pouvoir lancer un émulateur, on va devoir en créer un.
 
-Pour cela cliqué sur l'icone suivante :
+Pour cela, allez dans `Tools` > `AVD Manager`, ou cliquez sur l'icone suivante :
 
 <img src="./img/46e959d1e616e34972a41f4d120a1d4f5beb0955.png" width="690" height="42">
 
 Une fenêtre va s'ouvrir et vous proposer de créer un "Virtual Device" suivez le logiciel.
 
-Si vous avez un téléphone Android vous pouvez le mettre en mode développeur et le brancher si vous souhaitez vois l'application sur votre téléphone.
+Si vous avez un téléphone Android vous pouvez le mettre en mode développeur et le brancher si vous souhaitez voir l'application sur votre téléphone.
 
-Puis une fois l'émulateur de créer vous pouvez le bouton "Play" (<img src="./img/70b2ce88a5e7aa5754f6a771cf5efed3c639a27b.png" width="46" height="44">) pour lancer l'application.
+Puis, une fois l'émulateur créé, vous pouvez cliquer le bouton "Play" (<img src="./img/70b2ce88a5e7aa5754f6a771cf5efed3c639a27b.png" width="46" height="44">) pour lancer l'application.
 Vous pouvez aussi utiliser l'icone (<img src="./img/b7c419b33a43f6a43c5b756074ee0c199072f7d1.png" width="40" height="44">) pour lancer l'application en mode debug.
 
 Android Studio vous demandera sur quel appareil vous souhaitez lancer l'application, sélectionner l'émulateur ou le téléphone et laissez faire. 

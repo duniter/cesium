@@ -10,9 +10,9 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content class="padding no-padding-xs">
+  <ion-content class="padding no-padding-xs no-padding-sm">
     <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
-                   on-refresh="refresh(true)">
+                   on-refresh="refresh(true, $event)">
     </ion-refresher>
 
     <!-- Buttons bar-->
@@ -21,9 +21,9 @@
       <button class="button button-stable button-small-padding icon ion-loop" ng-click="load()">
       </button>
 
-      <button class="button button-calm icon ion-compose"
-              ng-click="showNewMessageModal()">
-        {{'MESSAGE.BTN_COMPOSE' | translate}}
+      <button class="button button-calm"
+              ng-click="showNewMessageModal()" translate>
+        MESSAGE.BTN_COMPOSE
       </button>
 
       <button class="button button-stable button-small-padding icon ion-android-more-vertical"
@@ -37,21 +37,47 @@
     <!-- button tabs -->
     <div class="buttons-tabs border-bottom hidden-sm hidden-xs">
       <div class="pull-right">
-        <div
-          class="button button-tab dark"
+
+        <!-- inbox tab -->
+        <a
+          ng-hide="!isDefaultWallet"
+          class="button button-tab ink dark"
           title="{{'MESSAGE.LIST.INBOX' | translate}}"
           nav-transition="none"
           ng-class="{'active': type=='inbox'}"
           ui-sref="app.user_messages_lg_inbox">
           <i class="icon ion-archive"></i>
           {{'MESSAGE.LIST.INBOX' | translate}}
-        </div>
+        </a>
         <a
+          ng-hide="isDefaultWallet"
+          class="button button-tab ink dark"
+          title="{{'MESSAGE.LIST.INBOX' | translate}}"
+          nav-transition="none"
+          ng-class="{'active': type=='inbox'}"
+          ui-sref="app.user_messages_lg_inbox_by_id({id: walletId})">
+          <i class="icon ion-archive"></i>
+          {{'MESSAGE.LIST.INBOX' | translate}}
+        </a>
+
+        <!-- outbox tab -->
+        <a
+          ng-hide="!isDefaultWallet"
           class="button button-tab ink dark"
           title="{{'MESSAGE.LIST.OUTBOX' | translate}}"
           nav-transition="none"
           ng-class="{'active': type=='outbox'}"
           ui-sref="app.user_messages_lg_outbox">
+          <i class="icon ion-paper-airplane"></i>
+          {{'MESSAGE.LIST.OUTBOX' | translate}}
+        </a>
+        <a
+          ng-hide="isDefaultWallet"
+          class="button button-tab ink dark"
+          title="{{'MESSAGE.LIST.OUTBOX' | translate}}"
+          nav-transition="none"
+          ng-class="{'active': type=='outbox'}"
+          ui-sref="app.user_messages_lg_outbox_by_id({id: walletId})">
           <i class="icon ion-paper-airplane"></i>
           {{'MESSAGE.LIST.OUTBOX' | translate}}
         </a>
@@ -116,7 +142,7 @@
     </div>
 
     <!-- list -->
-    <ng-include src="'plugins/es/templates/message/list.html'"></ng-include>
+    <ng-include src="::'plugins/es/templates/message/list.html'"></ng-include>
 
   </ion-content>
 

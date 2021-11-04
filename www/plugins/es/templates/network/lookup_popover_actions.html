@@ -1,0 +1,31 @@
+<ion-popover-view class="fit has-header">
+  <ion-header-bar>
+    <h1 class="title" translate>PEER.POPOVER_FILTER_TITLE</h1>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <div class="list item-text-wrap">
+
+      <a class="item item-icon-left item-icon-right ink"
+         ng-click="toggleSearchType('member')">
+        <i class="icon ion-person"></i>
+        {{'PEER.MEMBERS' | translate}}
+        <i class="icon ion-ios-checkmark-empty" ng-show="search.type=='member'"></i>
+      </a>
+
+      <a class="item item-icon-left item-icon-right ink"
+         ng-click="toggleSearchType('mirror')">
+        <i class="icon ion-radio-waves"></i>
+        {{'PEER.MIRRORS' | translate}}
+        <i class="icon ion-ios-checkmark-empty" ng-show="search.type=='mirror'"></i>
+      </a>
+
+      <a class="item item-icon-left item-icon-right ink"
+         ng-click="toggleSearchType('offline')">
+        <i class="icon ion-eye-disabled"></i>
+        {{'PEER.OFFLINE' | translate}}
+        <i class="icon ion-ios-checkmark-empty" ng-show="search.type=='offline'"></i>
+      </a>
+
+    </div>
+  </ion-content>
+</ion-popover-view>

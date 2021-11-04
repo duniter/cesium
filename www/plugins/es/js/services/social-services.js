@@ -1,6 +1,6 @@
 angular.module('cesium.es.social.services', ['cesium.es.crypto.services'])
 
-  .factory('SocialUtils', function($filter, $q, CryptoUtils, BMA, csWallet, esCrypto) {
+  .factory('SocialUtils', function($filter, $q, CryptoUtils, BMA, csWallet, esCrypto, $timeout) {
     'ngInject';
 
     function SocialUtils() {
@@ -52,7 +52,7 @@ angular.module('cesium.es.social.services', ['cesium.es.crypto.services'])
               urlToMatch = url.substring(0, slashPathIndex);
             }
           }
-          //console.log("match URI, try to match: " + urlToMatch);
+          //console.debug("match URI, try to match: " + urlToMatch);
           _.keys(regexp.socials).forEach(function(key){
             if (regexp.socials[key].test(urlToMatch)) {
               type = key;

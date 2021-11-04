@@ -1,4 +1,4 @@
-angular.module('cesium.modal.services', [])
+angular.module('cesium.modal.services', ['cesium.utils.services'])
 
 // Useful for modal with no controller
 .controller('EmptyModalCtrl', function () {
@@ -6,7 +6,7 @@ angular.module('cesium.modal.services', [])
 
 })
 
-.controller('AboutModalCtrl', function ($scope, UIUtils, csHttp) {
+.controller('AboutModalCtrl', function ($scope, csConfig, UIUtils, csHttp, filterTranslations) {
   'ngInject';
 
   $scope.openLink = function(event, uri, options) {
@@ -19,9 +19,12 @@ angular.module('cesium.modal.services', [])
 
     return csHttp.uri.open(uri, options);
   };
+
+  // Change UTC date into user date
+  $scope.buildDate = moment(csConfig.build).format(filterTranslations.DATE_PATTERN || 'YYYY-MM-DD HH:mm');
 })
 
-.factory('ModalUtils', function($ionicModal, $rootScope, $q, $injector, $controller, $timeout) {
+.factory('ModalUtils', function($ionicModal, $rootScope, $q, $injector, $controller, $timeout, Device) {
   'ngInject';
 
 
@@ -58,8 +61,15 @@ angular.module('cesium.modal.services', [])
 
     $scope.closeModal = function (result) {
       $scope.resolved = true;
+
+      // removeIf(no-device)
+      if (Device.enable) Device.keyboard.close();
+      // endRemoveIf(no-device)
+
       return $scope.modal.remove()
         .then(function() {
+          // Workaround modal-open not removed
+          document.body.classList.remove('modal-open');
           $scope.deferred.resolve(result);
           return result;
         });
@@ -89,7 +99,10 @@ angular.module('cesium.modal.services', [])
 
         $timeout(function() {
           $scope.deferred.resolve();
-          return $scope.modal.remove();
+          return $scope.modal.remove().then(function() {
+            // Workaround modal-open not removed
+            document.body.classList.remove('modal-open');
+          });
         }, ($scope.modal.hideDelay || 320) + 20);
       }
     });
@@ -100,6 +113,12 @@ angular.module('cesium.modal.services', [])
 
     options = options ? options : {} ;
     options.animation = options.animation || 'slide-in-up';
+
+    var focusFirstInput = false;
+    // removeIf(device)
+    focusFirstInput = angular.isDefined(options.focusFirstInput) ? options.focusFirstInput : false;
+    // endRemoveIf(device)
+    options.focusFirstInput = focusFirstInput;
 
     // If modal has a controller
     if (controller) {
@@ -282,18 +301,41 @@ angular.module('cesium.modal.services', [])
 
 })
 
-.factory('csPopovers', function($rootScope, $translate, $ionicPopup, $timeout, UIUtils) {
+.factory('csPopovers', function($rootScope, $translate, $ionicPopup, $timeout, UIUtils, $controller) {
     'ngInject';
 
     function showSelectWallet(event, options) {
-      options = options || {};
+      options = options || {};
+
+      var parameters = options.parameters || {};
+      delete options.parameters;
+
       var scope = options.scope && options.scope.$new() || $rootScope.$new(true);
-      scope.parameters = options;
-      delete options.scope;
-      return UIUtils.popover.show(event, angular.merge({
-        templateUrl :'templates/wallet/list/popover_wallets.html',
-        autoremove: true
-      }, options));
+      options.scope = scope;
+      options.templateUrl = 'templates/wallet/list/popover_wallets.html';
+      options.autoremove = true;
+
+      // Initialize the popover controller, with parameters
+      angular.extend(this, $controller('WalletSelectPopoverCtrl', {$scope: options.scope, parameters: parameters}));
+
+      var afterShowSaved = options.afterShow;
+      options.afterShow = function(popover) {
+
+        // Add a missing method, to close the popover
+        scope.closePopover = function(res) {
+          popover.scope.closePopover(res);
+        };
+
+        // Execute default afterShow fn, if any
+        if (afterShowSaved) afterShowSaved(popover);
+      };
+      // Show the popover
+      return UIUtils.popover.show(event, options)
+        .then(function(res) {
+          // Then destroy the scope
+          scope.$destroy();
+          return res;
+        });
     }
 
     return {

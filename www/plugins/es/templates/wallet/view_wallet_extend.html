@@ -1,4 +1,12 @@
-<ng-if ng-if=":state:enable">
+<ng-if ng-if=":state:enable && extensionPoint === 'hero'" >
+  <!-- likes -->
+  <small class="light" style="display: inline-block;"
+         ng-include="::'plugins/es/templates/common/view_likes.html'"
+         ng-init="canEdit=true"></small>
+</ng-if>
+
+<ng-if ng-if=":state:enable && extensionPoint === 'after-general'">
+
   <!-- profile -->
   <div class="item item-divider item-divider-top-border">
     <span>
@@ -25,11 +33,11 @@
   </div>
 
 
-  <div class="item item-text-wrap positive item-small-height" ng-show="showProfileHelp">
-    <small translate>PROFILE.PROFILE_DIVIDER_HELP</small>
+  <div class="item item-text-wrap positive item-small-height item-wallet-help" ng-show="showProfileHelp">
+    <small trust-as-html="'PROFILE.PROFILE_DIVIDER_HELP'|translate"></small>
   </div>
 
-  <ng-include src="'plugins/es/templates/user/items_profile.html'" ng-init="showName=true"></ng-include>
+  <ng-include src="::'plugins/es/templates/user/items_profile.html'" ng-init="showName=true"></ng-include>
 
   <!-- subscriptions -->
   <div class="item item-divider item-divider-top-border">
@@ -84,23 +92,23 @@
   <!-- page -->
   <div class="item item-divider item-divider-top-border">
     <span>
-      {{'REGISTRY.WALLET.REGISTRY_DIVIDER' | translate}}
+      {{'REGISTRY.WALLET.PAGE_DIVIDER' | translate}}
       <i style="font-size: 12pt; cursor: pointer;"
          ng-click="showPagesHelp=!showPagesHelp"
          class="icon positive ion-ios-help-outline"
-         title="{{'REGISTRY.WALLET.REGISTRY_HELP' | translate}}"></i>
+         title="{{'REGISTRY.WALLET.PAGE_DIVIDER_HELP' | translate}}"></i>
     <span>
 
     <a class="badge button button-text button-small button-small-padding "
        ng-if="!formData.pages.count"
-       ng-click="showNewPageModal()">
+       ng-click="showNewPageModal($event)">
       <i class="icon ion-edit"></i>
       <span translate>REGISTRY.BTN_NEW</span>
     </a>
   </div>
 
-  <div class="item item-text-wrap positive item-small-height" ng-show="showPagesHelp">
-    <small translate>REGISTRY.WALLET.REGISTRY_HELP</small>
+  <div class="item item-text-wrap positive item-small-height item-wallet-help" ng-show="showPagesHelp">
+    <small trust-as-html="'REGISTRY.WALLET.PAGE_DIVIDER_HELP'|translate"></small>
   </div>
 
   <div ng-if="!formData.pages.count"

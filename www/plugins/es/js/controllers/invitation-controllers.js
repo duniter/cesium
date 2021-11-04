@@ -110,7 +110,7 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
         UIUtils.loading.hide();
       })
       .catch(function(err) {
-        if (err == 'CANCELLED') return $scope.cancel();
+        if (err === 'CANCELLED') return $scope.cancel();
         $scope.search.loading = false;
         if (!from) {
           $scope.search.results = [];
@@ -230,32 +230,28 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
   $scope.showNewInvitationModal = function() {
     $scope.hideActionsPopover();
 
-    return esModals.showNewInvitation({});
+    return $timeout(function() {
+      return esModals.showNewInvitation({});
+    }, 500); // Timeout need, to avoid freeze
   };
 
   /* -- Popover -- */
 
   $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('plugins/es/templates/invitation/popover_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'plugins/es/templates/invitation/popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.actionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
-        });
-        $scope.actionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.actionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
 
@@ -374,7 +370,7 @@ function NewInvitationModalController($scope, $q, Modals, UIUtils, csWallet, esH
         }
       })
       .catch(function(err){
-        if (err == 'CANCELLED') return $scope.cancel(); // close the modal
+        if (err === 'CANCELLED') return $scope.cancel(); // close the modal
         UIUtils.onError('ERROR.LOGIN_FAILED')(err);
       });
   };

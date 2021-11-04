@@ -3,6 +3,16 @@
 
       <!-- bar -->
       <div class="col col-75">
+        <!-- graphs button bar -->
+        <div class="button-bar-inline "
+             style="top: 33px; margin-top:-33px; position: relative;">
+          <button
+            class="button button-stable button-clear no-padding-xs no-padding-sm pull-right"
+            ng-click="showPeriodPopover($event)">
+            <i class="icon ion-navicon-round"></i>
+          </button>
+        </div>
+
         <canvas id="bar" class="chart-bar"
                 height="{{height}}" width="{{width}}"
                 chart-data="data"

@@ -1,7 +1,7 @@
 <a name="block-{{::block.number}}"></a>
 <div id="block-{{::block.number}}"
           class="item item-block item-icon-left item-block-empty"
-          ng-class="{'compacted': block.compacted && compactMode}"
+          ng-class=":rebind:{'compacted': block.compacted && compactMode}"
           ng-click="selectBlock(block)"
           >
   <div class="row no-padding" ng-if=":rebind:!block.compacted || !compactMode">

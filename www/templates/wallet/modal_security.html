@@ -41,12 +41,14 @@
                 <b class="ion-ios-undo icon-secondary dark" style="top: -8px; left: 39px; font-size: 12px;"></b>
                 <h2 translate>ACCOUNT.SECURITY.RECOVER_ID</h2>
                 <h4 class="gray" translate>ACCOUNT.SECURITY.RECOVER_ID_HELP</h4>
-                <i class="icon dark ion-ios-arrow-right"></i>
+
+                <ng-if ng-if="::$root.config.demo" ng-include="::'templates/common/note_feature_not_available.html'"></ng-include>
+                <i class="icon dark ion-ios-arrow-right" ng-if="::!$root.config.demo"></i>
               </div>
             </div>
 
             <div class="item item-complex card stable-bg item-icon-left item-icon-right ink"
-                 ng-click="selectOption('revocation')" ng-if="!login">
+                 ng-click="selectOption('revocation', true)" ng-if="!login">
               <div class="item-content item-text-wrap">
                 <i class="item-image dark icon ion-person"></i>
                 <b class="ion-close icon-secondary dark" style="top: -8px; left: 39px; font-size: 12px;"></b>
@@ -64,6 +66,7 @@
                 <b class="ion-locked icon-secondary dark" style="top: 0px; left: 40px; font-size: 8px;"></b>
                 <h2 translate>ACCOUNT.SECURITY.SAVE_ID</h2>
                 <h4 class="gray" translate>ACCOUNT.SECURITY.SAVE_ID_HELP</h4>
+                <ng-if ng-if="::$root.config.demo" ng-include="::'templates/common/note_feature_not_available.html'"></ng-include>
                 <i class="icon dark ion-ios-arrow-right"></i>
               </div>
             </div>
@@ -76,6 +79,7 @@
                 <b class="ion-key icon-secondary dark" style="top: -8px; left: 42px; font-size: 12px;"></b>
                 <h2 translate>ACCOUNT.SECURITY.GENERATE_KEYFILE</h2>
                 <h4 class="gray" translate>ACCOUNT.SECURITY.GENERATE_KEYFILE_HELP</h4>
+                <ng-if ng-if="::$root.config.demo" ng-include="::'templates/common/note_feature_not_available.html'"></ng-include>
                 <i class="icon dark ion-ios-arrow-right"></i>
               </div>
             </div>
@@ -88,6 +92,7 @@
                 <b class="ion-close icon-secondary dark" style="top: 0px; left: 40px; font-size: 8px;"></b>
                 <h2 translate>ACCOUNT.SECURITY.DOWNLOAD_REVOKE</h2>
                 <h4 class="gray" translate>ACCOUNT.SECURITY.DOWNLOAD_REVOKE_HELP</h4>
+                <ng-if ng-if="::$root.config.demo" ng-include="::'templates/common/note_feature_not_available.html'"></ng-include>
                 <i class="icon dark ion-android-archive"></i>
               </div>
             </div>
@@ -99,6 +104,7 @@
                 <b class="ion-flag icon-secondary dark" style="top: -8px; left: 39px; font-size: 12px;"></b>
                 <h2 translate>ACCOUNT.SECURITY.SEND_IDENTITY</h2>
                 <h4 class="gray" ng-bind-html="::'ACCOUNT.SECURITY.SEND_IDENTITY_HELP' | translate"></h4>
+                <ng-if ng-if="::$root.config.demo" ng-include="::'templates/common/note_feature_not_available.html'"></ng-include>
               </div>
             </div>
 
@@ -109,6 +115,7 @@
                 <b class="ion-plus icon-secondary dark" style="top: -8px; left: 39px; font-size: 12px;"></b>
                 <h2 translate>ACCOUNT.SECURITY.MEMBERSHIP_IN</h2>
                 <h4 class="gray" ng-bind-html="::'ACCOUNT.SECURITY.MEMBERSHIP_IN_HELP' | translate"></h4>
+                <ng-if ng-if="::$root.config.demo" ng-include="::'templates/common/note_feature_not_available.html'"></ng-include>
               </div>
             </div>
 
@@ -119,6 +126,7 @@
                 <b class="ion-close icon-secondary assertive-900" style="top: -8px; left: 39px; font-size: 12px;"></b>
                 <h2 translate>ACCOUNT.SECURITY.REVOCATION_WALLET</h2>
                 <h4 class="gray" translate>ACCOUNT.SECURITY.REVOCATION_WALLET_HELP</h4>
+                <ng-if ng-if="::$root.config.demo" ng-include="::'templates/common/note_feature_not_available.html'"></ng-include>
               </div>
             </div>
           </div>
@@ -132,28 +140,28 @@
       </ion-slide-page>
 
       <ion-slide-page ng-if="option == 'revocation'">
-        <ng-include src="'templates/wallet/slides/slides_revocation_file.html'"></ng-include>
+        <ng-include src="::'templates/wallet/slides/slides_revocation_file.html'"></ng-include>
       </ion-slide-page>
 
       <ion-slide-page ng-if="login && option == 'saveID'">
-        <ng-include src="'templates/wallet/slides/slides_saveID_1.html'"></ng-include>
+        <ng-include src="::'templates/wallet/slides/slides_saveID_1.html'"></ng-include>
       </ion-slide-page>
       <ion-slide-page ng-if="login && option == 'saveID'">
-        <ng-include src="'templates/wallet/slides/slides_saveID_2.html'"></ng-include>
+        <ng-include src="::'templates/wallet/slides/slides_saveID_2.html'"></ng-include>
       </ion-slide-page>
 
       <ion-slide-page ng-if="option == 'recoverID'">
-        <ng-include src="'templates/wallet/slides/slides_recoverID_1.html'"></ng-include>
+        <ng-include src="::'templates/wallet/slides/slides_recoverID_1.html'"></ng-include>
       </ion-slide-page>
       <ion-slide-page ng-if="option == 'recoverID'">
-        <ng-include src="'templates/wallet/slides/slides_recoverID_2.html'"></ng-include>
+        <ng-include src="::'templates/wallet/slides/slides_recoverID_2.html'"></ng-include>
       </ion-slide-page>
       <ion-slide-page ng-if="option == 'recoverID'">
-        <ng-include src="'templates/wallet/slides/slides_recoverID_3.html'"></ng-include>
+        <ng-include src="::'templates/wallet/slides/slides_recoverID_3.html'"></ng-include>
       </ion-slide-page>
 
       <ion-slide-page ng-if="login && option == 'generateKeyfile'">
-        <ng-include src="'templates/wallet/slides/slides_generate_keyfile.html'"></ng-include>
+        <ng-include src="::'templates/wallet/slides/slides_generate_keyfile.html'"></ng-include>
       </ion-slide-page>
 
     </ion-slides>

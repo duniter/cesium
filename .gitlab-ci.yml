@@ -1,7 +1,7 @@
 stages:
-  - build
-  - alt_build
-  - publish
+  #- build
+  #- alt_build
+  #- publish
 
 fast-build:
   stage: build
@@ -11,14 +11,14 @@ fast-build:
     - cp -rf /customCache/www ./
     - cp -rf /customCache/hooks ./
   script:
-    - node ./node_modules/gulp/bin/gulp build:web
+    - node ./node_modules/gulp/bin/gulp webBuild
   after_script:
-    - ls -la platforms/web/
-    - du -csh platforms/web/
+    - ls -la dist/web/
+    - du -csh dist/web/
   artifacts:
     untracked: true
     paths:
-      - platforms/web
+      - dist/web
     expire_in: 60 minutes
   only:
     - master
@@ -26,16 +26,15 @@ fast-build:
 failsafe-build:
   stage: alt_build
   when: on_failure
-  image: node:5
+  image: node:10
   script:
-    - npm install
-    - npm run postinstall
-#    - node ./node_modules/gulp/bin/gulp config --env default_fr
-    - node ./node_modules/gulp/bin/gulp build:web
+    - yarn
+    - node ./node_modules/gulp/bin/gulp config --env default
+    - node ./node_modules/gulp/bin/gulp webBuild
   artifacts:
     untracked: true
     paths:
-      - platforms/web
+      - dist/web
     expire_in: 60 minutes
   only:
     - master
@@ -50,12 +49,11 @@ docker-for-fast-build:
   services:
     - docker:dind
   script:
-    - echo 'FROM node:5' > Dockerfile
+    - echo 'FROM node:10' > Dockerfile
     - echo 'WORKDIR /customCache' >> Dockerfile
     - echo 'COPY ./ ./' >> Dockerfile
     - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/before.txt' >> Dockerfile
-    - echo 'RUN npm install' >> Dockerfile
-    - echo 'RUN npm run postinstall' >> Dockerfile
+    - echo 'RUN yarn' >> Dockerfile
     - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/after.txt' >> Dockerfile
     - echo 'WORKDIR /build' >> Dockerfile
     - echo "RUN diff /before.txt /after.txt || true" >> Dockerfile
@@ -66,12 +64,12 @@ docker-for-fast-build:
 
 pages:
   stage: publish
-  image: node:latest
+  image: node:10
   variables:
     GIT_STRATEGY: none
   script:
     - ls -la public || true
-    - mv platforms/web/www public
+    - mv dist/web/www public
   artifacts:
     untracked: true
     paths:
@@ -89,20 +87,22 @@ mirror:
       [[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" >
       ~/.ssh/config
   script:
-    - mv platforms/web/www public
+    - mv dist/web/www public
     - rsync -az -e ssh ./public/ gammanu@1000i100.fr:~/g1.money/dev-cesium
+  after_script:
+    - ssh gammanu@1000i100.fr "~/g1.money/update-cesium.sh"
   only:
     - master
 
 
 release-web:
   stage: publish
-  image: node:latest
+  image: node:10
   variables:
     GIT_STRATEGY: none
   script:
     - ls -la www || true
-    - mv platforms/web/www www
+    - mv dist/web/www www
   artifacts:
     untracked: true
     paths:

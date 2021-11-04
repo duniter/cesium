@@ -15,6 +15,15 @@
         "HOUR": "Heure",
         "DAY": "Jour",
         "MONTH": "Mois"
+      },
+      "MAX_AGE": {
+        "DAY": "Depuis 24h",
+        "WEEK": "Depuis une semaine",
+        "MONTH": "Depuis un mois",
+        "QUARTER": "Depuis 3 mois",
+        "SEMESTER": "Depuis 6 mois",
+        "YEAR": "Depuis un an",
+        "FOREVER": "Depuis toujours"
       }
     },
     "ACCOUNT": {
@@ -44,13 +53,12 @@
       "BLOCKS_ISSUERS_TITLE": "Nombre de blocs calculés par membre",
       "BLOCKS_ISSUERS_LABEL": "Nombre de blocs",
       "TX_DIVIDER": "Analyse des transactions",
-      "TX_AMOUNT_TITLE": "Volume des transactions",
+      "TX_AMOUNT_TITLE": "Volume des transactions {{currency|abbreviate}}",
       "TX_AMOUNT_PUBKEY_TITLE": "Volume des transactions calculées par {{issuer | formatPubkey}}",
       "TX_AMOUNT_LABEL": "Volume échangé",
       "TX_COUNT_TITLE": "Nombre de transactions écrites",
       "TX_COUNT_LABEL": "Nombre de transactions",
       "TX_AVG_BY_BLOCK": "Nombre moyen de transactions / bloc"
-
     },
     "CURRENCY": {
       "MONETARY_MASS_TITLE": "Evolution de la masse monétaire",
@@ -58,7 +66,11 @@
       "MONETARY_MASS_SHARE_LABEL": "Moyenne par membre",
       "UD_TITLE": "Evolution du dividende universel",
       "MEMBERS_COUNT_TITLE": "Evolution du nombre de membres",
-      "MEMBERS_COUNT_LABEL": "Nombre de membres"
+      "MEMBERS_COUNT_LABEL": "Nombre de membres",
+      "MEMBERS_DELTA_TITLE": "Variation du nombre de membres",
+      "IS_MEMBER_DELTA_LABEL": "Prises en compte d'adhésion",
+      "WAS_MEMBER_DELTA_LABEL": "Pertes d'adhésion",
+      "PENDING_DELTA_LABEL": "Demandes d'adhésion"
     },
     "PEER": {
       "VIEW": {
@@ -74,9 +86,14 @@
         "USER_PROFILE": "Profils utilisateur",
         "USER_SETTINGS": "Paramètres sauvegardés"
       },
+      "USER_DELTA": {
+        "TITLE": "Variation du nombre de documents liés à un compte",
+        "USER_PROFILE": "Profils utilisateur",
+        "USER_SETTINGS": "Paramètres sauvegardés"
+      },
       "MESSAGE": {
-        "TITLE": "Nombre de documents lié à la communication",
-        "MESSAGE_INBOX": "Messages en boite de réception",
+        "TITLE": "Nombre de documents liés à la communication",
+        "MESSAGE_INBOX": "Messages en boîte de réception",
         "MESSAGE_OUTBOX": "Messages envoyés sauvegardés",
         "INVITATION_CERTIFICATION": "Invitations à certifier"
       },
@@ -101,13 +118,18 @@
       },
       "PEER": {
         "TITLE": "Noeuds requêtés",
-        "ES_USER_API": "Noeuds données utilisateurs",
-        "ES_SUBSCRIPTION_API": "Noeuds services en lignes"
+        "ES_USER_API": "Noeuds avec données utilisateurs",
+        "ES_SUBSCRIPTION_API": "Noeuds avec services en ligne"
       },
       "PERFORMANCE": {
-        "TITLE": "Performances d'execution",
-        "DURATION": "Temps d'execution (ms)"
+        "TITLE": "Performances d'exécution",
+        "DURATION": "Temps d'exécution (ms)"
       }
+    },
+    "NETWORK": {
+      "TITLE": "Statistiques réseau",
+      "ENDPOINT_COUNT_TITLE": "Nombre de points d'accès",
+      "ENDPOINT_DELTA_TITLE": "Variation du nombre de points d'accès"
     }
   }
 }

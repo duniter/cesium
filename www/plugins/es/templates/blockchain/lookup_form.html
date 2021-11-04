@@ -67,12 +67,17 @@
 
     <div class=" pull-right hidden-xs hidden-sm">
       <a ng-if="enableFilter"
+         class="button button-text button-small ink icon ion-card"
+         ui-sref="app.document_search({index: currency, type: 'movement', q: search.text })">
+        {{'BLOCKCHAIN.LOOKUP.BTN_TX' | translate}}
+      </a>
+
+      <a ng-if="enableFilter"
          class="button button-text button-small ink icon ion-clock"
          ng-class="{'button-text-positive': search.type=='last'}"
          ng-click="doSearchLast()">
         {{'BLOCKCHAIN.LOOKUP.BTN_LAST' | translate}}
       </a>
-
       <!--<a class="button button-text button-small ink icon icon-help" ng-click="showHelpModal('join-salt')">
         {{'BLOCKCHAIN.LOOKUP.HELP' | translate}}
       </a>-->
@@ -92,7 +97,7 @@
 
   <ion-list class="list list-blocks" ng-class="::motion.ionListClass">
 
-    <ng-include src="'plugins/es/templates/blockchain/items_blocks.html'"></ng-include>
+    <ng-include src="::'plugins/es/templates/blockchain/items_blocks.html'"></ng-include>
 
   </ion-list>
 

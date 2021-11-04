@@ -25,11 +25,11 @@
       </h4>
     </div>
 
-    <div class="row no-padding-xs">
+    <div class="row no-padding-xs no-padding-sm">
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;
       </div>
 
-      <div class="col list item-text-wrap no-padding-xs" ng-class="::motion.ionListClass">
+      <div class="col list item-text-wrap no-padding-xs no-padding-sm" ng-class="::motion.ionListClass">
 
         <div class="item">
           <h2 class="gray">
@@ -126,7 +126,7 @@
         <div class="lazy-load">
 
           <!-- pictures -->
-          <ng-include src="'plugins/es/templates/common/view_pictures.html'"></ng-include>
+          <ng-include src="::'plugins/es/templates/common/view_pictures.html'"></ng-include>
 
 
           <span class="item item-divider" ng-if="formData.pubkey">
@@ -143,7 +143,7 @@
           </div>
 
           <!-- comments -->
-          <ng-include src="'plugins/es/templates/common/view_comments.html'"></ng-include>
+          <ng-include src="::'plugins/es/templates/common/view_comments.html'"></ng-include>
         </div>
       </div>
 

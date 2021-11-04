@@ -2,7 +2,7 @@
 angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalprecht.translate', 'cesium.translations'
 ])
 
-  .factory('filterTranslations', function($rootScope, $q, csPlatform, csSettings, csCurrency, $translate) {
+  .factory('filterTranslations', function($rootScope, $q, csPlatform, csSettings, csCurrency, $translate, $timeout) {
     'ngInject';
 
     var
@@ -65,7 +65,10 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     };
 
     // Default action
-    that.start();
+    // Must be started with a delay, to allow settings override, before starting platform (need by Cesium API)
+    $timeout(function() {
+      that.start();
+    });
 
     return that;
   })
@@ -346,7 +349,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     return function(input) {
       if (!input) return '';
       input = input.toLowerCase();
-      return input.substring(0,1).toUpperCase()+input.substring(1);
+      return input.length > 1 ? (input.substring(0,1).toUpperCase()+input.substring(1)) : input;
     };
   })
 

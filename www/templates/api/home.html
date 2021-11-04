@@ -4,17 +4,15 @@
   </ion-nav-title>
 
   <ion-nav-buttons side="right">
-    <!-- locales -->
-    <button class="button button-clear hidden-xs hidden-sm gray icon-left"
-            style="max-width: 450px !important"
-            ng-click="showLocalesPopover($event)">
-      <i class="icon ion-earth" ></i>
-      {{$root.settings.locale.label}}
-      <small class="ion-arrow-down-b"></small>
+    <!-- locales  -->
+    <button class="button button-clear hidden-xs hidden-sm flag"
+            ng-click="showLocalesPopover($event)" style="align-content: center">
+      <i class="flag-image" ng-if="$root.settings.locale" style="background-image: url(../img/flag-{{$root.settings.locale.flag}}.png);"></i>
+      <b class="ion-arrow-down-b gray"></b>
     </button>
   </ion-nav-buttons>
 
-  <ion-content class=" has-header no-padding-xs positive-900-bg ">
+  <ion-content class="no-padding-xs no-padding-sm positive-900-bg">
 
     <br class="hidden-xs"/>
 
@@ -31,7 +29,7 @@
 
         <div class="light-bg no-padding">
           <!-- include documentation -->
-          <ng-include src="'templates/api/doc.html'"></ng-include>
+          <ng-include src="::'templates/api/doc.html'"></ng-include>
         </div>
       </div>
 

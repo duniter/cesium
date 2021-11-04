@@ -1,0 +1,40 @@
+<ion-popover-view class="fit has-header">
+  <ion-header-bar>
+    <h1 class="title"  translate>COMMON.POPOVER_ACTIONS_TITLE</h1>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <div class="list item-text-wrap">
+
+      <a class="item item-icon-left ink visible-xs visible-sm"
+         ng-click="showSharePopover($event)">
+        <i class="icon ion-android-share-alt"></i>
+        {{'COMMON.BTN_SHARE' | translate}}
+      </a>
+
+      <a class="item item-icon-left assertive ink "
+         ng-if="canDelete"
+         ng-click="delete()">
+        <i class="icon ion-trash-a"></i>
+        {{'COMMON.BTN_DELETE' | translate}}
+      </a>
+
+      <!-- Like -->
+      <a class="item item-icon-left ink"
+         ng-if="!canEdit && likeData.likes"
+         ng-click="hideActionsPopover() && toggleLike($event)">
+        <i class="icon " ng-class="{'ion-heart-broken': likeData.likes.wasHit, 'ion-heart': !likeData.likes.wasHit}"></i>
+        {{(likeData.likes.wasHit ? 'COMMON.BTN_LIKE_REMOVE' : 'COMMON.BTN_LIKE' )| translate}}
+      </a>
+
+      <!-- report abuse -->
+      <a class="item item-icon-left ink"
+         ng-if="!canEdit && likeData.abuses"
+         ng-disabled="!!likeData.abuses.wasHitCount"
+         ng-class="{'gray': !!likeData.abuses.wasHitCount}"
+         ng-click="hideActionsPopover() && reportAbuse($event)">
+        <i class="icon ion-android-warning"></i>
+        {{'COMMON.BTN_REPORT_ABUSE_DOTS' | translate}}
+      </a>
+    </div>
+  </ion-content>
+</ion-popover-view>

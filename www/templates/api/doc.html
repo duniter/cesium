@@ -47,11 +47,15 @@
         <div class="col gray" translate>API.DOC.TRANSFER.PARAM_NAME_HELP</div>
       </div>
       <div class="row">
-        <div class="col col-20 text-italic">redirect_url</div>
-        <div class="col gray" translate>API.DOC.TRANSFER.PARAM_REDIRECT_URL_HELP</div>
+        <div class="col col-20 text-italic">preferred_node</div>
+        <div class="col gray" translate>API.DOC.TRANSFER.PARAM_PREFERRED_NODE_HELP</div>
       </div>
       <div class="row stable-bg">
-        <div class="col col-20 text-italic dark">cancel_url</div>
+        <div class="col col-20 text-italic dark">redirect_url</div>
+        <div class="col gray" translate>API.DOC.TRANSFER.PARAM_REDIRECT_URL_HELP</div>
+      </div>
+      <div class="row">
+        <div class="col col-20 text-italic">cancel_url</div>
         <div class="col gray" translate>API.DOC.TRANSFER.PARAM_CANCEL_URL_HELP</div>
       </div>
     </div>
@@ -72,6 +76,8 @@
       <h2 class="text-right balanced" translate>API.DOC.DEMO_SUCCEED</h2>
       <h4 class="gray" translate>API.DOC.DEMO_RESULT</h4>
       <p class="balanced-100-bg padding dark text-keep-lines">{{result.content}}</p>
+
+      <h4 class="gray"><span translate>API.DOC.DEMO_RESULT_PEER</span> <b>{{result.node}}</b></h4>
     </div>
     <div class="item item-text-wrap" ng-if="result.type === 'payment' && result.cancelled">
       <h2 class="text-right assertive" translate>API.DOC.DEMO_CANCELLED</h2>
@@ -136,6 +142,7 @@
               </p>
               <label class="item item-input">
                 <input type="text"
+                       autocomplete="off"
                        ng-model="transferData.pubkey"
                        ng-model-options="{ debounce: 650 }"
                        placeholder="{{'API.DOC.TRANSFER.PARAM_PUBKEY_HELP'|translate}}">
@@ -147,6 +154,7 @@
               </p>
               <label class="item item-input">
                 <input type="text"
+                       autocomplete="off"
                        ng-model="transferData.amount"
                        ng-model-options="{ debounce: 650 }"
                        placeholder="{{'API.DOC.TRANSFER.PARAM_AMOUNT_HELP'|translate}}">
@@ -157,7 +165,9 @@
                 {{'API.DOC.TRANSFER.PARAM_COMMENT' | translate}} :
               </p>
               <label class="item item-input">
-                <input type="text" ng-model="transferData.comment" placeholder="{{'API.DOC.TRANSFER.PARAM_COMMENT'|translate}}">
+                <input type="text"
+                       autocomplete="off"
+                       ng-model="transferData.comment" placeholder="{{'API.DOC.TRANSFER.PARAM_COMMENT'|translate}}">
               </label>
 
               <p class="padding-top">
@@ -169,6 +179,17 @@
                        ng-model="transferData.name"
                        ng-model-options="{ debounce: 650 }"
                        placeholder="{{'API.DOC.TRANSFER.PARAM_NAME'|translate}}">
+              </label>
+
+              <p class="padding-top">
+                <i class="icon ion-key"></i>
+                {{'API.DOC.TRANSFER.PARAM_PREFERRED_NODE' | translate}} :
+              </p>
+              <label class="item item-input">
+                <input type="text"
+                       ng-model="transferData.preferred_node"
+                       ng-model-options="{ debounce: 650 }"
+                       placeholder="{{'API.DOC.TRANSFER.PARAM_PREFERRED_NODE_HELP'|translate}}">
               </label>
 
               <p class="padding-top">

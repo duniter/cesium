@@ -3,7 +3,7 @@
     <label class="item item-input"
            ng-class="{'item-input-error': registerForm.$submitted && registerForm.pseudo.$invalid}">
       <input name="pseudo" type="text" placeholder="{{'ACCOUNT.NEW.PSEUDO_HELP' | translate}}"
-             ng-model="walletData.newUid"
+             ng-model="formData.newUid"
              ng-minlength="3"
              required>
     </label>

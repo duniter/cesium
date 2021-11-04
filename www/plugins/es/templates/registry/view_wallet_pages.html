@@ -4,7 +4,7 @@
     {{'REGISTRY.MY_PAGES' | translate}}
   </ion-nav-title>
 
-  <ion-content class="padding no-padding-xs" scroll="true">
+  <ion-content class="padding no-padding-xs no-padding-sm" scroll="true">
 
     <ion-refresher pulling-text="{{:locale:'COMMON.BTN_REFRESH' | translate}}"
                    on-refresh="doUpdate()">
@@ -32,7 +32,7 @@
       REGISTRY.NO_PAGE
     </div>
 
-    <ng-include src="'plugins/es/templates/registry/lookup_list.html'"></ng-include>
+    <ng-include src="::'plugins/es/templates/registry/lookup_list.html'"></ng-include>
 
   </ion-content>
 

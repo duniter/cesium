@@ -2,22 +2,30 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width, minimal-ui">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=yes, width=device-width, minimal-ui">
+
     <title>Cesium</title>
-    <link rel="icon" href="./img/favicon.ico">
-    <link rel="apple-touch-icon" href="./img/logo_57px.png">
-    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" href="img/favicon.ico">
+
+    <meta name="theme-color" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <link rel="apple-touch-icon" href="img/logo_57px.png">
+
+    <link rel="manifest" href="manifest.json">
+
     <!-- build:css dist_css/cesium.css -->
-    <link rel="stylesheet" type="text/css" href="css/ionic.app.min.css">
+    <link rel="stylesheet" type="text/css" href="css/ionic.app.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="stylesheet" type="text/css" href="css/angular-image-crop.css">
+    <link rel="stylesheet" type="text/css" href="lib/angular-image-crop/dist/angular-image-crop.min.css">
     <!-- removeIf(device) -->
     <link rel="stylesheet" type="text/css" href="css/style-no-device.css">
     <!-- endRemoveIf(device) -->
 
     <!-- removeIf(no-plugin) -->
-    <link rel="stylesheet" type="text/css" href="css/leaflet.app.min.css">
+    <link rel="stylesheet" type="text/css" href="css/leaflet.app.css">
+    <link rel="stylesheet" type="text/css" href="lib/chart.js/dist/Chart.css">
     <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/es/css/style.css">
     <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/graph/css/style.css">
     <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/map/css/style.css">
@@ -30,7 +38,6 @@
     <meta property="og:title" content="Cesium" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="Cesium is a Wallet for the Ğ1 currency." />
-    <meta property="og:type" content="website" />
     <meta property="og:image" content="./img/logo_200px.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:height" content="200" />
@@ -42,76 +49,83 @@
     <meta property="og:locale:alternate" content="fr_FR" />
     <meta property="og:locale:alternate" content="it_IT" />
     <meta property="og:locale:alternate" content="nl_NL" />
+    <meta property="og:locale:alternate" content="eo_EO" />
 
     <!--endRemoveIf(device)-->
 
   </head>
-  <body ng-app="cesium" id="cesium" ng-strict-di="true" window-exit-unauth="true"
-        ng-class="{'nobackdrop': $root.tour, 'expert-mode': $root.settings.expertMode}">
-
+  <body id="cesium" ng-strict-di="true" window-exit-unauth="true"
+        ng-class="{'nobackdrop': $root.tour, 'expert-mode': $root.settings.expertMode, 'demo': $root.config.demo && !$root.config.readonly, 'readonly': $root.config.readonly}"
+        style="background-color: #1a237e;">
     <ion-nav-view>
       <div class="loader">
-        <h3 style="text-align: center; padding-top: 25px; "><b>Cesium</b></h3>
-        <h4 style="text-align: center;"><i class="icon ion-load-a"></i></h4>
+        <h3 style="text-align: center; padding-top: 25px; color: whitesmoke;"><b>Cesium</b></h3>
+        <h4 style="text-align: center; color: whitesmoke;"><i class="icon ion-load-a"></i></h4>
       </div>
     </ion-nav-view>
 
     <!-- build:js dist_js/vendor.js -->
     <!-- vendor js -->
-    <script src="js/vendor/moment.min.js"></script>
-    <script src="js/vendor/moment.fr.js"></script>
-    <script src="js/vendor/moment.nl.js"></script>
-    <script src="js/vendor/moment.es.js"></script>
-    <script src="js/vendor/numeral.js"></script>
-    <script src="js/vendor/numeral.fr.js"></script>
-    <script src="js/vendor/numeral.en.js"></script>
-    <script src="js/vendor/numeral.nl.js"></script>
-    <script src="js/vendor/numeral.es.js"></script>
-    <script src="js/vendor/socket-io.js"></script>
-    <script src="js/vendor/underscore.js"></script>
-    <script src="js/vendor/qrcode.min.js"></script>
-    <script src="js/vendor/aes-js.js"></script>
-    <script src="js/vendor/Chart.js"></script>
 
-    <!-- ionic/angularjs js -->
-    <script src="lib/ionic/js/ionic.bundle.js"></script>
-    <script src="lib/ionic/js/ionic.material.js"></script>
-    <script src="lib/ionic/js/angular/angular-resource.js"></script>
-    <script src="lib/ionic/js/angular/angular-translate.js"></script>
-    <script src="lib/ionic/js/angular/angular-messages.js"></script>
-    <script src="lib/ionic/js/angular/angular-api.js"></script>
-    <script src="lib/ionic/js/angular/angular-cache.js"></script>
-    <script src="lib/ionic/js/angular/angular-screenmatch.min.js"></script>
-    <script src="lib/ionic/js/angular/angular-bind-notifier.min.js"></script>
-    <script src="lib/ionic/js/angular/angular-image-crop.js"></script>
-    <script src="lib/ionic/js/angular/angular-file-saver.bundle.js"></script>
-    <script src="lib/ionic/js/angular/angular-idle.js"></script>
-    <script src="lib/ionic/js/angular/angular-simple-logger.light.js"></script>
-    <script src="lib/ionic/js/angular/ui-leaflet.js"></script>
-    <script src="js/vendor/ion-digit-keyboard.min.js"></script>
-    <script src="lib/ionic/js/angular/angular-chart.min.js"></script>
+    <script src="lib/numeral/numeral.js"></script>
+    <script src="lib/numeral/languages/fr.js"></script>
+    <script src="lib/numeral/languages/en-gb.js"></script>
+    <script src="lib/numeral/languages/nl-nl.js"></script>
+    <script src="lib/numeral/languages/es.js"></script>
+    <script src="lib/numeral/languages/it.js"></script>
+    <script src="js/vendor/numeral.eo.js"></script>
+    <script src="lib/qrcode-generator/js/qrcode.js"></script>
+    <script src="lib/aes-js/index.js"></script>
+    <script src="lib/moment/min/moment-with-locales.min.js"></script>
+    <script src="lib/socket.io-client/dist/socket.io.min.js"></script>
+    <script src="lib/underscore/underscore-min.js"></script>
+    <script src="lib/chart.js/dist/Chart.min.js"></script>
+
+    <!-- ionic/angular js -->
+    <script src="lib/ionic/js/ionic.min.js"></script>
+    <script src="lib/angular/angular.min.js"></script>
+    <script src="lib/angular-animate/angular-animate.min.js"></script>
+    <script src="lib/angular-sanitize/angular-sanitize.min.js"></script>
+    <script src="lib/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="lib/ionic/js/ionic-angular.min.js"></script>
+    <script src="lib/ionic-material/dist/ionic.material.min.js"></script>
+    <script src="lib/angular-resource/angular-resource.min.js"></script>
+    <script src="lib/angular-translate/angular-translate.min.js"></script>
+    <script src="lib/angular-messages/angular-messages.min.js"></script>
+    <script src="lib/angular-expose-api/dist/angular-expose-api.min.js"></script>
+    <script src="lib/angular-cache/dist/angular-cache.min.js"></script>
+    <script src="lib/angular-screenmatch/dist/angular-screenmatch.min.js"></script>
+    <script src="lib/angular-bind-notifier/dist/angular-bind-notifier.min.js"></script>
+    <script src="lib/angular-image-crop/dist/angular-image-crop.js"></script>
+    <script src="lib/angular-file-saver/dist/angular-file-saver.bundle.min.js"></script>
+    <script src="lib/ng-idle/angular-idle.min.js"></script>
+    <script src="lib/angular-simple-logger/dist/angular-simple-logger.light.min.js"></script>
+    <script src="lib/ui-leaflet/dist/ui-leaflet.min.no-header.js"></script>
+    <script src="lib/ion-digit-keyboard/dist/ion-digit-keyboard.min.js"></script>
+    <script src="lib/angular-chart.js/dist/angular-chart.min.js"></script>
+    <script src="lib/angular-fullscreen-toggle/dist/angular-fullscreen-toggle.min.js"></script>
 
     <script src="js/vendor/base58.js" async></script>
     <!--removeIf(android)-->
     <!--removeIf(ios)-->
-    <script src="js/vendor/nacl_factory.js" async></script>
-    <script src="js/vendor/scrypt-em.js" async></script>
+    <script src="lib/js-nacl/lib/nacl_factory.js" async></script>
+    <script src="lib/js-scrypt/browser/scrypt.js" async></script>
     <script src="js/vendor/base64.js" async></script>
     <!--endRemoveIf(ios)-->
     <!--endRemoveIf(android)-->
     <!--removeIf(no-device)-->
     <script src="js/vendor/sha256.min.js" async></script>
-    <script src="js/vendor/ng-cordova.min.js"></script>
+    <script src="lib/ngCordova/dist/ng-cordova.min.js"></script>
     <!--endRemoveIf(no-device)-->
 
     <!--removeIf(no-plugin)-->
-    <script src="js/vendor/leaflet.js"></script>
-    <script src="js/vendor/leaflet.awesome-markers.min.js"></script>
-    <script src="js/vendor/leaflet.search.min.js"></script>
-    <script src="js/vendor/leaflet.easy-button.js"></script>
-    <script src="js/vendor/leaflet.loading.js"></script>
-    <script src="js/vendor/leaflet.markercluster.js"></script>
-    <script src="js/vendor/leaflet.featuregroup.subgroup-src.js"></script>
+    <script src="lib/leaflet/dist/leaflet.js"></script>
+    <script src="lib/Leaflet.awesome-markers/dist/leaflet.awesome-markers.min.js"></script>
+    <script src="lib/leaflet-search/dist/leaflet-search.min.js"></script>
+    <script src="lib/Leaflet.EasyButton/src/easy-button.js"></script>
+    <script src="lib/leaflet.loading/src/Control.Loading.js"></script>
+    <script src="lib/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+    <script src="lib/Leaflet.FeatureGroup.SubGroup/leaflet.featuregroup.subgroup-src.js"></script>
     <!--endRemoveIf(no-plugin)-->
 
     <!-- endbuild -->
@@ -148,9 +162,9 @@
     <script src="dist/dist_js/app/entities/block.js"></script>
     <script src="dist/dist_js/app/entities/ws2pmessage.js"></script>
 
-
     <!-- controllers -->
     <script src="dist/dist_js/app/controllers/app-controllers.js"></script>
+    <script src="dist/dist_js/app/controllers/home-controllers.js"></script>
     <script src="dist/dist_js/app/controllers/join-controllers.js"></script>
     <script src="dist/dist_js/app/controllers/login-controllers.js"></script>
     <script src="dist/dist_js/app/controllers/help-controllers.js"></script>
@@ -179,6 +193,7 @@
     <script src="dist/dist_js/plugins/es/js/entities/notification.js"></script>
     <script src="dist/dist_js/plugins/es/js/entities/comment.js"></script>
     <script src="dist/dist_js/plugins/es/js/entities/invitation.js"></script>
+    <script src="dist/dist_js/plugins/es/js/entities/peer.js"></script>
     <script src="dist/dist_js/plugins/es/js/services.js"></script>
     <script src="dist/dist_js/plugins/es/js/services/comment-services.js"></script>
     <script src="dist/dist_js/plugins/es/js/services/http-services.js"></script>
@@ -199,6 +214,8 @@
     <script src="dist/dist_js/plugins/es/js/services/tx-services.js"></script>
     <script src="dist/dist_js/plugins/es/js/services/geo-services.js"></script>
     <script src="dist/dist_js/plugins/es/js/services/document-services.js"></script>
+    <script src="dist/dist_js/plugins/es/js/services/network-services.js"></script>
+    <script src="dist/dist_js/plugins/es/js/services/like-services.js"></script>
     <script src="dist/dist_js/plugins/es/js/controllers/common-controllers.js"></script>
     <script src="dist/dist_js/plugins/es/js/controllers/app-controllers.js"></script>
     <script src="dist/dist_js/plugins/es/js/controllers/settings-controllers.js"></script>
@@ -215,9 +232,9 @@
     <script src="dist/dist_js/plugins/es/js/controllers/invitation-controllers.js"></script>
     <script src="dist/dist_js/plugins/es/js/controllers/subscription-controllers.js"></script>
     <script src="dist/dist_js/plugins/es/js/controllers/document-controllers.js"></script>
+    <script src="dist/dist_js/plugins/es/js/controllers/like-controllers.js"></script>
 
     <!-- Graph plugin -->
-    <!--removeIf(ubuntu)--> <!-- FIXME: issue #463 -->
     <script src="dist/dist_js/plugins/graph/js/plugin.js"></script>
     <script src="dist/dist_js/plugins/graph/js/services.js"></script>
     <script src="dist/dist_js/plugins/graph/js/services/data-services.js"></script>
@@ -229,7 +246,6 @@
     <script src="dist/dist_js/plugins/graph/js/controllers/account-controllers.js"></script>
     <script src="dist/dist_js/plugins/graph/js/controllers/docstats-controllers.js"></script>
     <script src="dist/dist_js/plugins/graph/js/controllers/synchro-controllers.js"></script>
-    <!--endRemoveIf(ubuntu)-->
 
     <!-- Map plugin -->
     <script src="dist/dist_js/plugins/map/js/plugin.js"></script>
@@ -237,6 +253,7 @@
     <script src="dist/dist_js/plugins/map/js/services/wot-services.js"></script>
     <script src="dist/dist_js/plugins/map/js/services/registry-services.js"></script>
     <script src="dist/dist_js/plugins/map/js/services/utils-services.js"></script>
+    <script src="dist/dist_js/plugins/map/js/controllers/common-controllers.js"></script>
     <script src="dist/dist_js/plugins/map/js/controllers/wot-controllers.js"></script>
     <script src="dist/dist_js/plugins/map/js/controllers/registry-controllers.js"></script>
     <script src="dist/dist_js/plugins/map/js/controllers/network-controllers.js"></script>

@@ -35,9 +35,9 @@ angular.module('cesium.es.subscription.controllers', ['cesium.es.services'])
 
   })
 
- .controller('ViewSubscriptionsCtrl', ViewSubscriptionsController)
+  .controller('ViewSubscriptionsCtrl', ViewSubscriptionsController)
 
- .controller('ModalEmailSubscriptionsCtrl', ModalEmailSubscriptionsController)
+  .controller('ModalEmailSubscriptionsCtrl', ModalEmailSubscriptionsController)
 
 ;
 
@@ -68,11 +68,7 @@ function ViewSubscriptionsController($scope, $q, $ionicHistory, csWot, csWallet,
         return $scope.showHome();
       }
 
-      $scope.loadWallet({
-        wallet: wallet,
-        auth: true,
-        minData: true
-      })
+      wallet.auth({minData: true})
         .then(function() {
           UIUtils.loading.hide();
           return $scope.load();
@@ -81,7 +77,7 @@ function ViewSubscriptionsController($scope, $q, $ionicHistory, csWot, csWallet,
           $scope.showFab('fab-add-subscription-record');
         })
         .catch(function(err){
-          if (err == 'CANCELLED') {
+          if (err === 'CANCELLED') {
             UIUtils.loading.hide(10);
             $scope.loading=true; // reset for force reload next time
             $ionicHistory.goBack();
@@ -146,7 +142,7 @@ function ViewSubscriptionsController($scope, $q, $ionicHistory, csWot, csWallet,
         if (!cat) return;
         type = cat.id;
         // get subscription parameters
-        if (type == 'email') {
+        if (type === 'email') {
           return $scope.showEmailModal();
         }
         else {
@@ -156,7 +152,7 @@ function ViewSubscriptionsController($scope, $q, $ionicHistory, csWot, csWallet,
       .then(function(record) {
         if (!record) return;
         UIUtils.loading.show();
-        esSubscription.record.add(record, wallet)
+        esSubscription.record.add(record, {wallet: wallet})
           .then($scope.addToUI)
           .then(function() {
             wallet.data.subscriptions = wallet.data.subscriptions || {count: 0};
@@ -173,7 +169,7 @@ function ViewSubscriptionsController($scope, $q, $ionicHistory, csWot, csWallet,
     // get subscription parameters
     var promise;
     var oldRecord = angular.copy(record);
-    if (record.type == 'email') {
+    if (record.type === 'email') {
       promise = $scope.showEmailModal(record);
     }
     if (!promise) return;
@@ -185,8 +181,8 @@ function ViewSubscriptionsController($scope, $q, $ionicHistory, csWot, csWallet,
         return esSubscription.record.update(record, wallet)
           .then(function() {
             // If recipient change, update in results
-            if (oldRecord.type != record.type ||
-              oldRecord.recipient != record.recipient) {
+            if (oldRecord.type !== record.type ||
+              oldRecord.recipient !== record.recipient) {
               $scope.removeFromUI(oldRecord);
               return $scope.addToUI(record);
             }
@@ -264,7 +260,7 @@ function ViewSubscriptionsController($scope, $q, $ionicHistory, csWot, csWallet,
       })
       .then(function(cat){
         if (cat && cat.parent) {
-           return cat;
+          return cat;
         }
       });
   };
@@ -276,7 +272,7 @@ function ViewSubscriptionsController($scope, $q, $ionicHistory, csWot, csWallet,
 }
 
 
-function ModalEmailSubscriptionsController($scope, Modals, csSettings, esHttp, csWot, parameters) {
+function ModalEmailSubscriptionsController($scope, Modals, csSettings, esHttp, csWot, esModals, parameters) {
   'ngInject';
 
   $scope.frequencies = [
@@ -293,6 +289,15 @@ function ModalEmailSubscriptionsController($scope, Modals, csSettings, esHttp, c
     if ($scope.formData.recipient) {
       $scope.recipient = {pubkey: $scope.formData.recipient};
       return csWot.extendAll([$scope.recipient]);
+    }
+    else {
+      return esHttp.network.peering.self()
+        .then(function(res){
+          if (!res) return;
+          $scope.formData.recipient = res.pubkey;
+          $scope.recipient = {pubkey: $scope.formData.recipient};
+          return csWot.extendAll([$scope.recipient]);
+        });
     }
   });
 
@@ -322,9 +327,9 @@ function ModalEmailSubscriptionsController($scope, Modals, csSettings, esHttp, c
   }
 
   $scope.showNetworkLookup = function() {
-    return Modals.showNetworkLookup({
+    return esModals.showNetworkLookup({
       enableFilter: true,
-      endpointFilter: esHttp.constants.ES_USER_API_ENDPOINT
+      endpointFilter: esHttp.constants.ES_SUBSCRIPTION_API
     })
       .then(function (peer) {
         if (peer) {

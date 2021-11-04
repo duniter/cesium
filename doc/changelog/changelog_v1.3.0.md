@@ -1,6 +1,6 @@
 # Version v1.3.0
 
-## Desktop version
+## Desktop
 
 - Upgrade to NW.js v0.35.3
 - Better Duniter configuration detection (keyring and node)

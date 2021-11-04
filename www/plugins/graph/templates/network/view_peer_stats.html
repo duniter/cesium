@@ -12,13 +12,12 @@
 
     <div class="list" ng-if="!loading">
 
-      <!--  - - - - TX divider - - - - -->
       <div class="item item-divider hidden-xs hidden-sm" translate>
         GRAPH.BLOCKCHAIN.TX_DIVIDER
       </div>
 
       <div class="item no-padding-xs"
-           ng-include="'plugins/graph/templates/blockchain/graph_tx_count.html'"
+           ng-include="::'plugins/graph/templates/blockchain/graph_tx_count.html'"
            ng-init="setSize(350, 1000)">
       </div>
 

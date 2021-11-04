@@ -17,7 +17,7 @@
     "BTN_YES_CONTINUE": "Yes, Continue",
     "BTN_SHOW": "Show",
     "BTN_SHOW_PUBKEY": "Show key",
-    "BTN_RELATIVE_UNIT": "Use relative unit",
+    "BTN_RELATIVE_UNIT": "Display amounts in UD?",
     "BTN_BACK": "Back",
     "BTN_NEXT": "Next",
     "BTN_IMPORT": "Import",
@@ -98,8 +98,6 @@
     "CURRENCY": "Currency",
     "ACCOUNT": "My Account",
     "WALLETS": "My wallets",
-    "TRANSFER": "Transfer",
-    "SCAN": "Scan",
     "SETTINGS": "Settings",
     "NETWORK": "Network",
     "TRANSACTIONS": "My transactions"
@@ -110,6 +108,7 @@
     "LATEST_RELEASE": "There is a <b>newer version</ b> of {{'COMMON.APP_NAME' | translate}} (<b>v{{version}}</b>)",
     "PLEASE_UPDATE": "Please update {{'COMMON.APP_NAME' | translate}} (latest version: <b>v{{version}}</b>)",
     "CODE": "Source code:",
+    "OFFICIAL_WEB_SITE": "Official web site:",
     "DEVELOPERS": "Developers:",
     "FORUM": "Forum:",
     "PLEASE_REPORT_ISSUE": "Please report any issue to us!",
@@ -118,24 +117,42 @@
   },
   "HOME": {
     "TITLE": "Cesium",
-    "WELCOME": "Welcome to the Cesium Application!",
-    "MESSAGE": "Follow your {{currency|abbreviate}} wallets easily",
-    "BTN_CURRENCY": "Explore currency",
+    "WELCOME": "Welcome to the Cesium application!",
+    "WELCOME_READONLY": "Welcome to Cesium <span class='badge badge-balanced'>Monit</span> !",
+    "MESSAGE": "Receive and send libre currency {{currency|abbreviate}}",
+    "MESSAGE_READONLY": "Real-time monitoring of libre currency {{currency|abbreviate}}",
+    "BTN_CURRENCY": "Explore currency {{currency|abbreviate}}",
     "BTN_ABOUT": "about",
     "BTN_HELP": "Help",
+    "BTN_NETWORK": "Network status",
+    "FREE_SOFTWARE": "Free software",
+    "FORK_ME": "Fork me!",
+    "SHOW_LICENSE": "Show license",
     "REPORT_ISSUE": "Report an issue",
     "NOT_YOUR_ACCOUNT_QUESTION" : "You do not own the account <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b>?",
     "BTN_CHANGE_ACCOUNT": "Disconnect this account",
-    "CONNECTION_ERROR": "Peer <b>{{server}}</b> unreachable or invalid address.<br/><br/>Check your Internet connection, or change node <a class=\"positive\" ng-click=\"doQuickFix('settings')\">in the settings</a>."
+    "CONNECTION_ERROR": "Peer <b>{{server}}</b> unreachable or invalid address.<br/><br/>Check your Internet connection, or change node <a class=\"positive\" ng-click=\"doQuickFix('settings')\">in the settings</a>.",
+    "SHOW_ALL_FEED": "Show all",
+    "READ_MORE": "Read more",
+    "FEED_SOURCE": "Source"
   },
   "SETTINGS": {
     "TITLE": "Settings",
+    "DISPLAY_DIVIDER": "Display",
+    "STORAGE_DIVIDER": "Storage",
     "NETWORK_SETTINGS": "Network",
     "PEER": "Duniter peer address",
+    "PEER_SHORT": "Peer address",
     "PEER_CHANGED_TEMPORARY": "Address used temporarily",
+    "PERSIST_CACHE": "Keep navigation data (experimental)",
+    "PERSIST_CACHE_HELP": "Allows faster navigation, locally retaining the data received, for use from one session to another.",
     "USE_LOCAL_STORAGE": "Enable local storage",
     "USE_LOCAL_STORAGE_HELP": "Allows you to save your settings",
+    "WALLETS_SETTINGS": "My wallets",
+    "USE_WALLETS_ENCRYPTION": "Secure the list",
+    "USE_WALLETS_ENCRYPTION_HELP": "Enables you to encrypt the list of your wallets. Authentication required to access it.",
     "ENABLE_HELPTIP": "Enable contextual help tips",
+    "DISABLE_HELPTIP": "Disable contextual help tips",
     "ENABLE_UI_EFFECTS": "Enable visual effects",
     "HISTORY_SETTINGS": "Account operations",
     "DISPLAY_UD_HISTORY": "Display produced dividends?",
@@ -143,7 +160,8 @@
     "TX_HISTORY_AUTO_REFRESH_HELP": "Updates the list of operations to each new block.",
     "AUTHENTICATION_SETTINGS": "Authentication",
     "KEEP_AUTH": "Expiration of authentication",
-    "KEEP_AUTH_HELP": "Define when authentication is cleared from memory",
+    "KEEP_AUTH_SHORT": "Expiration",
+    "KEEP_AUTH_HELP": "Define when authentication is cleared from memory.",
     "KEEP_AUTH_OPTION": {
       "NEVER": "After each operation",
       "SECONDS": "After {{value}}s of inactivity",
@@ -301,15 +319,18 @@
     "PEERS": "Peers",
     "SIGNED_ON_BLOCK": "Signed on block",
     "MIRROR": "mirror",
-    "MIRRORS": "Mirror peers",
+    "MIRRORS": "Mirrors",
+    "MIRROR_PEERS": "Mirror peers",
     "PEER_LIST" : "Peer's list",
-    "MEMBERS" : "Member peers",
+    "MEMBERS" : "Members",
+    "MEMBER_PEERS" : "Member peers",
     "ALL_PEERS" : "All peers",
     "DIFFICULTY" : "Difficulty",
     "API" : "API",
     "CURRENT_BLOCK" : "Block #",
     "POPOVER_FILTER_TITLE": "Filter",
-    "OFFLINE": "Offline peers",
+    "OFFLINE": "Offline",
+    "OFFLINE_PEERS": "Offline peers",
     "BTN_SHOW_PEER": "Show peer",
     "VIEW": {
       "TITLE": "Peer",
@@ -603,7 +624,8 @@
       "QUESTION_19": "What was your grand-father's job ?",
       "RECOVER_ID": "Recover my password...",
       "RECOVER_ID_HELP": "If you have a <b>backup file of your identifiers</b>, you can find them by answering your personal questions correctly.",
-      "REVOCATION_WITH_FILE" : "Rekoke my member account...",
+      "RECOVER_ID_SELECT_FILE": "Select the <b>backup file of your identifiers</b> to use:",
+      "REVOCATION_WITH_FILE" : "Revoke my member account...",
       "REVOCATION_WITH_FILE_DESCRIPTION": "If you have <b>permanently lost your member account credentials (or if account security is compromised), you can use <b>the revocation file</b> of the account <b>to quit the Web Of Trust</b>.",
       "REVOCATION_WITH_FILE_HELP": "To <b>permanently revoke</ b> a member account, please drag the revocation file in the box below, or click in the box to search for a file.",
       "REVOCATION_WALLET": "Revoke this account immediately",
@@ -626,7 +648,8 @@
           "PASSWORD_HELP": "Passphrase"
         },
         "ERROR": {
-          "BAD_PASSWORD": "Bad passphrase"
+          "BAD_PASSWORD": "Bad passphrase",
+          "BAD_CHECKSUM": "Bad checksum"
         }
       }
     },
@@ -682,7 +705,6 @@
     "SEND_CERTIFICATION_FAILED": "Could not certify identity.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY": "You could not send certification, because your account is <b>not a member account</b>.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF": "You could not send certification now, because your are <b>not a member</b> yet.<br/><br/>You still need certification to become a member.",
-    "NOT_MEMBER_FOR_CERTIFICATION": "Your account is not a member account yet.",
     "IDENTITY_TO_CERTIFY_HAS_NO_SELF": "This account could not be certified. No registration found, or need to renew.",
     "LOGIN_FAILED": "Error while sign in.",
     "LOAD_IDENTITY_FAILED": "Could not load identity.",
@@ -713,7 +735,8 @@
     "INVALID_COMMENT": "Field 'reference' has a bad format.",
     "INVALID_PUBKEY": "Public key has a bad format.",
     "INVALID_PUBKEY_CHECKSUM": "Invalid checksum.",
-    "IDENTITY_REVOKED": "This identity <b>has been revoked {{revocationTime|medianFromNow}}</b> ({{revocationTime|medianDate}}). It can no longer become a member.",
+    "IDENTITY_REVOKED": "This identity <b>has been revoked</b>. It can no longer become a member.",
+    "IDENTITY_REVOKED_WITH_TIME": "This identity <b>has been revoked {{revocationTime|medianFromNow}}</b> ({{revocationTime|medianDate}}). It can no longer become a member.",
     "IDENTITY_PENDING_REVOCATION": "The <b>revocation of this identity</b> has been requested and is awaiting processing. Certification is therefore disabled.",
     "IDENTITY_INVALID_BLOCK_HASH": "This membership application is no longer valid (because it references a block that network peers are cancelled): the person must renew its application for membership <b>before</b> being certified.",
     "IDENTITY_EXPIRED": "This identity has expired: this person must re-apply <b>before</b> being certified.",
@@ -754,6 +777,7 @@
     "CHECK_NETWORK_CONNECTION": "No peer appears to be accessible.<br/><br/>Please <b>check your Internet connection</b>.",
     "ISSUE_524_TX_FAILED": "Failed to transfer.<br/><br/>A message has been sent to developers to help solve the problem.<b>Thank you for your help</b>.",
     "ADD_SECONDARY_WALLET_FAILED": "Unable to add secondary wallet.",
+    "REMOVE_SECONDARY_WALLET_FAILED": "Unable to remove secondary wallet.",
     "UPDATE_WALLET_LIST_FAILED": "Unable to refresh the list of wallets.",
     "LOAD_WALLET_LIST_FAILED": "Unable to load the list of wallets.",
     "SAVE_WALLET_LIST_FAILED": "Unable to save the list of wallets.",
@@ -761,7 +785,8 @@
     "COULD_NOT_ADD_EXISTING_WALLET": "Wallet already existing in the list.",
     "UNKNOWN_WALLET_ID": "Unknown secondary wallet.",
     "RESTORE_WALLET_LIST_FAILED": "Unable to restore the list of wallets.",
-    "INVALID_FILE_FORMAT": "Invalid file format."
+    "INVALID_FILE_FORMAT": "Invalid file format.",
+    "SAME_TX_RECIPIENT": "The recipient must be different from the issuer."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -785,6 +810,8 @@
     "POPUP_SECURITY_WARNING_TITLE": "<i class=\"icon ion-alert-circled\"></i> <b>Security warning</b>",
     "CERTIFY_RULES_TITLE_UID": "Certify {{uid}}",
     "CERTIFY_RULES": "<b class=\"assertive\">Don't certify an account</b> if you believe that: <ul><li>1.) the issuers identity might be faked.<li>2.) the issuer already has another certified account.<li>3.) the issuer purposely or carelessly violates rule 1 or 2 (he certifies faked or double accounts).</ul></small><br/>Are you sure you want to certify this identity?",
+    "FULLSCREEN": "View the application in full screen?",
+    "EXIT_APP": "Close the application ?",
     "TRANSFER": "<b>Transfer summary:</b><br/><br/><ul><li> - From: <b>{{from}}</b></li><li> - To: <b>{{to}}</b></li><li> - Amount: <b>{{amount}} {{unit}}</b></li><li> - Comment: <i>{{comment}}</i></li></ul><br/><b>Are-you sure you want to do this transfer?</b>",
     "TRANSFER_ALL": "<b>Transfer summary:</b><br/><br/><ul><li> - From: <b>{{from}}</b></li><li> - To: <b>{{to}}</b></li><li> - Amount: <b>{{amount}} {{unit}}</b></li><li> - Comment: <i>{{comment}}</i></li><br/><li> - Rest : <b>{{restAmount}} {{unit}}</b> to <b>{{restTo}}</b></li></ul><br/><b>Are-you sure you want to do this transfer?</b>",
     "MEMBERSHIP_OUT": "This operation is <b>irreversible</b>.<br/></br/><b>Are you sure you want to terminate your membership?</b>",
@@ -803,6 +830,21 @@
     "LOGOUT": "Are you sure you want to logout?",
     "USE_FALLBACK_NODE": "Peer <b>{{old}}</b> unreachable or invalid address.<br/><br/>Do you want to temporarily use the <b>{{new}}</b> node?",
     "ISSUE_524_SEND_LOG": "The transaction was rejected because of a known problem (issue #524) but not reproduced.<br/><br/>To help developers correct this error, do you accept <b>the transmission of your logs</b> per message?<br/><small>(No confidential data is sent)</small>"
+  },
+  "MODE": {
+    "DEMO": {
+      "BADGE": "Demo",
+      "MODE": "Demonstration mode",
+      "FEATURE_NOT_AVAILABLE": "Functionality <b>not available</b> on this demonstration site.",
+      "MODE_HELP": "Cesium works in <b>demonstration mode</b>: consultation on account is available, but no operation can be performed.",
+      "INSTALL_HELP": "For <b>security reasons</b> we recommend <b>installing</b> your copy of the software.<br/> Visit the site <a href='https://cesium.app'>www.cesium.app</a> for help."
+    },
+    "READONLY": {
+      "BADGE": "Monit",
+      "MODE": "Monitoring mode",
+      "MODE_HELP": "Cesium works in <b>monitoring mode</b>: only currency monitoring features are available.",
+      "INSTALL_HELP": "If you want to <b>create a wallet account</b> to send or received money, we recommend <b>installing</b> your copy of the software.<br/> Visit the site <a href='https://cesium.app'>www.cesium.app</a> for help."
+    }
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Revocation file</b>",
@@ -866,8 +908,8 @@
       "WALLET_RECEIVED_CERTS": "This shows the list of persons that certified you.",
       "WALLET_CERTIFY": "The button <b>{{'WOT.BTN_SELECT_AND_CERTIFY'|translate}}</b> allows selecting an identity and certifying it.<br/><br/>Only users that are <b>already member</b> may certify others.",
       "WALLET_CERT_STOCK": "Your supply of certifications (to send) is limited to <b>{{sigStock}} certifications</b>.<br/><br/>This supply will replete itself over time, as and when earlier certifications expire.",
-      "MENU_BTN_TX_MEMBER": "<b>{{'MENU.TRANSACTIONS'|translate}}</b> allow access to transactions history, and send new payments.",
-      "MENU_BTN_TX": "View the history of <b>your transactions</b> here and send new payments.",
+      "MENU_BTN_WALLETS": "The menu <b>{{'MENU.WALLETS'|translate}}</b> allows you to add additional wallets that you manage.",
+      "MENU_BTN_TX": "The menu <b>{{'MENU.TRANSACTIONS'|translate}}</b> allow access to transactions history, and send new payments.",
       "MENU_BTN_WOT": "The menu <b>{{'MENU.WOT'|translate}}</b> allows searching <b>users</b> of the currency (member or not).",
       "WOT_SEARCH_TEXT_XS": "To search in the registry, type the <b>first letters of a users pseudonym or public key</b>.<br/><br/>The search will start automatically.",
       "WOT_SEARCH_TEXT": "To search in the registry, type the <b>first letters of a users pseudonym or public key</b>.<br/><br/>Then hit <b>Enter</b> to start the search.",
@@ -881,7 +923,8 @@
       "HEADER_BAR_BTN_PROFILE": "Click here to access your <b>user profile</b>",
       "SETTINGS_CHANGE_UNIT": "You can <b>change the display unit</b> of amounts by clicking here.<br/><br/>- Deactivate the option to show amounts in {{currency|capitalize}}.<br/>- Activate the option for relative amounts in {{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub> (<b>divided</b> by the current Universal Dividend).",
       "END_LOGIN": "This guided visit has <b>ended</b>.<br/><br/>Welcome to the <b>free economy</b>!",
-      "END_NOT_LOGIN": "This guided visit has <b>ended</b>.<br/><br/>If you wish to join the currency {{currency|capitalize}}, simply click <b>{{'LOGIN.CREATE_ACCOUNT'|translate}}</b> below."
+      "END_NOT_LOGIN": "This guided visit has <b>ended</b>.<br/><br/>If you wish to join the currency {{currency|capitalize}}, simply click <b>{{'LOGIN.CREATE_FREE_ACCOUNT'|translate}}</b> below.",
+      "END_READONLY": "This guided visit has <b>ended</b>.<br/><br/>{{'MODE.READONLY.INSTALL_HELP'|translate}}."
     }
   },
   "API" :{
@@ -889,7 +932,8 @@
       "LINK_DOC": "API documentation",
       "LINK_DOC_HELP": "API documentation for developers",
       "LINK_STANDARD_APP": "Standard version",
-      "LINK_STANDARD_APP_HELP": "Open standard version of {{'COMMON.APP_NAME'|translate}}"
+      "LINK_STANDARD_APP_HELP": "Open standard version of {{'COMMON.APP_NAME'|translate}}",
+      "CONNECTION_ERROR": "Peer <b>{{server}}</b> unreachable or invalid address.<br/><br/>Check your Internet connection, or contact the web site administrator."
     },
     "HOME": {
       "TITLE": "{{'COMMON.APP_NAME'|translate}} API Documentation",
@@ -902,9 +946,11 @@
       "TITLE_SHORT": "Online payment",
       "SUMMARY": "Order summary:",
       "AMOUNT": "Amount:",
+      "AMOUNTS_HELP": "Please select the amount:",
       "NAME": "Name:",
       "PUBKEY": "Public key of the recipient:",
       "COMMENT": "Order reference:",
+      "NODE": "Peer address:",
       "DEMO": {
         "SALT": "demo",
         "PASSWORD": "demo",
@@ -930,6 +976,7 @@
       "DEMO_DIVIDER": "Try it !",
       "DEMO_HELP": "To test this service, click on this button. The result content will be display below.",
       "DEMO_RESULT": "Result returned by call:",
+      "DEMO_RESULT_PEER": "Peer address used:",
       "DEMO_SUCCEED": "<i class=\"icon ion-checkmark\"></i> Success!",
       "DEMO_CANCELLED": "<i class=\"icon ion-close\"></i> Canceled by user",
       "INTEGRATE_DIVIDER": "Website integration",
@@ -951,6 +998,8 @@
         "PARAM_REDIRECT_URL_HELP": "URL redirection after sending payment, after the payment has been sent. Can contain the following strings, which will be replaced by the values of the transaction: \"{tx}\", \"{hash}\", \"{comment}\", \"{amount}\" and \"{pubkey}\".",
         "PARAM_CANCEL_URL": "URL if cancelled",
         "PARAM_CANCEL_URL_HELP": "URL in case of cancellation.  Can contain the following strings, which will be replaced: \"{comment}\", \"{amount}\" and \"{pubkey}\".",
+        "PARAM_PREFERRED_NODE": "Preferred Duniter peer",
+        "PARAM_PREFERRED_NODE_HELP": "Peer address (URL) to use preferably (\"g1.domain.com:443\" or \"https://g1.domain.com\")",
         "EXAMPLES_HELP": "Examples of integration:",
         "EXAMPLE_BUTTON": "HTML Button",
         "EXAMPLE_BUTTON_DEFAULT_TEXT": "Pay in {{currency|abbreviate}}",

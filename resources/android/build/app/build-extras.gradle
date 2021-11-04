@@ -1,0 +1,11 @@
+configurations.all {
+    resolutionStrategy {
+      force 'androidx.legacy:legacy-support-v4:1.0.0'
+      force 'androidx.appcompat:appcompat:1.2.0'
+    }
+}
+dependencies {
+  implementation(project(path: ":CordovaLib")) {
+    exclude group: 'com.android.support', module:'support-v4'
+  }
+}

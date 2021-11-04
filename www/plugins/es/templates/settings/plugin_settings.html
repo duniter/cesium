@@ -14,9 +14,11 @@
       </label>
     </div>
 
-    <div class="item item-toggle dark">
-      <div ng-class="{'gray': !formData.enable}" class="input-label" translate>ES_SETTINGS.ENABLE_REMOTE_STORAGE</div>
-      <h4 class="gray" ng-bind-html="'ES_SETTINGS.ENABLE_REMOTE_STORAGE_HELP' | translate"></h4>
+    <span class="item item-divider hidden-readonly hidden-demo" translate>SETTINGS.STORAGE_DIVIDER</span>
+
+    <div class="item item-toggle item-text-wrap dark hidden-demo hidden-readonly">
+      <div class="input-label" ng-class="{'gray': !formData.enable}" class="input-label" translate>ES_SETTINGS.ENABLE_REMOTE_STORAGE</div>
+      <h4 class="gray text-wrap" ng-bind-html="'ES_SETTINGS.ENABLE_REMOTE_STORAGE_HELP' | translate"></h4>
       <label class="toggle toggle-royal">
         <input type="checkbox" ng-model="formData.useRemoteStorage" ng-disabled="!formData.enable">
         <div class="track">
@@ -27,10 +29,8 @@
 
     <span class="item item-divider" translate>SETTINGS.NETWORK_SETTINGS</span>
 
-    <div class="item ink" ng-click="formData.enable && changeEsNode()" ng-disabled="!formData.enable">
-      <div class="input-label" ng-class="{'gray': !formData.enable}">
-      {{'ES_SETTINGS.PEER' | translate}}
-      </div>
+    <div class="item ink hidden-xs hidden-sm" ng-click="formData.enable && changeEsNode()" ng-disabled="!formData.enable">
+      <div class="input-label" ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.PEER</div>
 
       <!-- node fallback node -->
       <ng-if ng-if="isFallbackNode">
@@ -43,11 +43,26 @@
 
       <span ng-if="!isFallbackNode" class="item-note" ng-class="{'dark': formData.enable}">{{server}}</span>
     </div>
+    <ion-item class="ink item-icon-right item-text-wrap visible-xs visible-sm" ng-click="formData.enable && changeEsNode()" ng-disabled="!formData.enable">
+      <div class="input-label" ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.PEER</div>
 
-    <span class="item item-divider" translate>ES_SETTINGS.NOTIFICATIONS.DIVIDER</span>
+      <!-- node temporary changed -->
+      <ng-if ng-if="isFallbackNode">
+        <h4 class="gray text-wrap assertive" >
+          <b class="ion-alert-circled"></b>
+          <span ng-bind-html="'SETTINGS.PEER_CHANGED_TEMPORARY' | translate "></span>
+        </h4>
+        <div class="badge badge-assertive">{{server}}</div>
+      </ng-if>
+      <div class="badge" ng-class="{'badge-balanced': formData.enable, 'badge-stable': !formData.enable}"
+           ng-if="!isFallbackNode">{{server}}</div>
+      <i class="icon ion-ios-arrow-right"></i>
+    </ion-item>
+
+    <span class="item item-divider hidden-readonly" translate>ES_SETTINGS.NOTIFICATIONS.DIVIDER</span>
 
     <!-- Enable HTML notifications -->
-    <div class="item item-toggle dark hidden-xs hidden-sm">
+    <div class="item item-toggle dark hidden-xs hidden-sm hidden-readonly">
       <div ng-class="{'gray': !formData.enable}" class="input-label" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_HTML5_NOTIFICATION</div>
       <h4 class="gray" ng-bind-html="'ES_SETTINGS.NOTIFICATIONS.ENABLE_HTML5_NOTIFICATION_HELP' | translate"></h4>
       <label class="toggle toggle-royal">
@@ -58,9 +73,9 @@
       </label>
     </div>
 
-    <span class="item gray item-text-wrap" translate>ES_SETTINGS.NOTIFICATIONS.HELP_TEXT</span>
+    <span class="item gray item-text-wrap hidden-readonly" translate>ES_SETTINGS.NOTIFICATIONS.HELP_TEXT</span>
 
-    <label class="item item-toggle dark item-text-wrap">
+    <label class="item item-toggle dark item-text-wrap hidden-readonly">
       <span ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_TX_SENT</span>
       <div class="toggle toggle-royal">
         <input type="checkbox" ng-model="formData.notifications.txSent" ng-disabled="!formData.enable">
@@ -69,7 +84,7 @@
         </div>
       </div>
     </label>
-    <label class="item item-toggle dark item-text-wrap">
+    <label class="item item-toggle dark item-text-wrap hidden-readonly">
       <span ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_TX_RECEIVED</span>
       <label class="toggle toggle-royal">
         <input type="checkbox" ng-model="formData.notifications.txReceived" ng-disabled="!formData.enable">
@@ -78,7 +93,7 @@
         </div>
       </label>
     </label>
-    <label class="item item-toggle dark item-text-wrap">
+    <label class="item item-toggle dark item-text-wrap hidden-readonly">
       <span ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_CERT_SENT</span>
       <div class="toggle toggle-royal">
         <input type="checkbox" ng-model="formData.notifications.certSent" ng-disabled="!formData.enable">
@@ -87,7 +102,7 @@
         </div>
       </div>
     </label>
-    <label class="item item-toggle dark item-text-wrap">
+    <label class="item item-toggle dark item-text-wrap hidden-readonly">
       <span ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_CERT_RECEIVED</span>
       <div class="toggle toggle-royal">
         <input type="checkbox" ng-model="formData.notifications.certReceived" ng-disabled="!formData.enable">

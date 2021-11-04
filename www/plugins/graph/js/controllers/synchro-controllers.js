@@ -6,14 +6,26 @@ angular.module('cesium.graph.synchro.controllers', ['chart.js', 'cesium.graph.se
 
     $stateProvider
       .state('app.doc_synchro_lg', {
-        url: "/data/synchro?stepUnit&t&hide&scale",
+        url: "/network/data/synchro/:server?stepUnit&t&hide&scale&useSsl&useTor",
         views: {
           'menuContent': {
             templateUrl: "plugins/graph/templates/synchro/view_stats.html",
             controller: "GpSynchroCtrl"
           }
         }
-      });
+      })
+
+      // Deprecated URL
+      .state('app.doc_synchro_lg_old', {
+        url: "/data/synchro?stepUnit&t&hide&scale&useSsl&useTor",
+        views: {
+          'menuContent': {
+            templateUrl: "plugins/graph/templates/synchro/view_stats.html",
+            controller: "GpSynchroCtrl"
+          }
+        }
+      })
+    ;
 
     var enable = csConfig.plugins && csConfig.plugins.es;
     if (enable) {
@@ -30,6 +42,8 @@ function GpSynchroController($scope, $controller, $q, $translate, gpColor, gpDat
 
   // Initialize the super class and extend it.
   angular.extend(this, $controller('GpCurrencyAbstractCtrl', {$scope: $scope}));
+
+  $scope.formData.rangeDuration = 'month';
 
   $scope.hiddenDatasets = [];
 
@@ -138,6 +152,11 @@ function GpSynchroController($scope, $controller, $q, $translate, gpColor, gpDat
   $scope.init = function(e, state) {
     if (state && state.stateParams) {
       // Manage URL parameters
+      var server = state.stateParams && state.stateParams.server || undefined;
+      if (server) {
+        console.debug("[synchro] Will use server: " + server);
+        angular.merge($scope.formData, state.stateParams);
+      }
     }
   };
 

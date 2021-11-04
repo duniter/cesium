@@ -30,7 +30,7 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
     return exports;
   })
 
-  .factory('localStorage', function($window, $q, sessionStorage) {
+  .factory('localStorage', function($window, $q, $log, sessionStorage) {
     'ngInject';
 
     var
@@ -64,6 +64,11 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
       return $q.when();
     };
 
+    exports.standard.remove = function(key, value) {
+      exports.standard.storage.removeItem(key);
+      return $q.when();
+    };
+
     exports.standard.get = function(key, defaultValue) {
       return $q.when(exports.standard.storage[key] || defaultValue);
     };
@@ -81,51 +86,77 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
 
     // Set a value to the secure storage (or remove if value is not defined)
     exports.secure.put = function(key, value) {
-      var deferred = $q.defer();
-      if (angular.isDefined(value)) {
-        exports.secure.storage.set(
-          function (key) { deferred.resolve(); },
-          function (err) { deferred.reject(err); },
-          key, value);
-      }
-      // Remove
-      else {
-        exports.secure.storage.remove(
-          function (key) { deferred.resolve(); },
-          function (err) { deferred.reject(err); },
-          key);
-      }
-      return deferred.promise;
+      return $q(function(resolve, reject) {
+        if (value !== undefined && value !== null) {
+          exports.secure.storage.set(
+            function (key) {
+              resolve();
+            },
+            function (err) {
+              $log.error(err);
+              reject(err);
+            },
+            key, value);
+        }
+        // Remove
+        else {
+          exports.secure.storage.remove(
+            function () {
+              resolve();
+            },
+            function (err) {
+              $log.error(err);
+              resolve(); // Error = not found
+            },
+            key);
+        }
+      });
     };
 
     // Get a value from the secure storage
     exports.secure.get = function(key, defaultValue) {
-      var deferred = $q.defer();
-      exports.secure.storage.get(
-        function (value) {
-          if (!value && defaultValue) {
-            deferred.resolve(defaultValue);
-          }
-          else {
-            deferred.resolve(value);
-          }
-        },
-        function (err) { deferred.reject(err); },
-        key);
-      return deferred.promise;
+      return $q(function(resolve, reject) {
+        exports.secure.storage.get(
+          function (value) {
+            if (!value && defaultValue) {
+              resolve(defaultValue);
+            }
+            else {
+              resolve(value);
+            }
+          },
+          function (err) {
+            $log.error(err);
+            resolve(); // Error = not found
+          },
+          key);
+      });
     };
 
     // Set a object to the secure storage
     exports.secure.setObject = function(key, value) {
-      return exports.secure.put(key, value ? JSON.stringify(value) : undefined);
+      $log.debug("[storage] Setting object into secure storage, using key=" + key);
+      return $q(function(resolve, reject){
+        exports.secure.storage.set(
+          resolve,
+          reject,
+          key,
+          value ? JSON.stringify(value) : undefined);
+      });
     };
 
     // Get a object from the secure storage
     exports.secure.getObject = function(key) {
-      return exports.secure.storage.get(key)
-        .then(function(value) {
-          return JSON.parse(value||'null');
-        });
+      $log.debug("[storage] Getting object from secure storage, using key=" + key);
+      return $q(function(resolve, reject){
+        exports.secure.storage.get(
+          function(value) {resolve(JSON.parse(value||'null'));},
+          function(err) {
+            $log.error(err);
+            resolve(); // Error = not found
+          },
+          key);
+      });
     };
 
     function initStandardStorage() {
@@ -139,7 +170,7 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
         });
       }
 
-      // Fallback to session storage (locaStorage could have been disabled on some browser)
+      // Fallback to session storage (localStorage could have been disabled on some browser)
       else {
         console.debug('[storage] Starting {session} storage...');
         // Set standard storage as default
@@ -196,7 +227,6 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
 
       // Use Cordova secure storage plugin
       if (isDevice) {
-        console.debug("[storage] Starting secure storage...");
         startPromise = initSecureStorage();
       }
 

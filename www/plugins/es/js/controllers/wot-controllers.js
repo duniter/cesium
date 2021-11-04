@@ -27,11 +27,23 @@ angular.module('cesium.es.wot.controllers', ['cesium.es.services'])
 
         .extendStates(['app.wot_identity', 'app.wot_identity_uid'], {
           points: {
+            'hero': {
+              templateUrl: "plugins/es/templates/wot/view_identity_extend.html",
+              controller: 'ESWotIdentityViewCtrl'
+            },
+            'general': {
+              templateUrl: "plugins/es/templates/wot/view_identity_extend.html",
+              controller: 'ESWotIdentityViewCtrl'
+            },
             'after-general': {
               templateUrl: "plugins/es/templates/wot/view_identity_extend.html",
               controller: 'ESWotIdentityViewCtrl'
             },
             'buttons': {
+              templateUrl: "plugins/es/templates/wot/view_identity_extend.html",
+              controller: 'ESWotIdentityViewCtrl'
+            },
+            'after-buttons': {
               templateUrl: "plugins/es/templates/wot/view_identity_extend.html",
               controller: 'ESWotIdentityViewCtrl'
             },
@@ -55,8 +67,6 @@ angular.module('cesium.es.wot.controllers', ['cesium.es.services'])
           }
         })
       ;
-
-
     }
 
   })
@@ -83,23 +93,36 @@ function ESWotLookupExtendController($scope, $controller, $state) {
       location: location.length ? location : undefined
     };
 
-    $state.go('app.registry_lookup', stateParams);
+    $state.go('app.wot_lookup.tab_registry', stateParams);
   };
 }
 
-function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIUtils, Modals, csWallet,
-                                     esModals, esWallet, esInvitation) {
+function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, $timeout, UIUtils, Modals, csWallet,
+                                     esHttp, esLike, esModals, esWallet, esProfile, esInvitation) {
   'ngInject';
+
+  $scope.options = $scope.options || {};
+  $scope.options.like = $scope.options.like || {
+    kinds: esLike.constants.KINDS,
+    index: 'user',
+    type: 'profile',
+    service: esProfile.like
+  };
+  $scope.smallscreen = angular.isDefined($scope.smallscreen) ? $scope.smallscreen : UIUtils.screen.isSmall();
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('ESLikesCtrl', {$scope: $scope}));
 
   // Initialize the super class and extend it.
   angular.extend(this, $controller('ESExtensionCtrl', {$scope: $scope}));
 
-  $scope.canCertify = false; // disable certity on the popover (by default - override by the wot map controller)
+  $scope.canCertify = false; // disable certify on the popover (by default - override by the wot map controller)
 
   /* -- modals -- */
 
   $scope.showNewMessageModal = function(confirm) {
 
+    // note: not need to select wallet here, because message modal will do it, if need
     return csWallet.login({minData: true, method: 'default'})
       .then(function() {
         UIUtils.loading.hide();
@@ -122,8 +145,8 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
           destPub: $scope.formData.pubkey,
           destUid: $scope.formData.name||$scope.formData.uid
         })
-        .then(function(send) {
-          if (send) UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT');
+        .then(function(sent) {
+          if (sent) UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT');
         });
       });
   };
@@ -196,6 +219,7 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
     var identities;
     return (csWallet.children.count() ? Modals.showSelectWallet({displayBalance: false}) : $q.when(csWallet))
       .then(function(wallet) {
+        if (!wallet) throw 'CANCELLED';
         return wallet.auth({minData: true});
       })
       .then(function(walletData) {
@@ -287,30 +311,97 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
       });
   };
 
+  /**
+   * Delete the user profile (need moderator access, on Cs+ pod)
+   * @param confirm
+   * @returns {*}
+   */
+  $scope.delete = function(confirm) {
+
+    if (!confirm) {
+      $scope.hideActionsPopover();
+      if (!$scope.formData.pubkey) return; // Skip
+
+      return UIUtils.alert.confirm('PROFILE.CONFIRM.DELETE_BY_MODERATOR')
+        .then(function(confirm) {
+          if (confirm) return $scope.delete(confirm); // recursive call
+        });
+    }
+
+    // TODO: ask for deletion of all data ? (e.g. message, comment, likes, etc.)
+    // if (angular.isUndefined(allData)) {
+    //   return UIUtils.alert.confirm(...)
+    //   ...
+    // }
+
+    return UIUtils.loading.show()
+      .then(function() {
+        return esProfile.remove($scope.formData.pubkey);
+      })
+      .then(function() {
+        return $scope.doUpdate();
+      })
+      .then(function() {
+        return $timeout(function() {
+          UIUtils.toast.show('DOCUMENT.INFO.REMOVED'); // toast
+        }, 800);
+      })
+      .catch(UIUtils.onError("PROFILE.ERROR.DELETE_PROFILE_FAILED"));
+  };
+
+  /* -- Load data -- */
+
+  // Watch when profile loaded
+  $scope.$watch('formData.pubkey', function(pubkey) {
+    if (pubkey) {
+
+      // Load likes,
+      $scope.loadLikes(pubkey);
+
+      // Enable deletion, if moderator
+      $scope.canDelete = $scope.formData.profile && csWallet.isLogin() && csWallet.data.moderator === true;
+    }
+
+  });
+
   /* -- Popover -- */
 
   $scope.showCertificationActionsPopover = function(event) {
-    if (!$scope.certificationActionsPopover) {
-      $ionicPopover.fromTemplateUrl('plugins/es/templates/wot/popover_certification_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'plugins/es/templates/wot/popover_certification_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.certificationActionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.certificationActionsPopover.remove();
-        });
-        $scope.certificationActionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.certificationActionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideCertificationActionsPopover = function() {
     if ($scope.certificationActionsPopover) {
       $scope.certificationActionsPopover.hide();
+      $scope.certificationActionsPopover = null;
     }
+    return true;
+  };
+
+  $scope.showActionsPopover = function (event) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'plugins/es/templates/wot/view_popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
+        $scope.actionsPopover = popover;
+      }
+    });
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
+    }
+    return true;
   };
 
   if ($scope.extensionPoint === 'buttons-top-fab') {
@@ -318,7 +409,7 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
       $scope.$on('$csExtension.motion', function(event) {
         var canCompose = !!$scope.formData.profile;
         if (canCompose) {
-          $scope.showFab('fab-compose-' + $scope.formData.uid);
+          $scope.showFab('fab-compose-' + $scope.formData.pubkey);
         }
       });
   }
@@ -329,4 +420,3 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
     $scope.showSuggestCertificationModal();
   }, 1000);*/
 }
-

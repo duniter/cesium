@@ -1,10 +1,12 @@
 {
   "default": {
     "cacheTimeMs": 300000,
+    "demo": false,
+    "readonly": false,
     "fallbackLanguage": "en",
     "rememberMe": true,
     "showUDHistory": true,
-    "timeout": 30000,
+    "timeout": 40000,
     "timeWarningExpireMembership": 5184000,
     "timeWarningExpire": 7776000,
     "keepAuthIdle": 600,
@@ -13,17 +15,26 @@
     "expertMode": false,
     "decimalCount": 2,
     "httpsMode": false,
-    "shareBaseUrl": "https://g1.duniter.fr",
+    "shareBaseUrl": "https://demo.cesium.app/",
     "helptip": {
       "enable": true,
       "installDocUrl": {
-        "fr-FR": "https://duniter.org/fr/wiki/duniter/installer/",
+        "fr-FR": "https://duniter.org/fr/miner-des-blocs/installer/",
         "en": "https://duniter.org/en/wiki/duniter/install/"
       }
     },
     "license": {
+      "en": "license/license_g1-en",
       "fr-FR": "license/license_g1-fr-FR",
-      "en": "license/license_g1-en"
+      "es-ES": "license/license_g1-es-ES",
+      "eo-EO": "license/license_g1-eo-EO"
+    },
+    "feed": {
+      "jsonFeed": {
+        "fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-fr.json",
+        "en": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-en.json"
+      },
+      "maxContentLength": 1300
     },
     "node": {
       "host": "g1.duniter.org",
@@ -31,7 +42,23 @@
     },
     "fallbackNodes": [
       {
-        "host": "g1.duniter.fr",
+        "host": "g1.cgeek.fr",
+        "port": 443
+      },
+      {
+        "host": "g1.librelois.fr",
+        "port": 443
+      },
+      {
+        "host": "g1.e-is.pro",
+        "port": 443
+      },
+      {
+        "host": "duniter.moul.re",
+        "port": 443
+      },
+      {
+        "host": "g1.presles.fr",
         "port": 443
       },
       {
@@ -47,15 +74,15 @@
         "enable": true,
         "askEnable": true,
         "useRemoteStorage": true,
-        "host": "g1.data.duniter.fr",
+        "host": "g1.data.e-is.pro",
         "port": 443,
         "fallbackNodes": [
           {
-            "host": "g1.data.le-sou.org",
+            "host": "g1.data.presles.fr",
             "port": 443
           },
           {
-            "host": "g1.data.duniter.fr",
+            "host": "g1.data.mithril.re",
             "port": 443
           }
         ],
@@ -72,6 +99,8 @@
 
   "default_fr": {
     "cacheTimeMs": 300000,
+    "demo": false,
+    "readonly": false,
     "fallbackLanguage": "fr",
     "rememberMe": true,
     "showUDHistory": true,
@@ -84,29 +113,50 @@
     "expertMode": false,
     "decimalCount": 2,
     "httpsMode": false,
-    "shareBaseUrl": "https://g1.duniter.fr",
+    "shareBaseUrl": "https://demo.cesium.app/",
     "helptip": {
       "enable": true,
       "installDocUrl": {
-        "fr-FR": "https://duniter.org/fr/wiki/duniter/installer/",
+        "fr-FR": "https://duniter.org/fr/miner-des-blocs/installer/",
         "en": "https://duniter.org/en/wiki/duniter/install/"
       }
     },
     "license": {
       "fr-FR": "license/license_g1-fr-FR",
-      "en": "license/license_g1-en"
+      "en": "license/license_g1-en",
+      "es-ES": "license/license_g1-es-ES",
+      "eo-EO": "license/license_g1-eo-EO"
+    },
+    "feed": {
+      "jsonFeed": {
+        "fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-fr.json",
+        "en": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-en.json"
+      },
+      "maxContentLength": 1300
     },
     "node": {
-      "host": "g1.duniter.fr",
+      "host": "g1.duniter.org",
       "port": 443
     },
     "fallbackNodes": [
       {
-        "host": "g1.duniter.fr",
+        "host": "g1.cgeek.fr",
         "port": 443
       },
       {
-        "host": "g1.monnaielibreoccitanie.org",
+        "host": "g1.librelois.fr",
+        "port": 443
+      },
+      {
+        "host": "g1.e-is.pro",
+        "port": 443
+      },
+      {
+        "host": "duniter.moul.re",
+        "port": 443
+      },
+      {
+        "host": "g1.presles.fr",
         "port": 443
       },
       {
@@ -127,15 +177,19 @@
         "enable": true,
         "askEnable": true,
         "useRemoteStorage": true,
-        "host": "g1.data.duniter.fr",
+        "host": "g1.data.e-is.pro",
         "port": 443,
         "fallbackNodes": [
+          {
+            "host": "g1.data.presles.fr",
+            "port": 443
+          },
           {
             "host": "g1.data.le-sou.org",
             "port": 443
           },
           {
-            "host": "g1.data.duniter.fr",
+            "host": "g1.data.mithril.re",
             "port": 443
           }
         ],
@@ -149,78 +203,11 @@
       }
     }
   },
-
-  "le-sou": {
-    "cacheTimeMs": 300000,
-    "fallbackLanguage": "fr-FR",
-    "defaultLanguage": "fr-FR",
-    "rememberMe": true,
-    "timeout": 30000,
-    "timeWarningExpireMembership": 5184000,
-    "timeWarningExpire": 7776000,
-    "keepAuthIdle": 600,
-    "useLocalStorage": true,
-    "useRelative": false,
-    "expertMode": false,
-    "decimalCount": 2,
-    "httpsMode": false,
-    "shareBaseUrl": "https://g1.le-sou.org",
-    "helptip": {
-      "enable": true,
-      "installDocUrl": {
-        "fr-FR": "https://www.le-sou.org/devenir-noeud/",
-        "en": "https://duniter.org/en/wiki/duniter/install/"
-      }
-    },
-    "license": {
-      "fr-FR": "license/license_g1-fr-FR",
-      "en": "license/license_g1-en"
-    },
-    "node": {
-      "host": "g1.le-sou.org",
-      "port": 443
-    },
-    "fallbackNodes": [
-      {
-        "host": "g1.duniter.org",
-        "port": 443
-      },
-      {
-        "host": "g1.duniter.fr",
-        "port": 443
-      }
-    ],
-    "plugins":{
-      "es": {
-        "enable": true,
-        "askEnable": true,
-        "useRemoteStorage": true,
-        "host": "g1.data.le-sou.org",
-        "port": 443,
-        "fallbackNodes": [
-          {
-            "host": "g1.data.le-sou.org",
-            "port": 443
-          },
-          {
-            "host": "g1.data.duniter.fr",
-            "port": 443
-          }
-        ],
-        "notifications": {
-          "txSent": true,
-          "txReceived": true,
-          "certSent": true,
-          "certReceived": true
-        },
-        "defaultCountry": "France"
-      }
-    }
-  },
-
 
   "g1-test": {
     "cacheTimeMs": 300000,
+    "demo": false,
+    "readonly": false,
     "fallbackLanguage": "en",
     "rememberMe": true,
     "timeout": 300000,
@@ -230,12 +217,12 @@
     "useRelative": false,
     "expertMode": true,
     "decimalCount": 2,
-    "shareBaseUrl": "https://g1.duniter.fr",
+    "shareBaseUrl": "https://g1-test.cesium.app",
     "helptip": {
       "enable": false,
       "installDocUrl": {
-        "fr-FR": "https://duniter.org/fr/wiki/duniter/installer/",
-        "en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+        "fr-FR": "https://duniter.org/fr/miner-des-blocs/installer/",
+        "en": "https://duniter.org/en/wiki/duniter/install/"
       }
     },
     "node": {
@@ -246,6 +233,14 @@
       {
         "host": "g1-test.cgeek.fr",
         "port": 443
+      },
+      {
+        "host": "gtest.jytou.fr",
+        "port": 443
+      },
+      {
+        "host": "ts.gt.elo.tf",
+        "port": 443
       }
     ],
     "plugins":{
@@ -253,7 +248,7 @@
         "enable": true,
         "askEnable": true,
         "useRemoteStorage": true,
-        "host": "g1-test.data.duniter.fr",
+        "host": "g1-test.data.e-is.pro",
         "port": 443,
         "notifications": {
           "txSent": true,
@@ -268,6 +263,8 @@
 
   "dev": {
     "cacheTimeMs": 300000,
+    "demo": false,
+    "readonly": false,
     "fallbackLanguage": "fr-FR",
     "defaultLanguage": "fr-FR",
     "rememberMe": true,
@@ -288,10 +285,12 @@
     },
     "license": {
       "fr-FR": "license/license_g1-fr-FR",
-      "en": "license/license_g1-en"
+      "en": "license/license_g1-en",
+      "es-ES": "license/license_g1-es-ES",
+      "eo-EO": "license/license_g1-eo-EO"
     },
     "node": {
-      "host": "g1.duniter.fr",
+      "host": "g1.e-is.pro",
       "port": 443
     },
     "fallbackNodes": [{
@@ -299,7 +298,7 @@
         "port": 443
       },
       {
-        "host": "g1.duniter.fr",
+        "host": "g1.e-is.pro",
         "port": 443
       }
     ],
@@ -316,7 +315,7 @@
             "port": 443
           },
           {
-            "host": "g1.data.duniter.fr",
+            "host": "g1.data.e-is.pro",
             "port": 443
           }
         ],
@@ -331,9 +330,6 @@
       "graph": {
         "enable": true
       },
-      "neo4j": {
-        "enable": true
-      },
       "rml9": {
         "enable": true
       }
@@ -342,6 +338,8 @@
 
   "dev_g1": {
     "cacheTimeMs": 300000,
+    "demo": false,
+    "readonly": false,
     "fallbackLanguage": "en",
     "rememberMe": true,
     "showUDHistory": true,
@@ -360,7 +358,9 @@
     },
     "license": {
       "fr-FR": "license/license_g1-fr-FR.txt",
-      "en": "license/license_g1-en.txt"
+      "en": "license/license_g1-en.txt",
+      "es-ES": "license/license_g1-es-ES",
+      "eo-EO": "license/license_g1-eo-EO"
     },
     "node": {
       "host": "g1.duniter.org",
@@ -376,9 +376,6 @@
         "defaultCountry": "France"
       },
       "graph": {
-        "enable": true
-      },
-      "neo4j": {
         "enable": true
       },
       "rml9": {

@@ -110,7 +110,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
         {
           decimal: true,
           decimalSeparator: '.',
-          resizeContent: true
+          resizeContent:false
         });
     $scope.digitKeyboardVisible = false;
   }
@@ -169,6 +169,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     // Make to sure to load full wallet data (balance)
     return wallet.login({sources: true, silent: true})
       .then(function(data) {
+        if (!wallet || $scope.$$destroyed) return; // user have cancelled before end of load
         $scope.walletData = data;
         $scope.formData.walletId = wallet.id;
         $scope.onUseRelativeChanged();
@@ -198,7 +199,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
         }
       })
       .catch(function(err){
-        if (err == 'CANCELLED') return $scope.cancel(); // close the modal
+        if (err === 'CANCELLED') return $scope.cancel(); // close the modal
         UIUtils.onError('ERROR.LOGIN_FAILED')(err);
       });
   };
@@ -206,6 +207,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
 
   $scope.cancel = function() {
     $scope.closeModal();
+    wallet = null;
   };
 
   // When changing use relative UD
@@ -224,6 +226,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
   };
 
   $scope.onAmountChanged = function() {
+    if ($scope.sending) return; // skip if sending TX
 
     var amount = $scope.formData.amount;
     if (amount && typeof amount === "string") {
@@ -238,7 +241,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       $scope.form.amount.$error = $scope.form.amount.$error || {};
       $scope.form.amount.$error.min = true;
     }
-    else if ($scope.form.amount.$error && $scope.form.amount.$error.min){
+    else if ($scope.form.amount && $scope.form.amount.$error && $scope.form.amount.$error.min){
       delete $scope.form.amount.$error.min;
     }
 
@@ -249,12 +252,12 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       $scope.form.amount.$error = $scope.form.amount.$error || {};
       $scope.form.amount.$error = {max: true};
     }
-    else if ($scope.form.amount.$error && $scope.form.amount.$error.max){
+    else if ($scope.form.amount && $scope.form.amount.$error && $scope.form.amount.$error.max){
       delete $scope.form.amount.$error.max;
     }
 
     $scope.form.$valid = valid;
-    $scope.form.amount.$invalid = !valid;
+    if ($scope.form.amount) $scope.form.amount.$invalid = !valid;
 
     if (!valid || !$scope.formData.all || !amount) {
       $scope.formData.restAmount = undefined;
@@ -272,6 +275,8 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
   };
 
   $scope.doTransfer = function() {
+    if ($scope.loading) return; // Skip
+
     $scope.form.$submitted=true;
 
     if(!$scope.form.$valid || !$scope.formData.destPub || !$scope.formData.amount) {
@@ -331,12 +336,12 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
             }
           })
           .then(function() {
-            $scope.sending = false;
             UIUtils.loading.hide();
             return $scope.closeModal(true);
           })
           .then(function(res) {
             $timeout(function() {
+              $scope.sending = false;
               UIUtils.toast.show('INFO.TRANSFER_SENT');
             }, 500);
             return res;
@@ -370,11 +375,13 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
   $scope.addComment = function() {
     $scope.formData.useComment = true;
     // Focus on comment field
+    // removeIf(device)
     if ($scope.commentInputId) {
       $timeout(function() {
         $focus($scope.commentInputId);
       }, 200);
     }
+    // endRemoveIf(device)
   };
 
   /* -- modals -- */
@@ -388,12 +395,12 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     return Modals.showWotLookup({enableWallets: true})
       .then(function(result){
         if (result) {
-          if (formDataField == 'destPub') {
+          if (formDataField === 'destPub') {
             $scope.destUid = result.uid;
             $scope.destPub = result.uid ? '' : result.pubkey;
             $scope.formData.destPub = result.pubkey;
           }
-          else if (formDataField == 'restPub') {
+          else if (formDataField === 'restPub') {
             $scope.restUid = result.uid;
             $scope.restPub = result.uid ? '' : result.pubkey;
             $scope.formData.restPub = result.pubkey;

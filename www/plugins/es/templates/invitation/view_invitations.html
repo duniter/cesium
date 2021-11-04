@@ -4,7 +4,7 @@
     {{'INVITATION.LIST.TITLE' | translate}}
   </ion-nav-title>
 
-  <ion-content class="padding no-padding-xs" scroll="true">
+  <ion-content class="padding no-padding-xs no-padding-sm" scroll="true">
 
     <!-- Buttons bar-->
     <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
@@ -28,7 +28,7 @@
     <div class="row no-padding">
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
 
-      <div class="col no-padding-xs">
+      <div class="col no-padding-xs no-padding-sm">
 
         <div class="center padding" ng-if="search.loading">
           <ion-spinner icon="android"></ion-spinner>
@@ -38,7 +38,7 @@
           INVITATION.NO_RESULT
         </div>
 
-        <ng-include src="'plugins/es/templates/invitation/list_invitation.html'"></ng-include>
+        <ng-include src="::'plugins/es/templates/invitation/list_invitation.html'"></ng-include>
 
       </div>
 

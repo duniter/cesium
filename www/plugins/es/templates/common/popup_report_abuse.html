@@ -1,0 +1,37 @@
+<form name="abuseForm" ng-submit="">
+    <div class="list" ng-init="setAbuseForm(abuseForm)">
+
+        <!-- reason -->
+        <label class="item item-input"
+               ng-class="{'item-input-error': abuseForm.$submitted && abuseForm.comment.$invalid}">
+            <textarea class="padding" style="background-color: transparent;"
+                      name="comment" type="text" placeholder="{{'COMMON.REPORT_ABUSE.REASON_HELP' | translate}}"
+                      rows="3"
+                      ng-model="abuseData.comment"
+                      ng-minlength="8"
+                      required></textarea>
+        </label>
+        <div class="form-errors"
+             ng-if="abuseForm.$submitted && abuseForm.comment.$error"
+             ng-messages="abuseForm.comment.$error">
+            <div class="form-error" ng-message="required">
+                <span translate="ERROR.FIELD_REQUIRED"></span>
+            </div>
+            <div class="form-error" ng-message="minlength">
+                <span translate="ERROR.FIELD_TOO_SHORT"></span>
+            </div>
+        </div>
+
+        <div class="item item-toggle item-text-wrap dark">
+            <div class="input-label" translate>COMMON.REPORT_ABUSE.ASK_DELETE</div>
+            <label class="toggle toggle-royal">
+                <input type="checkbox" ng-model="abuseData.delete" >
+                <div class="track">
+                    <div class="handle"></div>
+                </div>
+            </label>
+        </div>
+    </div>
+</form>
+
+

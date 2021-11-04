@@ -58,7 +58,7 @@
        "SUGGEST_CERTIFICATIONS": "E’ sicuro(a) di voler <b>suggerire queste certificazioni</b> ?",
        "ASK_CERTIFICATION": " E’ sicuro(a) di voler  <b>chiedere una certificazione</b> ?",
        "ASK_CERTIFICATIONS": " E’ sicuro(a) di voler <b>chiedere una certificazione</b> a questi membri ?"
-     },
+     }
    },
   "INVITATION": {
     "TITLE": "Invitazioni",
@@ -326,8 +326,8 @@
        "RECORD_PUBKEY_HELP": "Chiave pubblica per ricevere pagamenti"
      },
      "WALLET": {
-      "REGISTRY_DIVIDER": "Pagine",
-      "REGISTRY_HELP": "Le pagine sono un elenco dei profesionisti che accettano o favoriscono: negozi, aziende, associazioni, istituti..."
+      "PAGE_DIVIDER": "Pagine",
+      "PAGE_DIVIDER_HELP": "Le pagine sono un elenco dei profesionisti che accettano o favoriscono: negozi, aziende, associazioni, istituti..."
     },
      "ERROR": {
        "LOAD_CATEGORY_FAILED": "Errore nel caricamento delle attività principali",
@@ -360,7 +360,7 @@
      "TECHNICAL_DIVIDER": "Dati tecnici",
      "MODAL_AVATAR": {
        "TITLE": "Avatar",
-       "SELECT_FILE_HELP": "<b>Scegliere un'immagine</b>, cliccando sul bottone qui sotto:",
+       "SELECT_FILE_HELP": "<b>Scegliere un'immagine</b>:",
        "BTN_SELECT_FILE": "Scegliere un'immagine",
        "RESIZE_HELP": "<b>Ritagliare l'immagine</b> se necessario. Cliccare sull'immagine permette di spostarla. Cliccando nella zona a basso sinistra permette di fare uno zoom-in.",
        "RESULT_HELP": "<b>Questo è il risultato</b> come visibile sul suo profilo:"
@@ -518,7 +518,7 @@
      "TX_RECEIVED_MULTI": "Ha ricevuto un pagamento da <b>{{params[1]}}</b>.",
      "CERT_SENT": "Sua <b>certificazione</b> a favore di <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> è stata eseguita.",
      "CERT_RECEIVED": "Ha ricevuto <b>una certificazione</b> da parte di <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
-     "REGISTRY": {
+     "PAGE": {
        "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha scritto un commento sul suo riferimento: <b>{{params[2]}}</b>",
        "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha modificato il suo commento sul suo riferimento: <b>{{params[2]}}</b>",
        "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha risposto al suo commento sul riferimento: <b>{{params[2]}}</b>",

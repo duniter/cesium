@@ -1,8 +1,6 @@
-# Version v1.3.0
+# Version v1.3.1
 
-# Version v1.3.0
-
-## Desktop version
+## Desktop
 
 - [enh] Display logs in terminal
 - [enh] Add option `--debug` to show debug logs

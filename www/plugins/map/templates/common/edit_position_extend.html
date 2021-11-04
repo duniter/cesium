@@ -1,0 +1,8 @@
+<div class="item no-padding hidden-xs hidden-sm {{ionItemClass}}" ng-if="formData.geoPoint && formData.geoPoint.lat && formData.geoPoint.lon">
+  <leaflet id="{{::mapId}}"
+           height="250px"
+           center="map.center"
+           markers="map.markers"
+           defaults="map.defaults">
+  </leaflet>
+</div>

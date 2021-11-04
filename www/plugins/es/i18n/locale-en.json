@@ -3,8 +3,15 @@
     "CATEGORY": "Category",
     "CATEGORIES": "Categories",
     "CATEGORY_SEARCH_HELP": "Search",
+    "COMMENT_HELP": "Comments",
     "LAST_MODIFICATION_DATE": "Updated on ",
     "SUBMIT_BY": "Submitted by",
+    "BTN_LIKE": "I like",
+    "BTN_LIKE_REMOVE": "I don't like anymore",
+    "LIKES_TEXT": "{{total}} {{total > 1 ? 'people' : 'person'}} liked this page",
+    "ABUSES_TEXT": "{{total}} {{total > 1 ? 'people' : 'person'}} reported a problem on this page",
+    "BTN_REPORT_ABUSE_DOTS": "Report a problem or an abuse...",
+    "BTN_REMOVE_REPORTED_ABUSE": "Cancel my problem report",
     "BTN_PUBLISH": "Publish",
     "BTN_PICTURE_DELETE": "Delete",
     "BTN_PICTURE_FAVORISE": "Default",
@@ -20,6 +27,15 @@
       "NO_RESULT": "No notification",
       "SHOW_ALL": "Show all",
       "LOAD_NOTIFICATIONS_FAILED": "Could not load notifications"
+    },
+    "REPORT_ABUSE": {
+      "TITLE": "Report a problem",
+      "SUB_TITLE": "Please explain briefly the problem:",
+      "REASON_HELP": "I explain the problem...",
+      "ASK_DELETE": "Request removal?",
+      "CONFIRM": {
+        "SENT": "Request sent. Thnak you!"
+      }
     }
   },
   "MENU": {
@@ -35,7 +51,7 @@
       "ORGANIZATION_ACCOUNT_HELP": "If you represent a company, association, etc.<br/>No universal dividend will be created by this account."
     },
     "EVENT": {
-      "MEMBER_WITHOUT_PROFILE": "You can <a ui-sref=\"app.edit_profile\">fill your Cesium+ profile</a> (optional) to provide better visibility of your account."
+      "MEMBER_WITHOUT_PROFILE": "You can <a ui-sref=\"app.edit_profile\">fill your Cesium+ profile</a> (optional) to provide better visibility of your account. This profile will be stored in <b>a directory independent</b> of the currency, but decentralized."
     },
     "ERROR": {
       "WS_CONNECTION_FAILED": "Cesium can not receive notifications because of a technical error (connection to the Cesium + data node).<br/><br/>If the problem persists, please <b>choose another data node</b> in Cesium+ settings."
@@ -118,6 +134,8 @@
     "REPLY_TO_DELETED_COMMENT": "In response to a deleted comment",
     "REPLY_COUNT": "{{replyCount}} responses",
     "DELETED_COMMENT": "Comment deleted",
+    "MODIFIED_ON": "modified on {{time|formatDate}}",
+    "MODIFIED_PARENTHESIS": "(modified then)",
     "ERROR": {
       "FAILED_SAVE_COMMENT": "Saving comment failed",
       "FAILED_REMOVE_COMMENT": "Deleting comment failed"
@@ -202,6 +220,7 @@
       "HEADER_BLOCK": "Block #",
       "HEADER_ISSUER": "Peer owner",
       "BTN_LAST": "Last blocks",
+      "BTN_TX": "Transactions",
       "DISPLAY_QUERY": "View query",
       "HIDE_QUERY": "Hide query",
       "TX_SEARCH_FILTER": {
@@ -283,8 +302,8 @@
       "RECORD_PUBKEY_HELP": "Public key to receive payments"
     },
     "WALLET": {
-      "REGISTRY_DIVIDER": "Pages",
-      "REGISTRY_HELP": "Pages refer to activities accepting money or promoting it: local shops, companies, associations, institutions."
+      "PAGE_DIVIDER": "Pages",
+      "PAGE_DIVIDER_HELP": "Pages refer to activities accepting money or promoting it: local shops, companies, associations, institutions. They are stored outside the currency network, in <a ui-sref=\"app.es_network\">the Cesium+ network</a>."
     },
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Loading main activities failed",
@@ -302,7 +321,7 @@
   },
   "PROFILE": {
     "PROFILE_DIVIDER": "Cesium+ profile",
-    "PROFILE_DIVIDER_HELP": "These are ancillary data, stored outside the currency network.",
+    "PROFILE_DIVIDER_HELP": "These are ancillary data, stored outside the currency network, in <a ui-sref=\"app.es_network\">the Cesium+ network</a>.",
     "NO_PROFILE_DEFINED": "No Cesium+ profile",
     "BTN_ADD": "Create my profile",
     "BTN_EDIT": "Edit my profile",
@@ -319,7 +338,7 @@
     "TECHNICAL_DIVIDER": "Technical data",
     "MODAL_AVATAR": {
       "TITLE": "Avatar",
-      "SELECT_FILE_HELP": "<b>Choose an image file</b>, by clicking on the button below:",
+      "SELECT_FILE_HELP": "<b>Choose an image file</b>:",
       "BTN_SELECT_FILE": "Choose an image",
       "RESIZE_HELP": "<b>Re-crop the image</b> if necessary. A click on the image allows to move it. Click on the area at the bottom left to zoom in.",
       "RESULT_HELP": "<b>Here is the result</b> as seen on your profile:"
@@ -413,14 +432,18 @@
       "TITLE": "Document search",
       "BTN_ACTIONS": "Actions",
       "SEARCH_HELP": "issuer:AAA*, time:1508406169",
+      "LAST_DOCUMENTS_DOTS": "Last documents:",
       "LAST_DOCUMENTS": "Last documents",
       "SHOW_QUERY": "Show query",
       "HIDE_QUERY": "Hide query",
       "HEADER_TIME": "Time/Hour",
       "HEADER_ISSUER": "Issuer",
       "HEADER_RECIPIENT": "Recipient",
+      "HEADER_AMOUNT": "Amount",
       "READ": "Read",
       "BTN_REMOVE": "Delete this document",
+      "BTN_COMPACT": "Compact",
+      "HAS_CREATE_OR_UPDATE_PROFILE": "create or edit his profile",
       "POPOVER_ACTIONS": {
         "TITLE": "Actions",
         "REMOVE_ALL": "Delete these documents..."
@@ -470,6 +493,13 @@
   "ES_WALLET": {
     "ERROR": {
       "RECIPIENT_IS_MANDATORY": "A recipient is required for encryption."
+    },
+    "ES_PEER": {
+      "NAME": "Name",
+      "DOCUMENTS": "Documents",
+      "SOFTWARE": "Software",
+      "DOCUMENT_COUNT": "Number of documents",
+      "EMAIL_SUBSCRIPTION_COUNT": "{{emailSubscription}} subscribers to email notification"
     }
   },
   "EVENT": {
@@ -487,11 +517,31 @@
     "TX_RECEIVED_MULTI": "You received a payment from <b>{{params[1]}}</b>.",
     "CERT_SENT": "Your <b>certification</b> to <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> was executed.",
     "CERT_RECEIVED": "You  have <b>received a certification</b> from <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
-    "REGISTRY": {
+    "USER": {
+      "LIKE_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> like your profile",
+      "FOLLOW_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> follows your activity",
+      "STAR_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> rated you ({{params[3]}} <i class=\"ion-star\">)",
+      "MODERATION_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> asks you for a moderation on the profile: <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "DELETION_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> reported a profile to be deleted: <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "ABUSE_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has requested moderation on your profile"
+    },
+    "PAGE": {
       "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has commented on your referencing: <b>{{params[2]}}</b>",
       "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has modified his comment on your referencing: <b>{{params[2]}}</b>",
       "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has replied to your comment on the referencing: <b>{{params[2]}}</b>",
-      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has modified his answer to your comment, on the referencing: <b>{{params[2]}}</b>"
+      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has modified his answer to your comment, on the referencing: <b>{{params[2]}}</b>",
+      "FOLLOW_NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has commented on the page: <b>{{params[2]}}</b>",
+      "FOLLOW_UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has modified his comment on the page: <b>{{params[2]}}</b>",
+      "FOLLOW_NEW": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> added a page: <b>{{params[2]}}</b>",
+      "FOLLOW_UPDATE": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> updated the page: <b>{{params[2]}}</b>",
+      "MODERATION_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> asks you for a moderation on the page: <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "DELETION_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> reported a page to be deleted: <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "ABUSE_RECEIVED": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has requested moderation on your page: <b>{{params[2]}}</b>"
+    }
+  },
+  "LIKE": {
+    "ERROR": {
+      "FAILED_TOGGLE_LIKE": "Unable to execute this action."
     }
   },
   "CONFIRM": {

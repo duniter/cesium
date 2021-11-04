@@ -135,20 +135,19 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
           useTor: useTor
         };
         var serverParts = state.stateParams.server.split(':');
-        if (serverParts.length == 2 || serverParts.length == 3) {
+        if (serverParts.length === 2) {
           node.host = serverParts[0];
           node.port = serverParts[1];
-          node.wsPort = serverParts[2] || serverParts[1];
         }
 
-        if (BMA.node.same(node.host, node.port)) {
+        if (BMA.node.same(node)) {
           $scope.node = BMA;
         }
         else {
           $scope.node = useTor ?
               // For TOR, use a web2tor to access the endpoint
-              BMA.instance(node.host + ".to", 443, 443, true/*ssl*/, 600000 /*long timeout*/) :
-              BMA.instance(node.host, node.port, node.wsPort, node.useSsl);
+              BMA.instance(node.host + ".to", 443, true/*ssl*/, 600000 /*long timeout*/) :
+              BMA.instance(node.host, node.port, node.useSsl);
           return $scope.node.blockchain.parameters()
             .then(function(json) {
               $scope.currency = json.currency;
@@ -228,7 +227,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 
     // get blocks
     if (from === 0) {
-      promise = $scope.node.blockchain.current()
+      promise = $scope.node.blockchain.current(false)
         .then(function(current) {
           var size = current.number < $scope.defaultSizeLimit ? current.number : $scope.defaultSizeLimit;
           return $scope.node.blockchain.blocksSlice({count: size, from: current.number-size})
@@ -332,12 +331,12 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 
     $scope.smallscreen = UIUtils.screen.isSmall();
 
+    $scope.$broadcast('$$rebind::rebind'); // notify binder
+
     // Set Motion
     if (res && res.length) {
       $scope.motion.show({selector: '.list-blocks .item-block'});
     }
-
-    $scope.$broadcast('$$rebind::rebind'); // notify binder
   };
 
   $scope.showMore = function() {
@@ -392,14 +391,14 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 
   $scope.onBlock = function(block) {
     // Skip if still loading or if filter/sort is not the default (not last blocks)
-    if ($scope.search.loading || $scope.search.type != 'last' ||
-      ($scope.search.sort && $scope.search.sort != 'desc')) return; // skip
+    if ($scope.search.loading || $scope.search.type !== 'last' ||
+      ($scope.search.sort && $scope.search.sort !== 'desc')) return; // skip
 
     // Make sure results is init
     $scope.search.results = $scope.search.results || [];
 
     if (!$scope.search.results.length) {
-      console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
+      console.debug('[blockchain] new block #{0} received (by websocket)'.format(block.number));
       // add it to result
       $scope.search.total++;
       $scope.search.results.push(block);
@@ -416,8 +415,8 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 
       // replace existing block (fork could have replaced previous block)
       if (existingBlock) {
-        if (existingBlock.hash != block.hash) {
-          console.debug('[ES] [blockchain] block #{0} updated (by websocket)'.format(block.number));
+        if (existingBlock.hash !== block.hash) {
+          console.debug('[blockchain] block #{0} updated (by websocket)'.format(block.number));
           // Replace existing content
           angular.copy(block, existingBlock);
           // Prepare the new block, then show it
@@ -428,7 +427,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
         }
       }
       else {
-        console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
+        console.debug('[blockchain] new block #{0} received (by websocket)'.format(block.number));
         // Insert at index 0
         $scope.search.total++;
         $scope.search.results.splice(0, 0, block);
@@ -455,7 +454,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
         $anchorScroll('block-' + block.number);
       }, 900);
     }
-    else if (BMA.node.same($scope.node.host, $scope.node.port)) {
+    else if (BMA.node.same($scope.node)) {
       $state.go('app.view_block_hash', {number: block.number, hash: block.hash});
     }
     else {
@@ -530,20 +529,19 @@ function BlockViewController($scope, $ionicPopover, $state, UIUtils, BMA, csCurr
           useTor: useTor
         };
         var serverParts = state.stateParams.server.split(':');
-        if (serverParts.length == 2 || serverParts.length == 3) {
+        if (serverParts.length == 2) {
           node.host = serverParts[0];
           node.port = serverParts[1];
-          node.wsPort = serverParts[2] || serverParts[1];
         }
 
-        if (BMA.node.same(node.host, node.port)) {
+        if (BMA.node.same(node)) {
           $scope.node = BMA;
         }
         else {
           $scope.node = useTor ?
             // For TOR, use a web2tor to access the endpoint
-            BMA.instance(node.host + ".to", 443, 443, true/*ssl*/, 600000 /*long timeout*/) :
-            BMA.instance(node.host, node.port, node.wsPort, node.useSsl);
+            BMA.instance(node.host + ".to", 443, true/*ssl*/, 600000 /*long timeout*/) :
+            BMA.instance(node.host, node.port, node.useSsl);
           return $scope.node.blockchain.parameters()
             .then(function (json) {
               $scope.currency = json.currency;
@@ -704,29 +702,20 @@ function BlockViewController($scope, $ionicPopover, $state, UIUtils, BMA, csCurr
     $scope.popoverData.unlockConditions = $scope.toUnlockUIArray(output.unlockTree);
 
     // Open popover
-    if (!$scope.unlockConditionPopover) {
-      $ionicPopover.fromTemplateUrl('templates/blockchain/unlock_condition_popover.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'templates/blockchain/unlock_condition_popover.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.unlockConditionPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.unlockConditionPopover.remove();
-        });
-        $scope.unlockConditionPopover.show(event);
-      });
-    }
-    else {
-      $scope.unlockConditionPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideUnlockConditionsPopover = function() {
     if ($scope.unlockConditionPopover) {
       $scope.unlockConditionPopover.hide();
-      if ($scope.popoverData) {
-        delete $scope.popoverData.unlockConditions;
-      }
+      $scope.unlockConditionPopover = null;
     }
   };
 

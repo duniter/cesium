@@ -3,8 +3,15 @@
     "CATEGORY": "Catégorie",
     "CATEGORIES": "Catégories",
     "CATEGORY_SEARCH_HELP": "Recherche",
+    "COMMENT_HELP": "Commentaire",
     "LAST_MODIFICATION_DATE": "Mise à jour le",
     "SUBMIT_BY": "Soumis par",
+    "BTN_LIKE": "J'aime",
+    "BTN_LIKE_REMOVE": "Je n'aime plus",
+    "LIKES_TEXT": "{{total}} personne{{total > 1 ? 's' : ''}} {{total > 1 ? 'ont' : 'a'}} aimé cette page",
+    "ABUSES_TEXT": "{{total}} personne{{total > 1 ? 's' : ''}} {{total > 1 ? 'ont' : 'a'}} signalé un problème",
+    "BTN_REPORT_ABUSE_DOTS": "Signaler un problème ou un abus...",
+    "BTN_REMOVE_REPORTED_ABUSE": "Annuler mon signalement",
     "BTN_PUBLISH": "Publier",
     "BTN_PICTURE_DELETE": "Supprimer",
     "BTN_PICTURE_FAVORISE": "Principale",
@@ -20,6 +27,15 @@
       "NO_RESULT": "Aucune notification",
       "SHOW_ALL": "Voir tout",
       "LOAD_NOTIFICATIONS_FAILED": "Erreur de chargement des notifications"
+    },
+    "REPORT_ABUSE": {
+      "TITLE": "Signaler un problème",
+      "SUB_TITLE": "Merci d'expliquer succintement le problème :",
+      "REASON_HELP": "J'explique le problème...",
+      "ASK_DELETE": "Demander la suppression ?",
+      "CONFIRM": {
+        "SENT": "Signalement envoyé. Merci !"
+      }
     }
   },
   "MENU": {
@@ -35,7 +51,7 @@
       "ORGANIZATION_ACCOUNT_HELP": "Si vous représentez une entreprise, une association, etc.<br/>Aucun dividende universel ne sera créé par ce compte."
     },
     "EVENT": {
-      "MEMBER_WITHOUT_PROFILE": "Vous pouvez <a ui-sref=\"app.edit_profile\">saisir votre profil Cesium+</a> (optionnel) pour offrir une meilleure visibilité de votre compte."
+      "MEMBER_WITHOUT_PROFILE": "Vous pouvez <a ui-sref=\"app.edit_profile\">saisir votre profil Cesium+</a> (optionnel) pour offrir une meilleure visibilité de votre compte. Ce profil sera stocké dans <b>un annuaire indépendant</b> de la monnaie, mais décentralisé."
     },
     "ERROR": {
       "WS_CONNECTION_FAILED": "Cesium ne peut pas recevoir les notifications, à cause d'une erreur technique (connexion au noeud de données Cesium+).<br/><br/>Si le problème persiste, veuillez <b>choisir un autre noeud de données</b> dans les paramètres Cesium+."
@@ -92,7 +108,7 @@
     },
     "CONFIRM": {
       "DELETE_ALL_CONFIRMATION": "La suppression des invitations est une <b>opération irréversible</b>.<br/><br/><b>Êtes-vous sûr</b> de vouloir continuer ?",
-      "SEND_INVITATIONS_TO_CERTIFY": "Êtes-vous sûr de vouloir <b>envoyer cette invitation à certfier</b> ?"
+      "SEND_INVITATIONS_TO_CERTIFY": "Êtes-vous sûr de vouloir <b>envoyer cette invitation à certifier</b> ?"
     },
     "INFO": {
       "INVITATION_SENT": "Invitation envoyée"
@@ -118,6 +134,8 @@
     "REPLY_TO_DELETED_COMMENT": "En réponse à un commentaire supprimé",
     "REPLY_COUNT": "{{replyCount}} réponses",
     "DELETED_COMMENT": "Commentaire supprimé",
+    "MODIFIED_ON": "modifié le {{time|formatDate}}",
+    "MODIFIED_PARENTHESIS": "(modifié ensuite)",
     "ERROR": {
       "FAILED_SAVE_COMMENT": "Erreur lors de la sauvegarde du commentaire",
       "FAILED_REMOVE_COMMENT": "Erreur lors de la suppression du commentaire"
@@ -136,7 +154,7 @@
       "MESSAGE_RECEIVED": "Vous avez <b>reçu un message</b><br/>de"
     },
     "LIST": {
-      "INBOX": "Boite de réception",
+      "INBOX": "Boîte de réception",
       "OUTBOX": "Messages envoyés",
       "LAST_INBOX": "Nouveaux messages",
       "LAST_OUTBOX": "Messages envoyés",
@@ -170,12 +188,12 @@
     "CONFIRM": {
       "REMOVE": "Êtes-vous sûr de vouloir <b>supprimer ce message</b> ?<br/><br/>Cette opération est irréversible.",
       "REMOVE_ALL" : "Êtes-vous sûr de vouloir <b>supprimer tous les messages</b> ?<br/><br/>Cette opération est irréversible.",
-      "MARK_ALL_AS_READ": "Êtes-vous sûr de vouloir <b>marquer tous les messages comme lu</b> ?",
+      "MARK_ALL_AS_READ": "Êtes-vous sûr de vouloir <b>marquer tous les messages comme lus</b> ?",
       "USER_HAS_NO_PROFILE": "Cette identité n'a aucun profil Cesium+. Il se peut qu'elle n'utilise pas l'extension Cesium+, et <b>ne consultera donc pas votre message</b>.<br/><br/>Êtes-vous sûr de vouloir <b>continuer</b> malgré tout ?"
     },
     "INFO": {
       "MESSAGE_REMOVED": "Message supprimé",
-      "All_MESSAGE_REMOVED": "Tous les messages ont été supprimé",
+      "All_MESSAGE_REMOVED": "Tous les messages ont été supprimés",
       "MESSAGE_SENT": "Message envoyé"
     },
     "ERROR": {
@@ -190,7 +208,7 @@
       "MARK_AS_READ_FAILED": "Impossible de marquer le message comme 'lu'.",
       "LOAD_NOTIFICATIONS_FAILED": "Erreur lors de la récupération des notifications de messages.",
       "REMOVE_All_MESSAGES_FAILED": "Erreur lors de la suppression de tous les messages.",
-      "MARK_ALL_AS_READ_FAILED": "Erreur lors du marquage des message comme lu.",
+      "MARK_ALL_AS_READ_FAILED": "Erreur lors du marquage des messages comme lus.",
       "RECIPIENT_IS_MANDATORY": "Le destinataire est obligatoire."
     }
   },
@@ -202,6 +220,7 @@
       "HEADER_BLOCK": "Bloc #",
       "HEADER_ISSUER": "Noeud émetteur",
       "BTN_LAST": "Derniers blocs",
+      "BTN_TX": "Transactions",
       "DISPLAY_QUERY": "Afficher la requête",
       "HIDE_QUERY": "Masquer la requête",
       "TX_SEARCH_FILTER": {
@@ -221,7 +240,7 @@
     "LOCATION_DIVIDER": "Adresse",
     "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux et site web",
     "TECHNICAL_DIVIDER": "Informations techniques",
-    "CREATED_TIME": "Crée {{creationTime|formatFromNow}}",
+    "CREATED_TIME": "Créé {{creationTime|formatFromNow}}",
     "NOTIFICATIONS": {
       "TITLE": "Invitations"
     },
@@ -240,7 +259,7 @@
       "OPEN_GROUP": "Groupe ouvert",
       "OPEN_GROUP_HELP": "Un groupe ouvert est accessible par n'importe quel membre de la monnaie.",
       "MANAGED_GROUP": "Groupe administré",
-      "MANAGED_GROUP_HELP": "un groupe administré est gérer par des administrateurs et des modérateurs, qui peuvent accepter, refuser ou exclure un membre en son sein.",
+      "MANAGED_GROUP_HELP": "un groupe administré est géré par des administrateurs et des modérateurs, qui peuvent accepter, refuser ou exclure un membre en son sein.",
       "ENUM": {
         "OPEN": "Groupe ouvert",
         "MANAGED": "Groupe administré"
@@ -326,7 +345,7 @@
       "RECORD_DESCRIPTION": "Description",
       "RECORD_DESCRIPTION_HELP": "Description de l'activité",
       "RECORD_ADDRESS": "Rue",
-      "RECORD_ADDRESS_HELP": "Rue, batiment...",
+      "RECORD_ADDRESS_HELP": "Rue, bâtiment...",
       "RECORD_CITY": "Ville",
       "RECORD_CITY_HELP": "Ville",
       "RECORD_SOCIAL_NETWORKS": "Réseaux sociaux et site web",
@@ -334,14 +353,14 @@
       "RECORD_PUBKEY_HELP": "Clé publique de réception des paiements"
     },
     "WALLET": {
-      "REGISTRY_DIVIDER": "Pages",
-      "REGISTRY_HELP": "Les pages référencent des activités acceptant la monnaie ou la favorisant : commerces, entreprises, associations, institutions."
+      "PAGE_DIVIDER": "Pages",
+      "PAGE_DIVIDER_HELP": "Les pages référencent des activités acceptant la monnaie ou la favorisant : commerces, entreprises, associations, institutions. Elles sont stockées en dehors du réseau de la monnaie, dans <a ui-sref=\"app.es_network\">le réseau des nœuds Cesium+</a>."
     },
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Erreur de chargement de la liste des activités",
       "LOAD_RECORD_FAILED": "Erreur lors du chargement de la page",
-      "LOOKUP_RECORDS_FAILED": "Erreur lors de l'execution de la recherche.",
-      "REMOVE_RECORD_FAILED": "Erreur de la suppression de la page",
+      "LOOKUP_RECORDS_FAILED": "Erreur lors de l'exécution de la recherche",
+      "REMOVE_RECORD_FAILED": "Erreur lors de la suppression de la page",
       "SAVE_RECORD_FAILED": "Erreur lors de la sauvegarde",
       "RECORD_NOT_EXISTS": "Page inexistante",
       "GEO_LOCATION_NOT_FOUND": "Ville ou code postal non trouvé"
@@ -353,7 +372,7 @@
   },
   "PROFILE": {
     "PROFILE_DIVIDER": "Profil Cesium+",
-    "PROFILE_DIVIDER_HELP": "Il s'agit de données annexes, stockées en dehors du réseau de la monnaie.",
+    "PROFILE_DIVIDER_HELP": "Il s'agit de données annexes, optionnelles. Elles sont stockées en dehors du réseau de la monnaie, dans <a ui-sref=\"app.es_network\">le réseau Cesium+</a>.",
     "NO_PROFILE_DEFINED": "Aucun profil saisi",
     "BTN_ADD": "Saisir mon profil",
     "BTN_EDIT": "Editer mon profil",
@@ -370,18 +389,20 @@
     "TECHNICAL_DIVIDER": "Informations techniques",
     "MODAL_AVATAR": {
       "TITLE": "Photo de profil",
-      "SELECT_FILE_HELP": "Veuillez <b>choisir un fichier image</b>, en cliquant sur le bouton ci-dessous :",
+      "SELECT_FILE_HELP": "Veuillez <b>choisir le fichier image</b> :",
       "BTN_SELECT_FILE": "Choisir une photo",
       "RESIZE_HELP": "<b>Recadrez l'image</b>, si besoin. Un clic maintenu sur l'image permet de la déplacer. Cliquez sur la zone en bas à gauche pour zoomer.",
       "RESULT_HELP": "<b>Voici le résultat</b> tel que visible sur votre profil :"
     },
     "CONFIRM": {
-      "DELETE": "Êtes-vous sur de vouloir <b>supprimer votre profif Cesium+ ?</b><br/><br/>Cette opération est irréversible."
+      "DELETE": "Êtes-vous sûr de vouloir <b>supprimer votre profil Cesium+ ?</b><br/><br/>Cette opération est irréversible.",
+      "DELETE_BY_MODERATOR": "Êtes-vous sûr de vouloir <b>supprimer ce profil Cesium+ ?</b><br/><br/>Cette opération est irréversible."
     },
     "ERROR": {
       "REMOVE_PROFILE_FAILED": "Erreur de suppression du profil",
-      "LOAD_PROFILE_FAILED": "Erreur de chargement du profil utilisateur.",
+      "LOAD_PROFILE_FAILED": "Erreur de chargement du profil",
       "SAVE_PROFILE_FAILED": "Erreur lors de la sauvegarde",
+      "DELETE_PROFILE_FAILED": "Erreur lors de la suppression du profil",
       "INVALID_SOCIAL_NETWORK_FORMAT": "Format non pris en compte : veuillez indiquer une adresse valide.<br/><br/>Exemples :<ul><li>- Une page Facebook (https://www.facebook.com/user)</li><li>- Une page web (http://www.monsite.fr)</li><li>- Une adresse email (joe@dalton.com)</li></ul>",
       "IMAGE_RESIZE_FAILED": "Erreur lors du redimensionnement de l'image"
     },
@@ -423,14 +444,14 @@
   },
   "SUBSCRIPTION": {
     "SUBSCRIPTION_DIVIDER": "Services en ligne",
-    "SUBSCRIPTION_DIVIDER_HELP": "Les services en ligne offrent des services supplémentaires optionnels, délégués à un tiers.",
+    "SUBSCRIPTION_DIVIDER_HELP": "Les services en ligne offrent des services supplémentaires et optionnels, délégués à un perstataire de votre choix. Par exemple, pour recevoir les notifications de paiement par email.",
     "BTN_ADD": "Ajouter un service",
     "BTN_EDIT": "Gérer mes services",
     "NO_SUBSCRIPTION": "Aucun service utilisé",
     "SUBSCRIPTION_COUNT": "Services / Abonnements",
     "EDIT": {
-      "TITLE": "Services en lignes",
-      "HELP_TEXT": "Gérer ici vos abonnements et autres services en ligne",
+      "TITLE": "Services en ligne",
+      "HELP_TEXT": "Gérez ici vos abonnements et autres services en ligne",
       "PROVIDER": "Prestataire :"
     },
     "TYPE": {
@@ -448,9 +469,9 @@
       "DELETE_SUBSCRIPTION_FAILED": "Erreur lors de la suppression de l'abonnement"
     },
     "MODAL_EMAIL": {
-      "TITLE" : "Notification par email",
-      "HELP" : "Remplissez ce formulaire pour <b>être notifié par email</b> des événements de votre compte.<br/>Votre adresse email sera chiffrée pour n'être visible que par le prestataire de service.",
-      "EMAIL_LABEL" : "Votre email :",
+      "TITLE": "Notification par email",
+      "HELP": "Remplissez ce formulaire pour <b>être notifié par email</b> des événements de votre compte.<br/>Votre adresse email sera chiffrée pour n'être visible que par le prestataire de service.",
+      "EMAIL_LABEL": "Votre email :",
       "EMAIL_HELP": "jean.dupond@domaine.com",
       "FREQUENCY_LABEL": "Fréquence des notifications :",
       "FREQUENCY_DAILY": "Journalier",
@@ -459,19 +480,23 @@
     }
   },
   "DOCUMENT": {
-    "HASH": "Hash: ",
+    "HASH": "Hash : ",
     "LOOKUP": {
       "TITLE": "Recherche de documents",
       "BTN_ACTIONS": "Actions",
       "SEARCH_HELP": "issuer:AAA*, time:1508406169",
+      "LAST_DOCUMENTS_DOTS": "Derniers documents :",
       "LAST_DOCUMENTS": "Derniers documents",
       "SHOW_QUERY": "Voir la requête",
       "HIDE_QUERY": "Masquer la requête",
       "HEADER_TIME": "Date/Heure",
       "HEADER_ISSUER": "Emetteur",
       "HEADER_RECIPIENT": "Destinataire",
+      "HEADER_AMOUNT": "Montant",
       "READ": "Lu",
       "BTN_REMOVE": "Supprimer ce document",
+      "BTN_COMPACT": "Compacter",
+      "HAS_CREATE_OR_UPDATE_PROFILE": "a créé ou modifié son profil",
       "POPOVER_ACTIONS": {
         "TITLE": "Actions",
         "REMOVE_ALL": "Supprimer ces documents..."
@@ -497,7 +522,7 @@
     "ENABLE_REMOTE_STORAGE": "Activer le stockage distant ?",
     "ENABLE_REMOTE_STORAGE_HELP": "Permet de stockage (chiffré) de vos paramètres sur les noeuds Cesium+",
     "ENABLE_MESSAGE_TOGGLE": "Activer les messages privés ?",
-    "PEER": "Addresse du nœud de données",
+    "PEER": "Nœud de données Cesium+",
     "POPUP_PEER": {
       "TITLE" : "Nœud de données",
       "HELP" : "Saisissez l'adresse du nœud que vous voulez utiliser :",
@@ -506,16 +531,16 @@
     "NOTIFICATIONS": {
       "DIVIDER": "Notifications",
       "HELP_TEXT": "Activez les types de notifications que vous souhaitez recevoir :",
-      "ENABLE_TX_SENT": "Notifier les <b>paiement émis</b> ?",
+      "ENABLE_TX_SENT": "Notifier les <b>paiements émis</b> ?",
       "ENABLE_TX_RECEIVED": "Notifier les <b>paiements reçus</b> ?",
       "ENABLE_CERT_SENT": "Notifier les <b>certifications émises</b> ?",
       "ENABLE_CERT_RECEIVED": "Notifier les <b>certifications reçues</b> ?",
       "ENABLE_HTML5_NOTIFICATION": "Avertir à chaque nouvelle notification ?",
-      "ENABLE_HTML5_NOTIFICATION_HELP": "Ouvre une petite fenetre à chaque nouvelle notification."
+      "ENABLE_HTML5_NOTIFICATION_HELP": "Ouvre une petite fenêtre à chaque nouvelle notification."
     },
     "CONFIRM": {
       "ASK_ENABLE_TITLE": "Fonctionnalités optionnelles",
-      "ASK_ENABLE": "L'extension Cesium+ est <b>désactivée</b> dans vos paramètres, rendant inactives les fonctionnalités : <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-person\"></i> Profils Cesium+</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-android-notifications\"></i> Notifications</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Messages privés</b>.<li>&nbsp;&nbsp;<b><i class=\"icon ion-location\"></i> Cartes, etc.</b>.</ul><br/><b>Souhaitez-vous la ré-activer</b> l'extension ?"
+      "ASK_ENABLE": "L'extension Cesium+ est <b>désactivée</b> dans vos paramètres, rendant inactives les fonctionnalités : <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-person\"></i> Profils Cesium+</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-android-notifications\"></i> Notifications</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Messages privés</b>.<li>&nbsp;&nbsp;<b><i class=\"icon ion-location\"></i> Cartes, etc.</b>.</ul><br/><b>Souhaitez-vous ré-activer</b> l'extension ?"
     }
   },
   "ES_WALLET": {
@@ -523,12 +548,19 @@
       "RECIPIENT_IS_MANDATORY": "Un destinataire est obligatoire pour le chiffrement."
     }
   },
+  "ES_PEER": {
+    "NAME": "Nom",
+    "DOCUMENTS": "Documents",
+    "SOFTWARE": "Logiciel",
+    "DOCUMENT_COUNT": "Nombre de documents",
+    "EMAIL_SUBSCRIPTION_COUNT": "{{emailSubscription}} abonné{{emailSubscription ? 's' : ''}} aux notifications par email"
+  },
   "EVENT": {
     "NODE_STARTED": "Votre noeud ES API <b>{{params[0]}}</b> est démarré",
     "NODE_BMA_DOWN": "Le noeud <b>{{params[0]}}:{{params[1]}}</b> (utilisé par votre noeud ES API) est <b>injoignable</b>.",
     "NODE_BMA_UP": "Le noeud <b>{{params[0]}}:{{params[1]}}</b> est à nouveau accessible.",
     "MEMBER_JOIN": "Vous êtes maintenant <b>membre</b> de la monnaie <b>{{params[0]}}</b> !",
-    "MEMBER_LEAVE": "Vous n'êtes <b>plus membre</b> de la monnaie <b>{{params[0]}}</b>!",
+    "MEMBER_LEAVE": "Vous n'êtes <b>plus membre</b> de la monnaie <b>{{params[0]}}</b> !",
     "MEMBER_EXCLUDE": "Vous n'êtes <b>plus membre</b> de la monnaie <b>{{params[0]}}</b>, faute de non renouvellement ou par manque de certifications.",
     "MEMBER_REVOKE": "La révocation de votre compte a été effectuée. Il ne pourra plus être un compte membre de la monnaie <b>{{params[0]}}</b>.",
     "MEMBER_ACTIVE": "Votre renouvellement d'adhésion à la monnaie <b>{{params[0]}}</b> a été <b>pris en compte</b>.",
@@ -538,18 +570,38 @@
     "TX_RECEIVED_MULTI": "Vous avez <b>reçu un paiement</b> de <b>{{params[1]}}</b>.",
     "CERT_SENT": "Votre <b>certification</b> à <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a été effectuée.",
     "CERT_RECEIVED": "Vous avez <b>reçu une certification</b> de <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
-    "REGISTRY": {
-      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a commenté votre référencement : <b>{{params[2]}}</b>",
-      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a modifié son commentaire sur votre référencement : <b>{{params[2]}}</b>",
-      "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a répondu à votre commentaire sur le référencement : <b>{{params[2]}}</b>",
-      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a modifié sa réponse à votre commentaire sur le référencement : <b>{{params[2]}}</b>"
+    "USER": {
+      "LIKE_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> aime votre profil",
+      "FOLLOW_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> suit votre activité",
+      "STAR_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> vous a noté ({{params[3]}} <b class=\"ion-star\">)",
+      "MODERATION_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> vous demande une modération sur le profil : <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "DELETION_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> demande la suppression d'un profil : <b>{{params[2]}}</b>",
+      "ABUSE_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> a signalé votre profil"
+    },
+    "PAGE": {
+      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a commenté votre page : <b>{{params[2]}}</b>",
+      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a modifié son commentaire sur votre page : <b>{{params[2]}}</b>",
+      "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a répondu à votre commentaire sur la page : <b>{{params[2]}}</b>",
+      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a modifié sa réponse à votre commentaire sur la page : <b>{{params[2]}}</b>",
+      "FOLLOW_NEW_COMMENT": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> a commenté la page : <b>{{params[2]}}</b>",
+      "FOLLOW_UPDATE_COMMENT": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> a modifié son commentaire sur la page : <b>{{params[2]}}</b>",
+      "FOLLOW_NEW": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> a ajouté la page : <b>{{params[2]}}</b>",
+      "FOLLOW_UPDATE": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> a modifié la page : <b>{{params[2]}}</b>",
+      "MODERATION_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> vous demande une modération sur la page : <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "DELETION_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> a signalé une page à supprimer : <b>{{params[2]}}</b><br/><b class=\"dark ion-quote\"> </b><span class=\"text-italic\">{{params[3]}}</span>",
+      "ABUSE_RECEIVED": "<span class=\"positive\"><i class=\"icon ion-person\"></i>&thinsp;{{name||params[1]}}</span> a signalé votre page : <b>{{params[2]}}</b>"
+    }
+  },
+  "LIKE": {
+    "ERROR": {
+      "FAILED_TOGGLE_LIKE": "Impossible d'exécuter cette action."
     }
   },
   "CONFIRM": {
     "ES_USE_FALLBACK_NODE": "Nœud de données <b>{{old}}</b> injoignable ou adresse invalide.<br/><br/>Voulez-vous temporairement utiliser le nœud de données <b>{{new}}</b> ?"
   },
   "ERROR": {
-    "ES_CONNECTION_ERROR": "Nœud de données <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Cesium va continuer à fonctionner, <b>sans l'extension Cesium+</b> (profils utilisateur, messages privés, cartes et graphiques)<br/><br/>Vérifiez votre connection Internet, ou changer de nœud de données dans les <a class=\"positive\" ng-click=\"doQuickFix('settings')\">paramètres de l'extension</a>.",
+    "ES_CONNECTION_ERROR": "Nœud de données <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Cesium va continuer à fonctionner, <b>sans l'extension Cesium+</b> (profils utilisateur, messages privés, cartes et graphiques)<br/><br/>Vérifiez votre connexion Internet, ou changez de nœud de données dans les <a class=\"positive\" ng-click=\"doQuickFix('settings')\">paramètres de l'extension</a>.",
     "ES_MAX_UPLOAD_BODY_SIZE": "Le volume des données à envoyer dépasse la limite fixée par le serveur.<br/>Veuillez ré-essayer après avoir, par exemple, supprimer des photos."
   }
 }

@@ -114,33 +114,47 @@ angular.module('cesium.directives', [])
   })
 
   // Add a copy-on-click directive
-  .directive('copyOnClick', function ($window, $document, Device, UIUtils) {
+  .directive('copyOnClick', function ($window, Device, UIUtils) {
     'ngInject';
     return {
       restrict: 'A',
       link: function (scope, element, attrs) {
         var showCopyPopover = function (event) {
           var value = attrs.copyOnClick;
-          if (value && Device.clipboard.enable) {
-            // copy to clipboard
+          if (value === undefined || value === null) return; // Skip if no value
+          if (Device.clipboard.enable) {
+            // copy to clipboard, using cordova
             Device.clipboard.copy(value)
               .then(function(){
                  UIUtils.toast.show('INFO.COPY_TO_CLIPBOARD_DONE');
               })
               .catch(UIUtils.onError('ERROR.COPY_CLIPBOARD'));
           }
-          else if (value) {
+          else {
+
             var rows = value && value.indexOf('\n') >= 0 ? value.split('\n').length : 1;
             UIUtils.popover.show(event, {
               scope: scope,
               templateUrl: 'templates/common/popover_copy.html',
               bindings: {
                 value: attrs.copyOnClick,
-                rows: rows
+                rows: rows,
+                copied: false
               },
-              autoselect: '.popover-copy ' + (rows <= 1 ? 'input' : 'textarea')
+              autoselect: '.popover-copy ' + (rows <= 1 ? 'input' : 'textarea'),
+
+              // After popover, try to copy the selection
+              afterShow: document.execCommand ? function(popover) {
+                try {
+                  document.execCommand("copy");
+                  UIUtils.toast.show('INFO.COPY_TO_CLIPBOARD_DONE', 1000);
+                } catch (err) {
+                  console.error("[copy-on-click] Failed to copy using document.execCommand('copy')", err);
+                }
+              } : undefined
             });
           }
+
         };
         element.bind('click', showCopyPopover);
         element.bind('hold', showCopyPopover);
@@ -368,48 +382,104 @@ angular.module('cesium.directives', [])
     };
   })
 
-.directive("dropzone", function($parse) {
+.directive("dropZone", function($parse) {
     return {
       restrict: 'A',
       scope: false,
-        link: function(scope, elem, attrs) {
-          var fn = $parse(attrs.dropzone);
-          elem.bind('dragover', function (e) {
-            e.stopPropagation();
-            e.preventDefault();
-          });
-          elem.bind('dragenter', function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-          });
-          elem.bind('dragleave', function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-          });
-          elem.bind('drop', function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-            var fileData = {
-              name: e.dataTransfer.files[0].name,
-              size: e.dataTransfer.files[0].size,
-              type: e.dataTransfer.files[0].type
-            };
+      link: function(scope, elem, attrs) {
+        var fn = $parse(attrs.dropZone);
+        elem.bind('dragover', function (e) {
+          e.stopPropagation();
+          e.preventDefault();
+        });
+        elem.bind('dragenter', function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+        });
+        elem.bind('dragleave', function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+        });
+        elem.bind('drop', function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+          var file = e.dataTransfer.files[0];
+          var fileData = {
+            name: file.name,
+            size: file.size,
+            type: file.type
+          };
 
-            var reader = new FileReader();
-            reader.onload = function(onLoadEvent) {
-              scope.$apply(function () {
-                fn(scope, {
-                  file: {
-                    fileContent: onLoadEvent.target.result,
-                    fileData : fileData}
-                });
+          var reader = new FileReader();
+          reader.onload = function(onLoadEvent) {
+            scope.$apply(function () {
+              fn(scope, {
+                file: {
+                  file: file,
+                  fileContent: onLoadEvent.target.result,
+                  fileData : fileData}
               });
-            };
-            reader.readAsText(e.dataTransfer.files[0]);
-          });
+            });
+          };
+          reader.readAsText(e.dataTransfer.files[0]);
+        });
       }
     };
   })
+
+
+  // See http://embed.plnkr.co/2vgnFe/
+  .directive('fileSelect', function ($parse) {
+    'use strict';
+
+    return {
+      restrict: 'A',
+      scope: false,
+      template: '<input type="file" style="display: none;" />' +
+        '<ng-transclude></ng-transclude>',
+      transclude: true,
+      link: function (scope, element, attrs) {
+        var fn = $parse(attrs.fileSelect);
+
+        var fileInput = element.children('input[file]');
+
+        if (attrs.accept) {
+          fileInput[0].accept = attrs.accept;
+        }
+
+        fileInput.on('change', function (onChangeEvent) {
+          var reader = new FileReader();
+          var file = this.files[0];
+          var fileData = {
+            name: file.name,
+            size: file.size,
+            type: file.type
+          };
+
+          reader.onload = function(onLoadEvent) {
+            scope.$applyAsync(function() {
+              fn(scope, {
+                file: {
+                  file: file,
+                  fileContent: onLoadEvent.target.result,
+                  fileData : fileData}
+              });
+
+              // Reset the input file
+              fileInput[0].value = '';
+
+            });
+          };
+          reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
+        });
+
+        element.on('click', function () {
+          fileInput[0].click();
+        });
+      }
+    };
+  })
+
 
   // Un-authenticate when window closed
   // see: https://stackoverflow.com/questions/28197316/javascript-or-angularjs-defer-browser-close-or-tab-close-between-refresh
@@ -427,5 +497,4 @@ angular.module('cesium.directives', [])
         });
       }
     };
-  })
-;
+  });

@@ -4,7 +4,8 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate', 'ngApi', 'angular-cache', 'angular.screenmatch',
+angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate', 'ngApi', 'angular-cache',
+  'angular.screenmatch', 'angular-fullscreen-toggle',
   // removeIf(no-device)
   'ngCordova',
   // endRemoveIf(no-device)
@@ -25,7 +26,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
       })
 
       .state('app.home', {
-        url: "/home?result&service&cancel",
+        url: "/home?result&service&cancel&node",
         views: {
           'menuContent': {
             templateUrl: "templates/api/home.html",
@@ -43,7 +44,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
 
       .state('api.transfer', {
         cache: false,
-        url: "/payment/:pubkey?name&amount&udAmount&comment&redirect_url&cancel_url&demo",
+        url: "/payment/:pubkey?name&amount&udAmount&comment&preferred_node&redirect_url&cancel_url&demo&error",
         views: {
           'menuContent': {
             templateUrl: "templates/api/transfer.html",
@@ -56,9 +57,11 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
     $urlRouterProvider.otherwise('/app/home');
   })
 
-  .controller('ApiCtrl', function ($scope, $state, $translate, $ionicPopover, Modals, csSettings){
+  .controller('ApiCtrl', function ($scope, $state, $translate, $ionicPopover, UIUtils, Modals, csSettings){
     'ngInject';
 
+    // Fill locales
+    $scope.locales = angular.copy(csSettings.locales);
 
     $scope.showAboutModal = function(e) {
       e.preventDefault(); // avoid to open link href
@@ -78,29 +81,20 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
     /* -- show/hide locales popup -- */
 
     $scope.showLocalesPopover = function(event) {
-      if (!$scope.localesPopover) {
-        // Fill locales
-        $scope.locales = angular.copy(csSettings.locales);
-
-        $ionicPopover.fromTemplateUrl('templates/api/locales_popover.html', {
-          scope: $scope
-        }).then(function(popover) {
+      UIUtils.popover.show(event, {
+        templateUrl: 'templates/api/popover_locales.html',
+        scope: $scope,
+        autoremove: true,
+        afterShow: function(popover) {
           $scope.localesPopover = popover;
-          //Cleanup the popover when we're done with it!
-          $scope.$on('$destroy', function() {
-            $scope.localesPopover.remove();
-          });
-          $scope.localesPopover.show(event);
-        });
-      }
-      else {
-        $scope.localesPopover.show(event);
-      }
+        }
+      });
     };
 
     $scope.hideLocalesPopover = function() {
       if ($scope.localesPopover) {
         $scope.localesPopover.hide();
+        $scope.localesPopover = null;
       }
     };
   })
@@ -114,7 +108,8 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
       amount: 100,
       comment: 'REFERENCE',
       name: 'www.domain.com',
-      redirect_url: 'http://www.domain.com/payment?ref={comment}&tx={tx}',
+      preferred_node: undefined,
+      redirect_url: 'http://www.domain.com/payment?ref={comment}&tx={tx}&node={node}',
       cancel_url: 'http://www.domain.com/payment?ref={comment}&cancel'
     };
     $scope.transferButton = {
@@ -152,7 +147,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
     $scope.transferButton.style.icon = $scope.transferButton.icons[1/*Duniter icon*/];
     $scope.transferDemoUrl = $rootScope.rootPath + $state.href('api.transfer', angular.merge({}, $scope.transferData, {
         demo: true,
-        redirect_url: $rootScope.rootPath + '#/app/home?service=payment&result={tx}',
+        redirect_url: $rootScope.rootPath + '#/app/home?service=payment&result={tx}&node={node}',
         cancel_url: $rootScope.rootPath + '#/app/home?service=payment&cancel'
       }));
 
@@ -168,6 +163,9 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
       }
       if (state.stateParams && state.stateParams.cancel) {
         $scope.result.cancelled = true;
+      }
+      if (state.stateParams && state.stateParams.node) {
+        $scope.result.node = state.stateParams.node;
       }
 
       csCurrency.get()
@@ -230,26 +228,60 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
     $scope.$watch('transferButton.style', $scope.computeTransferButtonHtml, true);
   })
 
-  .controller('ApiTransferCtrl', function ($scope, $rootScope, $timeout, $controller, $state, $q, $translate, $filter,
-                                           BMA, CryptoUtils, UIUtils, csCurrency, csTx, csWallet, csDemoWallet){
+  .controller('ApiTransferCtrl', function($scope, $rootScope, $timeout, $controller, $state, $q, $translate, $filter,
+                                          $window, $ionicHistory, BMA, CryptoUtils, UIUtils, csConfig, csSettings,
+                                          csPlatform, csCurrency, csTx, csWallet, csDemoWallet) {
     'ngInject';
 
+    // WARN: Disable demo mode, on the API (a non-blocking warn message will be display later)
+    var config = csConfig;
+    if (config.demo) {
+      config = angular.copy(config);
+      config.demo = false;
+      config.readonly = false;
+    }
+
     // Initialize the super class and extend it.
-    angular.extend(this, $controller('AuthCtrl', {$scope: $scope}));
+    angular.extend(this, $controller('AuthCtrl', {$scope: $scope, csConfig: config}));
 
     $scope.loading = true;
     $scope.transferData = {
       amount: undefined,
+      amounts: undefined,
       comment: undefined,
       pubkey: undefined,
       name: undefined,
       redirect_url: undefined,
-      cancel_url: undefined
+      cancel_url: undefined,
+      node: undefined
     };
 
     $scope.enter = function(e, state) {
+      $rootScope.errorState = state.stateName;
+
+      if (!$scope.loading) return; // already enter
+
       if (state.stateParams && state.stateParams.amount) {
-        $scope.transferData.amount  = parseFloat(state.stateParams.amount.replace(new RegExp('[.,]'), '.')).toFixed(2) * 100;
+        var amountStr = state.stateParams.amount.trim();
+        var amounts = ((amountStr.indexOf('|') !== -1) && amountStr.split('|')) ||
+          ((amountStr.indexOf(' ') !== -1) && amountStr.split(' ')) ||
+          ((amountStr.indexOf(';') !== -1) && amountStr.split(';'));
+        if (amounts) {
+          $scope.transferData.amounts = amounts.reduce(function(res, amountStr) {
+            var amount = normalizeAmount(amountStr);
+            return amount > 0 ? res.concat(amount) : res;
+          }, []);
+          if ($scope.transferData.amounts.length === 1) {
+            $scope.transferData.amount  = $scope.transferData.amounts[0];
+            delete $scope.transferData.amounts;
+          }
+          else {
+            $scope.transferData.amounts.sort();
+          }
+        }
+        else {
+          $scope.transferData.amount  = normalizeAmount(amountStr);
+        }
       }
       if (state.stateParams && state.stateParams.pubkey) {
         $scope.transferData.pubkey = state.stateParams.pubkey;
@@ -269,27 +301,127 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
       if (state.stateParams && state.stateParams.demo) {
         $scope.demo = true;
       }
+
+      if (state.stateParams && state.stateParams.preferred_node) {
+        var
+          isHttpsMode = $window.location.protocol === 'https:',
+          useSsl = isHttpsMode,
+          preferredNode = state.stateParams.preferred_node;
+        var matches = /^(?:(http[s]?:)\/\/)(.*)$/.exec(preferredNode);
+        if (matches) {
+          useSsl = matches[1] === 'https:';
+          preferredNode = matches[2];
+        }
+        var parts = preferredNode.split(':');
+        if (parts.length >= 1) {
+          var port = parts[1] || (useSsl ? 443 : 80);
+          $scope.node = {
+            host: parts[0],
+            port: port,
+            useSsl: useSsl || (port == 443)
+          };
+
+          // Add a fallback node that use SSL
+          if (!$scope.node.useSsl) {
+            var node = angular.copy($scope.node);
+            node.useSsl = true;
+            node.port = 443;
+            csSettings.data.fallbackNodes = csSettings.data.fallbackNodes || [];
+            csSettings.data.fallbackNodes.splice(0,0,node);
+          }
+        }
+        else {
+          console.warn("[api] Invalid preferred node address: {0}. Using default node." + state.stateParams.preferred_node);
+        }
+      }
+
+      // Start
+      return $scope.start();
     };
     $scope.$on('$ionicView.enter', $scope.enter);
+
+
+    $scope.start = function() {
+      if ($scope.starting) return;
+
+      $scope.starting = true;
+      $scope.loading = true;
+
+      // Set BMA node
+      if (!$scope.error && $scope.node && !BMA.node.same($scope.node)) {
+        console.debug("[api] Using preferred node: {0}:{1}".format($scope.node.host, $scope.node.port));
+        BMA.stop();
+        BMA.copy($scope.node);
+        $scope.node.server = BMA.server;
+      }
+
+      // Start platform (or restart) platform
+      // This will start the BMA node
+      return csPlatform.restart()
+        .then(csCurrency.get)
+        .then(function(currency) {
+          $scope.currency = currency;
+          $scope.node = currency.node;
+          $scope.loading = false;
+          $scope.error = false;
+          $scope.starting = false;
+          // Reset history cache
+          $ionicHistory.clearCache();
+        })
+        // Error during load (BMA not alive ?)
+        .catch(function(err) {
+          console.error(err && err.message || err);
+          $scope.error = true;
+          $scope.loading = false;
+          $scope.starting = false;
+
+          // Make sure to retry if user choose a fallback node
+          var unsubscribe = BMA.api.node.on.start($scope, function() {
+            $scope.start();
+            unsubscribe();
+          });
+        })
+        ;
+    };
+
+    function normalizeAmount(amountStr) {
+      return parseFloat((amountStr||'0').trim().replace(new RegExp('[.,]'), '.')).toFixed(2) * 100;
+    }
 
     function onLogin(authData) {
 
       // User cancelled
       if (!authData) return $scope.onCancel();
 
+      // Make sure amount require fields
+      if (!$scope.transferData.amount || !$scope.transferData.pubkey) {
+        $scope.form.$submitted=true;
+        UIUtils.loading.hide();
+        return $q.reject();
+      }
+
       // Avoid multiple click
       if ($scope.sending) return;
       $scope.sending = true;
+      delete $scope.transferData.error;
 
       var wallet = $scope.demo ? csDemoWallet.instance(authData) : csWallet.instance('api', BMA);
 
       UIUtils.loading.show();
 
-      wallet.start({restore: false}/*skip restore from local storage*/)
+      wallet.start({restore: false/*skip restore from local storage*/})
         .then(function() {
-          return wallet.login({auth: true, authData: authData});
+          return wallet.login({
+            auth: true,
+            authData: authData,
+            minData: true,
+            sources: true,
+            tx: {enable: false}
+          });
         })
         .then(function(walletData) {
+          if (!walletData) return;
+
           $scope.login = true;
 
           UIUtils.loading.hide();
@@ -367,8 +499,9 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
           url = url.replace(/\{pubkey\}/g, $scope.transferData.pubkey);
           url = url.replace(/\{hash\}/g, txRes.hash||'');
           url = url.replace(/\{comment\}/g, $scope.transferData.comment||'');
-          url = url.replace(/\{amount\}/g, $scope.transferData.amount.toString());
+          url = url.replace(/\{amount\}/g, $scope.transferData.amount && ($scope.transferData.amount/100).toString() || '');
           url = url.replace(/\{tx\}/g, encodeURI(txRes.tx));
+          url = url.replace(/\{node\}/g, encodeURI(BMA.host+':'+BMA.port));
 
           return $scope.redirectToUrl(url, 2500);
         });
@@ -390,7 +523,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
           // Make replacements - fix #548
           url = url.replace(/\{pubkey\}/g, $scope.transferData.pubkey);
           url = url.replace(/\{comment\}/g, $scope.transferData.comment||'');
-          url = url.replace(/\{amount\}/g, $scope.transferData.amount.toString());
+          url = url.replace(/\{amount\}/g, $scope.transferData.amount && ($scope.transferData.amount/100).toString() || '');
 
           return $scope.redirectToUrl(url, 1500);
         });
@@ -416,16 +549,18 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
 
     /* -- methods need by Login controller -- */
 
-    $scope.setForm = function(form) {
-      $scope.form = form;
-    };
     $scope.closeModal = onLogin;
 
   })
 
-  .run(function(csPlatform) {
+  .run(function(csSettings) {
     'ngInject';
 
-    csPlatform.start();
+    csSettings.data.rememberMe = false;
+    csSettings.data.useLocalStorage = false;
+    // Force auth idle to 30s
+    csSettings.data.keepAuthIdle = 30;
+
+    //csPlatform.start();
   })
 ;

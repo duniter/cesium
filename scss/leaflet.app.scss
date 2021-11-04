@@ -1,8 +1,8 @@
 @charset "UTF-8";
-@import "leaflet/leaflet";
-@import "leaflet/leaflet.search";
-@import "leaflet/leaflet.easy-button";
-@import "leaflet/leaflet.loading";
-@import "leaflet/leaflet.awesome-markers";
-@import "leaflet/leaflet.markercluster";
-@import "leaflet/leaflet.markercluster.default";
+@import "www/lib/leaflet/dist/leaflet";
+@import "www/lib/leaflet-search/dist/leaflet-search.src";
+@import "www/lib/Leaflet.EasyButton/src/easy-button";
+@import "www/lib/leaflet.loading/src/Control.Loading";
+@import "www/lib/Leaflet.awesome-markers/dist/leaflet.awesome-markers";
+@import "www/lib/leaflet.markercluster/dist/MarkerCluster";
+@import "www/lib/leaflet.markercluster/dist/MarkerCluster.Default";

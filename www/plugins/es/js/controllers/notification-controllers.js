@@ -143,6 +143,8 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
   };
 
   $scope.markAllAsRead = function() {
+    $scope.hideActionsPopover();
+
     // Make sure to be auth before doing this
     if (!wallet.isAuth()) {
       return wallet.auth().then(function(){
@@ -151,15 +153,13 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
       });
     }
 
-    $scope.hideActionsPopover();
-
     if (!$scope.search.results.length) return;
 
     UIUtils.loading.show()
       .then(function() {
         wallet.data.notifications.unreadCount = 0;
         var lastNotification = $scope.search.results[0];
-        wallet.data.notifications.readTime = lastNotification ? lastNotification.time : 0;
+        wallet.data.notifications.time = lastNotification ? lastNotification.time : 0;
         _.forEach($scope.search.results, function (item) {
           if (item.markAsRead && typeof item.markAsRead == 'function') item.markAsRead();
         });
@@ -176,8 +176,8 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
     wallet.data.notifications.unreadCount = 0;
     var lastNotification = $scope.search.results[0];
     var readTime = lastNotification.time ? lastNotification.time : 0;
-    if (readTime && (!wallet.data.notifications.readTime || wallet.data.notifications.readTime != readTime)) {
-      wallet.data.notifications.readTime = readTime;
+    if (readTime && (!wallet.data.notifications.time || wallet.data.notifications.time != readTime)) {
+      wallet.data.notifications.time = readTime;
       wallet.storeData();
     }
   };
@@ -237,26 +237,20 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
   /* -- Popover -- */
 
   $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('plugins/es/templates/notification/popover_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl :'plugins/es/templates/notification/popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.actionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
-        });
-        $scope.actionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.actionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
 

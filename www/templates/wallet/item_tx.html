@@ -4,17 +4,23 @@
 <i class="avatar" ng-if="::tx.avatar" style="background-image: url({{::tx.avatar.src}})"></i>
 
 <div class="row no-padding">
-  <div class="col no-padding">
+  <div class="col col-pubkey no-padding">
     <a class="" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="::tx.uid">
       {{::tx.name||tx.uid}}
     </a>
-    <a class="gray" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="::!tx.uid">
+    <a class="gray" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="::!tx.uid && tx.pubkey">
       <i class="ion-key gray"></i>
       {{::tx.pubkey | formatPubkey}}
       <span ng-if="::tx.name"> - {{::tx.name | truncText:40}}</span>
     </a>
-    <p class="dark visible-xs width-cup text-italic"
-       data-toggle="tooltip"
+    <p ng-if="::tx.pubkeys" class="pubkeys">
+      <a class="gray" ng-repeat="pubkey in ::tx.pubkeys.slice(0, 4)"
+         ui-sref="app.wot_identity({pubkey:pubkey})" >
+        <i class="ion-key gray"></i>&nbsp;{{::pubkey | formatPubkey}}
+      </a>
+      <span ng-if="::tx.pubkeys.length &gt; 4">...</span>
+    </p>
+    <p class="dark visible-xs comment text-italic"
        ng-if="::tx.comment"
        title="{{::tx.comment}}">
       <i class="ion-ios-chatbubble-outline"></i>
@@ -29,16 +35,15 @@
       </span>
     </h4>
   </div>
-  <div class="col col-50 no-padding" ng-if="::tx.comment">
-    <p class="vertical-center gray text-italic hidden-xs"
+  <div class="col col-50 col-comment no-padding padding-left hidden-xs" ng-if="::tx.comment">
+    <p class="vertical-center gray text-italic "
        data-toggle="tooltip"
        title="{{::tx.comment}}">{{::tx.comment}}</p>
   </div>
   <div class="col col-10 no-padding">
 
     <!-- not locked TX -->
-    <span ng-if="::!tx.lockedOutputs" class="badge item-note" ng-class="{'badge-calm': tx.amount > 0}">
-      <!--<span class="hidden-xs" ng-if=":rebind:tx.amount>0">+</span>-->
+    <span ng-if="::!tx.lockedOutputs" class="badge item-note" ng-class="{'badge-calm': tx.amount > 0, 'badge-white': tx.amount <= 0}">
       <span ng-bind-html=":rebind:tx.amount| formatAmount:{currency:$root.currency.name}"></span>
     </span>
 
@@ -47,8 +52,7 @@
        class="badge item-note"
        ng-class="{'badge-calm': tx.amount > 0}"
        ng-click="showLockedOutputsPopover(tx, $event)">
-      <i class="icon ion-locked" ></i>
-      <!--<span class="hidden-xs" ng-if=":rebind:tx.amount>0">+</span>-->
+      <b class="ion-locked" ></b>
       <span ng-bind-html=":rebind:tx.amount| formatAmount:{currency:$root.currency.name}"></span>
     </a>
 

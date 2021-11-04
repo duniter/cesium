@@ -9,8 +9,7 @@ angular.module('cesium.graph.currency.controllers', ['chart.js', 'cesium.graph.s
         url: "/parameters/stats",
         views: {
           'tab-parameters': {
-            templateUrl: "plugins/graph/templates/currency/tabs/tab_parameters_stats.html",
-            controller: 'GpCurrencyMonetaryMassCtrl'
+            templateUrl: "plugins/graph/templates/currency/tabs/tab_parameters_stats.html"
           }
         }
       })
@@ -40,7 +39,7 @@ angular.module('cesium.graph.currency.controllers', ['chart.js', 'cesium.graph.s
         }
       })
       .state('app.currency_stats_lg', {
-        url: "/currency/stats/lg?hide&scale",
+        url: "/currency/stats/lg?hide&scale&stepUnit&t",
         views: {
           'menuContent': {
             templateUrl: "plugins/graph/templates/currency/view_stats_lg.html"
@@ -87,6 +86,8 @@ angular.module('cesium.graph.currency.controllers', ['chart.js', 'cesium.graph.s
   .controller('GpCurrencyDUCtrl', GpCurrencyDUController)
 
   .controller('GpCurrencyMembersCountCtrl', GpCurrencyMembersCountController)
+
+  .controller('GpCurrencyPendingCountCtrl', GpCurrencyPendingCountController)
 ;
 
 function GpCurrencyViewExtendController($scope, PluginService, UIUtils, esSettings) {
@@ -101,7 +102,7 @@ function GpCurrencyViewExtendController($scope, PluginService, UIUtils, esSettin
   });
 }
 
-function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $translate, $ionicPopover, gpColor, gpData, $filter, csSettings) {
+function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $translate, UIUtils, gpColor, gpData, $filter, csSettings) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -135,7 +136,9 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
     return $q.all([
       $translate(['GRAPH.CURRENCY.MONETARY_MASS_TITLE',
         'GRAPH.CURRENCY.MONETARY_MASS_LABEL',
-        'GRAPH.CURRENCY.MONETARY_MASS_SHARE_LABEL']),
+        'GRAPH.CURRENCY.MONETARY_MASS_SHARE_LABEL',
+        'COMMON.DATE_SHORT_PATTERN',
+        'COMMON.DATE_MONTH_YEAR_PATTERN']),
       gpData.blockchain.withDividend($scope.formData.currency, {
         from: from,
         size: size
@@ -147,56 +150,51 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
         if (!result || !result.times) return;
         $scope.times = result.times;
 
-        // Choose a date formatter, depending on the blocks period
+        // Compute the date pattern, depending on the blocks period
         var blocksPeriod = result.times[result.times.length-1] - result.times[0];
-        var formatDate;
-        if (blocksPeriod < 31557600/* less than 1 year */) {
-          formatDate = $filter('medianDateShort');
-        }
-        else {
-          formatDate = $filter('formatDateMonth'); //see #683
-        }
+        var datePattern = (blocksPeriod < 31557600/* less than 1 year */) ?
+          translations['COMMON.DATE_SHORT_PATTERN'] : translations['COMMON.DATE_MONTH_YEAR_PATTERN'];
 
         var formatAmount =  $filter('formatDecimal');
         $scope.currencySymbol = $filter('currencySymbolNoHtml')($scope.formData.currency, $scope.formData.useRelative);
 
         // Data: relative
         var data = [];
-        if($scope.formData.useRelative) {
+        if ($scope.formData.useRelative) {
 
           // M/N
           data.push(
-            result.blocks.reduce(function(res, block) {
-              return res.concat(truncAmount(block.monetaryMass / block.dividend / block.membersCount));
-            }, []));
+            _.map(result.blocks, function(block) {
+              return truncAmount(block.monetaryMass / block.dividend / block.membersCount);
+            }));
 
           // Mass
           data.push(
-            result.blocks.reduce(function(res, block) {
-              return res.concat(truncAmount(block.monetaryMass / block.dividend));
-            }, []));
+            _.map(result.blocks, function(block) {
+              return truncAmount(block.monetaryMass / block.dividend);
+            }));
         }
 
         // Data: quantitative
         else {
           // M/N
           data.push(
-            result.blocks.reduce(function(res, block) {
-              return res.concat(truncAmount(block.monetaryMass / block.membersCount / 100));
-            }, []));
+            _.map(result.blocks, function(block) {
+              return truncAmount(block.monetaryMass / block.membersCount / 100);
+            }));
 
           // Mass
           data.push(
-            result.blocks.reduce(function(res, block) {
-              return res.concat(block.monetaryMass / 100);
-            }, []));
+            _.map(result.blocks, function(block) {
+              return block.monetaryMass / 100;
+            }));
         }
         $scope.data = data;
 
         // Labels
-        $scope.labels = result.times.reduce(function(res, time) {
-          return res.concat(formatDate(time));
-        }, []);
+        $scope.labels = _.map(result.times, function(time) {
+          return moment.unix(time).local().format(datePattern);
+        });
 
         // Colors
         $scope.colors = gpColor.scale.fix(result.times.length);
@@ -289,31 +287,37 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
   /* -- Popover -- */
 
   $scope.showActionsPopover = function(event) {
-    $scope.hideActionsPopover();
-    $ionicPopover.fromTemplateUrl('plugins/graph/templates/currency/popover_monetary_mass_actions.html', {
-      scope: $scope
-    }).then(function(popover) {
-      $scope.actionsPopover = popover;
-      //Cleanup the popover when we're done with it!
-      $scope.$on('$destroy', function() {
-        $scope.actionsPopover.remove();
-      });
-      $scope.actionsPopover.show(event);
+    UIUtils.popover.show(event, {
+      templateUrl: 'plugins/graph/templates/currency/popover_monetary_mass_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
+        $scope.actionsPopover = popover;
+      }
     });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
+
 }
 
 
-function GpCurrencyDUController($scope, $q, $controller, $translate, gpColor, gpData, $filter) {
+function GpCurrencyDUController($scope, $q, $controller, $translate, gpColor, gpData, $filter, UIUtils) {
   'ngInject';
+
+  $scope.formData = {
+    scale: 'linear',
+    beginAtZero: false
+  };
+
   // Initialize the super class and extend it.
   angular.extend(this, $controller('GpCurrencyMonetaryMassCtrl', {$scope: $scope}));
+
 
   $scope.load = function(from, size) {
     from = from || 0;
@@ -322,7 +326,9 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpColor, gp
     return $q.all([
       $translate([
         'GRAPH.CURRENCY.UD_TITLE',
-        'COMMON.UNIVERSAL_DIVIDEND']),
+        'COMMON.UNIVERSAL_DIVIDEND',
+        'COMMON.DATE_SHORT_PATTERN',
+        'COMMON.DATE_MONTH_YEAR_PATTERN']),
       gpData.blockchain.withDividend($scope.formData.currency, {
         from: from,
         size: size
@@ -336,28 +342,23 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpColor, gp
 
         // Choose a date formatter, depending on the blocks period
         var blocksPeriod = result.times[result.times.length-1] - result.times[0];
-        var dateFilter;
-        if (blocksPeriod < 31557600/* less than 1 year */) {
-          dateFilter = $filter('medianDateShort');
-        }
-        else {
-          dateFilter = $filter('formatDateMonth');
-        }
+        var datePattern = (blocksPeriod < 31557600/* less than 1 year */) ?
+          translations['COMMON.DATE_SHORT_PATTERN'] : translations['COMMON.DATE_MONTH_YEAR_PATTERN'];
 
         var formatAmount =  $filter('formatDecimal');
         $scope.currencySymbol = $filter('currencySymbolNoHtml')($scope.formData.currency, false);
 
         // Data
         $scope.data = [
-          result.blocks.reduce(function(res, block) {
-            return res.concat(block.dividend / 100);
-          }, [])
+          _.map(result.blocks, function(block) {
+            return block.dividend / 100;
+          })
         ];
 
         // Labels
-        $scope.labels = result.times.reduce(function(res, time) {
-          return res.concat(dateFilter(time));
-        }, []);
+        $scope.labels = _.map(result.times, function(time) {
+          return moment.unix(time).local().format(datePattern);
+        });
 
         // Colors
         $scope.colors = result.blocks.reduce(function(res) {
@@ -377,7 +378,7 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpColor, gp
               {
                 id: 'y-axis-ud',
                 ticks: {
-                  beginAtZero: false
+                  beginAtZero: $scope.formData.beginAtZero
                 }
               }
             ]
@@ -414,6 +415,26 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpColor, gp
       });
 
   };
+
+  /* -- Popover -- */
+  $scope.showActionsPopover = function(event) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'plugins/graph/templates/currency/popover_monetary_mass_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
+        $scope.actionsPopover = popover;
+      }
+    });
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
+    }
+  };
+
 }
 
 
@@ -428,7 +449,11 @@ function GpCurrencyMembersCountController($scope, $controller, $q, $state, $tran
     size = size || 10000;
 
     return $q.all([
-      $translate(['GRAPH.CURRENCY.MEMBERS_COUNT_TITLE', 'GRAPH.CURRENCY.MEMBERS_COUNT_LABEL']),
+      $translate(['GRAPH.CURRENCY.MEMBERS_COUNT_TITLE',
+        'GRAPH.CURRENCY.MEMBERS_COUNT_LABEL',
+        'COMMON.DATE_SHORT_PATTERN',
+        'COMMON.DATE_MONTH_YEAR_PATTERN'
+      ]),
       gpData.blockchain.withDividend($scope.formData.currency, {
         from: from,
         size: size,
@@ -444,18 +469,18 @@ function GpCurrencyMembersCountController($scope, $controller, $q, $state, $tran
 
         // Choose a date formatter, depending on the blocks period
         var blocksPeriod = result.times[result.blocks.length-1] - result.times[0];
-        var dateFilter;
-        if (blocksPeriod < 31557600/* less than 1 year*/) {
-          dateFilter = $filter('medianDateShort');
-        }
-        else {
-          dateFilter = $filter('formatDateMonth');
-        }
+        var datePattern = (blocksPeriod < 31557600/* less than 1 year */) ?
+          translations['COMMON.DATE_SHORT_PATTERN'] : translations['COMMON.DATE_MONTH_YEAR_PATTERN'];
 
-        // Format time
-        $scope.labels = result.times.reduce(function(res, time) {
-          return res.concat(dateFilter(time));
-        }, []);
+        // Data
+        $scope.data = [
+          _.pluck(result.blocks, 'membersCount')
+        ];
+
+        // Labels
+        $scope.labels = _.map(result.times, function(time) {
+          return moment.unix(time).local().format(datePattern);
+        });
 
         // Members count graph: -------------------------
         $scope.options = {
@@ -487,12 +512,6 @@ function GpCurrencyMembersCountController($scope, $controller, $q, $state, $tran
             pointHoverRadius: 3
           }];
 
-        // Data
-        $scope.data = [
-          result.blocks.reduce(function(res, block) {
-            return res.concat(block.membersCount);
-          }, [])
-        ];
 
         // Colors
         $scope.colors = gpColor.scale.fix(result.blocks.length);
@@ -510,5 +529,127 @@ function GpCurrencyMembersCountController($scope, $controller, $q, $state, $tran
     $state.go('app.blockchain_search', {
       q: '(_exists_:joiners OR _exists_:leavers OR _exists_:revoked OR _exists_:excluded) AND medianTime:>{0} AND medianTime:<={1}'.format(from, to)
     });
+  };
+
+
+}
+
+
+function GpCurrencyPendingCountController($scope, $controller, $q, $state, $translate, gpColor, esHttp) {
+  'ngInject';
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('GpDocStatsCtrl', {$scope: $scope}));
+
+  $scope.chartIdPrefix = 'currency-chart-pending-';
+
+  $scope.init = function(e, state) {
+    var currency = $scope.formData.currency;
+    if (!currency) throw Error('Missing formData.currency!');
+
+    $scope.formData.index = currency;
+    $scope.formData.types = ['member', 'pending'];
+
+    $scope.charts = [
+
+      // Pending delta
+      {
+        id: currency + '_member_delta',
+        title: 'GRAPH.CURRENCY.MEMBERS_DELTA_TITLE',
+        series: [
+          {
+            key: currency + '_is_member_delta',
+            label: 'GRAPH.CURRENCY.IS_MEMBER_DELTA_LABEL',
+            type: 'bar',
+            yAxisID: 'y-axis-delta',
+            color: gpColor.rgba.calm(),
+            pointHoverBackgroundColor: gpColor.rgba.calm(),
+          },
+          {
+            key: currency + '_was_member_delta',
+            label: 'GRAPH.CURRENCY.WAS_MEMBER_DELTA_LABEL',
+            type: 'bar',
+            yAxisID: 'y-axis-delta',
+            color: gpColor.rgba.assertive(0.7),
+            pointHoverBackgroundColor: gpColor.rgba.assertive(),
+          },
+          {
+            key: currency + '_pending_delta',
+            label: 'GRAPH.CURRENCY.PENDING_DELTA_LABEL',
+            type: 'line',
+            yAxisID: 'y-axis-delta',
+            color: gpColor.rgba.gray(0.5),
+            pointHoverBackgroundColor: gpColor.rgba.gray()
+          }
+        ]
+      }];
+
+    $scope.formData.queryNames = $scope.charts.reduce(function(res, chart){
+      return chart.series.reduce(function(res, serie) {
+        var queryName = serie.key.replace(/_delta$/, '');
+        return res.concat(queryName);
+      }, res);
+    }, []);
+  };
+
+  var inheritedLoad = $scope.load;
+  $scope.load = function() {
+
+    // Call inherited load
+    return inheritedLoad()
+      .then(function() {
+        var chart = $scope.charts[0];
+
+        // Compute wasMember serie, using the is_member
+        if (chart.data[1]) {
+          chart.data[1] = _.map(chart.data[0], function(value) {
+            return value < 0 ? value : undefined;
+          });
+        }
+        chart.data[0] = _.map(chart.data[0], function(value) {
+          return value >= 0 ? value : undefined;
+        });
+
+        $scope.chart = chart;
+      });
+  };
+
+  $scope.onChartClick = function(data, e, item) {
+    if (!item) return;
+
+    var from = $scope.times[item._index];
+    var to = moment.unix(from).utc().add(1, $scope.formData.rangeDuration).unix();
+
+    var blockRequest = esHttp.get('/{0}/block/_search?pretty'.format($scope.formData.currency));
+    // Get block min/max
+    return $q.all([
+      // Get first (min) block
+      blockRequest({
+        q: 'time:>={0} AND time:<={1}'.format(from, to),
+        sort: 'number:asc',
+        size: 1,
+        _source: ['number']
+      }),
+
+      // Get last (max) block
+      blockRequest({
+        q: 'time:>={0} AND time:<={1}'.format(from, to),
+        sort: 'number:desc',
+        size: 1,
+        _source: ['number']
+      })
+    ])
+      .then(function(res) {
+        var minBlockHit = res[0] && res[0].hits && res[0].hits.hits && res[0].hits.hits[0];
+        var maxBlockHit = res[1] && res[1].hits && res[1].hits.hits && res[1].hits.hits[0];
+        var minBlockNumber = minBlockHit ? minBlockHit._source.number : undefined;
+        var maxBlockNumber = maxBlockHit ? maxBlockHit._source.number : undefined;
+        return $state.go('app.document_search', {
+          index: $scope.formData.currency,
+          type: 'pending',
+          q: 'blockNumber:>={0} AND blockNumber:<{1}'.format(minBlockNumber, maxBlockNumber)
+        });
+      });
+
   };
 }

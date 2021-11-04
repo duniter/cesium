@@ -14,7 +14,7 @@
 
       <div class="item no-padding-xs" ng-if="!loading"
            ng-repeat="chart in charts"
-           ng-include="'plugins/graph/templates/synchro/graph.html'"
+           ng-include="::'plugins/graph/templates/synchro/graph.html'"
            ng-init="setSize(250, 1000)">
       </div>
 

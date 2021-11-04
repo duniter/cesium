@@ -50,22 +50,20 @@ function ESPicturesEditController($scope, UIUtils, $q, Device) {
       .catch(UIUtils.onError('ERROR.TAKE_PICTURE_FAILED'));
   };
 
-  $scope.fileChanged = function(event) {
-    if (!event.target.files || !event.target.files.length) return;
+  $scope.onFileChanged = function(event) {
+    if (!event || !event.file) return;
     UIUtils.loading.show();
-    var file = event.target.files[0];
+    var file = event.file;
     return UIUtils.image.resizeFile(file)
       .then(function(imageData) {
         $scope.pictures.push({
           src: imageData,
           isnew: true // use to prevent visibility hidden (if animation)
         });
-        event.target.value = ""; // reset input[type=file]
         UIUtils.loading.hide(100);
       })
       .catch(function(err) {
         console.error(err);
-        event.target.value = ""; // reset input[type=file]
         UIUtils.loading.hide();
       });
   };
@@ -159,20 +157,22 @@ function ESCommentsController($scope, $filter, $state, $focus, $timeout, $anchor
       $scope.anchor = state && state.stateParams.anchor;
     }
     // second call (when using cached view)
-    else if (!$scope.loading && $scope.id) {
+    else if ($scope.id) {
       $scope.load($scope.id, {animate: false});
     }
   });
 
   $scope.$on('$recordView.load', function(event, id, service) {
     $scope.id = id || $scope.id;
-    $scope.service = service || $scope.service;
-    console.debug("[ES] [comment] Will use {" + service.index + "} service");
+    $scope.service = service.comment || $scope.service;
+    console.debug("[ES] [comment] Will use {" + $scope.service.index + "} service");
     if ($scope.id) {
       $scope.load($scope.id)
         .then(function() {
-          // Scroll to anchor
-          $scope.scrollToAnchor();
+          return $timeout(function() {
+            // Scroll to anchor
+            $scope.scrollToAnchor();
+          }, 500);
         });
     }
   });
@@ -397,9 +397,8 @@ function ESSocialsEditController($scope, $focus, $filter, UIUtils, SocialUtils) 
     $focus('socialUrl');
   };
 
-
   $scope.reorderSocialNetwork = function(social, fromIndex, toIndex) {
-    if (!social || fromIndex == toIndex) return; // no changes
+    if (!social || fromIndex === toIndex) return; // no changes
     $scope.formData.socials.splice(fromIndex, 1);
     $scope.formData.socials.splice(toIndex, 0, social);
   };
@@ -413,11 +412,11 @@ function ESSocialsViewController($scope)  {
   'ngInject';
 
   $scope.openSocial = function(event, social) {
+    event.stopPropagation();
     return $scope.openLink(event, social.url, {
       type: social.type
     });
   };
-
 
   $scope.filterFn = function(social) {
     return !social.recipient || social.valid;
@@ -427,7 +426,7 @@ function ESSocialsViewController($scope)  {
 
 
 
-function ESAvatarModalController($scope) {
+function ESAvatarModalController($scope, $sce) {
 
   $scope.formData = {
     initCrop: false,
@@ -437,33 +436,34 @@ function ESAvatarModalController($scope) {
     resultBlob: undefined
   };
 
-  $scope.openFileSelector = function() {
-    var fileInput = angular.element(document.querySelector('.modal-avatar #fileInput'));
-    if (fileInput && fileInput.length > 0) {
-      fileInput[0].click();
-    }
-  };
+  $scope.onFileChanged = function(event) {
+    if (!event || !event.file) return; // Skip
 
-  $scope.fileChanged = function(e) {
-
-    var files = e.target.files;
     var fileReader = new FileReader();
-    fileReader.readAsDataURL(files[0]);
+    fileReader.readAsDataURL(event.file);
 
     fileReader.onload = function(e) {
       var res = this.result;
       $scope.$applyAsync(function() {
-        $scope.formData.imgSrc = res;
+        $scope.formData.imgSrc = $sce.getTrustedHtml(res);
       });
     };
   };
 
   $scope.doNext = function() {
-    if ($scope.formData.imageCropStep == 2) {
+    if ($scope.formData.imageCropStep === 2) {
       $scope.doCrop();
     }
-    else if ($scope.formData.imageCropStep == 3) {
+    else if ($scope.formData.imageCropStep === 3) {
       $scope.closeModal($scope.formData.result);
+    }
+  };
+
+  $scope.doPrevious = function() {
+    $scope.formData.imageCropStep -= 1;
+    // Reset the image
+    if ($scope.formData.imageCropStep === 1) {
+      $scope.formData.imgSrc = undefined;
     }
   };
 
@@ -495,6 +495,7 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
     loading: false,
     enable: undefined
   };
+  $scope.searchModalOpened = false;
 
   $scope.tryToLocalize = function() {
     if ($scope.formPosition.loading || loadingCurrentPosition) return;
@@ -518,7 +519,7 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
     $scope.formPosition.loading = true;
     return esGeo.point.searchByAddress(searchText)
       .then(function(res) {
-        if (res && res.length == 1) {
+        if (res && res.length === 1) {
           return $scope.updateGeoPoint(res[0]);
         }
         return $scope.openSearchLocationModal({
@@ -536,17 +537,17 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
       });
   };
 
-    $scope.onCityChanged = function() {
-        if ($scope.loading) return;
-        if ($scope.formPosition.enable) {
-          if ($scope.formData.geoPoint) {
-            // Invalidate the position
-            $scope.formData.geoPoint.lat = undefined;
-            $scope.formData.geoPoint.lon = undefined;
-          }
-          return $scope.tryToLocalize();
-        }
-    };
+  $scope.onCityChanged = function() {
+    if ($scope.loading) return;
+    if ($scope.formPosition.enable) {
+      if ($scope.formData.geoPoint) {
+        // Invalidate the position
+        $scope.formData.geoPoint.lat = undefined;
+        $scope.formData.geoPoint.lon = undefined;
+      }
+      return $scope.tryToLocalize();
+    }
+  };
 
   $scope.onUseGeopointChanged = function() {
     if ($scope.loading) return;
@@ -572,7 +573,7 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
   $scope.getAddressToSearch = function() {
     return $scope.formData.address && $scope.formData.city ?
       [$scope.formData.address.trim(), $scope.formData.city.trim()].join(', ') :
-    $scope.formData.city || $scope.formData.address || $scope.formData.location ;
+      $scope.formData.city || $scope.formData.address || $scope.formData.location ;
   };
 
   $scope.updateGeoPoint = function(res) {
@@ -592,7 +593,7 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
       if (res.address.postcode) {
         cityParts.push(res.address.postcode);
       }
-      if (res.address.country != defaultCountry) {
+      if (res.address.country !== defaultCountry) {
         cityParts.push(res.address.country);
       }
       $scope.formData.city = cityParts.join(', ');
@@ -603,6 +604,9 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
 
   $scope.openSearchLocationModal = function(options) {
 
+    if ($scope.searchModalOpened) return; // Skip
+
+    $scope.searchModalOpened = true;
     options = options || {};
 
     var parameters = {
@@ -618,10 +622,16 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
       parameters,
       {
         focusFirstInput: true
-        //,scope: $scope
       }
     )
-      .then($scope.updateGeoPoint);
+      .then(function(res) {
+        $scope.searchModalOpened = false;
+        $scope.updateGeoPoint(res);
+      })
+      .catch(function(err) {
+        console.error(err);
+        $scope.searchModalOpened = false;
+      });
   };
 }
 
@@ -651,31 +661,31 @@ function ESLookupPositionController($scope, $q, csConfig, esGeo, ModalUtils) {
     var promise = !searchText ?
       esGeo.point.current() :
       esGeo.point.searchByAddress(searchText)
-      .then(function(res) {
-        if (res && res.length == 1) {
-          res[0].exact = true;
-          return res[0];
-        }
-        return $scope.openSearchLocationModal({
-          text: searchText,
-          results: res||[],
-          forceFallback: !res || !res.length // force fallback search first
-        })
-          .then(function(res) {
-            // Compute point name
-            if (res && res.address && res.address.city) {
-              var cityParts = [res.address.city];
-              if (res.address.postcode) {
-                cityParts.push(res.address.postcode);
+        .then(function(res) {
+          if (res && res.length === 1) {
+            res[0].exact = true;
+            return res[0];
+          }
+          return $scope.openSearchLocationModal({
+            text: searchText,
+            results: res||[],
+            forceFallback: !res || !res.length // force fallback search first
+          })
+            .then(function(res) {
+              // Compute point name
+              if (res && res.address && res.address.city) {
+                var cityParts = [res.address.city];
+                if (res.address.postcode) {
+                  cityParts.push(res.address.postcode);
+                }
+                if (res.address.country !== defaultCountry) {
+                  cityParts.push(res.address.country);
+                }
+                res.shortName = cityParts.join(', ');
               }
-              if (res.address.country != defaultCountry) {
-                cityParts.push(res.address.country);
-              }
-              res.shortName = cityParts.join(', ');
-            }
-            return res;
-          });
-      });
+              return res;
+            });
+        });
 
     promise
       .then(function(res) {
@@ -727,12 +737,11 @@ function ESLookupPositionController($scope, $q, csConfig, esGeo, ModalUtils) {
   };
 }
 
-function ESSearchPositionItemController($scope, $timeout, ModalUtils, csConfig, esGeo) {
+function ESSearchPositionItemController($scope, $timeout, UIUtils, ModalUtils, csConfig, esGeo) {
   'ngInject';
 
   // The default country used for address localisation
   var defaultCountry = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.defaultCountry;
-  //$scope.smallscreen = angular.isDefined($scope.smallscreen) ? $scope.smallscreen : UIUtils.screen.isSmall();
 
   var loadingPosition = false;
   var minLength = 3;
@@ -795,7 +804,7 @@ function ESSearchPositionItemController($scope, $timeout, ModalUtils, csConfig, 
     }
 
     _.forEach($scope.locations||[], function(item, index) {
-      item.selected = (index == $scope.selectLocationIndex);
+      item.selected = (index === $scope.selectLocationIndex);
     });
 
     // TODO: scroll to item ?
@@ -811,7 +820,7 @@ function ESSearchPositionItemController($scope, $timeout, ModalUtils, csConfig, 
   $scope.showDropdown = function() {
     var text = $scope.search.location && $scope.search.location.trim();
     if (!text || text.length < minLength) {
-        return $scope.hideDropdown(true/*force, if still loading*/);
+      return $scope.hideDropdown(true/*force, if still loading*/);
     }
 
     // Compute a request id, to apply response only if current request
@@ -823,7 +832,7 @@ function ESSearchPositionItemController($scope, $timeout, ModalUtils, csConfig, 
     // Execute the given query
     return esGeo.point.searchByAddress(text)
       .then(function(res) {
-        if ($scope.requestId != requestId) return; // Skip apply if not same request:
+        if ($scope.requestId !== requestId) return; // Skip apply if not same request:
 
         loadingPosition = false;
         $scope.locations = res||[];
@@ -871,7 +880,7 @@ function ESSearchPositionItemController($scope, $timeout, ModalUtils, csConfig, 
           if (res.address.postcode) {
             cityParts.push(res.address.postcode);
           }
-          if (res.address.country != defaultCountry) {
+          if (res.address.country !== defaultCountry) {
             cityParts.push(res.address.country);
           }
           $scope.search.location = cityParts.join(', ');
@@ -895,14 +904,33 @@ function ESSearchPositionItemController($scope, $timeout, ModalUtils, csConfig, 
     };
 
     return ModalUtils.show(
-        'plugins/es/templates/common/modal_location.html',
-        'ESSearchPositionModalCtrl',
-        parameters,
-        {
-          focusFirstInput: true
-        }
-      )
+      'plugins/es/templates/common/modal_location.html',
+      'ESSearchPositionModalCtrl',
+      parameters,
+      {
+        focusFirstInput: true
+      })
       .then($scope.selectLocation);
+  };
+
+  /* -- popover -- */
+
+  $scope.showDistancePopover = function(event) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'plugins/es/templates/common/popover_distances.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
+        $scope.actionsPopover = popover;
+      }
+    });
+  };
+
+  $scope.selectDistance = function(value) {
+    $scope.search.geoDistance = value;
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
   };
 
 }
@@ -934,13 +962,13 @@ function ESSearchPositionModalController($scope, $q, $translate, esGeo, paramete
 
     // Compute alternative query text
     var fallbackText = firstSearch && $scope.search.fallbackText && $scope.search.fallbackText.trim();
-    fallbackText = fallbackText && fallbackText != text ? fallbackText : undefined;
+    fallbackText = fallbackText && fallbackText !== text ? fallbackText : undefined;
 
     // Execute the given query
     return ((firstSearch && $scope.search.forceFallback && $scope.search.results) ?
         $q.when($scope.search.results) :
         esGeo.point.searchByAddress(text)
-      )
+    )
       .then(function(res) {
         if (res && res.length || !fallbackText) return res;
 

@@ -8,7 +8,7 @@
         <i class="icon ion-navicon"></i>
         <b class="ion-arrow-down-b" style="position: absolute; top: -2px; left: 4px; font-size: 8px;"></b>
         <b class="ion-arrow-up-b" style="position: absolute; top: 10px; left: 4px; font-size: 8px;"></b>
-        <span>{{'BLOCKCHAIN.LOOKUP.BTN_COMPACT'|translate}}</span>
+        <span>{{:locale:'BLOCKCHAIN.LOOKUP.BTN_COMPACT'|translate}}</span>
       </a>
     </div>
   </div>
@@ -17,12 +17,12 @@
     <ion-spinner icon="android"></ion-spinner>
   </div>
 
-  <ion-list class="padding padding-xs list-blocks" ng-class="::motion.ionListClass">
-    <div class="padding gray" ng-if="!search.loading && !search.results.length" translate>
-      BLOCKCHAIN.LOOKUP.NO_BLOCK
+  <ion-list class="padding padding-xs list-blocks {{::motion.ionListClass}}">
+    <div class="padding gray" ng-if="!search.loading && !search.results.length">
+      {{:locale:'BLOCKCHAIN.LOOKUP.NO_BLOCK'|translate}}
     </div>
     <!-- blocks -->
-    <ng-repeat ng-repeat="block in search.results"
+    <ng-repeat ng-repeat="block in search.results track by block.id"
                ng-include="!block.empty ? 'templates/blockchain/item_block_lg.html' : 'templates/blockchain/item_block_empty_lg.html'">
     </ng-repeat>
   </ion-list>

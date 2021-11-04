@@ -1,0 +1,27 @@
+{
+  "version": "https://jsonfeed.org/version/1",
+  "user_comment": "Feed that use the jsonFeed format (see jsonFeed.org for details).",
+  "title": "Actualités",
+  "description": "Actualités de Cesium",
+  "home_page_url": "https://forum.monnaie-libre.fr/tag/cesium",
+  "feed_url": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-fr.json",
+  "author": {
+    "name": "Benoit Lavenier",
+    "url": "@BenoitLavenier",
+    "avatar": "https://g1.data.duniter.fr/user/profile/38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE/_image/avatar.png"
+  },
+  "items": [
+    {
+      "title": "Cesium évolue ! Aïe, ça va piquer mais…",
+      "author": {
+        "name": "Elois",
+        "url": "@elois",
+        "avatar": "https://forum.monnaie-libre.fr/user_avatar/forum.monnaie-libre.fr/elois/45/185_2.png"
+      },
+      "date_published": "2020-03-07T19:42:00+01:00",
+      "id": "https://forum.monnaie-libre.fr/t/cesium-evolue-aie-ca-va-piquer-mais/10015",
+      "url": "https://forum.monnaie-libre.fr/t/cesium-evolue-aie-ca-va-piquer-mais/10015",
+      "content_html": "<p>Au <b>1er mai 2020</b>, certains d’entre vous vont devoir changer leurs habitudes :</p>\n<ul>\n<li>pour ceux d’entre vous qui ont <strong>installé</strong> Cesium sur leur appareil : rien ne change</li>\n<li>pour ceux qui n’en sont pas sûrs : vous utilisez probablement la version «&nbsp;<strong>en ligne</strong>&nbsp;» (par exemple <code>g1․duniter․fr</code>), elle sera désactivée le 1er mai 2020. <strong>Relocalisez</strong> la gestion de votre compte en téléchargeant votre propre copie de Cesium dès maintenant :\n<a href=\"https://cesium.app/\">Je télécharge ma copie de Cesium</a> !</li>\n</ul>\n<h4>Besoin d’aide ? On est là pour vous !</h4>\n<p>Vous ne serez pas seul·e :</p>\n<p>La communauté G1 et les développeurs de Cesium sont là pour répondre à vos questions si jamais vous rencontrez un problème dans l’installation ou dans l’usage.</p>\n<p>Trois possibilités s’offrent à vous :</p>\n<ul>\n<li>Rendez-vous aux prochaines rencontres organisées par votre groupe local,</li>\n<li>ou : dites-le-nous sur le forum : <a href=\"https://forum.monnaie-libre.fr/c/tools/13\">Support cesium.app</a>\n</li>\n<li>ou : envoyez un e-mail à <a href=\"mailto:support@cesium.app\">support@cesium.app</a> créée pour l’occasion avec une équipe derrière.</li>\n</ul>\n<p>Pour effectuer votre transition en douceur, Cesium-web reste utilisable jusqu’au 1er mai 2020 .</p>\n<p>Cependant, plus vite vous <a href=\"https://cesium.app\">installez Cesium</a>, plus nous aurons de temps pour vous aider avant la fermeture du site.</p>\n"
+    }
+  ]
+}

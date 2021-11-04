@@ -16,24 +16,24 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
 
   var
     SETTINGS_SAVE_SPEC = {
-      includes: ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'expertMode', 'logoutIdle', 'blockValidityWindow'],
-      excludes: ['timeout', 'cacheTimeMs', 'time', 'login', 'build'],
+      includes: ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'useLocalStorageEncryption', 'expertMode', 'logoutIdle', 'blockValidityWindow'],
+      excludes: ['timeout', 'cacheTimeMs', 'version', 'build', 'minVersion', 'fallbackLanguage'],
       plugins: {
         es: {
-          excludes: ['enable', 'host', 'port', 'wsPort', 'fallbackNodes', 'enableGoogleApi', 'googleApiKey'],
+          excludes: ['enable', 'host', 'port', 'useSsl', 'fallbackNodes', 'enableGoogleApi', 'googleApiKey', 'document', 'maxUploadBodySize', 'defaultCountry'],
           notifications: {
           }
         }
       },
       wallet: {
         includes: ['alertIfUnusedWallet'],
-        excludes: ['notificationReadTime']
+        excludes: ['notificationReadTime'] // deprecated - should be removed later
       },
       helptip: {
         excludes: ['installDocUrl']
       },
       notifications: {
-        excludes: ['readTime']
+        excludes: ['time', 'warnCount', 'unreadCount']
       }
     },
     defaultSettings = angular.merge({
@@ -41,6 +41,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
           es: {
             askEnable: false,
             useRemoteStorage: true,
+            latestReleaseUrl: "https://api.github.com/repos/duniter/cesium-plus-pod/releases/latest",
             notifications: {
               txSent: true,
               txReceived: true,
@@ -56,6 +57,10 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
             googleApiKey: undefined,
             wot: {
               enableMixedSearch: true
+            },
+            document: {
+              index: 'user,page,group',
+              type: 'profile,record,comment'
             },
             registry: {
               defaultSearch: {

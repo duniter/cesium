@@ -8,13 +8,13 @@
 </div>
 
 <!-- About me -->
-<div class="item item-text-wrap" ng-if="formData.profile.description">
+<div class="item item-text-wrap" ng-if="formData.profile.descriptionHtml">
   <span class="gray" translate>PROFILE.DESCRIPTION</span>
-  <h3 trust-as-html="formData.profile.description"></h3>
+  <h3 trust-as-html="formData.profile.descriptionHtml"></h3>
 </div>
 
 <!-- Localisation -->
-<div class="item" ng-if="formData.profile.address || formData.profile.city"
+<div class="item" ng-if="formData.profile && (formData.profile.address || formData.profile.city)"
      copy-on-click="{{formData.profile.address ? formData.profile.address + '&#10;' : ''}}{{formData.profile.city}}">
   <span class="gray" translate>LOCATION.LOCATION_DIVIDER</span>
   <h3>
@@ -24,7 +24,7 @@
 </div>
 
 <!-- Socials networks -->
-<div class="item" ng-if="formData.profile.socials && formData.profile.socials.length" ng-controller="ESSocialsViewCtrl">
+<div class="item" ng-if="formData.profile && formData.profile.socials && formData.profile.socials.length" ng-controller="ESSocialsViewCtrl">
   <span class="gray" translate>PROFILE.SOCIAL_NETWORKS_DIVIDER</span>
   <div class="list no-padding">
     <ion-item ng-repeat="social in formData.profile.socials | filter:filterFn track by social.url "

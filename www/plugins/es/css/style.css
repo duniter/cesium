@@ -19,6 +19,17 @@
 }
 
 /**********
+   Social link item
+**********/
+
+.item.item-social-edit h2 {
+  overflow: inherit ;
+  text-overflow: inherit ;
+  white-space: normal !important;
+  display: block;
+}
+
+/**********
    Record list
 **********/
 
@@ -36,7 +47,7 @@
 
 .row-record .col {
   padding-top: 5px;
-  padding-bottom: 0px;
+  padding-bottom: 0;
 }
 
 .row-record .item-avatar i.item-image {
@@ -81,22 +92,22 @@
 }
 
 .row-record .col-text-wrap {
-    padding: 0;
-    margin: 0;
+  padding: 0;
+  margin: 0;
 }
 .row-record .col .text-wrap {
-    height: 70px;
-    white-space: normal;
-    position: relative;
-    word-wrap: break-word !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis;
-    -o-text-overflow: ellipsis;
-    -webkit-hyphens: auto;
-    -moz-hyphens: auto;
-    -ms-hyphens: auto;
-    -o-hyphens: auto;
-    hyphens: auto;
+  height: 70px;
+  white-space: normal;
+  position: relative;
+  word-wrap: break-word !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  -o-hyphens: auto;
+  hyphens: auto;
 }
 
 /* Source: See doc: http://stackoverflow.com/questions/15814346 */
@@ -126,6 +137,10 @@
   min-height: inherit !important;
 }
 
+.card.card-comment .card-footer button {
+  top: 0;
+}
+
 /**********
    Record view
 **********/
@@ -133,8 +148,8 @@
 .hero .content .button.button-camera {
   display: block;
   position: absolute;
-  bottom: 0px;
-  right: 0px;
+  bottom: 0;
+  right: 0;
 }
 
 .hero .content i.avatar .button {
@@ -244,6 +259,36 @@
 
 
 /**********
+   Document
+**********/
+
+.item-document.compacted {
+  min-height: 16px !important;
+  max-height: 16px !important;
+  border-bottom: 0 !important;
+}
+
+.item-document.compacted .col{
+  padding-top: 1px;
+}
+
+/**********
+   Common > report abuse
+**********/
+
+.popup-report-abuse .popup {
+  width: 370px !important;
+}
+.popup-report-abuse .popup .item-toggle .toggle {
+  right: 0 !important;
+}
+.popup-report-abuse .popup .item-toggle .input-label {
+  width: 280px;
+  max-width: 100%;
+  white-space: normal;
+}
+
+/**********
    Add specific Icons
 **********/
 
@@ -293,3 +338,6 @@
   height: 57px;
 }
 
+.view-wallet .item-wallet-help a {
+  text-decoration: underline;
+}

@@ -1,4 +1,26 @@
+<a name="demo"></a>
+<div class="row responsive-sm"
+     ng-if="::$root.config.demo"
+     ng-class="itemsClass['demo']">
+  <div class="col col-20" translate>MODE.DEMO.MODE</div>
+  <div class="col">
+    <span translate>MODE.DEMO.MODE_HELP</span><br/>
+    <span translate>MODE.DEMO.INSTALL_HELP</span>
+  </div>
+</div>
 
+<a name="readonly"></a>
+<div class="row responsive-sm"
+     ng-if="::$root.config.readonly"
+     ng-class="itemsClass['readonly']">
+  <div class="col col-20" translate>MODE.READONLY.MODE</div>
+  <div class="col">
+    <span translate>MODE.READONLY.MODE_HELP</span><br/>
+    <span translate>MODE.READONLY.INSTALL_HELP</span>
+  </div>
+</div>
+
+<div class="hidden-readonly">
   <a name="join"></a>
   <h2 translate>HELP.JOIN.SECTION</h2>
 
@@ -22,7 +44,9 @@
       <div class="col col-20" translate>ACCOUNT.NEW.PSEUDO</div>
       <div class="col" translate>HELP.JOIN.PSEUDO</div>
     </div>
+</div>
 
+<div class="hidden-readonly">
   <a name="login"></a>
   <h2 translate>HELP.LOGIN.SECTION</h2>
 
@@ -39,7 +63,9 @@
     <div class="col col-20" translate>HELP.LOGIN.METHOD</div>
     <div class="col" translate>HELP.LOGIN.METHOD_DEF</div>
   </div>
+</div>
 
+<div>
   <a name="glossary"></a>
   <h2 translate>HELP.GLOSSARY.SECTION</h2>
 
@@ -92,3 +118,4 @@
     <div class="col col-20" translate>HELP.GLOSSARY.DISTANCE_RULE</div>
     <div class="col" translate>HELP.GLOSSARY.DISTANCE_RULE_DEF</div>
   </div>
+</div>

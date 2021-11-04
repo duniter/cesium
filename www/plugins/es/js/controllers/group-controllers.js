@@ -216,7 +216,7 @@ function ESGroupViewController($scope, $state, $ionicPopover, $ionicHistory, $tr
         delete data.record.pictures; // remove, as already stored in $scope.pictures
 
         // Load other data (from child controller)
-        $scope.$broadcast('$recordView.load', id, esGroup.record.comment);
+        $scope.$broadcast('$recordView.load', id, esGroup.record);
 
         $scope.loading = false;
         UIUtils.loading.hide();
@@ -264,26 +264,20 @@ function ESGroupViewController($scope, $state, $ionicPopover, $ionicHistory, $tr
   /* -- modals & popover -- */
 
   $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('plugins/es/templates/group/view_popover_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'plugins/es/templates/group/view_popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.actionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
-        });
-        $scope.actionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.actionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
 

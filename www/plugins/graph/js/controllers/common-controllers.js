@@ -4,7 +4,7 @@ angular.module('cesium.graph.common.controllers', ['cesium.services'])
   .controller('GpCurrencyAbstractCtrl', GpCurrencyAbstractController)
 ;
 
-function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHistory, $state, csSettings, csCurrency, esHttp) {
+function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHistory, $state, csSettings, csCurrency, esHttp, UIUtils) {
   'ngInject';
 
   $scope.loading = true;
@@ -12,12 +12,12 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
     useRelative: csSettings.data.useRelative,
     timePct: 100,
     rangeDuration: 'day',
+    maxAge: undefined, // forever
     firstBlockTime: 0,
     scale: 'linear',
-    hide: []
+    hide: [],
+    beginAtZero: true
   };
-  $scope.formData.useRelative = false; /*angular.isDefined($scope.formData.useRelative) ?
-    $scope.formData.useRelative : csSettings.data.useRelative;*/
   $scope.scale = 'linear';
   $scope.height = undefined;
   $scope.width = undefined;
@@ -30,6 +30,21 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
 
   $scope.enter = function (e, state) {
     if ($scope.loading) {
+
+      // Make sure there is currency, or load it not
+      if (!$scope.formData.currency) {
+        return csCurrency.get()
+          .then(function (currency) {
+            $scope.formData.currency = currency ? currency.name : null;
+            $scope.formData.firstBlockTime = currency ? _truncDate(currency.firstBlockTime) : 0;
+            if (!$scope.formData.firstBlockTime){
+              console.warn('[graph] currency.firstBlockTime not loaded ! Should have been loaded by currrency service!');
+            }
+            $scope.formData.currencyAge = _truncDate(moment().utc().unix()) - $scope.formData.firstBlockTime;
+
+            return $scope.enter(e, state); // Loop
+          });
+      }
 
       if (state && state.stateParams) {
         // remember state, to be able to refresh location
@@ -62,21 +77,6 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
       // Should be override by subclasses
       $scope.init(e, state);
 
-      // Make sure there is currency, or load it not
-      if (!$scope.formData.currency) {
-        return csCurrency.get()
-          .then(function (currency) {
-            $scope.formData.currency = currency ? currency.name : null;
-            $scope.formData.firstBlockTime = currency ? _truncDate(currency.firstBlockTime) : 0;
-            if (!$scope.formData.firstBlockTime){
-              console.warn('[graph] currency.firstBlockTime not loaded ! Should have been loaded by currrency service!');
-            }
-            $scope.formData.currencyAge = _truncDate(moment().utc().unix()) - $scope.formData.firstBlockTime;
-
-            return $scope.enter(e, state);
-          });
-      }
-
       $scope.load()  // Should be override by subclasses
         .then(function () {
           // Update scale
@@ -92,6 +92,8 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
   $scope.$on('$ionicParentView.enter', $scope.enter);
 
   $scope.updateLocation = function() {
+    if (!$scope.stateName) return;
+
     $ionicHistory.nextViewOptions({
       disableAnimate: true,
       disableBack: true,
@@ -100,9 +102,9 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
 
     $scope.stateParams = $scope.stateParams || {};
     $scope.stateParams.t = ($scope.formData.timePct >= 0 && $scope.formData.timePct < 100) ? $scope.formData.timePct : undefined;
-    $scope.stateParams.stepUnit = $scope.formData.rangeDuration != 'day' ? $scope.formData.rangeDuration : undefined;
+    $scope.stateParams.stepUnit = $scope.formData.rangeDuration !== 'day' ? $scope.formData.rangeDuration : undefined;
     $scope.stateParams.hide = $scope.formData.hide && $scope.formData.hide.length ? $scope.formData.hide.join(',') : undefined;
-    $scope.stateParams.scale = $scope.formData.scale != 'linear' ?$scope.formData.scale : undefined;
+    $scope.stateParams.scale = $scope.formData.scale !== 'linear' ?$scope.formData.scale : undefined;
 
     $state.go($scope.stateName, $scope.stateParams, {
       reload: false,
@@ -120,7 +122,7 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
 
   // When parent view execute a refresh action
   $scope.$on('csView.action.refresh', function(event, context) {
-    if (!context || context == 'currency') {
+    if (!context || context === 'currency') {
       return $scope.load();
     }
   });
@@ -149,8 +151,8 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
     _.forEach($scope.options.scales.yAxes, function(yAxe, index) {
       yAxe.type = scale;
       yAxe.ticks = yAxe.ticks || {};
-      if (scale == 'linear') {
-        yAxe.ticks.beginAtZero = true;
+      if (scale === 'linear') {
+        yAxe.ticks.beginAtZero = angular.isDefined($scope.formData.beginAtZero) ? $scope.formData.beginAtZero : true;
         delete yAxe.ticks.min;
         yAxe.ticks.callback = function(value) {
           return format(value);
@@ -173,7 +175,7 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
 
   $scope.setRangeDuration = function(rangeDuration) {
     $scope.hideActionsPopover();
-    if ($scope.formData && rangeDuration == $scope.formData.rangeDuration) return;
+    if ($scope.formData && rangeDuration === $scope.formData.rangeDuration) return;
 
     $scope.formData.rangeDuration = rangeDuration;
 
@@ -187,6 +189,55 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
     $scope.load();
     // Update location
     $scope.updateLocation();
+  };
+
+  $scope.setMaxAge = function(maxAge) {
+    $scope.hideActionsPopover();
+    if ($scope.formData && maxAge === $scope.formData.maxAge) return;
+
+    $scope.formData.maxAge = maxAge;
+
+    // Restore default values
+    delete $scope.formData.startTime;
+    delete $scope.formData.endTime;
+    delete $scope.formData.rangeDurationSec;
+
+    $scope.computeStartTimeByAge(); // Compute formData.startTime
+
+    // Reload data
+    $scope.load();
+    // Update location
+    $scope.updateLocation();
+  };
+
+  $scope.computeStartTimeByAge = function() {
+    if (!$scope.formData.maxAge) {
+      delete $scope.formData.startTime; // Forever
+    }
+    else {
+      var ageInSecond = 60 * 60; // one hour
+      switch ($scope.formData.maxAge) {
+        case 'day':
+          ageInSecond *= 24;
+          break;
+        case 'week':
+          ageInSecond *= 24 * 7;
+          break;
+        case 'month':
+          ageInSecond *= 24 * 365.25/12;
+          break;
+        case 'quarter':
+          ageInSecond *= 24 * 365.25/4;
+          break;
+        case 'semester':
+          ageInSecond *= 24 * 365.25/2;
+          break;
+        case 'year':
+          ageInSecond *= 24 * 365.25;
+          break;
+      }
+      $scope.formData.startTime = moment.utc().unix() - ageInSecond;
+    }
   };
 
   $scope.updateHiddenDataset = function(datasetOverride) {
@@ -205,7 +256,7 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
         var yAxisDatasetCount = _.filter(datasetOverride, function(dataset) {
           return dataset.yAxisID === yAxisID;
         }).length;
-        if (yAxisDatasetCount == 1) {
+        if (yAxisDatasetCount === 1) {
           yAxe.display = false;
         }
       }
@@ -227,7 +278,7 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
         return dataset.yAxisID && dataset.yAxisID === meta.yAxisID;
       }).length;
       if (yAxisDatasetCount === 1) {
-        ci.scales[meta.yAxisID].options.display = !(meta.hidden === true);
+        ci.scales[meta.yAxisID].options.display = (meta.hidden !== false);
       }
     }
 
@@ -311,23 +362,28 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
 
   /* -- Popover -- */
 
-  $scope.showActionsPopover = function(event) {
-    $scope.hideActionsPopover();
-    $ionicPopover.fromTemplateUrl('plugins/graph/templates/common/popover_range_actions.html', {
-      scope: $scope
-    }).then(function(popover) {
-      $scope.actionsPopover = popover;
-      //Cleanup the popover when we're done with it!
-      $scope.$on('$destroy', function() {
-        $scope.actionsPopover.remove();
-      });
-      $scope.actionsPopover.show(event);
+  $scope.showActionsPopover = function(event, options) {
+    var templateUrl = options && options.templateUrl || 'plugins/graph/templates/common/popover_range_actions.html';
+    UIUtils.popover.show(event, {
+      templateUrl: templateUrl,
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
+        $scope.actionsPopover = popover;
+      }
     });
   };
+
+  $scope.showPeriodPopover = function(event) {
+    return $scope.showActionsPopover(event, {templateUrl: 'plugins/graph/templates/common/popover_period_actions.html'});
+  };
+
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
+
 }

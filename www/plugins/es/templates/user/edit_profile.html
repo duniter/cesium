@@ -52,9 +52,10 @@
       <div class="col">
 
         <!-- Buttons bar-->
-        <div class="hidden-xs hidden-sm padding text-center" ng-if="existing && !saving">
+        <div class="hidden-xs hidden-sm padding text-center  animate-show-hide ng-hide" ng-show="existing">
 
           <button class="button button-stable icon-right ink"
+                  ng-disabled="saving"
                   ng-click="showActionsPopover($event)">
             &nbsp; <i class="icon ion-android-more-vertical"></i>&nbsp;
             {{'COMMON.BTN_OPTIONS' | translate}}
@@ -63,11 +64,7 @@
 
         <form name="profileForm" novalidate="" ng-submit="saveAndClose()">
 
-          <div class="list item-text-wrap {{::motion.ionListClass}}"
-                    ng-init="setForm(profileForm)">
-
-
-
+          <div class="list item-text-wrap {{::motion.ionListClass}}" ng-init="setForm(profileForm)">
 
             <!-- Public info -->
             <div class="item item-icon-left item-text-wrap">
@@ -75,9 +72,7 @@
               <h4 class="positive" translate>PROFILE.HELP.WARNING_PUBLIC_DATA</h4>
             </div>
 
-            <div class="item item-divider">
-              {{'PROFILE.GENERAL_DIVIDER' | translate}}
-            </div>
+            <div class="item item-divider" translate>PROFILE.GENERAL_DIVIDER</div>
 
             <!-- title -->
             <ion-item class="item-input item-floating-label item-button-right"
@@ -87,6 +82,7 @@
                      id="profile-name"
                      ng-model="formData.title"
                      ng-model-options="{ debounce: 350 }"
+                     ng-minlength="3"
                      ng-maxlength="50"
                      required>
             </ion-item>
@@ -95,6 +91,9 @@
                  ng-messages="form.title.$error">
               <div class="form-error" ng-message="required">
                 <span translate="ERROR.FIELD_REQUIRED"></span>
+              </div>
+              <div class="form-error" ng-message="minlength">
+                <span translate="ERROR.FIELD_TOO_SHORT"></span>
               </div>
               <div class="form-error" ng-message="maxlength">
                 <span translate="ERROR.FIELD_TOO_LONG_WITH_LENGTH" translate-values="{maxLength: 50}"></span>
@@ -112,18 +111,16 @@
             </ion-item>
 
             <!-- position -->
-            <ng-include src="'plugins/es/templates/common/edit_position.html'" ng-controller="ESPositionEditCtrl as ctrl"></ng-include>
+            <ng-include src="::'plugins/es/templates/common/edit_position.html'" ng-controller="ESPositionEditCtrl as ctrl"></ng-include>
 
           </div>
 
           <!-- social networks -->
-          <ng-include src="'plugins/es/templates/common/edit_socials.html'" ng-controller="ESSocialsEditCtrl"></ng-include>
+          <ng-include src="::'plugins/es/templates/common/edit_socials.html'" ng-controller="ESSocialsEditCtrl"></ng-include>
 
           <div class="list item-text-wrap {{::motion.ionListClass}}">
 
-            <div class="item item-divider">
-              {{'PROFILE.TECHNICAL_DIVIDER' | translate}}
-            </div>
+            <div class="item item-divider" translate>PROFILE.TECHNICAL_DIVIDER</div>
 
             <!-- uid -->
             <ion-item class="item-icon-left" ng-if="walletData && walletData.uid">

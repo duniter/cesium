@@ -672,50 +672,38 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
   /* -- popovers -- */
 
   $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('plugins/es/templates/registry/lookup_popover_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl :'plugins/es/templates/registry/lookup_popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.actionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
-        });
-        $scope.actionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.actionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.filtersPopover = null;
     }
   };
 
   $scope.showFiltersPopover = function(event) {
-    if (!$scope.filtersPopover) {
-      $ionicPopover.fromTemplateUrl('plugins/es/templates/registry/lookup_popover_filters.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl :'plugins/es/templates/registry/lookup_popover_filters.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.filtersPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.filtersPopover.remove();
-        });
-        $scope.filtersPopover.show(event);
-      });
-    }
-    else {
-      $scope.filtersPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideFiltersPopover = function() {
     if ($scope.filtersPopover) {
       $scope.filtersPopover.hide();
+      $scope.filtersPopover = null;
     }
   };
 
@@ -787,7 +775,7 @@ function ESWalletPagesController($scope, $controller, $timeout, UIUtils, esModal
 }
 
 
-function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout, $ionicPopover, $ionicHistory, $translate,
+function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout, $ionicPopover, $ionicHistory, $translate, $controller,
                                         $anchorScroll, csConfig, csWallet, esRegistry, UIUtils, esHttp) {
   'ngInject';
 
@@ -799,6 +787,21 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
   $scope.showTransfer = false;
   $scope.loading = true;
   $scope.motion = UIUtils.motion.fadeSlideIn;
+
+  // Init likes here, to be able to use in extension
+  $scope.options = $scope.options || {};
+  $scope.options.like = {
+    kinds: ['LIKE', 'ABUSE'],
+    index: 'page',
+    type: 'record'
+  };
+  $scope.likeData = {
+    likes: {},
+    abuses: {}
+  };
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('ESLikesCtrl', {$scope: $scope}));
 
   $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
     // Enable back button (workaround need for navigation outside tabs - https://stackoverflow.com/a/35064602)
@@ -813,7 +816,7 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
       $scope.$broadcast('$recordView.enter', state);
     }
     else {
-      $state.go('app.registry_lookup');
+      $state.go('app.wot_lookup.tab_registry');
     }
   });
 
@@ -855,7 +858,7 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
             $scope.loading = false;
             if (err && err.ucode === 404) {
               UIUtils.toast.show('REGISTRY.ERROR.RECORD_NOT_EXISTS');
-              $state.go('app.registry_lookup');
+              $state.go('app.wot_lookup.tab_registry');
             }
             else {
               UIUtils.onError('REGISTRY.ERROR.LOAD_RECORD_FAILED')(err);
@@ -885,7 +888,7 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
 
       // Load other data (from child controller)
       $timeout(function() {
-        return $scope.$broadcast('$recordView.load', id, esRegistry.record.comment);
+        return $scope.$broadcast('$recordView.load', id, esRegistry.record);
       })
     ])
     .then(function() {
@@ -949,28 +952,24 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
 
   /* -- modals & popover -- */
 
+
   $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('plugins/es/templates/registry/view_popover_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'plugins/es/templates/registry/view_popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.actionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
-        });
-        $scope.actionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.actionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
+    return true;
   };
 
   $scope.showSharePopover = function(event) {
@@ -1054,48 +1053,47 @@ function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHis
   });
 
   $scope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
-    if ($scope.dirty && !$scope.saving) {
+    if (!$scope.dirty || $scope.saving || event.defaultPrevented) return;
 
-      // stop the change state action
-      event.preventDefault();
+    // stop the change state action
+    event.preventDefault();
 
-      if (!$scope.loading) {
-        $scope.loading = true;
-        return UIUtils.alert.confirm('CONFIRM.SAVE_BEFORE_LEAVE',
-          'CONFIRM.SAVE_BEFORE_LEAVE_TITLE', {
-            cancelText: 'COMMON.BTN_NO',
-            okText: 'COMMON.BTN_YES_SAVE'
-          })
-          .then(function(confirmSave) {
-            $scope.loading = false;
-            if (confirmSave) {
-              $scope.form.$submitted=true;
-              return $scope.save(false/*silent*/, true/*haswait debounce*/)
-                .then(function(saved){
-                  if (saved) {
-                    $scope.dirty = false;
-                  }
-                  return saved; // change state only if not error
-                });
-            }
-            else {
-              $scope.dirty = false;
-              return true; // ok, change state
-            }
-          })
-          .then(function(confirmGo) {
-            if (confirmGo) {
-              // continue to the order state
-              $ionicHistory.nextViewOptions({
-                historyRoot: true
+    if (!$scope.loading) {
+      $scope.loading = true;
+      return UIUtils.alert.confirm('CONFIRM.SAVE_BEFORE_LEAVE',
+        'CONFIRM.SAVE_BEFORE_LEAVE_TITLE', {
+          cancelText: 'COMMON.BTN_NO',
+          okText: 'COMMON.BTN_YES_SAVE'
+        })
+        .then(function(confirmSave) {
+          $scope.loading = false;
+          if (confirmSave) {
+            $scope.form.$submitted=true;
+            return $scope.save(false/*silent*/, true/*haswait debounce*/)
+              .then(function(saved){
+                if (saved) {
+                  $scope.dirty = false;
+                }
+                return saved; // change state only if not error
               });
-              $state.go(next.name, nextParams);
-            }
-          })
-          .catch(function(err) {
-            // Silent
-          });
-      }
+          }
+          else {
+            $scope.dirty = false;
+            return true; // ok, change state
+          }
+        })
+        .then(function(confirmGo) {
+          if (confirmGo) {
+            // continue to the order state
+            $ionicHistory.nextViewOptions({
+              historyRoot: true
+            });
+            $state.go(next.name, nextParams);
+          }
+        })
+        .catch(function(err) {
+          // Silent
+        });
     }
   });
 
@@ -1376,8 +1374,6 @@ function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHis
         if (!$scope.avatar) {
           $scope.avatarClass['cion-page-' + type] = true;
         }
-        $scope.doSearch();
-        $scope.updateLocationHref();
       }
     });
   };
@@ -1393,8 +1389,6 @@ function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHis
     .then(function(cat){
       if (cat && cat.parent) {
         $scope.formData.category = cat;
-        $scope.doSearch();
-        $scope.updateLocationHref();
       }
     });
   };

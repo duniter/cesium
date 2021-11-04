@@ -77,6 +77,7 @@ angular.module('cesium.currency.controllers', ['ngFileSaver', 'cesium.services']
 ;
 
 function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA, UIUtils, csSettings, csCurrency, csNetwork, ModalUtils) {
+  'ngInject';
 
   $scope.formData = {
     useRelative: false, // Override in enter()
@@ -172,8 +173,8 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
           }
         }),
 
-      // Get the current block informations
-      BMA.blockchain.current()
+      // Get the current block information
+      csCurrency.blockchain.current()
         .then(function(block){
           M = block.monetaryMass;
           data.N = block.membersCount;
@@ -234,7 +235,7 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
 
       console.debug("[currency] Parameters loaded in " + (Date.now() - now) + 'ms' );
       $scope.loading = false;
-      $scope.$broadcast('$$rebind::' + 'rebind'); // force bind of currency name
+      $scope.$broadcast('$$rebind::rebind'); // force bind of currency name
 
       // Set Ink
       UIUtils.ink();
@@ -327,26 +328,20 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
   /* -- popover -- */
 
   $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('templates/currency/popover_actions.html', {
-        scope: $scope
-      }).then(function(popover) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'templates/currency/popover_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.actionsPopover = popover;
-        //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
-        });
-        $scope.actionsPopover.show(event);
-      });
-    }
-    else {
-      $scope.actionsPopover.show(event);
-    }
+      }
+    });
   };
 
   $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
     }
   };
 }
