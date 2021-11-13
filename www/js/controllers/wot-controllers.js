@@ -157,6 +157,8 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
   .controller('WotCertificationsViewCtrl', WotCertificationsViewController)
 
+  .controller('WotCertificationChecklistCtrl', WotCertificationChecklistController)
+
   .controller('WotSelectPubkeyIdentityModalCtrl', WotSelectPubkeyIdentityModalController)
 
 ;
@@ -1429,6 +1431,77 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
   };
 }
 
+/**
+ * Certification checklist controller
+ * @param $controller
+ */
+ function WotCertificationChecklistController($scope, $controller, parameters){
+
+  // allow to display license
+  $controller('CurrencyViewCtrl', {$scope: $scope});
+
+  let answers_are_right = parameters.answers_are_right;
+  $scope.identity = parameters.identity;
+
+  $scope.prepare_cert_checklist = function() {
+    const original_cert_checklist = [
+      {
+        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.WELL_KNOWN',
+        expected_answer: true,
+        answer: false
+      },
+      {
+        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.REVOCATION',
+        expected_answer: true,
+        answer: false
+      },
+      {
+        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.CONTACT',
+        expected_answer: true,
+        answer: false
+      },
+      {
+        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.DOUBLE_IDENTITY',
+        expected_answer: false,
+        answer: false
+      },
+      {
+        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.MASTER_ACCOUNT',
+        expected_answer: true,
+        answer: false
+      },
+      {
+        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.LICENSE',
+        expected_answer: true,
+        answer: false
+      },
+    ];
+
+    // Fisher-Yates shuffle
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
+        let t = array[i]; array[i] = array[j]; array[j] = t
+      }
+      return array;
+    }
+
+    return shuffle(original_cert_checklist);
+  }
+  $scope.cert_checklist = $scope.prepare_cert_checklist();
+
+  $scope.verifyAnswers = function() {
+    $scope.cert_checklist.map( question => {
+      if (question.answer !== question.expected_answer) {
+        // TODO message should be changed.
+        answers_are_right.reject();
+      }
+    });
+    answers_are_right.resolve(true);
+
+    $scope.closeModal();
+  }
+}
 
 /**
  * Select identities from a pubkey (useful when many self on the same pubkey)
