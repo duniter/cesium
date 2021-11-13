@@ -785,35 +785,39 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               return;
             }
 
-            UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', 'CONFIRM.POPUP_SECURITY_WARNING_TITLE', {
-              cssClass: 'warning',
-              okText: 'WOT.BTN_YES_CERTIFY',
-              okType: 'button-assertive'
+            // Certification checklist before confirmation
+            let answers_are_right = $q.defer();
+            answers_are_right.promise.then(function(){
+              UIUtils.loading.show();
+              wallet.certify($scope.formData.uid,
+                $scope.formData.pubkey,
+                $scope.formData.blockUid || ($scope.formData.requirements && $scope.formData.requirements.meta && $scope.formData.requirements.meta.timestamp),
+                $scope.formData.requirements && $scope.formData.requirements.meta && $scope.formData.requirements.meta.sig,
+                $scope.formData.isMember,
+                $scope.formData.wasMember)
+                .then(function(cert) {
+                  UIUtils.loading.hide();
+                  if (cert) {
+                    $scope.prepareNewCert(wallet, cert);
+                    $scope.alreadyCertified = true;
+                    UIUtils.toast.show('INFO.CERTIFICATION_DONE');
+                    $scope.formData.received_cert_pending.unshift(cert);
+                    $scope.formData.requirements.pendingCertificationCount++;
+                    $scope.doMotion();
+                  }
+                })
+                .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
             })
-              .then(function(confirm){
-                if (!confirm) {
-                  return;
-                }
-                UIUtils.loading.show();
-                wallet.certify($scope.formData.uid,
-                  $scope.formData.pubkey,
-                  $scope.formData.blockUid || ($scope.formData.requirements && $scope.formData.requirements.meta && $scope.formData.requirements.meta.timestamp),
-                  $scope.formData.requirements && $scope.formData.requirements.meta && $scope.formData.requirements.meta.sig,
-                  $scope.formData.isMember,
-                  $scope.formData.wasMember)
-                  .then(function(cert) {
-                    UIUtils.loading.hide();
-                    if (cert) {
-                      $scope.prepareNewCert(wallet, cert);
-                      $scope.alreadyCertified = true;
-                      UIUtils.toast.show('INFO.CERTIFICATION_DONE');
-                      $scope.formData.received_cert_pending.unshift(cert);
-                      $scope.formData.requirements.pendingCertificationCount++;
-                      $scope.doMotion();
-                    }
-                  })
-                  .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
-              });
+            .catch(
+              UIUtils.onError('ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_CONDITIONS_NOT_MET')
+            );
+
+            // display certification checklist modal
+            return Modals.showCertificationCheckList({
+              answers_are_right: answers_are_right,
+              identity: $scope.formData,
+            });
+
           })
           .catch(function(err) {
             if (err === 'CANCELLED') return;
@@ -891,36 +895,39 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               return;
             }
 
-            // Ask confirmation
-            $translate('CONFIRM.CERTIFY_RULES_TITLE_UID', {uid: identity.uid})
-              .then(function (confirmTitle) {
-                return UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', confirmTitle);
+            // Certification checklist before confirmation
+            let answers_are_right = $q.defer();
+            answers_are_right.promise.then(function(){
+              UIUtils.loading.show();
+              // Send certification
+              wallet.certify(identity.uid,
+                identity.pubkey,
+                identity.blockUid || (identity.requirements && identity.requirements.meta && identity.requirements.meta.timestamp),
+                identity.requirements && identity.requirements.meta && identity.requirements.meta.sig,
+                identity.isMember,
+                identity.wasMember)
+                .then(function (cert) {
+                  UIUtils.loading.hide();
+                  if (!cert) return;
+                  return csWot.extendAll([cert], 'pubkey')
+                    .then(function () {
+                      UIUtils.toast.show('INFO.CERTIFICATION_DONE');
+                      $scope.formData.given_cert_pending.unshift(cert);
+                      $scope.doMotion();
+                    });
+                })
+                .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
               })
-              .then(function (confirm) {
-                if (!confirm) {
-                  return;
-                }
-                UIUtils.loading.show();
+              .catch(
+                UIUtils.onError('ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_CONDITIONS_NOT_MET')
+              );
 
-                // Send certification
-                wallet.certify(identity.uid,
-                  identity.pubkey,
-                  identity.blockUid || (identity.requirements && identity.requirements.meta && identity.requirements.meta.timestamp),
-                  identity.requirements && identity.requirements.meta && identity.requirements.meta.sig,
-                  identity.isMember,
-                  identity.wasMember)
-                  .then(function (cert) {
-                    UIUtils.loading.hide();
-                    if (!cert) return;
-                    return csWot.extendAll([cert], 'pubkey')
-                      .then(function () {
-                        UIUtils.toast.show('INFO.CERTIFICATION_DONE');
-                        $scope.formData.given_cert_pending.unshift(cert);
-                        $scope.doMotion();
-                      });
-                  })
-                  .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
-              });
+            // Display cert checklist modal
+            return Modals.showCertificationCheckList({
+              answers_are_right: answers_are_right,
+              identity: identity,
+            });
+
           })
           .catch(function (err) {
             if (err === 'CANCELLED') return;
