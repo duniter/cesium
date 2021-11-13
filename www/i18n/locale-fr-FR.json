@@ -565,6 +565,20 @@
     "SELECT_WALLET_MODAL": {
       "TITLE": "Sélection du portefeuille"
     },
+    "CERTIFICATION_MODAL": {
+      "CHECKLIST_TITLE": "Vérifications avant certification",
+      "INFOS": "La sécurité de la monnaie Ğ1 repose sur chaque membre. Avant de certifier l'identité de cette personne, vous devez avoir fait quelques vérifications à son propos. Veuillez répondre aux questions suivantes :",
+      "BTN_ALL_CHECK": "Certifier",
+      "CHECKLIST_CONDITIONS_NOT_MET": "La certification n'a pas été envoyée. Les vérifications semblent insuffisantes. Veuillez vérifier de nouveau chaque point auprès de la personne à certifier.",
+      "QUESTIONS": {
+        "WELL_KNOWN": "<b>Connaissez-vous bien</b> la personne que vous certifiez, et l'avez-vous rencontrée physiquement ?",
+        "REVOCATION": "A-t-elle téléchargé son <b>document de révocation</b> et sait-elle où le retrouver ?",
+        "CONTACT": "Pouvez-vous la <b>contacter</b> par plusieurs moyens ?",
+        "DOUBLE_IDENTITY": "La personne possède-t-elle une <b>autre identité membre</b> active ?",
+        "MASTER_ACCOUNT": "Maîtrise-t-elle son compte, et a-t-elle déjà <b>effectué des virements</b> depuis son compte ?",
+        "LICENSE": "A-t-elle <b>compris la licence</b>, et accepte-t-elle de s'y conformer pour la certification d'autres membres ?"
+      }
+    },
     "WALLET_LIST": {
       "TITLE": "Mes portefeuilles",
       "BTN_NEW": "Ajouter un portefeuille",
