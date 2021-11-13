@@ -1,0 +1,80 @@
+<ion-modal-view class="modal-full-height">
+
+    <!-- TOP BAR -->
+    <ion-header-bar class="bar-positive">
+
+        <button class="button button-clear visible-xs"
+                ng-if="!slides.slider.activeIndex"
+                ng-click="closeModal()" translate>COMMON.BTN_CANCEL
+        </button>
+        <button class="button button-icon button-clear icon ion-ios-arrow-back buttons header-item"
+                ng-click="doPrev()"
+                ng-if="slides.slider.activeIndex && slideBehavior.hasPreviousButton">
+        </button>
+        <button class="button button-icon button-clear icon ion-ios-help-outline visible-xs"
+                ng-if="slideBehavior.helpAnchor"
+                ng-click="showHelpModal(slideBehavior.helpAnchor)">
+        </button>
+    
+        <h1 class="title" translate>ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_TITLE</h1>
+    
+        <!-- next -->
+        <button class="button button-clear icon-right visible-xs"
+                ng-if="slideBehavior.hasNextButton"
+                ng-click="doNext()">
+          <span translate>COMMON.BTN_NEXT</span>
+          <i class="icon ion-ios-arrow-right"></i>
+        </button>
+        <!-- accept -->
+        <button class="button button-clear icon-right visible-xs"
+                ng-class="{'button-text-stable': !isLicenseRead}"
+                ng-if="slideBehavior.hasAcceptButton"
+                ng-click="isLicenseRead ? doNext() : undefined">
+          <span translate>ACCOUNT.NEW.BTN_ACCEPT</span>
+          <i class="icon ion-ios-arrow-right"></i>
+        </button>
+        <!-- send -->
+        <button class="button button-clear icon-right visible-xs"
+                ng-if="slideBehavior.hasSendButton"
+                ng-click="doNewAccount()">
+          <i class="icon ion-android-send"></i>
+        </button>
+      </ion-header-bar>
+
+
+    <!-- CONTENT -->
+    <ion-content class="has-header" scroll="true">
+
+      <div class="padding text-center" ><b>{{ identity.uid }} - {{ identity.pubkey }}</b></div>
+
+      <div class="padding" translate>ACCOUNT.CERTIFICATION_MODAL.INFOS</div>
+
+      <div class="card padding">
+        <div class="row nowrap row-center"
+                  ng-repeat="check in cert_checklist"
+                  ng-include="::'templates/wot/item_checklist_certification.html'">
+        </div>
+      </div>
+
+
+      <div class="padding text-right">
+
+        <button class="button button-clear button-dark ink hidden-xs" ng-click="closeModal()" type="button"   translate>
+          COMMON.BTN_CANCEL
+        </button>
+
+        <button class="button button-stable icon-right ink"
+                ng-if="formData.licenseUrl"
+                ng-click="showLicenseModal()">
+          <i class="icon ion-document-text"></i>&nbsp;
+          {{'CURRENCY.VIEW.BTN_SHOW_LICENSE' | translate}}
+        </button>
+
+        <button class="button button-positive icon-right ion-chevron-right ink" ng-click="verifyAnswers()"
+          type="button" translate>
+          ACCOUNT.CERTIFICATION_MODAL.BTN_ALL_CHECK
+        </button>
+
+      </div>
+    </ion-content>
+</ion-modal-view>
