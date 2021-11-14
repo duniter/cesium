@@ -576,7 +576,9 @@
         "DOUBLE_IDENTITY": "La personne possède-t-elle une <b>autre identité membre</b> active ?",
         "MASTER_ACCOUNT": "Maîtrise-t-elle son compte, et a-t-elle déjà <b>effectué des virements</b> depuis son compte ?",
         "LICENSE": "A-t-elle <b>compris la licence</b>, et accepte-t-elle de s'y conformer pour la certification d'autres membres ?"
-      }
+      },
+      "REMINDER_TITLE": "Rappel",
+      "SHORT_LICENSE_REMINDER": "<p>Vous pouvez rappeler à la personne certifiée les paramètres des certifications :</p><p>- Chaque membre peut avoir émis 100 certifications valides au maximum.</p><p>- Les certifications sont enregistrées à un intervalle de 5 jours.</p><p>- Une nouvelle identité membre doit réunir au minimum 5 certifications en moins de deux mois.</p><p>- Un membre doit renouveler son adhésion chaque année.</p><p>- Les certifications sont valides durant deux ans.</p>"
     },
     "WALLET_LIST": {
       "TITLE": "Mes portefeuilles",

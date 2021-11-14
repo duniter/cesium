@@ -788,25 +788,37 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
             // Certification checklist before confirmation
             let answers_are_right = $q.defer();
             answers_are_right.promise.then(function(){
-              UIUtils.loading.show();
-              wallet.certify($scope.formData.uid,
-                $scope.formData.pubkey,
-                $scope.formData.blockUid || ($scope.formData.requirements && $scope.formData.requirements.meta && $scope.formData.requirements.meta.timestamp),
-                $scope.formData.requirements && $scope.formData.requirements.meta && $scope.formData.requirements.meta.sig,
-                $scope.formData.isMember,
-                $scope.formData.wasMember)
-                .then(function(cert) {
-                  UIUtils.loading.hide();
-                  if (cert) {
-                    $scope.prepareNewCert(wallet, cert);
-                    $scope.alreadyCertified = true;
-                    UIUtils.toast.show('INFO.CERTIFICATION_DONE');
-                    $scope.formData.received_cert_pending.unshift(cert);
-                    $scope.formData.requirements.pendingCertificationCount++;
-                    $scope.doMotion();
-                  }
-                })
-                .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
+              UIUtils.alert.confirm(
+                'ACCOUNT.CERTIFICATION_MODAL.SHORT_LICENSE_REMINDER',
+                'ACCOUNT.CERTIFICATION_MODAL.REMINDER_TITLE',
+                {
+                cssClass: 'positive',
+                okText: 'COMMON.BTN_OK',
+                okType: 'button-positive'
+                }
+              )
+              .then(function(confirm){
+                if (! confirm) {return}
+                UIUtils.loading.show();
+                wallet.certify($scope.formData.uid,
+                  $scope.formData.pubkey,
+                  $scope.formData.blockUid || ($scope.formData.requirements && $scope.formData.requirements.meta && $scope.formData.requirements.meta.timestamp),
+                  $scope.formData.requirements && $scope.formData.requirements.meta && $scope.formData.requirements.meta.sig,
+                  $scope.formData.isMember,
+                  $scope.formData.wasMember)
+                  .then(function(cert) {
+                    UIUtils.loading.hide();
+                    if (cert) {
+                      $scope.prepareNewCert(wallet, cert);
+                      $scope.alreadyCertified = true;
+                      UIUtils.toast.show('INFO.CERTIFICATION_DONE');
+                      $scope.formData.received_cert_pending.unshift(cert);
+                      $scope.formData.requirements.pendingCertificationCount++;
+                      $scope.doMotion();
+                    }
+                  })
+                  .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
+              })
             })
             .catch(
               UIUtils.onError('ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_CONDITIONS_NOT_MET')
@@ -898,29 +910,41 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
             // Certification checklist before confirmation
             let answers_are_right = $q.defer();
             answers_are_right.promise.then(function(){
-              UIUtils.loading.show();
-              // Send certification
-              wallet.certify(identity.uid,
-                identity.pubkey,
-                identity.blockUid || (identity.requirements && identity.requirements.meta && identity.requirements.meta.timestamp),
-                identity.requirements && identity.requirements.meta && identity.requirements.meta.sig,
-                identity.isMember,
-                identity.wasMember)
-                .then(function (cert) {
-                  UIUtils.loading.hide();
-                  if (!cert) return;
-                  return csWot.extendAll([cert], 'pubkey')
-                    .then(function () {
-                      UIUtils.toast.show('INFO.CERTIFICATION_DONE');
-                      $scope.formData.given_cert_pending.unshift(cert);
-                      $scope.doMotion();
-                    });
-                })
+              UIUtils.alert.confirm(
+                'ACCOUNT.CERTIFICATION_MODAL.SHORT_LICENSE_REMINDER',
+                'ACCOUNT.CERTIFICATION_MODAL.REMINDER_TITLE',
+                {
+                  cssClass: 'positive',
+                  okText: 'COMMON.BTN_OK',
+                  okType: 'button-positive'
+                }
+              )
+              .then(function(confirm){
+                if (! confirm) {return}
+                UIUtils.loading.show();
+                // Send certification
+                wallet.certify(identity.uid,
+                  identity.pubkey,
+                  identity.blockUid || (identity.requirements && identity.requirements.meta && identity.requirements.meta.timestamp),
+                  identity.requirements && identity.requirements.meta && identity.requirements.meta.sig,
+                  identity.isMember,
+                  identity.wasMember)
+                  .then(function (cert) {
+                    UIUtils.loading.hide();
+                    if (!cert) return;
+                    return csWot.extendAll([cert], 'pubkey')
+                      .then(function () {
+                        UIUtils.toast.show('INFO.CERTIFICATION_DONE');
+                        $scope.formData.given_cert_pending.unshift(cert);
+                        $scope.doMotion();
+                      });
+                  })
                 .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
               })
-              .catch(
-                UIUtils.onError('ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_CONDITIONS_NOT_MET')
-              );
+            })
+            .catch(
+              UIUtils.onError('ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_CONDITIONS_NOT_MET')
+            );
 
             // Display cert checklist modal
             return Modals.showCertificationCheckList({
