@@ -66,8 +66,8 @@
       "REMOVED": "Documento suprimido"
     },
     "CONFIRM": {
-      "REMOVE": "¿ Desea <b>suprimir este documento</b> ?",
-      "REMOVE_ALL": "¿ Desea <b>suprimer estos documentos</b> ?"
+      "REMOVE": "¿Desea <b>suprimir este documento</b>?",
+      "REMOVE_ALL": "¿Desea <b>suprimir estos documentos</b>?"
     },
     "ERROR": {
       "LOAD_DOCUMENTS_FAILED": "Error al buscar los documentos",
@@ -85,7 +85,7 @@
   "ACCOUNT": {
     "NEW": {
       "ORGANIZATION_ACCOUNT": "Cuenta para una organización",
-      "ORGANIZATION_ACCOUNT_HELP": "Si representa una empresa, una asociación, etc.<br/>Ningún dividendo universal será creído por esta cuenta."
+      "ORGANIZATION_ACCOUNT_HELP": "Si representa una empresa, una asociación, etc.<br/>Ningún dividendo universal será creado por esta cuenta."
     },
     "EVENT": {
       "MEMBER_WITHOUT_PROFILE": "Para obtener sus certificaciones más rapidamente, complete <a ui-sref=\"app.edit_profile\">su perfil usuario</a>. Los miembros concederán más fácilmente su confianza a una identidad verificable."
@@ -104,7 +104,7 @@
     },
     "ASK_CERTIFICATIONS_MODAL": {
       "TITLE": "Solicitar certificaciones",
-      "HELP": "Selectionar los destinatarios"
+      "HELP": "Seleccionar los destinatarios"
     },
     "SEARCH": {
       "DIVIDER_PROFILE": "Cuentas",
