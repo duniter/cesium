@@ -66,8 +66,8 @@
       "REMOVED": "Documento suprimido"
     },
     "CONFIRM": {
-      "REMOVE": "¿ Desea <b>suprimir este documento</b> ?",
-      "REMOVE_ALL": "¿ Desea <b>suprimer estos documentos</b> ?"
+      "REMOVE": "¿Desea <b>suprimir este documento</b>?",
+      "REMOVE_ALL": "¿Desea <b>suprimir estos documentos</b>?"
     },
     "ERROR": {
       "LOAD_DOCUMENTS_FAILED": "Error al buscar los documentos",
