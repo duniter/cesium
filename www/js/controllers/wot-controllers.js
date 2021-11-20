@@ -157,6 +157,8 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
   .controller('WotCertificationsViewCtrl', WotCertificationsViewController)
 
+  .controller('WotCertificationChecklistCtrl', WotCertificationChecklistController)
+
   .controller('WotSelectPubkeyIdentityModalCtrl', WotSelectPubkeyIdentityModalController)
 
 ;
@@ -783,15 +785,20 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               return;
             }
 
-            UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', 'CONFIRM.POPUP_SECURITY_WARNING_TITLE', {
-              cssClass: 'warning',
-              okText: 'WOT.BTN_YES_CERTIFY',
-              okType: 'button-assertive'
-            })
-              .then(function(confirm){
-                if (!confirm) {
-                  return;
+            // Certification checklist before confirmation
+            let answers_are_right = $q.defer();
+            answers_are_right.promise.then(function(){
+              UIUtils.alert.confirm(
+                'ACCOUNT.CERTIFICATION_MODAL.SHORT_LICENSE_REMINDER',
+                'ACCOUNT.CERTIFICATION_MODAL.REMINDER_TITLE',
+                {
+                cssClass: 'positive',
+                okText: 'COMMON.BTN_OK',
+                okType: 'button-positive'
                 }
+              )
+              .then(function(confirm){
+                if (! confirm) {return}
                 UIUtils.loading.show();
                 wallet.certify($scope.formData.uid,
                   $scope.formData.pubkey,
@@ -811,7 +818,18 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
                     }
                   })
                   .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
-              });
+              })
+            })
+            .catch(
+              UIUtils.onError('ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_CONDITIONS_NOT_MET')
+            );
+
+            // display certification checklist modal
+            return Modals.showCertificationCheckList({
+              answers_are_right: answers_are_right,
+              identity: $scope.formData,
+            });
+
           })
           .catch(function(err) {
             if (err === 'CANCELLED') return;
@@ -889,17 +907,21 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               return;
             }
 
-            // Ask confirmation
-            $translate('CONFIRM.CERTIFY_RULES_TITLE_UID', {uid: identity.uid})
-              .then(function (confirmTitle) {
-                return UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', confirmTitle);
-              })
-              .then(function (confirm) {
-                if (!confirm) {
-                  return;
+            // Certification checklist before confirmation
+            let answers_are_right = $q.defer();
+            answers_are_right.promise.then(function(){
+              UIUtils.alert.confirm(
+                'ACCOUNT.CERTIFICATION_MODAL.SHORT_LICENSE_REMINDER',
+                'ACCOUNT.CERTIFICATION_MODAL.REMINDER_TITLE',
+                {
+                  cssClass: 'positive',
+                  okText: 'COMMON.BTN_OK',
+                  okType: 'button-positive'
                 }
+              )
+              .then(function(confirm){
+                if (! confirm) {return}
                 UIUtils.loading.show();
-
                 // Send certification
                 wallet.certify(identity.uid,
                   identity.pubkey,
@@ -917,8 +939,19 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
                         $scope.doMotion();
                       });
                   })
-                  .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
-              });
+                .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
+              })
+            })
+            .catch(
+              UIUtils.onError('ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_CONDITIONS_NOT_MET')
+            );
+
+            // Display cert checklist modal
+            return Modals.showCertificationCheckList({
+              answers_are_right: answers_are_right,
+              identity: identity,
+            });
+
           })
           .catch(function (err) {
             if (err === 'CANCELLED') return;
@@ -1429,6 +1462,88 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
   };
 }
 
+/**
+ * Certification checklist controller
+ * @param $controller
+ */
+ function WotCertificationChecklistController($scope, $controller, parameters){
+
+  // allow to display license
+  $controller('CurrencyViewCtrl', {$scope: $scope});
+
+  let answers_are_right = parameters.answers_are_right;
+  $scope.identity = parameters.identity;
+
+  $scope.prepare_cert_checklist = function() {
+    const original_cert_checklist = [
+      {
+        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.WELL_KNOWN',
+        expected_answer: true,
+        answer: false
+      },
+      {
+        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.REVOCATION',
+        expected_answer: true,
+        answer: false
+      },
+      {
+        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.CONTACT',
+        expected_answer: true,
+        answer: false
+      },
+      {
+        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.MASTER_ACCOUNT',
+        expected_answer: true,
+        answer: false
+      },
+      {
+        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.LICENSE',
+        expected_answer: true,
+        answer: false
+      },
+      {
+        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.CREDENTIALS',
+        expected_answer: true,
+        answer: false
+      },
+      // questions with negative answers
+      {
+        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.DOUBLE_IDENTITY',
+        expected_answer: false,
+        answer: false
+      },
+      {
+        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.PUBLIC_KEY_DIFFERENT',
+        expected_answer: false,
+        answer: false
+      },
+    ];
+
+    // Fisher-Yates shuffle
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
+        let t = array[i]; array[i] = array[j]; array[j] = t
+      }
+      return array;
+    }
+
+    return shuffle(original_cert_checklist).slice(0, 5);
+  }
+  $scope.cert_checklist = $scope.prepare_cert_checklist();
+
+  $scope.verifyAnswers = function() {
+    $scope.cert_checklist.map( question => {
+      if (question.answer !== question.expected_answer) {
+        // TODO message should be changed.
+        answers_are_right.reject();
+      }
+    });
+    answers_are_right.resolve(true);
+
+    $scope.closeModal();
+  }
+}
 
 /**
  * Select identities from a pubkey (useful when many self on the same pubkey)

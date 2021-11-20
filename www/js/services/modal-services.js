@@ -232,6 +232,10 @@ angular.module('cesium.modal.services', ['cesium.utils.services'])
       parameters);
   }
 
+  function showCertificationCheckList(parameters) {
+    return ModalUtils.show('templates/wot/modal_certification_checklist.html','WotCertificationChecklistCtrl', parameters);
+  }
+
   function showSelectPubkeyIdentity(parameters) {
     return ModalUtils.show('templates/wot/modal_select_pubkey_identity.html', 'WotSelectPubkeyIdentityModalCtrl',
       parameters);
@@ -294,6 +298,7 @@ angular.module('cesium.modal.services', ['cesium.utils.services'])
     showHelp: showHelp,
     showAccountSecurity: showAccountSecurity,
     showLicense: showLicense,
+    showCertificationCheckList: showCertificationCheckList,
     showSelectPubkeyIdentity: showSelectPubkeyIdentity,
     showSelectWallet: showSelectWallet,
     showPassword: showPassword

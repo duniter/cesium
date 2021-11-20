@@ -1,0 +1,17 @@
+<div class="col col-80">
+    <div class="ion-text text-wrap" ng-bind-html="check.question | translate"></div>
+  </div>
+  <div class="col text-right">
+    <div class="ion-text" style="text-transform: uppercase;">
+      <b ng-if="check.answer" translate>COMMON.BTN_YES</b>
+      <b ng-if="!check.answer" translate>COMMON.BTN_NO</b>
+    </div>
+  </div>
+  <div class="col float-left">
+    <label class="toggle toggle-royal">
+      <input type="checkbox" ng-model="check.answer">
+      <div class="track">
+        <div class="handle"></div>
+      </div>
+    </label>
+  </div>
