@@ -1492,11 +1492,6 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
         answer: false
       },
       {
-        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.DOUBLE_IDENTITY',
-        expected_answer: false,
-        answer: false
-      },
-      {
         question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.MASTER_ACCOUNT',
         expected_answer: true,
         answer: false
@@ -1504,6 +1499,22 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
       {
         question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.LICENSE',
         expected_answer: true,
+        answer: false
+      },
+      {
+        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.CREDENTIALS',
+        expected_answer: true,
+        answer: false
+      },
+      // questions with negative answers
+      {
+        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.DOUBLE_IDENTITY',
+        expected_answer: false,
+        answer: false
+      },
+      {
+        question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.PUBLIC_KEY_DIFFERENT',
+        expected_answer: false,
         answer: false
       },
     ];
