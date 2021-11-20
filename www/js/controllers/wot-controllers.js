@@ -1528,7 +1528,7 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
       return array;
     }
 
-    return shuffle(original_cert_checklist);
+    return shuffle(original_cert_checklist).slice(0, 5);
   }
   $scope.cert_checklist = $scope.prepare_cert_checklist();
 
