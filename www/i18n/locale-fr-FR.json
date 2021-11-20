@@ -571,12 +571,14 @@
       "BTN_ALL_CHECK": "Certifier",
       "CHECKLIST_CONDITIONS_NOT_MET": "La certification n'a pas été envoyée. Les vérifications semblent insuffisantes. Veuillez vérifier de nouveau chaque point auprès de la personne à certifier.",
       "QUESTIONS": {
-        "WELL_KNOWN": "<b>Connaissez-vous bien</b> la personne que vous certifiez, et l'avez-vous rencontrée physiquement ?",
+        "WELL_KNOWN": "<b>Connaissez-vous bien</b> la personne que vous certifiez, et connaissez-vous des gens qui la connaissent bien également ?",
         "REVOCATION": "A-t-elle téléchargé son <b>document de révocation</b> et sait-elle où le retrouver ?",
-        "CONTACT": "Pouvez-vous la <b>contacter</b> par plusieurs moyens ?",
+        "CONTACT": "Avez-vous <b>contacté</b> cette personne par plusieurs moyens et vous a-t-elle répondu ?",
         "DOUBLE_IDENTITY": "La personne possède-t-elle une <b>autre identité membre</b> active ?",
-        "MASTER_ACCOUNT": "Maîtrise-t-elle son compte, et a-t-elle déjà <b>effectué des virements</b> depuis son compte ?",
-        "LICENSE": "A-t-elle <b>compris la licence</b>, et accepte-t-elle de s'y conformer pour la certification d'autres membres ?"
+        "MASTER_ACCOUNT": "Maîtrise-t-elle son compte, et a-t-elle déjà <b>effectué au moins un virement</b> depuis son compte ?",
+        "LICENSE": "A-t-elle <b>compris la licence</b>, et accepte-t-elle de s'y conformer pour la certification d'autres membres ?",
+        "CREDENTIALS": "L’identifiant et le mot de passe de son compte sont-ils <b>longs et complexes</b> (phrases de passe) ? A-t-elle compris que l’identifiant doit également rester secret ? Est-elle <b>certaine de s’en souvenir</b> ou de pouvoir les retrouver ?",
+        "PUBLIC_KEY_DIFFERENT": "La <b>clef publique</b> indiquée ici est-elle <b>différente</b> de celle que vous a communiqué cette personne ?"
       },
       "REMINDER_TITLE": "Rappel",
       "SHORT_LICENSE_REMINDER": "<p>Vous pouvez rappeler à la personne certifiée les paramètres des certifications :</p><p>- Chaque membre peut avoir émis 100 certifications valides au maximum.</p><p>- Les certifications sont enregistrées à un intervalle de 5 jours.</p><p>- Une nouvelle identité membre doit réunir au minimum 5 certifications en moins de deux mois.</p><p>- Un membre doit renouveler son adhésion chaque année.</p><p>- Les certifications sont valides durant deux ans.</p>"
