@@ -905,7 +905,9 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
             }
 
             // Check not already certified
-            var previousCert = _.findWhere(identity.received_cert, {pubkey: wallet.data.pubkey, valid: true});
+            var previousCert = _.find($scope.formData.received_cert, function(cert) {
+              return cert.pubkey === wallet.data.pubkey && cert.valid && cert.expiresIn > csSettings.data.timeWarningExpire;
+            });
             if (previousCert) {
               $translate('ERROR.IDENTITY_ALREADY_CERTIFY', previousCert)
                 .then(function (message) {
