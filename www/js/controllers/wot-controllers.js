@@ -757,6 +757,8 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               return;
             }
 
+            /* MATOGRAINE FROM HERE WE CAN GROUP IN ONE CERTIFY FUNCTION */
+
             // Check identity not expired
             if ($scope.formData.requirements.expired) {
               UIUtils.alert.error('ERROR.IDENTITY_EXPIRED');
@@ -764,7 +766,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
             }
 
             // Check not already certified
-            var previousCert = _.find($scope.formData.received_cert, function(cert) {
+            var previousCert = _.find($scope.formData.received_cert, function(cert) { // MATOGRAINE "cert" here is an element from received certs list.
               return cert.pubkey === wallet.data.pubkey && cert.valid && cert.expiresIn > csSettings.data.timeWarningExpire;
             });
             if (previousCert) {
@@ -893,10 +895,12 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
           .then(function (identity) {
             if (!identity) return; // cancelled
             UIUtils.loading.hide();
-            if (!identity || !identity.hasSelf) {
+            if (!identity || !identity.hasSelf) { // MATOGRAINE (!identity) is no need to be tested here, it is tested above.
               UIUtils.alert.error('ERROR.IDENTITY_TO_CERTIFY_HAS_NO_SELF');
               return;
             }
+
+            /* MATOGRAINE FROM HERE WE CAN GROUP IN ONE CERTIFY FUNCTION */
 
             // Check identity not expired
             if (identity.requirements.expired) {
