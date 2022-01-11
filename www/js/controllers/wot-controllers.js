@@ -824,6 +824,20 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               UIUtils.onError('ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_CONDITIONS_NOT_MET')
             );
 
+            // assume certification checks were done if renewal
+            if ( isCertificationRenewal($scope.formData.received_cert, wallet.data.pubkey) ) {
+              return UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', 'CONFIRM.POPUP_SECURITY_WARNING_TITLE', {
+                cssClass: 'warning',
+                okText: 'WOT.BTN_YES_CERTIFY',
+                okType: 'button-assertive'
+              })
+              .then( function (confirm) {
+                if (confirm) {
+                  answers_are_right.resolve(true);
+                }
+              })
+            }
+
             // display certification checklist modal
             return Modals.showCertificationCheckList({
               answers_are_right: answers_are_right,
@@ -945,6 +959,20 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
             .catch(
               UIUtils.onError('ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_CONDITIONS_NOT_MET')
             );
+
+            // assume certification checks were done if renewal
+            if ( isCertificationRenewal(identity.received_cert, wallet.data.pubkey) ) {
+              return UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', 'CONFIRM.POPUP_SECURITY_WARNING_TITLE', {
+                cssClass: 'warning',
+                okText: 'WOT.BTN_YES_CERTIFY',
+                okType: 'button-assertive'
+              })
+              .then( function (confirm) {
+                if (confirm) {
+                  answers_are_right.resolve(true);
+                }
+              })
+            }
 
             // Display cert checklist modal
             return Modals.showCertificationCheckList({
@@ -1587,4 +1615,10 @@ function WotSelectPubkeyIdentityModalController($scope, $q, csWot, parameters) {
       });
   };
   $scope.$on('modal.shown', $scope.load);
+}
+
+function isCertificationRenewal(identity_current_certs, certifier_pubkey) {
+  return _.find(identity_current_certs, function(certification) {
+    return certification.pubkey == certifier_pubkey;
+  })
 }
