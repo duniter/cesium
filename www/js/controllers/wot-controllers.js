@@ -757,27 +757,14 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               return;
             }
 
-            /* MATOGRAINE FROM HERE WE CAN GROUP IN ONE CERTIFY FUNCTION */
+            if ( ! $scope.commonCertificationVerifications($scope.formData, wallet) ) {
+              return;
+            }
 
-            console.log ("formData : " , $scope.formData)
-
-            $scope.commonCertificationVerifications($scope.formData, wallet)
-
-            // Certification checklist before confirmation
+            // Prepare actions after user confirmation
             let answers_are_right = $q.defer();
-            answers_are_right.promise.then(function(cert_status){
-              if (cert_status == "new_cert") {
-                return UIUtils.alert.confirm(
-                  'ACCOUNT.CERTIFICATION_MODAL.SHORT_LICENSE_REMINDER',
-                  'ACCOUNT.CERTIFICATION_MODAL.REMINDER_TITLE',
-                  {
-                    cssClass: 'positive',
-                    okText: 'COMMON.BTN_OK',
-                    okType: 'button-positive'
-                  }
-                )
-              }
-              return true;
+            answers_are_right.promise.then( function (cert_status) {
+              return $scope.showLicenseReminderIfNewCert(cert_status)
             })
             .then(function(confirm){
               if (! confirm) {return}
@@ -865,6 +852,21 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
     return true;
   }
 
+  $scope.showLicenseReminderIfNewCert = function (cert_status) {
+    if (cert_status == "new_cert") {
+      return UIUtils.alert.confirm(
+        'ACCOUNT.CERTIFICATION_MODAL.SHORT_LICENSE_REMINDER',
+        'ACCOUNT.CERTIFICATION_MODAL.REMINDER_TITLE',
+        {
+          cssClass: 'positive',
+          okText: 'COMMON.BTN_OK',
+          okType: 'button-positive'
+        }
+      )
+    }
+    return true;
+  }
+
   // Select an identity and certify
   $scope.selectAndCertify = function() {
 
@@ -908,26 +910,12 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               return;
             }
 
-            /* MATOGRAINE FROM HERE WE CAN GROUP IN ONE CERTIFY FUNCTION */
-            console.log ("identity : " , identity)
-
             $scope.commonCertificationVerifications(identity, wallet)
 
-            // Certification checklist before confirmation
+            // Prepare actions after user confirmation
             let answers_are_right = $q.defer();
-            answers_are_right.promise.then(function(cert_status){
-              if (cert_status == "new_cert") {
-                return UIUtils.alert.confirm(
-                  'ACCOUNT.CERTIFICATION_MODAL.SHORT_LICENSE_REMINDER',
-                  'ACCOUNT.CERTIFICATION_MODAL.REMINDER_TITLE',
-                  {
-                    cssClass: 'positive',
-                    okText: 'COMMON.BTN_OK',
-                    okType: 'button-positive'
-                  }
-                )
-              }
-              return true;
+            answers_are_right.promise.then( function (cert_status) {
+              return $scope.showLicenseReminderIfNewCert(cert_status)
             })
             .then(function(confirm){
               if (! confirm) {return}
