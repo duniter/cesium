@@ -759,33 +759,9 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
 
             /* MATOGRAINE FROM HERE WE CAN GROUP IN ONE CERTIFY FUNCTION */
 
-            // Check identity not expired
-            if ($scope.formData.requirements.expired) {
-              UIUtils.alert.error('ERROR.IDENTITY_EXPIRED');
-              return;
-            }
+            console.log ("formData : " , $scope.formData)
 
-            // Check not already certified
-            var previousCert = _.find($scope.formData.received_cert, function(cert) { // MATOGRAINE "cert" here is an element from received certs list.
-              return cert.pubkey === wallet.data.pubkey && cert.valid && cert.expiresIn > csSettings.data.timeWarningExpire;
-            });
-            if (previousCert) {
-              $translate('ERROR.IDENTITY_ALREADY_CERTIFY', previousCert)
-                .then(function(message) {
-                  UIUtils.alert.error(message, 'ERROR.UNABLE_TO_CERTIFY_TITLE');
-                });
-              return;
-            }
-
-            // Check no pending certification
-            previousCert = _.findWhere($scope.formData.received_cert_pending, { pubkey: wallet.data.pubkey, valid: true});
-            if (previousCert) {
-              $translate('ERROR.IDENTITY_ALREADY_CERTIFY_PENDING', previousCert)
-                .then(function(message) {
-                  UIUtils.alert.error(message, 'ERROR.UNABLE_TO_CERTIFY_TITLE');
-                });
-              return;
-            }
+            $scope.commonCertificationVerifications($scope.formData, wallet)
 
             // Certification checklist before confirmation
             let answers_are_right = $q.defer();
@@ -857,6 +833,38 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
       });
   };
 
+  $scope.commonCertificationVerifications = function (receiver_idty, sender_wallet) {
+    // Check identity not expired
+    if (receiver_idty.requirements.expired) {
+      UIUtils.alert.error('ERROR.IDENTITY_EXPIRED');
+      return false;
+    }
+
+    // Check not already certified
+    var previousCert = _.find(receiver_idty.received_cert, function (cert) {
+      return cert.pubkey === sender_wallet.data.pubkey && cert.valid && cert.expiresIn > csSettings.data.timeWarningExpire;
+    });
+    if (previousCert) {
+      $translate('ERROR.IDENTITY_ALREADY_CERTIFY', previousCert)
+        .then(function (message) {
+          UIUtils.alert.error(message, 'ERROR.UNABLE_TO_CERTIFY_TITLE');
+        });
+      return false;
+    }
+
+    // Check no pending certification
+    previousCert = _.findWhere(receiver_idty.received_cert_pending, { pubkey: sender_wallet.data.pubkey, valid: true });
+    if (previousCert) {
+      $translate('ERROR.IDENTITY_ALREADY_CERTIFY_PENDING', previousCert)
+        .then(function (message) {
+          UIUtils.alert.error(message, 'ERROR.UNABLE_TO_CERTIFY_TITLE');
+        });
+      return false;
+    }
+
+    return true;
+  }
+
   // Select an identity and certify
   $scope.selectAndCertify = function() {
 
@@ -901,34 +909,9 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
             }
 
             /* MATOGRAINE FROM HERE WE CAN GROUP IN ONE CERTIFY FUNCTION */
+            console.log ("identity : " , identity)
 
-            // Check identity not expired
-            if (identity.requirements.expired) {
-              UIUtils.alert.error('ERROR.IDENTITY_EXPIRED');
-              return;
-            }
-
-            // Check not already certified
-            var previousCert = _.find($scope.formData.received_cert, function(cert) {
-              return cert.pubkey === wallet.data.pubkey && cert.valid && cert.expiresIn > csSettings.data.timeWarningExpire;
-            });
-            if (previousCert) {
-              $translate('ERROR.IDENTITY_ALREADY_CERTIFY', previousCert)
-                .then(function (message) {
-                  UIUtils.alert.error(message, 'ERROR.UNABLE_TO_CERTIFY_TITLE');
-                });
-              return;
-            }
-
-            // Check not pending certification
-            previousCert = _.findWhere(identity.received_cert_pending, {pubkey: wallet.data.pubkey, valid: true});
-            if (previousCert) {
-              $translate('ERROR.IDENTITY_ALREADY_CERTIFY_PENDING', previousCert)
-                .then(function (message) {
-                  UIUtils.alert.error(message, 'ERROR.UNABLE_TO_CERTIFY_TITLE');
-                });
-              return;
-            }
+            $scope.commonCertificationVerifications(identity, wallet)
 
             // Certification checklist before confirmation
             let answers_are_right = $q.defer();
