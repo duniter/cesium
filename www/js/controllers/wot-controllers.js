@@ -793,19 +793,10 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
             );
 
             // assume certification checks were done if renewal
-            if ( isCertificationRenewal($scope.formData.received_cert, wallet.data.pubkey) ) {
-              return UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', 'CONFIRM.POPUP_SECURITY_WARNING_TITLE', {
-                cssClass: 'warning',
-                okText: 'WOT.BTN_YES_CERTIFY',
-                okType: 'button-assertive'
-              })
-              .then( function (confirm) {
-                if (confirm) {
-                  answers_are_right.resolve("renewal");
-                }
-              })
+            renewal = isCertificationRenewal($scope.formData.received_cert, wallet.data.pubkey);
+            if ( renewal ) {
+              return $scope.certRenewalConfirmationModal(answers_are_right)
             }
-
             // display certification checklist modal
             return Modals.showCertificationCheckList({
               answers_are_right: answers_are_right,
@@ -865,6 +856,19 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
       )
     }
     return true;
+  }
+
+  $scope.certRenewalConfirmationModal = function (answers_are_right) {
+    return UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', 'CONFIRM.POPUP_SECURITY_WARNING_TITLE', {
+      cssClass: 'warning',
+      okText: 'WOT.BTN_YES_CERTIFY',
+      okType: 'button-assertive'
+    })
+      .then(function (confirm) {
+        if (confirm) {
+          answers_are_right.resolve("renewal");
+        }
+      })
   }
 
   // Select an identity and certify
@@ -944,19 +948,10 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
             );
 
             // assume certification checks were done if renewal
-            if ( isCertificationRenewal(identity.received_cert, wallet.data.pubkey) ) {
-              return UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', 'CONFIRM.POPUP_SECURITY_WARNING_TITLE', {
-                cssClass: 'warning',
-                okText: 'WOT.BTN_YES_CERTIFY',
-                okType: 'button-assertive'
-              })
-              .then( function (confirm) {
-                if (confirm) {
-                  answers_are_right.resolve("renewal");
-                }
-              })
+            renewal = isCertificationRenewal(identity.received_cert, wallet.data.pubkey);
+            if ( renewal ) {
+              return $scope.certRenewalConfirmationModal(answers_are_right)
             }
-
             // Display cert checklist modal
             return Modals.showCertificationCheckList({
               answers_are_right: answers_are_right,
