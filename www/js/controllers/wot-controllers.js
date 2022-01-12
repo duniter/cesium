@@ -803,6 +803,13 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
   };
 
   $scope.commonCertificationVerifications = function (receiver_idty, sender_wallet) {
+
+    // Check it is no self-certification
+    if (receiver_idty.pubkey === sender_wallet.data.pubkey) {
+      UIUtils.alert.error('ERROR.SELF_CERTIFICATION');
+      return false;
+    }
+
     // Check identity not expired
     if (receiver_idty.requirements.expired) {
       UIUtils.alert.error('ERROR.IDENTITY_EXPIRED');
@@ -917,7 +924,9 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               return;
             }
 
-            $scope.commonCertificationVerifications(identity, wallet)
+            if ( ! $scope.commonCertificationVerifications(identity, wallet) ) {
+              return;
+            }
 
             // Prepare actions after user confirmation
             let answers_are_right = $q.defer();

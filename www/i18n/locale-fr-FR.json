@@ -805,7 +805,8 @@
     "UNKNOWN_WALLET_ID": "Portefeuille secondaire inconnu.",
     "RESTORE_WALLET_LIST_FAILED": "Échec de la restauration des portefeuilles secondaires.",
     "INVALID_FILE_FORMAT": "Format de fichier invalide.",
-    "SAME_TX_RECIPIENT": "Le destinataire doit être différent de l'émetteur."
+    "SAME_TX_RECIPIENT": "Le destinataire doit être différent de l'émetteur.",
+    "SELF_CERTIFICATION": "Vous ne pouvez pas certifier votre propre identité."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
