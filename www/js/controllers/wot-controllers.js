@@ -862,7 +862,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
   }
 
   $scope.certRenewalConfirmationModal = function (answers_are_right) {
-    return UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', 'CONFIRM.POPUP_SECURITY_WARNING_TITLE', {
+    return UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', 'CONFIRM.CERTIFY_RULES_TITLE_UID', {
       cssClass: 'warning',
       okText: 'WOT.BTN_YES_CERTIFY',
       okType: 'button-assertive'
@@ -912,7 +912,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
           .then(function (identity) {
             if (!identity) return; // cancelled
             UIUtils.loading.hide();
-            if (!identity || !identity.hasSelf) { // MATOGRAINE (!identity) is no need to be tested here, it is tested above.
+            if (!identity || !identity.hasSelf) {
               UIUtils.alert.error('ERROR.IDENTITY_TO_CERTIFY_HAS_NO_SELF');
               return;
             }
