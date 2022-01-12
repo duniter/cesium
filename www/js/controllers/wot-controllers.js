@@ -792,16 +792,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               UIUtils.onError('ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_CONDITIONS_NOT_MET')
             );
 
-            // assume certification checks were done if renewal
-            renewal = isCertificationRenewal($scope.formData.received_cert, wallet.data.pubkey);
-            if ( renewal ) {
-              return $scope.certRenewalConfirmationModal(answers_are_right)
-            }
-            // display certification checklist modal
-            return Modals.showCertificationCheckList({
-              answers_are_right: answers_are_right,
-              identity: $scope.formData,
-            });
+            return $scope.displayConfirmationModalOrLicenseQuestions($scope.formData, wallet, answers_are_right )
 
           })
           .catch(function(err) {
@@ -856,6 +847,18 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
       )
     }
     return true;
+  }
+
+  $scope.displayConfirmationModalOrLicenseQuestions = function (certified_idty, sender_wallet, answers_are_right) {
+
+    if (isCertificationRenewal(certified_idty.received_cert, sender_wallet.data.pubkey)) {
+      return $scope.certRenewalConfirmationModal(answers_are_right)
+    }
+
+    return Modals.showCertificationCheckList({
+      answers_are_right: answers_are_right,
+      identity: certified_idty,
+    });
   }
 
   $scope.certRenewalConfirmationModal = function (answers_are_right) {
@@ -947,16 +950,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               UIUtils.onError('ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_CONDITIONS_NOT_MET')
             );
 
-            // assume certification checks were done if renewal
-            renewal = isCertificationRenewal(identity.received_cert, wallet.data.pubkey);
-            if ( renewal ) {
-              return $scope.certRenewalConfirmationModal(answers_are_right)
-            }
-            // Display cert checklist modal
-            return Modals.showCertificationCheckList({
-              answers_are_right: answers_are_right,
-              identity: identity,
-            });
+            return $scope.displayConfirmationModalOrLicenseQuestions(identity, wallet, answers_are_right )
 
           })
           .catch(function (err) {
