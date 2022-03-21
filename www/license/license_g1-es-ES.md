@@ -2,7 +2,7 @@ Licencia Ğ1 - v0.2.8
 ====================
 
 :fecha: 2017-04-04 12:59
-:modificada: 2019-04-16 22:30
+:modificada: 2022-03-21 19:15
 
 **Licencia de la moneda y compromiso de responsabilidad.**
 
