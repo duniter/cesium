@@ -34,7 +34,7 @@ Cuando eres miembro de la RdC Ğ1 y estás a punto de certificar una nueva cuent
 
 ** Estás seguro de: **
 
-1°) Conocer suficientemente bien (además de conocerla físicamente) a la persona que declara poseer esta llave pública (nueva cuenta). Lea los consejos fuertemente recomendados más arriba para asegurarte de que la "conoces bien".
+1°) Conocer suficientemente bien (no solamente de vista) a la persona que declara poseer esta llave pública (nueva cuenta). Lea los consejos fuertemente recomendados más arriba para asegurarte de que la "conoces bien".
 
 2°) Haber comprobado personalmente con ella de que se trata de esta llave pública que está a punto de certificar (lea las sugerencias anteriores).
 
