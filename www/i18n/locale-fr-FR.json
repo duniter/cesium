@@ -529,7 +529,7 @@
       "SELECT_ACCOUNT_TYPE": "Choisissez le type de compte à créer :",
       "MEMBER_ACCOUNT": "Compte membre",
       "MEMBER_ACCOUNT_TITLE": "Création d'un compte membre",
-      "MEMBER_ACCOUNT_HELP": "Vous connaissez suffisament la monnaie libre et vous voulez participer à sa création ?<br/>En tant qu'individu, vous pouvez créer votre compte membre (un seul par individu). Celui-ci fonctionne comme un compte simple portefeuille, mais permet en plus de co-produire la monnaie, en <b>recevant chaque {{parameters.dt|formatPeriod}} un dividende universel</b> : à vous ensuite d'en faire bon usage !",
+      "MEMBER_ACCOUNT_HELP": "Vous connaissez suffisamment la monnaie libre et vous voulez participer à sa création ?<br/>En tant qu'individu, vous pouvez créer votre compte membre (un seul par individu). Celui-ci fonctionne comme un compte simple portefeuille, mais permet en plus de co-produire la monnaie, en <b>recevant chaque {{parameters.dt|formatPeriod}} un dividende universel</b> : à vous ensuite d'en faire bon usage !",
       "WALLET_ACCOUNT": "Compte simple portefeuille",
       "WALLET_ACCOUNT_TITLE": "Création d'un portefeuille",
       "WALLET_ACCOUNT_HELP": "Vous <b>découvrez la monnaie libre</b> ? Vous avez besoin d'un compte supplémentaire ?<br/>Ce type de compte vous conviendra. Bien qu'il ne co-produise la monnaie (contrairement à un compte membre - voir ci-dessous), vous pourrez y recevoir et envoyer des paiements, dès la fin de l'inscription.<br/>Si besoin, vous pourrez le transformer en compte membre ultérieurement.",
