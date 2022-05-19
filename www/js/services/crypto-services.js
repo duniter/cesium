@@ -405,7 +405,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         var naclOptions = {};
         var scryptOptions = {};
         if (ionic.Platform.grade.toLowerCase()!='a') {
-          console.info('Reduce NaCl memory to 16mb,  because plateform grade is not [a] but [{0}]'.format(ionic.Platform.grade));
+          console.info('Reduce NaCl memory to 16mb,  because platform grade is not [a] but [{0}]'.format(ionic.Platform.grade));
           naclOptions.requested_total_memory = 16 * 1048576; // 16 Mo
         }
         var loadedLib = 0;
@@ -1007,6 +1007,15 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       BAD_CHECKSUM: 3002
     };
 
+    function ready() {
+      if (CryptoUtils.isLoaded()) return $q.when();
+      return $timeout(ready, 100);
+    }
+
+    function isStarted() {
+      return CryptoUtils.isLoaded();
+    }
+
     /* -- keyfile -- */
 
     function readKeyFile(file, options) {
@@ -1374,13 +1383,20 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       }
     }
 
+    /* -- Useful functions -- */
 
-
-    /* -- usefull methods -- */
-
+    /**
+     * Compute the pubkey checksum (see Duniter RFC0016)
+     */
     function pkChecksum(pubkey) {
-      var signPk_int8 = CryptoUtils.util.decode_base58(pubkey);
-      return CryptoUtils.util.encode_base58(CryptoUtils.util.crypto_hash_sha256(CryptoUtils.util.crypto_hash_sha256(signPk_int8))).substring(0,3);
+      // Remove leading '1' (see https://forum.duniter.org/t/format-de-checksum/7616)
+      var signPk_int8 = pubkey && pubkey.length === 44 && pubkey.charAt(0) === '1'
+        ? CryptoUtils.util.decode_base58(pubkey.substr(1))
+        : CryptoUtils.util.decode_base58(pubkey);
+      return CryptoUtils.util.encode_base58(
+        CryptoUtils.util.crypto_hash_sha256(
+          CryptoUtils.util.crypto_hash_sha256(signPk_int8))
+      ).substring(0,3);
     }
 
     /* -- box (pack/unpack a record) -- */
@@ -1562,6 +1578,8 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
     return {
       errorCodes: errorCodes,
       constants: constants,
+      ready: ready,
+      isStarted: isStarted,
       // copy CryptoUtils
       util: angular.extend({
           pkChecksum: pkChecksum

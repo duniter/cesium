@@ -103,7 +103,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     return wallet.login()
       .then(function(walletData) {
         $scope.formData = walletData;
-        $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
+        $scope.loading = false; // very important, to avoid TX to be display before wallet.currentUd is loaded
         $scope.updateView();
         $scope.addListeners();
 

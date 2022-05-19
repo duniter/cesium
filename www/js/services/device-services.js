@@ -14,7 +14,6 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
           MAX_HEIGHT: 400,
           MAX_WIDTH: 400
         },
-        that = this,
         api = new Api(this, "Device"),
         exports = {
           // workaround to quickly no is device or not (even before the ready() event)

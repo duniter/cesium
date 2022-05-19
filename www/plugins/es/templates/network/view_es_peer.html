@@ -119,7 +119,8 @@
             <ion-spinner class="icon" icon="android"></ion-spinner>
         </div>
 
-        <div class="list no-padding {{::motion.ionListClass}}" ng-if="isReachable">
+        <div ng-if="isReachable"
+             class="list no-padding" ng-class="::motion.ionListClass">
 
           <div ng-repeat="peer in :rebind:peers track by peer.id"
                class="item item-peer item-icon-left ink"

@@ -1,6 +1,6 @@
 
-<ion-list class="{{::motion.ionListClass}}"
-          ng-if="!search.loading && search.results">
+<ion-list ng-if="!search.loading && search.results"
+          ng-class="::motion.ionListClass">
 
   <div class="item item-avatar item-icon-right item-border-large ink"
        ng-repeat="item in search.results"
