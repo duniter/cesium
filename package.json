@@ -1,6 +1,6 @@
 {
   "name": "cesium",
-  "version": "1.6.13",
+  "version": "1.7.0-rc1",
   "description": "Cesium Wallet for G1 libre currency",
   "author": "Benoit Lavenier <benoit.lavenier@e-is.pro>",
   "license": "AGPL-3.0",
