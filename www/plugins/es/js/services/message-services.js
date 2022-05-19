@@ -288,7 +288,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
 
         // Add avatar
         .then(function(messages){
-          var avatarField = (options.type == 'inbox') ? 'issuer' : 'recipient';
+          var avatarField = (options.type === 'inbox') ? 'issuer' : 'recipient';
           return csWot.extendAll(messages, avatarField);
         })
 
