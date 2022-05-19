@@ -1,115 +1,115 @@
 {
   "COMMON": {
-    "ABUSES_TEXT": "{{total}} personne{{total > 1 ? 's' : ''}} {{total > 1 ? 'ont' : 'a'}} signalé un problème",
-    "BTN_LIKE": "Me gusta",
-    "BTN_LIKE_REMOVE": "Dejar de gustarme",
-    "BTN_REMOVE_REPORTED_ABUSE": "Cancelar mi reporte",
-    "BTN_REPORT_ABUSE_DOTS": "Reportar un problema o un abuso...",
-    "COMMENT_HELP": "Comentario",
-    "LIKES_TEXT": "A {{total}} persona{{total > 1 ? 's' : ''}} {{total > 1 ? 'les' : 'le'}} gusta esta página",
+    "ABUSES_TEXT": "{{total}} person{{total > 1 ? 'es' : 'a'}} {{total > 1 ? 'han' : 'ha'}} informat d'un problema",
+    "BTN_LIKE": "M'agrada",
+    "BTN_LIKE_REMOVE": "Ja no m'agrada",
+    "BTN_REMOVE_REPORTED_ABUSE": "Cancel·la el meu informe",
+    "BTN_REPORT_ABUSE_DOTS": "Informeu d'un problema o un abús...",
+    "COMMENT_HELP": "Comentari",
+    "LIKES_TEXT": "A {{total}} person{{total > 1 ? 'es' : 'a'}} {{total > 1 ? 'els' : 'li'}} agrada aquesta pàgina",
     "NOTIFICATION": {
-        "HAS_UNREAD": "Tiene {{count}} notificaci{{count>0?'ones':'ón'}} no leída{{count>0?'s':''}}",
-        "TITLE": "Nueva notificación | {{'COMMON.APP_NAME'|translate}}"
+        "HAS_UNREAD": "Hi ha {{count}} notificaci{{count>0?'ons':'ó'}} sense llegir",
+        "TITLE": "Notificació nova | {{'COMMON.APP_NAME'|translate}}"
     },
     "REPORT_ABUSE": {
-      "ASK_DELETE": "¿ Solicitar la eliminación ?",
+      "ASK_DELETE": "Solicitud d'eliminació?",
       "CONFIRM": {
-          "SENT": "Reporte enviado. ¡ Gracias !"
+          "SENT": "Informe enviat. Gràcies!"
       },
-      "REASON_HELP": "Yo explico el problema...",
-      "SUB_TITLE": "Por favor explique brevemente el problema :",
-      "TITLE": "Señalar un problema"
+      "REASON_HELP": "Jo explico el problema...",
+      "SUB_TITLE": "Si us plau feu-nos cinc cèntims del problema:",
+      "TITLE": "Comuniqueu un problema"
     },
 
-    "CATEGORY": "Categoría",
-    "CATEGORIES": "Categorías",
-    "CATEGORY_SEARCH_HELP": "Búsqueda",
-    "LAST_MODIFICATION_DATE": "Actualización el",
-    "SUBMIT_BY": "Enviado por",
-    "BTN_PUBLISH": "Publicar",
-    "BTN_PICTURE_DELETE": "Suprimir",
+    "CATEGORY": "Categoria",
+    "CATEGORIES": "Categories",
+    "CATEGORY_SEARCH_HELP": "Cerca",
+    "LAST_MODIFICATION_DATE": "Actualitzat a",
+    "SUBMIT_BY": "Enviat per",
+    "BTN_PUBLISH": "Publica",
+    "BTN_PICTURE_DELETE": "Suprimeix",
     "BTN_PICTURE_FAVORISE": "Principal",
-    "BTN_PICTURE_ROTATE": "Girar",
-    "BTN_ADD_PICTURE": "Añadir una foto",
+    "BTN_PICTURE_ROTATE": "Gira",
+    "BTN_ADD_PICTURE": "Afegeix una foto",
     "NOTIFICATIONS": {
-      "TITLE": "Notificaciones",
-      "MARK_ALL_AS_READ": "Marcar todo como leído",
-      "NO_RESULT": "Ningúna notificación",
-      "SHOW_ALL": "Ver todo",
-      "LOAD_NOTIFICATIONS_FAILED": "Fallo en la carga de las notificaciones"
+      "TITLE": "Notificacions",
+      "MARK_ALL_AS_READ": "Marca-ho tot com a llegit",
+      "NO_RESULT": "Sense notificacions",
+      "SHOW_ALL": "Veure-ho tot",
+      "LOAD_NOTIFICATIONS_FAILED": "Ha fallat la càrrega de les notificacions"
     }
   },
   "DOCUMENT": {
     "HASH": "Hash: ",
     "LOOKUP": {
-      "BTN_COMPACT": "Compactar",
-      "HAS_CREATE_OR_UPDATE_PROFILE": "ha creado o modificado su perfil",
-      "LAST_DOCUMENTS_DOTS": "Últimos documentos :",
-      "TITLE": "Búsqueda de documentos",
-      "BTN_ACTIONS": "Acciones",
+      "BTN_COMPACT": "Compacta",
+      "HAS_CREATE_OR_UPDATE_PROFILE": "ha creat o modificat el seu perfil",
+      "LAST_DOCUMENTS_DOTS": "Últims documents :",
+      "TITLE": "Búsqueda de documents",
+      "BTN_ACTIONS": "Accions",
       "SEARCH_HELP": "issuer:AAA*, time:1508406169",
-      "LAST_DOCUMENTS": "Últimos documentos",
-      "SHOW_QUERY": "Ver la búsqueda",
-      "HIDE_QUERY": "Esconder la búsqueda",
-      "HEADER_TIME": "Fecha/Hora",
-      "HEADER_ISSUER": "Emisor",
-      "HEADER_RECIPIENT": "Destinatario",
-      "HEADER_AMOUNT": "Importe",
-      "READ": "Leído",
-      "BTN_REMOVE": "Sumprimer este documento",
+      "LAST_DOCUMENTS": "Últims documents",
+      "SHOW_QUERY": "Mostra la búsqueda",
+      "HIDE_QUERY": "Amaga la búsqueda",
+      "HEADER_TIME": "Data/Hora",
+      "HEADER_ISSUER": "Emissor",
+      "HEADER_RECIPIENT": "Destinatari",
+      "HEADER_AMOUNT": "Import",
+      "READ": "Llegit",
+      "BTN_REMOVE": "Sumpreix aquest document",
       "POPOVER_ACTIONS": {
-        "TITLE": "Acciones",
-        "REMOVE_ALL": "Suprimir estos documentos..."
+        "TITLE": "Accions",
+        "REMOVE_ALL": "Suprimeix aquests documents..."
       }
     },
     "INFO": {
-      "REMOVED": "Documento suprimido"
+      "REMOVED": "Document suprimit"
     },
     "CONFIRM": {
-      "REMOVE": "¿Desea <b>suprimir este documento</b>?",
-      "REMOVE_ALL": "¿Desea <b>suprimir estos documentos</b>?"
+      "REMOVE": "Vol <b>suprimir aquest document</b>?",
+      "REMOVE_ALL": "Vol <b>suprimir aquests documents</b>?"
     },
     "ERROR": {
-      "LOAD_DOCUMENTS_FAILED": "Error al buscar los documentos",
-      "REMOVE_FAILED": "Error al suprimir el documento",
-      "REMOVE_ALL_FAILED": "Error al suprimir los documentos"
+      "LOAD_DOCUMENTS_FAILED": "Error en buscar els documents",
+      "REMOVE_FAILED": "Error en suprimir el document",
+      "REMOVE_ALL_FAILED": "Error en suprimir els documents"
     }
   },
   "MENU": {
-    "REGISTRY": "Páginas",
-    "USER_PROFILE": "Mi perfil",
-    "MESSAGES": "Mensajes",
-    "NOTIFICATIONS": "Notificaciones",
-    "INVITATIONS": "Invitaciones"
+    "REGISTRY": "Pàgines",
+    "USER_PROFILE": "El meu perfil",
+    "MESSAGES": "Missatges",
+    "NOTIFICATIONS": "Notificacions",
+    "INVITATIONS": "Invitacions"
   },
   "ACCOUNT": {
     "NEW": {
-      "ORGANIZATION_ACCOUNT": "Cuenta para una organización",
-      "ORGANIZATION_ACCOUNT_HELP": "Si representa una empresa, una asociación, etc.<br/>Ningún dividendo universal será creado por esta cuenta."
+      "ORGANIZATION_ACCOUNT": "Compte per a una organització",
+      "ORGANIZATION_ACCOUNT_HELP": "Si representeu una empresa, una associació, etc.<br/>Aquest compte no crearà cap divident universal."
     },
     "EVENT": {
-      "MEMBER_WITHOUT_PROFILE": "Para obtener sus certificaciones más rapidamente, complete <a ui-sref=\"app.edit_profile\">su perfil usuario</a>. Los miembros concederán más fácilmente su confianza a una identidad verificable."
+      "MEMBER_WITHOUT_PROFILE": "Per aconseguir les vostres certificacions més ràpid, completi <a ui-sref=\"app.edit_profile\">el seu perfil d'usuari</a>. Els membres donaran la seva confiança més fàcilment a una identitat verificable."
     },
     "ERROR": {
-      "WS_CONNECTION_FAILED": "Cesium no puede recibir las notificaciones, a causa de un error técnico (conexión al nodo de datos Cesium+).<br/><br/>Si el problema persiste, por favor <b>elige un otro nodo de datos</b> en los ajustes de Cesium+."
+      "WS_CONNECTION_FAILED": "Cesium no pot rebre les notificacions, degut a un error tècnic (connexió al node de dades Cesium+).<br/><br/>Si el problema persisteix, si us plau <b>trieu un altre node de dades</b> als ajustos de Cesium+."
     }
   },
   "WOT": {
-    "BTN_SUGGEST_CERTIFICATIONS_DOTS": "Sugerir identidades a certificar…",
-    "BTN_ASK_CERTIFICATIONS_DOTS": "Pedir a miembros que le certifiquen…",
-    "BTN_ASK_CERTIFICATION": "Pedir una certificación",
+    "BTN_SUGGEST_CERTIFICATIONS_DOTS": "Suggeriu identidats a certificar...",
+    "BTN_ASK_CERTIFICATIONS_DOTS": "Demaneu a uns membres que us certifiquin...",
+    "BTN_ASK_CERTIFICATION": "Demaneu una certificació",
     "SUGGEST_CERTIFICATIONS_MODAL": {
-      "TITLE": "Sugerir certificaciones",
-      "HELP": "Selectionar sus sugerencias"
+      "TITLE": "Suggeriu certificacions",
+      "HELP": "Trieu els vostres suggeriments"
     },
     "ASK_CERTIFICATIONS_MODAL": {
-      "TITLE": "Solicitar certificaciones",
-      "HELP": "Seleccionar los destinatarios"
+      "TITLE": "Sol·liciteu certificacions",
+      "HELP": "Seleccioneu els destinataris"
     },
     "SEARCH": {
-      "DIVIDER_PROFILE": "Cuentas",
-      "DIVIDER_PAGE": "Páginas",
-      "DIVIDER_GROUP": "Grupos"
+      "DIVIDER_PROFILE": "Comptes",
+      "DIVIDER_PAGE": "Pàgines",
+      "DIVIDER_GROUP": "Grups"
     },
     "CONFIRM": {
       "SUGGEST_CERTIFICATIONS": "¿Desea <b>enviar estas sugerencias de certificatión</b> ?",
