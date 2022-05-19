@@ -153,7 +153,7 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
 
           return search(request).then(function(res) {
             if (!res.hits || !res.hits.hits.length) return result;
-            result.hits.total = res.hits.total
+            result.hits.total = res.hits.total;
             result.hits.hits = result.hits.hits.concat(res.hits.hits);
             if (result.hits.hits.length < result.hits.total) {
               request.from += request.size;
@@ -164,8 +164,8 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
               return searchRecursive(request, result);
             }
             return result;
-          })
-        }
+          });
+        };
         var processRequestResultFn = function(subRes) {
           if (!subRes.hits || !subRes.hits.hits.length) return [];
           return processLoadHits(options, uids, memberships, subRes);
