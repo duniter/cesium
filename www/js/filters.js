@@ -411,10 +411,9 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     'ngInject';
     return function(input, opts) {
       if (!input || input.length < 43) return '';
-      var result = (!opts || opts.full !== true)
+      var result = (!opts || opts.full !== true) ?
         // See RFC0016
-        ? (input.substr(0,4)  + '…' + input.substr(input.length - 4))
-        : input;
+        (input.substr(0,4)  + '…' + input.substr(input.length - 4)) : input;
       // If given (e.g. already computed) use the existing CHK
       if (opts && opts.checksum) {
         result += ':' + opts.checksum;

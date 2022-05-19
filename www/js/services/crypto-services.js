@@ -1390,9 +1390,9 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
      */
     function pkChecksum(pubkey) {
       // Remove leading '1' (see https://forum.duniter.org/t/format-de-checksum/7616)
-      var signPk_int8 = pubkey && pubkey.length === 44 && pubkey.charAt(0) === '1'
-        ? CryptoUtils.util.decode_base58(pubkey.substr(1))
-        : CryptoUtils.util.decode_base58(pubkey);
+      var signPk_int8 = pubkey && pubkey.length === 44 && pubkey.charAt(0) === '1' ?
+        CryptoUtils.util.decode_base58(pubkey.substr(1)) :
+        CryptoUtils.util.decode_base58(pubkey);
       return CryptoUtils.util.encode_base58(
         CryptoUtils.util.crypto_hash_sha256(
           CryptoUtils.util.crypto_hash_sha256(signPk_int8))
