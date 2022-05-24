@@ -78,14 +78,15 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       return $q.reject('[http] invalid URL from host: ' + host);
     }
     var url = getUrl(host, port, path, useSsl);
-    return function(params) {
+    return function(params, config) {
       return $q(function(resolve, reject) {
-        var config = {
+        var mergedConfig = {
           timeout: forcedTimeout || timeout,
           responseType: 'json'
         };
+        if (typeof config === 'string') angular.merge(mergedConfig, config);
 
-        prepare(url, params, config, function(url, config) {
+        prepare(url, params, mergedConfig, function(url, config) {
             $http.get(url, config)
             .success(function(data, status, headers, config) {
               resolve(data);
@@ -112,6 +113,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
           timeout: forcedTimeout || timeout,
           responseType: 'json'
         };
+
         if (autoRefresh) { // redo the request if need
           config.cache = csCache.get(cachePrefix, maxAge, function (key, value, done) {
               console.debug('[http] Refreshing cache for {{0}} '.format(key));
@@ -141,14 +143,15 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
   function postResource(host, port, path, useSsl, forcedTimeout) {
     var url = getUrl(host, port, path, useSsl);
-    return function(data, params) {
+    return function(data, params, config) {
       return $q(function(resolve, reject) {
-        var config = {
+        var mergedConfig = {
           timeout: forcedTimeout || timeout,
           headers : {'Content-Type' : 'application/json;charset=UTF-8'}
         };
+        if (typeof config === 'object') angular.merge(mergedConfig, config);
 
-        prepare(url, params, config, function(url, config) {
+        prepare(url, params, mergedConfig, function(url, config) {
             $http.post(url, data, config)
             .success(function(data) {
               resolve(data);

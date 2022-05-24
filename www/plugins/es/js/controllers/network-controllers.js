@@ -502,7 +502,7 @@ function ESPeerInfoPopoverController($scope, $q, csSettings, csCurrency, csHttp,
   $scope.load();
 }
 
-function ESPeerViewController($scope, $q, $window, $state, UIUtils, csWot, esHttp, csHttp, csSettings) {
+function ESPeerViewController($scope, $q, $window, $state, UIUtils, csWot, esHttp, csHttp, csSettings, csWallet) {
   'ngInject';
 
   $scope.node = {};
@@ -561,8 +561,9 @@ function ESPeerViewController($scope, $q, $window, $state, UIUtils, csWot, esHtt
       node);
 
     $scope.isReachable = !$scope.isHttps || useSsl;
+
+    // If not reachable: workaround to get info from the default node
     if (!$scope.isReachable) {
-      // Get node from the default node
       return esHttp.network.peers()
         .then(function(res) {
           // find the current peer
@@ -570,7 +571,7 @@ function ESPeerViewController($scope, $q, $window, $state, UIUtils, csWot, esHtt
             var peer = new EsPeer(json);
             if (!peer.hasEsEndpoint()) return res;
             var ep = esHttp.node.parseEndPoint(peer.getEsEndpoints()[0]);
-            if((ep.dns == node.host || ep.ipv4 == node.host || ep.ipv6 == node.host) && (
+            if ((ep.dns === node.host || ep.ipv4 === node.host || ep.ipv6 === node.host) && (
               ep.port == node.port)) {
               peer.ep = ep;
               return res.concat(peer);
@@ -598,6 +599,10 @@ function ESPeerViewController($scope, $q, $window, $state, UIUtils, csWot, esHtt
         .then(function(json) {
           $scope.node.pubkey = json.pubkey;
           $scope.node.currency = json.currency;
+          $scope.admin = csWallet.isLogin() && json.pubkey === csWallet.data.pubkey;
+          if ($scope.admin) {
+            console.info("[ES] [peer] Wallet user is admin");
+          }
         }),
 
       // Get node doc count
@@ -640,6 +645,15 @@ function ESPeerViewController($scope, $q, $window, $state, UIUtils, csWot, esHtt
       $scope.node.blockchain.current()
         .then(function(json) {
           $scope.current = json;
+        }),
+
+      // Load moderators
+      $scope.node.node.moderators()
+        .then(function(res) {
+          $scope.moderator = csWallet.isLogin() && _.contains(res && res.moderators, csWallet.data.pubkey);
+          if ($scope.moderator) console.info("[ES] [peer] Wallet user is a moderator");
+        }).catch(function(err) {
+          console.error("[peer] Cannot load moderators. Too old Pod version ?");
         })
     ])
       .catch(UIUtils.onError(useTor ? "PEER.VIEW.ERROR.LOADING_TOR_NODE_ERROR" : "PEER.VIEW.ERROR.LOADING_NODE_ERROR"));

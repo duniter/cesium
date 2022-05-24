@@ -19,6 +19,7 @@ angular.module('cesium.es.plugin', [
     'cesium.es.invitation.controllers',
     'cesium.es.subscription.controllers',
     'cesium.es.document.controllers',
-    'cesium.es.like.controllers'
+    'cesium.es.like.controllers',
+    'cesium.es.admin.controllers'
   ])
 ;

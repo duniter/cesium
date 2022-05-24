@@ -603,5 +603,18 @@
   "ERROR": {
     "ES_CONNECTION_ERROR": "Nœud de données <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Cesium va continuer à fonctionner, <b>sans l'extension Cesium+</b> (profils utilisateur, messages privés, cartes et graphiques)<br/><br/>Vérifiez votre connexion Internet, ou changez de nœud de données dans les <a class=\"positive\" ng-click=\"doQuickFix('settings')\">paramètres de l'extension</a>.",
     "ES_MAX_UPLOAD_BODY_SIZE": "Le volume des données à envoyer dépasse la limite fixée par le serveur.<br/>Veuillez ré-essayer après avoir, par exemple, supprimer des photos."
+  },
+  "ADMIN": {
+    "LOG": {
+      "VIEW": {
+        "TITLE": "Logs",
+        "LOG_REQUEST_DIVIDER": "Liste des requêtes bloquées"
+      }
+    },
+    "ERROR": {
+      "NO_SSL_ACCESS": "Impossible d'accéder à cause des restriction SSL.",
+      "LOAD_LOG_FAILED": "Erreur de lecture des logs impossible.",
+      "AUTH_ERROR": "Erreur d'authentification au pod"
+    }
   }
 }
