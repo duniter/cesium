@@ -5,7 +5,7 @@ angular.module('cesium.es.admin.controllers', ['cesium.es.services'])
 
     $stateProvider
 
-      .state('app.es_admin', {
+      .state('app.es_peer_log', {
         url: "/network/data/peer/:server/log?ssl&tor",
         cache: false,
         views: {

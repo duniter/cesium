@@ -605,7 +605,11 @@
     "ES_MAX_UPLOAD_BODY_SIZE": "Le volume des données à envoyer dépasse la limite fixée par le serveur.<br/>Veuillez ré-essayer après avoir, par exemple, supprimer des photos."
   },
   "ADMIN": {
+    "MESSAGE": {
+      "BTN_SEND_EMAIL": "Envoyer un email groupé"
+    },
     "LOG": {
+      "BTN_SHOW_LOG": "Logs des IP bloquées",
       "VIEW": {
         "TITLE": "Logs",
         "LOG_REQUEST_DIVIDER": "Liste des requêtes bloquées"
