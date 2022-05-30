@@ -130,12 +130,17 @@
 
           <!-- Public key -->
           <div id="helptip-wallet-pubkey"
-                class="item item-icon-left item-text-wrap ink"
+                class="item item-icon-left item-text-wrap item-icon-right ink"
                 on-hold="copy(formData.pubkey)"
-                copy-on-click="{{:rebind:formData.pubkey}}">
+                copy-on-click="{{:rebind:formData.pubkey|formatPubkey: {full: true, checksum: formData.checksum} }}">
             <i class="icon ion-key"></i>
             <span>{{:locale:'COMMON.PUBKEY'|translate}}</span>
-            <h4 id="pubkey" class="dark">{{:rebind:formData.pubkey}}</h4>
+            <h4 id="pubkey" class="dark">
+              {{:rebind:formData.pubkey|formatPubkey: {full: true, checksum: formData.checksum} }}
+            </h4>
+
+            <!-- icon of the pubkey -->
+            <i class="icon" ng-if=":rebind:formData.pubkey" jdenticon="{{:rebind:formData.pubkey}}" jdenticon-size="32"></i>
           </div>
 
           <!-- Uid + Registration date -->

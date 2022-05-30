@@ -12,6 +12,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     {id:'fr-FR', label:'Français', flag: 'fr'},
     {id:'nl-NL', label:'Nederlands', flag: 'nl'},
     {id:'es-ES', label:'Spanish', flag: 'es'},
+    {id:'ca', label:'Català', flag: 'ca'},
     {id:'it-IT', label:'Italiano', flag: 'it'}
   ];
   var fallbackLocale = csConfig.fallbackLanguage ? fixLocale(csConfig.fallbackLanguage) : 'en';
@@ -163,7 +164,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
   store = function() {
     if (!started) {
-      console.debug('[setting] Waiting start finished...');
+      console.debug('[settings] Waiting start finished...');
       return (startPromise || start()).then(store);
     }
 
@@ -190,7 +191,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     return promise
       .then(function() {
         if (data.useLocalStorage) {
-          console.debug('[setting] Saved locally');
+          console.debug('[settings] Saved locally');
         }
 
         // Emit event on store
@@ -232,7 +233,6 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     if (localeChanged) {
       $translate.use(data.locale.id);
     }
-
   },
 
   restore = function() {
@@ -329,6 +329,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
         startPromise = null;
         // Emit event (used by plugins)
         api.data.raise.ready(data);
+
+        return data;
       });
 
     return startPromise;

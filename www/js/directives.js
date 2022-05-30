@@ -213,6 +213,7 @@ angular.module('cesium.directives', [])
   // All this does is allow the message
   // to be sent when you tap return
   .directive('input', function($timeout) {
+    'ngInject';
     return {
       restrict: 'E',
       scope: {
@@ -250,7 +251,8 @@ angular.module('cesium.directives', [])
     };
   })
 
-  .directive('trustAsHtml', ['$sce', '$compile', '$parse', function($sce, $compile, $parse){
+  .directive('trustAsHtml', function($sce, $compile, $parse){
+    'ngInject';
     return {
       restrict: 'A',
       compile: function (tElement, tAttrs) {
@@ -272,12 +274,14 @@ angular.module('cesium.directives', [])
         };
       }
     };
-  }])
+  })
 
   /**
   * Close the current modal
   */
-  .directive('modalClose', ['$ionicHistory', '$timeout', function($ionicHistory, $timeout) {
+  .directive('modalClose', function($ionicHistory, $timeout) {
+    'ngInject';
+
     return {
       restrict: 'AC',
       link: function($scope, $element) {
@@ -302,12 +306,14 @@ angular.module('cesium.directives', [])
         });
       }
     };
-  }])
+  })
 
   /**
   * Plugin extension point (see services/plugin-services.js)
   */
   .directive('csExtensionPoint', function ($state, $compile, $controller, $templateCache, PluginService) {
+    'ngInject';
+
     var getTemplate = function(extensionPoint) {
       var template = extensionPoint.templateUrl ? $templateCache.get(extensionPoint.templateUrl) : extensionPoint.template;
       if (!template) {
@@ -353,6 +359,8 @@ angular.module('cesium.directives', [])
   })
 
   .directive('onReadFile', function ($parse) {
+    'ngInject';
+
     return {
       restrict: 'A',
       scope: false,
@@ -382,7 +390,8 @@ angular.module('cesium.directives', [])
     };
   })
 
-.directive("dropZone", function($parse) {
+  .directive("dropZone", function($parse) {
+    'ngInject';
     return {
       restrict: 'A',
       scope: false,
@@ -429,8 +438,8 @@ angular.module('cesium.directives', [])
 
 
   // See http://embed.plnkr.co/2vgnFe/
-  .directive('fileSelect', function ($parse) {
-    'use strict';
+  .directive('fileSelect', function($parse) {
+    'ngInject';
 
     return {
       restrict: 'A',
@@ -484,6 +493,8 @@ angular.module('cesium.directives', [])
   // Un-authenticate when window closed
   // see: https://stackoverflow.com/questions/28197316/javascript-or-angularjs-defer-browser-close-or-tab-close-between-refresh
   .directive('windowExitUnauth', function($window, csSettings, csWallet) {
+    'ngInject';
+
     return {
       restrict: 'AE',
       link: function(element, attrs){
@@ -495,6 +506,36 @@ angular.module('cesium.directives', [])
             return csWallet.unauth();
           }
         });
+      }
+    };
+  })
+
+  // Jdenticon directive (to generate icon from a string)
+  // see:
+  .directive('jdenticon', function($parse) {
+    'ngInject';
+
+    return {
+      restrict: 'A',
+      scope: false,
+      template: '<canvas></canvas>',
+      transclude: false,
+      link: function (scope, element, attrs) {
+        var value = attrs.jdenticon;
+        var size = attrs.jdenticonSize || 54;
+        var canvas = element.children('canvas')[0];
+
+        if (!value) {
+          canvas.height = 0;
+          canvas.width = 0;
+        }
+        else {
+          canvas.height  = size;
+          canvas.width  = size;
+
+          var ctx = canvas.getContext("2d");
+          jdenticon.drawIcon(ctx, value, size);
+        }
       }
     };
   });

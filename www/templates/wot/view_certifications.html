@@ -73,9 +73,14 @@
                 ng-class="{'positive': formData.isMember, 'gray': !formData.isMember}">
                 {{::formData.name||formData.uid}}
               </h4>
-              <h5 class="text-center gray">
-                <i class="icon ion-key"></i> {{formData.pubkey|formatPubkey}}
+              <h5 class="text-center gray row no-padding">
+                <div class="col">
+                  <i class="icon ion-key"></i> {{formData.pubkey|formatPubkey}}
+                </div>
+                <!-- icon of the pubkey -->
+                <div class="col" ng-if=":rebind:formData.pubkey" jdenticon="{{:rebind:formData.pubkey}}" jdenticon-size="32"></div>
               </h5>
+
               <h5 class="assertive">
                 <span ng-if="::(formData.name || formData.uid) && !formData.isMember && !revoked" translate>WOT.NOT_MEMBER_PARENTHESIS</span>
                 <b ng-if="::(formData.name || formData.uid) && !formData.isMember && revoked" translate>WOT.IDENTITY_REVOKED_PARENTHESIS</b>

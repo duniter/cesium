@@ -39,7 +39,7 @@
     <div class="row no-padding">
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
 
-      <div class="col list {{::motion.ionListClass}} item-border-large">
+      <div class="col list item-border-large" ng-class="::motion.ionListClass">
 
         <!-- emails -->
         <ng-repeat ng-repeat="subscriptions in search.results | filter: { type: 'email' }"

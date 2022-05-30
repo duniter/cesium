@@ -13,9 +13,10 @@ After that you should be able to start the application using `npm start`or `yarn
 ## Build the web extension
 
 
-- To create a uncompressed extension, use :
+- To create an uncompressed extension, use :
   ```bash
      cd cesium
+     gulp build
      gulp webExtCompile --release
   ```
   
@@ -24,6 +25,7 @@ After that you should be able to start the application using `npm start`or `yarn
 - To create a portable and compressed ZIP extension : 
   ```bash
      cd cesium
+     gulp build
      gulp webExtBuild --release
   ```
   

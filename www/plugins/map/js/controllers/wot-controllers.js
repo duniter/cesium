@@ -156,8 +156,10 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
         $scope.map.center.zoom = parseInt(cPart[2]);
       }
 
+      var lastLocationUpdate = Date.now();
       $scope.$watch("map.center", function() {
-        if (!$scope.loading) {
+        if (!$scope.loading && (Date.now() - lastLocationUpdate) > 5000) {
+          lastLocationUpdate = Date.now();
           return $timeout(function() {
             $scope.updateLocationHref();
           }, 300);
@@ -279,22 +281,19 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
         .then($scope.load);
     }
 
+    console.info('[map] Leaflet map is ready: starting loading data...');
     $scope.loading = true;
     // Show loading indicator
     map.fire('dataloading');
 
-    var options = {
-      fields: {
-        description: $scope.enableDescription
-      }
-    };
-
     // add bounding box
-    if ($scope.map.bounds) {
-      // FIXME - this is not working well
-      //options.bounds = angular.copy($scope.map.bounds);
-      //delete options.bounds.options;
-    }
+    var options = {
+      bounds: angular.copy($scope.map.bounds)
+    };
+    delete options.bounds.options;
+
+    var formatPubkey = $filter('formatPubkey');
+    var markerTemplate = $templateCache.get('plugins/map/templates/wot/popup_marker.html');
 
     // Load wot data, from service
     return mapWot.load(options)
@@ -302,26 +301,24 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
       .then(function(res) {
         var markers = {};
 
-
         if (res && res.length) {
-
-          var formatPubkey = $filter('formatPubkey');
-          var markerTemplate = $templateCache.get('plugins/map/templates/wot/popup_marker.html');
-
 
           _.forEach(res, function (hit) {
             var type = hit.pending ? 'pending' : (hit.uid ? 'member' : 'wallet');
             var id = hit.index + '_' + (hit.id || (hit.uid ? (hit.uid + ':' + hit.pubkey) : hit.pubkey)).replace(/-/g, '_');
             var title = hit.name + ' | ' + formatPubkey(hit.pubkey);
             var marker = {
+              id: id,
+              message: markerTemplate,
+              title: title,
               layer: type,
               icon: icons[type],
               opacity: hit.uid ? 1 : 0.7,
-              title: title,
               lat: hit.geoPoint.lat,
               lng: hit.geoPoint.lon,
+              focus: false,
               getMessageScope: function () {
-                //console.debug('[map] Loading marker ' + title + "...");
+                console.debug('[map] Loading marker ' + title + "...");
                 var markerScope = $scope.$new();
                 markerScope.loadingMarker = true;
                 markerScope.formData = {};
@@ -331,15 +328,12 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
                     uid: hit.uid,
                     name: title,
                     profile: hit,
-                    isMember: type == 'member'			  
+                    isMember: type === 'member'
                   };
                   markerScope.loadingMarker = false;
                 });
                 return markerScope;
-              },
-              focus: false,
-              message: markerTemplate,
-              id: id
+              }
             };
             markers[id] = marker;
           });
@@ -369,10 +363,10 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
   $scope.updateLocationHref = function(centerHash) {
     // removeIf(device)
     var params = $location.search() || {};
-    if (!params.c || !MapUtils.center.isDefault($scope.map.center)) {
+    /*if (!params.c || !MapUtils.center.isDefault($scope.map.center)) {
       centerHash = centerHash || '{0}:{1}:{2}'.format($scope.map.center.lat.toFixed(4), $scope.map.center.lng.toFixed(4), $scope.map.center.zoom);
       $location.search({c: centerHash}).replace();
-    }
+    }*/
     // endRemoveIf(device)
   };
 

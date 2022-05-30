@@ -40,7 +40,7 @@ Please visit th Cesium web site: [cesium.app](https://cesium.app)
     * Manual installation: download then install the `.apk` from your smartphone;
     * [Play Store](https://play.google.com/store/apps/details?id=fr.duniter.cesium);
  - iOS
-    * Coming soon...;
+    * [App Store](https://apps.apple.com/us/app/cesium-%C4%9F1/id1471028018);
 
 
  
@@ -58,8 +58,10 @@ A [development tutorial](doc/fr/development_tutorial-01.md) (in French) is also 
 
 ## Donate
 
-To help developers with donation, use the [Cesium Team Ğ1 account](https://g1.duniter.fr#/app/wot/CitdnuQgZ45tNFCagay7Wh12gwwHM8VLej1sWmfHWnQX/) (public key: `CitdnuQgZ45tNFCagay7Wh12gwwHM8VLej1sWmfHWnQX`) 
+To help developers with donation, use the [Cesium Team Ğ1 account](https://demo.cesium.app#/app/wot/CitdnuQgZ45tNFCagay7Wh12gwwHM8VLej1sWmfHWnQX/) (public key: `CitdnuQgZ45tNFCagay7Wh12gwwHM8VLej1sWmfHWnQX`) 
 
 ## License
 
 This software is distributed under [GNU AGPL-3.0](https://raw.github.com/duniter/cesium/master/LICENSE).
+
+Please read also our [privacy policy](./doc/privacy_policy.md).

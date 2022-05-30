@@ -22,75 +22,92 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
     }
   };
 
+  /**
+   * Convert Leaflet BBox into ES BBox query
+   * see https://www.elastic.co/guide/en/elasticsearch/reference/2.4/geo-point.html
+   * @param bounds
+   */
   function createFilterQuery(options) {
-    options = options || {};
-    var query = {
-      bool: {}
-    };
+    var bounds = options && options.bounds;
+    if (!bounds) throw new Error('Missing options.bounds!');
 
-    // Limit to profile with geo point
-    if (options.searchAddress) {
-      query.bool.should = [
+    var minLon = Math.min(bounds.northEast.lng, bounds.southWest.lng),
+      minLat = Math.min(bounds.northEast.lat, bounds.southWest.lat),
+      maxLon = Math.max(bounds.northEast.lng, bounds.southWest.lng),
+      maxLat = Math.max(bounds.northEast.lat, bounds.southWest.lat);
+
+    return {constant_score: {
+      filter: [
         {exists: {field: "geoPoint"}},
-        {exists: {field: "city"}}
-      ];
-    }
-    else {
-      query.bool.must= [
-        {exists: {field: "geoPoint"}}
-      ];
-    }
+        {geo_bounding_box: {geoPoint: {
+              top_left: {
+                lat: maxLat,
+                lon: minLon
+              },
+              bottom_right: {
+                lat: minLat,
+                lon: maxLon
+              }
+            }
+          }}
+      ]
+    }};
+  }
 
-    // Filter on bounding box
-    // see https://www.elastic.co/guide/en/elasticsearch/reference/2.4/geo-point.html
-    if (options.bounds && options.bounds.northEast && options.bounds.southWest) {
-      var boundingBox = {
-        "geoPoint" : {
-          "top_left" : {
-            "lat" : Math.max(Math.min(options.bounds.northEast.lat, 90), -90),
-            "lon" : Math.max(Math.min(options.bounds.southWest.lng, 180), -180)
-          },
-          "bottom_right" : {
-            "lat" : Math.max(Math.min(options.bounds.southWest.lat, 90), -90),
-            "lon" : Math.max(Math.min(options.bounds.northEast.lng, 180), -180)
-          }
-        }
-      };
-      console.debug("[map] [wot] Filtering on bounds: ", options.bounds);
-      query.bool.must = query.bool.must || [];
-      query.bool.must.push({geo_bounding_box:  boundingBox});
+  function createSliceQueries(options, total) {
+    var bounds = options && options.bounds;
+    if (!bounds) throw new Error('Missing options.bounds!');
+
+    var minLon = Math.min(bounds.northEast.lng, bounds.southWest.lng),
+      minLat = Math.min(bounds.northEast.lat, bounds.southWest.lat),
+      maxLon = Math.max(bounds.northEast.lng, bounds.southWest.lng),
+      maxLat = Math.max(bounds.northEast.lat, bounds.southWest.lat);
+
+    var queries = [];
+    var lonStep = (maxLon - minLon) / 5;
+    var latStep = (maxLat - minLat) / 5;
+    for (var lon = minLon; lon < maxLon; lon += lonStep) {
+      for (var lat = minLat; lat < maxLat; lat += latStep) {
+        queries.push({constant_score: {
+            filter: [
+              {exists: {field: "geoPoint"}},
+              {geo_bounding_box: {
+                geoPoint: {
+                  top_left: {
+                    lat: lat + latStep,
+                    lon: lon
+                  },
+                  bottom_right: {
+                    lat: lat,
+                    lon: lon + lonStep
+                  }
+                }
+              }}
+            ]
+          }});
+      }
     }
-    return query;
+    return queries;
   }
 
   function load(options) {
     options = options || {};
     options.from = options.from || 0;
     options.size = options.size || constants.DEFAULT_LOAD_SIZE;
-    options.searchAddress = esGeo.google.isEnable() && (angular.isDefined(options.searchAddress) ? options.searchAddress : true);
 
     options.fields = options.fields || {};
-    options.fields.description = angular.isDefined(options.fields.description) ? options.fields.description : false;
 
-    var request = {
+    var countRequest = {
       query: createFilterQuery(options),
-      from: 0,
-      size: options.size,
-      _source: options.fields.description ? fields.profile.concat("description") : fields.profile
+      size: 0
     };
 
     var mixedSearch = false;
-    /*var mixedSearch = esSettings.wot.isMixedSearchEnable();
-    if (mixedSearch) {
-      // add special fields for page and group
-      request._source = request._source.concat(["type", "pubkey", "issuer", "category"]);
-      console.debug("[ES] [map] Mixed search: enable");
-    }*/
 
     var search = mixedSearch ? that.raw.profile.mixedSearch : that.raw.profile.search;
 
     return $q.all([
-        search(request),
+        search(countRequest),
         BMA.wot.member.uids(),
         BMA.wot.member.pending()
           .then(function(res) {
@@ -98,14 +115,18 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
           })
       ])
       .then(function(res) {
+        var total = res[0].hits && res[0].hits.total || 0;
         var uids = res[1];
         var memberships = res[2];
-        res = res[0];
-        if (!res.hits || !res.hits.total) return [];
+
+        if (!total) return []; // No data
+
+        var now = Date.now();
+        console.info('[map] [wot] Loading {0} profiles...'.format(total));
 
         // Transform pending MS into a map by pubkey
         memberships = memberships.reduce(function(res, ms){
-          if (ms.membership == 'IN' && !uids[ms.pubkey]) {
+          if (ms.membership === 'IN' && !uids[ms.pubkey]) {
             var idty = {
               uid: ms.uid,
               pubkey: ms.pubkey,
@@ -122,26 +143,47 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
           return res;
         }, {});
 
-        var jobs = [
-          processLoadHits(options, uids, memberships, res)
-        ];
+        var searchRecursive = function(request, result) {
+          request.from = request.from || 0;
+          request.size = request.size || constants.DEFAULT_LOAD_SIZE;
+          result = result || {hits: {hits: []}};
 
-        // Additional slice requests
-        request.from += request.size;
+          // DEBUG
+          //console.debug('Searching... ' + request.from);
+
+          return search(request).then(function(res) {
+            if (!res.hits || !res.hits.hits.length) return result;
+            result.hits.total = res.hits.total;
+            result.hits.hits = result.hits.hits.concat(res.hits.hits);
+            if (result.hits.hits.length < result.hits.total) {
+              request.from += request.size;
+              if (request.from >= 10000) {
+                console.error("Cannot load more than 10000 profiles in a slice. Please reduce slice size!");
+                return result; // Skip if too large
+              }
+              return searchRecursive(request, result);
+            }
+            return result;
+          });
+        };
         var processRequestResultFn = function(subRes) {
           if (!subRes.hits || !subRes.hits.hits.length) return [];
           return processLoadHits(options, uids, memberships, subRes);
         };
-        while (request.from < res.hits.total) {
-          var searchRequest = search(angular.copy(request)).then(processRequestResultFn);
-          jobs.push(searchRequest);
-          request.from += request.size;
-        }
-        return $q.all(jobs)
+
+
+        return $q.all(createSliceQueries(options, total)
+          .reduce(function(res, query) {
+            var request = {query: query, _source: fields.profile};
+            return res.concat(searchRecursive(request).then(processRequestResultFn));
+          }, []))
           .then(function(res){
-            return res.reduce(function(res, items) {
+            var result = res.reduce(function(res, items) {
               return res.concat(items);
             }, []);
+            console.info('[map] [wot] Loaded {0} profiles in {1}ms'.format(result.length, Date.now() - now));
+
+            return result;
           });
       });
   }
@@ -149,8 +191,7 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
   function processLoadHits(options, uids, memberships, res) {
 
     // Transform profile hits
-    var commaRegexp = new RegExp('[,]');
-    var searchAddressItems = [];
+    var commaRegexp = new RegExp(',');
     var items = res.hits.hits.reduce(function(res, hit) {
       var pubkey =  hit._id;
       var uid = uids[pubkey];
@@ -164,19 +205,12 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
 
       // Set geo point
       item.geoPoint = hit._source.geoPoint;
-      if (!item.geoPoint || !item.geoPoint.lat || !item.geoPoint.lon) {
-        if (!options.searchAddress || !item.city) return res; // no city: exclude this item
-        item.searchAddress = item.city && ((hit._source.address ? hit._source.address+ ', ' : '') + item.city);
-        searchAddressItems.push(item);
+      // Convert lat/lon to float (if need)
+      if (item.geoPoint.lat && typeof item.geoPoint.lat === 'string') {
+        item.geoPoint.lat = parseFloat(item.geoPoint.lat.replace(commaRegexp, '.'));
       }
-      else {
-        // Convert lat/lon to float (if need)
-        if (item.geoPoint.lat && typeof item.geoPoint.lat === 'string') {
-          item.geoPoint.lat = parseFloat(item.geoPoint.lat.replace(commaRegexp, '.'));
-        }
-        if (item.geoPoint.lon && typeof item.geoPoint.lon === 'string') {
-          item.geoPoint.lon = parseFloat(item.geoPoint.lon.replace(commaRegexp, '.'));
-        }
+      if (item.geoPoint.lon && typeof item.geoPoint.lon === 'string') {
+        item.geoPoint.lon = parseFloat(item.geoPoint.lon.replace(commaRegexp, '.'));
       }
 
       // Avatar
@@ -190,38 +224,10 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
       }
 
       // Description
-      item.description = hit._source.description && esHttp.util.parseAsHtml(hit._source.description);
+      //item.description = hit._source.description && esHttp.util.parseAsHtml(hit._source.description);
 
       return item.geoPoint ? res.concat(item) : res;
     }, []);
-
-    // Resolve missing positions by addresses (only if google API enable)
-    if (searchAddressItems.length) {
-      var now = Date.now();
-      console.debug('[map] [wot] Search positions of {0} addresses...'.format(searchAddressItems.length));
-      var counter = 0;
-
-      return $q.all(searchAddressItems.reduce(function(res, item) {
-        return !item.city ? res : res.concat(esGeo.google.searchByAddress(item.searchAddress)
-          .then(function(res) {
-            if (!res || !res.length) return;
-            item.geoPoint = res[0];
-            // If search on city, add a randomized delta to avoid superposition
-            if (item.city == item.searchAddress) {
-              item.geoPoint.lon += Math.random() / 1000;
-              item.geoPoint.lat += Math.random() / 1000;
-            }
-            delete item.searchAddress; // not need anymore
-            items.push(item);
-            counter++;
-          })
-          .catch(function() {/*silent*/}));
-      }, []))
-        .then(function(){
-          console.debug('[map] [wot] Resolved {0}/{1} addresses in {2}ms'.format(counter, searchAddressItems.length, Date.now()-now));
-          return items;
-        });
-    }
 
     return $q.when(items);
   }

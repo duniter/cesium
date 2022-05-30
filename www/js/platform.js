@@ -513,9 +513,16 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
             ionic.Platform.exitApp();
           });
       }, 100);
+    })
+    // Make sure platform is started
+    .then(csPlatform.ready)
 
-      // Make sure platform is started
-      return csPlatform.ready();
+    // Applying some settings
+    .then(function(){
+      // Applying UI effects, if now already disable (e.g. because of poor platform grade)
+      if (UIUtils.motion.enable) {
+        UIUtils.setEffects($rootScope.settings.uiEffects);
+      }
     });
   })
 ;
