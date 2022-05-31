@@ -206,11 +206,13 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       var now = Date.now();
       console.info("[platform] Checking if node is synchronized...");
 
-      csNetwork.getSynchronizedBmaPeers(BMA, {
+      return csNetwork.getSynchronizedBmaPeers(BMA, {
         timeout:  Math.min(csConfig.timeout, 3000 /*3s max*/)
       })
         .then(function(peers) {
           console.info("[platform] Network scanned in {0}ms, {1} peers (UP and synchronized) found".format(Date.now() - now, peers.length));
+
+          if (!peers.length) return; // No peer found: exit
 
           // TODO: store sync peers in storage ?
           //csSettings.data.
