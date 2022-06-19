@@ -45,7 +45,9 @@
     <!-- CONTENT -->
     <ion-content class="has-header" scroll="true">
 
-      <div class="padding text-center" ><b>{{ identity.uid }} - {{ identity.pubkey }}</b></div>
+      <div class="padding text-center" ><b>
+        {{ identity.uid }} - {{:rebind:identity.pubkey|formatPubkey: {full: true, checksum: formData.checksum} }}
+      </b></div>
 
       <div class="padding" translate>ACCOUNT.CERTIFICATION_MODAL.INFOS</div>
 
