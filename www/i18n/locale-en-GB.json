@@ -565,6 +565,24 @@
     "SELECT_WALLET_MODAL": {
       "TITLE": "Wallet selection"
     },
+    "CERTIFICATION_MODAL": {
+      "CHECKLIST_TITLE": "Certification check list",
+      "INFOS": "Each member is responsible for the security of Ğ1 currency. Before certifying this person's identity, you should have performed few checks. Please answer following questions:",
+      "BTN_ALL_CHECK": "Certify",
+      "CHECKLIST_CONDITIONS_NOT_MET": "Certification has not been sent. All answers are not right. Please double-check each point with the person you want to certify.",
+      "QUESTIONS": {
+        "WELL_KNOWN": "Do you know <b>well</b> the person you are about to certify? Do you know other people who also know thes person well?",
+        "REVOCATION": "Has this person downloaded their <b>revocation document</b> and do they know where to find it?",
+        "CONTACT": "Have you <b>had contact</b> with this person by many means, and did they answer?",
+        "DOUBLE_IDENTITY": "The person should own <b>only one active member identity</b>. Do you think they own another one?",
+        "MASTER_ACCOUNT": "Does this person own their accounts secrets? Have they already <b>sent money from their account</b> at least once?",
+        "LICENSE": "Has this person <b>understood the Duniter license</b>? Do they agree to comply with it for future certifications?",
+        "CREDENTIALS": "Was the account created with <b>long and complex ID/Password</b> (ex. passphrases) ? Did the person understand that both ID and password must remain secret ? Are they <b>sure to remember them</b> or to be able to find them?",
+        "PUBLIC_KEY_DIFFERENT": "The <b>public key</b> that is shown must be <b>identical</b> to the one the person gave you. The public keys are they <b>different</b> ?"
+      },
+      "REMINDER_TITLE": "Reminder",
+      "SHORT_LICENSE_REMINDER": "<p>You may remind the person to certify different certification parameters:</p><p>- Each member can certify 100 other identities at most.</p><p>- The certifications are saved with a 5 days interval.</p><p>- A new identity must gather at least 5 certifications in less than 2 months.</p><p>- A member must renew its membership at least once a year.</p><p>- Certifications have a lifespan of two years.</p>"
+    },
     "WALLET_LIST": {
       "TITLE": "My wallets",
       "BTN_NEW": "Add a wallet",
