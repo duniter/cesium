@@ -162,7 +162,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 ;
 
 function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $ionicPopover, $ionicHistory,
-                             UIUtils, csConfig, csCurrency, csSettings, Device, BMA, csWallet, csWot) {
+                             UIUtils, csConfig, csCurrency, csSettings, Device, BMA, csWallet, csWot, csCrypto) {
   'ngInject';
 
   var defaultSearchLimit = 10;
@@ -293,10 +293,27 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
 
     $scope.search.loading = true;
     $scope.search.type = 'text';
+
+    // If checksum is correct, search on simple pubkey
+    let pubkey_ck;
+    if (BMA.regexp.PUBKEY_WITH_CHECKSUM.test(text)) {
+      console.debug("[wot] Validating pubkey checksum... ");
+      let matches = BMA.regexp.PUBKEY_WITH_CHECKSUM.exec(text);
+      console.log(matches)
+      pubkey = matches[1];
+      let checksum = matches[2];
+      let expectedChecksum = csCrypto.util.pkChecksum(pubkey);
+      if (checksum === expectedChecksum) {
+        console.debug("[wot] checksum {" + checksum + "} valid for pubkey {" + pubkey + "}")
+        text = pubkey
+        pubkey_ck = pubkey + ':' + checksum
+      }
+    }
+
     return csWot.search(text)
       .then(function(idties){
         if ($scope.search.type !== 'text') return; // could have change
-        if ($scope.search.text.trim() !== text) return; // search text has changed before received response
+        if (! $scope.search.text.trim() in [text, pubkey_ck] ) return; // search text has changed before received response
 
         if ((!idties || !idties.length) && (BMA.regexp.PUBKEY.test(text) || BMA.regexp.PUBKEY_WITH_CHECKSUM.test(text))) {
           return BMA.uri.parse(text)
