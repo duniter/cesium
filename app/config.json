@@ -64,6 +64,10 @@
       {
         "host": "g1.duniter.org",
         "port": 443
+      },
+      {
+        "host": "g1.texu.es",
+        "port": 7443
       }
     ],
     "developers": [
