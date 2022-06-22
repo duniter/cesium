@@ -856,6 +856,15 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
           return api.data.raisePromise.search(text, idties, 'pubkey')
             .then(function() {
 
+              // remove CS+ ids that match pubkey regex (considered attacks) - fix #959
+              idties = idties.filter(function(idty) {
+                if (BMA.regexp.PUBKEY.test(text) || BMA.regexp.PUBKEY_WITH_CHECKSUM.test(text)) {
+                  text_pk = text.split(':')[0]
+                  return idty.pubkey == text_pk
+                }
+                return true;
+              })
+
               // Make sure to add uid to new results - fix #488
               if (idties.length > lookupResultCount) {
                 var idtiesWithoutUid = _.filter(idties, function(idty) {
