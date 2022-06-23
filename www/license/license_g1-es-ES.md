@@ -1,8 +1,8 @@
-Licencia Ğ1 - v0.2.8
+Licencia Ğ1 - v0.2.9
 ====================
 
-:fecha: 2017-04-04 12:59
-:modificada: 2022-03-21 19:15
+:Date: 2017-04-04 12:59
+:Modified: 2022-03-21 19:15
 
 **Licencia de la moneda y compromiso de responsabilidad.**
 
@@ -13,7 +13,7 @@ Cualquier evento de encuentro relacionado con Ğ1 debe ir acompañado de la tran
 Red de confianza Ğ1 (RdC Ğ1)
 ------------------------------
 
-** Aviso de advertencia :** Certificar no solo es asegurarse de que te has encontrado físicamente con la persona. Es asegurar a la comunidad Ğ1 que conoces a la persona lo suficientemente bien y que sabrás cómo contactarla fácilmente, y ser capaz de identificar una cuenta duplicada o falsa realizada por una persona que has certificado, u otro tipo de problema (desaparición ...), efectuando verificaciones comparativas que revelen el problema.
+** Aviso de advertencia :** Certificar no solo es asegurarse de que te has encontrado físicamente con la persona. Es asegurar a la comunidad Ğ1 que conoces a la persona lo suficientemente bien y que sabrás cómo contactarla fácilmente, y ser capaz de identificar una cuenta duplicada o falsa realizada por una persona que has certificado, u otro tipo de problema (desaparición ...), efectuando verificaciones comparativas que revelen el problema.
 
 **Consejos fuertemente recomendados**
 
