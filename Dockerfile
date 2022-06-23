@@ -1,15 +1,15 @@
 FROM  node:12
 LABEL maintainer="benoit [dot] lavenier [at] e-is [dot] pro"
-LABEL version="1.6.12"
+LABEL version="1.7.0-rc1"
 LABEL description="Cesium Wallet for Ğ1 libre currency"
 
-ARG CESIUM_VER="1.6.12"
+ARG CESIUM_VER="1.7.0-rc1"
 
 ENV DEBIAN_FRONTEND=noninteractive \
-    NODE_VERSION=12.21.0 \
-    NPM_VERSION=7.14.0 \
-    YARN_VERSION=1.22.10 \
-    IONIC_CLI_VERSION=6.16.3 \
+    NODE_VERSION=12.22.8 \
+    NPM_VERSION=8.3.0 \
+    YARN_VERSION=1.22.17 \
+    IONIC_CLI_VERSION=6.19.1 \
     CORDOVA_VERSION=10.0.0 \
     GRADLE_VERSION=6.5.1 \
     GULP_VERSION=4.0.2
