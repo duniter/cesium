@@ -161,40 +161,44 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
 
       // Start network scan
       csNetwork.start($scope.node, $scope.computeOptions())
-        .then(function(){
-          if (!$scope.refreshing) {
-            $scope.refreshing = true;
-            csWot.extendAll(csNetwork.data.peers)
-              .then(function() {
-                // Avoid to refresh if view has been leaving
-                if ($scope.networkStarted) {
-                  $scope.updateView(csNetwork.data);
-                }
-                $scope.refreshing = false;
-              });
-          }
+        .then(function() {
+          $scope.refresh();
         });
 
       // Catch event on new peers
       $scope.listeners.push(
-        csNetwork.api.data.on.changed($scope, function(data){
-          if (!$scope.refreshing) {
-            $scope.refreshing = true;
-            csWot.extendAll(data.peers)
-              .then(function() {
-                // Avoid to refresh if view has been leaving
-                if ($scope.networkStarted) {
-                  $scope.updateView(data);
-                }
-                $scope.refreshing = false;
-              });
-          }
+        csNetwork.api.data.on.changed($scope, function(data) {
+          $scope.refresh(data);
         }));
     }
 
     // Show help tip
     $scope.showHelpTip();
   };
+
+  $scope.refresh = function(data) {
+    data = csNetwork.data || data;
+    if (!data || $scope.refreshing /*|| !$scope.networkStarted*/) return; // Skip if no data, or already refreshing
+
+    // Mark as refreshing
+    $scope.refreshing = true;
+
+    // Add name+avatar to peers
+    csWot.extendAll(data.peers)
+      .then(function() {
+        // Avoid to refresh if view has been leaving
+        if ($scope.networkStarted) {
+          $scope.updateView(data);
+        }
+      })
+      .catch(function(err) {
+        console.error(err);
+        // Continue
+      })
+      .then(function() {
+        $scope.refreshing = false;
+      });
+  }
 
   $scope.updateView = function(data) {
     console.debug("[peers] Updating UI");

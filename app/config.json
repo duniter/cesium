@@ -19,7 +19,7 @@
     "helptip": {
       "enable": true,
       "installDocUrl": {
-        "fr-FR": "https://duniter.org/fr/miner-des-blocs/installer/",
+        "fr-FR": "https://duniter.fr/wiki/doc/installer/",
         "en": "https://duniter.org/en/wiki/duniter/install/"
       }
     },
@@ -27,7 +27,9 @@
       "en": "license/license_g1-en",
       "fr-FR": "license/license_g1-fr-FR",
       "es-ES": "license/license_g1-es-ES",
-      "eo-EO": "license/license_g1-eo-EO"
+      "eo-EO": "license/license_g1-eo-EO",
+      "it-IT": "license/license_g1-it-IT",
+      "pt-PT": "license/license_g1-pt-PT"
     },
     "feed": {
       "jsonFeed": {
@@ -117,15 +119,17 @@
     "helptip": {
       "enable": true,
       "installDocUrl": {
-        "fr-FR": "https://duniter.org/fr/miner-des-blocs/installer/",
+        "fr-FR": "https://duniter.fr/wiki/doc/installer/",
         "en": "https://duniter.org/en/wiki/duniter/install/"
       }
     },
     "license": {
-      "fr-FR": "license/license_g1-fr-FR",
       "en": "license/license_g1-en",
+      "fr-FR": "license/license_g1-fr-FR",
       "es-ES": "license/license_g1-es-ES",
-      "eo-EO": "license/license_g1-eo-EO"
+      "eo-EO": "license/license_g1-eo-EO",
+      "it-IT": "license/license_g1-it-IT",
+      "pt-PT": "license/license_g1-pt-PT"
     },
     "feed": {
       "jsonFeed": {
@@ -221,7 +225,7 @@
     "helptip": {
       "enable": false,
       "installDocUrl": {
-        "fr-FR": "https://duniter.org/fr/miner-des-blocs/installer/",
+        "fr-FR": "https://duniter.fr/wiki/doc/installer/",
         "en": "https://duniter.org/en/wiki/duniter/install/"
       }
     },
@@ -279,15 +283,17 @@
     "helptip": {
       "enable": false,
       "installDocUrl": {
-        "fr-FR": "https://duniter.org/fr/wiki/duniter/installer/",
+        "fr-FR": "https://duniter.fr/wiki/doc/installer/",
         "en": "https://duniter.org/en/wiki/duniter/install/"
       }
     },
     "license": {
-      "fr-FR": "license/license_g1-fr-FR",
       "en": "license/license_g1-en",
+      "fr-FR": "license/license_g1-fr-FR",
       "es-ES": "license/license_g1-es-ES",
-      "eo-EO": "license/license_g1-eo-EO"
+      "eo-EO": "license/license_g1-eo-EO",
+      "it-IT": "license/license_g1-it-IT",
+      "pt-PT": "license/license_g1-pt-PT"
     },
     "node": {
       "host": "g1.e-is.pro",
@@ -299,6 +305,10 @@
       },
       {
         "host": "g1.e-is.pro",
+        "port": 443
+      },
+      {
+        "host": "g1.librelois.fr",
         "port": 443
       }
     ],
@@ -354,13 +364,18 @@
     "httpsMode": false,
     "helptip": {
       "enable": false,
-      "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+      "installDocUrl": {
+        "fr-FR": "https://duniter.fr/wiki/doc/installer/",
+        "en": "https://duniter.org/en/wiki/duniter/install/"
+      }
     },
     "license": {
-      "fr-FR": "license/license_g1-fr-FR.txt",
-      "en": "license/license_g1-en.txt",
+      "en": "license/license_g1-en",
+      "fr-FR": "license/license_g1-fr-FR",
       "es-ES": "license/license_g1-es-ES",
-      "eo-EO": "license/license_g1-eo-EO"
+      "eo-EO": "license/license_g1-eo-EO",
+      "it-IT": "license/license_g1-it-IT",
+      "pt-PT": "license/license_g1-pt-PT"
     },
     "node": {
       "host": "g1.duniter.org",
