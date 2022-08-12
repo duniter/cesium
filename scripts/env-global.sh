@@ -25,10 +25,10 @@ NODEJS_VERSION=12
 
 ANDROID_NDK_VERSION=19.2.5345600
 ANDROID_SDK_VERSION=29.0.3
-ANDROID_SDK_CLI_VERSION=6858069
+ANDROID_SDK_CLI_VERSION=8512546 # See https://developer.android.com/studio#command-tools
 ANDROID_SDK_ROOT="${HOME}/Android/Sdk"
 ANDROID_ALTERNATIVE_SDK_ROOT=/usr/lib/android-sdk
-ANDROID_SDK_CLI_ROOT=${ANDROID_SDK_ROOT}/cli
+ANDROID_SDK_CLI_ROOT=${ANDROID_SDK_ROOT}/cmdline-tools/${ANDROID_SDK_CLI_VERSION}
 ANDROID_OUTPUT_APK=${PROJECT_DIR}/platforms/android/app/build/outputs/apk
 ANDROID_OUTPUT_APK_DEBUG=${ANDROID_OUTPUT_APK}/debug
 ANDROID_OUTPUT_APK_RELEASE=${ANDROID_OUTPUT_APK}/release
@@ -66,11 +66,11 @@ if test -z "${JAVA_HOME}"; then
   # Check the Java version
   JAVA_VERSION=$(java -version 2>&1 | egrep "(java|openjdk) version" | awk '{print $3}' | tr -d \")
   if test $? -ne 0 || test -z "${JAVA_VERSION}"; then
-    echo "No Java JRE 1.8 found in machine. This is required for Android artifacts."
+    echo "No Java JRE 11 found in machine. This is required for Android artifacts."
   else
     JAVA_MAJOR_VERSION=$(echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[1]}')
     JAVA_MINOR_VERSION=$(echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[2]}')
-    if ! test "${JAVA_MAJOR_VERSION}" == "1" || ! test "${JAVA_MINOR_VERSION}" == "8"; then
+    if ! test "${JAVA_MAJOR_VERSION}" == "11" || ! test "${JAVA_MINOR_VERSION}" == "0"; then
       echo "ERROR: Require a Java JRE in version 1.8, but found ${JAVA_VERSION}. You can override your default JAVA_HOME in '.local/env.sh'."
     fi
   fi
@@ -95,7 +95,6 @@ export PATH \
   ANDROID_SDK_ROOT \
   ANDROID_SDK_CLI_ROOT \
   CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL
-
 
 # Node JS
 export NVM_DIR="$HOME/.nvm"
