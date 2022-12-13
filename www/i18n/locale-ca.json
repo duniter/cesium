@@ -12,17 +12,26 @@
     "BTN_SEND": "Envia",
     "BTN_SEND_MONEY": "Fes un pagament",
     "BTN_SEND_MONEY_SHORT": "Pagament",
+<<<<<<< HEAD
     "BTN_SAVE": "Guarda",
     "BTN_YES_SAVE": "Sí, guarda",
     "BTN_YES_CONTINUE": "Sí, continua",
     "BTN_SHOW": "Mostra",
     "BTN_SHOW_PUBKEY": "Mostra la clau",
+=======
+    "BTN_SAVE": "Desa",
+    "BTN_YES_SAVE": "Sí, desa",
+    "BTN_YES_CONTINUE": "Sí, continua",
+    "BTN_SHOW": "Mira",
+    "BTN_SHOW_PUBKEY": "Mira la clau",
+>>>>>>> upstream/master
     "BTN_RELATIVE_UNIT": "Mostra els imports en DU",
     "BTN_BACK": "Anterior",
     "BTN_NEXT": "Següent",
     "BTN_IMPORT": "Importa",
     "BTN_CANCEL": "Cancel·la",
     "BTN_CLOSE": "Tanca",
+<<<<<<< HEAD
     "BTN_LATER": "Després",
     "BTN_LOGIN": "Connecta't",
     "BTN_LOGOUT": "Desconnecta't",
@@ -34,6 +43,19 @@
     "BTN_SEARCH": "Busca",
     "BTN_REFRESH": "Actualitza",
     "BTN_RETRY": "Torna-ho a provar",
+=======
+    "BTN_LATER": "Més tard",
+    "BTN_LOGIN": "Connectar-se",
+    "BTN_LOGOUT": "Desconnexió",
+    "BTN_ADD_ACCOUNT": "Compte cou",
+    "BTN_SHARE": "Comparteix",
+    "BTN_EDIT": "Modifica",
+    "BTN_DELETE": "Supreix",
+    "BTN_ADD": "Afegeix",
+    "BTN_SEARCH": "Busca",
+    "BTN_REFRESH": "Actualitza",
+    "BTN_RETRY": "Comença de bell nou",
+>>>>>>> upstream/master
     "BTN_START": "Comença",
     "BTN_CONTINUE": "Continua",
     "BTN_CREATE": "Crea",
@@ -42,6 +64,7 @@
     "BTN_HELP_TOUR": "Visita guiada",
     "BTN_HELP_TOUR_SCREEN": "Explica'm aquesta pantalla",
     "BTN_DOWNLOAD": "Descarrega",
+<<<<<<< HEAD
     "BTN_DOWNLOAD_ACCOUNT_STATEMENT": "Descarrega l'historial del compte",
     "BTN_MODIFY": "Modifica",
     "CHOOSE_FILE": "Arrossegui el fitxer<br/>o cliqui per seleccionar-lo",
@@ -54,6 +77,20 @@
     "FROM": "De",
     "TO": "A",
     "COPY": "Còpia",
+=======
+    "BTN_DOWNLOAD_ACCOUNT_STATEMENT": "Descarrega l'històric del compte",
+    "BTN_MODIFY": "Modifica",
+    "CHOOSE_FILE": "Arrassegueu el fitxer<br/>o cliqui'l per a seleccionar-lo",
+    "DAYS": "Dies",
+    "NO_ACCOUNT_QUESTION": "Encara no sou membre? Faci's un compte!",
+    "SEARCH_NO_RESULT": "No s'ha trobat res",
+    "LOADING": "Espereu si us plau...",
+    "LOADING_WAIT": "Espereu si us plau...<br/><small>(en espera de tenir un node disponible)</small>",
+    "SEARCHING": "Cerca en procés...",
+    "FROM": "De",
+    "TO": "A",
+    "COPY": "Copia",
+>>>>>>> upstream/master
     "LANGUAGE": "Idioma",
     "UNIVERSAL_DIVIDEND": "Dividend universal",
     "UD": "DU",
@@ -62,23 +99,40 @@
     "DATE_SHORT_PATTERN": "DD/MM/YY",
     "DATE_MONTH_YEAR_PATTERN": "MM/YYYY",
     "EMPTY_PARENTHESIS": "(buit)",
+<<<<<<< HEAD
     "UID": "Renom",
+=======
+    "UID": "Pseudònim",
+>>>>>>> upstream/master
     "ENABLE": "Activat",
     "DISABLE": "Desactivat",
     "RESULTS_LIST": "Resultats:",
     "RESULTS_COUNT": "{{count}} resultats",
+<<<<<<< HEAD
     "EXECUTION_TIME": "executat en {{duration|formatDurationMs}}",
     "SHOW_VALUES": "Mostra la contrasenya",
+=======
+    "EXECUTION_TIME": "executant en {{duration|formatDurationMs}}",
+    "SHOW_VALUES": "Mostra les contrasenyes",
+>>>>>>> upstream/master
     "POPOVER_ACTIONS_TITLE": "Opcions",
     "POPOVER_FILTER_TITLE": "Filtres",
     "SHOW_MORE": "Mostra'n més",
     "SHOW_MORE_COUNT": "(límit actual {{limit}})",
     "POPOVER_SHARE": {
+<<<<<<< HEAD
       "TITLE": "Compartir",
       "SHARE_ON_TWITTER": "Compartir a Twitter",
       "SHARE_ON_FACEBOOK": "Compartir a Facebook",
       "SHARE_ON_DIASPORA": "Compartir a Diaspora*",
       "SHARE_ON_GOOGLEPLUS": "Compartir a Google+"
+=======
+      "TITLE": "Comparteix",
+      "SHARE_ON_TWITTER": "Comparteix a Twitter",
+      "SHARE_ON_FACEBOOK": "Comparteix a Facebook",
+      "SHARE_ON_DIASPORA": "Comparteix a Diaspora*",
+      "SHARE_ON_GOOGLEPLUS": "Comparteix a Google+"
+>>>>>>> upstream/master
     },
     "FILE": {
       "DATE" : "Data:",
@@ -100,6 +154,7 @@
     "WALLETS": "Moneders",
     "SETTINGS": "Ajustos",
     "NETWORK": "Xarxa",
+<<<<<<< HEAD
     "TRANSACTIONS": "Moviments"
   },
   "ABOUT": {
@@ -155,6 +210,63 @@
     "KEEP_AUTH": "Caducidad de la autenticación",
     "KEEP_AUTH_SHORT": "Caducidad",
     "KEEP_AUTH_HELP": "Defina cuándo expira su sesión",
+=======
+    "TRANSACTIONS": "Transaccions"
+  },
+  "ABOUT": {
+    "BTN_OPEN_DEV_WINDOW": "Obriu la finestra de depuració",
+    "TITLE": "A propòsit de",
+    "LICENSE": "Programari <b>lliure</b> (llicència GNU AGPLv3).",
+    "LATEST_RELEASE": "Existeix una <b>versió més nova</b> de {{'COMMON.APP_NAME' | translate}} (<b>v{{version}}</b>)",
+    "PLEASE_UPDATE": "Si us plau feu l'actualització {{'COMMON.APP_NAME' | translate}} (última versió: <b>v{{version}}</b>)",
+    "CODE": "Codi font:",
+    "OFFICIAL_WEB_SITE": "Web oficial:",
+    "DEVELOPERS": "Desenvolupat per:",
+    "FORUM": "Fòrum:",
+    "PLEASE_REPORT_ISSUE": "Si us plau, informeu-nos de les anomalies que trobeu",
+    "REPORT_ISSUE": "Informeu d'un problema"
+  },
+  "HOME": {
+    "FEED_SOURCE": "Font",
+    "READ_MORE": "Llegiu més",
+    "SHOW_ALL_FEED": "Veure tot",
+    "TITLE": "Cesium",
+    "WELCOME": "Benvingut/da a l'aplicació Cesium!",
+    "MESSAGE": "Rebeu i envieu moneda lliure {{currency|abbreviate}} fàcilment",
+    "BTN_CURRENCY": "Exploreu la moneda",
+    "BTN_ABOUT": "A propòsit de",
+    "BTN_HELP": "Ajuda en línea",
+    "REPORT_ISSUE": "Informeu d'una anomalia",
+    "NOT_YOUR_ACCOUNT_QUESTION": "Aquest compte <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}} no és vostre</b>?",
+    "BTN_CHANGE_ACCOUNT": "Desconnecta aquest compte",
+    "CONNECTION_ERROR": "Node <b>{{server}}</b> inabastable o adreça invàlida.<br/><br/>Comproveu bé la vostra connexió a Internet, o el node Duniter <a class=\"positive\" ng-click=\"doQuickFix('settings')\">als ajustos</a>."
+  },
+  "SETTINGS": {
+    "TITLE": "Ajustos",
+    "DISPLAY_DIVIDER": "Visualització",
+    "STORAGE_DIVIDER": "Emmagatzematge",
+    "NETWORK_SETTINGS": "Xarxa",
+    "PEER": "Adreça del node Duniter",
+    "PEER_CHANGED_TEMPORARY": "Adreça usada temporalment",
+    "PEER_SHORT": "Node Duniter",
+    "PERSIST_CACHE": "Conserva les dades de navegació (experimental)",
+    "PERSIST_CACHE_HELP": "Permet una navegació més ràpida, conservant localment les dades rebudes, per fer servir d'una sessió a una altra.",
+    "USE_LOCAL_STORAGE": "Activa l'emmagatzematge local",
+    "USE_LOCAL_STORAGE_HELP": "Permet conservar els vostres ajustos",
+    "WALLETS_SETTINGS": "Els meus moneders",
+    "USE_WALLETS_ENCRYPTION": "Xifra el llistat",
+    "USE_WALLETS_ENCRYPTION_HELP": "Permet protegir el listat dels vostres moneders (mitjançant xifrat), exigint una autenticació per accedir-hi.",
+    "ENABLE_HELPTIP": "Activa l'ajuda contextual",
+    "ENABLE_UI_EFFECTS": "Activa els efectes visuals",
+    "HISTORY_SETTINGS": "Transaccions del compte",
+    "DISPLAY_UD_HISTORY": "Mostra els DU creats",
+    "TX_HISTORY_AUTO_REFRESH": "Activa l'actualització automàtica",
+    "TX_HISTORY_AUTO_REFRESH_HELP": "Actualitza el saldo i les transaccions automàticament, amb cada bloc nou.",
+    "AUTHENTICATION_SETTINGS": "Autenticació",
+    "KEEP_AUTH": "Caducitat de l'autenticació",
+    "KEEP_AUTH_SHORT": "Caducitat",
+    "KEEP_AUTH_HELP": "Defineixi quan expira la seva sessió",
+>>>>>>> upstream/master
     "KEEP_AUTH_OPTION": {
       "NEVER": "Después de cada operación",
       "SECONDS": "Después de {{value}} segundos de inactividad",

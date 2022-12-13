@@ -48,7 +48,8 @@
     </div>
 
     <ion-list ng-if="!search.loading"
-              class="padding-top {{::motion.ionListClass}}">
+              class="padding-top"
+              ng-class="::motion.ionListClass">
       <div ng-repeat="res in search.results"
          class="item item-border-large  item-text-wrap  ink"
          ng-class="::{'item-divider': !res.address, 'item-icon-left item-icon-right': res.address}"

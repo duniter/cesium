@@ -40,7 +40,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     resetData = function(init) {
       data.loaded = false;
-      data.pubkey= null;
+      data.pubkey = null;
+      data.checksum = null;
       data.qrcode=null;
 
       data.uid = null;
@@ -566,12 +567,12 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           var seckey = res[0];
           var pubkey = res[1];
           var uid = res[2];
-          if (!pubkey || pubkey == 'null') return;
+          if (!pubkey || pubkey === 'null') return;
 
           console.debug('[wallet] Restore {' + pubkey.substring(0, 8) + '} from local storage');
 
           var keypair;
-          if (seckey && seckey.length && seckey != 'null') {
+          if (seckey && seckey.length && seckey !== 'null') {
             try {
               keypair = {
                 signPk: CryptoUtils.util.decode_base58(pubkey),
@@ -887,27 +888,32 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         loadPromise,
 
         // Create the QR code
-        loadQrCode()
+        loadQrCode(),
+
+        // Compute the checksum (if need)
+        csCrypto.ready().then(function() {
+          data.checksum = data.checksum || csCrypto.util.pkChecksum(data.pubkey);
+        })
       ])
-        // Warn if wallet has been never used - see #167
         .then(function() {
-          var unused = isNeverUsed();
+
+          // Warn if wallet has been never used - see #167
+          var unused = alertIfUnusedWallet && isNeverUsed();
           var showAlert = alertIfUnusedWallet && !isNew() && unused === true;
           if (!showAlert) return true;
           return UIUtils.loading.hide()
-            .then(function() {
+            .then(function () {
               return UIUtils.alert.confirm('CONFIRM.LOGIN_UNUSED_WALLET', 'CONFIRM.LOGIN_UNUSED_WALLET_TITLE', {
                 cancelText: 'COMMON.BTN_CONTINUE',
                 okText: 'COMMON.BTN_RETRY'
               });
             })
-            .then(function(retry) {
+            .then(function (retry) {
               if (retry) {
-                return logout().then(function() {
+                return logout().then(function () {
                   throw 'RETRY';
                 });
-              }
-              else {
+              } else {
                 // Remembering to not ask for confirmation
                 if (csSettings.data.wallet.alertIfUnusedWallet) {
                   csSettings.data.wallet.alertIfUnusedWallet = false;
@@ -924,8 +930,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           if (confirm) {
             return data;
           }
-          else { // cancel
-
+          else { // user cancelled
             throw 'CANCELLED';
           }
         });
@@ -2082,7 +2087,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     newChildInstance =  function() {
       // Return max(id) + 1
-      var walletId = (data.children || []).reduce(function(res, wallet) {
+      var walletId = (data.children || []).reduce(function(res, wallet) {
           return Math.max(res, wallet.id);
         }, 0) + 1;
       return service.instance(walletId, BMA);

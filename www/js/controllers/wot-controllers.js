@@ -162,7 +162,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 ;
 
 function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $ionicPopover, $ionicHistory,
-                             UIUtils, csConfig, csCurrency, csSettings, Device, BMA, csWallet, csWot) {
+                             UIUtils, csConfig, csCurrency, csSettings, Device, BMA, csWallet, csWot, csCrypto) {
   'ngInject';
 
   var defaultSearchLimit = 10;
@@ -204,13 +204,13 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
             $scope.doGetPending(0, undefined, true/*skipLocationUpdate*/);
           }
           // get new comers
-          else if (params.type == 'newcomers' || (!csConfig.initPhase && !params.type)) {
+          else if (params.type === 'newcomers' || (!csConfig.initPhase && !params.type)) {
             $scope.doGetNewcomers(0, undefined, true/*skipLocationUpdate*/);
           }
-          else if (params.type == 'pending') {
+          else if (params.type === 'pending') {
             $scope.doGetPending(0, undefined, true/*skipLocationUpdate*/);
           }
-          else if (params.type == 'wallets') {
+          else if (params.type === 'wallets') {
             $scope.doGetWallets(0, undefined, true/*skipLocationUpdate*/);
           }
 
@@ -263,7 +263,7 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
         stateParams.q = text;
       }
     }
-    else if ($scope.search.type != 'last') {
+    else if ($scope.search.type !== 'last') {
       stateParams.type = $scope.search.type;
     }
 
@@ -293,10 +293,28 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
 
     $scope.search.loading = true;
     $scope.search.type = 'text';
+
+    // If checksum is correct, search on simple pubkey
+    let pubkeyWithCk;
+    if (BMA.regexp.PUBKEY_WITH_CHECKSUM.test(text)) {
+      console.debug("[wot] Validating pubkey checksum... ");
+      let matches = BMA.regexp.PUBKEY_WITH_CHECKSUM.exec(text);
+      console.log(matches)
+      pubkey = matches[1];
+      let checksum = matches[2];
+      let expectedChecksum = csCrypto.util.pkChecksum(pubkey);
+      if (checksum === expectedChecksum) {
+        console.debug("[wot] checksum {" + checksum + "} valid for pubkey {" + pubkey + "}")
+        text = pubkey
+        pubkeyWithCk = pubkey + ':' + checksum
+      }
+    }
+
     return csWot.search(text)
       .then(function(idties){
-        if ($scope.search.type != 'text') return; // could have change
-        if ($scope.search.text.trim() !== text) return; // search text has changed before received response
+        if ($scope.search.type !== 'text') return; // could have change
+        originText = $scope.search.text.trim();
+        if (originText !== text && originText !== pubkeyWithCk) return; // search text has changed before received response
 
         if ((!idties || !idties.length) && (BMA.regexp.PUBKEY.test(text) || BMA.regexp.PUBKEY_WITH_CHECKSUM.test(text))) {
           return BMA.uri.parse(text)
@@ -366,7 +384,7 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
 
     return searchFunction(offset, size)
       .then(function(res){
-        if ($scope.search.type != 'pending') return false; // could have change
+        if ($scope.search.type !== 'pending') return false; // could have change
         $scope.doDisplayResult(res && res.hits, offset, size, res && res.total);
         // Always disable "more" on initphase
         $scope.search.hasMore = !csCurrency.data.initPhase && $scope.search.hasMore;
@@ -397,7 +415,7 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
 
     return csWallet.children.all()
       .then(function(children) {
-        if (!children || $scope.search.type != 'wallets') return false; // could have change
+        if (!children || $scope.search.type !== 'wallets') return false; // could have change
         var res = [csWallet].concat(children).reduce(function(res, wallet, index) {
           var item = {
             id: index,

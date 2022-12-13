@@ -13,7 +13,7 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
           lat: 46.5588603, lng: 4.229736328124999, zoom: 6
         }
       },
-      LOCALIZE_ZOOM: 15
+      LOCALIZE_ZOOM: 16
     },
     data = {
       cache: {}

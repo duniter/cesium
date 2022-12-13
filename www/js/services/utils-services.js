@@ -47,7 +47,11 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
     }
 
     return $q(function(resolve) {
-      $translate([err, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'].concat(subtitle ? [subtitle] : []))
+      $translate(['ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK']
+        // avoid error "translationId must be a not empty string"
+        .concat(typeof err === 'string' ? [err] : [])
+        .concat(subtitle ? [subtitle] : [])
+      )
         .then(function (translations) {
           var message = err.message || translations[err];
           return $ionicPopup.show({
@@ -109,6 +113,7 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
   }
 
   function askConfirm(message, title, options) {
+    message = message || 'CONFIRM.CAN_CONTINUE';
     title = title || 'CONFIRM.POPUP_TITLE';
 
     options = options || {};
@@ -678,7 +683,7 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
       // but many fabs can have the same id (many view could be loaded at the same time)
       var fabs = document.getElementsByClassName('button-fab');
       _.forEach(fabs, function(fab){
-        if (fab.id == id) {
+        if (fab.id === id) {
           fab.classList.toggle('on', false);
         }
       });
@@ -708,7 +713,7 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
   }
 
   function setEffects(enable) {
-    if (exports.motion.enable === enable) return; // same
+    if (exports.motion.enable === enable) return; // unchanged
     console.debug('[UI] [effects] ' + (enable ? 'Enable' : 'Disable'));
 
     exports.motion.enable = enable;
@@ -719,7 +724,7 @@ angular.module('cesium.utils.services', ['angular-fullscreen-toggle'])
     else {
       $ionicConfig.views.transition('none');
       var nothing = {
-        class: undefined,
+        ionListClass: '',
         show: function(){}
       };
       angular.merge(exports.motion, {

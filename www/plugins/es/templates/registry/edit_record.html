@@ -48,7 +48,7 @@
         <div class="col no-padding-xs no-padding-sm">
 
           <form name="recordForm" novalidate="" ng-submit="save()">
-            <div class="list {{::motion.ionListClass}}"
+            <div class="list" ng-class="::motion.ionListClass"
                  ng-init="setForm(recordForm)">
               <div class="item" ng-if="id">
                 <h4 class="gray">

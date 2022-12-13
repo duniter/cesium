@@ -3,12 +3,17 @@
    ng-class="{'active': toggleQRCode}"
    ng-click="toggleQRCode = !toggleQRCode">
   <div class="content"></div>
-  <div class="footer item item-icon-left item-text-wrap ink"
+  <div class="footer item item-icon-left item-text-wrap item-icon-right ink"
+       ng-if="toggleQRCode"
        on-hold="copy(formData.pubkey)"
-       copy-on-click="{{:rebind:formData.pubkey}}"
+       copy-on-click="{{::formData.pubkey|formatPubkey:{full: true, checksum: formData.checksum} }}"
        ng-click="$event.stopPropagation()">
     <i class="icon ion-key"></i>
     <span>{{:locale:'COMMON.PUBKEY'|translate}}</span>
-    <h4 id="pubkey" class="dark">{{:rebind:formData.pubkey}}</h4>
+
+    <h4 class="dark text-left">{{::formData.pubkey|formatPubkey: {full: true, checksum: formData.checksum} }}</h4>
+
+    <!-- icon of the pubkey -->
+    <i  class="icon" jdenticon="{{::formData.pubkey}}" jdenticon-size="32"></i>
   </div>
 </a>

@@ -1,4 +1,4 @@
-<div class="lookupForm">
+<div class="lookupForm" bind-notifier="{locale: $root.settings.locale.id}">
 
   <div class="item no-padding">
 
@@ -22,7 +22,7 @@
 
       <input type="text"
              class="visible-xs visible-sm"
-             placeholder="{{'WOT.SEARCH_HELP'|translate}}"
+             placeholder="{{:locale:'WOT.SEARCH_HELP'|translate}}"
              ng-model="search.text"
              ng-model-options="{ debounce: 650 }"
              ng-change="doSearch()"
@@ -30,7 +30,7 @@
              select-on-click>
       <input type="text"
              class="hidden-xs hidden-sm"
-             id="{{wotSearchTextId}}" placeholder="{{'WOT.SEARCH_HELP'|translate}}"
+             id="{{wotSearchTextId}}" placeholder="{{:locale:'WOT.SEARCH_HELP'|translate}}"
              ng-model="search.text"
              on-return="doSearchText()">
       <div class="helptip-anchor-center">
@@ -43,7 +43,7 @@
     ng-class="::{'hidden-xs hidden-sm': !showResultLabel}">
     <div class="pull-left" ng-if="!search.loading && showResultLabel">
       <ng-if ng-if="search.type=='newcomers'">
-        <h4 translate>WOT.LOOKUP.NEWCOMERS</h4>
+        <h4>{{:locale:'WOT.LOOKUP.NEWCOMERS'|translate}}</h4>
         <small class="gray no-padding" ng-if="search.total">{{'WOT.LOOKUP.NEWCOMERS_COUNT'|translate:{count: search.total} }}</small>
       </ng-if>
       <ng-if ng-if="search.type=='pending'">
@@ -51,7 +51,7 @@
         <small class="gray no-padding" ng-if="search.total">{{'WOT.LOOKUP.PENDING_COUNT'|translate:{count: search.total} }}</small>
       </ng-if>
       <h4 ng-if="search.type=='text'">
-        <span translate>COMMON.RESULTS_LIST</span>
+        <span>{{:locale:'COMMON.RESULTS_LIST'|translate}}</span>
         <small class="gray" ng-if="search.total">({{search.total}})</small>
       </h4>
     </div>
@@ -63,14 +63,14 @@
          ng-class="{'button-text-positive': search.type=='newcomers'}"
          ng-click="doGetNewcomers()">
         <i class="icon ion-person-stalker"></i>
-        {{'WOT.LOOKUP.BTN_NEWCOMERS' | translate}}
+        {{:locale:'WOT.LOOKUP.BTN_NEWCOMERS' | translate}}
       </a>
       <a ng-if="enableFilter"
          class="button button-text button-small ink"
          ng-class="{'button-text-positive': search.type=='pending'}"
          ng-click="doGetPending()" class="badge-balanced">
         <i class="icon ion-clock"></i>
-        {{'WOT.LOOKUP.BTN_PENDING' | translate}}
+        {{:locale:'WOT.LOOKUP.BTN_PENDING' | translate}}
       </a>
       <a ng-if="enableWallets"
          class="button button-text button-small ink"
@@ -78,7 +78,7 @@
          ng-click="doGetWallets()" class="badge-balanced">
         <i class="icon ion-card" style="left: -1px; top: 4px; position: relative; padding-left: 3px; padding-right: 3px;"></i>
         <b class="icon-secondary ion-card" style="left: 10px; top: -4px; font-size: 14px;"> </b>
-        {{'MENU.WALLETS' | translate}}
+        {{:locale:'MENU.WALLETS' | translate}}
       </a>
 
       <!-- Allow extension here -->
@@ -86,14 +86,14 @@
       &nbsp;
       <button class="button button-small button-stable ink"
               ng-click="doSearch()">
-        {{'COMMON.BTN_SEARCH' | translate}}
+        {{:locale:'COMMON.BTN_SEARCH' | translate}}
       </button>
 
       <button class="button button-small button-positive {{parameters.okType}} ink"
               ng-if="::allowMultiple"
               ng-disabled="!selection.length"
               ng-click="next()">
-        {{parameters.okText||'COMMON.BTN_NEXT' | translate}}
+        {{:locale:parameters.okText||'COMMON.BTN_NEXT' | translate}}
       </button>
     </div>
   </div>
@@ -105,9 +105,9 @@
 
   <ng-if ng-if="!search.loading">
     <div class="assertive padding" ng-if="!search.results.length">
-      <span ng-if="search.type=='text'" translate>COMMON.SEARCH_NO_RESULT</span>
-      <span ng-if="search.type=='pending'" translate>WOT.LOOKUP.NO_PENDING</span>
-      <span ng-if="search.type=='newcomers'" translate>WOT.LOOKUP.NO_NEWCOMERS</span>
+      <span ng-if="search.type=='text'">{{:locale:'COMMON.SEARCH_NO_RESULT'|translate}}</span>
+      <span ng-if="search.type=='pending'">{{:locale:'WOT.LOOKUP.NO_PENDING'|translate}}</span>
+      <span ng-if="search.type=='newcomers'">{{:locale:'WOT.LOOKUP.NO_NEWCOMERS'|translate}}</span>
     </div>
 
     <!-- simple selection + device -->
@@ -120,14 +120,14 @@
       <ng-repeat ng-repeat="item in search.results track by item.id">
         <div ng-if="::item.divider"
              class="item item-divider"
-             id="helptip-wot-search-result-{{$index}}">{{::('WOT.SEARCH.DIVIDER_' + item.index)|upper|translate}}</div>
+             id="helptip-wot-search-result-{{$index}}">{{:locale:('WOT.SEARCH.DIVIDER_' + item.index)|upper|translate}}</div>
         <ion-item
           ng-if="::!item.divider"
           id="helptip-wot-search-result-{{$index}}"
           class="item item-border-large item-avatar item-icon-right ink"
           ng-click="::select(item)">
 
-          <ng-include src="item.templateUrl || 'templates/wot/item_content_identity.html'"></ng-include>
+          <ng-include src="::item.templateUrl || 'templates/wot/item_content_identity.html'"></ng-include>
 
           <i class="icon ion-ios-arrow-right "></i>
           <ion-option-button

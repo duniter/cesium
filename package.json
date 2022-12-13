@@ -1,6 +1,6 @@
 {
   "name": "cesium",
-  "version": "1.6.12",
+  "version": "1.7.0-rc1",
   "description": "Cesium Wallet for G1 libre currency",
   "author": "Benoit Lavenier <benoit.lavenier@e-is.pro>",
   "license": "AGPL-3.0",
@@ -10,8 +10,9 @@
     "url": "git@git.duniter.org:clients/cesium/cesium.git"
   },
   "scripts": {
-    "clean": "clean webClean webExtClean && trash dist/desktop/**/*.deb platforms/android/**/*.apk",
+    "clean": "gulp clean webClean webExtClean && rm -rf dist/web dist/android && rm -f desktop/**/cesium-*.deb desktop/**/cesium-*.exe platforms/android/**/*.apk",
     "postinstall": "node scripts/node/postinstall.js",
+    "gulp": "gulp",
     "lint": "gulp lint",
     "install-platforms": "ionic cordova prepare",
     "start": "ionic serve",
@@ -84,6 +85,7 @@
     "@bower_components/socket.io-client": "socketio/socket.io-client#^1.7.4",
     "@bower_components/ui-leaflet": "angular-ui/ui-leaflet#v2.0.0",
     "@bower_components/underscore": "jashkenas/underscore#1.10.2",
+    "@bower_components/jdenticon": "dmester/jdenticon#3.1.0",
     "through2": "^4.0.2",
     "uuid": "3.2.1"
   },

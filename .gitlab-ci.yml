@@ -1,17 +1,51 @@
-stages:
-  #- build
-  #- alt_build
-  #- publish
+# ---------------------------------------------------------------
+# Global
+# ---------------------------------------------------------------
 
-fast-build:
-  stage: build
-  image: $CI_REGISTRY_IMAGE
+# default image
+image: node:12
+
+# stages (main steps of pipeline)
+stages:
+  - build
+  - alt_build
+  - deploy
+
+# ---------------------------------------------------------------
+# Global variables
+# ---------------------------------------------------------------
+
+variables:
+    CI_BUILD_IMAGE: $CI_REGISTRY_IMAGE/build:develop
+
+# ---------------------------------------------------------------
+# Jobs templates
+# ---------------------------------------------------------------
+
+
+.docker:
+  image: docker:latest
+  tags: [redshift]
+  services:
+    - docker:dind
   before_script:
-    - mv /customCache/node_modules ./
-    - cp -rf /customCache/www ./
-    - cp -rf /customCache/hooks ./
+    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+    #- docker login -u "duniterteam" -p "$DUNITERTEAM_PASSWD"
+  after_script:
+    - docker logout ${CI_REGISTRY}
+    #- docker logout
+  allow_failure: false
+
+# ---------------------------------------------------------------
+# Build jobs
+# ---------------------------------------------------------------
+
+.build:
+  stage: build
+  tags: [redshift]
   script:
-    - node ./node_modules/gulp/bin/gulp webBuild
+    - yarn install
+    - yarn run build:web
   after_script:
     - ls -la dist/web/
     - du -csh dist/web/
@@ -20,51 +54,63 @@ fast-build:
     paths:
       - dist/web
     expire_in: 60 minutes
+
+build:
+  extends: .build
+  image: ${CI_BUILD_IMAGE}
+  before_script:
+    - mv /tmp/.build-cache/node_modules ./
   only:
-    - master
-    - tags
+    - develop
+
 failsafe-build:
+  extends: .build
   stage: alt_build
   when: on_failure
-  image: node:10
-  script:
-    - yarn
-    - node ./node_modules/gulp/bin/gulp config --env default
-    - node ./node_modules/gulp/bin/gulp webBuild
-  artifacts:
-    untracked: true
-    paths:
-      - dist/web
-    expire_in: 60 minutes
+  before_script:
+    - yarn global add gulp
   only:
-    - master
-    - tags
-docker-for-fast-build:
+    - develop
+
+docker:ci:
+  extends: .docker
   stage: alt_build
   when: on_failure
   allow_failure: true
-  tags:
-    - doppler-docker
-  image: docker:latest
-  services:
-    - docker:dind
   script:
-    - echo 'FROM node:10' > Dockerfile
-    - echo 'WORKDIR /customCache' >> Dockerfile
+    # Create the target directory
+    - mkdir -p dist/ci
+    - cd dist/ci
+    # Create the Dockerfile
+    - echo 'FROM node:12' > Dockerfile
+    - echo 'WORKDIR /tmp/.build-cache' >> Dockerfile
     - echo 'COPY ./ ./' >> Dockerfile
-    - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/before.txt' >> Dockerfile
-    - echo 'RUN yarn' >> Dockerfile
-    - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"`>/after.txt' >> Dockerfile
+    # Store disk usage (before install)
+    - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"` > /tmp/before.txt' >> Dockerfile
+    - echo 'RUN du -s `find /tmp/.cache/yarn -maxdepth 1 | egrep -v "^\.$"` >> /tmp/before.txt' >> Dockerfile
+    # Install dependencies
+    - echo 'RUN yarn global add gulp web-ext @ionic/cli' >> Dockerfile
+    - echo 'RUN yarn install' >> Dockerfile
+    # Store disk usage (after install)
+    - echo 'RUN du -s `find . -maxdepth 1 | egrep -v "^\.$"` > /tmp/after.txt' >> Dockerfile
+    - echo 'RUN du -s `find /tmp/.cache/yarn -maxdepth 1 | egrep -v "^\.$"` >> /tmp/after.txt' >> Dockerfile
+    # Force docker to detect any changes
+    - echo "RUN diff /tmp/before.txt /tmp/after.txt || true" >> Dockerfile
     - echo 'WORKDIR /build' >> Dockerfile
-    - echo "RUN diff /before.txt /after.txt || true" >> Dockerfile
-    - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
-    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
-    - docker push "$CI_REGISTRY_IMAGE"
+    # Build and push the CI image
+    - docker build --no-cache -t ${CI_BUILD_IMAGE} .
+    - docker push ${CI_BUILD_IMAGE}
+  artifacts:
+    paths:
+      - dist/ci/Dockerfile
+    expire_in: 60 minutes
 
+# ---------------------------------------------------------------
+# Deploy jobs
+# ---------------------------------------------------------------
 
 pages:
-  stage: publish
-  image: node:10
+  stage: deploy
   variables:
     GIT_STRATEGY: none
   script:
@@ -76,8 +122,9 @@ pages:
       - public
   only:
     - master
+
 mirror:
-  stage: publish
+  stage: deploy
   image: liaohuqiu/rsync
   before_script:
     - eval $(ssh-agent -s)
@@ -94,10 +141,8 @@ mirror:
   only:
     - master
 
-
-release-web:
-  stage: publish
-  image: node:10
+release:
+  stage: deploy
   variables:
     GIT_STRATEGY: none
   script:

@@ -71,8 +71,8 @@
     </div>
   </div>
 
-  <div class="list {{::motion.ionListClass}}" ng-if="!$scope.search.loading">
-
+  <div ng-if="!$scope.search.loading"
+       class="list" ng-class="::motion.ionListClass">
     <ng-include src="::'plugins/es/templates/group/items_groups.html'"></ng-include>
 
   </div>

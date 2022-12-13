@@ -80,6 +80,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
   })
 
   .filter('formatAmount', function(csConfig, csSettings, csCurrency, $filter) {
+    'ngInject';
     var pattern = '0,0.0' + Array(csConfig.decimalCount || 4).join('0');
     var patternBigNumber = '0,0.000 a';
     var currencySymbol = $filter('currencySymbol');
@@ -124,6 +125,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
   })
 
   .filter('formatAmountNoHtml', function(csConfig, csSettings, csCurrency, $filter) {
+    'ngInject';
     var minValue = 1 / Math.pow(10, csConfig.decimalCount || 4);
     var format = '0,0.0' + Array(csConfig.decimalCount || 4).join('0');
     var currencySymbol = $filter('currencySymbolNoHtml');
@@ -164,6 +166,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
   })
 
   .filter('currencySymbol', function(filterTranslations, $filter, csSettings) {
+    'ngInject';
     return function(input, useRelative) {
       if (!input) return '';
       return (angular.isDefined(useRelative) ? useRelative : csSettings.data.useRelative) ?
@@ -173,6 +176,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
   })
 
   .filter('currencySymbolNoHtml', function(filterTranslations, $filter, csSettings) {
+    'ngInject';
     return function(input, useRelative) {
       if (!input) return '';
       return (angular.isDefined(useRelative) ? useRelative : csSettings.data.useRelative) ?
@@ -182,6 +186,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
   })
 
   .filter('formatDecimal', function(csConfig, csCurrency) {
+    'ngInject';
     var minValue = 1 / Math.pow(10, csConfig.decimalCount || 4);
     var format = '0,0.0' + Array(csConfig.decimalCount || 4).join('0');
 
@@ -209,24 +214,28 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
   })
 
   .filter('formatDate', function(filterTranslations) {
+    'ngInject';
     return function(input) {
       return input ? moment.unix(parseInt(input)).local().format(filterTranslations.DATE_PATTERN || 'YYYY-MM-DD HH:mm') : '';
     };
   })
 
   .filter('formatDateShort', function(filterTranslations) {
+    'ngInject';
     return function(input) {
       return input ? moment.unix(parseInt(input)).local().format(filterTranslations.DATE_SHORT_PATTERN || 'YYYY-MM-DD') : '';
     };
   })
 
   .filter('formatDateMonth', function(filterTranslations) {
+    'ngInject';
     return function(input) {
       return input ? moment.unix(parseInt(input)).local().format(filterTranslations.DATE_MONTH_YEAR_PATTERN || 'MMM YY') : '';
     };
   })
 
   .filter('formatDateForFile', function(filterTranslations) {
+    'ngInject';
     return function(input) {
       return input ? moment.unix(parseInt(input)).local().format(filterTranslations.DATE_FILE_PATTERN || 'YYYY-MM-DD') : '';
     };
@@ -245,6 +254,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
   })
 
   .filter('formatFromNowAndDate', function(filterTranslations) {
+    'ngInject';
     return function(input, options) {
       var m = input && moment.unix(parseInt(input));
       return m && (m.fromNow() + (options && options.separator || ' | ') + m.local().format(filterTranslations.DATE_PATTERN || 'YYYY-MM-DD HH:mm')) || '';
@@ -265,6 +275,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
 
 
   .filter('formatDurationTime', function(filterTranslations) {
+    'ngInject';
     return function(input) {
       if (!input) return '';
       var sign = input && input < 0 ? '-' : '+';
@@ -305,12 +316,14 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
   /* -- median time (apply currency offset)-- */
 
   .filter('medianDate', function(filterTranslations) {
+    'ngInject';
     return function(input) {
       return input ? moment.unix(parseInt(input) + filterTranslations.MEDIAN_TIME_OFFSET).local().format(filterTranslations.DATE_PATTERN || 'YYYY-MM-DD HH:mm') : '';
     };
   })
 
   .filter('medianDateShort', function(filterTranslations) {
+    'ngInject';
     return function(input) {
       return input ? moment.unix(parseInt(input) + filterTranslations.MEDIAN_TIME_OFFSET).local().format(filterTranslations.DATE_SHORT_PATTERN || 'YYYY-MM-DD') : '';
     };
@@ -318,24 +331,28 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
 
 
   .filter('medianTime', function(filterTranslations) {
+    'ngInject';
     return function(input) {
       return input ? moment.unix(parseInt(input)+filterTranslations.MEDIAN_TIME_OFFSET).local().format('HH:mm') : '';
     };
   })
 
   .filter('medianFromNow', function(filterTranslations) {
+    'ngInject';
     return function(input) {
       return input ? moment.unix(parseInt(input) + filterTranslations.MEDIAN_TIME_OFFSET).fromNow() : '';
     };
   })
 
   .filter('medianFromNowShort', function(filterTranslations) {
+    'ngInject';
     return function(input) {
       return input ? moment.unix(parseInt(input)+filterTranslations.MEDIAN_TIME_OFFSET).fromNow(true) : '';
     };
   })
 
   .filter('medianFromNowAndDate', function(filterTranslations) {
+    'ngInject';
     return function(input, options) {
       var m = input && moment.unix(parseInt(input)+filterTranslations.MEDIAN_TIME_OFFSET);
       return m && (m.fromNow() + (options && options.separator || ' | ')  + m.local().format(filterTranslations.DATE_PATTERN || 'YYYY-MM-DD HH:mm')) || '';
@@ -390,10 +407,34 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     };
   })
 
-  .filter('formatPubkey', function() {
-    return function(input) {
-      return input ? input.substr(0,8) : '';
+  .filter('formatPubkey', function(csCrypto) {
+    'ngInject';
+    return function(input, opts) {
+      if (!input || input.length < 43) return '';
+      var result = (!opts || opts.full !== true) ?
+        // See RFC0016
+        (input.substr(0,4)  + '…' + input.substr(input.length - 4)) : input;
+      // If given (e.g. already computed) use the existing CHK
+      if (opts && opts.checksum) {
+        result += ':' + opts.checksum;
+      }
+      // Crypto libs can be not loaded yet
+      else if (csCrypto.isStarted()){
+        result += ':' + csCrypto.util.pkChecksum(input);
+      }
+      return result;
     };
+  })
+
+  .filter('pkChecksum', function(csCrypto) {
+    'ngInject';
+    return function(input, opts) {
+      if (!input || input.length < 43) return '';
+      if (opts && opts.prefix) {
+        return ':' + csCrypto.util.pkChecksum(input);
+      }
+      return csCrypto.util.pkChecksum(input);
+   };
   })
 
   .filter('formatHash', function() {
@@ -444,6 +485,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
   })
 
   .filter('trustAsHtml', function($sce) {
+    'ngInject';
     return function(html) {
       return $sce.trustAsHtml(html);
     };

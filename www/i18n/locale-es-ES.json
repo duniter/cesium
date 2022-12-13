@@ -890,6 +890,7 @@
     "EMPTY_TX_HISTORY": "Ninguna operación a exportar"
   },
   "CONFIRM": {
+    "CAN_CONTINUE": "<b>¿Desea</b> continuar?",
     "EXIT_APP": "¿ Cerrar la aplicación ?",
     "FULLSCREEN": "¿ Mostrar la aplicación en pantalla completa ?",
     "ISSUE_524_SEND_LOG": "La transacción ha sido rechazada a causa de una anomalía conocida (ticket #524) pero todavía <b>no replicable</b>.<br/><br/>Para ayudar a los/as desarrolladores/as a corregir este error, ¿ <b>acepta el envío de los logs(trazas del programa)</b> ?<br/><small>(ningún dato confidencia será enviado)</small>.",

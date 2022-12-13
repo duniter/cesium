@@ -291,6 +291,9 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
       // Applying
       csSettings.apply($scope.formData);
 
+      // Applying UI effect
+      UIUtils.setEffects($scope.formData.uiEffects);
+
       // Store
       return csSettings.store();
 

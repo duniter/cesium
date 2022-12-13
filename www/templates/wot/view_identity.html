@@ -89,12 +89,17 @@
         <span class="item item-divider" translate>WOT.GENERAL_DIVIDER</span>
 
         <!-- Pubkey -->
-        <ion-item class="item-icon-left item-text-wrap ink"
-                  copy-on-click="{{:rebind:formData.pubkey}}">
+        <div class="item item-icon-left item-text-wrap item-icon-right ink"
+                  ng-if=":rebind:formData.pubkey"
+                  on-hold="copy(formData.pubkey)"
+                  copy-on-click="{{:rebind:formData.pubkey|formatPubkey: {full: true } }}">
           <i class="icon ion-key"></i>
           <span translate>COMMON.PUBKEY</span>
-          <h4 id="pubkey" class="dark text-left">{{:rebind:formData.pubkey}}</h4>
-        </ion-item>
+          <h4 id="pubkey" class="dark text-left">{{:rebind:formData.pubkey|formatPubkey: {full: true } }}</h4>
+
+          <!-- icon of the pubkey -->
+          <i class="icon" jdenticon="{{::formData.pubkey}}" jdenticon-size="32"></i>
+        </div>
 
         <div class="item item-icon-left item-text-wrap"
               ng-if=":rebind:!formData.hasSelf">

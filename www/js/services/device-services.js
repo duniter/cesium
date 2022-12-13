@@ -14,7 +14,6 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
           MAX_HEIGHT: 400,
           MAX_WIDTH: 400
         },
-        that = this,
         api = new Api(this, "Device"),
         exports = {
           // workaround to quickly no is device or not (even before the ready() event)
@@ -230,12 +229,12 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
         }
       };
 
-      exports.isIOS = function() {
-        return !!navigator.userAgent.match(/iPhone | iPad | iPod/i) || ionic.Platform.isIOS();
-      };
-
       exports.isOSX = function() {
         return !!navigator.userAgent.match(/Macintosh/i) || ionic.Platform.is("osx");
+      };
+
+      exports.isIOS = function() {
+        return !!navigator.userAgent.match(/iPhone | iPad | iPod/i) || (!!navigator.userAgent.match(/Mobile/i) && !!navigator.userAgent.match(/Macintosh/i)) || ionic.Platform.isIOS();
       };
 
       exports.isDesktop = function() {
@@ -269,7 +268,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
             if (exports.enable){
               exports.camera.enable = !!navigator.camera;
               exports.keyboard.enable = cordova && cordova.plugins && !!cordova.plugins.Keyboard;
-              exports.barcode.enable = cordova && cordova.plugins && !!cordova.plugins.barcodeScanner && !exports.isOSX();
+              exports.barcode.enable = cordova && cordova.plugins && !!cordova.plugins.barcodeScanner && (!exports.isOSX() || exports.isIOS());
               exports.clipboard.enable = cordova && cordova.plugins && !!cordova.plugins.clipboard;
               exports.intent.enable = window && !!window.plugins.launchmyapp;
 

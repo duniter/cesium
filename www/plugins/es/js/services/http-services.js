@@ -40,7 +40,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       truncUrlFilter = $filter('truncUrl');
 
     that.data = {
-      isFallback: false
+      isFallback: false,
+      token: null// Used to store pod authentication token
     };
     that.useCache = angular.isDefined(enableCache) ? enableCache : false; // need here because used in get() function
     that.raw = {
@@ -195,14 +196,22 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     };
 
     that.post = function(path) {
-      var postRequest = function(obj, params) {
+      var postRequest = function(obj, params, config) {
+        // Add auth token
+        if (that.data.token) {
+          config = angular.merge({
+            headers: {
+              'Authorization': 'token ' + that.data.token
+            }
+          }, config);
+        }
         if (!that.started) {
           if (!that._startPromise) {
             console.error('[ES] [http] Trying to post [{0}] before start()...'.format(path));
           }
           return that.ready().then(function(start) {
             if (!start) return $q.reject('ERROR.ES_CONNECTION_ERROR');
-            return postRequest(obj, params); // loop
+            return postRequest(obj, params, config); // loop
           });
         }
 
@@ -211,7 +220,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
           request =  csHttp.post(that.host, that.port, path, that.useSsl);
           that.raw.postByPath[path] = request;
         }
-        return request(obj, params);
+        return request(obj, params, config);
       };
       return postRequest;
     };
@@ -767,6 +776,62 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         });
     }
 
+    function isAuth() {
+      return that.data && !!that.data.token;
+    }
+
+    function auth(options) {
+      options = options || {};
+      console.info('[ES] Authenticate on server...');
+      var nodePubkey = options.nodePubkey;
+      var wallet = options.wallet || options.walletId && csWallet.children.get(options.walletId) || csWallet;
+      return (wallet.isAuth() ? $q.when(wallet.data) : wallet.auth({silent: true, minData: true}))
+        .then(function(walletData) {
+          var keypair = options.keypair || walletData && walletData.keypair;
+          if (!keypair && !wallet) {
+            throw new Error('Missing wallet or keypair, to sign auth challenge');
+          }
+          // Get challenge
+          return that.get('/auth')()
+            .then(function(json) {
+              var challenge = json && json.challenge;
+              return $q.all([
+                CryptoUtils.verify(json.challenge, json.signature, nodePubkey || json.pubkey),
+                CryptoUtils.sign(challenge, keypair)
+              ])
+                .then(function(res) {
+                  var signature = res[1];
+                  return that.post('/auth')({challenge: challenge, signature: signature, pubkey: wallet.data.pubkey})
+                })
+                .then(function(token) {
+                  console.info('[ES] Authentication to pod succeed. token: ' + token);
+                  that.data.token = token;
+                  return token;
+                });
+            });
+        });
+    }
+
+    function logSearch(options) {
+      if (!isAuth()) {
+        return auth().then(function() {
+            return logSearch(options);
+          });
+      }
+      options = options || {};
+      var request = {
+        from: options.from || 0,
+        size: options.size || 20,
+        sort: options.sort || {time: 'desc'}
+      }
+      return that.post('/log/request/_search')(request)
+        .then(function(res) {
+          return _(res && res.hits && res.hits.hits || []).reduce(function(res, hit) {
+            return res.concat(hit._source);
+          }, []);
+        });
+    }
+
     function addListeners() {
       // Watch some service events
       listeners = [
@@ -794,7 +859,13 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         parseEndPoint: parseEndPoint,
         same: isSameNode,
         sameAsSettings: isSameNodeAsSettings,
-        isFallback: isFallbackNode
+        isFallback: isFallbackNode,
+        auth: auth
+      },
+      log: {
+        request: {
+          search: logSearch
+        }
       },
       version: {
         latest: getLatestVersion
@@ -842,6 +913,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
   }
 
 
+  // Default instance
   var service = new EsHttp(undefined, undefined, undefined, true);
 
   service.instance = function(host, port, useSsl, enableCache) {
@@ -875,7 +947,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       port: port,
       useSsl: useSsl,
       node: {
-        summary: csHttp.getWithCache(host, port, '/node/summary', useSsl, csHttp.cache.LONG, false, timeout)
+        summary: csHttp.getWithCache(host, port, '/node/summary', useSsl, csHttp.cache.LONG, false, timeout),
+        moderators: csHttp.get(host, port, '/node/moderators', useSsl, timeout)
       },
       network: {
         peering: {
