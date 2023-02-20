@@ -1,7 +1,7 @@
 {
   "COMMON": {
     "APP_NAME": "Cesium",
-    "APP_VERSION": "v{{Version}}",
+    "APP_VERSION": "v{{version}}",
     "APP_BUILD": "Build {{build}}",
     "PUBKEY": "Öffentlicher Schlüssel",
     "MEMBER": "Mitglied",
