@@ -1,0 +1,76 @@
+{
+  "MAP": {
+    "COMMON": {
+      "SEARCH_DOTS": "Suche...",
+      "BTN_LOCALIZE_ME": "Lokalisiere mich"
+    },
+    "NETWORK": {
+      "LOOKUP": {
+        "BTN_MAP": "Karte der Knoten",
+        "BTN_MAP_HELP": "Karte der Knoten öffnen"
+      },
+      "VIEW": {
+        "TITLE": "Karte der Knoten",
+        "LAYER": {
+          "MEMBER": "Mitgliedsknoten",
+          "MIRROR": "Spiegelknoten",
+          "OFFLINE": "Offline-Knoten"
+        }
+      }
+    },
+    "WOT": {
+      "LOOKUP": {
+        "BTN_MAP": "Karte",
+        "BTN_MAP_HELP": "Mitgliederkarte öffnen"
+      },
+      "VIEW": {
+        "TITLE": "Mitgliederkarte",
+        "LAYER": {
+          "MEMBER": "<i class=\"icon ion-person positive\"></i> Mitglieder",
+          "PENDING": "<i class=\"icon ion-clock energized\"></i> Ausstehende Registrierungen",
+          "WALLET": "<i class=\"icon ion-card grey\"></i> Einfache Brieftaschen"
+        }
+      },
+      "ERROR": {
+        "LOAD_POSITION_FAILED": "Die anzuzeigenden Positionen konnten nicht abgerufen werden."
+      }
+    },
+    "REGISTRY": {
+      "LOOKUP": {
+        "BTN_MAP": "Karte",
+        "BTN_MAP_HELP": "Karte der Seiten öffnen"
+      },
+      "VIEW": {
+        "TITLE": "Karte der Seiten",
+        "LAYER": {
+          "SHOP": "<i class=\"icon ion-page-shop positive\"></i> Lokale Geschäfte",
+          "COMPANY": "<i class=\"icon ion-page-company positive\"></i> Unternehmen",
+          "ASSOCIATION": "<i class=\"icon ion-page-association energized\"></i> Verbände",
+          "INSTITUTION": "<i class=\"icon ion-page-institution grey\"></i> Institutionen"
+        }
+      }
+    },
+    "PROFILE": {
+      "MARKER_HELP": "<b>Ziehe</b> diese Markierung, um <b>deinen Standort</b><br/>auf der Karte zu <b>aktualisieren</b>, oder verwende die Schaltflächen<br/>über der Karte."
+    },
+    "ERROR": {
+      "LOCALIZE_ME_FAILED": "Ihr aktueller Standort kann nicht abgerufen werden"
+    },
+    "SETTINGS": {
+      "MAP_DIVIDER": "Karten",
+      "ENABLE_GOOGLE_API": "Google API-Dienste aktivieren?",
+      "ENABLE_GOOGLE_API_HELP": "Ermöglicht die Anzeige von Konten mit einer Adresse, aber ohne GPS-Ortung in der <b>Mitgliederkarte</b>.",
+      "GOOGLE_API_KEY": "Google-API-Schlüssel",
+      "BTN_GOOGLE_API": "Einen Google-API-Schlüssel erhalten",
+      "BTN_GOOGLE_API_WARNING": "Erfordert ein Google-Konto",
+      "GOOGLE_API_KEY_PLACEHOLDER": "Beispiel: AIzaqyAgszvWm0tM81x1sMK_ipDHBI7EowLqR7I"
+    },
+    "HELP": {
+      "TIP": {
+        "WOT": "Auf dieser Karte werden <b>Profile mit einer Position</b> angezeigt, unabhängig davon, ob sie Mitgliedskonten entsprechen oder nicht.<br/><br/>Nur Profile mit der Option &quot;Auf der Karte anzeigen&quot; sind aktiviert.",
+        "WOT_BTN_LAYERS": "<b>Filtern Sie die hier angezeigten Daten</b>: Mitglieder, ausstehende Registrierungen, einfache Brieftaschen usw.",
+        "WOT_BTN_SEARCH": "Sie können nach Name, öffentlichem Schlüssel oder Pseudonym des Mitglieds <b>suchen</b>."
+      }
+    }
+  }
+}

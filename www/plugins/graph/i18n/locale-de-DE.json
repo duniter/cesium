@@ -1,0 +1,135 @@
+{
+  "NETWORK": {
+    "VIEW": {
+      "BTN_GRAPH": "Statistiken"
+    }
+  },
+  "GRAPH": {
+    "COMMON": {
+      "LINEAR_SCALE": "Lineare Skalierung",
+      "LOGARITHMIC_SCALE": "Logarithmische Skalierung",
+      "BTN_SHOW_STATS": "Statistiken ansehen",
+      "BTN_SHOW_DETAILED_STATS": "Detaillierte Statistiken",
+      "RANGE_DURATION_DIVIDER": "Schrittweite:",
+      "RANGE_DURATION": {
+        "HOUR": "Stunde",
+        "DAY": "Tag",
+        "MONTH": "Monat"
+      },
+      "MAX_AGE": {
+        "DAY": "Seit 24 Stunden",
+        "WEEK": "Seit einer Woche",
+        "MONTH": "Seit einem Monat",
+        "QUARTER": "Seit 3 Monaten",
+        "SEMESTER": "Seit 6 Monaten",
+        "YEAR": "Seit einem Jahr",
+        "FOREVER": "Seit immer"
+      }
+    },
+    "ACCOUNT": {
+      "TITLE": "Statistiken",
+      "BTN_SHOW_STATS": "Kontostatistiken anzeigen",
+      "BALANCE_DIVIDER": "Kontostatus",
+      "BALANCE_TITLE": "Kontoentwicklung {{pubkey|formatPubkey}}",
+      "TX_RECEIVED_LABEL": "Einnahmen",
+      "TX_SENT_LABEL": "Ausgaben",
+      "TX_ACCUMULATION_LABEL": "Transaktionsbericht",
+      "UD_LABEL": "UD",
+      "UD_ACCUMULATION_LABEL": "Bilanz der DU",
+      "BALANCE_LABEL": "Kontostand",
+      "WOT_DIVIDER": "Netz des Vertrauens",
+      "CERTIFICATION_TITLE": "Anzahl der Zertifizierungen - {{pubkey|formatPubkey}}",
+      "RECEIVED_CERT_LABEL": "Insgesamt erhalten",
+      "RECEIVED_CERT_DELTA_LABEL": "Schwankung der Erhaltenen",
+      "GIVEN_CERT_LABEL": "Insgesamt vergeben",
+      "GIVEN_CERT_DELTA_LABEL": "Schwankung der Vergebenen",
+      "INPUT_CHART_TITLE": "Summe der Einnahmen, nach Emittent:",
+      "OUTPUT_CHART_TITLE": "Summe der Ausgaben, nach Empfänger:"
+    },
+    "BLOCKCHAIN": {
+      "TITLE": "Statistiken",
+      "BLOCKS_ISSUERS_DIVIDER": "Blockberechnungsanalyse",
+      "BLOCKS_ISSUERS_HELP": "<b>{{issuerCount|formatInteger}} Mitglieder</b> berechneten <b>{{blockCount|formatInteger}} Blöcke</b>",
+      "BLOCKS_ISSUERS_TITLE": "Anzahl berechneter Blöcke nach Mitgliedern",
+      "BLOCKS_ISSUERS_LABEL": "Anzahl der Blöcke",
+      "TX_DIVIDER": "Transaktionsanalyse",
+      "TX_AMOUNT_TITLE": "Transaktionsvolumen {{currency|abbreviate}}",
+      "TX_AMOUNT_PUBKEY_TITLE": "Transaktionsvolumen berechnet von {{issuer | formatPubkey}}",
+      "TX_AMOUNT_LABEL": "Gehandeltes Volumen",
+      "TX_COUNT_TITLE": "Anzahl der geschriebenen Transaktionen",
+      "TX_COUNT_LABEL": "Anzahl der Transaktionen",
+      "TX_AVG_BY_BLOCK": "Durchschnittliche Anzahl von Transaktionen pro Block"
+    },
+    "CURRENCY": {
+      "MONETARY_MASS_TITLE": "Entwicklung der Geldmenge",
+      "MONETARY_MASS_LABEL": "Geldmenge",
+      "MONETARY_MASS_SHARE_LABEL": "Durchschnitt pro Mitglied",
+      "UD_TITLE": "Entwicklung der universellen Dividende",
+      "MEMBERS_COUNT_TITLE": "Entwicklung der Mitgliederzahl",
+      "MEMBERS_COUNT_LABEL": "Anzahl der Mitglieder",
+      "MEMBERS_DELTA_TITLE": "Schwankungen in der Mitgliederzahl",
+      "IS_MEMBER_DELTA_LABEL": "Validierte Mitgliedschaften",
+      "WAS_MEMBER_DELTA_LABEL": "Mitgliederverluste",
+      "PENDING_DELTA_LABEL": "Anträge auf Mitgliedschaft"
+    },
+    "PEER": {
+      "VIEW": {
+        "BLOCK_COUNT_LABEL": "Anzahl der berechneten Blöcke",
+        "BLOCK_COUNT": "{{count}} Blöcke",
+        "NO_BLOCK": "Kein Block"
+      }
+    },
+    "DOC_STATS": {
+      "TITLE": "Speicherstatistik (Cesium+)",
+      "USER": {
+        "TITLE": "Anzahl der mit einem Konto verknüpften Dokumente",
+        "USER_PROFILE": "Benutzerprofile",
+        "USER_SETTINGS": "Gespeicherte Einstellungen"
+      },
+      "USER_DELTA": {
+        "TITLE": "Variation in der Anzahl der mit einem Konto verknüpften Dokumente",
+        "USER_PROFILE": "Variation der Benutzerprofile",
+        "USER_SETTINGS": "Variation der gespeicherten Einstellungen"
+      },
+      "MESSAGE": {
+        "TITLE": "Anzahl der Dokumente im Zusammenhang mit der Kommunikation",
+        "MESSAGE_INBOX": "Im Posteingang gespeicherte Nachrichten",
+        "MESSAGE_OUTBOX": "Im Postausgang gespeicherte Nachrichten",
+        "INVITATION_CERTIFICATION": "Einladungen zur Zertifizierung"
+      },
+      "SOCIAL": {
+        "TITLE": "Anzahl der Seiten oder Gruppen",
+        "PAGE_COMMENT": "Kommentare",
+        "PAGE_RECORD": "Seiten",
+        "GROUP_RECORD": "Gruppen"
+      },
+      "OTHER": {
+        "TITLE": "Sonstige Dokumente",
+        "HISTORY_DELETE": "Löschen von Dokumenten"
+      }
+    },
+    "SYNCHRO": {
+      "TITLE": "Synchronisationsstatistik",
+      "COUNT": {
+        "TITLE": "Anzahl Synchronisierungen",
+        "INSERTS": "Einfügungen",
+        "UPDATES": "Aktualisierungen",
+        "DELETES": "Löschungen"
+      },
+      "PEER": {
+        "TITLE": "Angeforderte Knoten",
+        "ES_USER_API": "Knoten mit Benutzerdaten",
+        "ES_SUBSCRIPTION_API": "Knoten mit Online-Diensten"
+      },
+      "PERFORMANCE": {
+        "TITLE": "Ausführungsleistung",
+        "DURATION": "Ausführungszeit (ms)"
+      }
+    },
+    "NETWORK": {
+      "TITLE": "Netzwerkstatistiken",
+      "ENDPOINT_COUNT_TITLE": "Anzahl der Zugangspunkte",
+      "ENDPOINT_DELTA_TITLE": "Variation in der Anzahl der Zugangspunkte"
+    }
+  }
+}
