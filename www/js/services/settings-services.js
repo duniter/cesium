@@ -12,7 +12,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     {id:'fr-FR', label:'Français', flag: 'fr'},
     {id:'nl-NL', label:'Nederlands', flag: 'nl'},
     {id:'es-ES', label:'Español', flag: 'es'},
-    {id:'ca', label:'Català', flag: 'ca'},
+    {id:'es-CT', label:'Català', flag: 'ct'},
     {id:'it-IT', label:'Italiano', flag: 'it'},
     {id:'pt-PT', label:'Português', flag: 'pt'},
     {id:'de-DE', label:'Deutsch', flag: 'de'}
