@@ -11,9 +11,10 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     {id:'eo-EO', label:'Esperanto', flag: 'eo'},
     {id:'fr-FR', label:'Français', flag: 'fr'},
     {id:'nl-NL', label:'Nederlands', flag: 'nl'},
-    {id:'es-ES', label:'Spanish', flag: 'es'},
+    {id:'es-ES', label:'Español', flag: 'es'},
     {id:'ca', label:'Català', flag: 'ca'},
     {id:'it-IT', label:'Italiano', flag: 'it'},
+    {id:'pt-PT', label:'Português', flag: 'pt'},
     {id:'de-DE', label:'Deutsch', flag: 'de'}
   ];
   var fallbackLocale = csConfig.fallbackLanguage ? fixLocale(csConfig.fallbackLanguage) : 'en';
@@ -113,7 +114,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     license: {
       "en": "license/license_g1-en",
       "fr-FR": "license/license_g1-fr-FR",
-      "es-ES": "license/license_g1-es-ES"
+      "es-ES": "license/license_g1-es-ES",
+      "pt-PT": "license/license_g1-pt-PT"
     }
   },
     fixedSettings,
