@@ -184,8 +184,8 @@
     "BTN_REPLY": "Responder",
     "BTN_COMPOSE": "Nuevo mensaje",
     "BTN_WRITE": "Escribir",
-    "NO_MESSAGE_INBOX": "Ningun mensaje recibido",
-    "NO_MESSAGE_OUTBOX": "Ningun mensaje mandado",
+    "NO_MESSAGE_INBOX": "Ningún mensaje recibido",
+    "NO_MESSAGE_OUTBOX": "Ningún mensaje mandado",
     "NOTIFICATIONS": {
       "TITLE": "Mensajes",
       "MESSAGE_RECEIVED": "Ha <b>recibido un mensaje</b><br/>de"
@@ -484,15 +484,15 @@
     }
   },
   "SUBSCRIPTION": {
-    "SUBSCRIPTION_DIVIDER": "Servicios en línea",
-    "SUBSCRIPTION_DIVIDER_HELP": "Los servicios en línea ofrecen servicios adicionales, proporcionados por un tercero.",
-    "BTN_ADD": "Agregar un servicio",
-    "BTN_EDIT": "Administrar mis servicios",
-    "NO_SUBSCRIPTION": "Ningún servicio definido",
-    "SUBSCRIPTION_COUNT": "Servicios / Suscripción",
+    "SUBSCRIPTION_DIVIDER": "Aplicaciones de terceros",
+    "SUBSCRIPTION_DIVIDER_HELP": "Las aplicaciones de terceros ofrecen servicios adicionales, proporcionados por un tercero.",
+    "BTN_ADD": "Agregar una aplicación",
+    "BTN_EDIT": "Administrar mis aplicaciones",
+    "NO_SUBSCRIPTION": "Ningúna suscripción definida",
+    "SUBSCRIPTION_COUNT": "Suscripciones",
     "EDIT": {
-      "TITLE": "Servicios en línea",
-      "HELP_TEXT": "Gestione sus suscripciones y otros servicios en línea aquí",
+      "TITLE": "Aplicaciones de terceros",
+      "HELP_TEXT": "Gestione sus suscripciones y otras aplicaciones de terceros aquí",
       "PROVIDER": "Proveedor:"
     },
     "TYPE": {
@@ -504,7 +504,7 @@
       "DELETE_SUBSCRIPTION": "¿ Deseas <b>eliminar</b> esta suscripción ?"
     },
     "ERROR": {
-      "LOAD_SUBSCRIPTIONS_FAILED": "Error al cargar servicios en línea",
+      "LOAD_SUBSCRIPTIONS_FAILED": "Error al cargar aplicaciones de terceros",
       "ADD_SUBSCRIPTION_FAILED": "Error al agregar suscripción",
       "UPDATE_SUBSCRIPTION_FAILED": "Error durante la actualización de la suscripción",
       "DELETE_SUBSCRIPTION_FAILED": "Error al eliminar la suscripción"
@@ -517,7 +517,7 @@
       "FREQUENCY_LABEL": "Frecuencia de las notificaciones :",
       "FREQUENCY_DAILY": "Diaria",
       "FREQUENCY_WEEKLY": "Semanal",
-      "PROVIDER": "Proveedor de servicio :"
+      "PROVIDER": "Proveedor de la aplicación :"
     }
   },
   "ES_PEER": {
@@ -533,10 +533,10 @@
     "ENABLE_TOGGLE": "Activar la extensión",
     "ENABLE_MESSAGE_TOGGLE": "Activar los mensajes privados",
     "ENABLE_REMOTE_STORAGE": "Activar el almacenamiento remoto",
-    "ENABLE_REMOTE_STORAGE_HELP": "Permite almacenar (con cifrado) sus ajustes en los nodos Cesium+",
-    "PEER": "Dirección del nodo de datos",
+    "ENABLE_REMOTE_STORAGE_HELP": "Permite almacenar (cifrados) sus ajustes en los nodos Cesium+",
+    "PEER": "Dirección del nodo de datos Cesium+",
     "POPUP_PEER": {
-      "TITLE" : "Nodo de datos",
+      "TITLE" : "Nodo de datos Cesium+",
       "HELP" : "Ingrese la dirección del nodo que quiere utilizar:",
       "PEER_HELP": "servidor.dominio.com:puerto"
     },
