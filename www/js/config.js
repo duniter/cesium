@@ -12,10 +12,10 @@ angular.module("cesium.config", [])
 	"cacheTimeMs": 300000,
 	"demo": false,
 	"readonly": false,
-	"fallbackLanguage": "fr",
+	"fallbackLanguage": "en",
 	"rememberMe": true,
 	"showUDHistory": true,
-	"timeout": 300000,
+	"timeout": 40000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
 	"keepAuthIdle": 600,
@@ -74,16 +74,14 @@ angular.module("cesium.config", [])
 			"port": 443
 		},
 		{
-			"host": "g1.le-sou.org",
-			"port": 443
-		},
-		{
-			"host": "duniter.normandie-libre.fr",
-			"port": 443
-		},
-		{
 			"host": "g1.duniter.org",
 			"port": 443
+		}
+	],
+	"developers": [
+		{
+			"name": "Benoit Lavenier",
+			"pubkey": "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE"
 		}
 	],
 	"plugins": {
@@ -96,10 +94,6 @@ angular.module("cesium.config", [])
 			"fallbackNodes": [
 				{
 					"host": "g1.data.presles.fr",
-					"port": 443
-				},
-				{
-					"host": "g1.data.le-sou.org",
 					"port": 443
 				},
 				{
@@ -116,8 +110,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "1.7.0-rc1",
-	"build": "2023-02-25T14:10:19.689Z",
+	"version": "1.7.0-rc2",
+	"build": "2023-02-25T14:25:26.204Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
