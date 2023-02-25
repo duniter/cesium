@@ -307,9 +307,9 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
       var checksum = matches[2];
       var expectedChecksum = csCrypto.util.pkChecksum(pubkey);
       if (checksum === expectedChecksum) {
-        console.debug("[wot] checksum {" + checksum + "} valid for pubkey {" + pubkey + "}")
-        text = pubkey
-        pubkeyWithCk = pubkey + ':' + checksum
+        console.debug("[wot] checksum {" + checksum + "} valid for pubkey {" + pubkey + "}");
+        text = pubkey;
+        pubkeyWithCk = pubkey + ':' + checksum;
       }
     }
 
@@ -788,10 +788,10 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
             // Prepare actions after user confirmation
             var answers_are_right = $q.defer();
             answers_are_right.promise.then( function (cert_status) {
-              return $scope.showLicenseReminderIfNewCert(cert_status)
+              return $scope.showLicenseReminderIfNewCert(cert_status);
             })
             .then(function(confirm){
-              if (! confirm) {return}
+              if (!confirm) return;
               UIUtils.loading.show();
               wallet.certify($scope.formData.uid,
                 $scope.formData.pubkey,
@@ -816,8 +816,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               UIUtils.onError('ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_CONDITIONS_NOT_MET')
             );
 
-            return $scope.displayConfirmationModalOrLicenseQuestions($scope.formData, wallet, answers_are_right )
-
+            return $scope.displayConfirmationModalOrLicenseQuestions($scope.formData, wallet, answers_are_right);
           })
           .catch(function(err) {
             if (err === 'CANCELLED') return;
@@ -863,7 +862,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
     }
 
     return true;
-  }
+  };
 
   $scope.showLicenseReminderIfNewCert = function (cert_status) {
     if (cert_status === "new_cert") {
@@ -875,22 +874,22 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
           okText: 'COMMON.BTN_OK',
           okType: 'button-positive'
         }
-      )
+      );
     }
     return true;
-  }
+  };
 
   $scope.displayConfirmationModalOrLicenseQuestions = function (certified_idty, sender_wallet, answers_are_right) {
 
     if (isCertificationRenewal(certified_idty.received_cert, sender_wallet.data.pubkey)) {
-      return $scope.certRenewalConfirmationModal(answers_are_right)
+      return $scope.certRenewalConfirmationModal(answers_are_right);
     }
 
     return Modals.showCertificationCheckList({
       answers_are_right: answers_are_right,
       identity: certified_idty,
     });
-  }
+  };
 
   $scope.certRenewalConfirmationModal = function (answers_are_right) {
     return UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', 'CONFIRM.CERTIFY_RULES_TITLE_UID', {
@@ -898,12 +897,12 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
       okText: 'WOT.BTN_YES_CERTIFY',
       okType: 'button-assertive'
     })
-      .then(function (confirm) {
-        if (confirm) {
-          answers_are_right.resolve("renewal");
-        }
-      })
-  }
+    .then(function (confirm) {
+      if (confirm) {
+        answers_are_right.resolve("renewal");
+      }
+    });
+  };
 
   // Select an identity and certify
   $scope.selectAndCertify = function() {
@@ -954,11 +953,11 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
 
             // Prepare actions after user confirmation
             var answers_are_right = $q.defer();
-            answers_are_right.promise.then( function (cert_status) {
-              return $scope.showLicenseReminderIfNewCert(cert_status)
+            answers_are_right.promise.then(function (cert_status) {
+              return $scope.showLicenseReminderIfNewCert(cert_status);
             })
             .then(function(confirm){
-              if (! confirm) {return}
+              if (!confirm) return;
               UIUtils.loading.show();
               // Send certification
               wallet.certify(identity.uid,
@@ -979,11 +978,9 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
                 })
                 .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
             })
-            .catch(
-              UIUtils.onError('ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_CONDITIONS_NOT_MET')
-            );
+            .catch(UIUtils.onError('ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_CONDITIONS_NOT_MET'));
 
-            return $scope.displayConfirmationModalOrLicenseQuestions(identity, wallet, answers_are_right )
+            return $scope.displayConfirmationModalOrLicenseQuestions(identity, wallet, answers_are_right);
 
           })
           .catch(function (err) {
@@ -1510,7 +1507,7 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
   $scope.identity = parameters.identity;
 
   $scope.prepare_cert_checklist = function() {
-    const original_cert_checklist = [
+    var original_cert_checklist = [
       {
         question: 'ACCOUNT.CERTIFICATION_MODAL.QUESTIONS.WELL_KNOWN',
         expected_answer: true,
@@ -1554,21 +1551,12 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
       },
     ];
 
-    // Fisher-Yates shuffle
-    function shuffle(array) {
-      for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
-        var t = array[i]; array[i] = array[j]; array[j] = t
-      }
-      return array;
-    }
-
     return shuffle(original_cert_checklist).slice(0, 5);
-  }
+  };
   $scope.cert_checklist = $scope.prepare_cert_checklist();
 
   $scope.verifyAnswers = function() {
-    $scope.cert_checklist.map( question => {
+    $scope.cert_checklist.map(function(question) {
       if (question.answer !== question.expected_answer) {
         // TODO message should be changed.
         answers_are_right.reject();
@@ -1577,7 +1565,7 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
     answers_are_right.resolve("new_cert");
 
     $scope.closeModal();
-  }
+  };
 }
 
 /**
@@ -1627,5 +1615,15 @@ function WotSelectPubkeyIdentityModalController($scope, $q, csWot, parameters) {
 function isCertificationRenewal(identity_current_certs, certifier_pubkey) {
   return _.find(identity_current_certs, function(certification) {
     return certification.pubkey === certifier_pubkey;
-  })
+  });
+}
+
+
+// Fisher-Yates shuffle
+function shuffle(array) {
+  for (var i = array.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
+    var t = array[i]; array[i] = array[j]; array[j] = t;
+  }
+  return array;
 }

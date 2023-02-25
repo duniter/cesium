@@ -172,7 +172,7 @@ function appConfig() {
     .pipe(gulp.dest('www/js'));
 }
 
-function appAndPluginLint(done) {
+function appAndPluginLint() {
   log(colors.green('Linting JS files...'));
 
   // Copy Js (and remove unused code)
@@ -185,8 +185,8 @@ function appAndPluginLint(done) {
         console.error('jshint failed');
         process.exit(1);
       }
-    }))
-    .on('end', done);
+      cb();
+    }));
 }
 
 function appNgTemplate() {

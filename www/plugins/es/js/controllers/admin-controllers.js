@@ -17,7 +17,7 @@ angular.module('cesium.es.admin.controllers', ['cesium.es.services'])
         data: {
           silentLocationChange: true
         }
-      })
+      });
   })
 
   .controller('ESAdminViewLogCtrl', ESAdminViewLogController)
@@ -94,7 +94,7 @@ function ESAdminViewLogController($scope, $q, $window, $state, UIUtils, csWot, e
         node);
     }
     return $scope.node;
-  }
+  };
 
   $scope.load = function(from, size) {
 
