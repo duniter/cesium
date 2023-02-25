@@ -297,14 +297,15 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
     $scope.search.type = 'text';
 
     // If checksum is correct, search on simple pubkey
-    let pubkeyWithCk;
+    var pubkeyWithCk;
     if (BMA.regexp.PUBKEY_WITH_CHECKSUM.test(text)) {
       console.debug("[wot] Validating pubkey checksum... ");
-      let matches = BMA.regexp.PUBKEY_WITH_CHECKSUM.exec(text);
-      console.log(matches)
+      var matches = BMA.regexp.PUBKEY_WITH_CHECKSUM.exec(text);
+      //console.log(matches)
+
       pubkey = matches[1];
-      let checksum = matches[2];
-      let expectedChecksum = csCrypto.util.pkChecksum(pubkey);
+      var checksum = matches[2];
+      var expectedChecksum = csCrypto.util.pkChecksum(pubkey);
       if (checksum === expectedChecksum) {
         console.debug("[wot] checksum {" + checksum + "} valid for pubkey {" + pubkey + "}")
         text = pubkey
@@ -441,7 +442,7 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
     var offset = $scope.search.results ? $scope.search.results.length : 0;
 
     $scope.search.loadingMore = true;
-    var searchFunction = ($scope.search.type == 'newcomers') ?
+    var searchFunction = ($scope.search.type === 'newcomers') ?
       $scope.doGetNewcomers :
       $scope.doGetPending;
 
@@ -691,11 +692,16 @@ function WotLookupModalController($scope, $controller, $focus, csWallet, paramet
 /**
  * Abtract controller that load identity, that expose some useful methods in $scope, like 'certify()'
  * @param $scope
+ * @param $rootScope
  * @param $state
- * @param $timeout
+ * @param $translate
+ * @param $ionicHistory
+ * @param $q
  * @param UIUtils
  * @param Modals
  * @param csConfig
+ * @param csSettings
+ * @param csCurrency
  * @param csWot
  * @param csWallet
  * @constructor
@@ -780,7 +786,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
             }
 
             // Prepare actions after user confirmation
-            let answers_are_right = $q.defer();
+            var answers_are_right = $q.defer();
             answers_are_right.promise.then( function (cert_status) {
               return $scope.showLicenseReminderIfNewCert(cert_status)
             })
@@ -860,7 +866,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
   }
 
   $scope.showLicenseReminderIfNewCert = function (cert_status) {
-    if (cert_status == "new_cert") {
+    if (cert_status === "new_cert") {
       return UIUtils.alert.confirm(
         'ACCOUNT.CERTIFICATION_MODAL.SHORT_LICENSE_REMINDER',
         'ACCOUNT.CERTIFICATION_MODAL.REMINDER_TITLE',
@@ -947,7 +953,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
             }
 
             // Prepare actions after user confirmation
-            let answers_are_right = $q.defer();
+            var answers_are_right = $q.defer();
             answers_are_right.promise.then( function (cert_status) {
               return $scope.showLicenseReminderIfNewCert(cert_status)
             })
@@ -1093,7 +1099,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
 /**
  * Identity view controller - should extend WotIdentityAbstractCtrl
  */
-function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $state, UIUtils, Modals, csWallet) {
+function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $state, UIUtils, Modals) {
   'ngInject';
   // Initialize the super class and extend it.
   angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
@@ -1340,8 +1346,8 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (state.stateParams && state.stateParams.type) {
-      $scope.motions.receivedCertifications.enable = (state.stateParams.type != 'given');
-      $scope.motions.givenCertifications.enable = (state.stateParams.type == 'given');
+      $scope.motions.receivedCertifications.enable = (state.stateParams.type !== 'given');
+      $scope.motions.givenCertifications.enable = (state.stateParams.type === 'given');
       $scope.motions.avatar.enable = false;
     }
 
@@ -1491,14 +1497,16 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
 
 /**
  * Certification checklist controller
+ * @param $scope
  * @param $controller
+ * @param parameters
  */
  function WotCertificationChecklistController($scope, $controller, parameters){
 
   // allow to display license
   $controller('CurrencyViewCtrl', {$scope: $scope});
 
-  let answers_are_right = parameters.answers_are_right;
+  var answers_are_right = parameters.answers_are_right;
   $scope.identity = parameters.identity;
 
   $scope.prepare_cert_checklist = function() {
@@ -1548,9 +1556,9 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
 
     // Fisher-Yates shuffle
     function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
-        let t = array[i]; array[i] = array[j]; array[j] = t
+      for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
+        var t = array[i]; array[i] = array[j]; array[j] = t
       }
       return array;
     }
@@ -1618,6 +1626,6 @@ function WotSelectPubkeyIdentityModalController($scope, $q, csWot, parameters) {
 
 function isCertificationRenewal(identity_current_certs, certifier_pubkey) {
   return _.find(identity_current_certs, function(certification) {
-    return certification.pubkey == certifier_pubkey;
+    return certification.pubkey === certifier_pubkey;
   })
 }
