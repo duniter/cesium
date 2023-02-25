@@ -28,7 +28,8 @@
       "fr-FR": "license/license_g1-fr-FR",
       "es-ES": "license/license_g1-es-ES",
       "eo-EO": "license/license_g1-eo-EO",
-      "pt-PT": "license/license_g1-pt-PT"
+      "pt-PT": "license/license_g1-pt-PT",
+      "it-IT": "license/license_g1-it-IT"
     },
     "feed": {
       "jsonFeed": {
@@ -290,7 +291,8 @@
       "en": "license/license_g1-en",
       "es-ES": "license/license_g1-es-ES",
       "eo-EO": "license/license_g1-eo-EO",
-      "pt-PT": "license/license_g1-pt-PT"
+      "pt-PT": "license/license_g1-pt-PT",
+      "it-IT": "license/license_g1-it-IT"
     },
     "node": {
       "host": "g1.e-is.pro",
