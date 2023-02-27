@@ -12,10 +12,10 @@ angular.module("cesium.config", [])
 	"cacheTimeMs": 300000,
 	"demo": false,
 	"readonly": false,
-	"fallbackLanguage": "fr",
+	"fallbackLanguage": "en",
 	"rememberMe": true,
 	"showUDHistory": true,
-	"timeout": 300000,
+	"timeout": 40000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
 	"keepAuthIdle": 600,
@@ -36,6 +36,7 @@ angular.module("cesium.config", [])
 		"en": "license/license_g1-en",
 		"fr-FR": "license/license_g1-fr-FR",
 		"es-ES": "license/license_g1-es-ES",
+		"es-CT": "license/license_g1-es-ES",
 		"eo-EO": "license/license_g1-eo-EO",
 		"pt-PT": "license/license_g1-pt-PT",
 		"it-IT": "license/license_g1-it-IT",
@@ -66,24 +67,30 @@ angular.module("cesium.config", [])
 			"port": 443
 		},
 		{
-			"host": "duniter.moul.re",
-			"port": 443
-		},
-		{
-			"host": "g1.presles.fr",
-			"port": 443
-		},
-		{
 			"host": "g1.le-sou.org",
 			"port": 443
 		},
 		{
-			"host": "duniter.normandie-libre.fr",
+			"host": "g1.moul.re",
+			"port": 443
+		},
+		{
+			"host": "g1.cloud-libre.eu",
+			"port": 443
+		},
+		{
+			"host": "g1.texu.es",
 			"port": 443
 		},
 		{
 			"host": "g1.duniter.org",
 			"port": 443
+		}
+	],
+	"developers": [
+		{
+			"name": "Benoit Lavenier",
+			"pubkey": "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE"
 		}
 	],
 	"plugins": {
@@ -94,10 +101,6 @@ angular.module("cesium.config", [])
 			"host": "g1.data.e-is.pro",
 			"port": 443,
 			"fallbackNodes": [
-				{
-					"host": "g1.data.presles.fr",
-					"port": 443
-				},
 				{
 					"host": "g1.data.le-sou.org",
 					"port": 443
@@ -117,7 +120,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "1.7.0-rc2",
-	"build": "2023-02-27T09:01:23.866Z",
+	"build": "2023-02-27T10:05:45.363Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
