@@ -132,7 +132,7 @@ angular.module('cesium.rml9.plugin', ['ngFileSaver', 'cesium.services'])
           $translate('RML9.FILE_NAME', {pubkey: $scope.pubkey, currentTime : currentTime})
             .then(function(result){
               FileSaver.saveAs(file, result);
-            })
+            });
         });
     };
 

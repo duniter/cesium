@@ -801,7 +801,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
               ])
                 .then(function(res) {
                   var signature = res[1];
-                  return that.post('/auth')({challenge: challenge, signature: signature, pubkey: wallet.data.pubkey})
+                  return that.post('/auth')({challenge: challenge, signature: signature, pubkey: wallet.data.pubkey});
                 })
                 .then(function(token) {
                   console.info('[ES] Authentication to pod succeed. token: ' + token);
@@ -823,7 +823,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         from: options.from || 0,
         size: options.size || 20,
         sort: options.sort || {time: 'desc'}
-      }
+      };
       return that.post('/log/request/_search')(request)
         .then(function(res) {
           return _(res && res.hits && res.hits.hits || []).reduce(function(res, hit) {

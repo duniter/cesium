@@ -36,7 +36,11 @@ angular.module("cesium.config", [])
 		"en": "license/license_g1-en",
 		"fr-FR": "license/license_g1-fr-FR",
 		"es-ES": "license/license_g1-es-ES",
-		"eo-EO": "license/license_g1-eo-EO"
+		"es-CT": "license/license_g1-es-ES",
+		"eo-EO": "license/license_g1-eo-EO",
+		"pt-PT": "license/license_g1-pt-PT",
+		"it-IT": "license/license_g1-it-IT",
+		"de-DE": "license/license_g1-de-DE"
 	},
 	"feed": {
 		"jsonFeed": {
@@ -63,11 +67,19 @@ angular.module("cesium.config", [])
 			"port": 443
 		},
 		{
-			"host": "duniter.moul.re",
+			"host": "g1.le-sou.org",
 			"port": 443
 		},
 		{
-			"host": "g1.presles.fr",
+			"host": "g1.moul.re",
+			"port": 443
+		},
+		{
+			"host": "g1.cloud-libre.eu",
+			"port": 443
+		},
+		{
+			"host": "g1.texu.es",
 			"port": 443
 		},
 		{
@@ -90,7 +102,7 @@ angular.module("cesium.config", [])
 			"port": 443,
 			"fallbackNodes": [
 				{
-					"host": "g1.data.presles.fr",
+					"host": "g1.data.le-sou.org",
 					"port": 443
 				},
 				{
@@ -107,8 +119,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "1.7.0-rc1",
-	"build": "2022-05-19T22:57:43.774Z",
+	"version": "1.7.0-rc2",
+	"build": "2023-02-27T10:05:45.363Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
