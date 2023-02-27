@@ -157,18 +157,18 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
   $scope.load = function() {
 
     if ($scope.search.loading){
-      $scope.refreshing = false;
+      $scope.updating = false;
 
       // Start network scan
       csNetwork.start($scope.node, $scope.computeOptions())
         .then(function() {
-          $scope.refresh();
+          $scope.onDataChanged();
         });
 
       // Catch event on new peers
       $scope.listeners.push(
         csNetwork.api.data.on.changed($scope, function(data) {
-          $scope.refresh(data);
+          $scope.onDataChanged(data);
         }));
     }
 
@@ -176,16 +176,21 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
     $scope.showHelpTip();
   };
 
-  $scope.refresh = function(data) {
+  $scope.onDataChanged = function(data) {
     data = csNetwork.data || data;
-    if (!data || $scope.refreshing /*|| !$scope.networkStarted*/) return; // Skip if no data, or already refreshing
+    if (!data || $scope.updating /*|| !$scope.networkStarted*/) return; // Skip if no data, or already updating
 
-    // Mark as refreshing
-    $scope.refreshing = true;
+    var now = Date.now();
+    console.debug("[peers] Fetching name + avatar, on {0} peers...".format(data.peers && data.peers.length || 0));
+
+    // Mark as updating
+    $scope.updating = true;
 
     // Add name+avatar to peers
     csWot.extendAll(data.peers)
       .then(function() {
+        console.debug("[peers] Fetching name + avatar on peers [OK] in {0}ms".format(Date.now() - now));
+
         // Avoid to refresh if view has been leaving
         if ($scope.networkStarted) {
           $scope.updateView(data);
@@ -196,7 +201,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
         // Continue
       })
       .then(function() {
-        $scope.refreshing = false;
+        $scope.updating = false;
       });
   }
 
@@ -223,7 +228,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
 
   $scope.sort = function() {
     $scope.search.loading = true;
-    $scope.refreshing = true;
+    $scope.updating = true;
     csNetwork.sort($scope.computeOptions());
     $scope.updateView(csNetwork.data);
   };

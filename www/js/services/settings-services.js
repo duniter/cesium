@@ -115,7 +115,11 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
       "en": "license/license_g1-en",
       "fr-FR": "license/license_g1-fr-FR",
       "es-ES": "license/license_g1-es-ES",
-      "pt-PT": "license/license_g1-pt-PT"
+      "es-CT": "license/license_g1-es-CT",
+      "eo-EO": "license/license_g1-eo-EO",
+      "pt-PT": "license/license_g1-pt-PT",
+      "it-IT": "license/license_g1-it-IT",
+      "de-DE": "license/license_g1-de-DE"
     }
   },
     fixedSettings,
@@ -174,7 +178,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     var promise;
     if (data.useLocalStorage) {
       // When node is temporary (fallback node): keep previous node address - issue #476
-      if (data.node.temporary === true) {
+      if (data.node && data.node.temporary === true) {
         promise = localStorage.getObject(constants.STORAGE_KEY)
           .then(function(previousSettings) {
             var savedData = angular.copy(data);
@@ -212,6 +216,9 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   applyData = function(newData) {
     if (!newData) return; // skip empty
 
+    // DEBUG
+    //console.debug('[settings] Applying data', newData);
+
     var localeChanged = false;
     if (newData.locale && newData.locale.id) {
       // Fix previously stored locale (could use bad format)
@@ -225,11 +232,20 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
       newData[key] = defaultSettings[key]; // This will apply fixed value (override by config.js file)
     });
 
+    // If need select a random peer, from the config
+    if (!newData.node && _.size(csConfig.fallbackNodes) > 0) {
+      newData.node = _.sample(csConfig.fallbackNodes);
+      console.info('[settings] Random selected peer: [{0}:{1}]'.format(newData.node.host, newData.node.port||80));
+      newData.node.temporary = true;
+    }
+
     // Apply new settings
     angular.merge(data, newData);
 
     // Delete temporary properties, if false
-    if (newData && newData.node && !newData.node.temporary || !data.node.temporary) delete data.node.temporary;
+    if ((newData && newData.node && !newData.node.temporary) || (data.node && !data.node.temporary)) {
+      delete data.node.temporary;
+    }
 
     // Apply the new locale (only if need)
     // will produce an event cached by onLocaleChange();
@@ -251,10 +267,11 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
             return;
           }
 
+          console.debug('[settings] Loaded from local storage in {0}ms'.format(Date.now()-now));
+
           // Apply stored data
           applyData(storedData);
 
-          console.debug('[settings] Loaded from local storage in '+(Date.now()-now)+'ms');
           emitChangedEvent();
         });
   },

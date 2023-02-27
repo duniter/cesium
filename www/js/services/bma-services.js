@@ -97,16 +97,16 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       that.alive = false;
 
       // Use settings as default, if exists
-      if (csSettings.data && csSettings.data.node) {
-        host = host || csSettings.data.node.host;
-        port = port || csSettings.data.node.port;
-
-        useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443 || csSettings.data.node.useSsl || that.forceUseSsl);
+      var node = csSettings.data && csSettings.data.node;
+      if (node) {
+        host = host || node.host;
+        port = port || node.port;
+        useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443 || node.useSsl || that.forceUseSsl);
       }
 
-      if (!host) {
-        return; // could not init yet
-      }
+      if (!host) return; // could not init yet
+
+
       that.host = host;
       that.port = port || 80;
       that.useSsl = angular.isDefined(useSsl) ? useSsl : (that.port == 443 || that.forceUseSsl);
@@ -308,7 +308,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       if (that._startPromise) return that._startPromise;
       if (that.started) return $q.when(that.alive);
 
-      if (!that.host) {
+      // Load without argument: wait settings, then init using setting's data
+      if (!that.host || !csSettings.isStarted()) {
         return csSettings.ready()
           .then(function() {
             that.init();
@@ -320,32 +321,29 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           });
       }
 
-      console.debug("[BMA] Starting {0} {ssl: {1})...".format(that.server, that.useSsl));
+      console.debug("[BMA] [{0}] Starting {ssl: {1})...".format(that.server, that.useSsl));
       var now = Date.now();
 
-      that._startPromise = $q.all([
-          csSettings.ready(),
-          that.isAlive()
-        ])
-        .then(function(res) {
-          that.alive = res[1];
+      that._startPromise = that.isAlive()
+        .then(function(alive) {
+          that.alive = alive;
           if (!that.alive) {
-            console.error("[BMA] Could not start {0} : unreachable".format(that.server));
+            console.error("[BMA] Could not start using peer {{0}}: unreachable".format(that.server));
             that.started = true;
             delete that._startPromise;
-            return false;
+            return false; // Not alive
           }
 
           // Add listeners
           if (!listeners || !listeners.length) {
             addListeners();
           }
-          console.debug('[BMA] Started in '+(Date.now()-now)+'ms');
+          console.debug('[BMA] Started in {}ms'.format(Date.now()-now));
 
           that.api.node.raise.start();
           that.started = true;
           delete that._startPromise;
-          return true;
+          return true; // Alive
         });
       return that._startPromise;
     };
@@ -383,6 +381,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     };
 
     that.filterAliveNodes = function(fallbackNodes, timeout) {
+      timeout = timeout || csConfig.timeout;
       var fallbackNodes = _.filter(fallbackNodes || [], function(node) {
         node.server = node.server || node.host + ((!node.port && node.port != 80 && node.port != 443) ? (':' + node.port) : '');
         var same = that.node.same(node);
@@ -1017,6 +1016,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
   service.lightInstance = function(host, port, useSsl, timeout) {
     port = port || 80;
     useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443);
+    timeout = timeout || csConfig.timeout;
     return {
       host: host,
       port: port,

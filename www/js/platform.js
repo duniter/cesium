@@ -101,7 +101,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
 
   .factory('csPlatform', function (ionicReady, $rootScope, $q, $state, $translate, $timeout, $ionicHistory, $window,
-                                   UIUtils, Modals, BMA, Device,
+                                   UIUtils, Modals, BMA, Device, Api,
                                    csHttp, csConfig, csCache, csSettings, csNetwork, csCurrency, csWallet) {
 
     'ngInject';
@@ -110,7 +110,9 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       started = false,
       startPromise,
       listeners = [],
-      removeChangeStateListener;
+      removeChangeStateListener,
+      api = new Api(this, 'csPlatform')
+    ;
 
     // Fix csConfig values
     csConfig.demo = csConfig.demo === true || csConfig.demo === 'true' || false;
@@ -141,57 +143,40 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       removeChangeStateListener = null;
     }
 
-    // Alert user if node not reached - fix issue #
+    // Alert user if node not reached
     function checkBmaNodeAlive(alive) {
-      if (alive) return true;
+      if (alive) return true; // Ok, current node is alive
 
+      var askUserConfirmation = checkBmaNodeAliveCounter === 0 && csSettings.data.expertMode;
       checkBmaNodeAliveCounter++;
       if (checkBmaNodeAliveCounter > 3)  throw 'ERROR.CHECK_NETWORK_CONNECTION'; // Avoid infinite loop
 
-      return BMA.filterAliveNodes(csSettings.data.fallbackNodes, Math.min(csConfig.timeout, 3000)/*3s max*/)
+      api.start.raise.message('NETWORK.INFO.CONNECTING_TO_PEER');
+      return BMA.filterAliveNodes(csSettings.data.fallbackNodes, csConfig.timeout)
         .then(function (fallbackNodes) {
-          if (!fallbackNodes.length) {
-            throw 'ERROR.CHECK_NETWORK_CONNECTION';
-          }
-          var randomIndex = Math.floor(Math.random() * fallbackNodes.length);
-          var fallbackNode = fallbackNodes[randomIndex];
-          return fallbackNode;
+          if (!fallbackNodes.length) throw 'ERROR.CHECK_NETWORK_CONNECTION';
+          return _.sample(fallbackNodes); // Random select
         })
         .then(function (fallbackNode) {
 
-          // Not expert mode: continue with the fallback node
-          if (!csSettings.data.expertMode) {
-            console.info("[platform] Switching to fallback node: {0}".format(fallbackNode.server));
-            return fallbackNode;
+          // Ask user before using the fallback node
+          if (askUserConfirmation) {
+            return askUseFallbackNode(fallbackNode);
           }
 
-          // If expert mode: ask user to confirm, before switching to fallback node
-          var confirmMsgParams = {old: BMA.server, new: fallbackNode.server};
-
-          // Force to show port/ssl, if this is the only difference
-          if (confirmMsgParams.old === confirmMsgParams.new) {
-            if (BMA.port != fallbackNode.port) {
-              confirmMsgParams.new += ':' + fallbackNode.port;
-            } else if (BMA.useSsl == false && (fallbackNode.useSsl || fallbackNode.port == 443)) {
-              confirmMsgParams.new += ' (SSL)';
-            }
-          }
-
-          return $translate('CONFIRM.USE_FALLBACK_NODE', confirmMsgParams)
-            .then(UIUtils.alert.confirm)
-            .then(function (confirm) {
-              if (!confirm) return; // Stop
-              return fallbackNode;
-            });
+          return fallbackNode;
         })
         .then(function (fallbackNode) {
           if (!fallbackNode) return; // Skip
 
-          // Only change BMA node in settings
-          csSettings.data.node = fallbackNode;
-
-          // Add a marker, for UI (only if not expert mode)
-          csSettings.data.node.temporary = !csSettings.data.expertMode;
+          console.info("[platform] Switching to fallback node: {0}".format(fallbackNode.server));
+          var node = {
+            host: fallbackNode.host,
+            port: fallbackNode.port,
+            useSsl: fallbackNode.useSsl,
+          };
+          csSettings.data.node = node;
+          csSettings.data.node.temporary = true;
 
           csHttp.cache.clear();
 
@@ -202,17 +187,31 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     }
 
     // Make sure the BMA node is synchronized (is on the main consensus block)
-    function checkBmaNodeSynchronized() {
+    function checkBmaNodeSynchronized(alive) {
+      if (!alive) return false;
       var now = Date.now();
+
       console.info("[platform] Checking if node is synchronized...");
+      api.start.raise.message('NETWORK.INFO.CHECKING_NETWORK_STATE');
+
+      var askUserConfirmation = csSettings.data.expertMode;
 
       return csNetwork.getSynchronizedBmaPeers(BMA, {
-        timeout:  Math.min(csConfig.timeout, 3000 /*3s max*/)
+        timeout:  Math.min(csConfig.timeout, 10000 /*10s max*/)
       })
         .then(function(peers) {
-          console.info("[platform] Network scanned in {0}ms, {1} peers (UP and synchronized) found".format(Date.now() - now, peers.length));
 
           if (!peers.length) return; // No peer found: exit
+
+          // Not enough peers in network (isolated node). Should never occur. Make sure at least one known node exists
+          if (peers.length < 10) {
+            console.warn("[platform] Network scanned in {0}ms, only {1} peers (UP and synchronized) found. To few peers. Will peek another peer...".format(Date.now() - now, peers.length));
+            // Retry using another peer
+            return checkBmaNodeAlive(false)
+              .then(checkBmaNodeSynchronized); // Loop
+          }
+
+          console.info("[platform] Network scanned in {0}ms, {1} peers (UP and synchronized) found".format(Date.now() - now, peers.length));
 
           // TODO: store sync peers in storage ?
           //csSettings.data.
@@ -242,19 +241,28 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
                 return true;
               }
 
-              // If Expert mode: ask user to select a node
-              if (csSettings.data.expertMode) {
-                return selectBmaNode();
-              }
-
-              var randomIndex = Math.floor(Math.random() * peers.length);
-              var randomPeer = peers[randomIndex];
-              var node = {
+              var randomPeer = _.sample(peers);
+              var synchronizedNode = {
                 host: randomPeer.getHost(),
                 port: randomPeer.getPort(),
                 useSsl: randomPeer.isSsl()
               };
-              console.info("[platform] Randomly selected peer {0}".format(randomPeer.server));
+
+              // If Expert mode: ask user to select a node
+              if (askUserConfirmation) {
+                return askUseFallbackNode(synchronizedNode);
+              }
+
+              return synchronizedNode;
+            })
+            .then(function(node) {
+              if (node === true) return true;
+              if (!node) {
+                return selectBmaNode();
+              }
+
+              console.info("[platform] Switching to synchronized fallback peer {{0}:{1}}".format(node.host, node.port));
+
               // Only change BMA node in settings
               csSettings.data.node = node;
 
@@ -262,7 +270,28 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
               csSettings.data.node.temporary = true;
 
               return BMA.copy(node);
-            });
+            })
+        });
+    }
+
+    function askUseFallbackNode(fallbackNode) {
+      // Ask user to confirm, before switching to fallback node
+      var confirmMsgParams = {old: BMA.server, new: fallbackNode.server};
+
+      // Force to show port/ssl, if this is the only difference
+      if (confirmMsgParams.old === confirmMsgParams.new) {
+        if (BMA.port != fallbackNode.port) {
+          confirmMsgParams.new += ':' + fallbackNode.port;
+        } else if (BMA.useSsl == false && (fallbackNode.useSsl || fallbackNode.port == 443)) {
+          confirmMsgParams.new += ' (SSL)';
+        }
+      }
+
+      return $translate('CONFIRM.USE_FALLBACK_NODE', confirmMsgParams)
+        .then(UIUtils.alert.confirm)
+        .then(function (confirm) {
+          if (!confirm) return; // Stop
+          return fallbackNode;
         });
     }
 
@@ -324,8 +353,6 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       return $q.when();
     }
 
-
-
     function addListeners() {
       // Listen if node changed
       listeners.push(
@@ -358,6 +385,8 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       // Avoid change state
       disableChangeState();
 
+      api.start.raise.message('COMMON.LOADING');
+
       // We use 'ionicReady()' instead of '$ionicPlatform.ready()', because this one is callable many times
       startPromise = ionicReady()
 
@@ -370,7 +399,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         ]))
 
         // Load BMA
-        .then(function(){
+        .then(function() {
           checkBmaNodeAliveCounter = 0;
           return BMA.ready()
             .then(checkBmaNodeAlive)
@@ -416,6 +445,8 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       }, 500);
     }
 
+    api.registerEvent('start', 'message');
+
     return  {
       disableChangeState: disableChangeState,
       isStarted: isStarted,
@@ -425,7 +456,8 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       stop: stop,
       version: {
         latest: getLatestRelease
-      }
+      },
+      api: api
     };
   })
 
@@ -481,7 +513,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
       // Ionic Platform Grade is not A, disabling views transitions
       if (ionic.Platform.grade.toLowerCase() !== 'a') {
-        console.info('[app] Disabling UI effects, because plateform\'s grade is [' + ionic.Platform.grade + ']');
+        console.info('[app] Disabling UI effects, because platform\'s grade is {{0}}'.format(ionic.Platform.grade));
         UIUtils.setEffects(false);
       }
 

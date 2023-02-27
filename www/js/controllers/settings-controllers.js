@@ -150,6 +150,7 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
 
   // Change node
   $scope.changeNode= function(node) {
+
     var port = !!$scope.formData.node.port && $scope.formData.node.port != 80 && $scope.formData.node.port != 443 ? $scope.formData.node.port : undefined;
     node = node || {
         host: $scope.formData.node.host,

@@ -41,7 +41,7 @@
       "maxContentLength": 1300
     },
     "node": {
-      "host": "g1.duniter.org",
+      "host": "g111.duniter.org",
       "port": 443
     },
     "fallbackNodes": [

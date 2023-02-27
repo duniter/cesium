@@ -202,38 +202,6 @@
 
         <span class="item item-divider" translate>SETTINGS.NETWORK_SETTINGS</span>
 
-        <!-- Duniter node -->
-        <div class="item ink item-text-wrap item-icon-right hidden-xs hidden-sm" ng-click="changeNode()">
-          <div class="input-label" translate>SETTINGS.PEER</div>
-
-          <!-- node temporary changed -->
-          <ng-if ng-if="formData.node.temporary">
-            <h4 class="gray text-wrap assertive" >
-              <i class="icon ion-alert-circled"></i>
-              <span ng-bind-html="'SETTINGS.PEER_CHANGED_TEMPORARY' | translate "></span>
-            </h4>
-            <div class="item-note assertive text-italic">{{bma.server}}</div>
-          </ng-if>
-
-          <div class="badge badge-balanced" ng-if="!formData.node.temporary">{{bma.server}}</div>
-          <i class="icon ion-ios-arrow-right"></i>
-        </div>
-        <ion-item class="ink item-icon-right visible-xs visible-sm" ng-click="changeNode()">
-          <div class="input-label hidden-xs" translate>SETTINGS.PEER</div>
-          <div class="input-label visible-xs" translate>SETTINGS.PEER_SHORT</div>
-
-          <!-- node temporary changed -->
-          <ng-if ng-if="formData.node.temporary">
-            <h4 class="gray text-wrap assertive" >
-              <b class="ion-alert-circled"></b>
-              <span ng-bind-html="'SETTINGS.PEER_CHANGED_TEMPORARY' | translate "></span>
-            </h4>
-            <div class="badge badge-assertive">{{bma.server}}</div>
-          </ng-if>
-          <div class="badge badge-balanced" ng-if="!formData.node.temporary">{{bma.server}}</div>
-          <i class="icon ion-ios-arrow-right"></i>
-        </ion-item>
-
         <!-- Expert mode ?-->
         <div class="item item-text-wrap item-toggle dark hidden-xs hidden-sm">
           <div class="input-label" ng-bind-html="'SETTINGS.EXPERT_MODE' | translate"></div>
@@ -245,6 +213,49 @@
             </div>
           </label>
         </div>
+
+        <!-- Duniter node -->
+        <div class="item ink item-text-wrap item-icon-right" ng-click="changeNode()">
+          <div class="input-label" translate>SETTINGS.PEER</div>
+
+          <ng-if ng-if="formData.node.temporary">
+            <!-- node temporary changed -->
+            <ng-if ng-if="formData.expertMode">
+              <h4 class="gray text-wrap assertive" >
+                <span class="ion-alert-circled"></span>
+                <span ng-bind-html="'SETTINGS.PEER_CHANGED_TEMPORARY' | translate "></span>
+              </h4>
+              <div class="badge badge-assertive">{{bma.server}}</div>
+            </ng-if>
+            <!-- node selected automatically -->
+            <ng-if ng-if="!formData.expertMode">
+              <h4 class="gray text-wrap " >
+                <span class="ion-info-circled positive"></span>
+                <span ng-bind-html="'SETTINGS.PEER_SELECTED_AUTOMATICALLY' | translate "></span>
+              </h4>
+              <div class="badge badge-balanced">{{bma.server}}</div>
+            </ng-if>
+          </ng-if>
+
+          <div class="badge badge-balanced" ng-if="!formData.node.temporary">{{bma.server}}</div>
+          <i class="icon ion-ios-arrow-right" ng-if="formData.expertMode"></i>
+        </div>
+        <ion-item class="ink item-icon-right visible-xs visible-sm" ng-click="changeNode()">
+          <div class="input-label hidden-xs" translate>SETTINGS.PEER</div>
+          <div class="input-label visible-xs" translate>SETTINGS.PEER_SHORT</div>
+
+          <!-- node temporary changed -->
+          <ng-if ng-if="formData.node.temporary">
+            <h4 class="gray text-wrap assertive" >
+              <span class="ion-alert-circled"></span>
+              <span ng-bind-html="'SETTINGS.PEER_CHANGED_TEMPORARY' | translate "></span>
+            </h4>
+            <div class="badge badge-assertive">{{bma.server}}</div>
+          </ng-if>
+          <div class="badge badge-balanced" ng-if="!formData.node.temporary">{{bma.server}}</div>
+          <i class="icon ion-ios-arrow-right" ng-if="formData.expertMode"></i>
+        </ion-item>
+
 
         <!-- Block validity window -->
         <label class="item item-input item-select item-text-wrap">

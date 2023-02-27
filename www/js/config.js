@@ -15,7 +15,7 @@ angular.module("cesium.config", [])
 	"fallbackLanguage": "en",
 	"rememberMe": true,
 	"showUDHistory": true,
-	"timeout": 3000,
+	"timeout": 40000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
 	"keepAuthIdle": 600,
@@ -28,7 +28,7 @@ angular.module("cesium.config", [])
 	"helptip": {
 		"enable": true,
 		"installDocUrl": {
-			"fr-FR": "https://duniter.org/fr/miner-des-blocs/installer/",
+			"fr-FR": "https://duniter.fr/wiki/doc/installer/",
 			"en": "https://duniter.org/en/wiki/duniter/install/"
 		}
 	},
@@ -50,7 +50,7 @@ angular.module("cesium.config", [])
 		"maxContentLength": 1300
 	},
 	"node": {
-		"host": "g1.duniter.org",
+		"host": "g11.duniter.org",
 		"port": 443
 	},
 	"fallbackNodes": [
@@ -67,19 +67,11 @@ angular.module("cesium.config", [])
 			"port": 443
 		},
 		{
-			"host": "g1.le-sou.org",
+			"host": "duniter.moul.re",
 			"port": 443
 		},
 		{
-			"host": "g1.moul.re",
-			"port": 443
-		},
-		{
-			"host": "g1.cloud-libre.eu",
-			"port": 443
-		},
-		{
-			"host": "g1.texu.es",
+			"host": "g1.presles.fr",
 			"port": 443
 		},
 		{
@@ -120,7 +112,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "1.7.0-rc2",
-	"build": "2023-02-27T10:05:45.363Z",
+	"build": "2023-02-27T10:33:03.091Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
