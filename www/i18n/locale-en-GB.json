@@ -191,7 +191,7 @@
       "HOST" : "Address",
       "HOST_HELP": "Address: server:port",
       "USE_SSL" : "Secured?",
-      "USE_SSL_HELP" : "(SSL Encryption)",
+      "USE_SSL_HELP" : "SSL Encryption",
       "BTN_SHOW_LIST" : "Peer's list"
     }
   },

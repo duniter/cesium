@@ -184,7 +184,7 @@
       "HOST": "Endereço",
       "HOST_HELP": "Endereço: servidor:porta",
       "USE_SSL": "Conexão segura",
-      "USE_SSL_HELP": "(Cifrado SSL)",
+      "USE_SSL_HELP": "Cifrado SSL",
       "BTN_SHOW_LIST": "Lista de nós"
     }
   },

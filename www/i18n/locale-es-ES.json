@@ -184,7 +184,7 @@
       "HOST": "Dirección",
       "HOST_HELP": "Dirección: servidor:puerto",
       "USE_SSL": "Conexión segura",
-      "USE_SSL_HELP": "(Cifrado SSL)",
+      "USE_SSL_HELP": "Cifrado SSL",
       "BTN_SHOW_LIST": "Lista de nodos"
     }
   },

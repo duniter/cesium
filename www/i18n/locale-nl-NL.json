@@ -138,7 +138,7 @@
       "HOST" : "Adres",
       "HOST_HELP": "Aadres: server:poort",
       "USE_SSL" : "Secure?",
-      "USE_SSL_HELP" : "(SSL-encryptie)",
+      "USE_SSL_HELP" : "SSL-encryptie",
       "BTN_SHOW_LIST" : "Lijst van knooppunten"
     }
   },

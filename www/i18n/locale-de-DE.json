@@ -194,8 +194,8 @@
       "TITLE" : "Duniter Knoten",
       "HOST" : "Adresse",
       "HOST_HELP": "Adresse: Server:Port",
-      "USE_SSL" : "Sichere Verbindung nutzen (TLS)?",
-      "USE_SSL_HELP" : "(TLS Verschlüsselung)",
+      "USE_SSL" : "Sichere Verbindung nutzen?",
+      "USE_SSL_HELP" : "TLS Verschlüsselung",
       "BTN_SHOW_LIST" : "Liste der verfügbaren Knoten"
     }
   },

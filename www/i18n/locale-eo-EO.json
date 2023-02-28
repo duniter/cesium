@@ -190,7 +190,7 @@
       "HOST": "Adreso",
       "HOST_HELP": "Adreso: servilo: konektujo",
       "USE_SSL": "Sekurigita?",
-      "USE_SSL_HELP": "(SSL-ĉifrado)",
+      "USE_SSL_HELP": "SSL-ĉifrado",
       "BTN_SHOW_LIST": "Listo de la nodoj"
     }
   },

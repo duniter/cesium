@@ -726,6 +726,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     },
 
     loadTxAndSources = function(fromTime) {
+      if (fromTime === 'pending') {
+        UIUtils.loading.update({template: "INFO.LOADING_PENDING_TX"});
+      }
       return csTx.load(data.pubkey, fromTime)
         .then(function(res){
           resetTxAndSources();
