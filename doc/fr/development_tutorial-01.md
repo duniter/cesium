@@ -90,16 +90,16 @@ Installer Node.js est devenu extrêmement simple pour ces OS : un outil vous per
 Vous pouvez installer nvm avec la commande suivante :
 
 ```bash
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.3/install.sh | bash
 ```
 
-Fermez puis rouvrez votre terminal, comme indiqué. Puis, installez Node.js (choisissez la version 6) : 
+Fermez puis rouvrez votre terminal, comme indiqué. Puis, installez Node.js (choisissez la version 12) : 
 
 ```bash
-nvm install 6
+nvm install 12
 ```
 
-Vous aurez alors la dernière version de la branche 5.x de Node.js prête à l'emploi.
+Vous aurez alors la dernière version de la branche 12.x de Node.js prête à l'emploi.
 
 ##### Outils de compilation
 
@@ -110,7 +110,7 @@ sudo apt-get install build-essential
 
 #### Sous Windows
 
-Pour Windows, téléchargez la version 6 disponible sur le site officiel de Node.js : https://nodejs.org
+Pour Windows, téléchargez la version 12 disponible sur le site officiel de Node.js : https://nodejs.org
 
 Puis lancez l'installeur ainsi téléchargé.
 
