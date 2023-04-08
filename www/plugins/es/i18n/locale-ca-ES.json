@@ -112,36 +112,36 @@
       "DIVIDER_GROUP": "Grups"
     },
     "CONFIRM": {
-      "SUGGEST_CERTIFICATIONS": "¿Desea <b>enviar estas sugerencias de certificatión</b> ?",
-      "ASK_CERTIFICATION": "¿Desea <b>enviar una solicitud de certificación</b> ?",
-      "ASK_CERTIFICATIONS": "¿Desea <b>enviar una solicitud de certificación</b> a estas personas ?"
+      "SUGGEST_CERTIFICATIONS": "Vols <b>enviar aquests suggeriments de certificatió</b>?",
+      "ASK_CERTIFICATION": "Vols <b>enviar una sol·licitut de certificació</b>?",
+      "ASK_CERTIFICATIONS": "Vols <b>enviar una sol·licitut de certificació</b> a aquestes persones?"
     }
   },
   "INVITATION": {
-    "TITLE": "Invitaciones",
-    "NO_RESULT": "Ningúna invitación en espera",
-    "BTN_DELETE_ALL": "Suprimir todas las invitaciones",
-    "BTN_DELETE": "Suprimir la invitación",
-    "BTN_NEW_INVITATION": "Nueva invitación",
-    "ASK_CERTIFICATION": "<a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid}}</a> solicita su certificación",
-    "SUGGESTION_CERTIFICATION": "<a href=\"#/app/wot/{{::pubkey}}/{{::uid}}\">{{::name||uid}}</a> ha sido sugerido/a para certificación",
-    "SUGGESTED_BY": "Sugerencia mandada por <a class=\"positive\" href=\"#/app/wot/{{::issuer.pubkey}}/{{::issuer.uid}}\">{{::issuer.name||issuer.uid}}</a>",
+    "TITLE": "Invitacions",
+    "NO_RESULT": "No hi ha cap invitació en espera",
+    "BTN_DELETE_ALL": "Suprimeix totes les invitacions",
+    "BTN_DELETE": "Suprimeix la invitació",
+    "BTN_NEW_INVITATION": "Nova invitació",
+    "ASK_CERTIFICATION": "<a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid}}</a> ha sol·licitat la teva certificació",
+    "SUGGESTION_CERTIFICATION": "<a href=\"#/app/wot/{{::pubkey}}/{{::uid}}\">{{::name||uid}}</a> ha sigut suggerit per certificar-se",
+    "SUGGESTED_BY": "Suggeriment enviat per <a class=\"positive\" href=\"#/app/wot/{{::issuer.pubkey}}/{{::issuer.uid}}\">{{::issuer.name||issuer.uid}}</a>",
     "NOTIFICATIONS": {
-      "TITLE": "Invitaciones"
+      "TITLE": "Invitacions"
     },
     "LIST": {
-      "TITLE": "Invitaciones"
+      "TITLE": "Invitacions"
     },
     "NEW": {
-      "TITLE": "Nueva invitación",
+      "TITLE": "Nova invitació",
       "RECIPIENTS": "A",
-      "RECIPIENTS_HELP": "Destinatarios de la invitación",
-      "RECIPIENTS_MODAL_TITLE": "Destinatarios",
-      "RECIPIENTS_MODAL_HELP": "Por favor, elige los destinatarios :",
-      "SUGGESTION_IDENTITIES": "Sugerencia de certificación",
-      "SUGGESTION_IDENTITIES_HELP": "Certificaciones a sugerir",
-      "SUGGESTION_IDENTITIES_MODAL_TITLE": "Sugerencias",
-      "SUGGESTION_IDENTITIES_MODAL_HELP": "Por favor, elige sus sugerencias :"
+      "RECIPIENTS_HELP": "Destinataris de la invitació",
+      "RECIPIENTS_MODAL_TITLE": "Destinataris",
+      "RECIPIENTS_MODAL_HELP": "Si us plau, tria els destinataris:",
+      "SUGGESTION_IDENTITIES": "Suggeriment de certificació",
+      "SUGGESTION_IDENTITIES_HELP": "Certificacions a suggerir",
+      "SUGGESTION_IDENTITIES_MODAL_TITLE": "Suggeriments",
+      "SUGGESTION_IDENTITIES_MODAL_HELP": "Si us plau, tria els teus suggeriments:"
     },
     "CONFIRM": {
       "DELETE_ALL_CONFIRMATION": "La supresión de las invitaciones es una <b>operación ireversible</b>.<br/><br/>¿ Desea continuar ?",
