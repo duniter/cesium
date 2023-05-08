@@ -510,7 +510,8 @@
     "NOT_NEED_RENEW_MEMBERSHIP": "Je lidmaatschap hoeft niet verlengd te worden (het zal pas verlopen na {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Weet je zeker</b> dat je een verlengingsaanvraag wil versturen?",
     "SAVE_BEFORE_LEAVE": "Wil je <b>je wijzigingen opslaan</b> voor je de pagina verlaat?",
     "SAVE_BEFORE_LEAVE_TITLE": "Wijzigingen niet opgeslagen",
-    "LICENCE": "Ik heb gelezen en geaccepteerd de voorwaarden van de vergunning G1"
+    "LICENCE": "Ik heb gelezen en geaccepteerd de voorwaarden van de vergunning G1",
+    "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Waarschuwing:</b> Wil je het knooppunt <b>handmatig wijzigen</b>?<br/><br/>Als je doorgaat:<ul><li> - De <b>expertmodus</b> wordt geactiveerd;</li><li> - Je kunt terugkeren naar automatische knooppuntselectie door eenvoudigweg de <b>expertmodus uit te schakelen</b>.</li></ul>"
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Intrekkingsdocument</b>",

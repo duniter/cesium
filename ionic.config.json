@@ -1,13 +1,14 @@
 {
   "name": "Cesium",
-  "type": "ionic1",
   "integrations": {
     "cordova": {}
   },
+  "type": "ionic1",
   "watchPatterns": [
     "www/index.html",
     "www/api/index.html",
     "www/dist/**/*",
     "www/css/*.css"
-  ]
+  ],
+  "yarn": true
 }

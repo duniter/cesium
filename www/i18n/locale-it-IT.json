@@ -814,9 +814,9 @@
     "CERTIFY_RULES": "<b class=\"assertive\">Non certificare un conto</b> se credi che: <ul><li>1.) L'identità della persona potrebbe essere finta.<li>2.) La persona ha già un conto certicato.<li>3.) La persona trasgredisce la regola 1 o 2 o entrambe. (Certifica conti finti o gemelli).</ul></small><br/>Sei sicuro di voler certificare questa identità?",
     "FULLSCREEN": "Aprire l'applicazione a schermo intero?",
     "EXIT_APP": "Chiudere l'applicazione?",
-"TRANSFER": "<b>Resoconto del bonifico:</b><br/><br/><ul><li> - Inviato da: <b>{{from}}</b></li><li> - A: <b>{{to}}</b></li><li> - Importo: <b>{{amount}} {{unit}}</b></li><li> - Comemnto: <i>{{comment}}</i></li></ul><br/><b>Sei sicuro di voler procedere con questo bonifico?</b>",
-   "TRANSFER_ALL": "<b>Riepilogo del bonifico:</b><br/><br/><ul><li> - Da: <b>{{from}}</b></li><li> - A: <b>{{to}}</b></li><li> - Importo: <b>{{amount}} {{unit}}</b></li><li> - Commento: <i>{{comment}}</i></li><br/><li> - Resto : <b>{{restAmount}} {{unit}}</b> a <b>{{restTo}}</b></li></ul><br/><b>Sicuro di voler fare questo bonifico?</b>",
-   "MEMBERSHIP_OUT": "Questa operazione è <b>irreversibile</b>.<br/></br/><b>Sei sicuro di voler cancellare la tua presenza nella RdF?</b>",
+    "TRANSFER": "<b>Resoconto del bonifico:</b><br/><br/><ul><li> - Inviato da: <b>{{from}}</b></li><li> - A: <b>{{to}}</b></li><li> - Importo: <b>{{amount}} {{unit}}</b></li><li> - Comemnto: <i>{{comment}}</i></li></ul><br/><b>Sei sicuro di voler procedere con questo bonifico?</b>",
+    "TRANSFER_ALL": "<b>Riepilogo del bonifico:</b><br/><br/><ul><li> - Da: <b>{{from}}</b></li><li> - A: <b>{{to}}</b></li><li> - Importo: <b>{{amount}} {{unit}}</b></li><li> - Commento: <i>{{comment}}</i></li><br/><li> - Resto : <b>{{restAmount}} {{unit}}</b> a <b>{{restTo}}</b></li></ul><br/><b>Sicuro di voler fare questo bonifico?</b>",
+    "MEMBERSHIP_OUT": "Questa operazione è <b>irreversibile</b>.<br/></br/><b>Sei sicuro di voler cancellare la tua presenza nella RdF?</b>",
     "MEMBERSHIP_OUT_2": "Questa operazione è <b>irreversibile</b>!<br/><br/>Sei sicuro <b>di voler revocare la tua identità</b>?",
     "LOGIN_UNUSED_WALLET_TITLE": "Errore di battitura?",
     "LOGIN_UNUSED_WALLET": "Il conto sembra <b>inattivo</b>.<br/><br/>Probabilmente è un<b>errore di battitura</b> delle tue credenziali. Per favore riprova, verificando che la <b>chiave pubblica sia la tua<b/>.",
@@ -831,8 +831,9 @@
     "SAVE_BEFORE_LEAVE_TITLE": "Modifiche non salvate",
     "LOGOUT": "Sei sicuro di voler chiudere la sessione?",
     "USE_FALLBACK_NODE": "Nodo <b>{{old}}</b> indisponibile o indirizzo errato.<br/><br/>Vuoi utilizzare temporanemante il <b>{{new}}</b> nodo?",
-    "ISSUE_524_SEND_LOG": "La transazione è stata annullata a causa di un errore conosciuto (issue #524) ma non riprodotto. <br/><br/>Per aiutare gli sviluppatori a risolvere questo errore, acconsenti all'<b>invio dei tuoi logs</b> per messaggio?<br/><small>(Non viene inviato nessun dato confidenziale)</small>"
- },
+    "ISSUE_524_SEND_LOG": "La transazione è stata annullata a causa di un errore conosciuto (issue #524) ma non riprodotto. <br/><br/>Per aiutare gli sviluppatori a risolvere questo errore, acconsenti all'<b>invio dei tuoi logs</b> per messaggio?<br/><small>(Non viene inviato nessun dato confidenziale)</small>",
+    "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Avviso:</b> Vuoi <b>cambiare manualmente</b> il nodo?<br/><br/>Se continui:<ul><li> - Verrà attivata la <b>modalità esperto</b>;</li><li> - Potrai tornare alla selezione automatica del nodo semplicemente <b>disattivando la modalità esperto</b>.</li></ul>"
+  },
  "MODE": {
    "DEMO": {
      "BADGE": "Demo",

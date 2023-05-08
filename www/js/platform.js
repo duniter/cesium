@@ -197,8 +197,8 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       var askUserConfirmation = csSettings.data.expertMode;
 
       return csNetwork.getSynchronizedBmaPeers(BMA, {
-        timeout:  Math.min(csConfig.timeout, 10000 /*10s max*/)
-      })
+          timeout:  Math.min(csConfig.timeout, 10000 /*10s max*/)
+        })
         .then(function(peers) {
 
           if (!peers.length) return; // No peer found: exit
@@ -270,7 +270,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
               csSettings.data.node.temporary = true;
 
               return BMA.copy(node);
-            })
+            });
         });
     }
 
@@ -417,10 +417,13 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
           addListeners();
           startPromise = null;
           started = true;
+
+          api.start.raise.message(''); // Reset message
         })
         .catch(function(err) {
           startPromise = null;
           started = false;
+          api.start.raise.message(''); // Reset message
           if($state.current.name !== $rootScope.errorState) {
             $state.go($rootScope.errorState, {error: 'peer'});
           }
@@ -560,40 +563,3 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     });
   })
 ;
-
-// Workaround to add "".startsWith() if not present
-if (typeof String.prototype.startsWith !== 'function') {
-  console.debug("Adding String.prototype.startsWith() -> was missing on this platform");
-  String.prototype.startsWith = function(prefix, position) {
-    return this.indexOf(prefix, position) === 0;
-  };
-}
-
-// Workaround to add "".startsWith() if not present
-if (typeof String.prototype.trim !== 'function') {
-  console.debug("Adding String.prototype.trim() -> was missing on this platform");
-  // Make sure we trim BOM and NBSP
-  var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
-  String.prototype.trim = function() {
-    return this.replace(rtrim, '');
-  };
-}
-
-// Workaround to add Math.trunc() if not present - fix #144
-if (Math && typeof Math.trunc !== 'function') {
-  console.debug("Adding Math.trunc() -> was missing on this platform");
-  Math.trunc = function(number) {
-    return parseInt((number - 0.5).toFixed());
-  };
-}
-
-// Workaround to add "".format() if not present
-if (typeof String.prototype.format !== 'function') {
-  console.debug("Adding String.prototype.format() -> was missing on this platform");
-  String.prototype.format = function() {
-    var args = arguments;
-    return this.replace(/{(\d+)}/g, function(match, number) {
-      return typeof args[number] != 'undefined' ? args[number] : match;
-    });
-  };
-}

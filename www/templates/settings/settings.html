@@ -216,28 +216,40 @@
 
         <!-- Duniter node -->
         <div class="item ink item-text-wrap item-icon-right" ng-click="changeNode()">
-          <div class="input-label" translate>SETTINGS.PEER</div>
+          <div class="input-label" ng-class="{'gray': !formData.expertMode}" translate>SETTINGS.PEER</div>
 
-          <ng-if ng-if="formData.node.temporary">
-            <!-- node temporary changed -->
-            <ng-if ng-if="formData.expertMode">
-              <h4 class="gray text-wrap assertive" >
-                <span class="ion-alert-circled"></span>
-                <span ng-bind-html="'SETTINGS.PEER_CHANGED_TEMPORARY' | translate "></span>
+          <!-- node manually selected (expert mode) -->
+          <ng-if ng-if="formData.expertMode">
+            <h4 class="gray text-wrap assertive" ng-if="formData.node.temporary">
+              <span class="ion-alert-circled"></span>
+              <span ng-bind-html="'SETTINGS.PEER_CHANGED_TEMPORARY' | translate "></span>
+            </h4>
+            <ng-if ng-if="platform.loading">
+              <h4 class="gray text-italic">
+                <span ng-bind-html="platform.loadingMessage | translate "></span>
               </h4>
-              <div class="badge badge-assertive">{{bma.server}}</div>
             </ng-if>
-            <!-- node selected automatically -->
-            <ng-if ng-if="!formData.expertMode">
-              <h4 class="gray text-wrap " >
-                <span class="ion-info-circled positive"></span>
-                <span ng-bind-html="'SETTINGS.PEER_SELECTED_AUTOMATICALLY' | translate "></span>
-              </h4>
+            <div class="badge badge-balanced" ng-class="{'badge-assertive': formData.node.temporary}">{{bma.server}}</div>
+          </ng-if>
+
+          <!-- node selected automatically -->
+          <ng-if ng-if="!formData.expertMode">
+            <h4 class="gray text-wrap">
+              <span ng-bind-html="'SETTINGS.PEER_SELECTED_AUTOMATICALLY' | translate "></span>
+            </h4>
+            <ng-if ng-if="!platform.loading">
               <div class="badge badge-balanced">{{bma.server}}</div>
+            </ng-if>
+            <ng-if ng-if="platform.loading">
+              <h4 class="gray text-italic">
+                <span ng-bind-html="platform.loadingMessage | translate "></span>
+              </h4>
+              <div class="badge badge-note">
+                <ion-spinner icon="android"></ion-spinner>
+              </div>
             </ng-if>
           </ng-if>
 
-          <div class="badge badge-balanced" ng-if="!formData.node.temporary">{{bma.server}}</div>
           <i class="icon ion-ios-arrow-right" ng-if="formData.expertMode"></i>
         </div>
 <!--        <ion-item class="ink item-icon-right visible-xs visible-sm" ng-click="changeNode()">-->

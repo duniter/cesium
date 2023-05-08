@@ -203,7 +203,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
       .then(function() {
         $scope.updating = false;
       });
-  }
+  };
 
   $scope.updateView = function(data) {
     console.debug("[peers] Updating UI");

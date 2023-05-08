@@ -15,6 +15,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
     startPromise,
 
     data = {
+      pid: 0, // Start PID
       bma: null,
       listeners: [],
       loading: true,
@@ -61,6 +62,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
     },
 
     resetData = function() {
+      data.starCounter = 0;
       data.bma = null;
       data.listeners = [];
       data.peers.splice(0);
@@ -178,10 +180,11 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         else if (data.loading && !data.searchingPeersOnNetwork) {
           data.loading = false;
           $interval.cancel(interval);
+
           // The peer lookup end, we can make a clean final report
           sortPeers(true/*update main buid*/);
 
-          console.debug('[network] {0} peers found.'.format(data.peers.length));
+          console.debug('[network] {0} peer(s) found.'.format(data.peers.length));
         }
       }, 1000);
 
@@ -462,7 +465,6 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       // Apply filter
       if (!applyPeerFilter(peer)) return $q.when();
 
-      var startRefreshTime = Date.now();
       if (!data.filter.online || (!data.filter.online && peer.status === 'DOWN') || !peer.getHost() /*fix #537*/) {
         peer.online = false;
         return $q.when(peer);
@@ -512,7 +514,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         return $q.when(peer);
       }
 
-      const timeout = Math.max(500, remainingTime()); // >= 500ms
+      var timeout = Math.max(500, remainingTime()); // >= 500ms
       peer.api = peer.api || BMA.lightInstance(peer.getHost(), peer.getPort(), peer.isSsl(), timeout);
 
       // Get current block
@@ -781,16 +783,17 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       if (startPromise) {
         console.warn('[network-service] Waiting previous start to be closed...');
         return startPromise.then(function() {
-          return start(bma, options)
-        })
+          return start(bma, options);
+        });
       }
 
       options = options || {};
       bma = bma || BMA;
+      var pid = data.pid;
       startPromise = bma.ready()
         .then(function() {
-          close();
-
+          close(pid);
+          data.pid++;
           data.bma = bma;
           data.filter = options.filter ? angular.merge(data.filter, options.filter) : data.filter;
           data.sort = options.sort ? angular.merge(data.sort, options.sort) : data.sort;
@@ -816,18 +819,21 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
 
           return loadPeers()
             .then(function(peers){
-              console.debug('[network] Started in {0}ms, {1} peers found'.format(Date.now() - now, peers.length));
+              if (peers) console.debug('[network] Started in {0}ms, {1} peers found'.format(Date.now() - now, peers.length));
               return data;
             });
         });
       return startPromise;
     },
 
-    close = function() {
-      if (data.bma) {
-        console.info('[network] Stopping...');
-        removeListeners();
-        resetData();
+    close = function(pid) {
+        if (data.bma) {
+          console.info('[network] Stopping...');
+          removeListeners();
+          resetData();
+        }
+      if (interval && pid === data.pid) {
+        $interval.cancel(interval);
       }
       startPromise = null;
     },
@@ -849,11 +855,17 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
 
     getMainBlockUid = function(bma, options) {
       var wasStarted = isStarted();
+      var pid = data.pid + 1;
       return startIfNeed(bma, options)
         .then(function(data) {
           var buid = data.mainBlock && data.mainBlock.buid;
-          if (!wasStarted) close();
+          if (!wasStarted) close(pid);
           return buid;
+        })
+        .catch(function(err) {
+          console.error('[network] Failed to get main block');
+          if (!wasStarted) close(pid);
+          throw err;
         });
     },
 
@@ -865,19 +877,20 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       options.filter.ssl = isHttpsMode ? true : undefined;
       options.filter.online = true;
       options.filter.expertMode = false;
+
+      var now = Date.now();
       console.info('[network] Getting synchronized BMA peers...');
 
       var wasStarted = isStarted();
-      var now = Date.now();
-
+      var pid = data.pid + 1;
       return startIfNeed(bma, options)
         .then(function(data){
-          var peers = _.filter(data.peers, function(peer) {
+          var peers = data && _.filter(data.peers, function(peer) {
             return peer.hasMainConsensusBlock && peer.isBma();
           });
 
           // Log
-          if (peers.length) {
+          if (peers && peers.length > 0) {
             console.info('[network] Found {0}/{1} BMA peers on main consensus block #{2} - in {3}ms'.format(
               peers.length,
               data.peers.length,
@@ -885,12 +898,19 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
               Date.now() - now));
           }
           else {
-            console.warn('[network] No synchronized BMA peers found, in {1}ms'.format(Date.now() - now))
+            console.warn('[network] No synchronized BMA peers found, in {0}ms'.format(Date.now() - now));
           }
 
-          if (!wasStarted) close();
+          if (!wasStarted) close(pid);
 
           return peers;
+        })
+        .catch(function(err) {
+          console.error('[network] Error while getting synchronized BMA peers', err);
+
+          if (!wasStarted) close(pid);
+
+          throw err;
         });
     };
 

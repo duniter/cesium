@@ -4,7 +4,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
 
   .factory('Device', function($rootScope, $translate, $ionicPopup, $q, Api,
       // removeIf(no-device)
-      $cordovaClipboard, $cordovaBarcodeScanner, $cordovaCamera,
+      $cordovaClipboard, $cordovaBarcodeScanner, $cordovaCamera, $cordovaNetwork,
       // endRemoveIf(no-device)
       ionicReady) {
       'ngInject';
@@ -143,6 +143,17 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
           cordova.plugins.Keyboard.close();
         }
       };
+      exports.network = {
+        connectionType: function() {
+          return navigator.connection.type || 'unknown';
+        },
+        isOnline: function() {
+          return navigator.connection.type !== Connection.NONE;
+        },
+        isOffline: function() {
+          return navigator.connection.type === Connection.NONE;
+        }
+      };
 
       function getLastIntent() {
         var deferred = $q.defer();
@@ -271,13 +282,15 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
               exports.barcode.enable = cordova && cordova.plugins && !!cordova.plugins.barcodeScanner && (!exports.isOSX() || exports.isIOS());
               exports.clipboard.enable = cordova && cordova.plugins && !!cordova.plugins.clipboard;
               exports.intent.enable = window && !!window.plugins.launchmyapp;
+              exports.clipboard.enable = cordova && cordova.plugins && !!cordova.plugins.clipboard;
+              exports.network.enable = navigator.connection && !!navigator.connection.type;
 
               if (exports.keyboard.enable) {
                 angular.extend(exports.keyboard, cordova.plugins.Keyboard);
               }
 
-              console.debug('[device] Ionic platform ready, with {camera: {0}, barcode: {1}, keyboard: {2}, clipboard: {3}, intent: {4}}'
-                .format(exports.camera.enable, exports.barcode.enable, exports.keyboard.enable, exports.clipboard.enable, exports.intent.enable));
+              console.debug('[device] Ionic platform ready, with {camera: {0}, barcode: {1}, keyboard: {2}, clipboard: {3}, intent: {4}, network: {5}}'
+                .format(exports.camera.enable, exports.barcode.enable, exports.keyboard.enable, exports.clipboard.enable, exports.intent.enable, exports.network.enable));
 
               if (cordova.InAppBrowser) {
                 console.debug('[device] Enabling InAppBrowser');

@@ -830,7 +830,8 @@
     "SAVE_BEFORE_LEAVE_TITLE": "Modifoj ne registritaj",
     "LOGOUT": "Ĉu vi certas, ke vi volas malkonektiĝi?",
     "USE_FALLBACK_NODE": "Nodo <b>{{old}}</b> neatingebla aŭ adreso nevalida.<br/><br/>Ĉu vi volas provizore uzi la nodon <b>{{new}}</b> ?",
-    "ISSUE_524_SEND_LOG": "La spezo estis forĵetita, pro konata anomalio (petslipo #524) sed <b>ne ripetita</b>.<br/><br/>Por helpi la programistojn korekti tiun eraron, <b>ĉu vi akceptas la sendadon de viaj protokolaj dosieroj</b> per mesaĝo?<br/><small>(neniu konfidenca dateno estas sendita)</small>."
+    "ISSUE_524_SEND_LOG": "La spezo estis forĵetita, pro konata anomalio (petslipo #524) sed <b>ne ripetita</b>.<br/><br/>Por helpi la programistojn korekti tiun eraron, <b>ĉu vi akceptas la sendadon de viaj protokolaj dosieroj</b> per mesaĝo?<br/><small>(neniu konfidenca dateno estas sendita)</small>.",
+    "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Averto:</b> Ĉu vi volas <b>mane ŝanĝi</b> la nodon?<br/><br/>Se vi daŭrigas:<ul><li> - La <b>eksperta reĝimo</b> estos aktivigita;</li><li> - Vi povos reveni al aŭtomata nodo-selekto simple <b>malaktivigante la ekspertan reĝimon</b>.</li></ul>"
   },
   "MODE": {
     "DEMO": {

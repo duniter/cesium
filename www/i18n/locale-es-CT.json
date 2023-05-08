@@ -913,7 +913,8 @@
     "SAVE_BEFORE_LEAVE": "¿Desea <b>guardar sus cambios</b> antes de abandonar la página?",
     "SAVE_BEFORE_LEAVE_TITLE": "Cambios no registrados",
     "LOGOUT": "¿Desea desconectarse?",
-    "USE_FALLBACK_NODE": "Nodo <b>{{old}}</b> inalcanzable o dirección inválida.<br/><br/>¿Desea utilizar temporalmente el nodo <b>{{new}}</b>?"
+    "USE_FALLBACK_NODE": "Nodo <b>{{old}}</b> inalcanzable o dirección inválida.<br/><br/>¿Desea utilizar temporalmente el nodo <b>{{new}}</b>?",
+    "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Advertència:</b> Vols <b>canviar manualment</b> el node Duniter?<br/><br/>Si continues:<ul><li> - S'activarà el <b>modo experto</b>;</li><li> - Podràs tornar a la selecció automàtica de nodes simplement <b>desactivant el modo experto</b>.</li></ul>"
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Revocación del archivo</b>",
