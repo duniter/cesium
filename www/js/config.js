@@ -28,7 +28,7 @@ angular.module("cesium.config", [])
 	"helptip": {
 		"enable": true,
 		"installDocUrl": {
-			"fr-FR": "https://duniter.org/fr/miner-des-blocs/installer/",
+			"fr-FR": "https://duniter.fr/wiki/doc/installer/",
 			"en": "https://duniter.org/en/wiki/duniter/install/"
 		}
 	},
@@ -36,7 +36,7 @@ angular.module("cesium.config", [])
 		"en": "license/license_g1-en",
 		"fr-FR": "license/license_g1-fr-FR",
 		"es-ES": "license/license_g1-es-ES",
-		"es-CT": "license/license_g1-es-ES",
+		"ca": "license/license_g1-ca",
 		"eo-EO": "license/license_g1-eo-EO",
 		"pt-PT": "license/license_g1-pt-PT",
 		"it-IT": "license/license_g1-it-IT",
@@ -70,18 +70,10 @@ angular.module("cesium.config", [])
 			"host": "g1.le-sou.org",
 			"port": 443
 		},
-		{
-			"host": "g1.moul.re",
-			"port": 443
-		},
-		{
-			"host": "g1.cloud-libre.eu",
-			"port": 443
-		},
-		{
-			"host": "g1.texu.es",
-			"port": 443
-		},
+    {
+      "host": "duniter.moul.re",
+      "port": 443
+    },
 		{
 			"host": "g1.duniter.org",
 			"port": 443
@@ -120,7 +112,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "1.7.0-rc2",
-	"build": "2023-03-14T23:50:28.725Z",
+	"build": "2023-02-27T10:33:03.091Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 

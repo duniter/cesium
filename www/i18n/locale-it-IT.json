@@ -144,6 +144,9 @@
     "PEER": "Indirizzo nodo Duniter",
     "PEER_SHORT": "Indirizzo nodo",
     "PEER_CHANGED_TEMPORARY": "Indirizzo usato temporaneamente",
+    "PEER_SELECTED_AUTOMATICALLY": "Nodo selezionato automaticamente all'avvio",
+    "PEER_TIMEOUT": "Tempo di attesa massimo (timeout)",
+    "PEER_TIMEOUT_HELP": "Tempo di attesa massimo per ottenere una risposta dal nodo",
     "PERSIST_CACHE": "Mantenere i dati di navigazione (sperimentale)",
     "PERSIST_CACHE_HELP": "per la fruizione da una sessione all'altra., Consente una navigazione più veloce, conservando localmente i dati ricevuti, per un utilizzo da una sessione all'altra.",
     "USE_LOCAL_STORAGE": "Permetti salvataggio locale",
@@ -191,7 +194,7 @@
       "HOST" : "Indirizzo",
       "HOST_HELP": "Indirizzo: server:port",
       "USE_SSL" : "Cifrato?",
-      "USE_SSL_HELP" : "(Cifratura SSL)",
+      "USE_SSL_HELP" : "Cifratura SSL",
       "BTN_SHOW_LIST" : "Lista dei nodi"
     }
   },
@@ -685,8 +688,9 @@
     "PUBKEY_INVALID_CHECKSUM": "Chiave pubblica non valida (checksum errato).",
     "POPUP_TITLE": "Errore",
     "UNKNOWN_ERROR": "Errore",
+    "TIMEOUT_REACHED": "Tempo di attesa del nodo superato ({{timeout|formatDurationMs}}).<br/><br/><small>{{url}}</small>",
     "CRYPTO_UNKNOWN_ERROR": "Il tuo navigatore non sembra compatibile con le funzionalità di cryptografia.",
-    "DOWNLOAD_KEYFILE_FAILED": "Errore nel generare il file del portachiavi", 
+    "DOWNLOAD_KEYFILE_FAILED": "Errore nel generare il file del portachiavi",
     "EQUALS_TO_PSEUDO": "Deve essere diverso dallo pseudonimo",
     "EQUALS_TO_SALT": "Deve essere diverso dall'identificativo segreto",
     "FIELD_REQUIRED": "Campo obbligatorio.",
@@ -803,7 +807,8 @@
     "REVOCATION_SENT": "Revoca dell'identità inviata",
     "REVOCATION_SENT_WAITING_PROCESS": "Cancellazione dell'identità <b>inviata con successo</b>. In attesa di validazione.",
     "FEATURES_NOT_IMPLEMENTED": "Questa funzionalità non è ancora disponibile.<br/><br/>Vuoi contribuire per velocizzarne la disponibilità? ;)",
-    "EMPTY_TX_HISTORY": "Nessuna operazione da esportare"
+    "EMPTY_TX_HISTORY": "Nessuna operazione da esportare",
+    "LOADING_PENDING_TX": "Caricando...<br/><small>(Recupero delle operazioni in sospeso)</small>"
   },
   "CONFIRM": {
     "CAN_CONTINUE": "<b>Sei sicuro/a</b> di voler procedere?",
@@ -813,10 +818,10 @@
     "CERTIFY_RULES_TITLE_UID": "Certificare {{uid}}",
     "CERTIFY_RULES": "<b class=\"assertive\">Non certificare un conto</b> se credi che: <ul><li>1.) L'identità della persona potrebbe essere finta.<li>2.) La persona ha già un conto certicato.<li>3.) La persona trasgredisce la regola 1 o 2 o entrambe. (Certifica conti finti o gemelli).</ul></small><br/>Sei sicuro di voler certificare questa identità?",
     "FULLSCREEN": "Aprire l'applicazione a schermo intero?",
-    "EXIT_APP": "Chiudere l'applicazione?",    
-"TRANSFER": "<b>Resoconto del bonifico:</b><br/><br/><ul><li> - Inviato da: <b>{{from}}</b></li><li> - A: <b>{{to}}</b></li><li> - Importo: <b>{{amount}} {{unit}}</b></li><li> - Comemnto: <i>{{comment}}</i></li></ul><br/><b>Sei sicuro di voler procedere con questo bonifico?</b>",
-   "TRANSFER_ALL": "<b>Riepilogo del bonifico:</b><br/><br/><ul><li> - Da: <b>{{from}}</b></li><li> - A: <b>{{to}}</b></li><li> - Importo: <b>{{amount}} {{unit}}</b></li><li> - Commento: <i>{{comment}}</i></li><br/><li> - Resto : <b>{{restAmount}} {{unit}}</b> a <b>{{restTo}}</b></li></ul><br/><b>Sicuro di voler fare questo bonifico?</b>", 
-   "MEMBERSHIP_OUT": "Questa operazione è <b>irreversibile</b>.<br/></br/><b>Sei sicuro di voler cancellare la tua presenza nella RdF?</b>",
+    "EXIT_APP": "Chiudere l'applicazione?",
+    "TRANSFER": "<b>Resoconto del bonifico:</b><br/><br/><ul><li> - Inviato da: <b>{{from}}</b></li><li> - A: <b>{{to}}</b></li><li> - Importo: <b>{{amount}} {{unit}}</b></li><li> - Comemnto: <i>{{comment}}</i></li></ul><br/><b>Sei sicuro di voler procedere con questo bonifico?</b>",
+    "TRANSFER_ALL": "<b>Riepilogo del bonifico:</b><br/><br/><ul><li> - Da: <b>{{from}}</b></li><li> - A: <b>{{to}}</b></li><li> - Importo: <b>{{amount}} {{unit}}</b></li><li> - Commento: <i>{{comment}}</i></li><br/><li> - Resto : <b>{{restAmount}} {{unit}}</b> a <b>{{restTo}}</b></li></ul><br/><b>Sicuro di voler fare questo bonifico?</b>",
+    "MEMBERSHIP_OUT": "Questa operazione è <b>irreversibile</b>.<br/></br/><b>Sei sicuro di voler cancellare la tua presenza nella RdF?</b>",
     "MEMBERSHIP_OUT_2": "Questa operazione è <b>irreversibile</b>!<br/><br/>Sei sicuro <b>di voler revocare la tua identità</b>?",
     "LOGIN_UNUSED_WALLET_TITLE": "Errore di battitura?",
     "LOGIN_UNUSED_WALLET": "Il conto sembra <b>inattivo</b>.<br/><br/>Probabilmente è un<b>errore di battitura</b> delle tue credenziali. Per favore riprova, verificando che la <b>chiave pubblica sia la tua<b/>.",
@@ -831,8 +836,9 @@
     "SAVE_BEFORE_LEAVE_TITLE": "Modifiche non salvate",
     "LOGOUT": "Sei sicuro di voler chiudere la sessione?",
     "USE_FALLBACK_NODE": "Nodo <b>{{old}}</b> indisponibile o indirizzo errato.<br/><br/>Vuoi utilizzare temporanemante il <b>{{new}}</b> nodo?",
-    "ISSUE_524_SEND_LOG": "La transazione è stata annullata a causa di un errore conosciuto (issue #524) ma non riprodotto. <br/><br/>Per aiutare gli sviluppatori a risolvere questo errore, acconsenti all'<b>invio dei tuoi logs</b> per messaggio?<br/><small>(Non viene inviato nessun dato confidenziale)</small>"
- },
+    "ISSUE_524_SEND_LOG": "La transazione è stata annullata a causa di un errore conosciuto (issue #524) ma non riprodotto. <br/><br/>Per aiutare gli sviluppatori a risolvere questo errore, acconsenti all'<b>invio dei tuoi logs</b> per messaggio?<br/><small>(Non viene inviato nessun dato confidenziale)</small>",
+    "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Avviso:</b> Vuoi <b>cambiare manualmente</b> il nodo?<br/><br/>Se continui:<ul><li> - Verrà attivata la <b>modalità esperto</b>;</li><li> - Potrai tornare alla selezione automatica del nodo semplicemente <b>disattivando la modalità esperto</b>.</li></ul>"
+  },
  "MODE": {
    "DEMO": {
      "BADGE": "Demo",
@@ -877,7 +883,7 @@
       "BLOCKCHAIN": "Blockchain",
       "BLOCKCHAIN_DEF": "La Blockchain è un sistema decentralizzato che, nel caso di Duniter, permette di rispettare e implementare <span class=\"text-italic\">le regole della moneta</span>.<br/><a href=\"http://en.duniter.org/presentation/\" target=\"_blank\">Saperne di più su Duniter</a> e il funzionamento della blockchain.",
       "UNIVERSAL_DIVIDEND_DEF": "Il Dividendo Universale (DU) è la quantità di moneta cocreata da ogni membro, seguendo le formule matematiche definite nelle <span class=\"text-italic\">regole della moneta</span>.<br/>All'inizio di ogni periodo, il conto di ogni membro riceve una quantità uguale della nuova moneta creata. <br/><br/>Il DU prevede una crescita costante per rimanere equo nei confronti dei membri (attuali e passati). Viene calcolato tenendo in conto la speranza di vita media, cosi come dimostrato nella Teoria Relativa della Moneta (TRM).<br/><a href=\"http://trm.creationmonetaire.info\" target=\"_system\">Peraperne di più sulla TRM</a> e la moneta libera.",
-      "WOT": "Web of Trust (WoT)", 
+      "WOT": "Web of Trust (WoT)",
       "WOT_DEF": "La Rete di Fiducia è costituita da tutti i membri della moneta libera, ed i collegamenti delle certificazioni che li collegano.",
       "DISTANCE_RULE": "Regola della distanza",
       "DISTANCE_RULE_DEF": "La regola della distanza definisce la <b>distanza massima da trovare</b> tra un candidato membro e un numero minimo di mebri referenti. Questa distanza è calcolata usando i collegamenti delle certificazioni."
@@ -1001,7 +1007,7 @@
        "PARAM_CANCEL_URL": "Indirizzo web della cancellazione",
        "PARAM_CANCEL_URL_HELP": "Indirizzo web (URL) in caso dell'annullamento del pagamento dall'utente. Può includere le seguenti stringe, che saranno sostituite dinamicamente : \"{comment}\", \"{amount}\" e {pubkey}.",
        "PARAM_PREFERRED_NODE": "Nodo Duniter preferito",
-       "PARAM_PREFERRED_NODE_HELP": "Indirizzo del nodo (URL) da usare preferibilmente (\"g1.domain.com:443\" or \"https://g1.domain.com\")", 
+       "PARAM_PREFERRED_NODE_HELP": "Indirizzo del nodo (URL) da usare preferibilmente (\"g1.domain.com:443\" or \"https://g1.domain.com\")",
        "EXAMPLES_HELP": "Alcuni esempi di integrazione :",
        "EXAMPLE_BUTTON": "Bottone HTML",
        "EXAMPLE_BUTTON_DEFAULT_TEXT": "Pagare in {{currency|currencySymbol}}",

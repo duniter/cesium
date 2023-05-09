@@ -40,6 +40,7 @@
 
         <div class="center padding" ng-if="loading">
           <ion-spinner icon="android" ></ion-spinner>
+          <p class="text-italic" translate-values=":currency:{currency: $root.currency.name}" translate>{{loadingMessage}}</p>
         </div>
 
         <div class="center padding animate-fade-in animate-show-hide ng-hide" ng-show="!loading && error">

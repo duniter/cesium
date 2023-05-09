@@ -45,6 +45,7 @@
     "NO_ACCOUNT_QUESTION": "Nog geen lid? Registreer nu!",
     "SEARCH_NO_RESULT": "Geen resultaten",
     "LOADING": "Even geduld...",
+    "LOADING_WAIT": "Even geduld...<br/><small>(Cesium vraagt de Duniter-node op)</small>",
     "SEARCHING": "Zoeken...",
     "FROM": "Van",
     "TO": "Aan",
@@ -120,6 +121,9 @@
     "NETWORK_SETTINGS": "Netwerk",
     "PEER": "Duniter knooppunt adres",
     "PEER_CHANGED_TEMPORARY": "Adres tijdelijk worden gebruikt",
+    "PEER_SELECTED_AUTOMATICALLY": "Node automatisch geselecteerd bij opstarten",
+    "PEER_TIMEOUT": "Maximale wachttijd (time-out)",
+    "PEER_TIMEOUT_HELP": "Maximale wachttijd om een reactie van de node te krijgen",
     "USE_LOCAL_STORAGE": "Lokale opslag inschakelen",
     "USE_LOCAL_STORAGE_HELP": "Laat je instellingen opslaan",
     "ENABLE_HELPTIP": "Contextgebonden hulp inschakelen",
@@ -138,7 +142,7 @@
       "HOST" : "Adres",
       "HOST_HELP": "Aadres: server:poort",
       "USE_SSL" : "Secure?",
-      "USE_SSL_HELP" : "(SSL-encryptie)",
+      "USE_SSL_HELP" : "SSL-encryptie",
       "BTN_SHOW_LIST" : "Lijst van knooppunten"
     }
   },
@@ -417,6 +421,7 @@
   "ERROR": {
     "POPUP_TITLE": "Error",
     "UNKNOWN_ERROR": "Unknown error",
+    "TIMEOUT_REACHED": "Node timeout overschreden ({{timeout|formatDurationMs}}).<br/><br/><small>{{url}}</small>",
     "CRYPTO_UNKNOWN_ERROR": "Your browser is not compatible with cryptographic features.",
     "FIELD_REQUIRED": "This field is required.",
     "FIELD_TOO_SHORT": "Value is too short (min {{minLength]] characters).",
@@ -490,7 +495,8 @@
     "REVOCATION_SENT": "Intrekking succesvol verzonden",
     "REVOCATION_SENT_WAITING_PROCESS": "Intrekking <b>is succesvol verzonden</b>. Het wacht op verwerking.",
     "FEATURE_NOT_AVAILABLE_ON_DEMO": "Functionaliteit niet beschikbaar op deze demonstratiesite.<br/>Om <b>veiligheidsredenen</b> raden we u aan uw kopie van de software te <b>installeren</b>.<br/>Bezoek de website <a href='https://cesium.app'>www.cesium.app</a> voor hulp.",
-    "EMPTY_TX_HISTORY": "Aucune operatie à exporteur"
+    "EMPTY_TX_HISTORY": "Aucune operatie à exporteur",
+    "LOADING_PENDING_TX": "Even geduld...<br/><small>(Ophalen van hangende operaties)</small>"
   },
   "CONFIRM": {
     "CAN_CONTINUE": "<b>Weet je zeker</b> dat je door wil gaan?",
@@ -510,7 +516,8 @@
     "NOT_NEED_RENEW_MEMBERSHIP": "Je lidmaatschap hoeft niet verlengd te worden (het zal pas verlopen na {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Weet je zeker</b> dat je een verlengingsaanvraag wil versturen?",
     "SAVE_BEFORE_LEAVE": "Wil je <b>je wijzigingen opslaan</b> voor je de pagina verlaat?",
     "SAVE_BEFORE_LEAVE_TITLE": "Wijzigingen niet opgeslagen",
-    "LICENCE": "Ik heb gelezen en geaccepteerd de voorwaarden van de vergunning G1"
+    "LICENCE": "Ik heb gelezen en geaccepteerd de voorwaarden van de vergunning G1",
+    "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Waarschuwing:</b> Wil je het knooppunt <b>handmatig wijzigen</b>?<br/><br/>Als je doorgaat:<ul><li> - De <b>expertmodus</b> wordt geactiveerd;</li><li> - Je kunt terugkeren naar automatische knooppuntselectie door eenvoudigweg de <b>expertmodus uit te schakelen</b>.</li></ul>"
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Intrekkingsdocument</b>",

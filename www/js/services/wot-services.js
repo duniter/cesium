@@ -997,7 +997,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
           var idtiesByBlock = {};
           var idtiesByPubkey = {};
           _.forEach(memberships, function(ms){
-            if (ms.membership == 'IN' && !uids[ms.pubkey]) {
+            if (ms.membership === 'IN' && !uids[ms.pubkey]) {
               var idty = {
                 uid: ms.uid,
                 pubkey: ms.pubkey,
@@ -1019,7 +1019,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
               // Remove previous idty from map
               if (otherIdtySamePubkey) {
                 idtiesByBlock[otherIdtySamePubkey.block] = idtiesByBlock[otherIdtySamePubkey.block].reduce(function(res, aidty){
-                  if (aidty.pubkey == otherIdtySamePubkey.pubkey) return res; // if match idty to remove, to NOT add
+                  if (aidty.pubkey === otherIdtySamePubkey.pubkey) return res; // if match idty to remove, to NOT add
                   return (res||[]).concat(aidty);
                 }, null);
                 if (idtiesByBlock[otherIdtySamePubkey.block] === null) {

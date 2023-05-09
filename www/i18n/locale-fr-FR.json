@@ -144,6 +144,9 @@
     "PEER": "Nœud Duniter",
     "PEER_SHORT": "Nœud Duniter",
     "PEER_CHANGED_TEMPORARY": "Adresse utilisée temporairement",
+    "PEER_SELECTED_AUTOMATICALLY": "Sélection automatiquement du nœud au démarrage",
+    "PEER_TIMEOUT": "Délai d'attente maximal (timeout)",
+    "PEER_TIMEOUT_HELP": "Délai d'attente maximal pour obtenir la réponse du nœud",
     "PERSIST_CACHE": "Conserver les données de navigation (expérimental)",
     "PERSIST_CACHE_HELP": "Permet une navigation plus rapide, en conservant localement les données reçues, pour les utiliser d'une session à l'autre.",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
@@ -191,7 +194,7 @@
       "HOST": "Adresse",
       "HOST_HELP": "Adresse : serveur:port",
       "USE_SSL": "Sécurisé ?",
-      "USE_SSL_HELP": "(Chiffrement SSL)",
+      "USE_SSL_HELP": "Chiffrement SSL",
       "BTN_SHOW_LIST": "Liste des noeuds"
     }
   },
@@ -201,7 +204,7 @@
       "HEADER_TITLE": "Bloc #{{number}}-{{hash|formatHash}}",
       "TITLE_CURRENT": "Bloc courant",
       "TITLE": "Bloc #{{number|formatInteger}}",
-      "COMPUTED_BY": "Calculé par le noeud de",
+      "COMPUTED_BY": "Calculé par le nœud de",
       "SHOW_RAW": "Voir le fichier brut",
       "TECHNICAL_DIVIDER": "Informations techniques",
       "VERSION": "Version du format",
@@ -297,7 +300,6 @@
   "NETWORK": {
     "VIEW": {
       "MEDIAN_TIME": "Heure de la blockchain",
-      "LOADING_PEERS": "Chargement des noeuds...",
       "NODE_ADDRESS": "Adresse :",
       "SOFTWARE": "Logiciel",
       "WARN_PRE_RELEASE": "Pré-version (dernière version stable : <b>{{version}}</b>)",
@@ -309,11 +311,13 @@
         "BMAS": "Interface sécurisée (SSL)",
         "BMATOR": "Interface réseau TOR",
         "WS2P": "Interface WS2P",
-        "ES_USER_API": "Noeud de données Cesium+"
+        "ES_USER_API": "Nœud de données Cesium+"
       }
     },
     "INFO": {
-      "ONLY_SSL_PEERS": "Les noeuds non SSL ont un affichage dégradé, car Cesium fonctionne en mode HTTPS."
+      "CONNECTING_TO_PEER": "Connexion au nœud réseau...",
+      "CHECKING_NETWORK_STATE": "Calcul de l'état du réseau {{currency|abbreviate}}...",
+      "ONLY_SSL_PEERS": "Les nœuds non SSL ont un affichage dégradé, car Cesium fonctionne en mode HTTPS."
     }
   },
   "PEER": {
@@ -342,8 +346,8 @@
       "KNOWN_PEERS": "Nœuds connus :",
       "GENERAL_DIVIDER": "Informations générales",
       "ERROR": {
-        "LOADING_TOR_NODE_ERROR": "Récupération des informations du noeud impossible. Le délai d'attente est dépassé.",
-        "LOADING_NODE_ERROR": "Récupération des informations du noeud impossible"
+        "LOADING_TOR_NODE_ERROR": "Récupération des informations du nœud impossible. Le délai d'attente est dépassé.",
+        "LOADING_NODE_ERROR": "Récupération des informations du nœud impossible"
       }
     }
   },
@@ -524,8 +528,8 @@
       "INTRO_WARNING_SECURITY": "Vérifiez que le matériel que vous utilisez actuellement (ordinateur, tablette, téléphone) <b>est sécurisé et digne de confiance</b>.",
       "INTRO_WARNING_SECURITY_HELP": "Anti-virus à jour, pare-feu activé, session protégée par mot de passe ou code pin, etc.",
       "INTRO_HELP": "Cliquez sur <b>{{'COMMON.BTN_START'|translate}}</b> pour débuter la création de compte. Vous serez guidé étape par étape.",
-      "REGISTRATION_NODE": "Votre inscription sera enregistrée via le noeud Duniter <b>{{server}}</b>, qui le diffusera ensuite au reste du réseau de la monnaie.",
-      "REGISTRATION_NODE_HELP": "Si vous ne faites pas confiance en ce noeud, veuillez en changer <a ng-click=\"doQuickFix('settings')\">dans les paramètres</a> de Cesium.",
+      "REGISTRATION_NODE": "Votre inscription sera enregistrée via le nœud Duniter <b>{{server}}</b>, qui le diffusera ensuite au reste du réseau de la monnaie.",
+      "REGISTRATION_NODE_HELP": "Si vous ne faites pas confiance en ce nœud, veuillez en changer <a ng-click=\"doQuickFix('settings')\">dans les paramètres</a> de Cesium.",
       "SELECT_ACCOUNT_TYPE": "Choisissez le type de compte à créer :",
       "MEMBER_ACCOUNT": "Compte membre",
       "MEMBER_ACCOUNT_TITLE": "Création d'un compte membre",
@@ -702,6 +706,7 @@
     "UNKNOWN_URI_FORMAT": "Format d'URI inconnu",
     "PUBKEY_INVALID_CHECKSUM": "Clé publique invalide (bad checksum).",
     "POPUP_TITLE": "Erreur",
+    "TIMEOUT_REACHED": "Délai d'attente du nœud dépassé ({{timeout|formatDurationMs}}).<br/><br/><small>{{url}}</small>",
     "UNKNOWN_ERROR": "Erreur inconnue",
     "CRYPTO_UNKNOWN_ERROR": "Votre navigateur ne semble pas compatible avec les fonctionnalités de cryptographie.",
     "DOWNLOAD_KEYFILE_FAILED": "Échec de la génération du fichier de trousseau.",
@@ -822,7 +827,8 @@
     "REVOCATION_SENT": "Révocation envoyée",
     "REVOCATION_SENT_WAITING_PROCESS": "La <b>révocation de cette identité</b> a été demandée et est en attente de traitement.",
     "FEATURES_NOT_IMPLEMENTED": "Cette fonctionnalité est encore en cours de développement.<br/>Pourquoi ne pas <b>contribuer à Cesium</b>, pour l'obtenir plus rapidement ? ;)",
-    "EMPTY_TX_HISTORY": "Aucune opération à exporter"
+    "EMPTY_TX_HISTORY": "Aucune opération à exporter",
+    "LOADING_PENDING_TX": "Veuillez patienter...<br/><small>(Récupération des opérations en attente)</small>"
   },
   "CONFIRM": {
     "CAN_CONTINUE": "<b>Êtes-vous sûr</b> de vouloir continuer ?",
@@ -850,7 +856,8 @@
     "SAVE_BEFORE_LEAVE_TITLE": "Modifications non enregistrées",
     "LOGOUT": "Êtes-vous sûr de vouloir vous déconnecter ?",
     "USE_FALLBACK_NODE": "Nœud <b>{{old}}</b> injoignable ou adresse invalide.<br/><br/>Voulez-vous temporairement utiliser le nœud <b>{{new}}</b> ?",
-    "ISSUE_524_SEND_LOG": "La transaction a été rejetée, à cause d'une anomalie connue (ticket #524) mais <b>non reproduite</b>.<br/><br/>Pour aider les développeurs à corriger cette erreur, <b>acceptez-vous la transmission de vos logs</b> par message ?<br/><small>(aucune donnée confidentielle n'est envoyée)</small>."
+    "ISSUE_524_SEND_LOG": "La transaction a été rejetée, à cause d'une anomalie connue (ticket #524) mais <b>non reproduite</b>.<br/><br/>Pour aider les développeurs à corriger cette erreur, <b>acceptez-vous la transmission de vos logs</b> par message ?<br/><small>(aucune donnée confidentielle n'est envoyée)</small>.",
+    "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Avertissement :</b> Voulez-vous <b>changer manuellement</b> le nœud ?<br/><br/>Si vous continuez :<ul><li> - Le <b>mode expert</b> sera activé;</li><li> - Vous pourrez revenir à la sélection automatique du nœud, simplement <b>en désactivant le mode expert</b>.</li></ul>"
   },
   "MODE": {
     "DEMO": {

@@ -1,8 +1,8 @@
 Licença Ğ1 - v0.2.9
 ===================
 
-:data: 2017-04-04 12:59
-:modificado: 2019-07-14 12:00
+:Date: 2017-04-04 12:59
+:Modified: 2019-07-14 12:00
 
 **Licença da moeda e compromisso de responsabilidade.**
 
@@ -13,7 +13,7 @@ Encoraja-se que qualquer evento de grupo relativo à Ğ1 seja acompanhado por um
 Rede de confiança Ğ1 (RdC Ğ1)
 ------------------------------
 
-**Nota de precaução:** Certificarmos alguém não é apenas assegurar-mo-nos que encontrámos a pessoa, é assegurarmos à comunidade Ğ1 que conhecemos suficientemente bem a pessoa a certificar, de modo a conseguirmos contactar a pessoa facilmente, e de termos condições para localizar uma conta em duplicado feita pela pessoa que receberá a nossa certificação, ou outro tipo de problemas (desaparecimento da pessoa…) fazendo despistagens que eventualmente permitirão revelar um problema. 
+**Nota de precaução:** Certificarmos alguém não é apenas assegurar-mo-nos que encontrámos a pessoa, é assegurarmos à comunidade Ğ1 que conhecemos suficientemente bem a pessoa a certificar, de modo a conseguirmos contactar a pessoa facilmente, e de termos condições para localizar uma conta em duplicado feita pela pessoa que receberá a nossa certificação, ou outro tipo de problemas (desaparecimento da pessoa…) fazendo despistagens que eventualmente permitirão revelar um problema.
 
 **Conselhos altamente recomendados**
 
@@ -62,7 +62,7 @@ Um membro da RdC Ğ1 torna-se membro referente a partir do momento em que ele te
 
 Logo que o novo membro tome lugar na RdC Ğ1, as suas certificações permanecerão válidas durante 2 anos.
 
-Para permanecer como membro, será necessário renovar o seu acordo regularmente com a sua chave privada (a cada 12 meses) e certificar-se de que tem sempre pelo menos 5 certificações válidas após os 2 anos iniciais. 
+Para permanecer como membro, será necessário renovar o seu acordo regularmente com a sua chave privada (a cada 12 meses) e certificar-se de que tem sempre pelo menos 5 certificações válidas após os 2 anos iniciais.
 
 Moeda Ğ1
 ----------
@@ -92,6 +92,6 @@ Software Ğ1 e licença Ğ1
 
 Os programas informáticos Ğ1 que permitem aos utilizadores a gestão de utilização da Ğ1 devem transmitir esta licença com o programa informático, assim como o conjunto de parâmetros técnicos da moeda Ğ1 e da RdC Ğ1 que estão inscritos no bloco 0 da Ğ1. O programa informático que não cumpra estas obrigações da licença não é compatível com a Ğ1.
 
-Para melhor aprofundar os detalhes técnicos é possível consultar diretamente o código do Duniter, que é software livre, assim com consultar os dados da blockchain Ğ1, obtendo-os por meio de uma instância (ou nó) Duniter Ğ1. 
+Para melhor aprofundar os detalhes técnicos é possível consultar diretamente o código do Duniter, que é software livre, assim com consultar os dados da blockchain Ğ1, obtendo-os por meio de uma instância (ou nó) Duniter Ğ1.
 
 Mais informações no sítio internet da equipa Duniter https://www.duniter.org

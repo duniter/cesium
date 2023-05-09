@@ -29,8 +29,21 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
   $scope.loading = true;
   $scope.nodePopup = {};
   $scope.bma = BMA;
-
-
+  $scope.listeners = [];
+  $scope.platform = {
+    loading: !csPlatform.isStarted(),
+    loadingMessage: 'COMMON.LOADING'
+  };
+  // Fill timeout
+  $scope.timeouts = [
+    500,
+    1000,
+    5000,
+    10000,
+    30000,
+    60000,
+    300000
+  ];
   $scope.keepAuthIdleLabels = {
     /*0: {
       labelKey: 'SETTINGS.KEEP_AUTH_OPTION.NEVER'
@@ -80,7 +93,9 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
   };
   $scope.blockValidityWindows = _.keys($scope.blockValidityWindowLabels);
 
-  $scope.$on('$ionicView.enter', function() {
+  $scope.enter = function() {
+    $scope.addListeners();
+
     $q.all([
       csSettings.ready(),
       csCurrency.parameters()
@@ -91,7 +106,7 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
         .then(function(parameters) {
           var avgGenTime = parameters && parameters.avgGenTime;
           if (!avgGenTime || avgGenTime < 0) {
-            console.warn("[settings] Could not not currency parameters. Using default G1 'avgGenTime' (300s)");
+            console.warn('[settings] Could not not currency parameters. Using default G1 \'avgGenTime\' (300s)');
             avgGenTime = 300; /* = G1 value = 5min */
           }
           _.each($scope.blockValidityWindows, function(blockCount) {
@@ -102,7 +117,7 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
         })
     ])
     .then($scope.load);
-  });
+  };
 
   $scope.setPopupForm = function(popupForm) {
     $scope.popupForm = popupForm;
@@ -111,8 +126,12 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
   $scope.load = function() {
     $scope.loading = true; // to avoid the call of csWallet.store()
 
+    $scope.platform.loading = !csPlatform.isStarted();
+
     // Fill locales
     $scope.locales = angular.copy(csSettings.locales);
+
+
 
     // Apply settings
     angular.merge($scope.formData, csSettings.data);
@@ -128,6 +147,22 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
       UIUtils.ink({selector: '.item'});
       $scope.showHelpTip();
     }, 100);
+  };
+
+
+  $scope.addListeners = function() {
+    $scope.listeners = [
+      // Listen platform start message
+      csPlatform.api.start.on.message($scope, function(message) {
+        $scope.platform.loading = !csPlatform.isStarted();
+        $scope.platform.loadingMessage = message;
+      })
+    ];
+  };
+
+  $scope.leave = function() {
+    console.debug('[settings] Leaving page');
+    $scope.removeListeners();
   };
 
   $scope.reset = function() {
@@ -149,7 +184,31 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
   };
 
   // Change node
-  $scope.changeNode= function(node) {
+  $scope.changeNode = function(node, confirm) {
+
+    // If platform not stared yet: wait then loop
+    if (!csPlatform.isStarted()) {
+      UIUtils.loading.update({template: this.loadingMessage});
+      return csPlatform.ready()
+        .then(function() {
+          return $scope.changeNode(node, confirm); // Loop
+        });
+    }
+
+    // Ask user to confirm, before allow to change the node
+    if (!confirm && !$scope.formData.expertMode) {
+      return UIUtils.alert.confirm('CONFIRM.ENABLE_EXPERT_MODE_TO_CHANGE_NODE', 'CONFIRM.POPUP_WARNING_TITLE', {
+        cssClass: 'warning',
+        cancelText: 'COMMON.BTN_NO',
+        okText: 'COMMON.BTN_YES_CONTINUE',
+        okType: 'button-assertive'
+      })
+      .then(function(confirm) {
+        if (!confirm) return;
+        $scope.changeNode(node, true);
+      });
+    }
+
     var port = !!$scope.formData.node.port && $scope.formData.node.port != 80 && $scope.formData.node.port != 443 ? $scope.formData.node.port : undefined;
     node = node || {
         host: $scope.formData.node.host,
@@ -159,37 +218,41 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
           ($scope.formData.node.port == 443)
       };
     $scope.showNodePopup(node)
-    .then(function(newNode) {
-      if (newNode.host === $scope.formData.node.host &&
-        newNode.port === $scope.formData.node.port &&
-        newNode.useSsl === $scope.formData.node.useSsl && !$scope.formData.node.temporary) {
-        return; // same node = nothing to do
-      }
-      UIUtils.loading.show();
+      .then(function(newNode) {
+        if (newNode.host === $scope.formData.node.host &&
+          newNode.port === $scope.formData.node.port &&
+          newNode.useSsl === $scope.formData.node.useSsl && !$scope.formData.node.temporary) {
+          return; // same node = nothing to do
+        }
 
-      BMA.isAlive(newNode)
-        .then(function(alive) {
-          if (!alive) {
+        // Change to expert mode
+        $scope.formData.expertMode = true;
+
+        UIUtils.loading.show();
+
+        BMA.isAlive(newNode)
+          .then(function(alive) {
+            if (!alive) {
+              UIUtils.loading.hide();
+              return UIUtils.alert.error('ERROR.INVALID_NODE_SUMMARY')
+                .then(function(){
+                  $scope.changeNode(newNode, true); // loop
+                });
+            }
             UIUtils.loading.hide();
-            return UIUtils.alert.error('ERROR.INVALID_NODE_SUMMARY')
-              .then(function(){
-                $scope.changeNode(newNode); // loop
-              });
-          }
-          UIUtils.loading.hide();
-          angular.merge($scope.formData.node, newNode);
-          delete $scope.formData.node.temporary;
-          BMA.stop();
-          BMA.copy(newNode);
-          $scope.bma = BMA;
+            angular.merge($scope.formData.node, newNode);
+            delete $scope.formData.node.temporary;
+            BMA.stop();
+            BMA.copy(newNode);
+            $scope.bma = BMA;
 
-          // Restart platform (or start if not already started)
-          csPlatform.restart();
+            // Restart platform (or start if not already started)
+            csPlatform.restart();
 
-          // Reset history cache
-          return $ionicHistory.clearCache();
-        });
-    });
+            // Reset history cache
+            return $ionicHistory.clearCache();
+          });
+      });
   };
 
   $scope.showNodeList = function() {
@@ -215,7 +278,7 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
         }
       })
       .then(function(newNode) {
-        $scope.changeNode(newNode);
+        $scope.changeNode(newNode, true);
       });
   };
 
@@ -283,8 +346,12 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
     }
     $scope.saving = true;
 
+    var now = Date.now();
+
     // Async - to avoid UI lock
     return $timeout(function() {
+      console.debug('[settings] Saving...');
+
       // Make sure to format helptip
       $scope.cleanupHelpTip();
 
@@ -300,7 +367,8 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
     }, 100)
     .then(function() {
       //return $timeout(function() {
-        $scope.saving = false;
+      $scope.saving = false;
+      console.debug('[settings] Saving [OK] in {0}ms'.format(Date.now() - now));
       //}, 100);
     });
   };
@@ -394,4 +462,18 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
         csSettings.store();
       });
   };
+
+  $scope.removeListeners = function() {
+    if ($scope.listeners.length) {
+      console.debug('[settings] Closing listeners');
+      _.forEach($scope.listeners, function(remove){
+        remove();
+      });
+      $scope.listeners = [];
+    }
+  };
+
+  $scope.$on('$ionicView.enter', $scope.enter);
+  $scope.$on('$ionicView.beforeLeave', $scope.leave);
+
 }

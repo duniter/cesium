@@ -13,7 +13,7 @@ Cualquier evento de encuentro relacionado con Ğ1 debe ir acompañado de la tran
 Red de confianza Ğ1 (RdC Ğ1)
 ------------------------------
 
-** Aviso de advertencia :** Certificar no significa que simplemente has visto físicamente a la persona candidata. Es asegurar a la comunidad Ğ1 que la conoces lo suficientemente bien y que sabrás cómo contactarla y localizarla fácilmente, ser capaz de identificar una posible cuenta falsa o duplicada realizada por alguien que has certificado, u otro tipo de problema, efectuando verificaciones con la comunidad que detecten el problema. La seguridad de la Red de Confianza es descentralizada.
+** Aviso de advertencia :** Certificar no significa que simplemente has visto físicamente a la persona candidata. Es asegurar a la comunidad Ğ1 que la conoces lo suficientemente bien y que sabrás cómo contactarla y localizarla fácilmente, ser capaz de identificar una posible cuenta falsa o duplicada realizada por alguien que has certificado, u otro tipo de problema, efectuando verificaciones con la comunidad que detecten el problema. La seguridad de la Red de Confianza es descentralizada.
 
 **Consejos fuertemente recomendados**
 

@@ -120,11 +120,11 @@ Peer.prototype.getIPv6 = function() {
 
 Peer.prototype.getPort = function() {
   var bma = this.bma || this.getBMA();
-  return bma.port ? bma.port : null;
+  return bma.port ? parseInt(bma.port) : null;
 };
 
-Peer.prototype.getHost = function(getHost) {
-  bma = getHost || this.bma || this.getBMA();
+Peer.prototype.getHost = function(bma) {
+  bma = bma || this.bma || this.getBMA();
   return ((bma.port == 443 || bma.useSsl) && bma.dns) ? bma.dns :
     (this.hasValid4(bma) ? bma.ipv4 :
         (bma.dns ? bma.dns :

@@ -100,17 +100,19 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
   })
 
 
-  .factory('csPlatform', function (ionicReady, $rootScope, $q, $state, $translate, $timeout, $ionicHistory, UIUtils,
-                                   BMA, Device, csHttp, csConfig, csCache, csSettings, csCurrency, csWallet) {
+  .factory('csPlatform', function (ionicReady, $rootScope, $q, $state, $translate, $timeout, $ionicHistory, $window,
+                                   UIUtils, Modals, BMA, Device, Api,
+                                   csHttp, csConfig, csCache, csSettings, csNetwork, csCurrency, csWallet) {
 
     'ngInject';
     var
-      fallbackNodeIndex = 0,
-      defaultSettingsNode,
+      checkBmaNodeAliveCounter = 0,
       started = false,
       startPromise,
-      listeners,
-      removeChangeStateListener;
+      listeners = [],
+      removeChangeStateListener,
+      api = new Api(this, 'csPlatform')
+    ;
 
     // Fix csConfig values
     csConfig.demo = csConfig.demo === true || csConfig.demo === 'true' || false;
@@ -141,63 +143,191 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       removeChangeStateListener = null;
     }
 
-    // Alert user if node not reached - fix issue #
+    // Alert user if node not reached
     function checkBmaNodeAlive(alive) {
-      if (alive) return true;
+      if (alive) return true; // Ok, current node is alive
 
-      // Remember the default node
-      defaultSettingsNode = defaultSettingsNode || csSettings.data.node;
+      var askUserConfirmation = checkBmaNodeAliveCounter === 0 && csSettings.data.expertMode;
+      checkBmaNodeAliveCounter++;
+      if (checkBmaNodeAliveCounter > 3)  throw 'ERROR.CHECK_NETWORK_CONNECTION'; // Avoid infinite loop
 
-      var fallbackNode = csSettings.data.fallbackNodes && fallbackNodeIndex < csSettings.data.fallbackNodes.length && csSettings.data.fallbackNodes[fallbackNodeIndex++];
-      if (!fallbackNode) {
-        throw 'ERROR.CHECK_NETWORK_CONNECTION';
-      }
-      var newServer = fallbackNode.host + ((!fallbackNode.port && fallbackNode.port != 80 && fallbackNode.port != 443) ? (':' + fallbackNode.port) : '');
+      api.start.raise.message('NETWORK.INFO.CONNECTING_TO_PEER');
 
-      // Skip is same as actual node
-      if (BMA.node.same(fallbackNode)) {
-        console.debug('[platform] Skipping fallback node [{0}]: same as actual node'.format(newServer));
-        return checkBmaNodeAlive(); // loop (= go to next node)
-      }
-
-      // Try to get summary
-      return csHttp.get(fallbackNode.host, fallbackNode.port, '/node/summary', fallbackNode.port == 443 || BMA.node.forceUseSsl)()
-        .catch(function (err) {
-          console.error('[platform] Could not reach fallback node [{0}]: skipping'.format(newServer));
-          // silent, but return no result (will loop to the next fallback node)
+      const timeout = csSettings.data.expertMode ? csSettings.data.timeout : Device.network.timeout(csConfig.timeout);
+      return BMA.filterAliveNodes(csSettings.data.fallbackNodes, timeout)
+        .then(function (fallbackNodes) {
+          if (!fallbackNodes.length) throw 'ERROR.CHECK_NETWORK_CONNECTION';
+          return _.sample(fallbackNodes); // Random select
         })
-        .then(function (res) {
-          if (!res) return checkBmaNodeAlive(); // Loop
+        .then(function (fallbackNode) {
 
-          // Force to show port/ssl, if this is the only difference
-          var messageParam = {old: BMA.server, new: newServer};
-          if (messageParam.old === messageParam.new) {
-            if (BMA.port != fallbackNode.port) {
-              messageParam.new += ':' + fallbackNode.port;
-            } else if (BMA.useSsl == false && (fallbackNode.useSsl || fallbackNode.port == 443)) {
-              messageParam.new += ' (SSL)';
-            }
+          // Ask user before using the fallback node
+          if (askUserConfirmation) {
+            return askUseFallbackNode(fallbackNode);
           }
 
-          return $translate('CONFIRM.USE_FALLBACK_NODE', messageParam)
-            .then(function (msg) {
-              return UIUtils.alert.confirm(msg);
+          return fallbackNode;
+        })
+        .then(function (fallbackNode) {
+          if (!fallbackNode) return; // Skip
+
+          console.info("[platform] Switching to fallback node: {0}".format(fallbackNode.server));
+          var node = {
+            host: fallbackNode.host,
+            port: fallbackNode.port,
+            useSsl: fallbackNode.useSsl,
+          };
+          csSettings.data.node = node;
+          csSettings.data.node.temporary = true;
+
+          csHttp.cache.clear();
+
+          // loop
+          return BMA.copy(fallbackNode)
+            .then(checkBmaNodeAlive);
+        });
+    }
+
+    // Make sure the BMA node is synchronized (is on the main consensus block)
+    function checkBmaNodeSynchronized(alive) {
+      if (!alive) return false;
+      var now = Date.now();
+
+      console.info("[platform] Checking if node is synchronized...");
+      api.start.raise.message('NETWORK.INFO.CHECKING_NETWORK_STATE');
+
+      var askUserConfirmation = csSettings.data.expertMode;
+
+      return csNetwork.getSynchronizedBmaPeers(BMA)
+        .then(function(peers) {
+
+          if (!peers.length) return; // No peer found: exit
+
+          // Not enough peers in network (isolated node). Should never occur. Make sure at least one known node exists
+          if (peers.length < 10) {
+            console.warn("[platform] Network scanned in {0}ms, only {1} peers (UP and synchronized) found. To few peers. Will peek another peer...".format(Date.now() - now, peers.length));
+            // Retry using another peer
+            return checkBmaNodeAlive(false)
+              .then(checkBmaNodeSynchronized); // Loop
+          }
+
+          console.info("[platform] Network scanned in {0}ms, {1} peers (UP and synchronized) found".format(Date.now() - now, peers.length));
+
+          // TODO: store sync peers in storage ?
+          //csSettings.data.
+
+          // Try to find the current peer in the list of synchronized peers
+          var synchronized = _.some(peers, function(peer) {
+            return BMA.node.same({
+              host: peer.getHost(),
+              port: peer.getPort(),
+              useSsl: peer.isSsl()
+            });
+          });
+
+          // OK (BMA node is sync): continue
+          if (synchronized) {
+            console.info("[platform] Default peer [{0}] is well synchronized.".format(BMA.server));
+            return true;
+          }
+
+          var consensusBlockNumber = peers.length ? peers[0].currentNumber : undefined;
+          return csCurrency.blockchain.current()
+            .then(function(block) {
+
+              // Only one block late: keep current node
+              if (Math.abs(block.number - consensusBlockNumber) <= 2) {
+                console.info("[platform] Keep BMA node [{0}], as current block #{1} is closed to consensus block #{2}".format(BMA.server, block.number, consensusBlockNumber));
+                return true;
+              }
+
+              var randomPeer = _.sample(peers);
+              var synchronizedNode = new Peer({
+                host: randomPeer.getHost(),
+                port: randomPeer.getPort(),
+                useSsl: randomPeer.isSsl()
+              });
+
+              // If Expert mode: ask user to select a node
+              if (askUserConfirmation) {
+                return askUseFallbackNode(synchronizedNode);
+              }
+
+              return synchronizedNode;
             })
-            .then(function (confirm) {
-              if (!confirm) return;
+            .then(function(node) {
+              if (node === true) return true;
+              if (!node) {
+                return selectBmaNode();
+              }
+
+              console.info("[platform] Switching to synchronized fallback peer {{0}:{1}}".format(node.host, node.port));
 
               // Only change BMA node in settings
-              csSettings.data.node = fallbackNode;
+              csSettings.data.node = node;
 
               // Add a marker, for UI
               csSettings.data.node.temporary = true;
 
-              csHttp.cache.clear();
-
-              // loop
-              return BMA.copy(fallbackNode)
-                .then(checkBmaNodeAlive);
+              return BMA.copy(node);
             });
+        });
+    }
+
+    function askUseFallbackNode(fallbackNode) {
+      // Ask user to confirm, before switching to fallback node
+      var server = fallbackNode.server || (typeof fallbackNode.getServer === 'function' ? fallbackNode.getServer() : new Peer(fallbackNode).getServer())
+      var confirmMsgParams = {old: BMA.server, new: server};
+
+      // Force to show port/ssl, if this is the only difference
+      if (confirmMsgParams.old === confirmMsgParams.new) {
+        if (BMA.port != fallbackNode.port) {
+          confirmMsgParams.new += ':' + fallbackNode.port;
+        } else if (BMA.useSsl == false && (fallbackNode.useSsl || fallbackNode.port == 443)) {
+          confirmMsgParams.new += ' (SSL)';
+        }
+      }
+      if (!server) {
+        console.warn('[] TODO Invalid peer ', fallbackNode);
+      }
+
+      return $translate('CONFIRM.USE_FALLBACK_NODE', confirmMsgParams)
+        .then(UIUtils.alert.confirm)
+        .then(function (confirm) {
+          if (!confirm) return; // Stop
+          return fallbackNode;
+        });
+    }
+
+    // User can select a node
+    function selectBmaNode() {
+      var parameters = {
+        enableFilter: false,
+        type: 'all',
+        bma: true,
+        expertMode: true
+      };
+      if ($window.location.protocol === 'https:') {
+        parameters.ssl = true;
+      }
+      return Modals.showNetworkLookup(parameters)
+        .then(function(peer) {
+          if (!peer) return true; // User cancelled (= keep the default node)
+
+          var node = {
+            host: peer.getHost(),
+            port: peer.getPort(),
+            useSsl: peer.isSsl()
+          };
+          console.info("[platform] Selected peer:", node);
+
+          // Only change BMA node in settings
+          csSettings.data.node = node;
+
+          // Add a marker, for UI
+          csSettings.data.node.temporary = true;
+
+          return BMA.copy(node);
         });
     }
 
@@ -227,13 +357,11 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       return $q.when();
     }
 
-
-
     function addListeners() {
-      listeners = [
-        // Listen if node changed
+      // Listen if node changed
+      listeners.push(
         BMA.api.node.on.restart($rootScope, restart, this)
-      ];
+      );
     }
 
     function removeListeners() {
@@ -261,6 +389,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       // Avoid change state
       disableChangeState();
 
+      api.start.raise.message('COMMON.LOADING');
 
       // We use 'ionicReady()' instead of '$ionicPlatform.ready()', because this one is callable many times
       startPromise = ionicReady()
@@ -274,8 +403,11 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         ]))
 
         // Load BMA
-        .then(function(){
-          return BMA.ready().then(checkBmaNodeAlive);
+        .then(function() {
+          checkBmaNodeAliveCounter = 0;
+          return BMA.ready()
+            .then(checkBmaNodeAlive)
+            .then(checkBmaNodeSynchronized);
         })
 
         // Load currency
@@ -289,11 +421,14 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
           addListeners();
           startPromise = null;
           started = true;
+
+          api.start.raise.message(''); // Reset message
         })
         .catch(function(err) {
           startPromise = null;
           started = false;
-          if($state.current.name !== $rootScope.errorState) {
+          api.start.raise.message(''); // Reset message
+          if ($state.current.name !== $rootScope.errorState) {
             $state.go($rootScope.errorState, {error: 'peer'});
           }
           throw err;
@@ -317,6 +452,8 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       }, 500);
     }
 
+    api.registerEvent('start', 'message');
+
     return  {
       disableChangeState: disableChangeState,
       isStarted: isStarted,
@@ -326,7 +463,8 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       stop: stop,
       version: {
         latest: getLatestRelease
-      }
+      },
+      api: api
     };
   })
 
@@ -382,7 +520,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
       // Ionic Platform Grade is not A, disabling views transitions
       if (ionic.Platform.grade.toLowerCase() !== 'a') {
-        console.info('[app] Disabling UI effects, because plateform\'s grade is [' + ionic.Platform.grade + ']');
+        console.info('[app] Disabling UI effects, because platform\'s grade is {{0}}'.format(ionic.Platform.grade));
         UIUtils.setEffects(false);
       }
 
@@ -429,40 +567,3 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     });
   })
 ;
-
-// Workaround to add "".startsWith() if not present
-if (typeof String.prototype.startsWith !== 'function') {
-  console.debug("Adding String.prototype.startsWith() -> was missing on this platform");
-  String.prototype.startsWith = function(prefix, position) {
-    return this.indexOf(prefix, position) === 0;
-  };
-}
-
-// Workaround to add "".startsWith() if not present
-if (typeof String.prototype.trim !== 'function') {
-  console.debug("Adding String.prototype.trim() -> was missing on this platform");
-  // Make sure we trim BOM and NBSP
-  var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
-  String.prototype.trim = function() {
-    return this.replace(rtrim, '');
-  };
-}
-
-// Workaround to add Math.trunc() if not present - fix #144
-if (Math && typeof Math.trunc !== 'function') {
-  console.debug("Adding Math.trunc() -> was missing on this platform");
-  Math.trunc = function(number) {
-    return parseInt((number - 0.5).toFixed());
-  };
-}
-
-// Workaround to add "".format() if not present
-if (typeof String.prototype.format !== 'function') {
-  console.debug("Adding String.prototype.format() -> was missing on this platform");
-  String.prototype.format = function() {
-    var args = arguments;
-    return this.replace(/{(\d+)}/g, function(match, number) {
-      return typeof args[number] != 'undefined' ? args[number] : match;
-    });
-  };
-}

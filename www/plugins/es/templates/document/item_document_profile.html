@@ -1,6 +1,6 @@
 <ion-item id="doc-{{::doc.id}}"
-          class="item item-document item-icon-left ink {{::ionItemClass}} no-padding-top no-padding-bottom"
-          ng-class="{'compacted': compactMode}"
+          class="item item-document ink {{::ionItemClass}} no-padding-top no-padding-bottom"
+          ng-class=":rebind:{'compacted': compactMode, 'item-icon-left': !compactMode}"
           ng-click="selectDocument($event, doc)">
 
   <i ng-show=":rebind:!compactMode" ng-if=":rebind:doc.avatar" class="avatar" style="background-image: url({{:rebind:doc.avatar.src}})"></i>

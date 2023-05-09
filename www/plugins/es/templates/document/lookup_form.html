@@ -67,6 +67,14 @@
 
     <div class=" pull-right hidden-xs hidden-sm">
       <a class="button button-text button-small ink"
+         ng-class="{'button-text-positive': compactMode, 'button-text-stable': !compactMode}"
+         ng-click="toggleCompactMode()" >
+        <i class="icon ion-navicon"></i>
+        <b class="icon-secondary ion-arrow-down-b" style="top: -8px; left: 5px; font-size: 8px;"></b>
+        <b class="icon-secondary ion-arrow-up-b" style="top: 6px; left: 5px; font-size: 8px;"></b>
+        <span>{{'DOCUMENT.LOOKUP.BTN_COMPACT'|translate}}</span>
+      </a>
+      <a class="button button-text button-small ink"
          ng-if="login"
          ng-click="showActionsPopover($event)">
         {{'DOCUMENT.LOOKUP.BTN_ACTIONS' | translate}}

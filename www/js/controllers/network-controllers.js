@@ -54,6 +54,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
   $scope.networkStarted = false;
   $scope.ionItemClass = '';
   $scope.expertMode = csSettings.data.expertMode && !UIUtils.screen.isSmall();
+  $scope.timeout = csSettings.data.timeout;
   $scope.isHttps = ($window.location.protocol === 'https:');
   $scope.search = {
     text: '',
@@ -148,8 +149,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
         asc : $scope.search.asc
       },
       expertMode: $scope.expertMode,
-      // larger timeout when on expert mode
-      timeout: csConfig.timeout && ($scope.expertMode ? (csConfig.timeout / 10) : (csConfig.timeout / 100))
+      timeout: angular.isDefined($scope.timeout) ? $scope.timeout : Device.network.timeout()
     };
     return options;
   };
@@ -157,29 +157,52 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
   $scope.load = function() {
 
     if ($scope.search.loading){
+      $scope.updating = false;
+
       // Start network scan
-      csNetwork.start($scope.node, $scope.computeOptions());
+      csNetwork.start($scope.node, $scope.computeOptions())
+        .then(function() {
+          $scope.onDataChanged();
+        });
 
       // Catch event on new peers
-      $scope.refreshing = false;
       $scope.listeners.push(
-        csNetwork.api.data.on.changed($scope, function(data){
-          if (!$scope.refreshing) {
-            $scope.refreshing = true;
-            csWot.extendAll(data.peers)
-              .then(function() {
-                // Avoid to refresh if view has been leaving
-                if ($scope.networkStarted) {
-                  $scope.updateView(data);
-                }
-                $scope.refreshing = false;
-              });
-          }
+        csNetwork.api.data.on.changed($scope, function(data) {
+          $scope.onDataChanged(data);
         }));
     }
 
     // Show help tip
     $scope.showHelpTip();
+  };
+
+  $scope.onDataChanged = function(data) {
+    data = csNetwork.data || data;
+    if (!data || $scope.updating /*|| !$scope.networkStarted*/) return; // Skip if no data, or already updating
+
+    var now = Date.now();
+    console.debug("[peers] Fetching name + avatar, on {0} peers...".format(data.peers && data.peers.length || 0));
+
+    // Mark as updating
+    $scope.updating = true;
+
+    // Add name+avatar to peers
+    csWot.extendAll(data.peers)
+      .then(function() {
+        console.debug("[peers] Fetching name + avatar on peers [OK] in {0}ms".format(Date.now() - now));
+
+        // Avoid to refresh if view has been leaving
+        if ($scope.networkStarted) {
+          $scope.updateView(data);
+        }
+      })
+      .catch(function(err) {
+        console.error(err);
+        // Continue
+      })
+      .then(function() {
+        $scope.updating = false;
+      });
   };
 
   $scope.updateView = function(data) {
@@ -205,7 +228,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
 
   $scope.sort = function() {
     $scope.search.loading = true;
-    $scope.refreshing = true;
+    $scope.updating = true;
     csNetwork.sort($scope.computeOptions());
     $scope.updateView(csNetwork.data);
   };
@@ -399,9 +422,12 @@ function NetworkLookupModalController($scope, $controller, parameters) {
   $scope.search.ssl = angular.isDefined(parameters.ssl) ? parameters.ssl : $scope.search.ssl;
   $scope.search.ws2p = angular.isDefined(parameters.ws2p) ? parameters.ws2p : $scope.search.ws2p;
   $scope.expertMode = angular.isDefined(parameters.expertMode) ? parameters.expertMode : $scope.expertMode;
+  $scope.timeout = angular.isDefined(parameters.timeout) ? parameters.timeout : $scope.timeout;
   $scope.ionItemClass = parameters.ionItemClass || 'item-border-large';
   $scope.enableLocationHref = false;
   $scope.helptipPrefix = '';
+
+  //$scope.compactMode = false; // Always false, because no toggle button in the modal
 
   $scope.selectPeer = function(peer) {
     $scope.closeModal(peer);

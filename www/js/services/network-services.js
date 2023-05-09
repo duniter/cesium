@@ -1,7 +1,7 @@
 
 angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 'cesium.http.services'])
 
-.factory('csNetwork', function($rootScope, $q, $interval, $timeout, $window, csConfig, BMA, csHttp, csCurrency, Api) {
+.factory('csNetwork', function($rootScope, $q, $interval, $timeout, $window, csConfig, csSettings, BMA, Device, csHttp, csCurrency, Api) {
   'ngInject';
 
    var
@@ -12,8 +12,10 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
     },
     isHttpsMode = $window.location.protocol === 'https:',
     api = new Api(this, "csNetwork"),
+    startPromise,
 
     data = {
+      pid: 0, // Start PID
       bma: null,
       listeners: [],
       loading: true,
@@ -41,7 +43,8 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       searchingPeersOnNetwork: false,
       difficulties: null,
       ws2pHeads: null,
-      timeout: csConfig.timeout
+      timeout: csConfig.timeout,
+      startTime: null
     },
 
     // Return the block uid
@@ -49,7 +52,17 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       return block && [block.number, block.hash].join('-');
     },
 
+    // Return the block uid
+    buidBlockNumber = function(buid) {
+      return (typeof buid === 'string') && parseInt(buid.split('-')[0]);
+    },
+
+    remainingTime = function() {
+      return Math.max(0, data.timeout - (Date.now() - data.startTime));
+    },
+
     resetData = function() {
+      data.starCounter = 0;
       data.bma = null;
       data.listeners = [];
       data.peers.splice(0);
@@ -77,7 +90,23 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       data.searchingPeersOnNetwork = false;
       data.difficulties = null;
       data.ws2pHeads = null;
-      data.timeout = csConfig.timeout;
+      data.timeout = getDefaultTimeout();
+      data.startTime = null;
+    },
+
+   /**
+    * Compute a timeout, depending on connection type (wifi, ethernet, cell, etc.)
+    */
+   getDefaultTimeout = function () {
+     // Using timeout from settings
+     if (csSettings.data.expertMode) {
+       var timeout = csSettings.data.timeout || csConfig.timeout;
+       console.debug('[network] Using user defined timeout: {0}ms'.format(timeout));
+       return timeout;
+     }
+
+     // Computing timeout from the connection type
+     return Device.network.timeout(csConfig.timeout);
     },
 
     hasPeers = function() {
@@ -118,7 +147,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           // When too many request, retry in 3s
           if (err && err.ucode == BMA.errorCodes.HTTP_LIMITATION) {
             return $timeout(function() {
-              return loadW2spHeads();
+              if (remainingTime() > 0) return loadW2spHeads();
             }, 3000);
           }
           console.error(err); // can occur on duniter v1.6
@@ -139,7 +168,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           // When too many request, retry in 3s
           if (err && err.ucode == BMA.errorCodes.HTTP_LIMITATION) {
             return $timeout(function() {
-              return loadDifficulties();
+              if (remainingTime() > 0) return loadDifficulties();
             }, 3000);
           }
           console.error(err);
@@ -166,10 +195,11 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         else if (data.loading && !data.searchingPeersOnNetwork) {
           data.loading = false;
           $interval.cancel(interval);
+
           // The peer lookup end, we can make a clean final report
           sortPeers(true/*update main buid*/);
 
-          console.debug('[network] Finish: {0} peers found.'.format(data.peers.length));
+          console.debug('[network] {0} peer(s) found.'.format(data.peers.length));
         }
       }, 1000);
 
@@ -206,7 +236,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
             _.forEach(res.peers, function(json) {
               // Exclude, if not UP or on a too old block
               if (json.status !== 'UP') return;
-              json.blockNumber = json.block && parseInt(json.block.split('-')[0]);
+              json.blockNumber = buidBlockNumber(json.block);
               if (json.blockNumber && json.blockNumber < data.minOnlineBlockNumber) {
                 console.debug("[network] Exclude a too old peer document, on pubkey {0}".format(json.pubkey.substring(0,6)));
                 return;
@@ -218,7 +248,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
               _.forEach(json.endpoints||[], function(ep) {
                 if (ep.startsWith('WS2P')) {
                   var key = json.pubkey + '-' + ep.split(' ')[1];
-                  if (data.ws2pHeads[key]) {
+                  if (data.ws2pHeads && data.ws2pHeads[key]) {
                     data.ws2pHeads[key].hasEndpoint = true;
                   }
                 }
@@ -233,7 +263,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
               _.forEach(privateWs2pHeads, function(head) {
 
                 if (!head.hasEndPoint) {
-                  var currentNumber = head.buid && parseInt(head.buid.split('-')[0]);
+                  var currentNumber = buidBlockNumber(head.buid);
                   // Exclude if on a too old block
                   if (currentNumber && currentNumber < data.minOnlineBlockNumber) {
                     console.debug("[network] Exclude a too old WS2P message, on pubkey {0}".format(head.pubkey.substring(0,6)));
@@ -285,7 +315,13 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           }
         })
         .then(function(){
+          if (!isStarted()) return; // Skip if stopped
           data.searchingPeersOnNetwork = false;
+          data.loading = false;
+          if (newPeers.length) {
+            flushNewPeersAndSort(newPeers, true/*update main buid*/);
+          }
+          return data.peers;
         })
         .catch(function(err){
           console.error(err);
@@ -343,7 +379,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       list = list || data.newPeers;
 
       // Analyze the peer document, and exclude using the online filter
-      json.blockNumber = json.block && parseInt(json.block.split('-')[0]);
+      json.blockNumber = buidBlockNumber(json.block);
       json.oldBlock = (json.status === 'UP' && json.blockNumber && json.blockNumber < data.minOnlineBlockNumber);
 
       var peers = createPeerEntities(json);
@@ -433,7 +469,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       peer.server = peer.getServer();
       peer.dns = peer.getDns();
       peer.buid = peer.buid || peer.block;
-      peer.blockNumber = peer.buid && parseInt(peer.buid.split('-')[0]);
+      peer.blockNumber = buidBlockNumber(peer.buid);
       peer.uid = peer.pubkey && data.uidsByPubkeys[peer.pubkey];
       peer.id = peer.keyID();
       return [peer];
@@ -455,7 +491,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         delete data.ws2pHeads[ws2pHeadKey];
         if (head) {
           peer.buid = head.buid;
-          peer.currentNumber=head.buid && parseInt(head.buid.split('-')[0]);
+          peer.currentNumber = buidBlockNumber(head.buid);
           peer.version = head.version;
           peer.powPrefix = head.powPrefix;
         }
@@ -493,7 +529,8 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         return $q.when(peer);
       }
 
-      peer.api = peer.api ||  BMA.lightInstance(peer.getHost(), peer.getPort(), peer.isSsl(), data.timeout);
+      var timeout = Math.max(500, remainingTime()); // >= 500ms
+      peer.api = peer.api || BMA.lightInstance(peer.getHost(), peer.getPort(), peer.isSsl(), timeout);
 
       // Get current block
       return peer.api.blockchain.current(false/*no cache*/)
@@ -519,10 +556,14 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           if (!peer.secondTry) {
             var bma = peer.bma || peer.getBMA();
             if (bma.dns && peer.server.indexOf(bma.dns) === -1) {
+              var secondTryTimeout = remainingTime();
+
               // try again, using DNS instead of IPv4 / IPV6
-              peer.secondTry = true;
-              peer.api = BMA.lightInstance(bma.dns, bma.port, bma.useSsl);
-              return refreshPeer(peer); // recursive call
+              if (secondTryTimeout > 0) {
+                peer.secondTry = true;
+                peer.api = BMA.lightInstance(bma.dns, bma.port, bma.useSsl, secondTryTimeout);
+                return refreshPeer(peer); // recursive call
+              }
             }
           }
 
@@ -754,79 +795,145 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
     },
 
     start = function(bma, options) {
-      options = options || {};
-      return BMA.ready()
-        .then(function() {
-          close();
+      if (startPromise) {
+        console.warn('[network-service] Waiting previous start to be closed...');
+        return startPromise.then(function() {
+          return start(bma, options);
+        });
+      }
 
-          data.bma = bma || BMA;
+      options = options || {};
+      bma = bma || BMA;
+      var pid = data.pid;
+
+      startPromise = bma.ready()
+        .then(function() {
+          close(pid);
+          data.pid++;
+          data.bma = bma;
           data.filter = options.filter ? angular.merge(data.filter, options.filter) : data.filter;
           data.sort = options.sort ? angular.merge(data.sort, options.sort) : data.sort;
           data.expertMode = angular.isDefined(options.expertMode) ? options.expertMode : data.expertMode;
-          data.timeout = angular.isDefined(options.timeout) ? options.timeout : csConfig.timeout;
+          data.timeout = angular.isDefined(options.timeout) ? options.timeout : getDefaultTimeout();
+          data.startTime = Date.now();
 
           // Init a min block number
-          data.minOnlineBlockNumber = data.mainBlock && data.mainBlock.buid && (parseInt(data.mainBlock.buid.split('-')[0]) - constants.MAX_BLOCK_OFFSET) || undefined;
+          var mainBlockNumber = data.mainBlock && buidBlockNumber(data.mainBlock.buid);
+          data.minOnlineBlockNumber = mainBlockNumber && Math.max(0, (mainBlockNumber - constants.MAX_BLOCK_OFFSET)) || undefined;
           if (data.minOnlineBlockNumber === undefined) {
             return csCurrency.blockchain.current(true/*use cache*/)
               .then(function(current) {
-                data.minOnlineBlockNumber = current.number - constants.MAX_BLOCK_OFFSET;
+                data.minOnlineBlockNumber = Math.max(0, current.number - constants.MAX_BLOCK_OFFSET);
+                if (Date.now() - data.startDate > 2000) {
+                  console.warn('[network-service] Resetting network start date, because blockchain.current() take more than 2s to respond');
+                  data.startTime = Date.now(); // Reset the startTime (use to compute remainingTime)
+                }
               });
           }
         })
         .then(function() {
-          console.info('[network] Starting network from [{0}]'.format(bma.server));
           var now = Date.now();
+          console.info('[network] Starting from [{0}]'.format(bma.server));
 
           addListeners();
 
           return loadPeers()
             .then(function(peers){
-              console.debug('[network] Started in '+(Date.now() - now)+'ms');
-              return peers;
+              if (peers) console.debug('[network] Started in {0}ms, {1} peers found'.format(Date.now() - now, peers.length));
+              return data;
             });
         });
+      return startPromise;
     },
 
-    close = function() {
-      if (data.bma) {
-        console.info('[network-service] Stopping...');
-        removeListeners();
-        resetData();
+    close = function(pid) {
+        if (data.bma) {
+          console.info('[network] Stopping...');
+          removeListeners();
+          resetData();
+        }
+      if (interval && pid === data.pid && pid > 0) {
+        $interval.cancel(interval);
       }
+      startPromise = null;
     },
 
     isStarted = function() {
-      return !data.bma;
+      return !!data.bma;
     },
 
-    $q_started = function(callback) {
-      if (!isStarted()) { // start first
-        return start()
-          .then(function() {
-            return $q(callback);
-          });
+    startIfNeed = function(bma, options) {
+      if (startPromise) return startPromise;
+      // Start if need
+      if (!isStarted()) {
+        return start(bma, options);
       }
       else {
-        return $q(callback);
+        return $q.resolve(data);
       }
     },
 
-    getMainBlockUid = function() {
-      return $q_started(function(resolve, reject){
-        resolve (data.mainBuid);
-      });
+    getMainBlockUid = function(bma, options) {
+      var wasStarted = isStarted();
+      var pid = data.pid + 1;
+      return startIfNeed(bma, options)
+        .then(function(data) {
+          var buid = data.mainBlock && data.mainBlock.buid;
+          if (!wasStarted) close(pid);
+          return buid;
+        })
+        .catch(function(err) {
+          console.error('[network] Failed to get main block');
+          if (!wasStarted) close(pid);
+          throw err;
+        });
     },
 
     // Get peers on the main consensus blocks
-    getTrustedPeers = function() {
-      return $q_started(function(resolve, reject){
-        resolve(data.peers.reduce(function(res, peer){
-          return (peer.hasMainConsensusBlock && peer.uid) ? res.concat(peer) : res;
-        }, []));
-      });
-    }
-    ;
+    getSynchronizedBmaPeers = function(bma, options) {
+      options = options || {};
+      options.filter = options.filter || {};
+      options.filter.bma = angular.isDefined(options.filter.bma) ? options.filter.bma : true;
+      options.filter.ssl = isHttpsMode ? true : undefined;
+      options.filter.online = true;
+      options.filter.expertMode = false;
+      options.timeout = angular.isDefined(options.timeout) ? options.timeout : getDefaultTimeout();
+
+      var now = Date.now();
+      console.info('[network] Getting synchronized BMA peers...');
+
+      var wasStarted = isStarted();
+      var pid = data.pid + 1;
+      return startIfNeed(bma, options)
+        .then(function(data){
+          var peers = data && _.filter(data.peers, function(peer) {
+            return peer.hasMainConsensusBlock && peer.isBma();
+          });
+
+          // Log
+          if (peers && peers.length > 0) {
+            console.info('[network] Found {0}/{1} BMA peers on main consensus block #{2} - in {3}ms'.format(
+              peers.length,
+              data.peers.length,
+              peers[0] && peers[0].buid,
+              Date.now() - now));
+          }
+          else {
+            console.warn('[network] No synchronized BMA peers found, in {0}ms'.format(Date.now() - now));
+          }
+
+          if (!wasStarted) close(pid);
+
+          return peers;
+        })
+        .catch(function(err) {
+          console.error('[network] Error while getting synchronized BMA peers', err);
+
+          if (!wasStarted) close(pid);
+
+          throw err;
+        });
+    };
 
   // Register extension points
   api.registerEvent('data', 'changed');
@@ -840,7 +947,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
     hasPeers: hasPeers,
     getPeers: getPeers,
     sort: sort,
-    getTrustedPeers: getTrustedPeers,
+    getSynchronizedBmaPeers: getSynchronizedBmaPeers,
     getKnownBlocks: getKnownBlocks,
     getMainBlockUid: getMainBlockUid,
     loadPeers: loadPeers,

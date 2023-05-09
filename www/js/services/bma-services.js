@@ -5,7 +5,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 .factory('BMA', function($q, $window, $rootScope, $timeout, csCrypto, Api, Device, UIUtils, csConfig, csSettings, csCache, csHttp) {
   'ngInject';
 
-  function BMA(host, port, useSsl, useCache) {
+  function BMA(host, port, useSsl, useCache, timeout) {
 
     var
       id = (!host ? 'default' : '{0}:{1}'.format(host, (port || (useSsl ? '443' : '80')))), // Unique id of this instance
@@ -67,6 +67,14 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         ROOT_BLOCK_HASH: 'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855',
         LIMIT_REQUEST_COUNT: 5, // simultaneous async request to a Duniter node
         LIMIT_REQUEST_DELAY: 1000, // time (in ms) to wait between to call of a rest request
+        TIMEOUT: {
+          NONE: -1,
+          SHORT: 1000, // 1s
+          MEDIUM: 5000, // 5s
+          LONG: 10000, // 10s
+          DEFAULT: csConfig.timeout,
+          VERY_LONG: 60000
+        },
         regexp: regexp,
         api: api
       },
@@ -97,16 +105,16 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       that.alive = false;
 
       // Use settings as default, if exists
-      if (csSettings.data && csSettings.data.node) {
-        host = host || csSettings.data.node.host;
-        port = port || csSettings.data.node.port;
-
-        useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443 || csSettings.data.node.useSsl || that.forceUseSsl);
+      var node = csSettings.data && csSettings.data.node;
+      if (node) {
+        host = host || node.host;
+        port = port || node.port;
+        useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443 || node.useSsl || that.forceUseSsl);
       }
 
-      if (!host) {
-        return; // could not init yet
-      }
+      if (!host) return; // could not init yet
+
+
       that.host = host;
       that.port = port || 80;
       that.useSsl = angular.isDefined(useSsl) ? useSsl : (that.port == 443 || that.forceUseSsl);
@@ -143,9 +151,10 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
      that.raw.wsByPath = {};
    }
 
-   function get(path, cacheTime) {
+    function get(path, cacheTime, forcedTimeout) {
 
-      cacheTime = that.useCache && cacheTime || 0 /* no cache*/ ;
+      cacheTime = that.useCache && cacheTime || 0 /* no cache*/ ;
+      forcedTimeout = forcedTimeout || timeout;
       var requestKey = path + (cacheTime ? ('#'+cacheTime) : '');
 
       var getRequestFn = function(params) {
@@ -162,10 +171,10 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         var request = that.raw.getByPath[requestKey];
         if (!request) {
           if (cacheTime) {
-            request = csHttp.getWithCache(that.host, that.port, path, that.useSsl, cacheTime, null, null, cachePrefix);
+            request = csHttp.getWithCache(that.host, that.port, path, that.useSsl, cacheTime, null/*autoRefresh*/, forcedTimeout, cachePrefix);
           }
           else {
-            request = csHttp.get(that.host, that.port, path, that.useSsl);
+            request = csHttp.get(that.host, that.port, path, that.useSsl, forcedTimeout);
           }
           that.raw.getByPath[requestKey] = request;
         }
@@ -234,13 +243,13 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       };
     }
 
-    that.isAlive = function(node) {
-      node = node || that;
+    that.isAlive = function(node, timeout) {
+      node = node || that;
       // WARN:
       //  - Cannot use previous get() function, because
       //    node can be !=that, or not be started yet
       //  - Do NOT use cache here
-      return csHttp.get(node.host, node.port, '/node/summary', node.useSsl)()
+      return csHttp.get(node.host, node.port, '/node/summary', node.useSsl || that.forceUseSsl, timeout)()
         .then(function(json) {
           var software = json && json.duniter && json.duniter.software;
           var isCompatible = true;
@@ -259,7 +268,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           return isCompatible;
         })
         .catch(function() {
-          return false;
+          return false; // Unreachable
         });
     };
 
@@ -308,7 +317,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       if (that._startPromise) return that._startPromise;
       if (that.started) return $q.when(that.alive);
 
-      if (!that.host) {
+      // Load without argument: wait settings, then init using setting's data
+      if (!that.host || !csSettings.isStarted()) {
         return csSettings.ready()
           .then(function() {
             that.init();
@@ -320,32 +330,29 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           });
       }
 
-      console.debug("[BMA] Starting {0} {ssl: {1})...".format(that.server, that.useSsl));
+      console.debug("[BMA] [{0}] Starting {ssl: {1})...".format(that.server, that.useSsl));
       var now = Date.now();
 
-      that._startPromise = $q.all([
-          csSettings.ready(),
-          that.isAlive()
-        ])
-        .then(function(res) {
-          that.alive = res[1];
+      that._startPromise = that.isAlive()
+        .then(function(alive) {
+          that.alive = alive;
           if (!that.alive) {
-            console.error("[BMA] Could not start {0} : unreachable".format(that.server));
+            console.error("[BMA] Could not start using peer {{0}}: unreachable".format(that.server));
             that.started = true;
             delete that._startPromise;
-            return false;
+            return false; // Not alive
           }
 
           // Add listeners
           if (!listeners || !listeners.length) {
             addListeners();
           }
-          console.debug('[BMA] Started in '+(Date.now()-now)+'ms');
+          console.debug('[BMA] Started in {0}ms'.format(Date.now()-now));
 
           that.api.node.raise.start();
           that.started = true;
           delete that._startPromise;
-          return true;
+          return true; // Alive
         });
       return that._startPromise;
     };
@@ -379,6 +386,37 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
             that.api.node.raise.restart();
           }
           return alive;
+        });
+    };
+
+    that.filterAliveNodes = function(fallbackNodes, timeout) {
+      timeout = timeout || csSettings.data.timeout;
+
+      // Filter to exclude the current BMA node
+      fallbackNodes = _.filter(fallbackNodes || [], function(node) {
+        node.server = node.server || node.host + ((!node.port && node.port != 80 && node.port != 443) ? (':' + node.port) : '');
+        var same = that.node.same(node);
+        if (same) console.debug('[BMA] Skipping fallback node [{0}]: same as current BMA node'.format(node.server));
+        return !same;
+      });
+
+
+      console.debug('[BMA] Getting alive fallback nodes... (temiout: {0}ms)'.format(timeout));
+
+      var aliveNodes = [];
+      return $q.all(_.map(fallbackNodes, function(node) {
+        return that.isAlive(node, timeout)
+          .then(function(alive) {
+            if (alive) {
+              aliveNodes.push(node);
+            }
+            else {
+              console.error('[BMA] Unreachable (or not compatible) fallback node [{0}]: skipping'.format(node.server));
+            }
+          });
+        }))
+        .then(function() {
+          return aliveNodes;
         });
     };
 
@@ -984,14 +1022,15 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 
   var service = new BMA();
 
-  service.instance = function(host, port, useSsl, useCache) {
+  service.instance = function(host, port, useSsl, useCache, timeout) {
     useCache = angular.isDefined(useCache) ? useCache : false; // No cache by default
-    return new BMA(host, port, useSsl, useCache);
+    return new BMA(host, port, useSsl, useCache, timeout);
   };
 
   service.lightInstance = function(host, port, useSsl, timeout) {
     port = port || 80;
     useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443);
+    timeout = timeout || csSettings.data.timeout;
     return {
       host: host,
       port: port,

@@ -48,8 +48,8 @@
     "DAYS": "Dias",
     "NO_ACCOUNT_QUESTION": "Ainda não é membro? Criar uma conta!",
     "SEARCH_NO_RESULT": "Não foi encontrado nenhum resultado",
-    "LOADING": "Aguarde por favor…",
-    "LOADING_WAIT": "Aguarde por favor…<br/><small>(Aguardando disponibilidade de nó)</small>",
+    "LOADING": "Aguarde por favor...",
+    "LOADING_WAIT": "Aguarde por favor...<br/><small>(Cesium está a questionar o nó Duniter)</small>",
     "SEARCHING": "Procurando…",
     "FROM": "De",
     "TO": "Para",
@@ -137,6 +137,9 @@
     "NETWORK_SETTINGS": "Rede",
     "PEER": "Endereço do nó Duniter",
     "PEER_CHANGED_TEMPORARY": "Endereço utilizado temporariamente",
+    "PEER_SELECTED_AUTOMATICALLY": "Nó selecionado automaticamente na inicialização",
+    "PEER_TIMEOUT": "Tempo máximo de espera (timeout)",
+    "PEER_TIMEOUT_HELP": "Tempo máximo de espera para obter uma resposta do nó",
     "PEER_SHORT": "Nó Duniter",
     "PERSIST_CACHE": "Conservar os dados de navegação (experimental)",
     "PERSIST_CACHE_HELP": "Permite uma navegação mais rápida, manter localmente os dados recebidos, para usar entre sessões.",
@@ -184,7 +187,7 @@
       "HOST": "Endereço",
       "HOST_HELP": "Endereço: servidor:porta",
       "USE_SSL": "Conexão segura",
-      "USE_SSL_HELP": "(Cifrado SSL)",
+      "USE_SSL_HELP": "Cifrado SSL",
       "BTN_SHOW_LIST": "Lista de nós"
     }
   },
@@ -780,6 +783,7 @@
     "PUBKEY_INVALID_CHECKSUM": "Chave pública inválida (soma de controlo incorreta).",
     "POPUP_TITLE": "Erro",
     "UNKNOWN_ERROR": "Erro desconhecido",
+    "TIMEOUT_REACHED": "Tempo de espera do nó excedido ({{timeout|formatDurationMs}}).<br/><br/><small>{{url}}</small>",
     "CRYPTO_UNKNOWN_ERROR": "O seu navegador parece incompatível com as funcionalidades de criptografia.",
     "DOWNLOAD_KEYFILE_FAILED": "Falha ao gerar o arquivo de chaves.",
     "EQUALS_TO_PSEUDO": "Deve ser diferente do seu pseudónimo.",
@@ -887,7 +891,8 @@
     "REVOCATION_SENT": "Revogação enviada",
     "REVOCATION_SENT_WAITING_PROCESS": "A <b>revogação desta identidade</b> foi solicitada e aguarda ser processada.",
     "FEATURES_NOT_IMPLEMENTED": "Esta funcionalidade encontra-se em desenvolvimento.<br/><br/>Porque não <b>contribuir com Cesium</b>, para obtê-la mais rápido? ;)",
-    "EMPTY_TX_HISTORY": "Nenhuma operação a exportar"
+    "EMPTY_TX_HISTORY": "Nenhuma operação a exportar",
+    "LOADING_PENDING_TX": "Aguarde por favor...<br/><small>(A recuperar operações pendentes)</small>"
   },
   "CONFIRM": {
     "CAN_CONTINUE": "<b>Deseja</b> continuar?",
@@ -914,7 +919,8 @@
     "SAVE_BEFORE_LEAVE": "Deseja <b>guardar as alterações</b> antes de abandonar a página?",
     "SAVE_BEFORE_LEAVE_TITLE": "Alterações não guardadas",
     "LOGOUT": "Deseja desconectar-se?",
-    "USE_FALLBACK_NODE": "Nó <b>{{old}}</b> indisponível ou endereço inválido.<br/><br/>Deseja utilizar temporalmente o nó <b>{{new}}</b>?"
+    "USE_FALLBACK_NODE": "Nó <b>{{old}}</b> indisponível ou endereço inválido.<br/><br/>Deseja utilizar temporalmente o nó <b>{{new}}</b>?",
+    "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Aviso:</b> Queres <b>alterar manualmente</b> o nó Duniter?<br/><br/>Se continuares:<ul><li> - Será ativado o <b>modo perito</b>;</li><li> - Poderás voltar à seleção automática do nó, simplesmente <b>desativando o modo perito</b>.</li></ul>"
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Revogação do arquivo</b>",

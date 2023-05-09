@@ -726,6 +726,12 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     },
 
     loadTxAndSources = function(fromTime) {
+      // DEBUG
+      //console.debug('[wallet-service] Calling loadTxAndSources()');
+
+      if (fromTime === 'pending') {
+        UIUtils.loading.update({template: "INFO.LOADING_PENDING_TX"});
+      }
       return csTx.load(data.pubkey, fromTime)
         .then(function(res){
           resetTxAndSources();
@@ -933,6 +939,11 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           else { // user cancelled
             throw 'CANCELLED';
           }
+        })
+        .catch(function(err) {
+          loadPromise = null;
+          console.log('TODO 2', err);
+          throw err;
         });
     },
 

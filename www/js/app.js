@@ -61,23 +61,32 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngSanitize',
       if (nextParams.wallet && !wallet) {
         console.warn("[app] Unable to find the children wallet: " + nextParams.wallet);
       }
+      var goNextState = function() {
+        preventStateChange = false;
+        return $state.go(next.name, nextParams);
+      };
+      var processError = function(err) {
+        preventStateChange = false;
+        // If user cancel
+        if (err === 'CANCELLED') {
+          // Redirect to home, if no current state
+          if (!$state.current.name) {
+            return $state.go('app.home');
+          }
+          return; // Stay on the existing state
+        }
+        // Show Error
+        UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR')(err);
+      };
       // If state need auth
       if (next.data.auth && !wallet.isAuth()) {
         event.preventDefault();
         options = next.data.minData ? {minData: true} : undefined;
         preventStateChange = true;
+        console.debug("[app] State need auth...");
         return csWallet.auth(options)
-          .then(function() {
-            preventStateChange = false;
-            return $state.go(next.name, nextParams);
-          })
-          .catch(function(err) {
-            preventStateChange = false;
-            // If cancel, redirect to home, if no current state
-            if (err === 'CANCELLED' && !$state.current.name) {
-              return $state.go('app.home');
-            }
-          });
+          .then(goNextState)
+          .catch(processError);
       }
 
       // If state need login
@@ -85,18 +94,10 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngSanitize',
         event.preventDefault();
         options = next.data.minData ? {minData: true} : undefined;
         preventStateChange = true;
+        console.debug("[app] State need login...");
         return csWallet.login(options)
-          .then(function() {
-            preventStateChange = false;
-            return $state.go(next.name, nextParams);
-          })
-          .catch(function(err) {
-            preventStateChange = false;
-            // If cancel, redirect to home, if no current state
-            if (err === 'CANCELLED' && !$state.current.name) {
-              return $state.go('app.home');
-            }
-          });
+          .then(goNextState)
+          .catch(processError);
       }
 
       // If state need login or auth, make sure to load wallet data
@@ -106,11 +107,11 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngSanitize',
           event.preventDefault();
           // Show loading message, when full load
           if (!options || !options.minData) UIUtils.loading.show();
+
+          console.debug("[app] State load wallet data...");
           return wallet.loadData(options)
-            .then(function() {
-              preventStateChange = false;
-              return $state.go(next.name, nextParams);
-            });
+            .then(goNextState)
+            .catch(processError)
         }
       }
     });

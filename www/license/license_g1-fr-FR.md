@@ -1,23 +1,23 @@
 ﻿Licence Ğ1 - v0.2.9
 ===================
 
-:date: 2017-04-04 12:59
-:modifié: 2019-07-14 12:00
+:Date: 2017-04-04 12:59
+:Modified: 2021-04-20 21:00
 
 **Licence de la monnaie et engagement de responsabilité.**
 
-Toute opération de certification d'un nouveau membre de Ğ1 doit préalablement s'accompagner de la transmission de cette licence de la monnaie Ğ1 dont le certificateur doit s'assurer qu'elle a été étudiée, comprise et acceptée par la personne qui sera certifiée.
+Toute opération de certification d'un nouveau membre de la monnaie Ğ1 doit préalablement s'accompagner de la transmission de cette licence de la monnaie Ğ1 dont le certificateur doit s'assurer qu'elle a été étudiée, comprise et acceptée par la personne qui sera certifiée.
 
-Tout événement de rencontre concernant Ğ1 devrait s'accompagner de la transmission de cette licence, qui peut être lue à haute voix, et transmise par tout moyen.
+Tout événement de rencontre concernant la Ğ1 devrait s'accompagner de la transmission de cette licence, qui peut être lue à haute voix, et transmise par tout moyen.
 
 Toile de confiance Ğ1 (TdC Ğ1)
 ------------------------------
 
-**Avertissement :** Certifier n'est pas uniquement s'assurer que vous avez rencontré la personne, c'est assurer à la communauté Ğ1 que vous connaissez suffisamment bien la personne certifiée et que vous saurez ainsi la contacter facilement, et être en mesure de repérer un double compte effectué par une personne certifiée par vous-même, ou d'autres types de problèmes (disparition...), en effectuant des recoupements qui permettront de révéler le problème le cas échéant.
+**Avertissement :** Certifier n'est pas uniquement s'assurer que vous avez rencontré la personne, c'est assurer à la communauté Ğ1 que vous connaissez suffisamment bien la personne que vous vous apprêtez à certifier et que vous saurez ainsi la contacter facilement, et être en mesure de repérer un double compte effectué par une personne certifiée par vous-même, ou d'autres types de problèmes (disparition…), en effectuant des recoupements qui permettront de révéler le problème le cas échéant.
 
 **Conseils fortement recommandés**
 
-Bien connaître une personne suppose que vous êtes en mesure de la contacter par plusieurs moyens différents (physique, électronique, autre...) mais aussi que vous connaissez aussi plusieurs personnes qui la connaissent tout aussi bien et sont donc aussi en mesure de la contacter de même. Notamment si vous ne connaissez pas bien aucun de ses autres certificateurs c'est une indication forte que vous ne connaissez pas bien la personne et une certification de ce type déclenche une alerte vers toute la communauté Ğ1. En cas de connaissance insuffisante il convient de ne surtout pas certifier.
+Bien connaître une personne suppose que vous êtes en mesure de la contacter par plusieurs moyens différents (physique, électronique, autre…) mais aussi que vous connaissez aussi plusieurs personnes qui la connaissent tout aussi bien et sont donc aussi en mesure de la contacter de même. Notamment si vous ne connaissez pas bien aucun de ses autres certificateurs c'est une indication forte que vous ne connaissez pas bien la personne et une certification de ce type déclenche une alerte vers toute la communauté Ğ1. En cas de connaissance insuffisante il convient de ne surtout pas certifier.
 
 Ne certifiez jamais seul, mais accompagné d'au moins un autre membre de la TdC Ğ1 afin d'éviter toute erreur de manipulation. En cas d'erreur, prévenez immédiatement d'autres membres de la TdC Ğ1.
 
@@ -27,7 +27,7 @@ Vérifiez que le futur certifié maîtrise bien son compte : un bon moyen de vé
 
 Vérifiez que vos contacts ont bien étudié et compris la licence Ğ1 à jour.
 
-Si vous vous rendez compte qu'un certificateur effectif ou potentiel du compte concerné ne connaît pas la personne concernée, alertez immédiatement des experts du sujet au sein de vos connaissance de la TdC Ğ1, afin que la procédure de validation soit vérifiée par la TdC Ğ1.
+Si vous vous rendez compte qu'un certificateur effectif ou potentiel du compte concerné ne connaît pas la personne concernée, alertez immédiatement des experts du sujet au sein de vos connaissances de la TdC Ğ1, afin que la procédure de validation soit vérifiée par la TdC Ğ1.
 
 Lorsque vous êtes membre de la TdC Ğ1 et que vous vous apprêtez à certifier un nouveau compte :
 
@@ -52,7 +52,7 @@ Chaque membre a un stock de 100 certifications possibles, qu'il ne peut émettre
 
 Valable 2 mois, une certification pour un nouveau membre n'est définitivement adoptée que si le certifié possède au moins 4 autres certifications au bout de ces 2 mois, sinon le processus d'entrée devra être relancé.
 
-Pour devenir un nouveau membre de la TdC Ğ1 il faut donc obtenir 5 certifications et se trouver à une distance <= 5 pas de 80% des membres référents de la TdC.
+Pour devenir un nouveau membre de la TdC Ğ1 il faut donc obtenir 5 certifications et se trouver à une distance <= à 5 pas de 80% des membres référents de la TdC.
 
 Un membre de la TdC Ğ1 est membre référent lorsqu'il a reçu et émis au moins Y[N] certifications où N est le nombre de membres de la TdC et Y[N] = plafond N^(1/5). Exemples :
 

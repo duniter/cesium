@@ -49,7 +49,7 @@
     "NO_ACCOUNT_QUESTION": "Ankoraŭ sen konto? Kreu ĝin senpage!",
     "SEARCH_NO_RESULT": "Neniu rezulto trovita",
     "LOADING": "Bonvolu pacienci...",
-    "LOADING_WAIT": "Bonvolu pacienci...<br/><small>(Atendado pri disponebleco de la nodo)</small>",
+    "LOADING_WAIT": "Bonvolu pacienci...<br/><small>(Cesium demandas la Duniter-nodon)</small>",
     "SEARCHING": "Serĉanta...",
     "FROM": "De",
     "TO": "Al",
@@ -144,6 +144,9 @@
     "PEER": "Adreso de la nodo Duniter",
     "PEER_SHORT": "Adreso de la nodo",
     "PEER_CHANGED_TEMPORARY": "Adreso provizore uzata",
+    "PEER_SELECTED_AUTOMATICALLY": "Nodo aŭtomate elektita ĉe starto",
+    "PEER_TIMEOUT": "Maksimuma atendotempo (eltempigo)",
+    "PEER_TIMEOUT_HELP": "Maksimuma atendotempo por ricevi respondon de la nodo",
     "PERSIST_CACHE": "Konservi la datenojn pri retumado (provaĵo)",
     "PERSIST_CACHE_HELP": "Ebligas pli rapidan retumadon, loke konservante la ricevitajn datenojn, por uzi ilin de seanco al alia.",
     "USE_LOCAL_STORAGE": "Aktivigi lokan stokadon",
@@ -190,7 +193,7 @@
       "HOST": "Adreso",
       "HOST_HELP": "Adreso: servilo: konektujo",
       "USE_SSL": "Sekurigita?",
-      "USE_SSL_HELP": "(SSL-ĉifrado)",
+      "USE_SSL_HELP": "SSL-ĉifrado",
       "BTN_SHOW_LIST": "Listo de la nodoj"
     }
   },
@@ -684,6 +687,7 @@
     "PUBKEY_INVALID_CHECKSUM": "Publika ŝlosilo nevalida (bad checksum).",
     "POPUP_TITLE": "Eraro",
     "UNKNOWN_ERROR": "Eraro nekonata",
+    "TIMEOUT_REACHED": "La atendo de la nodo superis la tempon ({{timeout|formatDurationMs}}).<br/><br/><small>{{url}}</small>",
     "CRYPTO_UNKNOWN_ERROR": "Via retumilo ŝajnas ne kongrua kun la kriptografiaj funkcioj.",
     "DOWNLOAD_KEYFILE_FAILED": "Malsukceso por la kreado de la dosiero pri ŝlosilaro.",
     "EQUALS_TO_PSEUDO": "Devas esti malsama ol la pseŭdonimo",
@@ -802,7 +806,8 @@
     "REVOCATION_SENT": "Nuligo sendita",
     "REVOCATION_SENT_WAITING_PROCESS": "La <b>nuligo de tiu ĉi identeco</b> estis petita kaj atendas traktadon.",
     "FEATURES_NOT_IMPLEMENTED": "Tiu ĉi funkciaro ankoraŭ estas programiĝanta.<br/>Kial ne <b>kontribui al Cesium</b>, por ekhavi ĝin pli rapide? ;)",
-    "EMPTY_TX_HISTORY": "Neniu spezo elportota"
+    "EMPTY_TX_HISTORY": "Neniu spezo elportota",
+    "LOADING_PENDING_TX": "Bonvolu pacienci...<br/><small>(Prenado de pendaj operacioj)</small>"
   },
   "CONFIRM": {
     "CAN_CONTINUE": "<b>Ĉu vi certas</b>, ke vi volas daŭrigi?",
@@ -830,7 +835,8 @@
     "SAVE_BEFORE_LEAVE_TITLE": "Modifoj ne registritaj",
     "LOGOUT": "Ĉu vi certas, ke vi volas malkonektiĝi?",
     "USE_FALLBACK_NODE": "Nodo <b>{{old}}</b> neatingebla aŭ adreso nevalida.<br/><br/>Ĉu vi volas provizore uzi la nodon <b>{{new}}</b> ?",
-    "ISSUE_524_SEND_LOG": "La spezo estis forĵetita, pro konata anomalio (petslipo #524) sed <b>ne ripetita</b>.<br/><br/>Por helpi la programistojn korekti tiun eraron, <b>ĉu vi akceptas la sendadon de viaj protokolaj dosieroj</b> per mesaĝo?<br/><small>(neniu konfidenca dateno estas sendita)</small>."
+    "ISSUE_524_SEND_LOG": "La spezo estis forĵetita, pro konata anomalio (petslipo #524) sed <b>ne ripetita</b>.<br/><br/>Por helpi la programistojn korekti tiun eraron, <b>ĉu vi akceptas la sendadon de viaj protokolaj dosieroj</b> per mesaĝo?<br/><small>(neniu konfidenca dateno estas sendita)</small>.",
+    "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Averto:</b> Ĉu vi volas <b>mane ŝanĝi</b> la nodon?<br/><br/>Se vi daŭrigas:<ul><li> - La <b>eksperta reĝimo</b> estos aktivigita;</li><li> - Vi povos reveni al aŭtomata nodo-selekto simple <b>malaktivigante la ekspertan reĝimon</b>.</li></ul>"
   },
   "MODE": {
     "DEMO": {

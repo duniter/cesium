@@ -22,7 +22,6 @@ variables:
 # Jobs templates
 # ---------------------------------------------------------------
 
-
 .docker:
   image: docker:latest
   tags: [redshift]

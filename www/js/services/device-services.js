@@ -4,7 +4,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
 
   .factory('Device', function($rootScope, $translate, $ionicPopup, $q, Api,
       // removeIf(no-device)
-      $cordovaClipboard, $cordovaBarcodeScanner, $cordovaCamera,
+      $cordovaClipboard, $cordovaBarcodeScanner, $cordovaCamera, $cordovaNetwork,
       // endRemoveIf(no-device)
       ionicReady) {
       'ngInject';
@@ -143,6 +143,81 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
           cordova.plugins.Keyboard.close();
         }
       };
+      exports.network = {
+        connectionType: function() {
+          if (!exports.network.enable) return  'unknown';
+          try {
+            return navigator.connection.type || 'unknown';
+          }
+          catch(err) {
+            console.error('[device] Cannot get connection type: ' + (err && err.message || err), err);
+            return 'unknown';
+          }
+        },
+        isOnline: function() {
+          try {
+            return navigator.connection.type !== Connection.NONE;
+          }
+          catch(err) {
+            console.error('[device] Cannot check if online: ' + (err && err.message || err), err);
+            return true;
+          }
+        },
+        isOffline: function() {
+          try {
+            return navigator.connection.type === Connection.NONE;
+          }
+          catch(err) {
+            console.error('[device] Cannot check if offline: ' + (err && err.message || err), err);
+            return true;
+          }
+          return false;
+        },
+        timeout: function(defaultTimeout) {
+          defaultTimeout = defaultTimeout || csConfig.timeout;
+          var timeout;
+          try {
+            var connectionType = exports.network.connectionType();
+
+            // If desktop: use ethernet as default connection type
+            if (connectionType === 'unknown' && exports.isDesktop()) {
+              connectionType = 'ethernet';
+            }
+
+            switch (connectionType) {
+              case 'ethernet':
+                timeout = 1000; // 1 s
+                break;
+              case 'wifi':
+                timeout = 5000; // 5 s
+                break;
+              case 'cell': // (e.g. iOS)
+              case 'cell_4g':
+                timeout = 10000; // 10s for 4G
+                break;
+              case 'cell_2g': // Added cell_2g case
+                timeout = 60000; // 60s for 2G
+                break;
+              case 'cell_3g': // Added cell_3g case
+                timeout = 30000; // 30s for 2G
+                break;
+              case 'none':
+                timeout = 0;
+                break;
+              case 'unknown':
+              default:
+                timeout = defaultTimeout;
+                break;
+            }
+            console.debug('[network] Using timeout: {1}ms (connection type: \'{0}\')'.format(connectionType, timeout));
+
+            return timeout;
+          } catch(err) {
+            console.error('[device] Error while trying to get connection type: ' + (err && err.message || err));
+            return defaultTimeout;
+          }
+        }
+      };
 
       function getLastIntent() {
         var deferred = $q.defer();
@@ -237,12 +312,27 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
         return !!navigator.userAgent.match(/iPhone | iPad | iPod/i) || (!!navigator.userAgent.match(/Mobile/i) && !!navigator.userAgent.match(/Macintosh/i)) || ionic.Platform.isIOS();
       };
 
+      exports.isWindows = function() {
+        return !!navigator.userAgent.match(/Windows/i) || ionic.Platform.is("windows");
+      };
+
+      exports.isUbuntu = function() {
+        return !!navigator.userAgent.match(/Ubuntu|Linux x86_64/i) || ionic.Platform.is("ubuntu");
+      };
+
       exports.isDesktop = function() {
         if (!angular.isDefined(cache.isDesktop)) {
           try {
-            // Should have NodeJs and NW
-            cache.isDesktop = !exports.enable && !!process && !!nw && !!nw.App;
+
+            cache.isDesktop = !exports.enable && (
+              exports.isUbuntu()
+              || exports.isWindows()
+              || exports.isOSX()
+              // Should have NodeJs and NW
+              || (!!process && !!nw && !!nw.App)
+            );
           } catch (err) {
+            // If error (e.g. 'process not defined')
             cache.isDesktop = false;
           }
         }
@@ -271,13 +361,15 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
               exports.barcode.enable = cordova && cordova.plugins && !!cordova.plugins.barcodeScanner && (!exports.isOSX() || exports.isIOS());
               exports.clipboard.enable = cordova && cordova.plugins && !!cordova.plugins.clipboard;
               exports.intent.enable = window && !!window.plugins.launchmyapp;
+              exports.clipboard.enable = cordova && cordova.plugins && !!cordova.plugins.clipboard;
+              exports.network.enable = navigator.connection && !!navigator.connection.type;
 
               if (exports.keyboard.enable) {
                 angular.extend(exports.keyboard, cordova.plugins.Keyboard);
               }
 
-              console.debug('[device] Ionic platform ready, with {camera: {0}, barcode: {1}, keyboard: {2}, clipboard: {3}, intent: {4}}'
-                .format(exports.camera.enable, exports.barcode.enable, exports.keyboard.enable, exports.clipboard.enable, exports.intent.enable));
+              console.debug('[device] Ionic platform ready, with {camera: {0}, barcode: {1}, keyboard: {2}, clipboard: {3}, intent: {4}, network: {5}}'
+                .format(exports.camera.enable, exports.barcode.enable, exports.keyboard.enable, exports.clipboard.enable, exports.intent.enable, exports.network.enable));
 
               if (cordova.InAppBrowser) {
                 console.debug('[device] Enabling InAppBrowser');

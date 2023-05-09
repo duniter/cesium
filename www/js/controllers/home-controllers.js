@@ -29,18 +29,17 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
   'ngInject';
 
   $scope.loading = true;
+  $scope.loadingMessage = '';
   $scope.locales = angular.copy(csSettings.locales);
   $scope.smallscreen = UIUtils.screen.isSmall();
   $scope.showInstallHelp = false;
 
   $scope.enter = function(e, state) {
-    if (ionic.Platform.isIOS()) {
-      if(window.StatusBar) {
-        // needed to fix Xcode 9 / iOS 11 issue with blank space at bottom of webview
-        // https://github.com/meteor/meteor/issues/9041
-        StatusBar.overlaysWebView(false);
-        StatusBar.overlaysWebView(true);
-      }
+    if (ionic.Platform.isIOS() && window.StatusBar) {
+      // needed to fix Xcode 9 / iOS 11 issue with blank space at bottom of webview
+      // https://github.com/meteor/meteor/issues/9041
+      StatusBar.overlaysWebView(false);
+      StatusBar.overlaysWebView(true);
     }
 
     if (state && state.stateParams && state.stateParams.uri) {
@@ -57,16 +56,20 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
       $scope.cleanLocationHref(state);
     }
     else {
+
+
       // Wait platform to be ready
       csPlatform.ready()
         .then(function() {
           $scope.loading = false;
+          $scope.loadingMessage = '';
           $scope.loadFeeds();
         })
         .catch(function(err) {
           $scope.node =  csCurrency.data.node;
           $scope.loading = false;
           $scope.error = err;
+          $scope.loadingMessage = '';
         });
     }
   };
@@ -192,6 +195,12 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
         });
     }
   };
+
+
+  // Listen platform messages
+  csPlatform.api.start.on.message($scope, function(message) {
+    $scope.loadingMessage = message;
+  });
 
   // For DEV ONLY
   /*$timeout(function() {

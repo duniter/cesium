@@ -1,8 +1,8 @@
 Licenco Ğ1 - v0.2.9
 ===================
 
-:dato: 2017-04-04 12:59
-:modifita: 2019-07-14 12:00
+:Date: 2017-04-04 12:59
+:Modified: 2019-07-14 12:00
 
 **Licenco de la mono kaj promeso de respondeco.**
 
@@ -13,7 +13,7 @@ Licenco Ğ1 - v0.2.9
 Reto de Fido Ğ1 (RdF Ğ1)
 ------------------------------
 
-**Averto :** Atesti ne estas nur certiĝi, ke vi renkontis la personon, tio estas certigi al la komunumo Ğ1, ke vi sufiĉe bone konas la atestitan personon, kaj ke vi tiel scipovos facile kontakti lin/ŝin, kaj kapablos malkovri duoblan konton kreitan de persono atestita de vi mem, aŭ alitipajn problemojn (malapero...), farante komparajn kontrolojn, kiuj eventuale ebligos elmontri la problemon.
+**Averto:** Atesti ne estas nur certiĝi, ke vi renkontis la personon, tio estas certigi al la komunumo Ğ1, ke vi sufiĉe bone konas la atestitan personon, kaj ke vi tiel scipovos facile kontakti lin/ŝin, kaj kapablos malkovri duoblan konton kreitan de persono atestita de vi mem, aŭ alitipajn problemojn (malapero...), farante komparajn kontrolojn, kiuj eventuale ebligos elmontri la problemon.
 
 **Ege rekomendindaj konsiloj**
 
@@ -48,7 +48,7 @@ La 4a°) tamen preferindas al la 4b°), dum la punktoj 1°) 2°) kaj 3°) estas 
 
 **Resumitaj reguloj de la RdF:**
 
-Ĉiu membro havas rezervon da 100 eblaj atestaĵoj, kiujn li/ŝi povas sendi nur po 1 ĉiun 5-an tagon.
+Ĉiu membro havas rezervon da 100 eblaj atestaĵoj, kiujn li/ŝi povas sendi nur po unu ĉiun kvinan tagon.
 
 Valida 2 monatojn, atestaĵo por nova membro estas definitive aprobita nur se la atestito havas almenaŭ 4 aliajn atestaĵojn fine de tiuj 2 monatoj, alie la enir-procezo devos esti rekomencita.
 

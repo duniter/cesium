@@ -1,61 +1,61 @@
 {
   "NETWORK": {
     "VIEW": {
-      "BTN_GRAPH": "Estadístiques"
+      "BTN_GRAPH": "Estadística"
     }
   },
   "GRAPH": {
     "COMMON": {
-      "LINEAR_SCALE" : "Escala linial",
+      "LINEAR_SCALE" : "Escala lineal",
       "LOGARITHMIC_SCALE" : "Escala logarítmica",
-      "BTN_SHOW_STATS": "Mostra'm les estadístiques",
-      "BTN_SHOW_DETAILED_STATS": "Estadístiques detallades",
-      "RANGE_DURATION_DIVIDER": "Unitat de temps:",
+      "BTN_SHOW_STATS": "Ver estadísticas",
+      "BTN_SHOW_DETAILED_STATS": "Estadísticas detalladas",
+      "RANGE_DURATION_DIVIDER": "Unidad de tiempo:",
       "RANGE_DURATION": {
-        "HOUR": "Agrupa per <b>hores</b>",
-        "DAY": "Agrupa per <b>dies</b>",
-        "MONTH": "Agrupa per <b>mesos</b>"
+        "HOUR": "Agrupar por <b>horas</b>",
+        "DAY": "Agrupar por <b>días</b>",
+        "MONTH": "Agrupar por <b>meses</b>"
       }
     },
     "ACCOUNT": {
-      "TITLE": "Estadístiques",
-      "BTN_SHOW_STATS": "Mostra'm les estadístiques del compte",
-      "BALANCE_DIVIDER": "Balanç del compte",
-      "BALANCE_TITLE": "Evolució del compte {{pubkey|formatPubkey}}",
-      "TX_RECEIVED_LABEL": "Rebut",
-      "TX_SENT_LABEL": "Enviat",
+      "TITLE": "Estadísticas",
+      "BTN_SHOW_STATS": "Ver estadísticas de la cuenta",
+      "BALANCE_DIVIDER": "Balance de la cuenta",
+      "BALANCE_TITLE": "Evolución de la cuenta {{pubkey|formatPubkey}}",
+      "TX_RECEIVED_LABEL": "Recibido",
+      "TX_SENT_LABEL": "Gastado",
       "UD_LABEL": "DU",
       "BALANCE_LABEL": "Saldo",
-      "INPUT_CHART_TITLE": "Resum del rebut, per emisor",
-      "OUTPUT_CHART_TITLE": "Resum de l'enviat, per destinatari"
+      "INPUT_CHART_TITLE": "Resumen de lo recibido, por emisor",
+      "OUTPUT_CHART_TITLE": "Resumen de lo gastado, por destinatario"
     },
     "BLOCKCHAIN": {
-      "TITLE": "Estadístiques",
-      "BLOCKS_ISSUERS_DIVIDER": "Blocs escrits per cada membre",
-      "BLOCKS_ISSUERS_HELP": "<b>{{issuerCount|formatInteger}} membres</b> han calculat <b>{{blockCount|formatInteger}} blocs</b>",
-      "BLOCKS_ISSUERS_TITLE": "Nombre de blocs per membre",
-      "BLOCKS_ISSUERS_LABEL": "Nombre de blocs",
-      "TX_DIVIDER": "Anàlisi de les transaccions",
-      "TX_AMOUNT_TITLE": "Volum de transaccions",
-      "TX_AMOUNT_PUBKEY_TITLE": "El volum de transaccions calculat per {{issuer | formatPubkey}}",
-      "TX_AMOUNT_LABEL": "Volum intercanviat",
-      "TX_COUNT_TITLE": "Nombre de transaccions escrites",
-      "TX_COUNT_LABEL": "Nombre de transaccions",
-      "TX_AVG_BY_BLOCK": "Promig per bloc"
+      "TITLE": "Estadística",
+      "BLOCKS_ISSUERS_DIVIDER": "Bloques escritos por cada miembro",
+      "BLOCKS_ISSUERS_HELP": "<b>{{issuerCount|formatInteger}} miembros</b> han calculado <b>{{blockCount|formatInteger}} bloques</b>",
+      "BLOCKS_ISSUERS_TITLE": "Número de bloques por miembro",
+      "BLOCKS_ISSUERS_LABEL": "Número de bloques",
+      "TX_DIVIDER": "Análisis de transacciones",
+      "TX_AMOUNT_TITLE": "El volumen de transacciones",
+      "TX_AMOUNT_PUBKEY_TITLE": "El volumen de transacciones calculado por {{issuer | formatPubkey}}",
+      "TX_AMOUNT_LABEL": "Volumen intercambiado",
+      "TX_COUNT_TITLE": "Número de transacciones escritas",
+      "TX_COUNT_LABEL": "Número de transacciones",
+      "TX_AVG_BY_BLOCK": "Promedio por bloque"
     },
     "CURRENCY": {
-      "MONETARY_MASS_TITLE": "Evolució de la massa monetària",
-      "MONETARY_MASS_LABEL": "Massa monetària",
-      "MONETARY_MASS_SHARE_LABEL": "Promig per membre",
-      "UD_TITLE": "Evolució del dividend universal",
-      "MEMBERS_COUNT_TITLE": "Evolució del nombre de membres",
-      "MEMBERS_COUNT_LABEL": "Nombre de membres"
+      "MONETARY_MASS_TITLE": "Evolución de la masa monetaria",
+      "MONETARY_MASS_LABEL": "Masa monetaria",
+      "MONETARY_MASS_SHARE_LABEL": "Promedio miembro",
+      "UD_TITLE": "Evolución del dividendo universales",
+      "MEMBERS_COUNT_TITLE": "Evolución del número de miembros",
+      "MEMBERS_COUNT_LABEL": "Número de miembros"
     },
     "PEER": {
       "VIEW": {
-        "BLOCK_COUNT_LABEL": "Nombre de blocs calculats",
-        "BLOCK_COUNT": "{{count}} blocs",
-        "NO_BLOCK": "Cap bloc"
+        "BLOCK_COUNT_LABEL": "Número de bloques calculados",
+        "BLOCK_COUNT": "{{count}} bloques",
+        "NO_BLOCK": "Ningún bloque"
       }
     }
   }
