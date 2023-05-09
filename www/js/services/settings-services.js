@@ -57,7 +57,6 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   },
   // Settings that user cannot change himself (only config can override this values)
   fixedSettings = {
-    timeout : 4000,
     cacheTimeMs: 60000, /*1 min*/
     timeWarningExpireMembership: 2592000 * 2 /*=2 mois*/,
     timeWarningExpire: 2592000 * 3 /*=3 mois*/,
@@ -71,6 +70,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     httpsMode: false
   },
   defaultSettings = angular.merge({
+    timeout : undefined, // Default will be set by csConfig.timeout
     useRelative: false,
     useLocalStorage: !!$window.localStorage, // override to false if no device
     useLocalStorageEncryption: false,

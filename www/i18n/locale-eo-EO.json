@@ -49,7 +49,7 @@
     "NO_ACCOUNT_QUESTION": "Ankoraŭ sen konto? Kreu ĝin senpage!",
     "SEARCH_NO_RESULT": "Neniu rezulto trovita",
     "LOADING": "Bonvolu pacienci...",
-    "LOADING_WAIT": "Bonvolu pacienci...<br/><small>(Atendado pri disponebleco de la nodo)</small>",
+    "LOADING_WAIT": "Bonvolu pacienci...<br/><small>(Cesium demandas la Duniter-nodon)</small>",
     "SEARCHING": "Serĉanta...",
     "FROM": "De",
     "TO": "Al",
@@ -144,6 +144,9 @@
     "PEER": "Adreso de la nodo Duniter",
     "PEER_SHORT": "Adreso de la nodo",
     "PEER_CHANGED_TEMPORARY": "Adreso provizore uzata",
+    "PEER_SELECTED_AUTOMATICALLY": "Nodo aŭtomate elektita ĉe starto",
+    "PEER_TIMEOUT": "Maksimuma atendotempo (eltempigo)",
+    "PEER_TIMEOUT_HELP": "Maksimuma atendotempo por ricevi respondon de la nodo",
     "PERSIST_CACHE": "Konservi la datenojn pri retumado (provaĵo)",
     "PERSIST_CACHE_HELP": "Ebligas pli rapidan retumadon, loke konservante la ricevitajn datenojn, por uzi ilin de seanco al alia.",
     "USE_LOCAL_STORAGE": "Aktivigi lokan stokadon",
@@ -802,7 +805,8 @@
     "REVOCATION_SENT": "Nuligo sendita",
     "REVOCATION_SENT_WAITING_PROCESS": "La <b>nuligo de tiu ĉi identeco</b> estis petita kaj atendas traktadon.",
     "FEATURES_NOT_IMPLEMENTED": "Tiu ĉi funkciaro ankoraŭ estas programiĝanta.<br/>Kial ne <b>kontribui al Cesium</b>, por ekhavi ĝin pli rapide? ;)",
-    "EMPTY_TX_HISTORY": "Neniu spezo elportota"
+    "EMPTY_TX_HISTORY": "Neniu spezo elportota",
+    "LOADING_PENDING_TX": "Bonvolu pacienci...<br/><small>(Prenado de pendaj operacioj)</small>"
   },
   "CONFIRM": {
     "CAN_CONTINUE": "<b>Ĉu vi certas</b>, ke vi volas daŭrigi?",

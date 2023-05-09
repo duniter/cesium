@@ -49,7 +49,7 @@
     "NO_ACCOUNT_QUESTION": "Noch nicht Mitglied? Registriere dich jetzt!",
     "SEARCH_NO_RESULT": "Keine Ergebnisse gefunden",
     "LOADING": "Lade...",
-    "LOADING_WAIT": "Lade...<br/><small>(Warte auf Verfügbarkeit des Knotens)</small>",
+    "LOADING_WAIT": "Lade...<br/><small>(Cesium fragt den Duniter-Knoten ab)</small>",
     "SEARCHING": "Suche...",
     "FROM": "Von",
     "TO": "An",
@@ -148,6 +148,9 @@
     "PEER": "Duniter Knoten-Adresse",
     "PEER_SHORT": "Knoten-Adresse",
     "PEER_CHANGED_TEMPORARY": "Knotenadresse wird nur temporär gebraucht",
+    "PEER_SELECTED_AUTOMATICALLY": "Knoten wird beim Start automatisch ausgewählt",
+    "PEER_TIMEOUT": "Maximale Wartezeit (Timeout)",
+    "PEER_TIMEOUT_HELP": "Maximale Wartezeit um eine Antwort vom Knoten zu bekommen",
     "PERSIST_CACHE": "Navigationsdaten behalten (experimental)",
     "PERSIST_CACHE_HELP": "Erlaubt schnellere Navigation, durch Zwischenspeicherung der empfangenen Daten, von einer Sitzung zur nächsten.",
     "USE_LOCAL_STORAGE": "Lokales Speichern einschalten",
@@ -818,7 +821,8 @@
     "REVOCATION_SENT_WAITING_PROCESS": "Widerruf des Kontos <b>erfolgreich abgeschickt</b>. Bearbeitung steht noch aus.",
     "FEATURE_NOT_AVAILABLE_ON_DEMO": "Diese Funktion ist auf der Demo-Version nicht verfügbar.<br/>Aus <b>Sicherheitsgründen</b> empfehlen wir dir, eine Kopie der Software zu <b>installieren</b>.<br/>Besuche die Webseite <a href='https://cesium.app'>www.cesium.app</a> für Hilfe und weitere Informationen.",
     "FEATURES_NOT_IMPLEMENTED": "Diese Funktion ist noch nicht implementiert.<br/><br/>Warum nicht mitwirken, um sie schneller zu erhalten? ;)",
-    "EMPTY_TX_HISTORY": "Keine Tansaktionen für den Export vorhanden."
+    "EMPTY_TX_HISTORY": "Keine Tansaktionen für den Export vorhanden.",
+    "LOADING_PENDING_TX": "Lade...<br/><small>(Abrufen von ausstehenden Operationen)</small>"
   },
   "CONFIRM": {
     "CAN_CONTINUE": "<b>Bist du sicher</b>, dass du fortfahren möchtest?",

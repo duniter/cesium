@@ -54,6 +54,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
   $scope.networkStarted = false;
   $scope.ionItemClass = '';
   $scope.expertMode = csSettings.data.expertMode && !UIUtils.screen.isSmall();
+  $scope.timeout = csSettings.data.timeout;
   $scope.isHttps = ($window.location.protocol === 'https:');
   $scope.search = {
     text: '',
@@ -148,8 +149,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
         asc : $scope.search.asc
       },
       expertMode: $scope.expertMode,
-      // larger timeout when on expert mode
-      timeout: csConfig.timeout && ($scope.expertMode ? (csConfig.timeout / 10) : (csConfig.timeout / 100))
+      timeout: angular.isDefined($scope.timeout) ? $scope.timeout : Device.network.timeout()
     };
     return options;
   };
@@ -422,6 +422,7 @@ function NetworkLookupModalController($scope, $controller, parameters) {
   $scope.search.ssl = angular.isDefined(parameters.ssl) ? parameters.ssl : $scope.search.ssl;
   $scope.search.ws2p = angular.isDefined(parameters.ws2p) ? parameters.ws2p : $scope.search.ws2p;
   $scope.expertMode = angular.isDefined(parameters.expertMode) ? parameters.expertMode : $scope.expertMode;
+  $scope.timeout = angular.isDefined(parameters.timeout) ? parameters.timeout : $scope.timeout;
   $scope.ionItemClass = parameters.ionItemClass || 'item-border-large';
   $scope.enableLocationHref = false;
   $scope.helptipPrefix = '';

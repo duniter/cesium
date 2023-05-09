@@ -108,7 +108,7 @@
     "fallbackLanguage": "fr",
     "rememberMe": true,
     "showUDHistory": true,
-    "timeout": 300000,
+    "timeout": 10000,
     "timeWarningExpireMembership": 5184000,
     "timeWarningExpire": 7776000,
     "keepAuthIdle": 600,

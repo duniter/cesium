@@ -5,7 +5,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 .factory('BMA', function($q, $window, $rootScope, $timeout, csCrypto, Api, Device, UIUtils, csConfig, csSettings, csCache, csHttp) {
   'ngInject';
 
-  function BMA(host, port, useSsl, useCache) {
+  function BMA(host, port, useSsl, useCache, timeout) {
 
     var
       id = (!host ? 'default' : '{0}:{1}'.format(host, (port || (useSsl ? '443' : '80')))), // Unique id of this instance
@@ -67,6 +67,14 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         ROOT_BLOCK_HASH: 'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855',
         LIMIT_REQUEST_COUNT: 5, // simultaneous async request to a Duniter node
         LIMIT_REQUEST_DELAY: 1000, // time (in ms) to wait between to call of a rest request
+        TIMEOUT: {
+          NONE: -1,
+          SHORT: 1000, // 1s
+          MEDIUM: 5000, // 5s
+          LONG: 10000, // 10s
+          DEFAULT: csConfig.timeout,
+          VERY_LONG: 60000
+        },
         regexp: regexp,
         api: api
       },
@@ -143,9 +151,10 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
      that.raw.wsByPath = {};
    }
 
-   function get(path, cacheTime) {
+    function get(path, cacheTime, forcedTimeout) {
 
-      cacheTime = that.useCache && cacheTime || 0 /* no cache*/ ;
+      cacheTime = that.useCache && cacheTime || 0 /* no cache*/ ;
+      forcedTimeout = forcedTimeout || timeout;
       var requestKey = path + (cacheTime ? ('#'+cacheTime) : '');
 
       var getRequestFn = function(params) {
@@ -162,10 +171,10 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         var request = that.raw.getByPath[requestKey];
         if (!request) {
           if (cacheTime) {
-            request = csHttp.getWithCache(that.host, that.port, path, that.useSsl, cacheTime, null, null, cachePrefix);
+            request = csHttp.getWithCache(that.host, that.port, path, that.useSsl, cacheTime, null/*autoRefresh*/, forcedTimeout, cachePrefix);
           }
           else {
-            request = csHttp.get(that.host, that.port, path, that.useSsl);
+            request = csHttp.get(that.host, that.port, path, that.useSsl, forcedTimeout);
           }
           that.raw.getByPath[requestKey] = request;
         }
@@ -235,7 +244,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     }
 
     that.isAlive = function(node, timeout) {
-      node = node || that;
+      node = node || that;
       // WARN:
       //  - Cannot use previous get() function, because
       //    node can be !=that, or not be started yet
@@ -338,7 +347,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           if (!listeners || !listeners.length) {
             addListeners();
           }
-          console.debug('[BMA] Started in {}ms'.format(Date.now()-now));
+          console.debug('[BMA] Started in {0}ms'.format(Date.now()-now));
 
           that.api.node.raise.start();
           that.started = true;
@@ -381,7 +390,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     };
 
     that.filterAliveNodes = function(fallbackNodes, timeout) {
-      timeout = timeout || csConfig.timeout;
+      timeout = timeout || csSettings.data.timeout;
 
       // Filter to exclude the current BMA node
       fallbackNodes = _.filter(fallbackNodes || [], function(node) {
@@ -390,6 +399,9 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         if (same) console.debug('[BMA] Skipping fallback node [{0}]: same as current BMA node'.format(node.server));
         return !same;
       });
+
+
+      console.debug('[BMA] Getting alive fallback nodes... (temiout: {0}ms)'.format(timeout));
 
       var aliveNodes = [];
       return $q.all(_.map(fallbackNodes, function(node) {
@@ -481,14 +493,14 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         membership: post('/blockchain/membership'),
         stats: {
           ud: get('/blockchain/with/ud', csCache.constants.MEDIUM),
-          tx: get('/blockchain/with/tx'),
-          newcomers: get('/blockchain/with/newcomers', csCache.constants.MEDIUM),
+          tx: get('/blockchain/with/tx', null, constants.TIMEOUT.LONG),
+          newcomers: get('/blockchain/with/newcomers', csCache.constants.MEDIUM, constants.TIMEOUT.LONG),
           hardship: get('/blockchain/hardship/:pubkey'),
           difficulties: get('/blockchain/difficulties')
         }
       },
       tx: {
-        sources: get('/tx/sources/:pubkey', csCache.constants.SHORT),
+        sources: get('/tx/sources/:pubkey', csCache.constants.SHORT, constants.TIMEOUT.VERY_LONG),
         process: post('/tx/process'),
         history: {
           all: function(params) {
@@ -527,14 +539,14 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           current: get('/blockchain/current')
         },
         wot: {
-          requirementsWithCache: get('/wot/requirements/:pubkey', csCache.constants.LONG),
-          requirements: get('/wot/requirements/:pubkey')
+          requirementsWithCache: get('/wot/requirements/:pubkey', csCache.constants.LONG, constants.TIMEOUT.LONG),
+          requirements: get('/wot/requirements/:pubkey', null, constants.TIMEOUT.LONG)
         },
         tx: {
           history: {
-            timesWithCache: get('/tx/history/:pubkey/times/:from/:to', csCache.constants.LONG),
-            times: get('/tx/history/:pubkey/times/:from/:to'),
-            all: get('/tx/history/:pubkey')
+            timesWithCache: get('/tx/history/:pubkey/times/:from/:to', csCache.constants.LONG, constants.TIMEOUT.LONG),
+            times: get('/tx/history/:pubkey/times/:from/:to', null, constants.TIMEOUT.LONG),
+            all: get('/tx/history/:pubkey', null, constants.TIMEOUT.LONG)
           }
         },
       }
@@ -1010,15 +1022,15 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 
   var service = new BMA();
 
-  service.instance = function(host, port, useSsl, useCache) {
+  service.instance = function(host, port, useSsl, useCache, timeout) {
     useCache = angular.isDefined(useCache) ? useCache : false; // No cache by default
-    return new BMA(host, port, useSsl, useCache);
+    return new BMA(host, port, useSsl, useCache, timeout);
   };
 
   service.lightInstance = function(host, port, useSsl, timeout) {
     port = port || 80;
     useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443);
-    timeout = timeout || csConfig.timeout;
+    timeout = timeout || csSettings.data.timeout;
     return {
       host: host,
       port: port,

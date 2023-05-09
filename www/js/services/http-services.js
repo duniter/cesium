@@ -1,9 +1,7 @@
 angular.module('cesium.http.services', ['cesium.cache.services'])
 
-.factory('csHttp', function($http, $q, $timeout, $window, csSettings, csCache, Device) {
+.factory('csHttp', function($http, $q, $timeout, $window, $translate, csConfig, csSettings, csCache, Device) {
   'ngInject';
-
-  var timeout = csSettings.data.timeout;
 
   var
     sockets = [],
@@ -12,12 +10,13 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     regexp = {
       POSITIVE_INTEGER: /^\d+$/,
       VERSION_PART_REGEXP: /^[0-9]+|alpha[0-9]+|beta[0-9]+|rc[0-9]+|[0-9]+-SNAPSHOT$/
+    },
+    errorCodes = {
+      TIMEOUT: -1, // Timeout reached
+      FORBIDDEN: 403,
+      NOT_FOUND: 404,
     }
   ;
-
-  if (!timeout) {
-    timeout=4000; // default
-  }
 
   function getServer(host, port) {
     // Remove port if 80 or 443
@@ -34,23 +33,36 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     return  protocol + '://' + getServer(host, port) + (path ? path : '');
   }
 
-  function processError(reject, data, url, status) {
-    if (data && data.message) {
+  function processError(reject, data, url, status, config, startTime) {
+    // Detected timeout error
+    var reachTimeout = status === -1 && (config && config.timeout > 0 && startTime > 0) && (Date.now() - startTime) >= config.timeout;
+    if (reachTimeout) {
+      console.error('[http] Request timeout on [{0}] after waiting {1}ms'.format(url, config.timeout));
+      $translate('ERROR.TIMEOUT_REACHED_URL', {url: url || '?'})
+        .then(function(message) {
+          reject({ucode: errorCodes.TIMEOUT, message: message});
+        })
+        .catch(function() {
+          reject(data);
+        });
+    }
+
+    else if (data && data.message) {
       reject(data);
     }
     else {
-      if (status == 403) {
-        reject({ucode: 403, message: 'Resource is forbidden' + (url ? ' ('+url+')' : '')});
+      if (status == errorCodes.FORBIDDEN) {
+        reject({ucode: errorCodes.FORBIDDEN, message: 'Resource is forbidden' + (url ? ' ('+url+')' : '')});
       }
-      else if (status == 404) {
-        reject({ucode: 404, message: 'Resource not found' + (url ? ' ('+url+')' : '')});
+      else if (status == errorCodes.NOT_FOUND) {
+        reject({ucode: errorCodes.NOT_FOUND, message: 'Resource not found' + (url ? ' ('+url+')' : '')});
       }
       else if (url) {
-        console.error('[http] Get HTTP error {status: ' + status + '} on [' + url + ']');
-        reject('Error while requesting [' + url + ']');
+        console.error('[http] Get HTTP error {status: {0}} on [{1}]'.format(status, url));
+        reject('Error while requesting [{0}}'.format(url));
       }
       else {
-        reject('Unknown error from node');
+        reject('Unknown HTTP error');
       }
     }
   }
@@ -81,18 +93,19 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     return function(params, config) {
       return $q(function(resolve, reject) {
         var mergedConfig = {
-          timeout: forcedTimeout || timeout,
+          timeout: forcedTimeout || csConfig.timeout,
           responseType: 'json'
         };
         if (typeof config === 'string') angular.merge(mergedConfig, config);
 
         prepare(url, params, mergedConfig, function(url, config) {
-            $http.get(url, config)
-            .success(function(data, status, headers, config) {
+          var startTime = Date.now();
+          $http.get(url, config)
+            .success(function(data) {
               resolve(data);
             })
-            .error(function(data, status, headers, config) {
-              processError(reject, data, url, status);
+            .error(function(data, status) {
+              processError(reject, data, url, status, config, startTime);
             });
         });
       });
@@ -101,7 +114,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
   function getResourceWithCache(host, port, path, useSsl, maxAge, autoRefresh, forcedTimeout, cachePrefix) {
     var url = getUrl(host, port, path, useSsl);
-    cachePrefix = cachePrefix || defaultCachePrefix;
+    cachePrefix = cachePrefix || defaultCachePrefix;
     maxAge = maxAge || csCache.constants.LONG;
     allCachePrefixes[cachePrefix] = true;
 
@@ -110,7 +123,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     return function(params) {
       return $q(function(resolve, reject) {
         var config = {
-          timeout: forcedTimeout || timeout,
+          timeout: forcedTimeout || csConfig.timeout,
           responseType: 'json'
         };
 
@@ -129,12 +142,13 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
         }
 
         prepare(url, params, config, function(url, config) {
+          var startTime = Date.now();
           $http.get(url, config)
             .success(function(data) {
               resolve(data);
             })
             .error(function(data, status) {
-              processError(reject, data, url, status);
+              processError(reject, data, url, status, config, startTime);
             });
         });
       });
@@ -146,31 +160,32 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     return function(data, params, config) {
       return $q(function(resolve, reject) {
         var mergedConfig = {
-          timeout: forcedTimeout || timeout,
+          timeout: forcedTimeout || csConfig.timeout, // We use a large timeout, when post, and NOT the settings timeout
           headers : {'Content-Type' : 'application/json;charset=UTF-8'}
         };
         if (typeof config === 'object') angular.merge(mergedConfig, config);
 
         prepare(url, params, mergedConfig, function(url, config) {
-            $http.post(url, data, config)
+          var startTime = Date.now();
+          $http.post(url, data, config)
             .success(function(data) {
               resolve(data);
             })
             .error(function(data, status) {
-              processError(reject, data, url, status);
+              processError(reject, data, url, status, config, startTime);
             });
         });
       });
     };
   }
 
-  function ws(host, port, path, useSsl, timeout) {
+  function ws(host, port, path, useSsl, forcedTimeout) {
     if (!path) {
       console.error('calling csHttp.ws without path argument');
       throw 'calling csHttp.ws without path argument';
     }
     var uri = getWsUrl(host, port, path, useSsl);
-    timeout = timeout || csSettings.data.timeout;
+    var timeout = forcedTimeout || csConfig.timeout;
 
     function _waitOpen(self) {
       if (!self.delegate) {

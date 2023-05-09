@@ -5,10 +5,10 @@ angular.module('cesium.cache.services', ['angular-cache'])
 
   var
     constants = {
-      VERY_LONG: 54000000, /*15 days*/
-      LONG: 1 * 60  * 60 * 1000 /*1 hour*/,
-      MEDIUM: 5  * 60 * 1000 /*5 min*/,
-      SHORT: csSettings.defaultSettings.cacheTimeMs // around 1min
+      SHORT: csSettings.defaultSettings.cacheTimeMs, // around 1min
+      MEDIUM: 5  * 60 * 1000, // 5 min
+      LONG: 1 * 60  * 60 * 1000, // 1 hour
+      VERY_LONG: 54000000 // 15 days
     },
     storageMode = getSettingsStorageMode(),
     cacheNames = [],

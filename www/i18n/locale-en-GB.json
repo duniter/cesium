@@ -49,7 +49,7 @@
     "NO_ACCOUNT_QUESTION": "Not a member yet? Register now!",
     "SEARCH_NO_RESULT": "No result found",
     "LOADING": "Loading...",
-    "LOADING_WAIT": "Loading...<br/><small>(Waiting for node availability)</small>",
+    "LOADING_WAIT": "Loading...<br/><small>(Cesium is querying the Duniter peer)</small>",
     "SEARCHING": "Searching...",
     "FROM": "From",
     "TO": "To",
@@ -144,6 +144,9 @@
     "PEER": "Duniter peer address",
     "PEER_SHORT": "Peer address",
     "PEER_CHANGED_TEMPORARY": "Address used temporarily",
+    "PEER_SELECTED_AUTOMATICALLY": "Peer selected automatically at startup",
+    "PEER_TIMEOUT": "Maximum waiting time (timeout)",
+    "PEER_TIMEOUT_HELP": "Maximum waiting time to get a response from the peer",
     "PERSIST_CACHE": "Keep navigation data (experimental)",
     "PERSIST_CACHE_HELP": "Allows faster navigation, locally retaining the data received, for use from one session to another.",
     "USE_LOCAL_STORAGE": "Enable local storage",
@@ -821,7 +824,8 @@
     "REVOCATION_SENT": "Revocation sent successfully",
     "REVOCATION_SENT_WAITING_PROCESS": "Revocation <b>has been sent successfully</b>. It is awaiting processing.",
     "FEATURES_NOT_IMPLEMENTED": "This features is not implemented yet.<br/><br/>Why not to contribute to get it faster? ;)",
-    "EMPTY_TX_HISTORY": "No operations to export"
+    "EMPTY_TX_HISTORY": "No operations to export",
+    "LOADING_PENDING_TX": "Please wait...<br/><small>(Retrieving pending operations)</small>"
   },
   "CONFIRM": {
     "CAN_CONTINUE": "<b>Are you sure</b> you want to continue?",

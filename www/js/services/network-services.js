@@ -1,7 +1,7 @@
 
 angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 'cesium.http.services'])
 
-.factory('csNetwork', function($rootScope, $q, $interval, $timeout, $window, csConfig, BMA, csHttp, csCurrency, Api) {
+.factory('csNetwork', function($rootScope, $q, $interval, $timeout, $window, csConfig, csSettings, BMA, Device, csHttp, csCurrency, Api) {
   'ngInject';
 
    var
@@ -90,8 +90,23 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       data.searchingPeersOnNetwork = false;
       data.difficulties = null;
       data.ws2pHeads = null;
-      data.timeout = csConfig.timeout;
+      data.timeout = getDefaultTimeout();
       data.startTime = null;
+    },
+
+   /**
+    * Compute a timeout, depending on connection type (wifi, ethernet, cell, etc.)
+    */
+   getDefaultTimeout = function () {
+     // Using timeout from settings
+     if (csSettings.data.expertMode) {
+       var timeout = csSettings.data.timeout || csConfig.timeout;
+       console.debug('[network] Using user defined timeout: {0}ms'.format(timeout));
+       return timeout;
+     }
+
+     // Computing timeout from the connection type
+     return Device.network.timeout(csConfig.timeout);
     },
 
     hasPeers = function() {
@@ -790,6 +805,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       options = options || {};
       bma = bma || BMA;
       var pid = data.pid;
+
       startPromise = bma.ready()
         .then(function() {
           close(pid);
@@ -798,7 +814,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           data.filter = options.filter ? angular.merge(data.filter, options.filter) : data.filter;
           data.sort = options.sort ? angular.merge(data.sort, options.sort) : data.sort;
           data.expertMode = angular.isDefined(options.expertMode) ? options.expertMode : data.expertMode;
-          data.timeout = angular.isDefined(options.timeout) ? options.timeout : csConfig.timeout;
+          data.timeout = angular.isDefined(options.timeout) ? options.timeout : getDefaultTimeout();
           data.startTime = Date.now();
 
           // Init a min block number
@@ -808,12 +824,16 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
             return csCurrency.blockchain.current(true/*use cache*/)
               .then(function(current) {
                 data.minOnlineBlockNumber = Math.max(0, current.number - constants.MAX_BLOCK_OFFSET);
+                if (Date.now() - data.startDate > 2000) {
+                  console.warn('[network-service] Resetting network start date, because blockchain.current() take more than 2s to respond');
+                  data.startTime = Date.now(); // Reset the startTime (use to compute remainingTime)
+                }
               });
           }
         })
         .then(function() {
-          console.info('[network] Starting from [{0}]'.format(bma.server));
           var now = Date.now();
+          console.info('[network] Starting from [{0}]'.format(bma.server));
 
           addListeners();
 
@@ -832,7 +852,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           removeListeners();
           resetData();
         }
-      if (interval && pid === data.pid) {
+      if (interval && pid === data.pid && pid > 0) {
         $interval.cancel(interval);
       }
       startPromise = null;
@@ -877,6 +897,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       options.filter.ssl = isHttpsMode ? true : undefined;
       options.filter.online = true;
       options.filter.expertMode = false;
+      options.timeout = angular.isDefined(options.timeout) ? options.timeout : getDefaultTimeout();
 
       var now = Date.now();
       console.info('[network] Getting synchronized BMA peers...');

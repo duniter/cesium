@@ -34,7 +34,16 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
     loading: !csPlatform.isStarted(),
     loadingMessage: 'COMMON.LOADING'
   };
-
+  // Fill timeout
+  $scope.timeouts = [
+    500,
+    1000,
+    5000,
+    10000,
+    30000,
+    60000,
+    300000
+  ];
   $scope.keepAuthIdleLabels = {
     /*0: {
       labelKey: 'SETTINGS.KEEP_AUTH_OPTION.NEVER'
@@ -122,6 +131,8 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
     // Fill locales
     $scope.locales = angular.copy(csSettings.locales);
 
+
+
     // Apply settings
     angular.merge($scope.formData, csSettings.data);
 
@@ -152,7 +163,7 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
   $scope.leave = function() {
     console.debug('[settings] Leaving page');
     $scope.removeListeners();
-  }
+  };
 
   $scope.reset = function() {
     if ($scope.actionsPopover) {
@@ -207,41 +218,41 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
           ($scope.formData.node.port == 443)
       };
     $scope.showNodePopup(node)
-    .then(function(newNode) {
-      if (newNode.host === $scope.formData.node.host &&
-        newNode.port === $scope.formData.node.port &&
-        newNode.useSsl === $scope.formData.node.useSsl && !$scope.formData.node.temporary) {
-        return; // same node = nothing to do
-      }
+      .then(function(newNode) {
+        if (newNode.host === $scope.formData.node.host &&
+          newNode.port === $scope.formData.node.port &&
+          newNode.useSsl === $scope.formData.node.useSsl && !$scope.formData.node.temporary) {
+          return; // same node = nothing to do
+        }
 
-      // Change to expert mode
-      $scope.formData.expertMode = true;
+        // Change to expert mode
+        $scope.formData.expertMode = true;
 
-      UIUtils.loading.show();
+        UIUtils.loading.show();
 
-      BMA.isAlive(newNode)
-        .then(function(alive) {
-          if (!alive) {
+        BMA.isAlive(newNode)
+          .then(function(alive) {
+            if (!alive) {
+              UIUtils.loading.hide();
+              return UIUtils.alert.error('ERROR.INVALID_NODE_SUMMARY')
+                .then(function(){
+                  $scope.changeNode(newNode, true); // loop
+                });
+            }
             UIUtils.loading.hide();
-            return UIUtils.alert.error('ERROR.INVALID_NODE_SUMMARY')
-              .then(function(){
-                $scope.changeNode(newNode, true); // loop
-              });
-          }
-          UIUtils.loading.hide();
-          angular.merge($scope.formData.node, newNode);
-          delete $scope.formData.node.temporary;
-          BMA.stop();
-          BMA.copy(newNode);
-          $scope.bma = BMA;
+            angular.merge($scope.formData.node, newNode);
+            delete $scope.formData.node.temporary;
+            BMA.stop();
+            BMA.copy(newNode);
+            $scope.bma = BMA;
 
-          // Restart platform (or start if not already started)
-          csPlatform.restart();
+            // Restart platform (or start if not already started)
+            csPlatform.restart();
 
-          // Reset history cache
-          return $ionicHistory.clearCache();
-        });
-    });
+            // Reset history cache
+            return $ionicHistory.clearCache();
+          });
+      });
   };
 
   $scope.showNodeList = function() {
@@ -451,8 +462,6 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
         csSettings.store();
       });
   };
-
-
 
   $scope.removeListeners = function() {
     if ($scope.listeners.length) {

@@ -144,7 +144,9 @@
     "PEER": "Nœud Duniter",
     "PEER_SHORT": "Nœud Duniter",
     "PEER_CHANGED_TEMPORARY": "Adresse utilisée temporairement",
-    "PEER_SELECTED_AUTOMATICALLY": "Sélectionné automatiquement au démarrage",
+    "PEER_SELECTED_AUTOMATICALLY": "Sélection automatiquement du nœud au démarrage",
+    "PEER_TIMEOUT": "Délai d'attente maximal (timeout)",
+    "PEER_TIMEOUT_HELP": "Délai d'attente maximal pour obtenir la réponse du nœud",
     "PERSIST_CACHE": "Conserver les données de navigation (expérimental)",
     "PERSIST_CACHE_HELP": "Permet une navigation plus rapide, en conservant localement les données reçues, pour les utiliser d'une session à l'autre.",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
@@ -704,6 +706,7 @@
     "UNKNOWN_URI_FORMAT": "Format d'URI inconnu",
     "PUBKEY_INVALID_CHECKSUM": "Clé publique invalide (bad checksum).",
     "POPUP_TITLE": "Erreur",
+    "TIMEOUT_REACHED": "Délai d'attente du nœud dépassé.<br/><br/><small>{{url}}</small>",
     "UNKNOWN_ERROR": "Erreur inconnue",
     "CRYPTO_UNKNOWN_ERROR": "Votre navigateur ne semble pas compatible avec les fonctionnalités de cryptographie.",
     "DOWNLOAD_KEYFILE_FAILED": "Échec de la génération du fichier de trousseau.",
@@ -825,7 +828,7 @@
     "REVOCATION_SENT_WAITING_PROCESS": "La <b>révocation de cette identité</b> a été demandée et est en attente de traitement.",
     "FEATURES_NOT_IMPLEMENTED": "Cette fonctionnalité est encore en cours de développement.<br/>Pourquoi ne pas <b>contribuer à Cesium</b>, pour l'obtenir plus rapidement ? ;)",
     "EMPTY_TX_HISTORY": "Aucune opération à exporter",
-    "LOADING_PENDING_TX": "Lecture des opérations en attente"
+    "LOADING_PENDING_TX": "Veuillez patienter...<br/><small>(Récupération des opérations en attente)</small>"
   },
   "CONFIRM": {
     "CAN_CONTINUE": "<b>Êtes-vous sûr</b> de vouloir continuer ?",

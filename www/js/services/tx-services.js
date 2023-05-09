@@ -287,7 +287,6 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
   function loadData(pubkey, fromTime) {
     var now = Date.now();
-
     var data;
 
     // Alert user, when request is too long (> 2s)
@@ -304,92 +303,92 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
       loadTx(pubkey, fromTime)
     ])
 
-      .then(function(res) {
-        // Copy sources and balance
-        data = res[0];
-        data.tx = res[1];
+    .then(function(res) {
+      // Copy sources and balance
+      data = res[0];
+      data.tx = res[1];
 
-        var txPendings = [];
-        var txErrors = [];
-        var balanceFromSource = data.balance;
-        var balanceWithPending = data.balance;
+      var txPendings = [];
+      var txErrors = [];
+      var balanceFromSource = data.balance;
+      var balanceWithPending = data.balance;
 
-        function _processPendingTx(tx) {
-          var consumedSources = [];
-          var valid = true;
-          if (tx.amount > 0) { // do not check sources from received TX
-            valid = false;
-            // TODO get sources from the issuer ?
-          }
-          else {
-            _.find(tx.inputs, function(input) {
-              var inputKey = input.split(':').slice(2).join(':');
-              var srcIndex = data.sourcesIndexByKey[inputKey];
-              if (angular.isDefined(srcIndex)) {
-                consumedSources.push(data.sources[srcIndex]);
-              }
-              else {
-                valid = false;
-                return true; // break
-              }
-            });
-            if (tx.sources) { // add source output
-              addSources(data, tx.sources);
+      function _processPendingTx(tx) {
+        var consumedSources = [];
+        var valid = true;
+        if (tx.amount > 0) { // do not check sources from received TX
+          valid = false;
+          // TODO get sources from the issuer ?
+        }
+        else {
+          _.find(tx.inputs, function(input) {
+            var inputKey = input.split(':').slice(2).join(':');
+            var srcIndex = data.sourcesIndexByKey[inputKey];
+            if (angular.isDefined(srcIndex)) {
+              consumedSources.push(data.sources[srcIndex]);
             }
-            delete tx.sources;
-            delete tx.inputs;
-          }
-          if (valid) {
-            balanceWithPending += tx.amount; // update balance
-            txPendings.push(tx);
-            _.forEach(consumedSources, function(src) {
-              src.consumed=true;
-            });
-          }
-          else {
-            txErrors.push(tx);
-          }
-        }
-
-        var txs = data.tx.pendings;
-        var retry = true;
-        while(txs && txs.length) {
-          // process TX pendings
-          _.forEach(txs, _processPendingTx);
-
-          // Retry once (TX could be chained and processed in a wrong order)
-          if (txErrors.length > 0 && txPendings.length > 0 && retry) {
-            txs = txErrors;
-            txErrors = [];
-            retry = false;
-          }
-          else {
-            txs = null;
-          }
-        }
-
-        data.tx = data.tx || {};
-        data.tx.pendings = txPendings.sort(function(tx1, tx2) {
-          return (tx2.time - tx1.time);
-        });
-        data.tx.errors = txErrors.sort(function(tx1, tx2) {
-          return (tx2.time - tx1.time);
-        });
-        // Negative balance not allow (use only source's balance) - fix #769
-        data.balance = (balanceWithPending < 0) ? balanceFromSource : balanceWithPending;
-
-        // Will add uid (+ plugin will add name, avatar, etc. if enable)
-        var allTx = (data.tx.history || []).concat(data.tx.validating||[], data.tx.pendings||[], data.tx.errors||[]);
-        return csWot.extendAll(allTx, 'pubkey')
-          .then(function() {
-            console.debug('[tx] TX and sources loaded in '+ (Date.now()-now) +'ms');
-            return data;
+            else {
+              valid = false;
+              return true; // break
+            }
           });
-      })
-      .catch(function(err) {
-        console.warn("[tx] Error while getting sources and tx...", err);
-        throw err;
+          if (tx.sources) { // add source output
+            addSources(data, tx.sources);
+          }
+          delete tx.sources;
+          delete tx.inputs;
+        }
+        if (valid) {
+          balanceWithPending += tx.amount; // update balance
+          txPendings.push(tx);
+          _.forEach(consumedSources, function(src) {
+            src.consumed=true;
+          });
+        }
+        else {
+          txErrors.push(tx);
+        }
+      }
+
+      var txs = data.tx.pendings;
+      var retry = true;
+      while(txs && txs.length) {
+        // process TX pendings
+        _.forEach(txs, _processPendingTx);
+
+        // Retry once (TX could be chained and processed in a wrong order)
+        if (txErrors.length > 0 && txPendings.length > 0 && retry) {
+          txs = txErrors;
+          txErrors = [];
+          retry = false;
+        }
+        else {
+          txs = null;
+        }
+      }
+
+      data.tx = data.tx || {};
+      data.tx.pendings = txPendings.sort(function(tx1, tx2) {
+        return (tx2.time - tx1.time);
       });
+      data.tx.errors = txErrors.sort(function(tx1, tx2) {
+        return (tx2.time - tx1.time);
+      });
+      // Negative balance not allow (use only source's balance) - fix #769
+      data.balance = (balanceWithPending < 0) ? balanceFromSource : balanceWithPending;
+
+      // Will add uid (+ plugin will add name, avatar, etc. if enable)
+      var allTx = (data.tx.history || []).concat(data.tx.validating||[], data.tx.pendings||[], data.tx.errors||[]);
+      return csWot.extendAll(allTx, 'pubkey')
+        .then(function() {
+          console.debug('[tx] TX and sources loaded in {0}ms'.format(Date.now() - now));
+          return data;
+        });
+    })
+    .catch(function(err) {
+      console.warn('[tx] Error while getting sources and tx: ' + (err && err.message || err), err);
+      throw err;
+    });
   }
 
   function loadSources(pubkey) {

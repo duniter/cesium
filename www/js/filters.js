@@ -291,11 +291,32 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
   // Display time in ms or seconds (see i18n label 'COMMON.EXECUTION_TIME')
   .filter('formatDurationMs', function() {
     return function(input) {
-      return input ? (
-        (input < 1000) ?
-          (input + 'ms') :
-          (input/1000 + 's')
-      ) : '';
+      if (!input) return '';
+
+      if (input < 1000) {
+        return  input + 'ms';
+      }
+
+      let result = '';
+      const hours = Math.floor(input / (1000 * 60 * 60));
+      const minutes = Math.floor((input % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((input % (1000 * 60)) / 1000);
+      const milliseconds = Math.floor(input % 1000);
+
+      if (hours > 0) {
+        result += hours + 'h ';
+      }
+      if (minutes > 0) {
+        result += minutes + 'min ';
+      }
+      if (seconds > 0) {
+        result += seconds + 's ';
+      }
+      if (milliseconds > 0) {
+        result += milliseconds + 'ms';
+      }
+
+      return result.trim();
     };
   })
 

@@ -152,7 +152,9 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       if (checkBmaNodeAliveCounter > 3)  throw 'ERROR.CHECK_NETWORK_CONNECTION'; // Avoid infinite loop
 
       api.start.raise.message('NETWORK.INFO.CONNECTING_TO_PEER');
-      return BMA.filterAliveNodes(csSettings.data.fallbackNodes, csConfig.timeout)
+
+      const timeout = csSettings.data.expertMode ? csSettings.data.timeout : Device.network.timeout(csConfig.timeout);
+      return BMA.filterAliveNodes(csSettings.data.fallbackNodes, timeout)
         .then(function (fallbackNodes) {
           if (!fallbackNodes.length) throw 'ERROR.CHECK_NETWORK_CONNECTION';
           return _.sample(fallbackNodes); // Random select
@@ -196,9 +198,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
       var askUserConfirmation = csSettings.data.expertMode;
 
-      return csNetwork.getSynchronizedBmaPeers(BMA, {
-          timeout:  Math.min(csConfig.timeout, 10000 /*10s max*/)
-        })
+      return csNetwork.getSynchronizedBmaPeers(BMA)
         .then(function(peers) {
 
           if (!peers.length) return; // No peer found: exit
@@ -242,11 +242,11 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
               }
 
               var randomPeer = _.sample(peers);
-              var synchronizedNode = {
+              var synchronizedNode = new Peer({
                 host: randomPeer.getHost(),
                 port: randomPeer.getPort(),
                 useSsl: randomPeer.isSsl()
-              };
+              });
 
               // If Expert mode: ask user to select a node
               if (askUserConfirmation) {
@@ -276,7 +276,8 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
     function askUseFallbackNode(fallbackNode) {
       // Ask user to confirm, before switching to fallback node
-      var confirmMsgParams = {old: BMA.server, new: fallbackNode.server};
+      var server = fallbackNode.server || (typeof fallbackNode.getServer === 'function' ? fallbackNode.getServer() : new Peer(fallbackNode).getServer())
+      var confirmMsgParams = {old: BMA.server, new: server};
 
       // Force to show port/ssl, if this is the only difference
       if (confirmMsgParams.old === confirmMsgParams.new) {
@@ -285,6 +286,9 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         } else if (BMA.useSsl == false && (fallbackNode.useSsl || fallbackNode.port == 443)) {
           confirmMsgParams.new += ' (SSL)';
         }
+      }
+      if (!server) {
+        console.warn('[] TODO Invalid peer ', fallbackNode);
       }
 
       return $translate('CONFIRM.USE_FALLBACK_NODE', confirmMsgParams)
@@ -424,7 +428,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
           startPromise = null;
           started = false;
           api.start.raise.message(''); // Reset message
-          if($state.current.name !== $rootScope.errorState) {
+          if ($state.current.name !== $rootScope.errorState) {
             $state.go($rootScope.errorState, {error: 'peer'});
           }
           throw err;
