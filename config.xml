@@ -156,7 +156,7 @@
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="28.+" />
     </plugin>
     <plugin name="cordova-plugin-customurlscheme" spec="^5.0.2">
-      <variable name="URL_SCHEME" value="june" />
+        <variable name="URL_SCHEME" value="june" />
     </plugin>
     <plugin name="cordova-plugin-network-information" spec="~3.0.0">
     </plugin>

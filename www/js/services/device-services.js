@@ -325,11 +325,11 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
           try {
 
             cache.isDesktop = !exports.enable && (
-              exports.isUbuntu()
-              || exports.isWindows()
-              || exports.isOSX()
+              exports.isUbuntu() ||
+              exports.isWindows() ||
+              exports.isOSX() ||
               // Should have NodeJs and NW
-              || (!!process && !!nw && !!nw.App)
+              (!!process && !!nw && !!nw.App)
             );
           } catch (err) {
             // If error (e.g. 'process not defined')

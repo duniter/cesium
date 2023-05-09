@@ -111,7 +111,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngSanitize',
           console.debug("[app] State load wallet data...");
           return wallet.loadData(options)
             .then(goNextState)
-            .catch(processError)
+            .catch(processError);
         }
       }
     });

@@ -297,11 +297,11 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
         return  input + 'ms';
       }
 
-      let result = '';
-      const hours = Math.floor(input / (1000 * 60 * 60));
-      const minutes = Math.floor((input % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((input % (1000 * 60)) / 1000);
-      const milliseconds = Math.floor(input % 1000);
+      var result = '';
+      var hours = Math.floor(input / (1000 * 60 * 60));
+      var minutes = Math.floor((input % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((input % (1000 * 60)) / 1000);
+      var milliseconds = Math.floor(input % 1000);
 
       if (hours > 0) {
         result += hours + 'h ';
