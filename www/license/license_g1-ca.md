@@ -1,19 +1,19 @@
-Licencia Ğ1 - v0.2.9
+Llicència Ğ1 - v0.2.9
 ====================
 
 :Date: 2017-04-04 12:59
 :Modified: 2023-01-01 18:33
 
-**Licencia de la moneda y compromiso de responsabilidad.**
+**Llicència de la moneda i compromís de responsabilitat.**
 
-Cualquier certificación de nueva membresía de Ğ1 debe ir primero acompañada por la transmisión de esta licencia de moneda Ğ1 cuyo certificador debe asegurar que ha sido estudiada, entendida y aceptada por la persona que será certificada.
+Qualsevol certificació d'un nou membre de Ğ1 Ha d'anar en primer lloc acompanyada de la transmissió d'aquesta llicència de la moneda Ğ1, on el certificador ha d'assegurar-se que ha sigut estudiada, entesa i acceptada per la persona que serà certificada.
 
 Cualquier evento de encuentro relacionado con Ğ1 debe ir acompañado de la transmisión de esta licencia, que puede leerse en voz alta y transmitirse por cualquier medio.
 
 Red de confianza Ğ1 (RdC Ğ1)
 ------------------------------
 
-** Aviso de advertencia :** Certificar no significa que simplemente has visto físicamente a la persona candidata. Es asegurar a la comunidad Ğ1 que la conoces lo suficientemente bien y que sabrás cómo contactarla y localizarla fácilmente, ser capaz de identificar una posible cuenta falsa o duplicada realizada por alguien que has certificado, u otro tipo de problema, efectuando verificaciones con la comunidad que detecten el problema. La seguridad de la Red de Confianza es descentralizada.
+** Aviso de advertencia :** Certificar no significa que simplemente has visto físicamente a la persona candidata. Es asegurar a la comunidad Ğ1 que la conoces lo suficientemente bien y que sabrás cómo contactarla y localizarla fácilmente, ser capaz de identificar una posible cuenta falsa o duplicada realizada por alguien que has certificado, u otro tipo de problema, efectuando verificaciones con la comunidad que detecten el problema. La seguridad de la Red de Confianza es descentralizada.
 
 **Consejos fuertemente recomendados**
 

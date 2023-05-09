@@ -50,7 +50,7 @@ angular.module("cesium.config", [])
 		"maxContentLength": 1300
 	},
 	"node": {
-		"host": "g11.duniter.org",
+		"host": "g1.duniter.org",
 		"port": 443
 	},
 	"fallbackNodes": [
@@ -67,13 +67,13 @@ angular.module("cesium.config", [])
 			"port": 443
 		},
 		{
-			"host": "duniter.moul.re",
+			"host": "g1.le-sou.org",
 			"port": 443
 		},
-		{
-			"host": "g1.presles.fr",
-			"port": 443
-		},
+    {
+      "host": "duniter.moul.re",
+      "port": 443
+    },
 		{
 			"host": "g1.duniter.org",
 			"port": 443
