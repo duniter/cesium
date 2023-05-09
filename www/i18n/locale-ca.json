@@ -467,95 +467,95 @@
   },
   "API": {
     "COMMON": {
-        "CONNECTION_ERROR": "Nodo <b>{{server}}</b> inalcanzable o dirección inválida.<br/><br/>Verifique su conexión a Internet, o contacte con la administración del sitio.</a>.",
-        "LINK_DOC": "Documentación API",
-        "LINK_DOC_HELP": "Documentación para desarrolladores",
-        "LINK_STANDARD_APP": "Versión clásica",
-        "LINK_STANDARD_APP_HELP": "Abrir la versión clásica de {{'COMMON.APP_NAME'|translate}}"
+      "CONNECTION_ERROR": "Nodo <b>{{server}}</b> inalcanzable o dirección inválida.<br/><br/>Verifique su conexión a Internet, o contacte con la administración del sitio.</a>.",
+      "LINK_DOC": "Documentación API",
+      "LINK_DOC_HELP": "Documentación para desarrolladores",
+      "LINK_STANDARD_APP": "Versión clásica",
+      "LINK_STANDARD_APP_HELP": "Abrir la versión clásica de {{'COMMON.APP_NAME'|translate}}"
     },
     "DOC": {
-        "AVAILABLE_PARAMETERS": "Lista de parámetros disponibles :",
-        "DEMO_CANCELLED": "<i class=\"icon ion-close\"></i> Cancelado por el usuario",
-        "DEMO_DIVIDER": "Probar",
-        "DEMO_HELP": "Para probar este servicio, haga clic en este botón. El resultado se mostrará debajo.",
-        "DEMO_RESULT": "Resultado retornado por la llamada :",
-        "DEMO_RESULT_PEER": "Dirección del nodo utilizado :",
-        "DEMO_SUCCEED": "<i class=\"icon ion-checkmark\"></i> ¡ Éxito !",
-        "DESCRIPTION_DIVIDER": "Descripción",
-        "INTEGRATE_CODE": "Código :",
-        "INTEGRATE_DIVIDER": "Integrar",
-        "INTEGRATE_PARAMETERS": "Parámetros",
-        "INTEGRATE_RESULT": "Previsualización del resultado :",
-        "PARAMETERS_DIVIDER": "Parámetros",
-        "TRANSFER": {
-            "DESCRIPTION": "Desde una web (ej: tienda online) puede delegar el pago en moneda libre con la API de Cesium. Para eso, simplemente ponga un link a la siguiente dirección :",
-            "EXAMPLE_BUTTON": "Botón HTML",
-            "EXAMPLE_BUTTON_BG_COLOR": "Color de fondo",
-            "EXAMPLE_BUTTON_BG_COLOR_HELP": "Ejemplo : #fbc14c, black, lightgrey, rgb(180,180,180)",
-            "EXAMPLE_BUTTON_DEFAULT_STYLE": "Estilo personalizado",
-            "EXAMPLE_BUTTON_DEFAULT_TEXT": "Pagar en {{currency|currencySymbol}}",
-            "EXAMPLE_BUTTON_FONT_COLOR": "Color del texto",
-            "EXAMPLE_BUTTON_FONT_COLOR_HELP": "Ejemplo : black, orange, rgb(180,180,180)",
-            "EXAMPLE_BUTTON_ICON_CESIUM": "Logo Cesium",
-            "EXAMPLE_BUTTON_ICON_DUNITER": "Logo Duniter",
-            "EXAMPLE_BUTTON_ICON_G1_BLACK": "Logo Ğ1 (negro)",
-            "EXAMPLE_BUTTON_ICON_G1_COLOR": "Logo Ğ1",
-            "EXAMPLE_BUTTON_ICON_NONE": "Ninguno",
-            "EXAMPLE_BUTTON_TEXT_HELP": "Texto del botón",
-            "EXAMPLE_BUTTON_TEXT_ICON": "Icono",
-            "EXAMPLE_BUTTON_TEXT_WIDTH": "Anchura",
-            "EXAMPLE_BUTTON_TEXT_WIDTH_HELP": "Ejemplo : 200px, 50%",
-            "EXAMPLES_HELP": "Ejemplos de integración :",
-            "PARAM_AMOUNT": "Cuantía",
-            "PARAM_AMOUNT_HELP": "Cuantía de la transición (obligatorio). Valores múltiples permitidos utilizando un separador (punto y coma, barra vertical o espacio).",
-            "PARAM_CANCEL_URL": "Dirección web de cancelación",
-            "PARAM_CANCEL_URL_HELP": "Dirección web (URL) en caso de anulación del pago por parte del usuario. Puede contener las siguientes palabras que serán remplazadas por sus valores dinámicamente en cada caso: \"{comment}\", \"{amount}\" y \"{pubkey}\".",
-            "PARAM_COMMENT": "Concepto (o comentario)",
-            "PARAM_COMMENT_HELP": "Concepto o comentario. Le permitirá por ejemplo identificar el pago en la cadena de bloques (blockchain).",
-            "PARAM_NAME": "Nombre (del destinatario o de su sitio web)",
-            "PARAM_NAME_HELP": "El nombre del destinatario, o de su sitio web. Puede ser un nombre leíble (\"Mi tienda en línea\"), o un dominio (\"Mitienda.com\").",
-            "PARAM_PREFERRED_NODE": "Dirección del nodo preferido",
-            "PARAM_PREFERRED_NODE_HELP": "Dirección (URL) del nodo Duniter a utilizar preferentemente (\"g1.domaine.com:443\" o \"https://g1.domaine.com\").",
-            "PARAM_PUBKEY": "Llave pública del destinatario",
-            "PARAM_PUBKEY_HELP": "La llave pública del destinatario (obligatoria)",
-            "PARAM_REDIRECT_URL": "Dirección web de redirección",
-            "PARAM_REDIRECT_URL_HELP": "Dirección web (URL) de redirección, llamada cuanda el pago ha sido enviado. Puede contener las palabras siguientes, que serán remplazadas por los valores de la transacción dinámicanente : \"{tx}\", \"{hash}\", \"{comment}\", \"{amount}\", \"{pubkey}\" y \"{node}\".",
-            "TITLE": "Pagos"
-        },
-        "URL_DIVIDER": "Dirección de llamada"
+      "AVAILABLE_PARAMETERS": "Lista de parámetros disponibles :",
+      "DEMO_CANCELLED": "<i class=\"icon ion-close\"></i> Cancelado por el usuario",
+      "DEMO_DIVIDER": "Probar",
+      "DEMO_HELP": "Para probar este servicio, haga clic en este botón. El resultado se mostrará debajo.",
+      "DEMO_RESULT": "Resultado retornado por la llamada :",
+      "DEMO_RESULT_PEER": "Dirección del nodo utilizado :",
+      "DEMO_SUCCEED": "<i class=\"icon ion-checkmark\"></i> ¡ Éxito !",
+      "DESCRIPTION_DIVIDER": "Descripción",
+      "INTEGRATE_CODE": "Código :",
+      "INTEGRATE_DIVIDER": "Integrar",
+      "INTEGRATE_PARAMETERS": "Parámetros",
+      "INTEGRATE_RESULT": "Previsualización del resultado :",
+      "PARAMETERS_DIVIDER": "Parámetros",
+      "TRANSFER": {
+        "DESCRIPTION": "Desde una web (ej: tienda online) puede delegar el pago en moneda libre con la API de Cesium. Para eso, simplemente ponga un link a la siguiente dirección :",
+        "EXAMPLE_BUTTON": "Botón HTML",
+        "EXAMPLE_BUTTON_BG_COLOR": "Color de fondo",
+        "EXAMPLE_BUTTON_BG_COLOR_HELP": "Ejemplo : #fbc14c, black, lightgrey, rgb(180,180,180)",
+        "EXAMPLE_BUTTON_DEFAULT_STYLE": "Estilo personalizado",
+        "EXAMPLE_BUTTON_DEFAULT_TEXT": "Pagar en {{currency|currencySymbol}}",
+        "EXAMPLE_BUTTON_FONT_COLOR": "Color del texto",
+        "EXAMPLE_BUTTON_FONT_COLOR_HELP": "Ejemplo : black, orange, rgb(180,180,180)",
+        "EXAMPLE_BUTTON_ICON_CESIUM": "Logo Cesium",
+        "EXAMPLE_BUTTON_ICON_DUNITER": "Logo Duniter",
+        "EXAMPLE_BUTTON_ICON_G1_BLACK": "Logo Ğ1 (negro)",
+        "EXAMPLE_BUTTON_ICON_G1_COLOR": "Logo Ğ1",
+        "EXAMPLE_BUTTON_ICON_NONE": "Ninguno",
+        "EXAMPLE_BUTTON_TEXT_HELP": "Texto del botón",
+        "EXAMPLE_BUTTON_TEXT_ICON": "Icono",
+        "EXAMPLE_BUTTON_TEXT_WIDTH": "Anchura",
+        "EXAMPLE_BUTTON_TEXT_WIDTH_HELP": "Ejemplo : 200px, 50%",
+        "EXAMPLES_HELP": "Ejemplos de integración :",
+        "PARAM_AMOUNT": "Cuantía",
+        "PARAM_AMOUNT_HELP": "Cuantía de la transición (obligatorio). Valores múltiples permitidos utilizando un separador (punto y coma, barra vertical o espacio).",
+        "PARAM_CANCEL_URL": "Dirección web de cancelación",
+        "PARAM_CANCEL_URL_HELP": "Dirección web (URL) en caso de anulación del pago por parte del usuario. Puede contener las siguientes palabras que serán remplazadas por sus valores dinámicamente en cada caso: \"{comment}\", \"{amount}\" y \"{pubkey}\".",
+        "PARAM_COMMENT": "Concepto (o comentario)",
+        "PARAM_COMMENT_HELP": "Concepto o comentario. Le permitirá por ejemplo identificar el pago en la cadena de bloques (blockchain).",
+        "PARAM_NAME": "Nombre (del destinatario o de su sitio web)",
+        "PARAM_NAME_HELP": "El nombre del destinatario, o de su sitio web. Puede ser un nombre leíble (\"Mi tienda en línea\"), o un dominio (\"Mitienda.com\").",
+        "PARAM_PREFERRED_NODE": "Dirección del nodo preferido",
+        "PARAM_PREFERRED_NODE_HELP": "Dirección (URL) del nodo Duniter a utilizar preferentemente (\"g1.domaine.com:443\" o \"https://g1.domaine.com\").",
+        "PARAM_PUBKEY": "Llave pública del destinatario",
+        "PARAM_PUBKEY_HELP": "La llave pública del destinatario (obligatoria)",
+        "PARAM_REDIRECT_URL": "Dirección web de redirección",
+        "PARAM_REDIRECT_URL_HELP": "Dirección web (URL) de redirección, llamada cuanda el pago ha sido enviado. Puede contener las palabras siguientes, que serán remplazadas por los valores de la transacción dinámicanente : \"{tx}\", \"{hash}\", \"{comment}\", \"{amount}\", \"{pubkey}\" y \"{node}\".",
+        "TITLE": "Pagos"
+      },
+      "URL_DIVIDER": "Dirección de llamada"
     },
     "HOME": {
-        "DOC_HEADER": "Servicios disponibles :",
-        "MESSAGE": "Bienvenido/a a la <b>documentación de la API</b> {{'COMMON.APP_NAME'|translate}}.<br/>Conecte sus sitios webs a la cadena de bloques <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> muy fácilmente !",
-        "MESSAGE_SHORT": "Conecte sus sitios a <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> muy fácilmente !",
-        "TITLE": "Documentación API {{'COMMON.APP_NAME'|translate}}"
+      "DOC_HEADER": "Servicios disponibles :",
+      "MESSAGE": "Bienvenido/a a la <b>documentación de la API</b> {{'COMMON.APP_NAME'|translate}}.<br/>Conecte sus sitios webs a la cadena de bloques <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> muy fácilmente !",
+      "MESSAGE_SHORT": "Conecte sus sitios a <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> muy fácilmente !",
+      "TITLE": "Documentación API {{'COMMON.APP_NAME'|translate}}"
     },
     "TRANSFER": {
-        "AMOUNT": "Cuantía :",
-        "AMOUNTS_HELP": "Elija la cuantía :",
-        "COMMENT": "Concepto/Comentario de la operación :",
-        "DEMO": {
-            "BAD_CREDENTIALS": "Verifique sus credenciales.<br/>En modo demostración, las credenciales son : {{'API.TRANSFER.DEMO.SALT'|translate}} / {{'API.TRANSFER.DEMO.PASSWORD'|translate}}",
-            "HELP": "<b>Modo demostración</b> : Ningún pago será enviado realmente durante esta simulación.<br/>Utilice las credenciales : <b>{{'API.TRANSFER.DEMO.SALT'|translate}} / {{'API.TRANSFER.DEMO.PASSWORD'|translate}}</b>",
-            "PASSWORD": "demo",
-            "PUBKEY": "3G28bL6deXQBYpPBpLFuECo46d3kfYMJwst7uhdVBnD1",
-            "SALT": "demo"
-        },
-        "ERROR": {
-            "TRANSFER_FAILED": "Error en el pago"
-        },
-        "INFO": {
-            "CANCEL_REDIRECTING": "Pago cancelado.<br/>Redirigiendo al sitio del vendedor...",
-            "CANCEL_REDIRECTING_WITH_NAME": "Pago cancelado.<br/>Redirigiendo a <b>{{name}}</b>...",
-            "SUCCESS_REDIRECTING": "Pago enviado.<br/>Redirigiendo al sitio del vendedor...",
-            "SUCCESS_REDIRECTING_WITH_NAME": "Pago enviado.<br/>Redirigiendo a <b>{{name}}</b>..."
-        },
-        "NAME": "Nombre :",
-        "NODE": "Dirección del nodo :",
-        "PUBKEY": "Llave pública del destinatario :",
-        "SUMMARY": "Resumen del pago :",
-        "TITLE": "{{'COMMON.APP_NAME'|translate}} - Pago en línea",
-        "TITLE_SHORT": "Pago en línea"
+      "AMOUNT": "Cuantía :",
+      "AMOUNTS_HELP": "Elija la cuantía :",
+      "COMMENT": "Concepto/Comentario de la operación :",
+      "DEMO": {
+        "BAD_CREDENTIALS": "Verifique sus credenciales.<br/>En modo demostración, las credenciales son : {{'API.TRANSFER.DEMO.SALT'|translate}} / {{'API.TRANSFER.DEMO.PASSWORD'|translate}}",
+        "HELP": "<b>Modo demostración</b> : Ningún pago será enviado realmente durante esta simulación.<br/>Utilice las credenciales : <b>{{'API.TRANSFER.DEMO.SALT'|translate}} / {{'API.TRANSFER.DEMO.PASSWORD'|translate}}</b>",
+        "PASSWORD": "demo",
+        "PUBKEY": "3G28bL6deXQBYpPBpLFuECo46d3kfYMJwst7uhdVBnD1",
+        "SALT": "demo"
+      },
+      "ERROR": {
+        "TRANSFER_FAILED": "Error en el pago"
+      },
+      "INFO": {
+        "CANCEL_REDIRECTING": "Pago cancelado.<br/>Redirigiendo al sitio del vendedor...",
+        "CANCEL_REDIRECTING_WITH_NAME": "Pago cancelado.<br/>Redirigiendo a <b>{{name}}</b>...",
+        "SUCCESS_REDIRECTING": "Pago enviado.<br/>Redirigiendo al sitio del vendedor...",
+        "SUCCESS_REDIRECTING_WITH_NAME": "Pago enviado.<br/>Redirigiendo a <b>{{name}}</b>..."
+      },
+      "NAME": "Nombre :",
+      "NODE": "Dirección del nodo :",
+      "PUBKEY": "Llave pública del destinatario :",
+      "SUMMARY": "Resumen del pago :",
+      "TITLE": "{{'COMMON.APP_NAME'|translate}} - Pago en línea",
+      "TITLE_SHORT": "Pago en línea"
     }
   },
   "AUTH": {
@@ -679,15 +679,15 @@
     "SECURITY": {
       "KEYFILE": {
         "ERROR": {
-            "BAD_CHECKSUM": "Suma de control (checksum) incorrecta",
-            "BAD_PASSWORD": "Frase secreta incorrecta"
+          "BAD_CHECKSUM": "Suma de control (checksum) incorrecta",
+          "BAD_PASSWORD": "Frase secreta incorrecta"
         },
         "EWIF_FORMAT": "Formato EWIF (Encrypted Wallet Import Format) - v1",
         "EWIF_FORMAT_HELP": "Este formato almacena su archivo de llaves <b>de forma cifrada</b> a partir de una frase secreta de su elección. También guarda una suma de control (checksum) para verificar la integridad del archivo.<br/><b>Atención :</b>¡ Asegúrese siempre de recordar su frase secreta !",
         "PASSWORD_POPUP": {
-            "HELP": "Indique la frase secreta :",
-            "PASSWORD_HELP": "Frase secreta",
-            "TITLE": "Archivo de llaves cifrado"
+          "HELP": "Indique la frase secreta :",
+          "PASSWORD_HELP": "Frase secreta",
+          "TITLE": "Archivo de llaves cifrado"
         },
         "PUBSEC_FORMAT": "Formato PubSec",
         "PUBSEC_FORMAT_HELP": "Este formato almacena su archivo de llaves de forma simple. Es compatible con Cesium, ğannonce y Duniter.<br/><b>Atención :</b>El archivo <b>no está cifrado</b> (la llave privada aparece en claro) ; ¡ guárdelo en un lugar seguro !",

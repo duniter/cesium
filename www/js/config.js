@@ -36,7 +36,7 @@ angular.module("cesium.config", [])
 		"en": "license/license_g1-en",
 		"fr-FR": "license/license_g1-fr-FR",
 		"es-ES": "license/license_g1-es-ES",
-		"es-CT": "license/license_g1-es-ES",
+		"ca": "license/license_g1-ca",
 		"eo-EO": "license/license_g1-eo-EO",
 		"pt-PT": "license/license_g1-pt-PT",
 		"it-IT": "license/license_g1-it-IT",
