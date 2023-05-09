@@ -702,6 +702,7 @@
     "PUBKEY_INVALID_CHECKSUM": "Ungültiger öffentlicher Schlüssel (falsche Prüfsumme).",
     "POPUP_TITLE": "Fehler",
     "UNKNOWN_ERROR": "Unbekannter Fehler",
+    "TIMEOUT_REACHED": "Zeitüberschreitung des Knotens überschritten ({{timeout|formatDurationMs}}).<br/><br/><small>{{url}}</small>",
     "CRYPTO_UNKNOWN_ERROR": "Dein Browser ist nicht kompatibel mit kryptographischen Eigenschaften.",
     "DOWNLOAD_KEYFILE_FAILED": "Die Schlüsselbunddatei konnte nicht generiert werden.",
     "EQUALS_TO_PSEUDO": "Muss sich vom Pseudonym unterscheiden",

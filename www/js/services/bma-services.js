@@ -493,14 +493,14 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         membership: post('/blockchain/membership'),
         stats: {
           ud: get('/blockchain/with/ud', csCache.constants.MEDIUM),
-          tx: get('/blockchain/with/tx', null, constants.TIMEOUT.LONG),
-          newcomers: get('/blockchain/with/newcomers', csCache.constants.MEDIUM, constants.TIMEOUT.LONG),
+          tx: get('/blockchain/with/tx'),
+          newcomers: get('/blockchain/with/newcomers', csCache.constants.MEDIUM),
           hardship: get('/blockchain/hardship/:pubkey'),
           difficulties: get('/blockchain/difficulties')
         }
       },
       tx: {
-        sources: get('/tx/sources/:pubkey', csCache.constants.SHORT, constants.TIMEOUT.VERY_LONG),
+        sources: get('/tx/sources/:pubkey', csCache.constants.SHORT),
         process: post('/tx/process'),
         history: {
           all: function(params) {
@@ -539,14 +539,14 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           current: get('/blockchain/current')
         },
         wot: {
-          requirementsWithCache: get('/wot/requirements/:pubkey', csCache.constants.LONG, constants.TIMEOUT.LONG),
-          requirements: get('/wot/requirements/:pubkey', null, constants.TIMEOUT.LONG)
+          requirementsWithCache: get('/wot/requirements/:pubkey', csCache.constants.LONG),
+          requirements: get('/wot/requirements/:pubkey')
         },
         tx: {
           history: {
-            timesWithCache: get('/tx/history/:pubkey/times/:from/:to', csCache.constants.LONG, constants.TIMEOUT.LONG),
-            times: get('/tx/history/:pubkey/times/:from/:to', null, constants.TIMEOUT.LONG),
-            all: get('/tx/history/:pubkey', null, constants.TIMEOUT.LONG)
+            timesWithCache: get('/tx/history/:pubkey/times/:from/:to', csCache.constants.LONG),
+            times: get('/tx/history/:pubkey/times/:from/:to'),
+            all: get('/tx/history/:pubkey')
           }
         },
       }

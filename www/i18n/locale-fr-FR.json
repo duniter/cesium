@@ -706,7 +706,7 @@
     "UNKNOWN_URI_FORMAT": "Format d'URI inconnu",
     "PUBKEY_INVALID_CHECKSUM": "Clé publique invalide (bad checksum).",
     "POPUP_TITLE": "Erreur",
-    "TIMEOUT_REACHED": "Délai d'attente du nœud dépassé.<br/><br/><small>{{url}}</small>",
+    "TIMEOUT_REACHED": "Délai d'attente du nœud dépassé ({{timeout|formatDurationMs}}).<br/><br/><small>{{url}}</small>",
     "UNKNOWN_ERROR": "Erreur inconnue",
     "CRYPTO_UNKNOWN_ERROR": "Votre navigateur ne semble pas compatible avec les fonctionnalités de cryptographie.",
     "DOWNLOAD_KEYFILE_FAILED": "Échec de la génération du fichier de trousseau.",

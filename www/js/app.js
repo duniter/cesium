@@ -67,13 +67,16 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngSanitize',
       };
       var processError = function(err) {
         preventStateChange = false;
-        // If cancel, redirect to home, if no current state
-        if (err === 'CANCELLED' && !$state.current.name) {
-          return $state.go('app.home');
+        // If user cancel
+        if (err === 'CANCELLED') {
+          // Redirect to home, if no current state
+          if (!$state.current.name) {
+            return $state.go('app.home');
+          }
+          return; // Stay on the existing state
         }
-        if (!options || !options.minData) UIUtils.loading.hide();
+        // Show Error
         UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR')(err);
-        throw err;
       };
       // If state need auth
       if (next.data.auth && !wallet.isAuth()) {

@@ -421,6 +421,7 @@
   "ERROR": {
     "POPUP_TITLE": "Error",
     "UNKNOWN_ERROR": "Unknown error",
+    "TIMEOUT_REACHED": "Node timeout overschreden ({{timeout|formatDurationMs}}).<br/><br/><small>{{url}}</small>",
     "CRYPTO_UNKNOWN_ERROR": "Your browser is not compatible with cryptographic features.",
     "FIELD_REQUIRED": "This field is required.",
     "FIELD_TOO_SHORT": "Value is too short (min {{minLength]] characters).",

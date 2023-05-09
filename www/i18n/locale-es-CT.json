@@ -783,6 +783,7 @@
     "PUBKEY_INVALID_CHECKSUM": "Llave pública no válida (suma de comprobación incorrecta).",
     "POPUP_TITLE": "Error",
     "UNKNOWN_ERROR": "Error desconocido",
+    "TIMEOUT_REACHED": "S'ha superat el temps d'espera del node ({{timeout|formatDurationMs}}).<br/><br/><small>{{url}}</small>",
     "CRYPTO_UNKNOWN_ERROR": "Su navegador parece incompatible con las funcionalidades de cryptografía.",
     "DOWNLOAD_KEYFILE_FAILED": "Error al generar el archivo de llaves.",
     "EQUALS_TO_PSEUDO": "Debe ser diferente del seudónimo.",

@@ -783,6 +783,7 @@
     "PUBKEY_INVALID_CHECKSUM": "Chave pública inválida (soma de controlo incorreta).",
     "POPUP_TITLE": "Erro",
     "UNKNOWN_ERROR": "Erro desconhecido",
+    "TIMEOUT_REACHED": "Tempo de espera do nó excedido ({{timeout|formatDurationMs}}).<br/><br/><small>{{url}}</small>",
     "CRYPTO_UNKNOWN_ERROR": "O seu navegador parece incompatível com as funcionalidades de criptografia.",
     "DOWNLOAD_KEYFILE_FAILED": "Falha ao gerar o arquivo de chaves.",
     "EQUALS_TO_PSEUDO": "Deve ser diferente do seu pseudónimo.",

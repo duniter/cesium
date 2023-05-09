@@ -687,6 +687,7 @@
     "PUBKEY_INVALID_CHECKSUM": "Publika ŝlosilo nevalida (bad checksum).",
     "POPUP_TITLE": "Eraro",
     "UNKNOWN_ERROR": "Eraro nekonata",
+    "TIMEOUT_REACHED": "La atendo de la nodo superis la tempon ({{timeout|formatDurationMs}}).<br/><br/><small>{{url}}</small>",
     "CRYPTO_UNKNOWN_ERROR": "Via retumilo ŝajnas ne kongrua kun la kriptografiaj funkcioj.",
     "DOWNLOAD_KEYFILE_FAILED": "Malsukceso por la kreado de la dosiero pri ŝlosilaro.",
     "EQUALS_TO_PSEUDO": "Devas esti malsama ol la pseŭdonimo",

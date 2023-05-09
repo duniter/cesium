@@ -38,12 +38,13 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     var reachTimeout = status === -1 && (config && config.timeout > 0 && startTime > 0) && (Date.now() - startTime) >= config.timeout;
     if (reachTimeout) {
       console.error('[http] Request timeout on [{0}] after waiting {1}ms'.format(url, config.timeout));
-      $translate('ERROR.TIMEOUT_REACHED_URL', {url: url || '?'})
+      $translate('ERROR.TIMEOUT_REACHED', {timeout: config.timeout, url: url || '?'})
         .then(function(message) {
           reject({ucode: errorCodes.TIMEOUT, message: message});
         })
         .catch(function() {
-          reject(data);
+          // No translation: use hardcoded message
+          reject({ucode: errorCodes.TIMEOUT, message: 'Request timeout ({0})'.format(url)});
         });
     }
 
