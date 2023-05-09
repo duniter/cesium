@@ -55,6 +55,7 @@ A [Development Guide](doc/development_guide.md) is available to learn :
  - Development best practices.
  
 A [development tutorial](doc/fr/development_tutorial-01.md) (in French) is also available.
+The [first 3 lessons of the tutorial](doc/en/development_tutorial-01.md) have also been translated into english.
 
 ## Donate
 
