@@ -182,6 +182,14 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
           }
         });
         var pubkeys = _.keys(dataByPubkey);
+
+        // Workaround to avoid error in pod (ES error "maxClauseCount is set to 1024")
+        if (pubkeys.length > 1024) {
+          console.warn('Too many pubkeys to extends (pod is limited to 1024 pubkeys)');
+          deferred.resolve(datas);
+          return deferred.promise;
+        }
+
         // Make sure all results will be return
         request.size = (pubkeys.length <= request.size) ? request.size : pubkeys.length;
         if (!text) {
