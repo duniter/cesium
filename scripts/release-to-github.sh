@@ -49,7 +49,7 @@ case "$1" in
     release_url=$(echo "$result" | grep -P "\"url\": \"[^\"]+"  | grep -oP "$REPO_API_URL/releases/\d+")
     if [[ $release_url != "" ]]; then
         echo "--- Deleting existing release..."
-        curl -H 'Authorization: token $GITHUB_TOKEN'  -XDELETE $release_url
+        curl -H ''"$GITHUT_AUTH"''  -XDELETE $release_url
     fi
     exit 0;
   ;;
@@ -101,7 +101,7 @@ echo ""
 echo "--- Creating new release..."
 echo " - tag: v$current"
 echo " - description: $description"
-result=$(curl -X POST -H ''"$GITHUT_AUTH"'' -s $REPO_API_URL/releases -d '{"tag_name": "v'"$current"'","target_commitish": "master","name": "'"$current"'","body": "'"$description"'","draft": false,"prerelease": '"$prerelease"'}')
+result=$(curl -X POST -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" -H ''"$GITHUT_AUTH"'' -s $REPO_API_URL/releases -d '{"tag_name": "v'"$current"'","target_commitish": "master","name": "'"$current"'","body": "'"$description"'","draft": false,"prerelease": '"$prerelease"'}')
 upload_url=$(echo "$result" | grep -P "\"upload_url\": \"[^\"]+"  | grep -oP "https://[A-Za-z0-9/.-]+")
 if [[ "_$upload_url" = "_" ]]; then
   echo "Failed to create new release for repo $REPO."
