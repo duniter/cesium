@@ -89,9 +89,12 @@ gulp config build --env default || exit 1
 echo "----------------------------------"
 echo "- Building Android artifact..."
 echo "----------------------------------"
-cd ${PROJECT_DIR} || exit 1
-. scripts/release-android.sh
-[[ $? -ne 0 ]] && exit 1
+cd ${PROJECT_DIR}/scripts || exit 1
+./release-android.sh
+#[[ $? -ne 0 ]] && exit 1
+if [[ ! -f "${APK_SIGNED_FILE}" ]]; then
+  exit 1
+fi
 
 echo "----------------------------------"
 echo "- Building web and extension artifacts..."

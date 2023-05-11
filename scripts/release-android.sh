@@ -25,14 +25,17 @@ echo "--- Cleaning previous Android APK [OK]"
 echo ""
 
 # Run the build
-echo "--- Building Cordova App..."
+echo "--- Building Android APK..."
 echo ""
 yarn run build:android
 [[ $? -ne 0 ]] && exit 1
 
-echo "--- Building Cordova App [OK]"
+echo "--- Building Android APK [OK]"
+echo ""
 
 # Sign APK file
 cd ${PROJECT_DIR}/scripts
 ./release-android-sign.sh
 [[ $? -ne 0 ]] && exit 1
+
+cd ${PROJECT_DIR}

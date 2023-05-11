@@ -24,23 +24,21 @@ cd ${PROJECT_DIR}
 
 
 # Checking files
-echo "Checking keystore file..."
 if [[ ! -f "${KEYSTORE_FILE}" ]]; then
-  echo "Keystore file not found: ${KEYSTORE_FILE}"
+  echo "ERROR: Keystore file not found: ${KEYSTORE_FILE}"
   exit 1
 fi
-
-echo "Checking APK file..."
 if [[ ! -f "${APK_UNSIGNED_FILE}" ]]; then
   # Check in an alternative path (e.g. Android default signed file)
   if [[ ! -f "${APK_FILE_ALTERNATIVE}" ]]; then
-    echo "APK file not found: ${APK_UNSIGNED_FILE}"
+    echo "ERROR: Unsigned APK file not found: ${APK_UNSIGNED_FILE}"
     exit 1
   fi
   APK_UNSIGNED_FILE=${APK_FILE_ALTERNATIVE}
 fi
 
 echo "--- Signing Android APK..."
+echo ""
 
 # Remove previous version (only if unsigned exists)
 if [[ -f "${APK_SIGNED_FILE}" ]]; then
@@ -60,6 +58,7 @@ echo "Executing zipalign..."
 ./zipalign -v 4 ${APK_UNSIGNED_FILE} ${APK_SIGNED_FILE}
 [[ $? -ne 0 ]] && exit 1
 echo "Executing zipalign [OK]"
+echo ""
 
 echo "Executing apksigner..."
 ./apksigner sign --ks ${KEYSTORE_FILE} --ks-pass "pass:${KEYSTORE_PWD}" --ks-key-alias ${KEY_ALIAS} \
@@ -69,10 +68,14 @@ echo "Executing apksigner..."
 
 [[ $? -ne 0 ]] && exit 1
 echo "Executing apksigner [OK]"
+echo ""
 
 echo "Verify APK signature..."
 ./apksigner verify --verbose --print-certs ${APK_SIGNED_FILE}
 [[ $? -ne 0 ]] && exit 1
 echo "Verify APK signature [OK]"
+echo ""
 
 echo "--- Successfully generated signed APK at: ${APK_SIGNED_FILE}"
+echo ""
+exit 0
