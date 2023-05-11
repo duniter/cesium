@@ -92,7 +92,9 @@ echo "----------------------------------"
 cd ${PROJECT_DIR}/scripts || exit 1
 ./release-android.sh
 #[[ $? -ne 0 ]] && exit 1
+APK_SIGNED_FILE="${ANDROID_OUTPUT_APK_RELEASE}/${ANDROID_OUTPUT_APK_PREFIX}-release-signed.apk"
 if [[ ! -f "${APK_SIGNED_FILE}" ]]; then
+  echo "Missing signed APK file at: ${APK_SIGNED_FILE}"
   exit 1
 fi
 

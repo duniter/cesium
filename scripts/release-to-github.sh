@@ -160,18 +160,18 @@ fi
 
 # Upload Android APK file
 APK_BASENAME="${PROJECT_NAME}-v${current}-android.apk"
-APK_FILE="${ANDROID_OUTPUT_APK_RELEASE}/${ANDROID_OUTPUT_APK_PREFIX}-release-signed.apk"
-if [[ -f "${APK_FILE}" ]]; then
+APK_SIGNED_FILE="${ANDROID_OUTPUT_APK_RELEASE}/${ANDROID_OUTPUT_APK_PREFIX}-release-signed.apk"
+if [[ -f "${APK_SIGNED_FILE}" ]]; then
   # Copy to dist/android
   mkdir -p ${DIST_ANDROID}
-  cp -f "${APK_FILE}" "${DIST_ANDROID}/${APK_BASENAME}"
+  cp -f "${APK_SIGNED_FILE}" "${DIST_ANDROID}/${APK_BASENAME}"
 
-  result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/vnd.android.package-archive' -T "${APK_FILE}" "${upload_url}?name=${APK_BASENAME}")
+  result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/vnd.android.package-archive' -T "${APK_SIGNED_FILE}" "${upload_url}?name=${APK_BASENAME}")
   browser_download_url=$(echo "$result" | grep -P "\"browser_download_url\":[ ]?\"[^\"]+" | grep -oP "\"browser_download_url\":[ ]?\"[^\"]+"  | grep -oP "https://[A-Za-z0-9/.-]+")
-  APK_SHA256=$(sha256sum "${APK_FILE}" | sed 's/ /\n/gi' | head -n 1)
+  APK_SHA256=$(sha256sum "${APK_SIGNED_FILE}" | sed 's/ /\n/gi' | head -n 1)
   echo " - ${browser_download_url}  | SHA256 Checksum: ${APK_SHA256}"
-  echo "${APK_SHA256}  ${APK_BASENAME}" > "${APK_FILE}.sha256"
-  result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: text/plain' -T "${APK_FILE}.sha256" "${upload_url}?name=${APK_BASENAME}.sha256")
+  echo "${APK_SHA256}  ${APK_BASENAME}" > "${APK_SIGNED_FILE}.sha256"
+  result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: text/plain' -T "${APK_SIGNED_FILE}.sha256" "${upload_url}?name=${APK_BASENAME}.sha256")
 else
   echo "- ERROR: Android release (APK) not found! Skipping."
   missing_file=true
