@@ -20,16 +20,19 @@ REPO="duniter/cesium"
 REPO_API_URL="https://api.github.com/repos/${REPO}"
 REPO_PUBLIC_URL="https://github.com/${REPO}"
 
-NODEJS_VERSION=12
+NODEJS_VERSION=16
 #NODE_OPTIONS=--max-old-space-size=4096
+IONIC_CLI_VERSION=6.20.9
 
-ANDROID_NDK_VERSION=19.2.5345600
-ANDROID_SDK_VERSION=29.0.3
+ANDROID_NDK_VERSION=21.0.6113669 # Should be compatible with 'cordova-sqlite-storage' plugin
+ANDROID_SDK_VERSION=30.0.3
 ANDROID_SDK_CLI_VERSION=8512546 # See https://developer.android.com/studio#command-tools
+#ANDROID_HOME="${HOME}/Android"
 ANDROID_SDK_ROOT="${HOME}/Android/Sdk"
 ANDROID_ALTERNATIVE_SDK_ROOT=/usr/lib/android-sdk
 ANDROID_SDK_CLI_ROOT=${ANDROID_SDK_ROOT}/cmdline-tools/${ANDROID_SDK_CLI_VERSION}
-ANDROID_OUTPUT_APK=${PROJECT_DIR}/platforms/android/app/build/outputs/apk
+ANDROID_OUTPUT_APK_PREFIX=app
+ANDROID_OUTPUT_APK=${PROJECT_DIR}/platforms/android/${ANDROID_OUTPUT_APK_PREFIX}/build/outputs/apk
 ANDROID_OUTPUT_APK_DEBUG=${ANDROID_OUTPUT_APK}/debug
 ANDROID_OUTPUT_APK_RELEASE=${ANDROID_OUTPUT_APK}/release
 
@@ -42,7 +45,7 @@ WEB_EXT_ID="{6f9922f7-a054-4609-94ce-d269993246a5}"
 # /!\ WARN can be define in your <project>/.local/env.sh file
 #JAVA_HOME=
 
-GRADLE_VERSION=6.5.1
+GRADLE_VERSION=6.7.1
 GRADLE_HOME=${HOME}/.gradle/${GRADLE_VERSION}
 CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL=https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-all.zip
 GRADLE_OPTS=-Dorg.gradle.jvmargs=-Xmx512m
@@ -56,7 +59,7 @@ else
 fi
 
 # Checking Java installed
-if test -z "${JAVA_HOME}"; then
+if test -d "${JAVA_HOME}"; then
   JAVA_CMD=`which java`
   if test -z "${JAVA_CMD}"; then
     echo "ERROR: No Java installed. Please install java, or set env variable JAVA_HOME "
@@ -66,11 +69,11 @@ if test -z "${JAVA_HOME}"; then
   # Check the Java version
   JAVA_VERSION=$(java -version 2>&1 | egrep "(java|openjdk) version" | awk '{print $3}' | tr -d \")
   if test $? -ne 0 || test -z "${JAVA_VERSION}"; then
-    echo "No Java JRE 11 found in machine. This is required for Android artifacts."
+    echo "No Java JRE 1.8 found in machine. This is required for Android artifacts."
   else
     JAVA_MAJOR_VERSION=$(echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[1]}')
     JAVA_MINOR_VERSION=$(echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[2]}')
-    if ! test "${JAVA_MAJOR_VERSION}" == "11" || ! test "${JAVA_MINOR_VERSION}" == "0"; then
+    if ! test "${JAVA_MAJOR_VERSION}" == "1" || ! test "${JAVA_MINOR_VERSION}" == "8"; then
       echo "ERROR: Require a Java JRE in version 1.8, but found ${JAVA_VERSION}. You can override your default JAVA_HOME in '.local/env.sh'."
     fi
   fi
@@ -84,6 +87,7 @@ if test -z "${ANDROID_SDK_ROOT}" || ! test -d "${ANDROID_SDK_ROOT}"; then
     echo "ERROR: Please set env variable ANDROID_SDK_ROOT to an existing directory"
   fi
 fi
+
 
 # Add Java, Android SDK tools to path
 PATH=${ANDROID_SDK_CLI_ROOT}/bin:${GRADLE_HOME}/bin:${JAVA_HOME}/bin$:$PATH
@@ -123,7 +127,7 @@ NATIVE_RUN_PATH=`which native-run`
 WEB_EXT_PATH=`which web-ext`
 if test -z "${YARN_PATH}" || test -z "${IONIC_PATH}" || test -z "${CORDOVA_PATH}" || test -z "${CORDOVA_RES_PATH}" || test -z "${NATIVE_RUN_PATH}" || test -z "${WEB_EXT_PATH}"; then
   echo "Installing global dependencies..."
-  npm install -g yarn cordova cordova-res @ionic/cli web-ext native-run
+  npm install -g yarn cordova cordova-res @ionic/cli@$IONIC_CLI_VERSION web-ext native-run
   if ! test $? == 0; then
     echo "ERROR: Unable to install global dependencies"
     #exit 1
@@ -140,13 +144,23 @@ if ! test -d "${PROJECT_DIR}/node_modules"; then
     yarn install
 fi
 
-# Install project submodules
-if ! test -d "${PROJECT_DIR}/platforms/android" || ! test -d "${PROJECT_DIR}/dist/desktop"; then
+# Install platform Android
+if ! test -d "${PROJECT_DIR}/platforms/android"; then
+  echo "Installing platform Android..."
+  cd "${PROJECT_DIR}"
+  ionic cordova platform add android
+  if ! test $? == 0; then
+    echo "ERROR: Unable to install Android platform. Will not be able to build Android artifacts!"
+    #exit 1
+  fi
+fi
+
+if ! test -d "${PROJECT_DIR}/dist/desktop"; then
   #echo "Installing project submodules..."
   #cd "${PROJECT_DIR}"
   #git submodule init && git submodule sync && git submodule update --remote --merge
   if ! test $? == 0; then
-    echo "ERROR: Unable to sync git submodule. Will not be able to build android and desktop artifacts!"
+    echo "ERROR: Unable to sync git submodule. Will not be able to build desktop artifacts!"
     #exit 1
   fi
 fi
@@ -156,8 +170,11 @@ export PATH \
   PROJECT_DIR PROJECT_NAME \
   REPO REPO_API_URL REPO_PUBLIC_URL \
   NODEJS_VERSION \
-  ANDROID_NDK_VERSION ANDROID_SDK_VERSION ANDROID_SDK_CLI_VERSION ANDROID_SDK_ROOT ANDROID_ALTERNATIVE_SDK_ROOT \
-  ANDROID_SDK_CLI_ROOT ANDROID_OUTPUT_APK ANDROID_OUTPUT_APK_DEBUG ANDROID_OUTPUT_APK_RELEASE \
+  JAVA_HOME \
+  ANDROID_NDK_VERSION ANDROID_SDK_VERSION ANDROID_SDK_CLI_VERSION \
+  ANDROID_HOME ANDROID_SDK_ROOT ANDROID_ALTERNATIVE_SDK_ROOT ANDROID_SDK_CLI_ROOT \
+  ANDROID_OUTPUT_APK ANDROID_OUTPUT_APK_DEBUG ANDROID_OUTPUT_APK_RELEASE \
+  CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL \
   GRADLE_HOME GRADLE_OPTS \
   DIST_WEB DIST_ANDROID \
   WEB_EXT_ID

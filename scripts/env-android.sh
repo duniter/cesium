@@ -15,10 +15,12 @@ if test -z "${CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL}"; then
   echo "ERROR: Missing Gradle distribution URL - please export env variable 'CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL'"
 fi
 
-echo "Preparing Android environment:"
+echo "--- Preparing Android environment:"
 echo "        Root: ${PROJECT_DIR}"
 echo "      NodeJS: version ${NODE_VERSION} with options: ${NODE_OPTIONS}"
-echo " Android SDK: ${ANDROID_SDK_ROOT} with CLI: ${ANDROID_SDK_CLI_ROOT}"
+echo " Android SDK: ${ANDROID_SDK_ROOT}"
+echo " Android CLI: ${ANDROID_SDK_CLI_ROOT}"
+echo " Build Tools: ${ANDROID_BUILD_TOOLS_ROOT}"
 echo "      Gradle: ${GRADLE_HOME} with options: ${GRADLE_OPTS}"
 echo "        Java: ${JAVA_HOME}"
 
@@ -30,17 +32,20 @@ if test -z "${JAVAC_PATH}"; then
 fi
 
 # Prepare Android SDK tools
-if ! test -d "${BUILD_TOOLS_DIR}" || ! test -d "${ANDROID_SDK_CLI_ROOT}/tools/bin"; then
-  . ${PROJECT_DIR}/scripts/install-android-sdk.sh
+if ! test -d "${ANDROID_SDK_CLI_ROOT}"; then
+  . ${PROJECT_DIR}/scripts/install-android-sdk-tools.sh
   if test $? -ne 0; then
     echo "ERROR: Unable to install Android SDK Tools & CLI"
   fi
+else
+  # Add SDK CLI to path
+  export PATH=${ANDROID_SDK_CLI_ROOT}/bin:$PATH
 fi
 
 # Install Gradle
 if test -z "$(which gradle)" && ! test -d "${GRADLE_HOME}"; then
   cd "${PROJECT_DIR}/scripts"
-  echo "Installing gradle...  ${GRADLE_HOME}"
+  echo "--- Installing gradle...  ${GRADLE_HOME}"
   test -e "gradle-${GRADLE_VERSION}-all.zip" || wget -kL ${CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL}
   GRADLE_PARENT=$(dirname $GRADLE_HOME)
   test -e "${GRADLE_PARENT}" || mkdir -p ${GRADLE_PARENT}
@@ -58,7 +63,7 @@ fi
 
 # Prepare Android platform
 if ! test -d "${PROJECT_DIR}/platforms/android"; then
-  echo "Adding Cordova Android platform..."
+  echo "--- Adding Cordova Android platform..."
   cd "${PROJECT_DIR}"
   ionic cordova prepare android --color --verbose
   if test $? -ne 0; then
@@ -79,7 +84,7 @@ else
 fi
 
 echo
-echo "Check Requirements"
+echo "--- Checking Android requirements..."
 cordova requirements android --verbose
 if test $? -ne 0; then
   echo "ERROR: Check Cordova requirements failed"
@@ -92,4 +97,4 @@ PATH=${GRADLE_HOME}/bin:${PATH}
 export PATH \
   BUILD_TOOLS_DIR
 
-echo "Android environment is ready!"
+echo "--- Android environment is ready!"

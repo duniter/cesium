@@ -6,10 +6,10 @@ LABEL description="Cesium Wallet for Ğ1 libre currency"
 ARG CESIUM_VER="1.7.0-rc1"
 
 ENV DEBIAN_FRONTEND=noninteractive \
-    NODE_VERSION=12.22.8 \
+    NODE_VERSION=16.17.0 \
     NPM_VERSION=8.3.0 \
     YARN_VERSION=1.22.17 \
-    IONIC_CLI_VERSION=6.19.1 \
+    IONIC_CLI_VERSION=6.20.9 \
     CORDOVA_VERSION=10.0.0 \
     GRADLE_VERSION=6.5.1 \
     GULP_VERSION=4.0.2

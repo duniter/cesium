@@ -2,7 +2,7 @@
 
 const gulp = require('gulp'),
   path = require("path"),
-  sass = require('gulp-sass'),
+  sass = require('gulp-sass')(require('node-sass')),
   cleanCss = require('gulp-clean-css'),
   base64 = require('gulp-base64-v2'),
   rename = require('gulp-rename'),
