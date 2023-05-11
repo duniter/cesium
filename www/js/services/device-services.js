@@ -2,7 +2,7 @@ var App;
 
 angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.settings.services'])
 
-  .factory('Device', function($rootScope, $translate, $ionicPopup, $q, Api,
+  .factory('Device', function($rootScope, $translate, $ionicPopup, $q, Api, csConfig,
       // removeIf(no-device)
       $cordovaClipboard, $cordovaBarcodeScanner, $cordovaCamera, $cordovaNetwork,
       // endRemoveIf(no-device)
@@ -209,7 +209,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
                 timeout = defaultTimeout;
                 break;
             }
-            console.debug('[network] Using timeout: {1}ms (connection type: \'{0}\')'.format(connectionType, timeout));
+            console.debug('[device] Using timeout: {1}ms (connection type: \'{0}\')'.format(connectionType, timeout));
 
             return timeout;
           } catch(err) {

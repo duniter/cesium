@@ -106,7 +106,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
      }
 
      // Computing timeout from the connection type
-     return Device.network.timeout(csConfig.timeout);
+     return Device.network.timeout();
     },
 
     hasPeers = function() {
