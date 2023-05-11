@@ -1,21 +1,23 @@
-Licencia Ğ1 - v0.2.9
-====================
+Licenza Ğ1 - v0.2.9
+===================
 
-:fecha: 2017-04-04 12:59
-:modificada: 2019-04-16 22:30
+:Date: 2017-04-04 12:59
+:Modified: 2019-04-16 22:30
 
 **Licenza d'uso della moneta e presa di responsabilità**
 
-Ogni operazione di certificazione di un nuovo membro della Ğ1 deve essere prima accompagnata dalla trasmissione di questa licenza d'uso della moneta libera Ğ1, la quale il certificatore deve assicurarsi sia stata studiata, compresa e accettata dalla persona. Ogni evento riguardante la Ğ1 deve essere accompagnato dalla trasmissione di questa licenza, che può essere letta ad alta voce e trasmessa in ogni forma.
+Ogni operazione di certificazione di un nuovo membro della Ğ1 deve essere prima accompagnata dalla trasmissione di questa licenza d'uso della moneta libera Ğ1, la quale il certificatore deve assicurarsi sia stata studiata, compresa e accettata dalla persona.
 
-​​​​​​​Rete di fiducia Ğ1 (RdF - Rete di Fiducia Ğ1)
----------------------------------------------
+Ogni evento riguardante la Ğ1 deve essere accompagnato dalla trasmissione di questa licenza, che può essere letta ad alta voce e trasmessa in ogni forma.
 
-**Attenzione:** certificare non significa solo assicurarsi di aver incontrato fisicamente la persona, bensì è assicurare alla comunità Ğ1 che si conosce la persona  certificata abbastanza bene da poterla contattare facilmente, e di essere in grado di individuare un conto duplicato fatto da una persona che si è certificata, o altri tipi di problemi (morte...), facendo un controllo incrociato che rivelerà il problema se necessario.
+Rete di fiducia Ğ1 (RdF - Ğ1)
+-----------------------------
+
+**Attenzione:** certificare non significa solo assicurarsi di aver incontrato fisicamente la persona, bensì è assicurare alla comunità Ğ1 che si conosce la persona certificata abbastanza bene da poterla contattare facilmente, e di essere in grado di individuare un conto duplicato fatto da una persona che si è certificata, o altri tipi di problemi (morte...), facendo un controllo incrociato che rivelerà il problema se necessario.
 
 **Consigli fortemente raccomandati**
 
-Conoscere bene una persona implica che si è in grado di contattarla con diversi mezzi (fisici, elettronici, altro…), ma anche che si conosscono diverse persone che la conoscono altrettanto bene e che quindi sono anche loro in grado di contattarla allo stesso modo; in particolare, se non si conosce bene qualcuno tra coloro che l’hanno già certificata, è una chiara indicazione che non si conosce in modo sufficiente questa persona, e una certificazione di questo tipo fa scattare un allarme in  tutta la comunità Ğ1. In caso di conoscenza insufficiente, è importante NON certificare.
+Conoscere bene una persona implica che si è in grado di contattarla con diversi mezzi (fisici, elettronici, altro…), ma anche che si conoscono diverse persone che la conoscono altrettanto bene e che quindi sono anche loro in grado di contattarla allo stesso modo; in particolare, se non si conosce bene qualcuno tra coloro che l’hanno già certificata, è una chiara indicazione che non si conosce in modo sufficiente questa persona, e una certificazione di questo tipo fa scattare un allarme in tutta la comunità Ğ1. In caso di conoscenza insufficiente, è importante NON certificare.
 
 Non certificare mai da soli, ma insieme almeno ad un altro membro della RdF Ğ1, per evitare errori nel processo. In caso di errore, si devono avvisare immediatamente altri membri della RdF Ğ1.
 
@@ -25,9 +27,12 @@ Verificate che il candidato membro abbia un buon controllo nella gestione del su
 
 Controllate che i vostri contatti abbiano studiato e compreso questa Licenza aggiornata della Ğ1.
 
-Se ci si accerta che un certificatore effettivo o potenziale del conto del candidato non conosce il candidato in questione, é necessario avvertire immediatamente chiunque abbia esperienza in materia, tra i vostri contatti nella RdF Ğ1, in modo che la RdF Ğ1 possa verificare il processo di convalida.
+Se ci si accerta che un certificatore effettivo o potenziale del conto del candidato non conosce il candidato in questione, é necessario avvertire immediatamente chiunque abbia esperienza in materia, tra i vostri contatti nella RdF Ğ1, in modo che la RdF Ğ1 possa verificare ilprocesso di convalida.
 
-**Nel momento in cui, in qualità di membri della RdF G1, ci si accinge a certificare un nuovo conto, bisogna essere certi:**
+Nel momento in cui, in qualità di membri della RdF G1, ci si accinge a certificare un nuovo conto,
+
+
+**bisogna essere certi:**
 
 1°) di conoscere sufficientemente bene (non solamente di vista) la persona che dichiara di saper gestire questa chiave pubblica (nuovo conto). Leggere i consigli fortemente raccomandati qui sopra per essere sicuri di "conoscerla bene".
 
@@ -37,7 +42,7 @@ Se ci si accerta che un certificatore effettivo o potenziale del conto del candi
 
 4a°) di aver incontrato il candidato di persona per assicurarti che sia la persona fisica che conosci bene e che ha questa chiave pubblica.
 
-4b°) Oppure di aver verificato a distanza la corrispondenza tra la chiave pubblica e la persona (che hai già incontrato fisicamente), utilizzando più di un mezzo di comunicazione​​​​​​​, ad esempio posta ordinaria + social network + forum + email + video conferenza + telefono (riconoscimento vocale). Questo perché se si può violare un account di posta elettronica o di un forum, è molto più difficile immaginare di violare quattro mezzi di comunicazione distinti, e imitare l'aspetto (video) e persino la voce della persona fisica .
+4b°) Oppure di aver verificato a distanza la corrispondenza tra la chiave pubblica e la persona (che hai già incontrato fisicamente), utilizzando più di un mezzo di comunicazione, ad esempio posta ordinaria + social network + forum + email + video conferenza + telefono (riconoscimento vocale). Questo perché se si può violare un account di posta elettronica o di un forum, è molto più difficile immaginare di violare quattro mezzi di comunicazione distinti, e imitare l'aspetto (video) e persino la voce della persona fisica .
 
 Tuttavia, 4a) è preferibile a 4b), mentre i punti 1) 2) e 3) sono prioritari ed indispensabili.
 
@@ -64,21 +69,23 @@ Moneta Ğ1
 
 La nuova moneta Ğ1 è generata attraverso un Dividendo Universale (DU) per ogni essere umano membro della Rete di Fiducia Ğ1, come segue:
 
-* 1 DU per persona al giorno.
+* 1 DU per persona al giorno
+
+**Codice della moneta libera Ğ1**
 
 La quantità in Ğ1 del DU è la stessa ogni giorno fino all'equinozio successivo (ogni 6 mesi), quando il DU sarà rivalutato secondo la formula (1 giorno = 86.400 secondi):
 
-* DU quotidiano (prossimo equinozio) = DU quotidiano (equinozio) + c² (M/N)(equinozio) / (15.778.800 secondi).
-  Dove i parametri sono:
+* DU quotidiano (prossimo equinozio) = DU quotidiano (equinozio) + c² (M/N)(equinozio) / (15.778.800 secondi)
+
+Dove i parametri sono:
 
 * c = 4,88% / equinozio
-
 * DU(0) = 10.00 Ğ1
 
 E le variabili sono:
 
-* M La massa monetaria all'equinozio
-* N Il numero di membri nel giorno dell'equinozio
+- M La massa monetaria all'equinozio
+- N Il numero di membri nel giorno dell'equinozio
 
 Software Ğ1 e licenza Ğ1
 ------------------------
@@ -87,6 +94,4 @@ I software Ğ1 che permettono agli utenti di gestire l'uso della moneta Ğ1 devo
 
 Il software che non rispetta questi obblighi di licenza non è compatibile con la Ğ1.
 
-Per maggiori dettagli tecnici, è possibile consultare direttamente il codice di Duniter, che è un software libero, così come i dati della blockchain Ğ1, recuperandoli attraverso un'istanza di Duniter o un nodo Ğ1.
-
-Maggiori informazioni sul sito web del team Duniter, https://www.duniter.org
+Per maggiori dettagli tecnici, è possibile consultare direttamente il codice di Duniter, che è un software libero, così come i dati della blockchain Ğ1, recuperandoli attraverso un'istanza di Duniter o un nodo Ğ1
