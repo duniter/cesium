@@ -20,12 +20,7 @@ APK_SIGNED_FILE=${ANDROID_OUTPUT_APK_RELEASE}/${ANDROID_OUTPUT_APK_PREFIX}-relea
 APK_UNSIGNED_FILE=${ANDROID_OUTPUT_APK_RELEASE}/${ANDROID_OUTPUT_APK_PREFIX}-release-unsigned.apk
 
 echo "--- Cleaning previous Android APK ..."
-if [[ -f "${APK_SIGNED_FILE}" ]]; then
-  rm -f ${APK_SIGNED_FILE}*
-fi;
-if [[ -f "${APK_UNSIGNED_FILE}" ]]; then
-  rm -f ${APK_UNSIGNED_FILE}
-fi;
+rm -f ${ANDROID_OUTPUT_APK_RELEASE}/*.apk*
 echo "--- Cleaning previous Android APK [OK]"
 echo ""
 

@@ -148,7 +148,7 @@ echo "----------------------------------"
 echo "- Uploading web extension to Mozilla ..."
 echo "----------------------------------"
 . ${PROJECT_DIR}/scripts/release-sign-extension.sh $1
-# FIXME: always failed: but continue
+# FIXME: always failed, but continue
 #[[ $? -ne 0 ]] && exit 1
 
 echo "----------------------------------"

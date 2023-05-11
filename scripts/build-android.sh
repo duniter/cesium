@@ -22,9 +22,9 @@ fi
 
 # Run the build
 echo "Cleaning previous android APK files..."
-rm -rf ${ANDROID_OUTPUT_APK_DEBUG}/*.apk
-rm -rf ${ANDROID_OUTPUT_APK_RELEASE}/*.apk
+rm -f ${ANDROID_OUTPUT_APK_DEBUG}/*.apk
+rm -f ${ANDROID_OUTPUT_APK_RELEASE}/*.apk*
 
 echo "Running cordova build android..."
-ionic cordova build android --warning-mode=none --color $*
-#ionic cordova build android --warning-mode=none --color --verbose
+ionic cordova build android --warning-mode=none --color $* -- -- --packageType=apk
+#ionic cordova build android --warning-mode=none --color --verbose -- -- --packageType=apk

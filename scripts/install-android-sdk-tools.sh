@@ -41,7 +41,7 @@ mkdir -p ~/.android
 touch ~/.android/repositories.cfg
 
 echo y | sdkmanager "platform-tools" "--sdk_root=${ANDROID_SDK_ROOT}" | tee sdkmanager.log
-echo y | sdkmanager "extras;android;m2repository" "--sdk_root=${ANDROID_SDK_ROOT}" | tee -a  sdkmanager.log
+echo y | sdkmanager "extras;android;m2repository" "--sdk_root=${ANDROID_SDK_ROOT}" | tee -a sdkmanager.log
 echo y | sdkmanager "extras;google;m2repository" "--sdk_root=${ANDROID_SDK_ROOT}" | tee -a sdkmanager.log
 echo y | sdkmanager "cmdline-tools;latest" "--sdk_root=${ANDROID_SDK_ROOT}" | tee sdkmanager.log
 
