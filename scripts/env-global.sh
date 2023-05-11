@@ -73,8 +73,8 @@ if test -d "${JAVA_HOME}"; then
   else
     JAVA_MAJOR_VERSION=$(echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[1]}')
     JAVA_MINOR_VERSION=$(echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[2]}')
-    if ! test "${JAVA_MAJOR_VERSION}" == "1" || ! test "${JAVA_MINOR_VERSION}" == "8"; then
-      echo "ERROR: Require a Java JRE in version 1.8, but found ${JAVA_VERSION}. You can override your default JAVA_HOME in '.local/env.sh'."
+    if ! test "${JAVA_MAJOR_VERSION}" == "11" || ! test "${JAVA_MINOR_VERSION}" == "0"; then
+      echo "ERROR: Require a Java SDK in version 11, but found ${JAVA_VERSION}. You can override your default JAVA_HOME in '.local/env.sh'."
     fi
   fi
 fi
