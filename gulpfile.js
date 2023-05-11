@@ -1417,4 +1417,4 @@ exports.cdvBeforeCompile = cdvAsHook(cdvBeforeCompile);
 
 exports.default = gulp.series(appConfig, build);
 exports.serveBefore = gulp.series(build, appAndPluginWatch);
-exports['ionic:serve:before'] = exports.serveBefore; // Alias need need by @ionic/cli
+exports['ionic:serve:before'] = exports.serveBefore; // Alias need by @ionic/cli

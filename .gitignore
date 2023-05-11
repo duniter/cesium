@@ -2,8 +2,8 @@
 # http://git-scm.com/docs/gitignore
 
 /node_modules/
-/platforms/*
-#!/platforms/android
+/platforms/ios
+#/platforms/android
 /resources/android/build/local.properties
 /resources/android/build/*.keystore
 /resources/android/build/release-signing.properties
@@ -23,6 +23,8 @@
 
 /hooks/uglify-config.json
 /hooks/after_prepare/uglify.js
+
+/scripts/sdkmanager.log
 
 /www/js/config.js
 /www/dist
