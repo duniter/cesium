@@ -84,10 +84,7 @@ echo "----------------------------------"
 echo "- Compiling sources..."
 echo "----------------------------------"
 cd ${PROJECT_DIR} || exit 1
-gulp config build --env default_fr || exit 1
-
-echo "Clean previous sha256 files..."
-rm -rf ${PROJECT_DIR}/dist/*.sha256
+gulp config build --env default || exit 1
 
 echo "----------------------------------"
 echo "- Building Android artifact..."

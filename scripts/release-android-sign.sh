@@ -22,6 +22,7 @@ APK_FILE_ALTERNATIVE=${ANDROID_OUTPUT_APK_RELEASE}/${ANDROID_OUTPUT_APK_PREFIX}-
 
 cd ${PROJECT_DIR}
 
+
 # Checking files
 echo "Checking keystore file..."
 if [[ ! -f "${KEYSTORE_FILE}" ]]; then
@@ -38,6 +39,8 @@ if [[ ! -f "${APK_UNSIGNED_FILE}" ]]; then
   fi
   APK_UNSIGNED_FILE=${APK_FILE_ALTERNATIVE}
 fi
+
+echo "--- Signing Android APK..."
 
 # Remove previous version (only if unsigned exists)
 if [[ -f "${APK_SIGNED_FILE}" ]]; then
@@ -72,5 +75,4 @@ echo "Verify APK signature..."
 [[ $? -ne 0 ]] && exit 1
 echo "Verify APK signature [OK]"
 
-echo "Successfully generated signed APK at: ${APK_SIGNED_FILE}"
-exit 0
+echo "--- Successfully generated signed APK at: ${APK_SIGNED_FILE}"

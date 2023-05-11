@@ -26,7 +26,6 @@ if [[ "_$current" == "_" ]]; then
   echo " - Check version format is: x.y.z (x and y should be an integer)"
   exit 1
 fi
-echo "Sending v$current extension to Github..."
 
 ###  get auth token
 if [[ "_${GITHUB_TOKEN}" == "_" ]]; then
@@ -49,7 +48,7 @@ case "$1" in
     result=$(curl -i "$REPO_API_URL/releases/tags/v$current")
     release_url=$(echo "$result" | grep -P "\"url\": \"[^\"]+"  | grep -oP "$REPO_API_URL/releases/\d+")
     if [[ $release_url != "" ]]; then
-        echo "Deleting existing release..."
+        echo "--- Deleting existing release..."
         curl -H 'Authorization: token $GITHUB_TOKEN'  -XDELETE $release_url
     fi
     exit 0;
@@ -57,12 +56,12 @@ case "$1" in
 
   pre)
     prerelease="true"
-    echo "Creating new pre-release v$current..."
+    echo "--- Creating new pre-release v$current..."
     ;;
 
   rel)
     prerelease="false"
-    echo "Creating new release v$current..."
+    echo "--- Creating new release v$current..."
     ;;
   *)
     echo "No task given, or wrong arguments"
@@ -84,7 +83,7 @@ fi
 result=$(curl -s -H ''"$GITHUT_AUTH"'' "$REPO_API_URL/releases/tags/v$current")
 release_url=$(echo "$result" | grep -P "\"url\": \"[^\"]+" | grep -oP "https://[A-Za-z0-9/.-]+/releases/\d+")
 if [[ "_$release_url" != "_" ]]; then
-  echo "Deleting existing release... $release_url"
+  echo "--- Deleting existing release... $release_url"
   result=$(curl -H ''"$GITHUT_AUTH"'' -s -XDELETE $release_url)
   if [[ "_$result" != "_" ]]; then
       error_message=$(echo "$result" | grep -P "\"message\": \"[^\"]+" | grep -oP ": \"[^\"]+\"")
@@ -95,7 +94,11 @@ else
   echo "Release not exists yet on github."
 fi
 
-echo "Creating new release..."
+echo "--- Clean previous SHA256 files..."
+rm -rf ${PROJECT_DIR}/dist/**/*.sha256
+echo ""
+
+echo "--- Creating new release..."
 echo " - tag: v$current"
 echo " - description: $description"
 result=$(curl -X POST -H ''"$GITHUT_AUTH"'' -s $REPO_API_URL/releases -d '{"tag_name": "v'"$current"'","target_commitish": "master","name": "'"$current"'","body": "'"$description"'","draft": false,"prerelease": '"$prerelease"'}')
@@ -108,7 +111,7 @@ if [[ "_$upload_url" = "_" ]]; then
 fi
 
 ### Sending files
-echo "Uploading files to ${upload_url} ..."
+echo "--- Uploading files to ${upload_url} ..."
 
 # Upload web file
 WEB_BASENAME="${PROJECT_NAME}-v$current-web.zip"
@@ -174,6 +177,7 @@ else
   missing_file=true
 fi
 
+echo ""
 if [[ ${missing_file} == true ]]; then
   echo "-------------------------------------------"
   echo "ERROR: missing some artifacts (see logs)"
