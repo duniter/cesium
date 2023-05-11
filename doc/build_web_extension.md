@@ -8,7 +8,7 @@ Cesium can be build as Web extension, for Mozilla Firefox extension (`.xpi`) and
 
 Follow all the steps defined in the [Development guide](./development_guide.md).
 
-After that you should be able to start the application using `npm start`or `yarn run start`, and to test it.
+After that you should be able to start the application using `yarn run start`, and to test it.
 
 ## Build the web extension
 

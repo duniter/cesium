@@ -36,7 +36,7 @@ RUN npm install -g cordova@"$CORDOVA_VERSION" cordova-res@"$CORDOVA_RES_VERSION"
 RUN echo ANDROID_HOME="${ANDROID_HOME}" >> /etc/environment && \
     dpkg --add-architecture i386 && \
     apt-get update && \
-    apt-get -y install openjdk-8-jdk-headless && \
+    apt-get -y install openjdk-11-jdk-headless && \
     apt-get install -y --force-yes expect ant wget zipalign libc6-i386 lib32stdc++6 lib32gcc1 lib32ncurses5 lib32z1 qemu-kvm kmod && \
     apt-get clean && \
     apt-get autoclean && \

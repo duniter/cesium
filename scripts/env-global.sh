@@ -42,7 +42,7 @@ DIST_WEB=${PROJECT_DIR}/dist/web/build
 DIST_ANDROID=${PROJECT_DIR}/dist/android
 
 # Addons Mozilla Web extension ID
-WEB_EXT_ID="{6f9922f7-a054-4609-94ce-d269993246a5}"
+WEB_EXT_ID=${WEB_EXT_ID:-"{6f9922f7-a054-4609-94ce-d269993246a5}"}
 
 # /!\ WARN can be define in your <project>/.local/env.sh file
 #JAVA_HOME=
@@ -121,7 +121,7 @@ else
 fi
 
 # Checking if some global dependencies are missing
-GLOBAL_TOOLS="yarn ionic cordova cordova-res native-run web-ext"
+GLOBAL_TOOLS="yarn gulp ionic cordova web-ext cordova-res native-run"
 MISSING_GLOBAL_TOOLS=
 for GLOBAL_TOOL in ${GLOBAL_TOOLS}
 do
@@ -135,7 +135,7 @@ done
 # Install global dependencies
 if ! test -z "${MISSING_GLOBAL_TOOLS}"; then
   echo "Installing global dependencies..."
-  npm install -g yarn cordova cordova-res @ionic/cli@$IONIC_CLI_VERSION web-ext native-run
+  npm install -g yarn gulp cordova @ionic/cli@$IONIC_CLI_VERSION web-ext cordova-res native-run
   if ! test $? == 0; then
     echo "ERROR: Unable to install global dependencies"
     #exit 1

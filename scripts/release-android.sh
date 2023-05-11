@@ -13,7 +13,8 @@ KEY_ALIAS=Cesium
 KEY_PWD=
 
 # Preparing Android environment
-source ${PROJECT_DIR}/scripts/env-android.sh
+cd ${PROJECT_DIR}
+source scripts/env-android.sh
 [[ $? -ne 0 ]] && exit 1
 
 APK_SIGNED_FILE=${ANDROID_OUTPUT_APK_RELEASE}/${ANDROID_OUTPUT_APK_PREFIX}-release-signed.apk

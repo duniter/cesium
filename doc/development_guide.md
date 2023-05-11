@@ -3,8 +3,8 @@
 ## In a post-it
 
 ```bash
-# Install NodeJS v12
-nvm use 12
+# Install NodeJS v16
+nvm use 16
 npm install -g yarn 
 
 # Clone and compile from source
@@ -28,7 +28,7 @@ To build Cesium, you will have to:
       sudo apt-get install git wget curl unzip build-essential software-properties-common ruby ruby-dev ruby-ffi gcc make
    ```
 
-2. Installing node.js v12 :
+2. Installing node.js v16 :
 
   * First, install [nvm](https://github.com/nvm-sh/nvm) (Node Version Manager) :    
     ```bash
@@ -41,7 +41,7 @@ To build Cesium, you will have to:
 
   * Configure nvm to use the expected version: (**WARNING**: upper version will NOT work !) 
     ```bash
-       nvm install 12
+       nvm install 16
     ```
       
 3. Installing node build tools, as global dependencies:
@@ -64,7 +64,7 @@ To build Cesium, you will have to:
 
 3. Installing Cordova plugins (required to build Android and iOS artifacts): 
    ```bash
-      export JAVA_HOME=/path/to/jdk-8
+      export JAVA_HOME=/path/to/jdk-11
       export PATH=$JAVA_HOME/bin:$PATH
       ionic cordova prepare
    ```
@@ -73,7 +73,7 @@ To build Cesium, you will have to:
 
    > As a reminder: check that your command line is well configured:
    > - You must place yourself in the directory of the application: `cd cesium`
-   > - and working with NodeJs **v12**: `nvm use 12` (please check using the command `node --version`)
+   > - and working with NodeJs **v16**: `nvm use 16` (please check using the command `node --version`)
     
 
 ### Prepare configuration file
