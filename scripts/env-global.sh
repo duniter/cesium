@@ -25,16 +25,18 @@ NODEJS_VERSION=16
 IONIC_CLI_VERSION=6.20.9
 
 ANDROID_NDK_VERSION=21.0.6113669 # Should be compatible with 'cordova-sqlite-storage' plugin
-ANDROID_SDK_VERSION=30.0.3
+ANDROID_SDK_VERSION=32.0.0
 ANDROID_SDK_CLI_VERSION=8512546 # See https://developer.android.com/studio#command-tools
-#ANDROID_HOME="${HOME}/Android"
 ANDROID_SDK_ROOT="${HOME}/Android/Sdk"
 ANDROID_ALTERNATIVE_SDK_ROOT=/usr/lib/android-sdk
 ANDROID_SDK_CLI_ROOT=${ANDROID_SDK_ROOT}/cmdline-tools/${ANDROID_SDK_CLI_VERSION}
+ANDROID_BUILD_TOOLS_ROOT="${ANDROID_SDK_ROOT}/build-tools/${ANDROID_SDK_VERSION}"
 ANDROID_OUTPUT_APK_PREFIX=app
 ANDROID_OUTPUT_APK=${PROJECT_DIR}/platforms/android/${ANDROID_OUTPUT_APK_PREFIX}/build/outputs/apk
 ANDROID_OUTPUT_APK_DEBUG=${ANDROID_OUTPUT_APK}/debug
 ANDROID_OUTPUT_APK_RELEASE=${ANDROID_OUTPUT_APK}/release
+ANDROID_OUTPUT_MIN_SDK_VERSION=22 # Used by release-android-sign.sh
+ANDROID_OUTPUT_MAX_SDK_VERSION=34 # Used by release-android-sign.sh
 
 DIST_WEB=${PROJECT_DIR}/dist/web/build
 DIST_ANDROID=${PROJECT_DIR}/dist/android
@@ -73,7 +75,7 @@ if test -d "${JAVA_HOME}"; then
   else
     JAVA_MAJOR_VERSION=$(echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[1]}')
     JAVA_MINOR_VERSION=$(echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[2]}')
-    if ! test "${JAVA_MAJOR_VERSION}" == "11" || ! test "${JAVA_MINOR_VERSION}" == "0"; then
+    if ! test "${JAVA_MAJOR_VERSION}" -eq "11" || ! test "${JAVA_MINOR_VERSION}" -eq "0"; then
       echo "ERROR: Require a Java SDK in version 11, but found ${JAVA_VERSION}. You can override your default JAVA_HOME in '.local/env.sh'."
     fi
   fi
@@ -118,14 +120,20 @@ else
     echo "nvm (Node version manager) not found (directory ${NVM_DIR} not found). Please install, and retry"
 fi
 
+# Checking if some global dependencies are missing
+GLOBAL_TOOLS="yarn ionic cordova cordova-res native-run web-ext"
+MISSING_GLOBAL_TOOLS=
+for GLOBAL_TOOL in ${GLOBAL_TOOLS}
+do
+  GLOBAL_TOOL_PATH=$(which ${GLOBAL_TOOL})
+  if test -z "${GLOBAL_TOOL_PATH}"; then
+    echo "- Missing global dependency: ${GLOBAL_TOOL}"
+    MISSING_GLOBAL_TOOLS="${GLOBAL_TOOL} ${MISSING_GLOBAL_TOOLS}"
+  fi
+done
+
 # Install global dependencies
-YARN_PATH=`which yarn`
-IONIC_PATH=`which ionic`
-CORDOVA_PATH=`which cordova`
-CORDOVA_RES_PATH=`which cordova-res`
-NATIVE_RUN_PATH=`which native-run`
-WEB_EXT_PATH=`which web-ext`
-if test -z "${YARN_PATH}" || test -z "${IONIC_PATH}" || test -z "${CORDOVA_PATH}" || test -z "${CORDOVA_RES_PATH}" || test -z "${NATIVE_RUN_PATH}" || test -z "${WEB_EXT_PATH}"; then
+if ! test -z "${MISSING_GLOBAL_TOOLS}"; then
   echo "Installing global dependencies..."
   npm install -g yarn cordova cordova-res @ionic/cli@$IONIC_CLI_VERSION web-ext native-run
   if ! test $? == 0; then
@@ -139,15 +147,15 @@ fi
 
 # Install project dependencies
 if ! test -d "${PROJECT_DIR}/node_modules"; then
-    echo "Installing project dependencies..."
-    cd "${PROJECT_DIR}"
+    echo "--- Installing project dependencies..."
+    cd ${PROJECT_DIR}
     yarn install
 fi
 
 # Install platform Android
 if ! test -d "${PROJECT_DIR}/platforms/android"; then
-  echo "Installing platform Android..."
-  cd "${PROJECT_DIR}"
+  echo "-- Installing platform Android..."
+  cd ${PROJECT_DIR}
   ionic cordova platform add android
   if ! test $? == 0; then
     echo "ERROR: Unable to install Android platform. Will not be able to build Android artifacts!"
@@ -156,9 +164,9 @@ if ! test -d "${PROJECT_DIR}/platforms/android"; then
 fi
 
 if ! test -d "${PROJECT_DIR}/dist/desktop"; then
-  #echo "Installing project submodules..."
-  #cd "${PROJECT_DIR}"
-  #git submodule init && git submodule sync && git submodule update --remote --merge
+  echo "-- Checkout submodules (dist/desktop) ..."
+  cd "${PROJECT_DIR}"
+  git submodule init && git submodule sync && git submodule update --remote --merge
   if ! test $? == 0; then
     echo "ERROR: Unable to sync git submodule. Will not be able to build desktop artifacts!"
     #exit 1

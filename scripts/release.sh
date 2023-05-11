@@ -92,33 +92,16 @@ rm -rf ${PROJECT_DIR}/dist/*.sha256
 echo "----------------------------------"
 echo "- Building Android artifact..."
 echo "----------------------------------"
-mkdir -p ${DIST_ANDROID} || exit 1
-rm -rf ${DIST_ANDROID}/*.apk || exit 1
-rm -rf ${ANDROID_OUTPUT_APK_RELEASE}/*.apk || exit 1
-. scripts/build-android.sh --release
+cd ${PROJECT_DIR} || exit 1
+. scripts/release-android.sh
 [[ $? -ne 0 ]] && exit 1
-
-APK_RELEASE_FILE="${ANDROID_OUTPUT_APK_RELEASE}/app-release.apk"
-APK_RELEASE_UNSIGNED_FILE="${ANDROID_OUTPUT_APK_RELEASE}/app-release-unsigned.apk"
-if [[ ! -f "${APK_RELEASE_FILE}" ]]; then
-  if [[ ! -f "${APK_RELEASE_UNSIGNED_FILE}" ]]; then
-    echo "ERROR: Missing android artifact at ${APK_RELEASE_FILE}"
-    exit 1
-  else
-    . scripts/release-android-sign.sh
-    [[ $? -ne 0 ]] && exit 1
-  fi
-fi
-mkdir -p ${DIST_ANDROID} || exit 1
-cp ${APK_RELEASE_FILE} "${DIST_ANDROID}/${PROJECT_NAME}-v$2-android.apk" || exit 1
-
 
 echo "----------------------------------"
 echo "- Building web and extension artifacts..."
 echo "----------------------------------"
-cd ${PROJECT_DIR} || exit 1
 
-# Gnerate config (only once, to keep same config if web and web-extension artifacts)
+# Generate config (only once, to keep same config if web and web-extension artifacts)
+cd ${PROJECT_DIR} || exit 1
 gulp config --env default
 
 # Run web build
