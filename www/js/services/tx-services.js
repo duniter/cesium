@@ -154,6 +154,17 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
       // get TX history since
       if (fromTime !== 'pending') {
+        var slices = [];
+        // Fill slices: {params, cache}[]
+        {
+          var sliceTime = csSettings.data.walletHistorySliceSecond;
+          fromTime = fromTime - (fromTime % sliceTime);
+          for (var i = fromTime; i - sliceTime < nowInSec; i += sliceTime)  {
+            slices.push({params: {pubkey: pubkey, from: i, to: i+sliceTime-1}, cache: true  /*with cache*/});
+          }
+          slices.push({params: {pubkey: pubkey, from: nowInSec - (nowInSec % sliceTime), to: nowInSec+999999999}, cache: false/*no cache for the last slice*/});
+        }
+
         var reduceTxFn = function (res) {
           reduceTxAndPush(pubkey, res.history.sent, tx.history, processedTxMap, false);
           reduceTxAndPush(pubkey, res.history.received, tx.history, processedTxMap, false);
@@ -161,62 +172,59 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
         // get TX from a given time
         if (fromTime > 0) {
-          // Use slice, to be able to cache requests result
-          var sliceTime = csSettings.data.walletHistorySliceSecond;
-          fromTime = fromTime - (fromTime % sliceTime);
-          for(var i = fromTime; i - sliceTime < nowInSec; i += sliceTime)  {
-            jobs.push(BMA.tx.history.times({pubkey: pubkey, from: i, to: i+sliceTime-1}, true /*with cache*/)
-              .then(reduceTxFn)
-            );
-          }
-
-          // Last slide: no cache
-          jobs.push(BMA.tx.history.times({pubkey: pubkey, from: nowInSec - (nowInSec % sliceTime), to: nowInSec+999999999}, false/*no cache*/)
-            .then(reduceTxFn));
+          jobs.push(slices.map(function(slice) {
+              return BMA.tx.history.times(slice.params, slice.cache).then(reduceTxFn);
+          }));
         }
 
         // get all TX
         else {
-          jobs.push(BMA.tx.history.all({pubkey: pubkey})
-            .then(reduceTxFn)
-          );
+          jobs.push(BMA.tx.history.all({pubkey: pubkey}).then(reduceTxFn));
         }
 
         // get UD history
-        if (csSettings.data.showUDHistory && fromTime > 0) {
-          /*jobs.push(
-            BMA.ud.history({pubkey: pubkey})
-              .then(function(res){
-                udHistory = !res.history || !res.history.history ? [] :
-                  _.forEach(res.history.history, function(ud){
-                    if (ud.time < fromTime) return res; // skip to old UD
-                    var amount = powBase(ud.amount, ud.base);
-                    udHistory.push({
-                      time: ud.time,
-                      amount: amount,
-                      isUD: true,
-                      block_number: ud.block_number
-                    });
-                  });
-              }));*/
-          // API extension
-          jobs.push(
-            api.data.raisePromise.loadUDs({
-              pubkey: pubkey,
-              fromTime: fromTime
-            })
-              .then(function(res) {
-                if (!res || !res.length) return;
-                _.forEach(res, function(hits) {
-                  tx.history.push(hits);
-                });
-              })
+        if (csSettings.data.showUDHistory) {
+          var reduceUdFn = function(res) {
+            if (!res || !res.history || !res.history.history) return;
+            _.forEach(res.history.history, function(ud){
+              if (ud.time < fromTime) return res; // skip to old UD
+              var amount = powBase(ud.amount, ud.base);
+              tx.history.push({
+                time: ud.time,
+                amount: amount,
+                isUD: true,
+                block_number: ud.block_number
+              });
+            });
+          };
 
-              .catch(function(err) {
-                console.debug('Error while loading UDs history, on extension point.');
-                console.error(err);
-              })
-          );
+          // get UD from a given time
+          if ( fromTime > 0) {
+            jobs.push(slices.map(function(slice) {
+              return BMA.ud.history.times(slice.params, slice.cache).then(reduceTxFn);
+            }));
+            // API extension
+            // jobs.push(
+            //   api.data.raisePromise.loadUDs({
+            //     pubkey: pubkey,
+            //     fromTime: fromTime
+            //   })
+            //     .then(function(res) {
+            //       if (!res || !res.length) return;
+            //       _.forEach(res, function(hits) {
+            //         tx.history.push(hits);
+            //       });
+            //     })
+            //     .catch(function(err) {
+            //       console.error('Error while loading UDs history, on extension point.', err);
+            //       // Continue
+            //     })
+            // );
+          }
+          // get all UD
+          else {
+            jobs.push(BMA.ud.history.all({pubkey: pubkey}).then(reduceUdFn));
+          }
         }
       }
 

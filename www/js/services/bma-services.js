@@ -25,6 +25,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       api = {
         BMA: 'BASIC_MERKLED_API',
         BMAS: 'BMAS',
+        GVA: 'GVA',
+        GVAS: 'GVA S',
         WS2P: 'WS2P',
         BMATOR: 'BMATOR',
         WS2PTOR: 'WS2PTOR'
@@ -41,7 +43,9 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/("+pubkey+")(?:/([A-Za-z0-9_-]+))?",
         BMA_ENDPOINT: api.BMA + REGEX_ENDPOINT_PARAMS,
         BMAS_ENDPOINT: api.BMAS + REGEX_ENDPOINT_PARAMS,
-        WS2P_ENDPOINT: api.WS2P + " ([a-f0-9]{8})"+ REGEX_ENDPOINT_PARAMS,
+        GVA_ENDPOINT: api.GVA + REGEX_ENDPOINT_PARAMS,
+        GVAS_ENDPOINT: api.GVAS + REGEX_ENDPOINT_PARAMS,
+        WS2P_ENDPOINT: api.WS2P + " ([a-f0-9]{8})" + REGEX_ENDPOINT_PARAMS,
         BMATOR_ENDPOINT: api.BMATOR + " ([a-z0-9-_.]*|[0-9.]+|[0-9a-f:]+.onion)(?: ([0-9]+))?",
         WS2PTOR_ENDPOINT: api.WS2PTOR + " ([a-f0-9]{8}) ([a-z0-9-_.]*|[0-9.]+|[0-9a-f:]+.onion)(?: ([0-9]+))?(?: (.+))?"
       },
@@ -73,7 +77,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           MEDIUM: 5000, // 5s
           LONG: 10000, // 10s
           DEFAULT: csConfig.timeout,
-          VERY_LONG: 60000
+          VERY_LONG: 60000 * 2 // 2 min (.e.g need by /tx/sources for Duniter < v1.9
         },
         regexp: regexp,
         api: api
@@ -437,6 +441,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         BMA_ENDPOINT: exact(regexp.BMA_ENDPOINT),
         BMAS_ENDPOINT: exact(regexp.BMAS_ENDPOINT),
         WS2P_ENDPOINT: exact(regexp.WS2P_ENDPOINT),
+        GVA_ENDPOINT: exact(regexp.GVA_ENDPOINT),
+        GVAS_ENDPOINT: exact(regexp.GVAS_ENDPOINT),
         BMATOR_ENDPOINT: exact(regexp.BMATOR_ENDPOINT),
         WS2PTOR_ENDPOINT: exact(regexp.WS2PTOR_ENDPOINT),
         // TX output conditions
@@ -450,7 +456,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         TX_OUTPUT_FUNCTIONS: test(OUTPUT_FUNCTIONS)
       },
       node: {
-        summary: get('/node/summary', csCache.constants.LONG),
+        summary: get('/node/summary', csCache.constants.MEDIUM),
         same: isSameNode,
         forceUseSsl: that.forceUseSsl
       },
@@ -500,7 +506,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         }
       },
       tx: {
-        sources: get('/tx/sources/:pubkey', csCache.constants.SHORT),
+        sources: get('/tx/sources/:pubkey', csCache.constants.SHORT, constants.TIMEOUT.VERY_LONG),
         process: post('/tx/process'),
         history: {
           all: function(params) {
@@ -524,12 +530,19 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
                 return res;
               });
           },
-          blocks: get('/tx/history/:pubkey/blocks/:from/:to', csCache.constants.LONG),
+          /*blocks: get('/tx/history/:pubkey/blocks/:from/:to', csCache.constants.LONG),*/
           pending: get('/tx/history/:pubkey/pending')
         }
       },
       ud: {
-        history: get('/ud/history/:pubkey')
+        history: {
+          all: get('/ud/history/:pubkey'),
+          times: function(params, cache) {
+            // No cache by default
+            return ((cache !== true) ? exports.raw.ud.history.times(params) : exports.raw.ud.history.timesWithCache(params));
+          },
+          /*blocks: get('/ud/history/:pubkey/blocks/:from/:to', csCache.constants.LONG),*/
+        }
       },
       uri: {},
       version: {},
@@ -549,6 +562,12 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
             all: get('/tx/history/:pubkey')
           }
         },
+        ud: {
+          history: {
+            timesWithCache: get('/ud/history/:pubkey/times/:from/:to', csCache.constants.LONG),
+            times: get('/ud/history/:pubkey/times/:from/:to')
+          }
+        }
       }
     };
 
@@ -710,6 +729,32 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           "useSsl": false,
           "useTor": true,
           "useWs2p": true
+        };
+      }
+      // Try GVA
+      matches = exports.regexp.GVA_ENDPOINT.exec(endpoint);
+      if (matches) {
+        return {
+          "dns": matches[2] || '',
+          "ipv4": matches[4] || '',
+          "ipv6": matches[6] || '',
+          "port": matches[8] || 80,
+          "useSsl": false,
+          "path": matches[10],
+          "useGva": true
+        };
+      }
+      // Try GVAS
+      matches = exports.regexp.GVAS_ENDPOINT.exec(endpoint);
+      if (matches) {
+        return {
+          "dns": matches[2] || '',
+          "ipv4": matches[4] || '',
+          "ipv6": matches[6] || '',
+          "port": matches[8] || 443,
+          "useSsl": true,
+          "path": matches[10],
+          "useGva": true
         };
       }
 

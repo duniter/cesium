@@ -35,6 +35,10 @@
                 title="WS2P">
             <i class="ion-arrow-swap"></i><small class="hidden-md"> WS2P</small>
           </span>
+          <span ng-if=":rebind:peer.isGva()"
+                title="GVA">
+            <i class="ion-arrow-swap"></i><small class="hidden-md"> GVA</small>
+          </span>
         </div>
         <div ng-if=":rebind:!peer.isWs2p()&&peer.hasEndpoint('ES_USER_API')"
              ng-click="showEndpointsPopover($event, peer, 'ES_USER_API')"

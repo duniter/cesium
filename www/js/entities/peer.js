@@ -178,3 +178,8 @@ Peer.prototype.isBma = function() {
 Peer.prototype.hasBma = function() {
   return this.hasEndpoint('(BASIC_MERKLED_API|BMAS|BMATOR)');
 };
+
+Peer.prototype.isGva = function() {
+  var bma = this.bma || this.getBMA();
+  return bma.useGva;
+};
