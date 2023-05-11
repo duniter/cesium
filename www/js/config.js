@@ -45,13 +45,10 @@ angular.module("cesium.config", [])
 	"feed": {
 		"jsonFeed": {
 			"fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-fr.json",
-			"en": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-en.json"
+			"en": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-en.json",
+			"es": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-es.json"
 		},
 		"maxContentLength": 1300
-	},
-	"node": {
-		"host": "g1.duniter.org",
-		"port": 443
 	},
 	"fallbackNodes": [
 		{
@@ -59,7 +56,7 @@ angular.module("cesium.config", [])
 			"port": 443
 		},
 		{
-			"host": "g1.librelois.fr",
+			"host": "g1.cloud-libre.eu",
 			"port": 443
 		},
 		{
@@ -67,15 +64,19 @@ angular.module("cesium.config", [])
 			"port": 443
 		},
 		{
-			"host": "g1.le-sou.org",
+			"host": "g1.mithril.re",
 			"port": 443
 		},
-    {
-      "host": "duniter.moul.re",
-      "port": 443
-    },
+		{
+			"host": "vit.fdn.org",
+			"port": 443
+		},
 		{
 			"host": "g1.duniter.org",
+			"port": 443
+		},
+		{
+			"host": "g1v1.p2P.legal",
 			"port": 443
 		}
 	],
@@ -94,11 +95,19 @@ angular.module("cesium.config", [])
 			"port": 443,
 			"fallbackNodes": [
 				{
+					"host": "g1.data.presles.fr",
+					"port": 443
+				},
+				{
 					"host": "g1.data.le-sou.org",
 					"port": 443
 				},
 				{
 					"host": "g1.data.mithril.re",
+					"port": 443
+				},
+				{
+					"host": "g1.data.e-is.pro",
 					"port": 443
 				}
 			],
@@ -112,7 +121,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "1.7.0-rc2",
-	"build": "2023-02-27T10:33:03.091Z",
+	"build": "2023-05-11T15:45:13.623Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 

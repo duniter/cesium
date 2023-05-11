@@ -23,8 +23,8 @@
     "build": "gulp build",
     "build:web": "gulp config --env default && gulp webBuild --release",
     "build:webExt": "gulp config --env default && gulp webExtBuild --release",
-    "build:android": "ionic cordova build android --color --release",
-    "build:ios": "ionic cordova build ios --color --release"
+    "build:android": "ionic cordova build android --warning-mode=none --color --release -- -- --packageType=apk",
+    "build:ios": "ionic cordova build ios --warning-mode=none --color --release -- -- --packageType=apk"
   },
   "keywords": [
     "duniter",
