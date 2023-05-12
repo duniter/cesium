@@ -103,6 +103,14 @@ angular.module("cesium.config", [])
 					"port": 443
 				},
 				{
+					"host": "g1.data.brussels.ovh",
+					"port": 443
+				},
+				{
+					"host": "g1.data.pini.fr",
+					"port": 443
+				},
+				{
 					"host": "g1.data.mithril.re",
 					"port": 443
 				},
@@ -121,7 +129,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "1.7.0",
-	"build": "2023-05-12T14:55:14.211Z",
+	"build": "2023-05-12T15:02:11.625Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
