@@ -91,6 +91,14 @@
             "port": 443
           },
           {
+            "host": "g1.data.brussels.ovh",
+            "port": 443
+          },
+          {
+            "host": "g1.data.pini.fr",
+            "port": 443
+          },
+          {
             "host": "g1.data.mithril.re",
             "port": 443
           },
