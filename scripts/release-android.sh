@@ -44,12 +44,20 @@ if [[ ! -f "${APK_SIGNED_FILE}" ]]; then
   exit 1
 fi
 
+# Get current version
+cd ${PROJECT_DIR}
+current=$(grep -m 1 -oP "version\": \"\d+.\d+.\d+(-\w+[-0-9]*)?\"" package.json | grep -m 1 -oP "\d+.\d+.\d+(-\w+[-0-9]*)?")
+if [[ "_$current" == "_" ]]; then
+  echo "Unable to read the current version in 'package.json'. Please check version format is: x.y.z (x and y should be an integer)."
+  exit 1;
+fi
+
 # Copy signed APK to 'dist/android/build'
 echo ""
-echo "--- Copying Android APK to '${DIST_ANDROID}'..."
+echo "--- Copying Android APK to '${APK_FINAL_FILE}'..."
 APK_BASENAME="${PROJECT_NAME}-v${current}-android.apk"
 APK_FINAL_FILE="${DIST_ANDROID}/${APK_BASENAME}"
-mkdir -p ${DIST_ANDROID}
-cp -f "${APK_SIGNED_FILE}" "${DIST_ANDROID}/${APK_BASENAME}"
+mkdir -p "${DIST_ANDROID}"
+cp -f "${APK_SIGNED_FILE}" "${APK_FINAL_FILE}"
 echo "--- Copying Android APK [OK]"
 echo ""
