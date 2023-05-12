@@ -151,7 +151,7 @@ if [[ -f "${WEB_EXT_XPI_FILE}" ]]; then
   browser_download_url=$(echo "$result" | grep -P "\"browser_download_url\":[ ]?\"[^\"]+" | grep -oP "\"browser_download_url\":[ ]?\"[^\"]+"  | grep -oP "https://[A-Za-z0-9/.-]+")
   WEB_EXT_XPI_SHA256=$(cd ${DIST_WEB} && sha256sum "${WEB_EXT_XPI_BASENAME}")
   echo " - ${browser_download_url}  | Checksum: ${WEB_EXT_XPI_SHA256}"
-  echo "${WEB_EXT_XPI_SHA256}  ${WEB_EXT_XPI_BASENAME}" > "${WEB_EXT_XPI_BASENAME}.sha256"
+  echo "${WEB_EXT_XPI_SHA256}  ${WEB_EXT_XPI_BASENAME}" > "${WEB_EXT_XPI_FILE}.sha256"
   result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: text/plain' -T "${WEB_EXT_XPI_FILE}.sha256" "${upload_url}?name=${WEB_EXT_XPI_BASENAME}.sha256")
 else
   echo " - ERROR: Web signed extension artifact (XPI) not found! Skipping."

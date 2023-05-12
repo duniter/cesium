@@ -233,7 +233,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     });
 
     // If need select a random peer, from the config
-    if (!newData.node && _.size(csConfig.fallbackNodes) > 0) {
+    if (!data.node && !newData.node && _.size(csConfig.fallbackNodes) > 0) {
       newData.node = _.sample(csConfig.fallbackNodes);
       console.info('[settings] Random selected peer: [{0}:{1}]'.format(newData.node.host, newData.node.port||80));
       newData.node.temporary = true;
