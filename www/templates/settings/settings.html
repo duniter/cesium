@@ -207,12 +207,24 @@
           <div class="input-label" ng-bind-html="'SETTINGS.EXPERT_MODE' | translate"></div>
           <h4 class="gray" ng-bind-html="'SETTINGS.EXPERT_MODE_HELP' | translate"></h4>
           <label class="toggle toggle-royal">
-            <input type="checkbox" ng-model="formData.expertMode" >
+            <input type="checkbox" ng-model="formData.expertMode" ng-change="changeExpertMode(formData.expertMode)" >
             <div class="track">
               <div class="handle"></div>
             </div>
           </label>
         </div>
+
+        <!-- Duniter node -->
+        <!--<div class="item item-text-wrap item-toggle dark">
+          <div class="input-label" ng-bind-html="'SETTINGS.EXPERT_MODE' | translate"></div>
+          <h4 class="gray" ng-bind-html="'SETTINGS.EXPERT_MODE_HELP' | translate"></h4>
+          <label class="toggle toggle-royal">
+            <input type="checkbox" ng-model="formData.expertMode" >
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
+        </div>-->
 
         <!-- Duniter node -->
         <div class="item ink item-text-wrap item-icon-right" ng-click="changeNode()">
@@ -252,30 +264,16 @@
 
           <i class="icon ion-ios-arrow-right" ng-if="formData.expertMode"></i>
         </div>
-<!--        <ion-item class="ink item-icon-right visible-xs visible-sm" ng-click="changeNode()">-->
-<!--          <div class="input-label hidden-xs" translate>SETTINGS.PEER</div>-->
-<!--          <div class="input-label visible-xs" translate>SETTINGS.PEER_SHORT</div>-->
 
-<!--          &lt;!&ndash; node temporary changed &ndash;&gt;-->
-<!--          <ng-if ng-if="formData.node.temporary">-->
-<!--            <h4 class="gray text-wrap assertive" >-->
-<!--              <span class="ion-alert-circled"></span>-->
-<!--              <span ng-bind-html="'SETTINGS.PEER_CHANGED_TEMPORARY' | translate "></span>-->
-<!--            </h4>-->
-<!--            <div class="badge badge-assertive">{{bma.server}}</div>-->
-<!--          </ng-if>-->
-<!--          <div class="badge badge-balanced" ng-if="!formData.node.temporary">{{bma.server}}</div>-->
-<!--          <i class="icon ion-ios-arrow-right" ng-if="formData.expertMode"></i>-->
-<!--        </ion-item>-->
-
+        <!-- Network scan timeout -->
         <label class="item item-select item-text-wrap" ng-if="formData.expertMode">
           <div class="input-label" style="max-width: 70%;">
-            <span translate>SETTINGS.PEER_TIMEOUT</span>
+            <span translate>SETTINGS.NETWORK_ANALYZE_TIMEOUT</span>
           </div>
-          <h4 class="gray text-wrap hidden-xs" ng-bind-html="'SETTINGS.PEER_TIMEOUT_HELP' | translate"></h4>
+          <h4 class="gray text-wrap hidden-xs" ng-bind-html="'SETTINGS.NETWORK_ANALYZE_TIMEOUT_HELP' | translate"></h4>
 
           <select ng-model="formData.timeout"
-                  ng-options="t as (t|formatDurationMs) for t in timeouts track by t">
+                  ng-options="t as ((t.label|translate) || (t.value|formatDurationMs)) for t in timeouts track by t.value">
           </select>
         </label>
 

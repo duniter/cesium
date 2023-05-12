@@ -128,19 +128,20 @@
     "REPORT_ISSUE": "Reportar anomalía",
     "NOT_YOUR_ACCOUNT_QUESTION": "¿No es suya la cuenta <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b>?",
     "BTN_CHANGE_ACCOUNT": "Desconectar esta cuenta",
-    "CONNECTION_ERROR": "Nodo <b>{{server}}</b> inalcanzable o dirección inválida.<br/><br/>Compruebe su conexión a Internet, o nodo Duniter <a class=\"positive\" ng-click=\"doQuickFix('settings')\">en los ajustes</a>."
+    "PEER_CONNECTION_ERROR": "Nodo <b>{{server}}</b> inalcanzable o dirección inválida.<br/><br/>Compruebe su conexión a Internet, o nodo Duniter <a class=\"positive\" ng-click=\"doQuickFix('settings')\">en los ajustes</a>.",
+    "NETWORK_CONNECTION_ERROR": "No se puede alcanzar la red.<br/><br/>Comprueba tu conexión a Internet, o selecciona un nodo manualmente <a class=\"positive\" ng-click=\"doQuickFix('settings')\">en los ajustes</a>."
   },
   "SETTINGS": {
     "TITLE": "Ajustes",
     "DISPLAY_DIVIDER": "Visualización",
     "STORAGE_DIVIDER": "Almacenamiento",
     "NETWORK_SETTINGS": "Red",
-    "PEER": "Dirección del nodo Duniter",
+    "PEER": "Nodo Duniter",
     "PEER_CHANGED_TEMPORARY": "Dirección utilizada temporalmente",
     "PEER_SELECTED_AUTOMATICALLY": "Nodo seleccionado automáticamente al inicio",
-    "PEER_TIMEOUT": "Tiempo de espera máximo (timeout)",
-    "PEER_TIMEOUT_HELP": "Tiempo de espera máximo para obtener una respuesta del nodo",
-    "PEER_SHORT": "Nodo Duniter",
+    "NETWORK_ANALYZE_TIMEOUT": "Temps d'espera màxim (timeout)",
+    "NETWORK_ANALYZE_TIMEOUT_HELP": "Tiempo de espera máximo para el análisis de la red",
+    "NETWORK_ANALYZE_TIMEOUT_AUTO": "Auto",
     "PERSIST_CACHE": "Conservar los datos de navegación (experimental)",
     "PERSIST_CACHE_HELP": "Permite una navegación más rápida, conservando localmente los datos recibidos, para usar de una sesión a otra.",
     "USE_LOCAL_STORAGE": "Activar el almacenamiento local",
@@ -309,6 +310,8 @@
       }
     },
     "INFO": {
+      "CONNECTING_TO_NETWORK": "Conectando a la red...",
+      "ANALYZING_NETWORK": "Analizando la red {{currency|abbreviate}}...",
       "ONLY_SSL_PEERS": "La visualización de los nodos sin SSL está deteriorada porque Cesium funciona en modo HTTPS."
     }
   },

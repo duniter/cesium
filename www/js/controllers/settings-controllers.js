@@ -36,13 +36,14 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
   };
   // Fill timeout
   $scope.timeouts = [
-    500,
-    1000,
-    5000,
-    10000,
-    30000,
-    60000,
-    300000
+    {label: 'SETTINGS.NETWORK_ANALYZE_TIMEOUT_AUTO', value: -1},
+    {value: 500},
+    {value: 1000},
+    {value: 5000},
+    {value: 10000},
+    {value: 30000},
+    {value: 60000},
+    {value: 300000}
   ];
   $scope.keepAuthIdleLabels = {
     /*0: {
@@ -181,6 +182,13 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
 
   $scope.changeLanguage = function(langKey) {
     $translate.use(langKey);
+  };
+
+  $scope.changeExpertMode = function(expertMode) {
+    // Restart platform, to auto select node
+    if (!expertMode) {
+      csPlatform.restart();
+    }
   };
 
   // Change node

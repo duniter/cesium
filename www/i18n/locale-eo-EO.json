@@ -131,7 +131,8 @@
     "REPORT_ISSUE": "fuŝaĵo",
     "NOT_YOUR_ACCOUNT_QUESTION" : "Vi ne posedas la konton <b class=\"ion-key\"> {{pubkey|formatPubkey}}</b>&nbsp;?",
     "BTN_CHANGE_ACCOUNT": "Malkonektu tiun ĉi konton",
-    "CONNECTION_ERROR": "Nodo <b>{{server}}</b> neatingebla aŭ adreso nevalida.<br/><br/>Kontrolu vian retkonekton, aŭ elektu alian nodon <a class=\"positive\" ng-click=\"doQuickFix('settings')\">ĉe la parametroj</a>.",
+    "PEER_CONNECTION_ERROR": "Nodo <b>{{server}}</b> neatingebla aŭ adreso nevalida.<br/><br/>Kontrolu vian retkonekton, aŭ elektu alian nodon <a class=\"positive\" ng-click=\"doQuickFix('settings')\">ĉe la parametroj</a>.",
+    "NETWORK_CONNECTION_ERROR": "Reto neatingeblas.<br/><br/>Kontrolu vian interreta konekto, aŭ selektu nodon permane <a class=\"positive\" ng-click=\"doQuickFix('settings')\">en la agordoj</a>.",
     "SHOW_ALL_FEED": "Vidi ĉion",
     "READ_MORE": "Legi la sekvon",
     "FEED_SOURCE": "Fonto"
@@ -141,12 +142,12 @@
     "DISPLAY_DIVIDER": "Afiŝado",
     "STORAGE_DIVIDER": "Stokado",
     "NETWORK_SETTINGS": "Reto",
-    "PEER": "Adreso de la nodo Duniter",
-    "PEER_SHORT": "Adreso de la nodo",
+    "PEER": "Nodo Duniter",
     "PEER_CHANGED_TEMPORARY": "Adreso provizore uzata",
     "PEER_SELECTED_AUTOMATICALLY": "Nodo aŭtomate elektita ĉe starto",
-    "PEER_TIMEOUT": "Maksimuma atendotempo (eltempigo)",
-    "PEER_TIMEOUT_HELP": "Maksimuma atendotempo por ricevi respondon de la nodo",
+    "NETWORK_ANALYZE_TIMEOUT": "Maksimuma atendotempo (eltempigo)",
+    "NETWORK_ANALYZE_TIMEOUT_HELP": "Maksimuma atendotempo por reto analizo",
+    "NETWORK_ANALYZE_TIMEOUT_AUTO": "Auto",
     "PERSIST_CACHE": "Konservi la datenojn pri retumado (provaĵo)",
     "PERSIST_CACHE_HELP": "Ebligas pli rapidan retumadon, loke konservante la ricevitajn datenojn, por uzi ilin de seanco al alia.",
     "USE_LOCAL_STORAGE": "Aktivigi lokan stokadon",
@@ -315,6 +316,8 @@
       }
     },
     "INFO": {
+      "CONNECTING_TO_NETWORK": "Konektiĝo al la reto...",
+      "ANALYZING_NETWORK": "Analizo de la {{currency|abbreviate}} reto...",
       "ONLY_SSL_PEERS": "La nodoj ne-SSL estas mis-afiŝitaj, ĉar Cesium funkcias laŭ moduso HTTPS."
     }
   },

@@ -70,7 +70,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     httpsMode: false
   },
   defaultSettings = angular.merge({
-    timeout : undefined, // Default will be set by csConfig.timeout
+    timeout : -1, // -1 = auto
     useRelative: false,
     useLocalStorage: !!$window.localStorage, // override to false if no device
     useLocalStorageEncryption: false,

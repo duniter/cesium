@@ -131,7 +131,8 @@
     "REPORT_ISSUE": "anomalie",
     "NOT_YOUR_ACCOUNT_QUESTION" : "Vous n'êtes pas propriétaire du compte <b class=\"ion-key\"> {{pubkey|formatPubkey}}</b>&nbsp;?",
     "BTN_CHANGE_ACCOUNT": "Déconnecter ce compte",
-    "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connexion Internet, ou changer de nœud <a class=\"positive\" ng-click=\"doQuickFix('settings')\">dans les paramètres</a>.",
+    "PEER_CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connexion Internet, ou changer de nœud <a class=\"positive\" ng-click=\"doQuickFix('settings')\">dans les paramètres</a>.",
+    "NETWORK_CONNECTION_ERROR": "Réseau injoignable.<br/><br/>Vérifiez votre connexion Internet, ou sélectionnez un nœud manuellement <a class=\"positive\" ng-click=\"doQuickFix('settings')\">dans les paramètres</a>.",
     "SHOW_ALL_FEED": "Voir tout",
     "READ_MORE": "Lire la suite",
     "FEED_SOURCE": "Source"
@@ -142,11 +143,11 @@
     "STORAGE_DIVIDER": "Stockage",
     "NETWORK_SETTINGS": "Réseau",
     "PEER": "Nœud Duniter",
-    "PEER_SHORT": "Nœud Duniter",
     "PEER_CHANGED_TEMPORARY": "Adresse utilisée temporairement",
     "PEER_SELECTED_AUTOMATICALLY": "Sélection automatiquement du nœud au démarrage",
-    "PEER_TIMEOUT": "Délai d'attente maximal (timeout)",
-    "PEER_TIMEOUT_HELP": "Délai d'attente maximal pour obtenir la réponse du nœud",
+    "NETWORK_ANALYZE_TIMEOUT": "Délai d'attente maximal (timeout)",
+    "NETWORK_ANALYZE_TIMEOUT_HELP": "Délai d'attente maximal pour l'analyse du réseau",
+    "NETWORK_ANALYZE_TIMEOUT_AUTO": "Auto",
     "PERSIST_CACHE": "Conserver les données de navigation (expérimental)",
     "PERSIST_CACHE_HELP": "Permet une navigation plus rapide, en conservant localement les données reçues, pour les utiliser d'une session à l'autre.",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
@@ -315,8 +316,8 @@
       }
     },
     "INFO": {
-      "CONNECTING_TO_PEER": "Connexion au nœud réseau...",
-      "CHECKING_NETWORK_STATE": "Calcul de l'état du réseau {{currency|abbreviate}}...",
+      "CONNECTING_TO_NETWORK": "Connexion au réseau...",
+      "ANALYZING_NETWORK": "Analyse du réseau {{currency|abbreviate}}...",
       "ONLY_SSL_PEERS": "Les nœuds non SSL ont un affichage dégradé, car Cesium fonctionne en mode HTTPS."
     }
   },
@@ -533,7 +534,7 @@
       "SELECT_ACCOUNT_TYPE": "Choisissez le type de compte à créer :",
       "MEMBER_ACCOUNT": "Compte membre",
       "MEMBER_ACCOUNT_TITLE": "Création d'un compte membre",
-      "MEMBER_ACCOUNT_HELP": "Vous connaissez suffisamment la monnaie libre et vous voulez participer à sa création ?<br/>En tant qu'individu, vous pouvez créer votre compte membre (un seul par individu). Celui-ci fonctionne comme un compte simple portefeuille, mais permet en plus de co-produire la monnaie, en <b>recevant chaque {{parameters.dt|formatPeriod}} un dividende universel</b> : à vous ensuite d'en faire bon usage !",
+      "MEMBER_ACCOUNT_HELP": "Vous connaissez suffisamment la monnaie libre et vous voulez participer à sa co-création ?<br/>En tant qu'individu, vous pouvez créer votre compte membre (un seul par individu). Celui-ci fonctionne comme un compte simple portefeuille, mais permet en plus de co-produire la monnaie, en <b>recevant chaque {{parameters.dt|formatPeriod}} un dividende universel</b> : à vous ensuite d'en faire bon usage !",
       "WALLET_ACCOUNT": "Compte simple portefeuille",
       "WALLET_ACCOUNT_TITLE": "Création d'un portefeuille",
       "WALLET_ACCOUNT_HELP": "Vous <b>découvrez la monnaie libre</b> ? Vous avez besoin d'un compte supplémentaire ?<br/>Ce type de compte vous conviendra. Bien qu'il ne co-produise la monnaie (contrairement à un compte membre - voir ci-dessous), vous pourrez y recevoir et envoyer des paiements, dès la fin de l'inscription.<br/>Si besoin, vous pourrez le transformer en compte membre ultérieurement.",

@@ -114,16 +114,18 @@
     "REPORT_ISSUE": "Meld een probleem",
     "NOT_YOUR_ACCOUNT_QUESTION" : "Is rekening <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b> niet van jou?",
     "BTN_CHANGE_ACCOUNT": "Dze rekening ontkoppelen",
-    "CONNECTION_ERROR": "Node <b>{{server}}</b> onbereikbaar of ongeldig adres.<br/><br/>Controleer de internetverbinding, of schakel knooppunt <a class=\"positive\" ng-click=\"doQuickFix('settings')\">in parameters</a>."
+    "CONNECTION_ERROR": "Node <b>{{server}}</b> onbereikbaar of ongeldig adres.<br/><br/>Controleer de internetverbinding, of schakel knooppunt <a class=\"positive\" ng-click=\"doQuickFix('settings')\">in de instellingen</a>.",
+    "NETWORK_CONNECTION_ERROR": "Netwerk is niet bereikbaar.<br/><br/>Controleer uw internetverbinding, of selecteer een node handmatig <a class=\"positive\" ng-click=\"doQuickFix('settings')\">in de instellingen</a>."
   },
   "SETTINGS": {
     "TITLE": "Instellingen",
     "NETWORK_SETTINGS": "Netwerk",
-    "PEER": "Duniter knooppunt adres",
+    "PEER": "Duniter knooppunt",
     "PEER_CHANGED_TEMPORARY": "Adres tijdelijk worden gebruikt",
     "PEER_SELECTED_AUTOMATICALLY": "Node automatisch geselecteerd bij opstarten",
-    "PEER_TIMEOUT": "Maximale wachttijd (time-out)",
-    "PEER_TIMEOUT_HELP": "Maximale wachttijd om een reactie van de node te krijgen",
+    "NETWORK_ANALYZE_TIMEOUT": "Maximale wachttijd (time-out)",
+    "NETWORK_ANALYZE_TIMEOUT_HELP": "Maximale wachttijd voor netwerkanalyse",
+    "NETWORK_ANALYZE_TIMEOUT_AUTO": "Auto",
     "USE_LOCAL_STORAGE": "Lokale opslag inschakelen",
     "USE_LOCAL_STORAGE_HELP": "Laat je instellingen opslaan",
     "ENABLE_HELPTIP": "Contextgebonden hulp inschakelen",
@@ -239,6 +241,8 @@
       }
     },
     "INFO": {
+      "CONNECTING_TO_NETWORK": "Verbinden met het netwerk...",
+      "ANALYZING_NETWORK": "Analyseren van het {{currency|abbreviate}} netwerk...",
       "ONLY_SSL_PEERS": "Les noeuds non SSL ont un affichage dégradé, car Cesium fonctionne en mode HTTPS."
     }
   },

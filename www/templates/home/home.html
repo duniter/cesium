@@ -46,7 +46,8 @@
         <div class="center padding animate-fade-in animate-show-hide ng-hide" ng-show="!loading && error">
           <div class="card card-item padding">
             <p class="item-content item-text-wrap">
-                <span class="dark" trust-as-html="'HOME.CONNECTION_ERROR'|translate:node"></span>
+              <span class="dark" ng-if="$root.settings.expertMode" trust-as-html="'HOME.PEER_CONNECTION_ERROR'|translate:node"></span>
+              <span class="dark" ng-if="!$root.settings.expertMode" trust-as-html="'HOME.NETWORK_CONNECTION_ERROR'|translate"></span>
             </p>
 
             <!-- Retry -->

@@ -151,9 +151,9 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       checkBmaNodeAliveCounter++;
       if (checkBmaNodeAliveCounter > 3)  throw 'ERROR.CHECK_NETWORK_CONNECTION'; // Avoid infinite loop
 
-      api.start.raise.message('NETWORK.INFO.CONNECTING_TO_PEER');
+      api.start.raise.message('NETWORK.INFO.CONNECTING_TO_NETWORK');
 
-      var timeout = csSettings.data.expertMode ? csSettings.data.timeout : Device.network.timeout(csConfig.timeout);
+      var timeout = csSettings.data.expertMode && csSettings.data.timeout > 0 ? csSettings.data.timeout : Device.network.timeout();
       return BMA.filterAliveNodes(csSettings.data.fallbackNodes, timeout)
         .then(function (fallbackNodes) {
           if (!fallbackNodes.length) throw 'ERROR.CHECK_NETWORK_CONNECTION';
@@ -194,7 +194,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       var now = Date.now();
 
       console.info("[platform] Checking if node is synchronized...");
-      api.start.raise.message('NETWORK.INFO.CHECKING_NETWORK_STATE');
+      api.start.raise.message('NETWORK.INFO.ANALYZING_NETWORK');
 
       var askUserConfirmation = csSettings.data.expertMode;
 

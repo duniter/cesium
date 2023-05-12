@@ -131,7 +131,8 @@
     "REPORT_ISSUE": "Segnalare un bug",
     "NOT_YOUR_ACCOUNT_QUESTION" : "Non sei proprietario del conto <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b>?",
     "BTN_CHANGE_ACCOUNT": "Disconettere questo conto",
-    "CONNECTION_ERROR": "Nodo <b>{{server}}</b> irraggiungibile o indirizzo non valido. <br/><br/> Verifica la tua connessione o cambia nodo. <a class=\"positive\" ng-click=\"doQuickFix('settings')\">nelle impostazioni. </a>.",
+    "PEER_CONNECTION_ERROR": "Nodo <b>{{server}}</b> irraggiungibile o indirizzo non valido. <br/><br/> Verifica la tua connessione o cambia nodo. <a class=\"positive\" ng-click=\"doQuickFix('settings')\">nelle impostazioni</a>.",
+    "NETWORK_CONNECTION_ERROR": "Rete non raggiungibile.<br/><br/>Controlla la tua connessione Internet, o seleziona un nodo manualmente <a class=\"positive\" ng-click=\"doQuickFix('settings')\">nelle impostazioni</a>.",
     "SHOW_ALL_FEED": "Mostra tutto",
     "READ_MORE": "Leggi di più",
     "FEED_SOURCE": "Fonte"
@@ -141,12 +142,12 @@
     "DISPLAY_DIVIDER": "Schermo",
     "STORAGE_DIVIDER": "Memoria",
     "NETWORK_SETTINGS": "Rete",
-    "PEER": "Indirizzo nodo Duniter",
-    "PEER_SHORT": "Indirizzo nodo",
+    "PEER": "Nodo Duniter",
     "PEER_CHANGED_TEMPORARY": "Indirizzo usato temporaneamente",
     "PEER_SELECTED_AUTOMATICALLY": "Nodo selezionato automaticamente all'avvio",
-    "PEER_TIMEOUT": "Tempo di attesa massimo (timeout)",
-    "PEER_TIMEOUT_HELP": "Tempo di attesa massimo per ottenere una risposta dal nodo",
+    "NETWORK_ANALYZE_TIMEOUT": "Tempo di attesa massimo (timeout)",
+    "NETWORK_ANALYZE_TIMEOUT_HELP": "Tempo di attesa massimo per l'analisi della rete",
+    "NETWORK_ANALYZE_TIMEOUT_AUTO": "Auto",
     "PERSIST_CACHE": "Mantenere i dati di navigazione (sperimentale)",
     "PERSIST_CACHE_HELP": "per la fruizione da una sessione all'altra., Consente una navigazione più veloce, conservando localmente i dati ricevuti, per un utilizzo da una sessione all'altra.",
     "USE_LOCAL_STORAGE": "Permetti salvataggio locale",
@@ -316,6 +317,8 @@
       }
     },
     "INFO": {
+      "CONNECTING_TO_NETWORK": "Connessione alla rete...",
+      "ANALYZING_NETWORK": "Analisi della rete {{currency|abbreviate}}...",
       "ONLY_SSL_PEERS": "I nodi non-SSL hanno un display semplificato perche Cesium funziona in modalità HTTPS."
     }
   },

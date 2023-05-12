@@ -21,7 +21,12 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
         },
         cache = {},
         started = false,
-        startPromise;
+        startPromise,
+        listeners = {
+          online: undefined,
+          offline: undefined
+        }
+      ;
 
       // removeIf(device)
       // workaround to quickly no is device or not (even before the ready() event)
@@ -189,17 +194,20 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
                 timeout = 1000; // 1 s
                 break;
               case 'wifi':
-                timeout = 5000; // 5 s
+                timeout = 2000;
                 break;
               case 'cell': // (e.g. iOS)
+              case 'cell_5g':
+                timeout = 3000;
+                break;
               case 'cell_4g':
-                timeout = 10000; // 10s for 4G
+                timeout = 5000;
                 break;
-              case 'cell_2g': // Added cell_2g case
-                timeout = 60000; // 60s for 2G
+              case 'cell_3g':
+                timeout = 10000; // 10s
                 break;
-              case 'cell_3g': // Added cell_3g case
-                timeout = 30000; // 30s for 2G
+              case 'cell_2g':
+                timeout = 40000; // 40s
                 break;
               case 'none':
                 timeout = 0;
@@ -351,11 +359,11 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
       exports.start = function() {
 
         startPromise = ionicReady()
-          .then(function(){
+          .then(function() {
 
-            exports.enable = window.cordova && cordova && cordova.plugins;
+            exports.enable = window.cordova && cordova && !!cordova.plugins || false;
 
-            if (exports.enable){
+            if (exports.enable) {
               exports.camera.enable = !!navigator.camera;
               exports.keyboard.enable = cordova && cordova.plugins && !!cordova.plugins.Keyboard;
               exports.barcode.enable = cordova && cordova.plugins && !!cordova.plugins.barcodeScanner && (!exports.isOSX() || exports.isIOS());
@@ -375,6 +383,18 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
                 console.debug('[device] Enabling InAppBrowser');
                 window.open = cordova.InAppBrowser.open;
               }
+
+              // Add network listeners
+              if (exports.network.enable) {
+                document.addEventListener("offline", function() {
+                  console.info('[device] Network is offline');
+                  api.network.raise.offline();
+                }, false);
+                document.addEventListener("online", function() {
+                  console.info('[device] Network is online');
+                  api.network.raise.online();
+                }, false);
+              }
             }
             else {
               console.debug('[device] Ionic platform ready - no device detected.');
@@ -388,6 +408,8 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
       };
 
       api.registerEvent('intent', 'new');
+      api.registerEvent('network', 'offline');
+      api.registerEvent('network', 'online');
 
       // Export the event api (see ngApi)
       exports.api = api;

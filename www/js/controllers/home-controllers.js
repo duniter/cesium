@@ -25,7 +25,7 @@ angular.module('cesium.home.controllers', ['cesium.platform', 'cesium.services']
 ;
 
 function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $http, $q, $location,
-                        UIUtils, BMA, csConfig, csCache, csPlatform, csCurrency, csSettings) {
+                        UIUtils, BMA, Device, csConfig, csCache, csPlatform, csCurrency, csSettings) {
   'ngInject';
 
   $scope.loading = true;
@@ -56,7 +56,6 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
       $scope.cleanLocationHref(state);
     }
     else {
-
 
       // Wait platform to be ready
       csPlatform.ready()
@@ -196,10 +195,24 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
     }
   };
 
-
   // Listen platform messages
   csPlatform.api.start.on.message($scope, function(message) {
     $scope.loadingMessage = message;
+  });
+
+  // Listen network offline/online
+  Device.api.network.on.offline($scope, function() {
+    csPlatform.stop();
+    $scope.loadingMessage = '';
+    $scope.loading = false;
+    $scope.node =  csCurrency.data.node;
+    $scope.error = true;
+  });
+  Device.api.network.on.online($scope, function() {
+    if (!$scope.loading && $scope.error) {
+      delete $scope.error;
+      $scope.reload();
+    }
   });
 
   // For DEV ONLY

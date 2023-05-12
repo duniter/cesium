@@ -135,7 +135,8 @@
     "REPORT_ISSUE": "Ein Problem melden",
     "NOT_YOUR_ACCOUNT_QUESTION" : "Ist dieses Konto <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b> nicht von dir?",
     "BTN_CHANGE_ACCOUNT": "Von diesem Konto abmelden",
-    "CONNECTION_ERROR": "Der Knoten <b>{{server}}</b> ist nicht erreichbar oder die Adresse ist falsch.<br/><br/>Kontrolliere deine Internetverbindung, oder wähle einen anderen Knoten <a class=\"positive\" ng-click=\"doQuickFix('settings')\">in deinen Einstellungen</a>.",
+    "PEER_CONNECTION_ERROR": "Der Knoten <b>{{server}}</b> ist nicht erreichbar oder die Adresse ist falsch.<br/><br/>Kontrolliere deine Internetverbindung, oder wähle einen anderen Knoten <a class=\"positive\" ng-click=\"doQuickFix('settings')\">in deinen Einstellungen</a>.",
+    "NETWORK_CONNECTION_ERROR": "Netzwerk ist nicht erreichbar.<br/><br/>Überprüfen Sie Ihre Internetverbindung, oder wählen Sie einen Knoten manuell <a class=\"positive\" ng-click=\"doQuickFix('settings')\">in den Einstellungen</a> aus.",
     "SHOW_ALL_FEED": "Alles anzeigen",
     "READ_MORE": "Mehr lesen",
     "FEED_SOURCE": "Quelle"
@@ -145,12 +146,12 @@
     "DISPLAY_DIVIDER": "Anzeige",
     "STORAGE_DIVIDER": "Speicher",
     "NETWORK_SETTINGS": "Netzwerk",
-    "PEER": "Duniter Knoten-Adresse",
-    "PEER_SHORT": "Knoten-Adresse",
+    "PEER": "Duniter Knoten",
     "PEER_CHANGED_TEMPORARY": "Knotenadresse wird nur temporär gebraucht",
     "PEER_SELECTED_AUTOMATICALLY": "Knoten wird beim Start automatisch ausgewählt",
-    "PEER_TIMEOUT": "Maximale Wartezeit (Timeout)",
-    "PEER_TIMEOUT_HELP": "Maximale Wartezeit um eine Antwort vom Knoten zu bekommen",
+    "NETWORK_ANALYZE_TIMEOUT": "Maximale Wartezeit (Timeout)",
+    "NETWORK_ANALYZE_TIMEOUT_HELP": "Maximale Wartezeit für die Netzwerkanalyse",
+    "NETWORK_ANALYZE_TIMEOUT_AUTO": "Auto",
     "PERSIST_CACHE": "Navigationsdaten behalten (experimental)",
     "PERSIST_CACHE_HELP": "Erlaubt schnellere Navigation, durch Zwischenspeicherung der empfangenen Daten, von einer Sitzung zur nächsten.",
     "USE_LOCAL_STORAGE": "Lokales Speichern einschalten",
@@ -325,6 +326,8 @@
       }
     },
     "INFO": {
+      "CONNECTING_TO_NETWORK": "Verbindung zum Netzwerk...",
+      "ANALYZING_NETWORK": "Analyse des {{currency|abbreviate}} Netzwerks...",
       "ONLY_SSL_PEERS": "Die nicht mit SSL gesicherten Knoten haben eine reduzierte Darstellung, weil Cesium im HTTPS Modus funktioniert."
     }
   },

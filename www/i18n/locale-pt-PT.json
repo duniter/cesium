@@ -128,19 +128,20 @@
     "REPORT_ISSUE": "Reportar anomalia",
     "NOT_YOUR_ACCOUNT_QUESTION": "Esta conta não é sua <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b>?",
     "BTN_CHANGE_ACCOUNT": "Sair desta conta",
-    "CONNECTION_ERROR": "Nó <b>{{server}}</b> indisponível ou endereço inválido.<br/><br/>Teste a sua ligação à Internet, ou nó Duniter <a class=\"positive\" ng-click=\"doQuickFix('settings')\">nas definições</a>."
+    "PEER_CONNECTION_ERROR": "Nó <b>{{server}}</b> indisponível ou endereço inválido.<br/><br/>Teste a sua ligação à Internet, ou nó Duniter <a class=\"positive\" ng-click=\"doQuickFix('settings')\">nas definições</a>.",
+    "NETWORK_CONNECTION_ERROR": "Rede inacessível.<br/><br/>Verifique a sua ligação à Internet, ou selecione um nó manualmente <a class=\"positive\" ng-click=\"doQuickFix('settings')\">nas definições</a>."
   },
   "SETTINGS": {
     "TITLE": "Definições",
     "DISPLAY_DIVIDER": "Visualização",
     "STORAGE_DIVIDER": "Armazenamento",
     "NETWORK_SETTINGS": "Rede",
-    "PEER": "Endereço do nó Duniter",
+    "PEER": "Nó Duniter",
     "PEER_CHANGED_TEMPORARY": "Endereço utilizado temporariamente",
     "PEER_SELECTED_AUTOMATICALLY": "Nó selecionado automaticamente na inicialização",
-    "PEER_TIMEOUT": "Tempo máximo de espera (timeout)",
-    "PEER_TIMEOUT_HELP": "Tempo máximo de espera para obter uma resposta do nó",
-    "PEER_SHORT": "Nó Duniter",
+    "NETWORK_ANALYZE_TIMEOUT": "Tempo máximo de espera (timeout)",
+    "NETWORK_ANALYZE_TIMEOUT_HELP": "Tempo máximo de espera para a análise de rede",
+    "NETWORK_ANALYZE_TIMEOUT_AUTO": "Auto",
     "PERSIST_CACHE": "Conservar os dados de navegação (experimental)",
     "PERSIST_CACHE_HELP": "Permite uma navegação mais rápida, manter localmente os dados recebidos, para usar entre sessões.",
     "USE_LOCAL_STORAGE": "Ativar o armazenamento local",
@@ -309,6 +310,8 @@
       }
     },
     "INFO": {
+      "CONNECTING_TO_NETWORK": "A conectar à rede...",
+      "ANALYZING_NETWORK": "A analisar a rede {{currency|abbreviate}}...",
       "ONLY_SSL_PEERS": "A visualização de nós sem SSL está deteriorada porque Cesium funciona em modo HTTPS."
     }
   },
