@@ -266,8 +266,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           else {
             console.debug('[BMA] Unknown node software [{0} v{1}]: could not check compatibility.'.format(software || '?', json.duniter.version || '?'));
           }
-          if (!isCompatible) {
-            console.error('[BMA] Incompatible node [{0} v{1}]: expected at least v{2}'.format(software, json.duniter.version, csSettings.data.minVersion));
+          if (!isCompatible && json && json.duniter) {
+            console.error('[BMA] Incompatible node [{0} v{1}]: expected at least v{2}'.format(software, json.duniter.version || '?', csSettings.data.minVersion));
           }
           return isCompatible;
         })

@@ -99,10 +99,9 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
     */
    getDefaultTimeout = function () {
      // Using timeout from settings
-     if (csSettings.data.expertMode) {
-       var timeout = csSettings.data.timeout || csConfig.timeout;
-       console.debug('[network] Using user defined timeout: {0}ms'.format(timeout));
-       return timeout;
+     if (csSettings.data.expertMode && csSettings.data.timeout > 0) {
+       console.debug('[network] Using user defined timeout: {0}ms'.format(csSettings.data.timeout));
+       return csSettings.data.timeout;
      }
 
      // Computing timeout from the connection type
@@ -900,7 +899,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       options.timeout = angular.isDefined(options.timeout) ? options.timeout : getDefaultTimeout();
 
       var now = Date.now();
-      console.info('[network] Getting synchronized BMA peers...');
+      console.info('[network] Getting synchronized BMA peers... (timeout: {0}ms)'.format(options.timeout));
 
       var wasStarted = isStarted();
       var pid = data.pid + 1;
