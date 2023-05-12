@@ -76,7 +76,7 @@ angular.module("cesium.config", [])
 			"port": 443
 		},
 		{
-			"host": "g1v1.p2P.legal",
+			"host": "g1v1.p2p.legal",
 			"port": 443
 		}
 	],
@@ -120,8 +120,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "1.7.0-rc2",
-	"build": "2023-05-11T16:08:06.033Z",
+	"version": "1.7.0",
+	"build": "2023-05-12T14:55:14.211Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
