@@ -22,7 +22,7 @@ then
 fi
 
 ### Get version to release
-current=$(grep -P "version\": \"\d+.\d+.\d+(-?\w*)" package.json | grep -m 1 -oP "\d+.\d+.\d+(-?\w*)")
+current=$(grep -P "version\": \"\d+.\d+.\d+(-\w+[-0-9]*)?\"" package.json | grep -m 1 -oP "\d+.\d+.\d+(-\w+[-0-9]*)?")
 if [[ "_$current" == "_" ]]; then
   echo "Unable to read the current version in 'package.json'. Please check version format is: x.y.z (x and y should be an integer)."
   exit 1;

@@ -39,7 +39,8 @@ ANDROID_OUTPUT_MIN_SDK_VERSION=22 # Used by release-android-sign.sh
 ANDROID_OUTPUT_MAX_SDK_VERSION=34 # Used by release-android-sign.sh
 
 DIST_WEB=${PROJECT_DIR}/dist/web/build
-DIST_ANDROID=${PROJECT_DIR}/dist/android
+DIST_ANDROID=${PROJECT_DIR}/dist/android/build # Where APK are stored
+SOURCES_ANDROID=${PROJECT_DIR}/dist/android/sources # Where git cesium-android is checkout
 
 # Addons Mozilla Web extension ID
 WEB_EXT_ID=${WEB_EXT_ID:-"{6f9922f7-a054-4609-94ce-d269993246a5}"}

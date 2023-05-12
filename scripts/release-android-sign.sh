@@ -16,9 +16,9 @@ KEYSTORE_PWD=
 . ${PROJECT_DIR}/scripts/env-android.sh
 [[ $? -ne 0 ]] && exit 1
 
-APK_SIGNED_FILE=${ANDROID_OUTPUT_APK_RELEASE}/${ANDROID_OUTPUT_APK_PREFIX}-release-signed.apk
+APK_SIGNED_FILE=${APK_SIGNED_FILE:-"${ANDROID_OUTPUT_APK_RELEASE}/${ANDROID_OUTPUT_APK_PREFIX}-release-signed.apk"}
 APK_UNSIGNED_FILE=${ANDROID_OUTPUT_APK_RELEASE}/${ANDROID_OUTPUT_APK_PREFIX}-release-unsigned.apk
-APK_FILE_ALTERNATIVE=${ANDROID_OUTPUT_APK_RELEASE}/${ANDROID_OUTPUT_APK_PREFIX}-release.apk
+APK_UNSIGNED_FILE_ALTERNATIVE=${ANDROID_OUTPUT_APK_RELEASE}/${ANDROID_OUTPUT_APK_PREFIX}-release.apk
 
 cd ${PROJECT_DIR}
 
@@ -30,11 +30,11 @@ if [[ ! -f "${KEYSTORE_FILE}" ]]; then
 fi
 if [[ ! -f "${APK_UNSIGNED_FILE}" ]]; then
   # Check in an alternative path (e.g. Android default signed file)
-  if [[ ! -f "${APK_FILE_ALTERNATIVE}" ]]; then
+  if [[ ! -f "${APK_UNSIGNED_FILE_ALTERNATIVE}" ]]; then
     echo "ERROR: Unsigned APK file not found: ${APK_UNSIGNED_FILE}"
     exit 1
   fi
-  APK_UNSIGNED_FILE=${APK_FILE_ALTERNATIVE}
+  APK_UNSIGNED_FILE=${APK_UNSIGNED_FILE_ALTERNATIVE}
 fi
 
 echo "--- Signing Android APK..."
@@ -78,5 +78,4 @@ echo ""
 
 export APK_SIGNED_FILE
 echo "--- Successfully generated signed APK at: ${APK_SIGNED_FILE}"
-echo ""
 exit 0

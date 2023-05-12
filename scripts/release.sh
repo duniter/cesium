@@ -18,7 +18,7 @@ then
 fi
 
 ### Get current version (package.json)
-current=$(grep -m1 -P "version\": \"\d+.\d+.\d+(-\w+[0-9]*)?" package.json | grep -oP "\d+.\d+.\d+(-\w+[0-9]*)?")
+current=$(grep -m1 -P "version\": \"\d+.\d+.\d+(-\w+[-0-9]*)?\"" package.json | grep -oP "\d+.\d+.\d+(-\w+[-0-9]*)?")
 if [[ "_$current" == "_" ]]; then
   echo "Unable to read the current version in 'package.json'. Please check version format is: x.y.z (x and y should be an integer)."
   exit 1;
@@ -34,7 +34,7 @@ fi
 echo "Current Android version: $currentAndroid"
 
 # Check version format
-if [[ ! $2 =~ ^[0-9]+.[0-9]+.[0-9]+(-(alpha|beta|rc)[-0-9]*)?$ || ! $3 =~ ^[0-9]+$ ]]; then
+if [[ ! $2 =~ ^[0-9]+.[0-9]+.[0-9]+(-[a-z]+[-0-9]*)?$ || ! $3 =~ ^[0-9]+$ ]]; then
   echo "Wrong version format"
   echo "Usage:"
   echo " > ./release.sh [pre|rel] <version>  <android-version> <release_description>"
@@ -53,16 +53,16 @@ case "$1" in
   rel|pre)
     # Change the version in files: 'package.json' and 'config.xml'
     sed -i "s/version\": \"$current\"/version\": \"$2\"/g" package.json
-    currentConfigXmlVersion=$(grep -m 1 -oP "version=\"\d+.\d+.\d+(-\w+[0-9]*)?\"" config.xml | grep -oP "\d+.\d+.\d+(-\w+[0-9]*)?")
+    currentConfigXmlVersion=$(grep -m 1 -oP "version=\"\d+.\d+.\d+(-\w+[-0-9]*)?\"" config.xml | grep -oP "\d+.\d+.\d+(-\w+[-0-9]*)?")
     sed -i "s/ version=\"$currentConfigXmlVersion\"/ version=\"$2\"/g" config.xml
     sed -i "s/ android-versionCode=\"$currentAndroid\"/ android-versionCode=\"$3\"/g" config.xml
 
     # Change version in file: 'www/manifest.json'
-    currentManifestJsonVersion=$(grep -m 1 -oP "version\": \"\d+.\d+.\d+(-\w+[0-9]*)?\"" www/manifest.json | grep -oP "\d+.\d+.\d+(-\w+[0-9]*)?")
+    currentManifestJsonVersion=$(grep -m 1 -oP "version\": \"\d+.\d+.\d+(-\w+[-0-9]*)?\"" www/manifest.json | grep -oP "\d+.\d+.\d+(-\w+[-0-9]*)?")
     sed -i "s/version\": \"$currentManifestJsonVersion\"/version\": \"$2\"/g" www/manifest.json
 
     # Change version in file: 'resources/web-ext/manifest.json'
-    currentExtManifestJsonVersion=$(grep -m 1 -oP "version\": \"\d+.\d+.\d+(-\w+[0-9]*)?\"" resources/web-ext/manifest.json | grep -oP "\d+.\d+.\d+(-\w+[0-9]*)?")
+    currentExtManifestJsonVersion=$(grep -m 1 -oP "version\": \"\d+.\d+.\d+(-\w+[-0-9]*)?\"" resources/web-ext/manifest.json | grep -oP "\d+.\d+.\d+(-\w+[-0-9]*)?")
     sed -i "s/version\": \"$currentExtManifestJsonVersion\"/version\": \"$2\"/g" resources/web-ext/manifest.json
 
     # Bump the install.sh
@@ -92,11 +92,7 @@ echo "----------------------------------"
 cd ${PROJECT_DIR}/scripts || exit 1
 ./release-android.sh
 #[[ $? -ne 0 ]] && exit 1
-APK_SIGNED_FILE="${ANDROID_OUTPUT_APK_RELEASE}/${ANDROID_OUTPUT_APK_PREFIX}-release-signed.apk"
-if [[ ! -f "${APK_SIGNED_FILE}" ]]; then
-  echo "Missing signed APK file at: ${APK_SIGNED_FILE}"
-  exit 1
-fi
+
 
 echo "----------------------------------"
 echo "- Building web and extension artifacts..."

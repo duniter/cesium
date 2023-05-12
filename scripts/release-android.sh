@@ -37,6 +37,19 @@ echo ""
 # Sign APK file
 cd ${PROJECT_DIR}/scripts
 ./release-android-sign.sh
-[[ $? -ne 0 ]] && exit 1
 
-cd ${PROJECT_DIR}
+# Check signed APK exists
+if [[ ! -f "${APK_SIGNED_FILE}" ]]; then
+  echo "Missing signed APK file at: ${APK_SIGNED_FILE}"
+  exit 1
+fi
+
+# Copy signed APK to 'dist/android/build'
+echo ""
+echo "--- Copying Android APK to '${DIST_ANDROID}'..."
+APK_BASENAME="${PROJECT_NAME}-v${current}-android.apk"
+APK_FINAL_FILE="${DIST_ANDROID}/${APK_BASENAME}"
+mkdir -p ${DIST_ANDROID}
+cp -f "${APK_SIGNED_FILE}" "${DIST_ANDROID}/${APK_BASENAME}"
+echo "--- Copying Android APK [OK]"
+echo ""
