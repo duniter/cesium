@@ -942,7 +942,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         })
         .catch(function(err) {
           loadPromise = null;
-          console.log('TODO 2', err);
+          console.error('[wallet] Failed to load wallet data', err);
           throw err;
         });
     },

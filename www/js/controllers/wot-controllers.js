@@ -301,7 +301,9 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
     if (BMA.regexp.PUBKEY_WITH_CHECKSUM.test(text)) {
       console.debug("[wot] Validating pubkey checksum... ");
       var matches = BMA.regexp.PUBKEY_WITH_CHECKSUM.exec(text);
-      //console.log(matches)
+
+      // DEBUG only
+      //console.debug(matches)
 
       pubkey = matches[1];
       var checksum = matches[2];
