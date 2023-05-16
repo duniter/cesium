@@ -2362,9 +2362,15 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     }
 
     function stop() {
+      var wasLogin = isLogin();
+      var wasAuth = isAuth();
       console.debug('[wallet] Stopping...');
       removeListeners();
       resetData();
+
+      // Send logout/unauth events
+      if (wasLogin) api.data.raise.logout();
+      if (wasAuth) api.data.raise.unauth();
     }
 
     function restart() {

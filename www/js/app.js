@@ -46,20 +46,18 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngSanitize',
 
       // removeIf(android)
       // removeIf(ios)
-      // removeIf(firefoxos)
       // -- Automatic redirection to large state (if define) (keep this code for platforms web and ubuntu build)
       if (next.data.large && !UIUtils.screen.isSmall()) {
         event.preventDefault();
         $state.go(next.data.large, nextParams);
         return;
       }
-      // endRemoveIf(firefoxos)
       // endRemoveIf(ios)
       // endRemoveIf(android)
 
-      var wallet = nextParams.wallet && nextParams.wallet != "default" ? csWallet.children.get(nextParams.wallet) : csWallet;
+      var wallet = nextParams.wallet && nextParams.wallet !== 'default' ? csWallet.children.get(nextParams.wallet) : csWallet;
       if (nextParams.wallet && !wallet) {
-        console.warn("[app] Unable to find the children wallet: " + nextParams.wallet);
+        console.warn('[app] Unable to find the children wallet: ' + nextParams.wallet);
       }
       var goNextState = function() {
         preventStateChange = false;
@@ -94,7 +92,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngSanitize',
         event.preventDefault();
         options = next.data.minData ? {minData: true} : undefined;
         preventStateChange = true;
-        console.debug("[app] State need login...");
+        console.debug('[app] State need login...');
         return csWallet.login(options)
           .then(goNextState)
           .catch(processError);
@@ -108,7 +106,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngSanitize',
           // Show loading message, when full load
           if (!options || !options.minData) UIUtils.loading.show();
 
-          console.debug("[app] State load wallet data...");
+          console.debug('[app] State load wallet data...');
           return wallet.loadData(options)
             .then(goNextState)
             .catch(processError);

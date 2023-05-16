@@ -161,18 +161,18 @@
           {{'SETTINGS.WALLETS_SETTINGS' | translate}}
         </span>
 
-          <div class="item item-toggle item-text-wrap dark hidden-readonly">
-            <span class="input-label" ng-class="{'gray': !formData.useLocalStorage}" translate>SETTINGS.USE_WALLETS_ENCRYPTION</span>
-            <h4 class="gray text-wrap" ng-bind-html="'SETTINGS.USE_WALLETS_ENCRYPTION_HELP' | translate">
-            </h4>
-            <label class="toggle toggle-royal">
-              <input type="checkbox" ng-model="formData.useLocalStorageEncryption" ng-if="formData.useLocalStorage">
-              <input type="checkbox" ng-model="formData.useLocalStorage" ng-if="!formData.useLocalStorage" disabled>
-              <div class="track">
-                <div class="handle"></div>
-              </div>
-            </label>
-          </div>
+        <div class="item item-toggle item-text-wrap dark hidden-readonly">
+          <span class="input-label" ng-class="{'gray': !formData.useLocalStorage}" translate>SETTINGS.USE_WALLETS_ENCRYPTION</span>
+          <h4 class="gray text-wrap" ng-bind-html="'SETTINGS.USE_WALLETS_ENCRYPTION_HELP' | translate">
+          </h4>
+          <label class="toggle toggle-royal">
+            <input type="checkbox" ng-model="formData.useLocalStorageEncryption" ng-if="formData.useLocalStorage">
+            <input type="checkbox" ng-model="formData.useLocalStorage" ng-if="!formData.useLocalStorage" disabled>
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
+        </div>
 
         <span class="item item-divider hidden-readonly" translate>SETTINGS.HISTORY_SETTINGS</span>
 
