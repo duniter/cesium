@@ -37,12 +37,3 @@ try {
 } catch (e) {
   // Silent
 }
-
-try {
-  if (!fs.existsSync('plugins')) {
-    fs.mkdirSync('plugins');
-  }
-  fs.symlinkSync(path.resolve('node_modules/cordova-plugin-minisodium'), 'plugins/cordova-plugin-minisodium', 'junction');
-} catch (e) {
-  throw new Error(e);
-}

@@ -107,12 +107,6 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       else {$timeout(function(){that.async_load_base64(on_ready);}, 100);}
     };
 
-    CryptoAbstractService.prototype.async_load_sha256 = function(on_ready) {
-      var that = this;
-      if (sha256 !== null){return on_ready(sha256);}
-      else {$timeout(function(){that.async_load_sha256(on_ready);}, 100);}
-    };
-
     CryptoAbstractService.prototype.seed_from_signSk = function(signSk) {
       var seed = new Uint8Array(this.constants.SEED_LENGTH);
       for (var i = 0; i < seed.length; i++) seed[i] = signSk[i];
@@ -553,344 +547,6 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
     }
     FullJSServiceFactory.prototype = new CryptoAbstractService();
 
-
-    /* -----------------------------------------------------------------------------------------------------------------
-     * Service that use Cordova MiniSodium plugin
-     * ----------------------------------------------------------------------------------------------------------------*/
-
-    /***
-     * Factory for crypto, using Cordova plugin
-     */
-    function CordovaServiceFactory() {
-
-      this.id = 'MiniSodium';
-
-      // libraries handlers
-      this.nacl = null; // the cordova plugin
-      this.base58= null;
-      this.sha256= null;
-      var that = this;
-
-      // functions
-      this.util = this.util || {};
-      this.util.decode_utf8 = function(s) {
-        return that.nacl.to_string(s);
-      };
-      this.util.encode_utf8 = function(s) {
-        return that.nacl.from_string(s);
-      };
-      this.util.encode_base58 = function(a) {
-        return that.base58.encode(a);
-      };
-      this.util.decode_base58 = function(a) {
-        var i;
-        var d = that.base58.decode(a);
-        var b = new Uint8Array(d.length);
-        for (i = 0; i < d.length; i++) b[i] = d[i];
-        return b;
-      };
-      this.util.decode_base64 = function (a) {
-        return that.nacl.from_base64(a);
-      };
-      this.util.encode_base64 = function (b) {
-        return that.nacl.to_base64(b);
-      };
-      this.util.hash_sha256 = function(message) {
-        return $q.when(that.sha256(message).toUpperCase());
-      };
-      this.util.random_nonce = function() {
-        var nonce = new Uint8Array(that.constants.crypto_secretbox_NONCEBYTES);
-        that.crypto.getRandomValues(nonce);
-        return $q.when(nonce);
-      };
-      this.util.crypto_hash_sha256 = function (message) {
-        return that.nacl.from_hex(that.sha256(message));
-      };
-
-      this.util.crypto_scrypt = function(password, salt, N, r, p, seedLength) {
-        var deferred = $q.defer();
-        that.nacl.crypto_pwhash_scryptsalsa208sha256_ll(
-          password,
-          salt,
-          N,
-          r,
-          p,
-          seedLength,
-          function (err, seed) {
-            if (err) { deferred.reject(err); return;}
-            deferred.resolve(seed);
-          }
-        );
-        return deferred.promise;
-      };
-
-      /**
-       * Create key pairs (sign and box), from salt+password (Scrypt), using cordova
-       */
-      this.scryptKeypair = function(salt, password, scryptParams) {
-        var deferred = $q.defer();
-
-        that.nacl.crypto_pwhash_scryptsalsa208sha256_ll(
-          that.nacl.from_string(password),
-          that.nacl.from_string(salt),
-          scryptParams && scryptParams.N || that.constants.SCRYPT_PARAMS.DEFAULT.N,
-          scryptParams && scryptParams.r || that.constants.SCRYPT_PARAMS.DEFAULT.r,
-          scryptParams && scryptParams.p || that.constants.SCRYPT_PARAMS.DEFAULT.p,
-          that.constants.SEED_LENGTH,
-          function (err, seed) {
-            if (err) { deferred.reject(err); return;}
-
-            that.nacl.crypto_sign_seed_keypair(seed, function (err, signKeypair) {
-              if (err) { deferred.reject(err); return;}
-              var result = {
-                signPk: signKeypair.pk,
-                signSk: signKeypair.sk
-              };
-              that.box_keypair_from_sign(result)
-                .then(function(boxKeypair) {
-                  result.boxPk = boxKeypair.pk;
-                  result.boxSk = boxKeypair.sk;
-                  deferred.resolve(result);
-                })
-                .catch(function(err) {
-                  deferred.reject(err);
-                });
-            });
-
-          }
-        );
-
-        return deferred.promise;
-      };
-
-      /**
-       * Create key pairs from a seed
-       */
-      this.seedKeypair = function(seed) {
-        var deferred = $q.defer();
-
-        that.nacl.crypto_sign_seed_keypair(seed, function (err, signKeypair) {
-          if (err) { deferred.reject(err); return;}
-          deferred.resolve({
-            signPk: signKeypair.pk,
-            signSk: signKeypair.sk
-          });
-        });
-        return deferred.promise;
-      };
-
-
-      /**
-       * Get sign PK from salt+password (Scrypt), using cordova
-       */
-      this.scryptSignPk = function(salt, password, scryptParams) {
-        var deferred = $q.defer();
-
-        that.nacl.crypto_pwhash_scryptsalsa208sha256_ll(
-          that.nacl.from_string(password),
-          that.nacl.from_string(salt),
-          scryptParams && scryptParams.N || that.constants.SCRYPT_PARAMS.DEFAULT.N,
-          scryptParams && scryptParams.r || that.constants.SCRYPT_PARAMS.DEFAULT.r,
-          scryptParams && scryptParams.p || that.constants.SCRYPT_PARAMS.DEFAULT.p,
-          that.constants.SEED_LENGTH,
-          function (err, seed) {
-            if (err) { deferred.reject(err); return;}
-
-            that.nacl.crypto_sign_seed_keypair(seed, function (err, signKeypair) {
-              if (err) { deferred.reject(err); return;}
-              deferred.resolve(signKeypair.pk);
-            });
-
-          }
-        );
-
-        return deferred.promise;
-      };
-
-      /**
-       * Verify a signature of a message, for a pubkey
-       */
-      this.verify = function (message, signature, pubkey) {
-        var deferred = $q.defer();
-        that.nacl.crypto_sign_verify_detached(
-          that.nacl.from_base64(signature),
-          that.nacl.from_string(message),
-          that.nacl.from_base64(pubkey),
-          function(err, verified) {
-            if (err) { deferred.reject(err); return;}
-            deferred.resolve(verified);
-          });
-        return deferred.promise;
-      };
-
-      /**
-       * Sign a message, from a key pair
-       */
-      this.sign = function(message, keypair) {
-        var deferred = $q.defer();
-
-        that.nacl.crypto_sign(
-          that.nacl.from_string(message), // message
-          keypair.signSk, // sk
-          function(err, signedMsg) {
-            if (err) { deferred.reject(err); return;}
-            var sig;
-            if (signedMsg.length > that.constants.crypto_sign_BYTES) {
-              sig = new Uint8Array(that.constants.crypto_sign_BYTES);
-              for (var i = 0; i < sig.length; i++) sig[i] = signedMsg[i];
-            }
-            else {
-              sig = signedMsg;
-            }
-            var signature = that.nacl.to_base64(sig);
-            deferred.resolve(signature);
-          });
-
-        return deferred.promise;
-      };
-
-      /**
-       * Compute the box key pair, from a sign key pair
-       */
-      this.box_keypair_from_sign = function(signKeyPair) {
-        if (signKeyPair.boxSk && signKeyPair.boxPk) return $q.when(signKeyPair);
-        var deferred = $q.defer();
-        var result = {};
-        that.nacl.crypto_sign_ed25519_pk_to_curve25519(signKeyPair.signPk, function(err, boxPk) {
-          if (err) { deferred.reject(err); return;}
-          result.boxPk = boxPk;
-          if (result.boxSk) deferred.resolve(result);
-        });
-        that.nacl.crypto_sign_ed25519_sk_to_curve25519(signKeyPair.signSk, function(err, boxSk) {
-          if (err) { deferred.reject(err); return;}
-          result.boxSk = boxSk;
-          if (result.boxPk) deferred.resolve(result);
-        });
-
-        return deferred.promise;
-      };
-
-      /**
-       * Compute the box public key, from a sign public key
-       */
-      this.box_pk_from_sign = function(signPk) {
-        var deferred = $q.defer();
-        that.nacl.crypto_sign_ed25519_pk_to_curve25519(signPk, function(err, boxPk) {
-          if (err) { deferred.reject(err); return;}
-          deferred.resolve(boxPk);
-        });
-        return deferred.promise;
-      };
-
-      /**
-       * Compute the box secret key, from a sign secret key
-       */
-      this.box_sk_from_sign = function(signSk) {
-        var deferred = $q.defer();
-        that.nacl.crypto_sign_ed25519_sk_to_curve25519(signSk, function(err, boxSk) {
-          if (err) { deferred.reject(err); return;}
-          deferred.resolve(boxSk);
-        });
-        return deferred.promise;
-      };
-
-      /**
-       * Encrypt a message, from a key pair
-       */
-      this.box = function(message, nonce, recipientPk, senderSk) {
-        if (!message) {
-          return $q.reject('No message');
-        }
-        var deferred = $q.defer();
-
-        var messageBin = that.nacl.from_string(message);
-        if (typeof recipientPk === "string") {
-          recipientPk = that.util.decode_base58(recipientPk);
-        }
-
-        that.nacl.crypto_box_easy(messageBin, nonce, recipientPk, senderSk, function(err, ciphertextBin) {
-          if (err) { deferred.reject(err); return;}
-          var ciphertext = that.util.encode_base64(ciphertextBin);
-          //console.debug('Encrypted message: ' + ciphertext);
-          deferred.resolve(ciphertext);
-        });
-        return deferred.promise;
-      };
-
-      /**
-       * Decrypt a message, from a key pair
-       */
-      this.box_open = function(cypherText, nonce, senderPk, recipientSk) {
-        if (!cypherText) {
-          return $q.reject('No cypherText');
-        }
-        var deferred = $q.defer();
-
-        var ciphertextBin = that.nacl.from_base64(cypherText);
-        if (typeof senderPk === "string") {
-          senderPk = that.util.decode_base58(senderPk);
-        }
-
-        // Avoid crash if content has not the minimal length - Fix #346
-        if (ciphertextBin.length < that.constants.crypto_box_MACBYTES) {
-          deferred.reject('Invalid cypher content length');
-          return;
-        }
-
-        that.nacl.crypto_box_open_easy(ciphertextBin, nonce, senderPk, recipientSk, function(err, message) {
-          if (err) { deferred.reject(err); return;}
-          that.util.array_to_string(message, function(result) {
-            //console.debug('Decrypted text: ' + result);
-            deferred.resolve(result);
-          });
-        });
-
-        return deferred.promise;
-      };
-
-      this.load = function() {
-        var deferred = $q.defer();
-        if (!window.plugins || !window.plugins.MiniSodium) {
-          deferred.reject("Cordova plugin 'MiniSodium' not found. Please load Full JS implementation instead.");
-        }
-        else {
-          that.nacl = window.plugins.MiniSodium;
-
-          var loadedLib = 0;
-          var checkAllLibLoaded = function() {
-            loadedLib++;
-            if (loadedLib == 2) {
-              that.loaded = true;
-              deferred.resolve();
-            }
-          };
-          that.async_load_base58(function(lib) {
-            that.base58 = lib;
-            checkAllLibLoaded();
-          });
-          that.async_load_sha256(function(lib) {
-            that.sha256 = lib;
-            checkAllLibLoaded();
-          });
-        }
-
-        return deferred.promise;
-      };
-
-      // Shortcuts
-      this.util.hash = that.util.hash_sha256;
-      this.box = {
-        keypair: {
-          fromSignKeypair: that.box_keypair_from_sign,
-          skFromSignSk: that.box_sk_from_sign,
-          pkFromSignPk: that.box_pk_from_sign
-        },
-        pack: that.box,
-        open: that.box_open
-      };
-    }
-    CordovaServiceFactory.prototype = new CryptoAbstractService();
-
     /* -----------------------------------------------------------------------------------------------------------------
      * Create service instance
      * ----------------------------------------------------------------------------------------------------------------*/
@@ -905,7 +561,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
     // endRemoveIf(ios)
     // endRemoveIf(android)
 
-    //console.debug("[crypto] Created CryptotUtils service. device=" + isDevice);
+    console.debug("[crypto] Created CryptoUtils service. device=" + isDevice);
 
     ionicReady().then(function() {
       console.debug('[crypto] Starting...');
@@ -913,20 +569,14 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
 
       var serviceImpl;
 
-      // Use Cordova plugin implementation, when exists
-      if (isDevice && window.plugins && window.plugins.MiniSodium && crypto && crypto.getRandomValues) {
-        console.debug('[crypto] Loading \'MiniSodium\' implementation...');
-        serviceImpl = new CordovaServiceFactory();
-      }
-      else {
-        console.debug('[crypto] Loading \'FullJS\' implementation...');
-        serviceImpl = new FullJSServiceFactory();
-      }
+      console.debug('[crypto] Has crypto.getRandomValues ? ' + (crypto && crypto.getRandomValues && true || false));
+      console.debug('[crypto] Loading \'FullJS\' implementation...');
+      serviceImpl = new FullJSServiceFactory();
 
       // Load (async lib)
       serviceImpl.load()
         .catch(function(err) {
-          console.error(err);
+          console.error('[crypto] Failed to load implementation: ' + (err && err.message || err), err);
           throw err;
         })
         .then(function() {
@@ -1059,7 +709,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       }
 
       // Type: PubSec
-      if (type == 'PubSec') {
+      if (type === 'PubSec') {
 
         // Read Pub field
         matches = regexp.FILE.PUB.exec(content);
@@ -1077,7 +727,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       }
 
       // Type: WIF or EWIF
-      else if (type == 'WIF' || type == 'EWIF') {
+      else if (type === 'WIF' || type === 'EWIF') {
         matches = regexp.FILE.DATA.exec(content);
         if (!matches) {
           return $q.reject('Missing [Data] field in file. This is required for WIF or EWIF format');
@@ -1120,15 +770,15 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       options.type = options.type || (data_int8[0] == 1 && 'WIF') || (data_int8[0] == 2 && 'EWIF');
 
       // Type: WIF
-      if (options.type == 'WIF') {
+      if (options.type === 'WIF') {
         return parseWIF_v1(data_base58);
       }
 
       // Type: EWIF
-      if (options.type == 'EWIF') {
+      if (options.type === 'EWIF') {
 
         // If not set, resolve password using the given callback
-        if (typeof options.password == "function") {
+        if (typeof options.password === "function") {
           //console.debug("[crypto] [EWIF] Executing 'options.password()' to resolve the password...");
           options.password = options.password();
           if (!options.password) {
@@ -1161,12 +811,12 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       var wif_int8 = CryptoUtils.util.decode_base58(wif_base58);
 
       // Check identifier byte = 0x01
-      if (wif_int8[0] != 1) {
+      if (wif_int8[0] !== 1) {
         return $q.reject({message: 'Invalid WIF v1 format: expected [0x01] as first byte'});
       }
 
       // Check length
-      if (wif_int8.length != constants.WIF.DATA_LENGTH) {
+      if (wif_int8.length !== constants.WIF.DATA_LENGTH) {
         return $q.reject({message: 'Invalid WIF v1 format: Data must be a '+constants.WIF.DATA_LENGTH+' bytes array, encoded in base 58.'});
       }
 
@@ -1176,7 +826,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
 
       // Compute expected checksum
       var expectedChecksum = CryptoUtils.util.crypto_hash_sha256(CryptoUtils.util.crypto_hash_sha256(wif_int8_no_checksum)).slice(0,2);
-      if (CryptoUtils.util.encode_base58(checksum) != CryptoUtils.util.encode_base58(expectedChecksum)) {
+      if (CryptoUtils.util.encode_base58(checksum) !== CryptoUtils.util.encode_base58(expectedChecksum)) {
         $q.reject({message: 'Invalid WIF format: bad checksum'});
       }
 
@@ -1188,7 +838,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       var ewif_int8 = CryptoUtils.util.decode_base58(ewif_base58);
 
       // Check identifier byte = 0x02
-      if (ewif_int8[0] != 2) {
+      if (ewif_int8[0] !== 2) {
         return $q.reject({message: 'Invalid EWIF v1 format: Expected [0x02] as first byte'});
       }
 

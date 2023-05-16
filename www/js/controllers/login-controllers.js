@@ -136,7 +136,10 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
       if (!$scope.formData.username || !$scope.formData.password) return;
       var scryptPrams = $scope.formData.scrypt && $scope.formData.scrypt.params;
       UIUtils.loading.show();
-      promise = CryptoUtils.scryptKeypair($scope.formData.username, $scope.formData.password, scryptPrams)
+      promise = CryptoUtils.ready()
+        .then(function() {
+          return CryptoUtils.scryptKeypair($scope.formData.username, $scope.formData.password, scryptPrams)
+        })
         .then(function(keypair) {
           if (!keypair) return UIUtils.loading.hide(10);
           var pubkey = CryptoUtils.util.encode_base58(keypair.signPk);

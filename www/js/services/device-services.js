@@ -376,6 +376,8 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
                 angular.extend(exports.keyboard, cordova.plugins.Keyboard);
               }
 
+              console.debug('[device] Cordova plugins: ' + Object.keys(cordova.plugins));
+              console.debug('[device] Windows plugins: ' + Object.keys(window.plugins));
               console.debug('[device] Ionic platform ready, with {camera: {0}, barcode: {1}, keyboard: {2}, clipboard: {3}, intent: {4}, network: {5}}'
                 .format(exports.camera.enable, exports.barcode.enable, exports.keyboard.enable, exports.clipboard.enable, exports.intent.enable, exports.network.enable));
 
