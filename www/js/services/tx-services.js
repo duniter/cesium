@@ -154,15 +154,17 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
       // get TX history since
       if (fromTime !== 'pending') {
+        console.info('[tx] Preparing download slices...');
         var slices = [];
         // Fill slices: {params, cache}[]
         {
           var sliceTime = csSettings.data.walletHistorySliceSecond;
           fromTime = fromTime - (fromTime % sliceTime);
-          for (var i = fromTime; i - sliceTime < nowInSec; i += sliceTime)  {
+          var i;
+          for (i = fromTime; i - sliceTime < nowInSec; i += sliceTime)  {
             slices.push({params: {pubkey: pubkey, from: i, to: i+sliceTime-1}, cache: true  /*with cache*/});
           }
-          slices.push({params: {pubkey: pubkey, from: nowInSec - (nowInSec % sliceTime), to: nowInSec+999999999}, cache: false/*no cache for the last slice*/});
+          slices.push({params: {pubkey: pubkey, from: i, to: nowInSec+999999999}, cache: false/*no cache for the last slice*/});
         }
 
         var reduceTxFn = function (res) {
@@ -201,25 +203,8 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           // get UD from a given time
           if ( fromTime > 0) {
             jobs.push(slices.map(function(slice) {
-              return BMA.ud.history.times(slice.params, slice.cache).then(reduceTxFn);
+              return BMA.ud.history.times(slice.params, slice.cache).then(reduceUdFn);
             }));
-            // API extension
-            // jobs.push(
-            //   api.data.raisePromise.loadUDs({
-            //     pubkey: pubkey,
-            //     fromTime: fromTime
-            //   })
-            //     .then(function(res) {
-            //       if (!res || !res.length) return;
-            //       _.forEach(res, function(hits) {
-            //         tx.history.push(hits);
-            //       });
-            //     })
-            //     .catch(function(err) {
-            //       console.error('Error while loading UDs history, on extension point.', err);
-            //       // Continue
-            //     })
-            // );
           }
           // get all UD
           else {
