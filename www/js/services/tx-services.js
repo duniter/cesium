@@ -154,7 +154,6 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
       // get TX history since
       if (fromTime !== 'pending') {
-        console.info('[tx] Preparing download slices...');
         var slices = [];
         // Fill slices: {params, cache}[]
         {
@@ -166,6 +165,9 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           }
           slices.push({params: {pubkey: pubkey, from: i, to: nowInSec+999999999}, cache: false/*no cache for the last slice*/});
         }
+
+        // DEBUG
+        // console.debug('[tx] Loading TX using slices: ', slices);
 
         var reduceTxFn = function (res) {
           reduceTxAndPush(pubkey, res.history.sent, tx.history, processedTxMap, false);
