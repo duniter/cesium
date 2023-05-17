@@ -57,6 +57,8 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
   $scope.computing = false;
   $scope.pubkey = null;
   $scope.formData = {};
+  $scope.showSalt = false;
+  $scope.showPassword = false;
   $scope.showPubkey = false;
   $scope.showComputePubkeyButton = false;
   $scope.autoComputePubkey = false;
@@ -136,13 +138,13 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
       if (!$scope.formData.username || !$scope.formData.password) return;
       var scryptPrams = $scope.formData.scrypt && $scope.formData.scrypt.params;
       UIUtils.loading.show();
-      promise = CryptoUtils.ready()
+      promise = csCrypto.ready()
         .then(function() {
-          return CryptoUtils.scryptKeypair($scope.formData.username, $scope.formData.password, scryptPrams)
+          return csCrypto.scrypt.keypair($scope.formData.username, $scope.formData.password, scryptPrams)
         })
         .then(function(keypair) {
           if (!keypair) return UIUtils.loading.hide(10);
-          var pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+          var pubkey = csCrypto.util.encode_base58(keypair.signPk);
           // Check pubkey
           if (parameters.expectedPubkey && parameters.expectedPubkey != pubkey) {
             $scope.pubkey = pubkey;
@@ -178,7 +180,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
         })
         .then(function(keypair) {
           if (!keypair) return UIUtils.loading.hide(10);
-          var pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+          var pubkey = csCrypto.util.encode_base58(keypair.signPk);
 
           // Check pubkey
           if (parameters.expectedPubkey && parameters.expectedPubkey != pubkey) {
@@ -316,15 +318,18 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
       var salt = $scope.formData.username;
       var pwd = $scope.formData.password;
       var scryptPrams = $scope.formData.scrypt && $scope.formData.scrypt.params;
-      return CryptoUtils.scryptSignPk(salt, pwd, scryptPrams)
-        .then(function (signPk) {
+      return csCrypto.ready()
+        .then(function() {
+          return csCrypto.scrypt.pubkey(salt, pwd, scryptPrams)
+        })
+        .then(function (pubkey) {
 
           // If model has changed before the response, then retry
           if (salt !== $scope.formData.username || pwd !== $scope.formData.password) {
             return $scope.computePubkey();
           }
 
-          $scope.pubkey = CryptoUtils.util.encode_base58(signPk);
+          $scope.pubkey = pubkey;
           if ($scope.expectedPubkey && $scope.expectedPubkey != $scope.pubkey) {
             $scope.pubkeyError = true;
           }
@@ -357,6 +362,11 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
 
   $scope.showHelpModal = function(parameters) {
     return Modals.showHelp(parameters);
+  };
+
+  $scope.toggleShowSalt = function() {
+    console.debug('[login] Toggle showSalt');
+    $scope.showSalt = !$scope.showSalt;
   };
 
   $scope.doScan = function() {

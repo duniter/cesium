@@ -323,6 +323,16 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       };
 
       /**
+       * Get pubkey (sign), from salt+password (Scrypt auth)
+       */
+      this.scryptPubkey = function(salt, password, scryptParams) {
+        return that.scryptKeypair(salt, password, scryptParams)
+          .then(function(keypair){
+            return that.util.encode_base58(keypair.signPk);
+          });
+      };
+
+      /**
        * Create key pairs from a seed
        */
       this.seedKeypair = function(seed) {
@@ -552,35 +562,23 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
      * ----------------------------------------------------------------------------------------------------------------*/
 
 
-    var service = new CryptoAbstractService();
+    var service = new FullJSServiceFactory();
 
-    var isDevice = true;
-    // removeIf(android)
-    // removeIf(ios)
-    isDevice = false;
-    // endRemoveIf(ios)
-    // endRemoveIf(android)
-
-    console.debug("[crypto] Created CryptoUtils service. device=" + isDevice);
+    //console.debug("[crypto] Created CryptoUtils service.");
 
     ionicReady().then(function() {
       console.debug('[crypto] Starting...');
       var now = Date.now();
-
-      var serviceImpl;
-
       console.debug('[crypto] Has crypto.getRandomValues ? ' + (crypto && crypto.getRandomValues && true || false));
       console.debug('[crypto] Loading \'FullJS\' implementation...');
-      serviceImpl = new FullJSServiceFactory();
 
       // Load (async lib)
-      serviceImpl.load()
+      service.load()
         .catch(function(err) {
           console.error('[crypto] Failed to load implementation: ' + (err && err.message || err), err);
           throw err;
         })
         .then(function() {
-          service.copy(serviceImpl);
           console.debug('[crypto] Loaded \'{0}\' implementation in {1}ms'.format(service.id, Date.now() - now));
         });
 
@@ -1243,6 +1241,10 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         getKeypair: getBoxKeypair,
         pack: packRecordFields,
         open: openRecordFields
+      },
+      scrypt: {
+        keypair: CryptoUtils.scryptKeypair,
+        pubkey: CryptoUtils.scryptPubkey
       }
     };
   })

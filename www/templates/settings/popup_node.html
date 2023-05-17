@@ -5,6 +5,7 @@
            ng-class="{'item-input-error': popupForm.$submitted && popupForm.newNode.$invalid}">
       <span class="input-label" ng-bind-html="'SETTINGS.POPUP_PEER.HOST'|translate"></span>
       <input name="newNode" type="text" placeholder="{{'SETTINGS.POPUP_PEER.HOST_HELP' | translate}}"
+             autocomplete="off"
              ng-model="popupData.newNode"
              ng-minlength="3"
              required>

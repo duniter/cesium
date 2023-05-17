@@ -7,17 +7,32 @@
   <input type="password" name="fake-password" autocomplete="off" style="visibility:hidden; position:absolute;"/>
 
   <!-- salt (=username, to enable browser login cache) -->
-  <label class="item item-input"
+  <div class="item item-input "
          ng-class="{ 'item-input-error': form.$submitted && form.username.$invalid}">
     <span class="input-label hidden-xs" translate>LOGIN.SALT</span>
-    <input name="username" type="password"
+    <input name="username"
+           type="password"
+           class="highlight-light"
+           ng-if="!showSalt"
            placeholder="{{'LOGIN.SALT_HELP' | translate}}"
            autocomplete="off"
            ng-model="formData.username"
            ng-model-options="{ debounce: 650 }"
+           required>
+    <input name="username"
+           type="text"
            class="highlight-light"
-           required >
-  </label>
+           ng-if="showSalt"
+           placeholder="{{'LOGIN.SALT_HELP' | translate}}"
+           autocomplete="off"
+           ng-model="formData.username"
+           ng-model-options="{ debounce: 650 }"
+           required>
+    <i class="button button-icon button-small-padding icon icon-eye-toggle"
+       ng-class="{'ion-eye': !showSalt, 'ion-eye-disabled': showSalt}"
+       ng-click="showSalt=!showSalt">
+    </i>
+  </div>
   <div class="form-errors"
        ng-show="form.$submitted && form.username.$error"
        ng-messages="form.username.$error">
@@ -27,17 +42,30 @@
   </div>
 
   <!-- password-->
-  <label class="item item-input"
+  <div class="item item-input"
          ng-class="{ 'item-input-error': form.$submitted && form.password.$invalid}">
     <span class="input-label hidden-xs" translate>LOGIN.PASSWORD</span>
     <input name="password" type="password"
+           ng-if="!showPassword"
            placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
            autocomplete="off"
            ng-model="formData.password"
            ng-model-options="{ debounce: 650 }"
            select-on-click
            required>
-  </label>
+    <input name="password" type="text"
+           ng-if="showPassword"
+           placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
+           autocomplete="off"
+           ng-model="formData.password"
+           ng-model-options="{ debounce: 650 }"
+           select-on-click
+           required>
+    <i class="button button-icon button-small-padding icon icon-eye-toggle"
+       ng-class="{'ion-eye': !showPassword, 'ion-eye-disabled': showPassword}"
+       ng-click="showPassword=!showPassword">
+    </i>
+  </div>
   <div class="form-errors"
        ng-show="form.$submitted && form.password.$error"
        ng-messages="form.password.$error">
@@ -56,7 +84,7 @@
         <i class="ion-eye"></i>
         {{'COMMON.BTN_SHOW_PUBKEY' | translate}}
       </a>
-      <span class="gray animate-show-hide" ng-show="!computing && pubkey">{{pubkey}}</span>
+      <span class="gray animate-show-hide" ng-show="!computing && pubkey">{{pubkey}}:{{pubkey|pkChecksum}}</span>
       <ion-spinner class="ion-spinner-small" icon="android" ng-if="computing"></ion-spinner>
     </div>
     <a class="button button-icon positive button-small-padding icon ion-ios-help-outline animate-show-hide "
