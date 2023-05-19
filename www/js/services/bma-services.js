@@ -473,8 +473,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       },
       wot: {
         lookup: get('/wot/lookup/:search'),
-        certifiedBy: get('/wot/certified-by/:pubkey?pubkey', csCache.constants.SHORT),
-        certifiersOf: get('/wot/certifiers-of/:pubkey?pubkey', csCache.constants.SHORT),
+        certifiedBy: get('/wot/certified-by/:pubkey?pubkey=true', csCache.constants.SHORT),
+        certifiersOf: get('/wot/certifiers-of/:pubkey?pubkey=true', csCache.constants.SHORT),
         member: {
           all: get('/wot/members', csCache.constants.LONG),
           pending: get('/wot/pending', csCache.constants.SHORT)
@@ -552,8 +552,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           current: get('/blockchain/current')
         },
         wot: {
-          requirementsWithCache: get('/wot/requirements/:pubkey?pubkey', csCache.constants.LONG),
-          requirements: get('/wot/requirements/:pubkey?pubkey')
+          requirementsWithCache: get('/wot/requirements/:pubkey?pubkey=true', csCache.constants.LONG),
+          requirements: get('/wot/requirements/:pubkey?pubkey=true')
         },
         tx: {
           history: {
