@@ -140,7 +140,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
       UIUtils.loading.show();
       promise = csCrypto.ready()
         .then(function() {
-          return csCrypto.scrypt.keypair($scope.formData.username, $scope.formData.password, scryptPrams)
+          return csCrypto.scrypt.keypair($scope.formData.username, $scope.formData.password, scryptPrams);
         })
         .then(function(keypair) {
           if (!keypair) return UIUtils.loading.hide(10);
@@ -320,7 +320,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, Cryp
       var scryptPrams = $scope.formData.scrypt && $scope.formData.scrypt.params;
       return csCrypto.ready()
         .then(function() {
-          return csCrypto.scrypt.pubkey(salt, pwd, scryptPrams)
+          return csCrypto.scrypt.pubkey(salt, pwd, scryptPrams);
         })
         .then(function (pubkey) {
 
