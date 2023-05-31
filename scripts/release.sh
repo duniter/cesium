@@ -178,5 +178,5 @@ echo "**********************************"
 cd ${PROJECT_DIR}
 
 # Back to nodejs project version
-nvm use ${NODEJS_VERSION}
+nvm use ${NODE_VERSION}
 

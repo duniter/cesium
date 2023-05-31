@@ -87,16 +87,19 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
     // Set a value to the secure storage (or remove if value is not defined)
     exports.secure.put = function(key, value) {
       return $q(function(resolve, reject) {
-        if (value !== undefined && value !== null) {
+        if (value != null) {
           exports.secure.storage.set(
             function (key) {
               resolve();
             },
             function (err) {
+              $log.error("[storage] Failed to set value for key=" + key);
               $log.error(err);
               reject(err);
             },
-            key, value);
+            key, value,
+            null // Cipher mode  - "CCM" (default) or "GCM" (Galois/Counter Mode)
+          );
         }
         // Remove
         else {
@@ -105,6 +108,7 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
               resolve();
             },
             function (err) {
+              $log.error("[storage] Failed to remove key=" + key);
               $log.error(err);
               resolve(); // Error = not found
             },
@@ -115,6 +119,7 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
 
     // Get a value from the secure storage
     exports.secure.get = function(key, defaultValue) {
+      $log.debug("[storage] Getting value from secure storage, using key=" + key);
       return $q(function(resolve, reject) {
         exports.secure.storage.get(
           function (value) {
@@ -126,6 +131,7 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
             }
           },
           function (err) {
+            $log.error("[storage] Failed to get value from secure storage, using key=" + key);
             $log.error(err);
             resolve(); // Error = not found
           },
@@ -137,11 +143,31 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
     exports.secure.setObject = function(key, value) {
       $log.debug("[storage] Setting object into secure storage, using key=" + key);
       return $q(function(resolve, reject){
-        exports.secure.storage.set(
-          resolve,
-          reject,
-          key,
-          value ? JSON.stringify(value) : undefined);
+        if (value != null) {
+          exports.secure.storage.set(
+            resolve,
+            function(err) {
+              $log.error("[storage] Failed to set object into secure storage, using key=" + key, value);
+              $log.error(err);
+              reject(err);
+            },
+            key,
+            JSON.stringify(value),
+            null // Cipher mode  - "CCM" (default) or "GCM" (Galois/Counter Mode)
+          );
+        }
+        else {
+          exports.secure.storage.remove(
+            function () {
+              resolve();
+            },
+            function (err) {
+              $log.error("[storage] Failed to remove key=" + key);
+              $log.error(err);
+              resolve(); // Error = not found
+            },
+            key);
+        }
       });
     };
 
@@ -150,8 +176,12 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
       $log.debug("[storage] Getting object from secure storage, using key=" + key);
       return $q(function(resolve, reject){
         exports.secure.storage.get(
-          function(value) {resolve(JSON.parse(value||'null'));},
+          function(value) {
+            $log.debug("[storage] Getting object from secure storage, using key=" + key + " - result="+value);
+            resolve(JSON.parse(value||'null'));
+          },
           function(err) {
+            $log.error("[storage] Failed to get object from secure storage, using key=" + key);
             $log.error(err);
             resolve(); // Error = not found
           },

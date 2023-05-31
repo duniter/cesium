@@ -20,7 +20,7 @@ REPO="duniter/cesium"
 REPO_API_URL="https://api.github.com/repos/${REPO}"
 REPO_PUBLIC_URL="https://github.com/${REPO}"
 
-NODEJS_VERSION=16
+NODE_VERSION=16
 #NODE_OPTIONS=--max-old-space-size=4096
 IONIC_CLI_VERSION=6.20.9
 
@@ -111,11 +111,11 @@ if test -d "${NVM_DIR}"; then
     . "${NVM_DIR}/nvm.sh"
 
     # Switch to expected version
-    nvm use ${NODEJS_VERSION}
+    nvm use ${NODE_VERSION}
 
     # Or install it
     if test $? -ne 0; then
-        nvm install ${NODEJS_VERSION}
+        nvm install ${NODE_VERSION}
     fi
 else
     echo "nvm (Node version manager) not found (directory ${NVM_DIR} not found). Please install, and retry"
@@ -178,7 +178,7 @@ fi
 export PATH \
   PROJECT_DIR PROJECT_NAME \
   REPO REPO_API_URL REPO_PUBLIC_URL \
-  NODEJS_VERSION \
+  NODE_VERSION \
   JAVA_HOME \
   ANDROID_NDK_VERSION ANDROID_SDK_VERSION ANDROID_SDK_CLI_VERSION \
   ANDROID_HOME ANDROID_SDK_ROOT ANDROID_ALTERNATIVE_SDK_ROOT ANDROID_SDK_CLI_ROOT \

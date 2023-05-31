@@ -17,7 +17,7 @@ fi
 
 echo "--- Preparing Android environment:"
 echo "        Root: ${PROJECT_DIR}"
-echo "      NodeJS: version ${NODE_VERSION} with options: ${NODE_OPTIONS}"
+echo "      NodeJS: ${NODE_VERSION} with options: ${NODE_OPTIONS}"
 echo " Android SDK: ${ANDROID_SDK_ROOT}"
 echo " Android CLI: ${ANDROID_SDK_CLI_ROOT}"
 echo " Build Tools: ${ANDROID_BUILD_TOOLS_ROOT}"
