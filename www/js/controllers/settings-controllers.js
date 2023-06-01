@@ -217,19 +217,33 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
       });
     }
 
-    var port = !!$scope.formData.node.port && $scope.formData.node.port != 80 && $scope.formData.node.port != 443 ? $scope.formData.node.port : undefined;
-    node = node || {
-        host: $scope.formData.node.host,
+    // If not given, get node from settings data
+    if (!node || !node.host) {
+      var host = $scope.formData.node.host;
+      if (!host) return; // Should never occur
+
+      var useSsl = angular.isDefined($scope.formData.node.useSsl) ?
+        $scope.formData.node.useSsl :
+        ($scope.formData.node.port == 443);
+      var port = !!$scope.formData.node.port && $scope.formData.node.port != 80 && $scope.formData.node.port != 443 ? $scope.formData.node.port : undefined;
+      var path = $scope.formData.node.path || (host.indexOf('/') !== -1 ? host.substring(host.indexOf('/')) : '');
+      if (path.endsWith('/')) path = path.substring(0, path.length - 1); // Remove trailing slash
+      host = host.indexOf('/') !== -1 ? host.substring(0, host.indexOf('/')) : host; // Remove path from host
+      node = {
+        host: host,
         port: port,
-        useSsl: angular.isDefined($scope.formData.node.useSsl) ?
-          $scope.formData.node.useSsl :
-          ($scope.formData.node.port == 443)
+        path: path,
+        useSsl: useSsl
       };
+    }
+
     $scope.showNodePopup(node)
       .then(function(newNode) {
         if (newNode.host === $scope.formData.node.host &&
-          newNode.port === $scope.formData.node.port &&
-          newNode.useSsl === $scope.formData.node.useSsl && !$scope.formData.node.temporary) {
+          newNode.port == $scope.formData.node.port &&
+          newNode.path === $scope.formData.node.path &&
+          newNode.useSsl === $scope.formData.node.useSsl &&
+          !$scope.formData.node.temporary) {
           return; // same node = nothing to do
         }
 
@@ -277,11 +291,15 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
       .then(function (peer) {
         if (peer) {
           var bma = peer.getBMA();
+          var host = (bma.dns ? bma.dns :
+            (peer.hasValid4(bma) ? bma.ipv4 : bma.ipv6));
+          var useSsl = bma.useSsl || bma.port == 443
+          var port = bma.port || (useSsl ? 443 : 80);
           return {
-            host: (bma.dns ? bma.dns :
-                   (peer.hasValid4(bma) ? bma.ipv4 : bma.ipv6)),
-            port: bma.port || 80,
-            useSsl: bma.useSsl || bma.port == 443
+            host: host,
+            port: port,
+            path: bma.path || '',
+            useSsl: useSsl
           };
         }
       })
@@ -293,8 +311,11 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
   // Show node popup
   $scope.showNodePopup = function(node) {
     return $q(function(resolve, reject) {
-      $scope.popupData.newNode = node.port ? [node.host, node.port].join(':') : node.host;
-      $scope.popupData.useSsl = node.useSsl;
+      var useSsl = node.useSsl || node.port == 443;
+      var host = (node.port && node.port != 80 && node.port != 443) ? [node.host, node.port].join(':') : node.host;
+      if (node.path && node.path.length && node.path !== '/') host += node.path;
+      $scope.popupData.newNode = host;
+      $scope.popupData.useSsl = useSsl;
       if (!!$scope.popupForm) {
         $scope.popupForm.$setPristine();
       }
@@ -317,7 +338,7 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
                     e.preventDefault();
                   } else {
                     return {
-                      server: $scope.popupData.newNode,
+                      host: $scope.popupData.newNode,
                       useSsl: $scope.popupData.useSsl
                     };
                   }
@@ -326,16 +347,23 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
             ]
           })
           .then(function(res) {
-            if (!res) { // user cancel
+            if (!res || !res.host) { // user cancel
               UIUtils.loading.hide();
+              reject('CANCELLED');
               return;
             }
-            var parts = res.server.split(':');
-            parts[1] = parts[1] ? parts[1] : 80;
+            var host = res.host;
+            var path = host.indexOf('/') !== -1 ? host.substring(host.indexOf('/')) : '';
+            host = host.indexOf('/') !== -1 ? host.substring(0, host.indexOf('/')) : host;
+            var parts = host.split(':', 2);
+            host = parts[0];
+            var port = parts[1] ? parts[1] : (res.useSsl ? 443 : 80);
+            var useSsl = res.useSsl || port == 443;
             resolve({
-              host: parts[0],
-              port: parts[1],
-              useSsl: res.useSsl
+              host: host,
+              port: port,
+              path: path,
+              useSsl: useSsl
             });
           });
         });

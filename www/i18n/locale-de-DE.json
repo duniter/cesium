@@ -854,6 +854,7 @@
     "SAVE_BEFORE_LEAVE_TITLE": "Änderungen nicht speichern",
     "LOGOUT": "Sicher, dass du dich abmelden möchtest?",
     "USE_FALLBACK_NODE": "Knoten <b>{{old}}</b> ist nicht erreichbar.<br/><br/>Möchtest du temporär den Knoten <b>{{new}}</b> verwenden?",
+    "USE_SYNC_FALLBACK_NODE": "Knoten <b>{{old}}</b> scheint nicht synchronisiert zu sein.<br/><br/>Möchten Sie vorübergehend den synchronisierten Knoten <b>{{new}}</b> verwenden?",
     "ISSUE_524_SEND_LOG": "Die Transaktion wurde aufgrund eines bekannten Problems (issue #524) zurückgewiesen. Die Ursache ist bisher unbekannt.<br/>Akzeptierst du <b>die Übertragung deiner Logdaten</b> als Nachricht, um den Entwicklern bei der Korrektur zu helfen?<br/><small>(Dies beinhaltet keine vertraulichen Daten)</small><br/>",
     "LICENCE": "Ich habe die die Lizenz des G1 gelesen und akzeptiert",
     "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Warnung:</b> Möchten Sie den Knoten <b>manuell ändern</b>?<br/><br/>Wenn Sie fortfahren:<ul><li> - Der <b>Expertenmodus</b> wird aktiviert;</li><li> - Sie können zur automatischen Knotenauswahl zurückkehren, indem Sie einfach den <b>Expertenmodus deaktivieren</b>.</li></ul>"

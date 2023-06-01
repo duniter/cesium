@@ -175,6 +175,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
           var node = {
             host: fallbackNode.host,
             port: fallbackNode.port,
+            path: fallbackNode.path,
             useSsl: fallbackNode.useSsl,
           };
           csSettings.data.node = node;
@@ -221,6 +222,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
             return BMA.node.same({
               host: peer.getHost(),
               port: peer.getPort(),
+              path: peer.getPath(),
               useSsl: peer.isSsl()
             });
           });
@@ -231,7 +233,10 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
             return true;
           }
 
+          // Peer is not well synchronized!
           var consensusBlockNumber = peers.length ? peers[0].currentNumber : undefined;
+          console.warn("[platform] Default peer [{0}] not synchronized with consensus block #{1}".format(BMA.server, consensusBlockNumber));
+
           return csCurrency.blockchain.current()
             .then(function(block) {
 
@@ -245,12 +250,14 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
               var synchronizedNode = new Peer({
                 host: randomPeer.getHost(),
                 port: randomPeer.getPort(),
-                useSsl: randomPeer.isSsl()
+                useSsl: randomPeer.isSsl(),
+                path: randomPeer.getPath(),
+                endpoints: randomPeer.endpoints
               });
 
               // If Expert mode: ask user to select a node
               if (askUserConfirmation) {
-                return askUseFallbackNode(synchronizedNode);
+                return askUseFallbackNode(synchronizedNode, 'CONFIRM.USE_SYNC_FALLBACK_NODE');
               }
 
               return synchronizedNode;
@@ -264,19 +271,19 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
               console.info("[platform] Switching to synchronized fallback peer {{0}:{1}}".format(node.host, node.port));
 
               // Only change BMA node in settings
-              csSettings.data.node = node;
-
-              // Add a marker, for UI
-              csSettings.data.node.temporary = true;
+              angular.merge(csSettings.data.node, node, {endpoints: undefined, temporary: true});
 
               return BMA.copy(node);
             });
         });
     }
 
-    function askUseFallbackNode(fallbackNode) {
+    function askUseFallbackNode(fallbackNode, messageKey) {
       // Ask user to confirm, before switching to fallback node
       var server = fallbackNode.server || (typeof fallbackNode.getServer === 'function' ? fallbackNode.getServer() : new Peer(fallbackNode).getServer());
+
+      server += fallbackNode.path || '';
+
       var confirmMsgParams = {old: BMA.server, new: server};
 
       // Force to show port/ssl, if this is the only difference
@@ -288,7 +295,9 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         }
       }
 
-      return $translate('CONFIRM.USE_FALLBACK_NODE', confirmMsgParams)
+      messageKey = messageKey || 'CONFIRM.USE_FALLBACK_NODE';
+
+      return $translate(messageKey, confirmMsgParams)
         .then(UIUtils.alert.confirm)
         .then(function (confirm) {
           if (!confirm) return; // Stop

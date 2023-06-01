@@ -924,6 +924,7 @@
     "SAVE_BEFORE_LEAVE_TITLE": "Cambios no registrados",
     "LOGOUT": "¿Desea desconectarse?",
     "USE_FALLBACK_NODE": "Nodo <b>{{old}}</b> inalcanzable o dirección inválida.<br/><br/>¿Desea utilizar temporalmente el nodo <b>{{new}}</b>?",
+    "USE_SYNC_FALLBACK_NODE": "El nodo <b>{{old}}</b> parece estar desincronizado.<br/><br/>¿Quieres utilizar temporalmente el nodo sincronizado <b>{{new}}</b>?",
     "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Advertencia:</b> ¿Quieres <b>cambiar manualmente</b> el nodo?<br/><br/>Si continúas:<ul><li> - Se activará el <b>modo experto</b>;</li><li> - Podrás volver a la selección automática de nodos simplemente <b>desactivando el modo experto</b>.</li></ul>"
   },
   "DOWNLOAD": {

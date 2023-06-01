@@ -923,6 +923,7 @@
     "SAVE_BEFORE_LEAVE_TITLE": "Alterações não guardadas",
     "LOGOUT": "Deseja desconectar-se?",
     "USE_FALLBACK_NODE": "Nó <b>{{old}}</b> indisponível ou endereço inválido.<br/><br/>Deseja utilizar temporalmente o nó <b>{{new}}</b>?",
+    "USE_SYNC_FALLBACK_NODE": "Nó <b>{{old}}</b> parece estar dessincronizado.<br/><br/>Quer usar temporariamente o nó sincronizado <b>{{new}}</b>?",
     "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Aviso:</b> Queres <b>alterar manualmente</b> o nó Duniter?<br/><br/>Se continuares:<ul><li> - Será ativado o <b>modo perito</b>;</li><li> - Poderás voltar à seleção automática do nó, simplesmente <b>desativando o modo perito</b>.</li></ul>"
   },
   "DOWNLOAD": {

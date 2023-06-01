@@ -5,10 +5,10 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 .factory('BMA', function($q, $window, $rootScope, $timeout, csCrypto, Api, Device, UIUtils, csConfig, csSettings, csCache, csHttp) {
   'ngInject';
 
-  function BMA(host, port, useSsl, useCache, timeout) {
+  function BMA(host, port, path, useSsl, useCache, timeout) {
 
     var
-      id = (!host ? 'default' : '{0}:{1}'.format(host, (port || (useSsl ? '443' : '80')))), // Unique id of this instance
+      id = (!host ? 'default' : '{0}:{1}'.format(host, (port || (useSsl ? '443' : '80')))), // Unique id of this instance
       cachePrefix = "BMA-",
       pubkey = "[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44}",
       // TX output conditions
@@ -101,10 +101,10 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       console.debug('[BMA] Enable SSL (forced by config or detected in URL)');
     }
 
-    if (host)  init(host, port, useSsl);
+    if (host)  init(host, port, path, useSsl);
     that.useCache = angular.isDefined(useCache) ? useCache : true; // need here because used in get() function
 
-    function init(host, port, useSsl) {
+    function init(host, port, path, useSsl) {
       if (that.started) that.stop();
       that.alive = false;
 
@@ -113,17 +113,22 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       if (node) {
         host = host || node.host;
         port = port || node.port;
+        path = path || node.path;
         useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443 || node.useSsl || that.forceUseSsl);
       }
 
       if (!host) return; // could not init yet
 
+      path = path && path.length ? path : (host.indexOf('/') !== -1 ? host.substring(host.indexOf('/')) : '');
+      if (path.endsWith('/')) path = path.substring(0, path.length -1); // Remove trailing slash
+      host = host.indexOf('/') !== -1 ? host.substring(0, host.indexOf('/')) : host; // Remove path from host
 
       that.host = host;
       that.port = port || 80;
+      that.path = path || '';
       that.useSsl = angular.isDefined(useSsl) ? useSsl : (that.port == 443 || that.forceUseSsl);
-      that.server = csHttp.getServer(host, port);
-      that.url = csHttp.getUrl(host, port, ''/*path*/, useSsl);
+      that.server = csHttp.getServer(that.host, that.port);
+      that.url = csHttp.getUrl(that.host, that.port, that.path, that.useSsl);
     }
 
     function exact(regexpContent) {
@@ -159,7 +164,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 
       cacheTime = that.useCache && cacheTime || 0 /* no cache*/ ;
       forcedTimeout = forcedTimeout || timeout;
-      var requestKey = path + (cacheTime ? ('#'+cacheTime) : '');
+      var cacheKey = path + (cacheTime ? ('#'+cacheTime) : '');
 
       var getRequestFn = function(params) {
 
@@ -172,15 +177,15 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           });
         }
 
-        var request = that.raw.getByPath[requestKey];
+        var request = that.raw.getByPath[cacheKey];
         if (!request) {
           if (cacheTime) {
-            request = csHttp.getWithCache(that.host, that.port, path, that.useSsl, cacheTime, null/*autoRefresh*/, forcedTimeout, cachePrefix);
+            request = csHttp.getWithCache(that.host, that.port, that.path + path, that.useSsl, cacheTime, null/*autoRefresh*/, forcedTimeout, cachePrefix);
           }
           else {
-            request = csHttp.get(that.host, that.port, path, that.useSsl, forcedTimeout);
+            request = csHttp.get(that.host, that.port, that.path + path, that.useSsl, forcedTimeout);
           }
-          that.raw.getByPath[requestKey] = request;
+          that.raw.getByPath[cacheKey] = request;
         }
         var execCount = 1;
         return request(params)
@@ -221,7 +226,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 
         var request = that.raw.postByPath[path];
         if (!request) {
-          request =  csHttp.post(that.host, that.port, path, that.useSsl);
+          request =  csHttp.post(that.host, that.port, that.path + path, that.useSsl);
           that.raw.postByPath[path] = request;
         }
         return request(obj, params);
@@ -234,7 +239,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       return function() {
         var sock = that.raw.wsByPath[path];
         if (!sock || sock.isClosed()) {
-          sock =  csHttp.ws(that.host, that.port, path, that.useSsl);
+          sock =  csHttp.ws(that.host, that.port, that.path + path, that.useSsl);
 
           // When close, remove from cache
           sock.onclose = function() {
@@ -253,7 +258,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       //  - Cannot use previous get() function, because
       //    node can be !=that, or not be started yet
       //  - Do NOT use cache here
-      return csHttp.get(node.host, node.port, '/node/summary', node.useSsl || that.forceUseSsl, timeout)()
+      return csHttp.get(node.host, node.port, (node.path || '') + '/node/summary', node.useSsl || that.forceUseSsl, timeout)()
         .then(function(json) {
           var software = json && json.duniter && json.duniter.software;
           var isCompatible = true;
@@ -261,8 +266,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           // Check duniter min version
           if (software === 'duniter' && json.duniter.version) {
             isCompatible = csHttp.version.isCompatible(csSettings.data.minVersion, json.duniter.version);
+            // TODO check storage transaction ?
           }
-          // TODO: check version of other software (DURS, Juniter, etc.)
           else {
             console.debug('[BMA] Unknown node software [{0} v{1}]: could not check compatibility.'.format(software || '?', json.duniter.version || '?'));
           }
@@ -278,13 +283,16 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 
     function isSameNode(node2) {
       node2 = node2 || {};
-      node2.useSsl = angular.isDefined(node2.useSsl) ? node2.useSsl : (node2.port && node2.port == 443);
+      var useSsl = angular.isDefined(node2.useSsl) ? node2.useSsl : (node2.port && node2.port == 443);
+      var port = node2.port || (useSsl ? 443 : 80);
       // Same host
       return that.host === node2.host &&
+        // Same path
+          ((!that.path && !node2.path) || (that.path == node2.path||'')) &&
           // Same port
-          ((!that.port && !node2.port2) || (that.port == node2.port2||80)) &&
+          ((!that.port && !node2.port) || (that.port == port)) &&
           // Same useSsl
-          (that.useSsl === node2.useSsl);
+          (that.useSsl === useSsl);
     }
 
     function removeListeners() {
@@ -334,14 +342,14 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           });
       }
 
-      console.debug("[BMA] [{0}] Starting {ssl: {1})...".format(that.server, that.useSsl));
+      console.debug("[BMA] Starting from [{0}{1}] {ssl: {2})...".format(that.server, that.path, that.useSsl));
       var now = Date.now();
 
       that._startPromise = that.isAlive()
         .then(function(alive) {
           that.alive = alive;
           if (!that.alive) {
-            console.error("[BMA] Could not start using peer {{0}}: unreachable".format(that.server));
+            console.error("[BMA] Could not start using peer [{0}{1}]: unreachable".format(that.server, that.path));
             that.started = true;
             delete that._startPromise;
             return false; // Not alive
@@ -667,29 +675,35 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     };
 
     exports.node.parseEndPoint = function(endpoint, epPrefix) {
+      var path = null;
+
       // Try BMA
       var matches = exports.regexp.BMA_ENDPOINT.exec(endpoint);
       if (matches) {
+        path = matches[10];
+        if (path && !path.startsWith('/')) path = '/' + path; // Fix path
         return {
           "dns": matches[2] || '',
           "ipv4": matches[4] || '',
           "ipv6": matches[6] || '',
           "port": matches[8] || 80,
           "useSsl": matches[8] && matches[8] == 443,
-          "path": matches[10],
+          "path": path || '',
           "useBma": true
         };
       }
       // Try BMAS
       matches = exports.regexp.BMAS_ENDPOINT.exec(endpoint);
       if (matches) {
+        path = matches[10];
+        if (path && !path.startsWith('/')) path = '/' + path; // Fix path
         return {
           "dns": matches[2] || '',
           "ipv4": matches[4] || '',
           "ipv6": matches[6] || '',
           "port": matches[8] || 80,
           "useSsl": true,
-          "path": matches[10],
+          "path": path || '',
           "useBma": true
         };
       }
@@ -701,12 +715,51 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           "port": matches[2] || 80,
           "useSsl": false,
           "useTor": true,
-          "useBma": true
+          "useBma": true,
+          "useWs2p": false,
+          "useGva": false
+        };
+      }
+
+      // Try GVA
+      matches = exports.regexp.GVA_ENDPOINT.exec(endpoint);
+      if (matches) {
+        path = matches[10];
+        if (path && !path.startsWith('/')) path = '/' + path; // Add starting slash
+        return {
+          "dns": matches[2] || '',
+          "ipv4": matches[4] || '',
+          "ipv6": matches[6] || '',
+          "port": matches[8] || 80,
+          "useSsl": matches[8] && matches[8] == 443,
+          "path": path || '',
+          "useBma": false,
+          "useWs2p": false,
+          "useGva": true,
+        };
+      }
+      // Try GVAS
+      matches = exports.regexp.GVAS_ENDPOINT.exec(endpoint);
+      if (matches) {
+        path = matches[10];
+        if (!path.startsWith('/')) path = '/' + path; // Fix GVA path
+        return {
+          "dns": matches[2] || '',
+          "ipv4": matches[4] || '',
+          "ipv6": matches[6] || '',
+          "port": matches[8] || 443,
+          "useSsl": true,
+          "path": path || '',
+          "useBma": false,
+          "useWs2p": false,
+          "useGva": true,
         };
       }
       // Try WS2P
       matches = exports.regexp.WS2P_ENDPOINT.exec(endpoint);
       if (matches) {
+        path = matches[11];
+        if (path && !path.startsWith('/')) path = '/' + path;
         return {
           "ws2pid": matches[1] || '',
           "dns": matches[3] || '',
@@ -714,47 +767,25 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           "ipv6": matches[7] || '',
           "port": matches[9] || 80,
           "useSsl": matches[9] && matches[9] == 443,
-          "path": matches[11] || '',
-          "useWs2p": true
+          "path": path || '',
+          "useWs2p": true,
+          "useBma": false
         };
       }
       // Try WS2PTOR
       matches = exports.regexp.WS2PTOR_ENDPOINT.exec(endpoint);
       if (matches) {
+        path = matches[4];
+        if (path && !path.startsWith('/')) path = '/' + path;
         return {
           "ws2pid": matches[1] || '',
           "dns": matches[2] || '',
           "port": matches[3] || 80,
-          "path": matches[4] || '',
+          "path": path || '',
           "useSsl": false,
           "useTor": true,
-          "useWs2p": true
-        };
-      }
-      // Try GVA
-      matches = exports.regexp.GVA_ENDPOINT.exec(endpoint);
-      if (matches) {
-        return {
-          "dns": matches[2] || '',
-          "ipv4": matches[4] || '',
-          "ipv6": matches[6] || '',
-          "port": matches[8] || 80,
-          "useSsl": false,
-          "path": matches[10],
-          "useGva": true
-        };
-      }
-      // Try GVAS
-      matches = exports.regexp.GVAS_ENDPOINT.exec(endpoint);
-      if (matches) {
-        return {
-          "dns": matches[2] || '',
-          "ipv4": matches[4] || '',
-          "ipv6": matches[6] || '',
-          "port": matches[8] || 443,
-          "useSsl": true,
-          "path": matches[10],
-          "useGva": true
+          "useWs2p": true,
+          "useBma": false
         };
       }
 
@@ -762,13 +793,15 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       if (epPrefix) {
         matches = exact(epPrefix + REGEX_ENDPOINT_PARAMS).exec(endpoint);
         if (matches) {
+          path = matches[10];
+          if (path && !path.startsWith('/')) path = '/' + path;
           return {
             "dns": matches[2] || '',
             "ipv4": matches[4] || '',
             "ipv6": matches[6] || '',
             "port": matches[8] || 80,
             "useSsl": matches[8] && matches[8] == 443,
-            "path": matches[10],
+            "path": path || '',
             "useBma": false
           };
         }
@@ -778,12 +811,12 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 
     exports.copy = function(otherNode) {
 
-      var server = csHttp.getUrl(otherNode.host, otherNode.port, ''/*path*/, otherNode.useSsl);
-      var hasChanged = (server !== that.url);
+      var url = csHttp.getUrl(otherNode.host, otherNode.port, otherNode.path || '', otherNode.useSsl);
+      var hasChanged = (url !== that.url);
       if (hasChanged) {
         var wasStarted = that.started;
         if (wasStarted) that.stop();
-        that.init(otherNode.host, otherNode.port, otherNode.useSsl, that.useCache/*keep original value*/);
+        that.init(otherNode.host, otherNode.port, otherNode.path || '', otherNode.useSsl);
         if (wasStarted) {
           return $timeout(function () {
             return that.start()
@@ -1067,33 +1100,39 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 
   var service = new BMA();
 
-  service.instance = function(host, port, useSsl, useCache, timeout) {
+  service.instance = function(host, port, path, useSsl, useCache, timeout) {
     useCache = angular.isDefined(useCache) ? useCache : false; // No cache by default
-    return new BMA(host, port, useSsl, useCache, timeout);
+    return new BMA(host, port, path, useSsl, useCache, timeout);
   };
 
-  service.lightInstance = function(host, port, useSsl, timeout) {
+  service.lightInstance = function(host, port, path, useSsl, timeout) {
     port = port || 80;
     useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443);
     timeout = timeout || csSettings.data.timeout;
+    path = path || (host.indexOf('/') !== -1 ? host.substring(host.indexOf('/')) : '');
+    if (!path.startsWith('/')) path = '/' + path; // Add starting slash
+    if (path.endsWith('/')) path = path.substring(0, path.length - 1); // Remove trailing slash
+    host = host.indexOf('/') !== -1 ? host.substring(0, host.indexOf('/')) : host;
     return {
       host: host,
       port: port,
+      path: path,
       useSsl: useSsl,
-      url: csHttp.getUrl(host, port, ''/*no path*/, useSsl),
+      server: csHttp.getServer(host, port),
+      url: csHttp.getUrl(host, port, path, useSsl),
       node: {
-        summary: csHttp.getWithCache(host, port, '/node/summary', useSsl, csCache.constants.MEDIUM, false/*autoRefresh*/, timeout)
+        summary: csHttp.getWithCache(host, port, path + '/node/summary', useSsl, csCache.constants.MEDIUM, false/*autoRefresh*/, timeout)
       },
       network: {
         peering: {
-          self: csHttp.get(host, port, '/network/peering', useSsl, timeout)
+          self: csHttp.get(host, port, path + '/network/peering', useSsl, timeout)
         },
-        peers: csHttp.get(host, port, '/network/peers', useSsl, timeout)
+        peers: csHttp.get(host, port, path + '/network/peers', useSsl, timeout)
       },
       blockchain: {
-        current: csHttp.get(host, port, '/blockchain/current', useSsl, timeout),
+        current: csHttp.get(host, port, path + '/blockchain/current', useSsl, timeout),
         stats: {
-          hardship: csHttp.get(host, port, '/blockchain/hardship/:pubkey', useSsl, timeout)
+          hardship: csHttp.get(host, port, path + '/blockchain/hardship/:pubkey', useSsl, timeout)
         }
       }
     };

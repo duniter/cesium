@@ -554,8 +554,9 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
   }
 
   function isVersionCompatible(minVersion, actualVersion) {
-    console.debug('[http] Checking actual version [{0}] is compatible with min expected version [{1}]'.format(actualVersion, minVersion));
-    return compareVersionNumbers(minVersion, actualVersion) <= 0;
+    var result = compareVersionNumbers(minVersion, actualVersion) <= 0;
+    console.debug('[http] Is actual version [{0}] compatible with min expected version [{1}] ? => {2}'.format(actualVersion, minVersion, result));
+    return result;
   }
 
   function clearCache(cachePrefix) {

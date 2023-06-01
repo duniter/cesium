@@ -84,7 +84,7 @@
 
         <a class="item item-icon-left item-icon-right item-text-wrap ink"
            ng-if="isReachable"
-           ui-sref="app.view_server_block_hash({server: node.server, ssl: node.useSsl, tor: node.useTor, number: current.number, hash: current.hash})">
+           ui-sref="app.view_server_block_hash({server: node.server, path: node.path, ssl: node.useSsl, tor: node.useTor, number: current.number, hash: current.hash})">
           <i class="icon ion-cube"></i>
           <span translate>BLOCKCHAIN.VIEW.TITLE_CURRENT</span>
           <div class="badge badge-calm" ng-if="!loading">
@@ -95,7 +95,7 @@
 
         <a class="item item-icon-left item-icon-right item-text-wrap ink"
            ng-if="isReachable"
-           ui-sref="app.server_blockchain({server: node.server, ssl: node.useSsl, tor: node.useTor})">
+           ui-sref="app.server_blockchain({server: node.server, path: node.path, ssl: node.useSsl, tor: node.useTor})">
           <i class="icon ion-cube" style="font-size: 25px;"></i>
           <i class="icon-secondary ion-clock" style="font-size: 18px; left: 33px; top: -12px;"></i>
           <span translate>PEER.VIEW.LAST_BLOCKS</span>

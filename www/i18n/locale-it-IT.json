@@ -839,6 +839,7 @@
     "SAVE_BEFORE_LEAVE_TITLE": "Modifiche non salvate",
     "LOGOUT": "Sei sicuro di voler chiudere la sessione?",
     "USE_FALLBACK_NODE": "Nodo <b>{{old}}</b> indisponibile o indirizzo errato.<br/><br/>Vuoi utilizzare temporanemante il <b>{{new}}</b> nodo?",
+    "USE_SYNC_FALLBACK_NODE": "Il nodo <b>{{old}}</b> sembra non essere sincronizzato.<br/><br/>Vuoi usare temporaneamente il nodo sincronizzato <b>{{new}}</b>?",
     "ISSUE_524_SEND_LOG": "La transazione è stata annullata a causa di un errore conosciuto (issue #524) ma non riprodotto. <br/><br/>Per aiutare gli sviluppatori a risolvere questo errore, acconsenti all'<b>invio dei tuoi logs</b> per messaggio?<br/><small>(Non viene inviato nessun dato confidenziale)</small>",
     "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Avviso:</b> Vuoi <b>cambiare manualmente</b> il nodo?<br/><br/>Se continui:<ul><li> - Verrà attivata la <b>modalità esperto</b>;</li><li> - Potrai tornare alla selezione automatica del nodo semplicemente <b>disattivando la modalità esperto</b>.</li></ul>"
   },

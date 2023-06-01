@@ -60,7 +60,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     cacheTimeMs: 60000, /*1 min*/
     timeWarningExpireMembership: 2592000 * 2 /*=2 mois*/,
     timeWarningExpire: 2592000 * 3 /*=3 mois*/,
-    minVersion: '1.1.0',
+    minVersion: '1.1.0', // TODO change into 1.8.7
     sourceUrl: 'https://git.duniter.org/clients/cesium-grp/cesium',
     sourceLicenseUrl: 'https://git.duniter.org/clients/cesium-grp/cesium/-/raw/master/LICENSE',
     newIssueUrl: "https://git.duniter.org/clients/cesium-grp/cesium/issues/new",
@@ -235,7 +235,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     // If need select a random peer, from the config
     if (!data.node && !newData.node && _.size(csConfig.fallbackNodes) > 0) {
       newData.node = _.sample(csConfig.fallbackNodes);
-      console.info('[settings] Random selected peer: [{0}:{1}]'.format(newData.node.host, newData.node.port||80));
+      console.info('[settings] Random selected peer [{0}]'.format(newData.node.host));
       newData.node.temporary = true;
     }
 

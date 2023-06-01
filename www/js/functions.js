@@ -35,3 +35,21 @@ if (typeof String.prototype.format !== 'function') {
     });
   };
 }
+
+// Workaround to add "".endsWith() if not present
+if (typeof String.prototype.startsWith !== 'function') {
+  console.debug("Adding String.prototype.endsWith() -> was missing on this platform");
+  String.prototype.startsWith = function() {
+    var args = arguments;
+    return this.indexOf(args[0]) === 0;
+  };
+}
+
+// Workaround to add "".endsWith() if not present
+if (typeof String.prototype.endsWith !== 'function') {
+  console.debug("Adding String.prototype.endsWith() -> was missing on this platform");
+  String.prototype.endsWith = function() {
+    var args = arguments;
+    return this.lastIndexOf(args[0]) === this.length - 1;
+  };
+}

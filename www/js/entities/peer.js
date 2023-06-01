@@ -16,9 +16,12 @@ Peer.prototype.regexp = {
   BMA: /^BASIC_MERKLED_API[ ]?/,
   BMAS: /^BMAS[ ]?/,
   WS2P: /^WS2P[ ]?/,
-  BMA_REGEXP: /^BASIC_MERKLED_API([ ]+([a-z_][a-z0-9-_.ğĞ]*))?([ ]+([0-9.]+))?([ ]+([0-9a-f:]+))?([ ]+([0-9]+))$/,
-  BMAS_REGEXP: /^BMAS([ ]+([a-z_][a-z0-9-_.ğĞ]*))?([ ]+([0-9.]+))?([ ]+([0-9a-f:]+))?([ ]+([0-9]+))$/,
-  WS2P_REGEXP: /^WS2P[ ]+([a-z0-9]+)([ ]+([a-z_][a-z0-9-_.ğĞ]*))?([ ]+([0-9.]+))?([ ]+([0-9a-f:]+))?([ ]+([0-9]+))([ ]+([a-z0-9/.&#!]+))?$/,
+  GVA: /^GVA(:? S)?[ ]?/,
+  BMA_REGEXP: /^BASIC_MERKLED_API( ([a-z_][a-z0-9-_.ğĞ]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))( ([a-z0-9/.&#!]+))?$/,
+  BMAS_REGEXP: /^BMAS( ([a-z_][a-z0-9-_.ğĞ]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))( ([a-z0-9/.&#!]+))?$/,
+  GVA_REGEXP: /^GVA( ([a-z_][a-z0-9-_.ğĞ]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))( ([a-z0-9/.&#!]+))?$/,
+  GVAS_REGEXP: /^GVA S( ([a-z_][a-z0-9-_.ğĞ]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))( ([a-z0-9/.&#!]+))?$/,
+  WS2P_REGEXP: /^WS2P ([a-z0-9]+)( ([a-z_][a-z0-9-_.ğĞ]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))( ([a-z0-9/.&#!]+))?$/,
   LOCAL_IP_ADDRESS: /^127[.]0[.]0.|192[.]168[.]|10[.]0[.]0[.]|172[.]16[.]/
 };
 Peer.prototype.regex = Peer.prototype.regexp; // for backward compat
@@ -26,6 +29,9 @@ Peer.prototype.regex = Peer.prototype.regexp; // for backward compat
 Peer.prototype.keyID = function () {
   var bma = this.bma || this.getBMA();
   if (bma.useBma) {
+    return [this.pubkey || "Unknown", bma.dns, bma.ipv4, bma.ipv6, bma.port, bma.useSsl, bma.path].join('-');
+  }
+  if (bma.useGva) {
     return [this.pubkey || "Unknown", bma.dns, bma.ipv4, bma.ipv6, bma.port, bma.useSsl, bma.path].join('-');
   }
   return [this.pubkey || "Unknown", bma.ws2pid, bma.path].join('-');
@@ -59,27 +65,34 @@ Peer.prototype.json = function() {
 Peer.prototype.getBMA = function() {
   if (this.bma) return this.bma;
   var bma = null;
+  var path = null;
   var bmaRegex = this.regexp.BMA_REGEXP;
   var bmasRegex = this.regexp.BMAS_REGEXP;
   this.endpoints.forEach(function(ep){
     var matches = !bma && bmaRegex.exec(ep);
     if (matches) {
+      path = matches[10];
+      if (path && !path.startsWith('/')) path = '/' + path; // Fix path (add starting slash)
       bma = {
         "dns": matches[2] || '',
         "ipv4": matches[4] || '',
         "ipv6": matches[6] || '',
         "port": matches[8] || 80,
         "useSsl": matches[8] == 443,
+        "path": path || '',
         "useBma": true
       };
     }
     matches = !bma && bmasRegex.exec(ep);
     if (matches) {
+      path = matches[10];
+      if (path && !path.startsWith('/')) path = '/' + path; // Fix path (add starting slash)
       bma = {
         "dns": matches[2] || '',
         "ipv4": matches[4] || '',
         "ipv6": matches[6] || '',
         "port": matches[8] || 80,
+        "path": path || '',
         "useSsl": true,
         "useBma": true
       };
@@ -129,6 +142,11 @@ Peer.prototype.getHost = function(bma) {
     (this.hasValid4(bma) ? bma.ipv4 :
         (bma.dns ? bma.dns :
           (bma.ipv6 ? '[' + bma.ipv6 + ']' :'')));
+};
+
+Peer.prototype.getPath = function() {
+  var bma = this.bma || this.getBMA();
+  return bma.path ? bma.path : '';
 };
 
 Peer.prototype.getURL = function(bma) {

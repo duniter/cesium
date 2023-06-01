@@ -392,6 +392,14 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           return jobs.concat(
             refreshPeer(peer)
               .then(function (refreshedPeer) {
+                var api = refreshedPeer
+                  && refreshedPeer.bma
+                  && (
+                    (refreshedPeer.bma.useBma && 'BMA')
+                    || (refreshedPeer.bma.useGva && 'GVA')
+                    || (refreshedPeer.bma.useWs2p && 'WS2P')
+                  ) || 'null'
+
                 if (existingPeer) {
                   // remove existing peers, when reject or offline
                   if (!refreshedPeer || (refreshedPeer.online !== data.filter.online && data.filter.online !== 'all')) {
@@ -404,26 +412,26 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
                   }
                   else if (refreshedPeer.buid !== existingMainBuid){
                     console.debug('[network] {0} endpoint [{1}] new current block'.format(
-                      refreshedPeer.bma && (refreshedPeer.bma.useBma ? 'BMA' : 'WS2P') || 'null',
+                      api,
                       refreshedPeer.server));
                     hasUpdates = true;
                   }
                   else if (existingOnline !== refreshedPeer.online){
                     console.debug('[network] {0} endpoint [{1}] is now {2}'.format(
-                      refreshedPeer.bma && (refreshedPeer.bma.useBma ? 'BMA' : 'WS2P') || 'null',
+                      api,
                       refreshedPeer.server,
                       refreshedPeer.online ? 'UP' : 'DOWN'));
                     hasUpdates = true;
                   }
                   else {
                     console.debug("[network] {0} endpoint [{1}] unchanged".format(
-                      refreshedPeer.bma && (refreshedPeer.bma.useBma ? 'BMA' : 'WS2P') || 'null',
+                      api,
                       refreshedPeer.server));
                   }
                 }
                 else if (refreshedPeer && (refreshedPeer.online === data.filter.online || data.filter.online === 'all')) {
                   console.debug("[network] {0} endpoint [{1}] is {2}".format(
-                    refreshedPeer.bma && (refreshedPeer.bma.useBma ? 'BMA' : 'WS2P') || 'null',
+                    api,
                     refreshedPeer.server,
                     refreshedPeer.online ? 'UP' : 'DOWN'
                   ));
@@ -504,7 +512,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       }
 
       // Cesium running in SSL: Do not try to access not SSL node,
-      if (!peer.bma.useWs2p && isHttpsMode && !peer.bma.useSsl) {
+      if (peer.bma.useBma && isHttpsMode && !peer.bma.useSsl) {
         peer.online = (peer.status === 'UP');
         peer.buid = constants.UNKNOWN_BUID;
         delete peer.version;
@@ -516,8 +524,8 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         return $q.when(peer);
       }
 
-      // Do not try to access TOR or WS2P endpoints
-      if (peer.bma.useTor || peer.bma.useWs2p) {
+      // Do not try to access TOR, WS2P or GVA endpoints
+      if (peer.bma.useTor || peer.bma.useWs2p || peer.bma.useGva) {
         peer.online = (peer.status === 'UP');
         peer.buid = constants.UNKNOWN_BUID;
         delete peer.version;
@@ -529,7 +537,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       }
 
       var timeout = Math.max(500, remainingTime()); // >= 500ms
-      peer.api = peer.api || BMA.lightInstance(peer.getHost(), peer.getPort(), peer.isSsl(), timeout);
+      peer.api = peer.api || BMA.lightInstance(peer.getHost(), peer.getPort(), peer.getPath(), peer.isSsl(), timeout);
 
       // Get current block
       return peer.api.blockchain.current(false/*no cache*/)
@@ -554,13 +562,15 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           }
           if (!peer.secondTry) {
             var bma = peer.bma || peer.getBMA();
+
+            // Retry using DNS (instead of IP v4 or v6)
             if (bma.dns && peer.server.indexOf(bma.dns) === -1) {
               var secondTryTimeout = remainingTime();
 
               // try again, using DNS instead of IPv4 / IPV6
               if (secondTryTimeout > 0) {
                 peer.secondTry = true;
-                peer.api = BMA.lightInstance(bma.dns, bma.port, bma.useSsl, secondTryTimeout);
+                peer.api = BMA.lightInstance(bma.dns, bma.port, bma.path, bma.useSsl, secondTryTimeout);
                 return refreshPeer(peer); // recursive call
               }
             }
@@ -832,13 +842,13 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         })
         .then(function() {
           var now = Date.now();
-          console.info('[network] Starting from [{0}]'.format(bma.server));
+          console.info('[network] Starting from [{0}{1}] {ssl: {2})'.format(bma.server, bma.path, bma.useSsl));
 
           addListeners();
 
           return loadPeers()
             .then(function(peers){
-              if (peers) console.debug('[network] Started in {0}ms, {1} peers found'.format(Date.now() - now, peers.length));
+              if (peers) console.debug('[network] Started in {0}ms, {1} peer(s) found'.format(Date.now() - now, peers.length));
               return data;
             });
         });

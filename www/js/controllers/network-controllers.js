@@ -21,7 +21,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
     })
 
     .state('app.view_peer', {
-      url: "/network/peer/:server?ssl&tor",
+      url: "/network/peer/:server?ssl&tor&path",
       cache: false,
       views: {
         'menuContent': {
@@ -95,7 +95,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
         if (currency) {
           var isDefaultNode = BMA.node.same(currency.node);
           $scope.node = isDefaultNode ? BMA :
-            BMA.instance(currency.node.host, currency.node.port);
+            BMA.instance(currency.node.host, currency.node.port, currency.node.path || '');
           if (state && state.stateParams) {
             if (state.stateParams.type && ['mirror', 'member', 'offline'].indexOf(state.stateParams.type) != -1) {
               $scope.search.type = state.stateParams.type;
@@ -294,6 +294,9 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
     }
     if (peer.isTor()) {
       stateParams.tor = true;
+    }
+    if (peer.getPath()) {
+      stateParams.path = peer.getPath();
     }
     $state.go('app.view_peer', stateParams);
   };
@@ -576,10 +579,11 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
   $scope.$on('$ionicView.enter', function(e, state) {
     var isDefaultNode = !state.stateParams || !state.stateParams.server;
     var server = state.stateParams && state.stateParams.server || BMA.server;
+    var path = state.stateParams && state.stateParams.path || (isDefaultNode ? BMA.path : '');
     var useSsl = state.stateParams && state.stateParams.ssl == "true" || (isDefaultNode ? BMA.useSsl : false);
     var useTor = state.stateParams.tor == "true" || (isDefaultNode ? BMA.useTor : false);
 
-    return $scope.load(server, useSsl, useTor)
+    return $scope.load(server, path, useSsl, useTor)
       .then(function() {
         return $scope.$broadcast('$csExtension.enter', e, state);
       })
@@ -591,24 +595,31 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
       });
   });
 
-  $scope.load = function(server, useSsl, useTor) {
+  $scope.load = function(server, path, useSsl, useTor) {
+    var port, host;
+    var serverParts = server.split(':', 2);
+    if (serverParts.length === 2) {
+      host = serverParts[0];
+      port = serverParts[1];
+    }
+    else {
+      host = server;
+      port = useSsl ? 443 : 80;
+    }
     var node = {
       server: server,
-      host: server,
+      host: host,
+      port: port,
+      path: path,
       useSsl: useSsl,
       useTor: useTor
     };
-    var serverParts = server.split(':');
-    if (serverParts.length === 2) {
-      node.host = serverParts[0];
-      node.port = serverParts[1];
-    }
 
     angular.merge($scope.node,
       useTor ?
         // For TOR, use a web2tor to access the endpoint
-        BMA.lightInstance(node.host + ".to", 443, true/*ssl*/, 60000 /*long timeout*/) :
-        BMA.lightInstance(node.host, node.port, node.useSsl),
+        BMA.lightInstance(node.host + ".to", 443, node.path, true/*ssl*/, 60000 /*long timeout*/) :
+        BMA.lightInstance(node.host, node.port, node.path, node.useSsl),
       node);
 
     $scope.isReachable = !$scope.isHttps || useSsl;
@@ -619,16 +630,19 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
           // find the current peer
           var peers = (res && res.peers || []).reduce(function(res, json) {
             var peer = new Peer(json);
-            return (peer.getEndpoints('BASIC_MERKLED_API') || []).reduce(function(res, ep) {
-              var bma = BMA.node.parseEndPoint(ep);
-              if((bma.dns === node.host || bma.ipv4 === node.host || bma.ipv6 === node.host) && (
-                bma.port == node.port)) {
-                peer.bma = bma;
-                return res.concat(peer);
-              }
-              return res;
-            }, res);
-          }, []);
+            return (peer.getEndpoints('BASIC_MERKLED_API') || [])
+              .concat((peer.getEndpoints('BMAS') || []))
+              .reduce(function(res, ep) {
+                var bma = BMA.node.parseEndPoint(ep);
+                if ((bma.dns === node.host || bma.ipv4 === node.host || bma.ipv6 === node.host) &&
+                  (bma.port == node.port) &&
+                  (bma.path == node.path)) {
+                  peer.bma = bma;
+                  return res.concat(peer);
+                }
+                return res;
+              }, res);
+            }, []);
           var peer = peers.length && peers[0];
 
           // Current node found
@@ -707,6 +721,9 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
     }
     if (peer.isTor()) {
       stateParams.tor = true;
+    }
+    if (peer.getPath()) {
+      stateParams.path = peer.getPath();
     }
     $state.go('app.view_peer', stateParams);
   };
