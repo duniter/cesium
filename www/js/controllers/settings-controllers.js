@@ -293,7 +293,7 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
           var bma = peer.getBMA();
           var host = (bma.dns ? bma.dns :
             (peer.hasValid4(bma) ? bma.ipv4 : bma.ipv6));
-          var useSsl = bma.useSsl || bma.port == 443
+          var useSsl = bma.useSsl || bma.port == 443;
           var port = bma.port || (useSsl ? 443 : 80);
           return {
             host: host,

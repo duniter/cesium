@@ -392,13 +392,12 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           return jobs.concat(
             refreshPeer(peer)
               .then(function (refreshedPeer) {
-                var api = refreshedPeer
-                  && refreshedPeer.bma
-                  && (
-                    (refreshedPeer.bma.useBma && 'BMA')
-                    || (refreshedPeer.bma.useGva && 'GVA')
-                    || (refreshedPeer.bma.useWs2p && 'WS2P')
-                  ) || 'null'
+                var api = refreshedPeer &&
+                  refreshedPeer.bma && (
+                    (refreshedPeer.bma.useBma && 'BMA') ||
+                    (refreshedPeer.bma.useGva && 'GVA') ||
+                    (refreshedPeer.bma.useWs2p && 'WS2P')
+                  ) || 'null';
 
                 if (existingPeer) {
                   // remove existing peers, when reject or offline
