@@ -1,4 +1,4 @@
-<ion-view id="home">
+<ion-view id="home" bind-notifier="{locale:$root.settings.locale.id}">
   <!-- no title -->
   <ion-nav-title></ion-nav-title>
 
@@ -53,7 +53,7 @@
             <!-- Retry -->
             <button type="button"
                     class="button button-positive icon icon-left ion-refresh ink"
-                    ng-click="reload()">{{:locale:'COMMON.BTN_REFRESH'|translate}}</button>
+                    ng-click="reload()" translate>COMMON.BTN_REFRESH</button>
           </div>
         </div>
 
@@ -75,9 +75,7 @@
           </button>
           <button type="button"
                   class="item button button-block button-positive button-raised icon icon-left ion-cloud ink-dark "
-                  ui-sref="app.network" ng-if="::$root.config.readonly">
-            {{:locale:'HOME.BTN_NETWORK'|translate}}
-          </button>
+                  ui-sref="app.network" ng-if="::$root.config.readonly" translate>HOME.BTN_NETWORK</button>
 
           <button type="button"
                   class="button button-block button-positive button-raised ink-dark"
@@ -92,7 +90,7 @@
                   class="item button button-block button-stable button-raised icon icon-left ion-card ink-dark visible-xs"
                   ui-sref="app.view_wallet_tx" ng-if="login">
             <b class="icon-secondary ion-clock" style="left: 52px; top: -2px; font-size: 10pt; display: block;"></b>
-            {{:locale:'MENU.TRANSACTIONS'|translate}}
+            <span translate>MENU.TRANSACTIONS</span>
           </button>
 
           <button type="button"
@@ -106,7 +104,7 @@
                ng-if="::!$root.config.readonly"
                ng-show="!login">
             <br class="visible-xs visible-sm"/>
-            {{'LOGIN.HAVE_ACCOUNT_QUESTION'|translate}}
+            <span translate>LOGIN.HAVE_ACCOUNT_QUESTION</span>
             <b>
               <a class="assertive hidden-xs hidden-sm" ui-sref="app.view_wallet" translate>
                 COMMON.BTN_LOGIN
