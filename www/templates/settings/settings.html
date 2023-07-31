@@ -273,7 +273,7 @@
           <h4 class="gray text-wrap hidden-xs" ng-bind-html="'SETTINGS.NETWORK_ANALYZE_TIMEOUT_HELP' | translate"></h4>
 
           <select ng-model="formData.timeout"
-                  ng-options="t as ((t.label|translate) || (t.value|formatDurationMs)) for t in timeouts track by t.value">
+                  ng-options="t as (t === -1 ? ('SETTINGS.NETWORK_ANALYZE_TIMEOUT_AUTO'|translate) : (t|formatDurationMs)) for t in timeouts track by t">
           </select>
         </label>
 

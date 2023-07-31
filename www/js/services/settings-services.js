@@ -5,19 +5,31 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   'ngInject';
 
   // Define app locales
-  var locales = [
-    {id:'en',    label:'English', flag: 'us'},
-    {id:'en-GB', label:'English (UK)', flag: 'gb'},
-    {id:'eo-EO', label:'Esperanto', flag: 'eo'},
-    {id:'fr-FR', label:'Français', flag: 'fr'},
-    {id:'nl-NL', label:'Nederlands', flag: 'nl'},
-    {id:'es-ES', label:'Español', flag: 'es'},
-    {id:'ca',    label:'Català', flag: 'ca'},
-    {id:'it-IT', label:'Italiano', flag: 'it'},
-    {id:'pt-PT', label:'Português', flag: 'pt'},
-    {id:'de-DE', label:'Deutsch', flag: 'de'}
-  ];
-  var fallbackLocale = csConfig.fallbackLanguage ? fixLocale(csConfig.fallbackLanguage) : 'en';
+  var
+    locales = [
+      {id:'en',    label:'English', flag: 'us'},
+      {id:'en-GB', label:'English (UK)', flag: 'gb'},
+      {id:'eo-EO', label:'Esperanto', flag: 'eo'},
+      {id:'fr-FR', label:'Français', flag: 'fr'},
+      {id:'nl-NL', label:'Nederlands', flag: 'nl'},
+      {id:'es-ES', label:'Español', flag: 'es'},
+      {id:'ca',    label:'Català', flag: 'ca'},
+      {id:'it-IT', label:'Italiano', flag: 'it'},
+      {id:'pt-PT', label:'Português', flag: 'pt'},
+      {id:'de-DE', label:'Deutsch', flag: 'de'}
+    ],
+    timeouts = [
+      -1,
+      500,
+      1000,
+      5000,
+      10000,
+      30000,
+      60000,
+      300000
+    ],
+    fallbackLocale = csConfig.fallbackLanguage ? fixLocale(csConfig.fallbackLanguage) : 'en'
+  ;
 
   // Convert browser locale to app locale (fix #140)
   function fixLocale (locale) {
@@ -70,7 +82,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     httpsMode: false
   },
   defaultSettings = angular.merge({
-    timeout : -1, // -1 = auto
+    timeout: -1, // -1 = auto
     useRelative: false,
     useLocalStorage: !!$window.localStorage, // override to false if no device
     useLocalStorageEncryption: false,
@@ -136,8 +148,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   defaultSettings.walletHistoryAutoRefresh = false;
   // endRemoveIf(no-device)
 
-  var
-  reset = function() {
+  function reset() {
     _.keys(data).forEach(function(key){
       delete data[key];
     });
@@ -146,9 +157,9 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
     return api.data.raisePromise.reset(data)
       .then(store);
-  },
+  }
 
-  getByPath = function(path, defaultValue) {
+  function getByPath(path, defaultValue) {
     var obj = data;
     _.each(path.split('.'), function(key) {
       obj = obj[key];
@@ -159,17 +170,17 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     });
 
     return obj;
-  },
+  }
 
-  emitChangedEvent = function() {
+  function emitChangedEvent() {
     var hasChanged = angular.isUndefined(previousData) || !angular.equals(previousData, data);
     if (hasChanged) {
       previousData = angular.copy(data);
       return api.data.raise.changed(data);
     }
-  },
+  }
 
-  store = function() {
+  function store() {
     if (!started) {
       console.debug('[settings] Waiting start finished...');
       return (startPromise || start()).then(store);
@@ -207,13 +218,13 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
       // Emit event on store
       .then(emitChangedEvent);
-  },
+  }
 
   /**
    * Apply new settings (can be partial)
    * @param newData
    */
-  applyData = function(newData) {
+  function applyData(newData) {
     if (!newData) return; // skip empty
 
     // DEBUG
@@ -231,6 +242,9 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     _.keys(fixedSettings).forEach(function(key) {
       newData[key] = defaultSettings[key]; // This will apply fixed value (override by config.js file)
     });
+
+    // Force using an existing timeout (e.g. for version < 1.7.4)
+    newData.timeout = newData.timeout && timeouts.includes(newData.timeout) ? newData.timeout : -1 /* auto */;
 
     // If need select a random peer, from the config
     if (!data.node && !newData.node && _.size(csConfig.fallbackNodes) > 0) {
@@ -252,9 +266,9 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     if (localeChanged) {
       $translate.use(data.locale.id);
     }
-  },
+  }
 
-  restore = function() {
+  function restore() {
     var now = Date.now();
 
     return localStorage.getObject(constants.STORAGE_KEY)
@@ -274,22 +288,22 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
           emitChangedEvent();
         });
-  },
+  }
 
-  getLicenseUrl = function() {
+  function getLicenseUrl() {
     var locale = data.locale && data.locale.id || csConfig.defaultLanguage || 'en';
     return (csConfig.license) ?
       (csConfig.license[locale] ? csConfig.license[locale] : defaultSettings.license[csConfig.defaultLanguage || 'en'] || csConfig.license) : undefined;
-  },
+  }
 
-  getFeedUrl = function() {
+  function getFeedUrl() {
     var locale = data.locale && data.locale.id || csConfig.defaultLanguage || 'en';
     return (csConfig.feed && csConfig.feed.jsonFeed) ?
       (csConfig.feed.jsonFeed[locale] ? csConfig.feed.jsonFeed[locale] : defaultSettings.feed.jsonFeed[csConfig.defaultLanguage || 'en'] || csConfig.feed) : undefined;
-  },
+  }
 
   // Detect locale successful changes, then apply to vendor libs
-  onLocaleChange = function() {
+  function onLocaleChange() {
     var locale = $translate.use();
     console.debug('[settings] Locale ['+locale+']');
 
@@ -323,18 +337,18 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
     // Emit event
     api.locale.raise.changed(locale);
-  },
+  }
 
-  isStarted = function() {
+  function isStarted() {
     return started;
-  },
+  }
 
-  ready = function() {
+  function ready() {
     if (started) return $q.when();
     return startPromise || start();
-  },
+  }
 
-  start = function() {
+  function start() {
     console.debug('[settings] Starting...');
 
     startPromise = localStorage.ready()
@@ -386,6 +400,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     // api extension
     api: api,
     locales: locales,
+    timeouts: timeouts,
     constants: constants
   };
 });

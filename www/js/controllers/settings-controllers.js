@@ -34,17 +34,7 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
     loading: !csPlatform.isStarted(),
     loadingMessage: 'COMMON.LOADING'
   };
-  // Fill timeout
-  $scope.timeouts = [
-    {label: 'SETTINGS.NETWORK_ANALYZE_TIMEOUT_AUTO', value: -1},
-    {value: 500},
-    {value: 1000},
-    {value: 5000},
-    {value: 10000},
-    {value: 30000},
-    {value: 60000},
-    {value: 300000}
-  ];
+  $scope.timeouts = csSettings.timeouts;
   $scope.keepAuthIdleLabels = {
     /*0: {
       labelKey: 'SETTINGS.KEEP_AUTH_OPTION.NEVER'
