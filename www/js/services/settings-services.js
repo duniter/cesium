@@ -368,7 +368,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
       });
 
     return startPromise;
-  };
+  }
 
   $rootScope.$on('$translateChangeSuccess', onLocaleChange);
 
