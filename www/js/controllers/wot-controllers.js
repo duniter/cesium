@@ -898,7 +898,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
       cssClass: 'warning',
       okText: 'WOT.BTN_YES_CERTIFY',
       okType: 'button-assertive'
-    })
+    });
   };
 
   // Select an identity and certify
