@@ -586,7 +586,7 @@
         "PUBLIC_KEY_DIFFERENT": "La montrata <b>publika ŝlosilo</b> devas esti <b>identa</b> al tiu, kiun la persono donis al vi. Ĉu la publika ŝlosiloj estas <b>malsamaj</b>?"
       },
       "REMINDER_TITLE": "Memorigo",
-      "SHORT_LICENSE_REMINDER": "<p>Vi povas rememorigi al la atestota persono diversajn parametrojn pri atestoj:</p><p>- Ĉiu membro povas atesti maksimume 100 aliajn identecojn.</p><p>- La atestoj estas konservataj kun intervolo de 5 tagoj.</p><p>- Nova membro devas kolekti minimume 5 atestojn en malpli ol 2 monatoj.</p><p>- Membro devas renovigi sian membrecon minimume unufoje jare.</p><p>- Atestoj estas validaj dum du jaroj.</p>"
+      "SHORT_LICENSE_REMINDER": "Vi povas rememorigi al la atestota persono diversajn parametrojn pri atestoj:<br/><br/><ul><li> - Ĉiu membro povas atesti maksimume 100 aliajn identecojn.</li><li> - La atestoj estas konservataj kun intervolo de 5 tagoj.</li><li> - Nova membro devas kolekti minimume 5 atestojn en malpli ol 2 monatoj.</li><li> - Membro devas renovigi sian membrecon minimume unufoje jare.</li><li> - Atestoj estas validaj dum du jaroj.</li></ul>"
     },
     "WALLET_LIST": {
       "TITLE": "Miaj monujoj",

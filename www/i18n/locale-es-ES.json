@@ -673,7 +673,7 @@
         "PUBLIC_KEY_DIFFERENT": "La <b>clave pública</b> indicada debe ser <b>idéntica</b> a la que esta persona te ha proporcionado. ¿Son <b>diferentes</b> las claves?"
       },
       "REMINDER_TITLE": "Recordatorio",
-      "SHORT_LICENSE_REMINDER": "<p>Puedes recordarle a la persona certificada los parámetros de las certificaciones:</p><p>- Cada miembro puede emitir un máximo de 100 certificaciones válidas.</p><p>- Las certificaciones se registran con un intervalo de 5 días.</p><p>- Una nueva identidad de miembro debe reunir al menos 5 certificaciones en menos de dos meses.</p><p>- Un miembro debe renovar su membresía cada año.</p><p>- Las certificaciones son válidas durante dos años.</p>"
+      "SHORT_LICENSE_REMINDER": "Puedes recordarle a la persona certificada los parámetros de las certificaciones:<br/><br/><ul><li> - Cada miembro puede emitir un máximo de 100 certificaciones válidas.</li><li> - Las certificaciones se registran con un intervalo de 5 días.</li><li> - Una nueva identidad de miembro debe reunir al menos 5 certificaciones en menos de dos meses.</li><li> - Un miembro debe renovar su membresía cada año.</li><li> - Las certificaciones son válidas durante dos años.</li></ul>"
     },
     "WALLET_LIST": {
       "IMPORT_MODAL": {

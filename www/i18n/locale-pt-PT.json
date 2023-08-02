@@ -673,7 +673,7 @@
         "PUBLIC_KEY_DIFFERENT": "A <b>chave pública</b> mostrada deve ser <b>idêntica</b> àquela que a pessoa lhe deu. As chaves públicas são <b>diferentes</b>?"
       },
       "REMINDER_TITLE": "Lembrete",
-      "SHORT_LICENSE_REMINDER": "<p>Você pode lembrar à pessoa certificada dos parâmetros de certificação:</p><p>- Cada membro pode certificar no máximo 100 identidades.</p><p>- As certificações são salvas com um intervalo de 5 dias.</p><p>- Uma nova identidade deve reunir pelo menos 5 certificações em menos de 2 meses.</p><p>- Um membro deve renovar sua associação pelo menos uma vez por ano.</p><p>- As certificações têm validade de dois anos.</p>"
+      "SHORT_LICENSE_REMINDER": "Você pode lembrar à pessoa certificada dos parâmetros de certificação:<br/><br/><ul><li> - Cada membro pode certificar no máximo 100 identidades.</li><li> - As certificações são salvas com um intervalo de 5 dias.</li><li> - Uma nova identidade deve reunir pelo menos 5 certificações em menos de 2 meses.</li><li> - Um membro deve renovar sua associação pelo menos uma vez por ano.</li><li> - As certificações têm validade de dois anos.</li></ul>"
     },
     "WALLET_LIST": {
       "IMPORT_MODAL": {

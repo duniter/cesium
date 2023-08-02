@@ -587,7 +587,7 @@
         "PUBLIC_KEY_DIFFERENT": "La <b>chiave pubblica</b> mostrata deve essere <b>identica</b> a quella che la persona ti ha comunicato. Le chiavi pubbliche sono <b>diverse</b>?"
       },
       "REMINDER_TITLE": "Promemoria",
-      "SHORT_LICENSE_REMINDER": "<p>Puoi ricordare alla persona da certificare i parametri delle certificazioni:</p><p>- Ogni membro può certificare al massimo 100 identità.</p><p>- Le certificazioni vengono registrate con un intervallo di 5 giorni.</p><p>- Una nuova identità deve raccogliere almeno 5 certificazioni in meno di 2 mesi.</p><p>- Un membro deve rinnovare la sua adesione almeno una volta all'anno.</p><p>- Le certificazioni sono valide per due anni.</p>"
+      "SHORT_LICENSE_REMINDER": "Puoi ricordare alla persona da certificare i parametri delle certificazioni:<br/><br/><ul><li> - Ogni membro può certificare al massimo 100 identità.</li><li> - Le certificazioni vengono registrate con un intervallo di 5 giorni.</li><li> - Una nuova identità deve raccogliere almeno 5 certificazioni in meno di 2 mesi.</li><li> - Un membro deve rinnovare la sua adesione almeno una volta all'anno.</li><li> - Le certificazioni sono valide per due anni.</li></ul>"
     },
     "WALLET_LIST": {
       "TITLE": "Portafoglio secondario",

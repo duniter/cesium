@@ -673,7 +673,7 @@
         "PUBLIC_KEY_DIFFERENT": "La <b>clau pública</b> indicada ha de ser <b>idèntica</b> a la que aquesta persona t'ha donat. Les claus són <b>diferents</b>?"
       },
       "REMINDER_TITLE": "Recordatori",
-      "SHORT_LICENSE_REMINDER": "<p>Pots recordar a la persona certificada els paràmetres de les certificacions:</p><p>- Cada membre pot emetre com a màxim 100 certificacions vàlides.</p><p>- Les certificacions es registren amb un interval de 5 dies.</p><p>- Una nova identitat de membre ha de reunir com a mínim 5 certificacions en menys de dos mesos.</p><p>- Un membre ha de renovar la seva afiliació cada any.</p><p>- Les certificacions són vàlides durant dos anys.</p>"
+      "SHORT_LICENSE_REMINDER": "Pots recordar a la persona certificada els paràmetres de les certificacions:<br/><br/><ul><li> - Cada membre pot emetre com a màxim 100 certificacions vàlides.</li><li> - Les certificacions es registren amb un interval de 5 dies.</li><li> - Una nova identitat de membre ha de reunir com a mínim 5 certificacions en menys de dos mesos.</li><li> - Un membre ha de renovar la seva afiliació cada any.</li><li> - Les certificacions són vàlides durant dos anys.</li></ul>"
     },
 
     "WALLET_LIST": {
