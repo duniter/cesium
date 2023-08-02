@@ -658,22 +658,22 @@
       "TITLE": "Seleção de carteira"
     },
     "CERTIFICATION_MODAL": {
-      "CHECKLIST_TITLE": "Verificações antes da certificação",
-      "INFOS": "A segurança da moeda Ğ1 baseia-se em cada membro. Antes de certificar a identidade desta pessoa, deve ter feito algumas verificações sobre ela. Por favor, responda às seguintes perguntas:",
+      "CHECKLIST_TITLE": "Lista de verificação antes da certificação",
+      "INFOS": "A segurança da moeda Ğ1 depende de cada membro. Antes de certificar a identidade dessa pessoa, você deve realizar algumas verificações. Por favor, responda às seguintes perguntas:",
       "BTN_ALL_CHECK": "Certificar",
-      "CHECKLIST_CONDITIONS_NOT_MET": "A certificação não foi enviada. As verificações parecem insuficientes. Por favor, verifique novamente cada ponto com a pessoa a certificar.",
+      "CHECKLIST_CONDITIONS_NOT_MET": "A certificação não foi enviada. As verificações parecem insuficientes. Por favor, verifique novamente cada ponto com a pessoa a ser certificada.",
       "QUESTIONS": {
-        "WELL_KNOWN": "<b>Conhece bem</b> a pessoa que está a certificar e conhece pessoas que também a conhecem bem?",
-        "REVOCATION": "Ela baixou o seu <b>documento de revogação</b> e sabe onde encontrá-lo?",
-        "CONTACT": "Você <b>contactou</b> essa pessoa por vários meios e ela respondeu-lhe?",
-        "DOUBLE_IDENTITY": "A pessoa deve possuir <b>uma única identidade de membro ativa</b>. Ela possui <b>outra</b>?",
-        "MASTER_ACCOUNT": "Ela controla sua conta e já <b>fez pelo menos uma transferência</b> da sua conta?",
-        "LICENSE": "Ela <b>entendeu a licença</b> e concorda em cumpri-la na certificação de outros membros?",
-        "CREDENTIALS": "A frase secreta e a senha da sua conta são <b>longas e complexas</b>? Você entendeu que a frase também deve permanecer secreta? Você tem <b>certeza de que se lembra deles</b> ou que pode encontrá-los?",
-        "PUBLIC_KEY_DIFFERENT": "A <b>chave pública</b> indicada deve ser <b>idêntica</b> à que essa pessoa lhe comunicou. As chaves são <b>diferentes</b>?"
+        "WELL_KNOWN": "<b>Você conhece bem</b> a pessoa que está prestes a certificar? Você conhece outras pessoas que também a conhecem bem?",
+        "REVOCATION": "Essa pessoa baixou seu <b>documento de revogação</b> e sabe onde encontrá-lo?",
+        "CONTACT": "Você <b>entrou em contato</b> com essa pessoa por vários meios e ela respondeu?",
+        "DOUBLE_IDENTITY": "A pessoa deve possuir <b>apenas uma identidade de membro ativa</b>. Você acha que ela possui outra?",
+        "MASTER_ACCOUNT": "Essa pessoa possui controle sobre sua conta e já <b>enviou dinheiro de sua conta</b> pelo menos uma vez?",
+        "LICENSE": "Essa pessoa <b>entendeu a licença</b> do Duniter e concorda em cumpri-la para futuras certificações?",
+        "CREDENTIALS": "A conta foi criada com um <b>ID/senha longos e complexos</b> (frases secretas)? Essa pessoa entende que tanto o ID quanto a senha devem permanecer em segredo? Ela tem certeza de que se lembrará deles ou conseguirá encontrá-los?",
+        "PUBLIC_KEY_DIFFERENT": "A <b>chave pública</b> mostrada deve ser <b>idêntica</b> àquela que a pessoa lhe deu. As chaves públicas são <b>diferentes</b>?"
       },
       "REMINDER_TITLE": "Lembrete",
-      "SHORT_LICENSE_REMINDER": "Você pode lembrar à pessoa certificada os diferentes parâmetros de certificação:<br/><br/><ul><li> - Cada membro pode certificar no máximo 100 outras identidades.</li><li> - As certificações são guardadas com um intervalo de 5 dias.</li><li> - Uma nova identidade deve reunir pelo menos 5 certificações em menos de 2 meses.</li><li> - Um membro deve renovar sua adesão pelo menos uma vez por ano.</li><li> - As certificações têm uma duração de dois anos.</li></ul>"
+      "SHORT_LICENSE_REMINDER": "<p>Você pode lembrar à pessoa certificada dos parâmetros de certificação:</p><p>- Cada membro pode certificar no máximo 100 identidades.</p><p>- As certificações são salvas com um intervalo de 5 dias.</p><p>- Uma nova identidade deve reunir pelo menos 5 certificações em menos de 2 meses.</p><p>- Um membro deve renovar sua associação pelo menos uma vez por ano.</p><p>- As certificações têm validade de dois anos.</p>"
     },
     "WALLET_LIST": {
       "IMPORT_MODAL": {

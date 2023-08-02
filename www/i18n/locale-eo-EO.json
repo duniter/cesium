@@ -571,22 +571,22 @@
       "TITLE": "Elekto de la monujo"
     },
     "CERTIFICATION_MODAL": {
-      "CHECKLIST_TITLE": "Kontroloj antaŭ atestado",
-      "INFOS": "La sekureco de la Ğ1-monero dependas de ĉiu membro. Antaŭ ol atesti la identecon de tiu persono, vi devas fari iujn kontroladojn pri ŝi. Bonvolu respondi la jenajn demandojn:",
+      "CHECKLIST_TITLE": "Kontrolisto antaŭ atesto",
+      "INFOS": "La sekureco de la monero Ğ1 dependas de ĉiu membro. Antaŭ atesti la identon de tiu ĉi persono, vi devus fari kelkajn kontroladetojn. Bonvolu respondi la jenajn demandojn:",
       "BTN_ALL_CHECK": "Atesti",
-      "CHECKLIST_CONDITIONS_NOT_MET": "La atestado ne estas sendita. La kontroladoj ŝajnas nesufiĉaj. Bonvolu rekontroli ĉiun punkton kun la persono, kiu estas atestota.",
+      "CHECKLIST_CONDITIONS_NOT_MET": "La atesto ne estis sendita. La kontrolado ŝajnas nesufiĉa. Bonvolu rekontroli ĉiun punkton kun la persono, kiun vi volas atesti.",
       "QUESTIONS": {
-        "WELL_KNOWN": "<b>Ĉu vi bone konas</b> la personon, kiun vi atestas, kaj ĉu vi konas aliajn, kiuj ankaŭ bone konas ŝin?",
-        "REVOCATION": "Ĉu ŝi elŝutis sian <b>revokigan dokumenton</b> kaj ĉu ŝi scias, kie trovi ĝin?",
-        "CONTACT": "Ĉu vi <b>kontaktis</b> tiun personon per diversaj rimedoj kaj ĉu ŝi respondis?",
-        "DOUBLE_IDENTITY": "La persono devas havi <b>nur unu aktivulan membran identecon</b>. Ĉu ŝi havas <b>alian</b>?",
-        "MASTER_ACCOUNT": "Ĉu ŝi regas sian konton, kaj ĉu ŝi jam <b>faris almenaŭ unu transakcion</b> el ĝi?",
-        "LICENSE": "Ĉu ŝi <b>komprenis la permesilon</b>, kaj ĉu ŝi konsentas al ĝi por atesti aliajn membrojn?",
-        "CREDENTIALS": "Ĉu la salutnomo kaj pasvorto de ŝia konto estas <b>longaj kaj kompleksaj</b> (pasfrazoj)? Ĉu ŝi komprenis, ke la salutnomo ankaŭ devas resti sekreta? Ĉu ŝi estas <b>certa, ke ŝi memoros ilin</b> aŭ povos retrovi ilin?",
-        "PUBLIC_KEY_DIFFERENT": "La indikita <b>publika ŝlosilo</b> devas esti <b>identa</b> al tiu, kiun tiu persono komunikis al vi. Ĉu la ŝlosiloj estas <b>malsamaj</b>?"
+        "WELL_KNOWN": "<b>Ĉu vi bone konas</b> la personon, kiun vi volas atesti, kaj ĉu vi konas aliajn homojn, kiuj ankaŭ bone konas tiun personon?",
+        "REVOCATION": "Ĉu tiu ĉi persono elŝutis sian <b>malkonfirmadon dokumenton</b> kaj ĉu ŝi scias, kie trovi ĝin?",
+        "CONTACT": "Ĉu vi <b>kontaktis</b> kun tiu ĉi persono per diversaj metodoj, kaj ĉu ŝi respondis?",
+        "DOUBLE_IDENTITY": "La persono devus havi <b>nur unu aktivan membro-identon</b>. Ĉu vi pensas, ke ŝi posedas alian?",
+        "MASTER_ACCOUNT": "Ĉu tiu ĉi persono posedas siajn kontosekretojn? Ĉu ŝi jam <b>sendis monon de sia konto</b> almenaŭ unufoje?",
+        "LICENSE": "Ĉu tiu ĉi persono <b>komprenis la permesilon</b> de Duniter, kaj ĉu ŝi konsentas konformiĝi al ĝi por estontaj atestoj?",
+        "CREDENTIALS": "Ĉu la konto estis kreita kun <b>longa kaj kompleksa identigilo/pasvorto</b> (ekz. pasfrazoj)? Ĉu la persono komprenis, ke ambaŭ la identigilo kaj la pasvorto devas resti sekretaj? Ĉu ŝi estas <b>certa, ke ŝi memoros ilin</b> aŭ povos retrovi ilin?",
+        "PUBLIC_KEY_DIFFERENT": "La montrata <b>publika ŝlosilo</b> devas esti <b>identa</b> al tiu, kiun la persono donis al vi. Ĉu la publika ŝlosiloj estas <b>malsamaj</b>?"
       },
       "REMINDER_TITLE": "Memorigo",
-      "SHORT_LICENSE_REMINDER": "Vi povas memorigi al la atestita persono la parametrojn de la atestadoj:<br/><br/><ul><li> - Ĉiu membro povas eldoni maksimume 100 validajn atestadojn.</p><p>- La atestadoj estas registradoj je 5-tagaj intervaloj.</p><p>- Nova membra identeco devas kolekti almenaŭ 5 atestadojn en malpli ol du monatoj.</p><p>- Membro devas renovigi sian membron ĉiun jaron.</p><p>- Atestadoj estas validaj dum du jaroj.</p>"
+      "SHORT_LICENSE_REMINDER": "<p>Vi povas rememorigi al la atestota persono diversajn parametrojn pri atestoj:</p><p>- Ĉiu membro povas atesti maksimume 100 aliajn identecojn.</p><p>- La atestoj estas konservataj kun intervolo de 5 tagoj.</p><p>- Nova membro devas kolekti minimume 5 atestojn en malpli ol 2 monatoj.</p><p>- Membro devas renovigi sian membrecon minimume unufoje jare.</p><p>- Atestoj estas validaj dum du jaroj.</p>"
     },
     "WALLET_LIST": {
       "TITLE": "Miaj monujoj",

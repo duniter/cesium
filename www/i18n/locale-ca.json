@@ -658,23 +658,24 @@
       "TITLE": "Selección de monedero"
     },
     "CERTIFICATION_MODAL": {
-      "CHECKLIST_TITLE": "Verificacions abans de la certificació",
-      "INFOS": "La seguretat de la moneda Ğ1 es basa en cada membre. Abans de certificar la identitat d'aquesta persona, heu de fer algunes verificacions sobre ella. Si us plau, respongueu les següents preguntes:",
+      "CHECKLIST_TITLE": "Llista de verificacions abans de la certificació",
+      "INFOS": "La seguretat de la moneda Ğ1 recau sobre cada membre. Abans de certificar la identitat d'aquesta persona, cal que realitzis algunes verificacions. Si us plau, respon a les següents preguntes:",
       "BTN_ALL_CHECK": "Certificar",
-      "CHECKLIST_CONDITIONS_NOT_MET": "La certificació no s'ha enviat. Les verificacions semblen insuficients. Si us plau, torneu a comprovar cada punt amb la persona a certificar.",
+      "CHECKLIST_CONDITIONS_NOT_MET": "La certificació no s'ha enviat. Les verificacions semblen insuficients. Si us plau, verifica de nou cada punt amb la persona a certificar.",
       "QUESTIONS": {
-        "WELL_KNOWN": "<b>Coneixeu bé</b> la persona que esteu certificant, i coneixeu gent que també la conegui bé?",
-        "REVOCATION": "La persona ha baixat el seu <b>document de revocació</b> i sap on trobar-lo?",
-        "CONTACT": "Heu <b>contactat</b> aquesta persona per diversos mitjans i us ha respost?",
-        "DOUBLE_IDENTITY": "La persona ha de tenir <b>una sola identitat de membre actiu</b>. En té <b>un altre</b>??",
-        "MASTER_ACCOUNT": "Controla el seu compte i ha <b>realitzat almenys una transferència</b> des del seu compte?",
-        "LICENSE": "Ha <b>entès la llicència</b>, i accepta complir-la per a la certificació d'altres membres?",
-        "CREDENTIALS": "La frase secreta i la contrasenya del seu compte són <b>llargues i complexes</b>? Ha entès que han de romandre en secret? Està <b>segura que els recorda</b> o els pot trobar?",
-        "PUBLIC_KEY_DIFFERENT": "La <b>llave pública</b> indicada ha de ser <b>idèntica</b> a la que us ha comunicat aquesta persona. Les claus són <b>diferents</b>?"
+        "WELL_KNOWN": "<b>Coneixes bé</b> la persona que vols certificar, i coneixes altres persones que també la coneixen bé?",
+        "REVOCATION": "Ha descarregat el seu <b>document de revocació</b> i sap on trobar-lo?",
+        "CONTACT": "Has <b>contactat</b> amb aquesta persona per diversos mitjans i t'ha respost?",
+        "DOUBLE_IDENTITY": "La persona ha de tenir <b>una sola identitat de membre activa</b>. En té alguna <b>altra</b>?",
+        "MASTER_ACCOUNT": "Domina el seu compte i ja ha <b>enviat diners des del seu compte</b> com a mínim una vegada?",
+        "LICENSE": "Ha <b>entès la llicència</b> i accepta complir-la per a la certificació d'altres membres?",
+        "CREDENTIALS": "L'identificador i la contrasenya del seu compte són <b>suficientment llargs i complexos</b>? Ha entès que tant la contrasenya com la frase secreta han de romandre secret? Està segur que en recordarà o que podrà trobar-los?",
+        "PUBLIC_KEY_DIFFERENT": "La <b>clau pública</b> indicada ha de ser <b>idèntica</b> a la que aquesta persona t'ha donat. Les claus són <b>diferents</b>?"
       },
       "REMINDER_TITLE": "Recordatori",
-      "SHORT_LICENSE_REMINDER": "Podeu recordar a la persona que certifiqui diferents paràmetres de certificació:<br/><br/><ul><li> - Cada membre pot certificar 100 altres identitats com a màxim.</li><li> - Les certificacions es desen amb un interval de 5 dies.</li><li> - Una nova identitat ha de reunir almenys 5 certificacions en menys de 2 mesos.</li><li> - Un membre ha de renovar la seva afiliació almenys un cop a l'any.</li><li> - Les certificacions tenen una durada de dos anys.</li></ul>"
+      "SHORT_LICENSE_REMINDER": "<p>Pots recordar a la persona certificada els paràmetres de les certificacions:</p><p>- Cada membre pot emetre com a màxim 100 certificacions vàlides.</p><p>- Les certificacions es registren amb un interval de 5 dies.</p><p>- Una nova identitat de membre ha de reunir com a mínim 5 certificacions en menys de dos mesos.</p><p>- Un membre ha de renovar la seva afiliació cada any.</p><p>- Les certificacions són vàlides durant dos anys.</p>"
     },
+
     "WALLET_LIST": {
       "IMPORT_MODAL": {
         "HELP": "Para <b>importar monederos</b>, haga clic para seleccionar o arrastre en la zona de abajo el archivo con la lista de monederos.",

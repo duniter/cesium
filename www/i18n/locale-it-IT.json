@@ -572,22 +572,22 @@
       "TITLE": "Selezione del portafoglio"
     },
     "CERTIFICATION_MODAL": {
-      "CHECKLIST_TITLE": "Verifiche prima della certificazione",
-      "INFOS": "La sicurezza della moneta Ğ1 si basa su ogni membro. Prima di certificare l'identità di questa persona, devi aver fatto alcune verifiche su di lei. Rispondi alle seguenti domande, per favore:",
+      "CHECKLIST_TITLE": "Lista di controllo prima della certificazione",
+      "INFOS": "La sicurezza della valuta Ğ1 dipende da ogni membro. Prima di certificare l'identità di questa persona, è necessario effettuare alcuni controlli. Si prega di rispondere alle seguenti domande:",
       "BTN_ALL_CHECK": "Certifica",
-      "CHECKLIST_CONDITIONS_NOT_MET": "La certificazione non è stata inviata. Le verifiche sembrano insufficienti. Si prega di verificare nuovamente ogni punto con la persona da certificare.",
+      "CHECKLIST_CONDITIONS_NOT_MET": "La certificazione non è stata inviata. I controlli sembrano insufficienti. Si prega di verificare nuovamente ogni punto con la persona che si desidera certificare.",
       "QUESTIONS": {
-        "WELL_KNOWN": "<b>Conosci bene</b> la persona che stai certificando, e conosci anche persone che la conoscono bene?",
+        "WELL_KNOWN": "<b>Conosci bene</b> la persona che stai per certificare e conosci altre persone che la conoscono bene?",
         "REVOCATION": "Ha scaricato il suo <b>documento di revoca</b> e sa dove trovarlo?",
-        "CONTACT": "Hai <b>contattato</b> questa persona con diversi mezzi e ti ha risposto?",
-        "DOUBLE_IDENTITY": "La persona deve possedere <b>una sola identità di membro attivo</b>. Ne possiede <b>un'altra</b>?",
-        "MASTER_ACCOUNT": "Controlla il suo conto e ha già <b>effettuato almeno un bonifico</b> dal suo conto?",
-        "LICENSE": "Ha <b>capito la licenza</b> e accetta di conformarsi per la certificazione di altri membri?",
-        "CREDENTIALS": "L'identificativo e la password del suo conto sono <b>lunghi e complessi</b> (frasi segrete)? Ha capito che l'identificativo deve anche rimanere segreto? È <b>certa di ricordarseli</b> o di poterli ritrovare?",
-        "PUBLIC_KEY_DIFFERENT": "La <b>chiave pubblica</b> indicata deve essere <b>identica</b> a quella che ti ha comunicato questa persona. Le chiavi sono <b>diverse</b>?"
+        "CONTACT": "Hai <b>contattato</b> questa persona in vari modi e ti ha risposto?",
+        "DOUBLE_IDENTITY": "La persona dovrebbe possedere <b>solo un'identità di membro attiva</b>. Ne possiede un'altra?",
+        "MASTER_ACCOUNT": "Ha il controllo del suo account e ha già <b>effettuato almeno un trasferimento</b> dal suo account?",
+        "LICENSE": "Ha <b>compreso la licenza</b> di Duniter e accetta di conformarsi ad essa per le future certificazioni?",
+        "CREDENTIALS": "L'account è stato creato con un <b>ID/password lungo e complesso</b> (frasi segrete)? La persona ha compreso che sia l'ID che la password devono rimanere segreti? È sicura di ricordarli o di poterli recuperare?",
+        "PUBLIC_KEY_DIFFERENT": "La <b>chiave pubblica</b> mostrata deve essere <b>identica</b> a quella che la persona ti ha comunicato. Le chiavi pubbliche sono <b>diverse</b>?"
       },
       "REMINDER_TITLE": "Promemoria",
-      "SHORT_LICENSE_REMINDER": "Puoi ricordare alla persona di certificare diversi parametri di certificazione:<br/><br/><ul><li> - Ogni membro può certificare al massimo 100 altre identità.</li><li> - Le certificazioni sono salvate con un intervallo di 5 giorni.</li><li> - Una nuova identità deve raccogliere almeno 5 certificazioni in meno di 2 mesi.</li><li> - Un membro deve rinnovare la sua iscrizione almeno una volta all'anno.</li><li> - Le certificazioni hanno una durata di due anni.</li></ul>"
+      "SHORT_LICENSE_REMINDER": "<p>Puoi ricordare alla persona da certificare i parametri delle certificazioni:</p><p>- Ogni membro può certificare al massimo 100 identità.</p><p>- Le certificazioni vengono registrate con un intervallo di 5 giorni.</p><p>- Una nuova identità deve raccogliere almeno 5 certificazioni in meno di 2 mesi.</p><p>- Un membro deve rinnovare la sua adesione almeno una volta all'anno.</p><p>- Le certificazioni sono valide per due anni.</p>"
     },
     "WALLET_LIST": {
       "TITLE": "Portafoglio secondario",

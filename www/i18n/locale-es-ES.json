@@ -658,22 +658,22 @@
       "TITLE": "Selección de monedero"
     },
     "CERTIFICATION_MODAL": {
-      "CHECKLIST_TITLE": "Verificaciones antes de la certificación",
-      "INFOS": "La seguridad de la moneda Ğ1 se basa en cada miembro. Antes de certificar la identidad de esta persona, debes haber realizado algunas verificaciones sobre ella. Por favor, responde a las siguientes preguntas:",
+      "CHECKLIST_TITLE": "Lista de verificación antes de certificar",
+      "INFOS": "La seguridad de la moneda Ğ1 depende de cada miembro. Antes de certificar la identidad de este ser humano, debes realizar algunas verificaciones. Por favor, responde a las siguientes preguntas:",
       "BTN_ALL_CHECK": "Certificar",
       "CHECKLIST_CONDITIONS_NOT_MET": "La certificación no se ha enviado. Las verificaciones parecen insuficientes. Por favor, verifica nuevamente cada punto con la persona a certificar.",
       "QUESTIONS": {
-        "WELL_KNOWN": "<b>¿Conoces bien</b> a la persona que estás certificando, y conoces a gente que también la conoce bien?",
+        "WELL_KNOWN": "<b>¿Conoces bien</b> al ser humano que vas a certificar y conoces a otras personas que también lo conocen bien?",
         "REVOCATION": "¿Ha descargado su <b>documento de revocación</b> y sabe dónde encontrarlo?",
         "CONTACT": "¿Has <b>contactado</b> a esta persona por varios medios y te ha respondido?",
-        "DOUBLE_IDENTITY": "La persona debe poseer <b>una sola identidad de miembro activa</b>. ¿Tiene <b>otra</b>?",
-        "MASTER_ACCOUNT": "¿Controla su cuenta y ha <b>realizado al menos una transferencia</b> desde su cuenta?",
-        "LICENSE": "¿Ha <b>entendido la licencia</b>, y acepta cumplirla para la certificación de otros miembros?",
-        "CREDENTIALS": "¿El frase secreta y la contraseña de su cuenta son <b>largos y complejos</b>? ¿Ha entendido que el frase también debe permanecer en secreto? ¿Está <b>segura de recordarlos</b> o de poder encontrarlos?",
-        "PUBLIC_KEY_DIFFERENT": "La <b>clave pública</b> indicada debe ser <b>idéntica</b> a la que te ha comunicado esta persona. ¿Las claves son <b>diferentes</b>?"
+        "DOUBLE_IDENTITY": "La persona debe tener <b>una sola identidad de miembro activa</b>. ¿Tiene alguna <b>otra</b>?",
+        "MASTER_ACCOUNT": "¿Controla bien su cuenta y ha realizado al menos <b>una transferencia</b> desde su cuenta?",
+        "LICENSE": "¿Ha <b>entendido la licencia</b> y está dispuesta a cumplirla para certificar a otros miembros?",
+        "CREDENTIALS": "¿Las credenciales de su cuenta, como el identificador y la contraseña, son suficientemente <b>largas y complejas</b>? ¿Ha comprendido que tanto la frase secreta como la contraseña deben mantenerse en secreto? ¿Está segura de recordarlos o de poder encontrarlos?",
+        "PUBLIC_KEY_DIFFERENT": "La <b>clave pública</b> indicada debe ser <b>idéntica</b> a la que esta persona te ha proporcionado. ¿Son <b>diferentes</b> las claves?"
       },
       "REMINDER_TITLE": "Recordatorio",
-      "SHORT_LICENSE_REMINDER": "Puedes recordarle a la persona que certifique diferentes parámetros de certificación:<br/><br/><ul><li> - Cada miembro puede certificar 100 otras identidades como máximo.</li><li> - Las certificaciones se guardan con un intervalo de 5 días.</li><li> - Una nueva identidad debe reunir al menos 5 certificaciones en menos de 2 meses.</li><li> - Un miembro debe renovar su membresía al menos una vez al año.</li><li> - Las certificaciones tienen una vida útil de dos años.</li></ul>"
+      "SHORT_LICENSE_REMINDER": "<p>Puedes recordarle a la persona certificada los parámetros de las certificaciones:</p><p>- Cada miembro puede emitir un máximo de 100 certificaciones válidas.</p><p>- Las certificaciones se registran con un intervalo de 5 días.</p><p>- Una nueva identidad de miembro debe reunir al menos 5 certificaciones en menos de dos meses.</p><p>- Un miembro debe renovar su membresía cada año.</p><p>- Las certificaciones son válidas durante dos años.</p>"
     },
     "WALLET_LIST": {
       "IMPORT_MODAL": {
