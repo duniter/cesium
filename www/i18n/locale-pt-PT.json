@@ -657,6 +657,24 @@
     "SELECT_WALLET_MODAL": {
       "TITLE": "Seleção de carteira"
     },
+    "CERTIFICATION_MODAL": {
+      "CHECKLIST_TITLE": "Lista de verificação antes da certificação",
+      "INFOS": "A segurança da moeda Ğ1 depende de cada membro. Antes de certificar a identidade dessa pessoa, você deve realizar algumas verificações. Por favor, responda às seguintes perguntas:",
+      "BTN_ALL_CHECK": "Certificar",
+      "CHECKLIST_CONDITIONS_NOT_MET": "A certificação não foi enviada. As verificações parecem insuficientes. Por favor, verifique novamente cada ponto com a pessoa a ser certificada.",
+      "QUESTIONS": {
+        "WELL_KNOWN": "<b>Você conhece bem</b> a pessoa que está prestes a certificar? Você conhece outras pessoas que também a conhecem bem?",
+        "REVOCATION": "Essa pessoa baixou seu <b>documento de revogação</b> e sabe onde encontrá-lo?",
+        "CONTACT": "Você <b>entrou em contato</b> com essa pessoa por vários meios e ela respondeu?",
+        "DOUBLE_IDENTITY": "A pessoa deve possuir <b>apenas uma identidade de membro ativa</b>. Você acha que ela possui outra?",
+        "MASTER_ACCOUNT": "Essa pessoa possui controle sobre sua conta e já <b>enviou dinheiro de sua conta</b> pelo menos uma vez?",
+        "LICENSE": "Essa pessoa <b>entendeu a licença</b> do Duniter e concorda em cumpri-la para futuras certificações?",
+        "CREDENTIALS": "A conta foi criada com um <b>ID/senha longos e complexos</b> (frases secretas)? Essa pessoa entende que tanto o ID quanto a senha devem permanecer em segredo? Ela tem certeza de que se lembrará deles ou conseguirá encontrá-los?",
+        "PUBLIC_KEY_DIFFERENT": "A <b>chave pública</b> mostrada deve ser <b>idêntica</b> àquela que a pessoa lhe deu. As chaves públicas são <b>diferentes</b>?"
+      },
+      "REMINDER_TITLE": "Lembrete",
+      "SHORT_LICENSE_REMINDER": "<p>Você pode lembrar à pessoa certificada dos parâmetros de certificação:</p><p>- Cada membro pode certificar no máximo 100 identidades.</p><p>- As certificações são salvas com um intervalo de 5 dias.</p><p>- Uma nova identidade deve reunir pelo menos 5 certificações em menos de 2 meses.</p><p>- Um membro deve renovar sua associação pelo menos uma vez por ano.</p><p>- As certificações têm validade de dois anos.</p>"
+    },
     "WALLET_LIST": {
       "IMPORT_MODAL": {
         "HELP": "Para <b>importar carteiras</b>, faça clique para selecionar ou arraste na zona abaixo o arquivo com a lista de carteiras.",
