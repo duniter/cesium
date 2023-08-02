@@ -575,19 +575,19 @@
       "CHECKLIST_TITLE": "Certification check list",
       "INFOS": "Each member is responsible for the security of Ğ1 currency. Before certifying this person's identity, you should have performed few checks. Please answer following questions:",
       "BTN_ALL_CHECK": "Certify",
-      "CHECKLIST_CONDITIONS_NOT_MET": "Certification has not been sent. All answers are not right. Please double-check each point with the person you want to certify.",
+      "CHECKLIST_CONDITIONS_NOT_MET": "The certification has not been sent. All answers are not right. Please recheck each point with the person to be certified.",
       "QUESTIONS": {
-        "WELL_KNOWN": "Do you know <b>well</b> the person you are about to certify? Do you know other people who also know thes person well?",
+        "WELL_KNOWN": "Do you know <b>well</b> the person you are about to certify? Do you know other people who also know this person well?",
         "REVOCATION": "Has this person downloaded their <b>revocation document</b> and do they know where to find it?",
         "CONTACT": "Have you <b>had contact</b> with this person by many means, and did they answer?",
         "DOUBLE_IDENTITY": "The person should own <b>only one active member identity</b>. Do you think they own another one?",
         "MASTER_ACCOUNT": "Does this person own their accounts secrets? Have they already <b>sent money from their account</b> at least once?",
         "LICENSE": "Has this person <b>understood the Duniter license</b>? Do they agree to comply with it for future certifications?",
-        "CREDENTIALS": "Was the account created with <b>long and complex ID/Password</b> (ex. passphrases) ? Did the person understand that both ID and password must remain secret ? Are they <b>sure to remember them</b> or to be able to find them?",
-        "PUBLIC_KEY_DIFFERENT": "The <b>public key</b> that is shown must be <b>identical</b> to the one the person gave you. The public keys are they <b>different</b> ?"
+        "CREDENTIALS": "Was the account created with <b>long and complex secret identifier and password</b> (ex. passphrases)? Did the person understand that both secret identifier and password must remain secret ? Are they <b>sure to remember them</b> or to be able to find them?",
+        "PUBLIC_KEY_DIFFERENT": "The <b>public key</b> that is shown must be <b>identical</b> to the one the person gave you. The public keys are they <b>different</b>?"
       },
       "REMINDER_TITLE": "Reminder",
-      "SHORT_LICENSE_REMINDER": "<p>You may remind the person to certify different certification parameters:</p><p>- Each member can certify 100 other identities at most.</p><p>- The certifications are saved with a 5 days interval.</p><p>- A new identity must gather at least 5 certifications in less than 2 months.</p><p>- A member must renew its membership at least once a year.</p><p>- Certifications have a lifespan of two years.</p>"
+      "SHORT_LICENSE_REMINDER": "You may remind the person to certify different certification parameters:<br/><br/><ul><li> - Each member can certify 100 other identities at most.</li><li> - The certifications are saved with a 5 days interval.</li><li> - A new identity must gather at least 5 certifications in less than 2 months.</li><li>- A member must renew its membership at least once a year.</li><li> - Certifications have a lifespan of two years.</li></ul>"
     },
     "WALLET_LIST": {
       "TITLE": "My wallets",
@@ -709,7 +709,7 @@
     "PUBKEY_INVALID_CHECKSUM": "Invalid public key (bad checksum).",
     "POPUP_TITLE": "Error",
     "UNKNOWN_ERROR": "Unknown error",
-    "TIMEOUT_REACHED": "Peer timeout exceeded ({{timeout}}ms).<br/><br/><small>{{url}}</small>",
+    "TIMEOUT_REACHED": "Peer timeout exceeded ({{timeout|formatDurationMs}}).<br/><br/><small>{{url}}</small>",
     "CRYPTO_UNKNOWN_ERROR": "Your browser is not compatible with cryptographic features.",
     "DOWNLOAD_KEYFILE_FAILED": "Failed to generate the keychain file.",
     "EQUALS_TO_PSEUDO": "Must be different from pseudonym",
@@ -859,7 +859,7 @@
     "USE_FALLBACK_NODE": "Peer <b>{{old}}</b> unreachable or invalid address.<br/><br/>Do you want to temporarily use the <b>{{new}}</b> node?",
     "USE_SYNC_FALLBACK_NODE": "Node <b>{{old}}</b> seems to be out of sync.<br/><br/>Do you want to temporarily use the synchronised node <b>{{new}}</b>?",
     "ISSUE_524_SEND_LOG": "The transaction was rejected because of a known problem (issue #524) but not reproduced.<br/><br/>To help developers correct this error, do you accept <b>the transmission of your logs</b> per message?<br/><small>(No confidential data is sent)</small>",
-    "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Warning:</b> Do you want to <b>manually change</b> the peer?<br/><br/>If you proceed:<ul><li> - <b>Expert mode</b> will be activated;</li><li> - You can return to automatic peer selection by simply <b>deactivating expert mode</b>.</li></ul>"
+    "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Warning:</b> Do you want to <b>manually change</b> the Duniter node?<br/><br/>If you proceed:<ul><li> - <b>Expert mode</b> will be activated;</li><li> - You can return to automatic node selection by simply <b>deactivating expert mode</b>.</li></ul>"
   },
   "MODE": {
     "DEMO": {

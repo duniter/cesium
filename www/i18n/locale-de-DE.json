@@ -585,6 +585,24 @@
     "SELECT_WALLET_MODAL": {
       "TITLE": "Auswahl der Brieftasche"
     },
+    "CERTIFICATION_MODAL": {
+      "CHECKLIST_TITLE": "Prüfungen vor der Zertifizierung",
+      "INFOS": "Die Sicherheit der Währung Ğ1 basiert auf jedem Mitglied. Bevor Sie die Identität dieser Person zertifizieren, müssen Sie einige Überprüfungen vorgenommen haben. Bitte beantworten Sie die folgenden Fragen:",
+      "BTN_ALL_CHECK": "Zertifizieren",
+      "CHECKLIST_CONDITIONS_NOT_MET": "Die Zertifizierung wurde nicht gesendet. Die Überprüfungen scheinen unzureichend zu sein. Bitte überprüfen Sie jeden Punkt erneut bei der zu zertifizierenden Person.",
+      "QUESTIONS": {
+        "WELL_KNOWN": "Kennen Sie die Person, die Sie zertifizieren, <b>gut</b>, und kennen Sie auch andere, die sie gut kennen?",
+        "REVOCATION": "Hat sie ihr <b>Widerrufsdokument</b> heruntergeladen und weiß sie, wo sie es finden kann?",
+        "CONTACT": "Haben Sie diese Person auf verschiedene Weise <b>kontaktiert</b>, und hat sie Ihnen geantwortet?",
+        "DOUBLE_IDENTITY": "Die Person muss <b>nur eine aktive Mitgliedsidentität</b> haben. Hat sie <b>eine andere</b>?",
+        "MASTER_ACCOUNT": "Kontrolliert sie ihr Konto und hat sie mindestens <b>eine Überweisung</b> von diesem Konto getätigt?",
+        "LICENSE": "Hat sie die <b>Lizenz verstanden</b>, und stimmt sie zu, sie bei der Zertifizierung anderer Mitglieder einzuhalten?",
+        "CREDENTIALS": "Sind der Geheimer Benutzername und das Passwort ihres Kontos <b>lang und komplex</b> (Passphrasen)? Hat sie verstanden, dass der Benutzername auch geheim bleiben muss? Ist sie <b>sicher, sich daran zu erinnern</b> oder in der Lage, sie wiederzufinden?",
+        "PUBLIC_KEY_DIFFERENT": "Der angegebene <b>öffentliche Schlüssel</b> muss <b>identisch</b> sein mit dem, den Ihnen diese Person mitgeteilt hat. Sind die Schlüssel <b>unterschiedlich</b>?"
+      },
+      "REMINDER_TITLE": "Erinnerung",
+      "SHORT_LICENSE_REMINDER": "Sie können die zertifizierte Person an die Zertifizierungsparameter erinnern:<br/><br/><ul><li> - Jedes Mitglied kann maximal 100 gültige Zertifikate ausstellen.</li><li>- Die Zertifikate werden in Abständen von 5 Tagen aufgezeichnet.</li><li> - Eine neue Mitgliedsidentität muss in weniger als zwei Monaten mindestens 5 Zertifikate sammeln.</li><li> - Ein Mitglied muss seine Mitgliedschaft jedes Jahr erneuern.</li><li> - Zertifikate sind zwei Jahre gültig.</li></ul>"
+    },
     "WALLET_LIST": {
       "TITLE": "Meine Brieftaschen",
       "BTN_NEW": "Eine Brieftasche hinzufügen",

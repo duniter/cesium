@@ -570,6 +570,24 @@
     "SELECT_WALLET_MODAL": {
       "TITLE": "Elekto de la monujo"
     },
+    "CERTIFICATION_MODAL": {
+      "CHECKLIST_TITLE": "Kontroloj antaŭ atestado",
+      "INFOS": "La sekureco de la Ğ1-monero dependas de ĉiu membro. Antaŭ ol atesti la identecon de tiu persono, vi devas fari iujn kontroladojn pri ŝi. Bonvolu respondi la jenajn demandojn:",
+      "BTN_ALL_CHECK": "Atesti",
+      "CHECKLIST_CONDITIONS_NOT_MET": "La atestado ne estas sendita. La kontroladoj ŝajnas nesufiĉaj. Bonvolu rekontroli ĉiun punkton kun la persono, kiu estas atestota.",
+      "QUESTIONS": {
+        "WELL_KNOWN": "<b>Ĉu vi bone konas</b> la personon, kiun vi atestas, kaj ĉu vi konas aliajn, kiuj ankaŭ bone konas ŝin?",
+        "REVOCATION": "Ĉu ŝi elŝutis sian <b>revokigan dokumenton</b> kaj ĉu ŝi scias, kie trovi ĝin?",
+        "CONTACT": "Ĉu vi <b>kontaktis</b> tiun personon per diversaj rimedoj kaj ĉu ŝi respondis?",
+        "DOUBLE_IDENTITY": "La persono devas havi <b>nur unu aktivulan membran identecon</b>. Ĉu ŝi havas <b>alian</b>?",
+        "MASTER_ACCOUNT": "Ĉu ŝi regas sian konton, kaj ĉu ŝi jam <b>faris almenaŭ unu transakcion</b> el ĝi?",
+        "LICENSE": "Ĉu ŝi <b>komprenis la permesilon</b>, kaj ĉu ŝi konsentas al ĝi por atesti aliajn membrojn?",
+        "CREDENTIALS": "Ĉu la salutnomo kaj pasvorto de ŝia konto estas <b>longaj kaj kompleksaj</b> (pasfrazoj)? Ĉu ŝi komprenis, ke la salutnomo ankaŭ devas resti sekreta? Ĉu ŝi estas <b>certa, ke ŝi memoros ilin</b> aŭ povos retrovi ilin?",
+        "PUBLIC_KEY_DIFFERENT": "La indikita <b>publika ŝlosilo</b> devas esti <b>identa</b> al tiu, kiun tiu persono komunikis al vi. Ĉu la ŝlosiloj estas <b>malsamaj</b>?"
+      },
+      "REMINDER_TITLE": "Memorigo",
+      "SHORT_LICENSE_REMINDER": "Vi povas memorigi al la atestita persono la parametrojn de la atestadoj:<br/><br/><ul><li> - Ĉiu membro povas eldoni maksimume 100 validajn atestadojn.</p><p>- La atestadoj estas registradoj je 5-tagaj intervaloj.</p><p>- Nova membra identeco devas kolekti almenaŭ 5 atestadojn en malpli ol du monatoj.</p><p>- Membro devas renovigi sian membron ĉiun jaron.</p><p>- Atestadoj estas validaj dum du jaroj.</p>"
+    },
     "WALLET_LIST": {
       "TITLE": "Miaj monujoj",
       "BTN_NEW": "Aldoni monujon",

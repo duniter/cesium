@@ -571,6 +571,24 @@
     "SELECT_WALLET_MODAL": {
       "TITLE": "Selezione del portafoglio"
     },
+    "CERTIFICATION_MODAL": {
+      "CHECKLIST_TITLE": "Verifiche prima della certificazione",
+      "INFOS": "La sicurezza della moneta Ğ1 si basa su ogni membro. Prima di certificare l'identità di questa persona, devi aver fatto alcune verifiche su di lei. Rispondi alle seguenti domande, per favore:",
+      "BTN_ALL_CHECK": "Certifica",
+      "CHECKLIST_CONDITIONS_NOT_MET": "La certificazione non è stata inviata. Le verifiche sembrano insufficienti. Si prega di verificare nuovamente ogni punto con la persona da certificare.",
+      "QUESTIONS": {
+        "WELL_KNOWN": "<b>Conosci bene</b> la persona che stai certificando, e conosci anche persone che la conoscono bene?",
+        "REVOCATION": "Ha scaricato il suo <b>documento di revoca</b> e sa dove trovarlo?",
+        "CONTACT": "Hai <b>contattato</b> questa persona con diversi mezzi e ti ha risposto?",
+        "DOUBLE_IDENTITY": "La persona deve possedere <b>una sola identità di membro attivo</b>. Ne possiede <b>un'altra</b>?",
+        "MASTER_ACCOUNT": "Controlla il suo conto e ha già <b>effettuato almeno un bonifico</b> dal suo conto?",
+        "LICENSE": "Ha <b>capito la licenza</b> e accetta di conformarsi per la certificazione di altri membri?",
+        "CREDENTIALS": "L'identificativo e la password del suo conto sono <b>lunghi e complessi</b> (frasi segrete)? Ha capito che l'identificativo deve anche rimanere segreto? È <b>certa di ricordarseli</b> o di poterli ritrovare?",
+        "PUBLIC_KEY_DIFFERENT": "La <b>chiave pubblica</b> indicata deve essere <b>identica</b> a quella che ti ha comunicato questa persona. Le chiavi sono <b>diverse</b>?"
+      },
+      "REMINDER_TITLE": "Promemoria",
+      "SHORT_LICENSE_REMINDER": "Puoi ricordare alla persona di certificare diversi parametri di certificazione:<br/><br/><ul><li> - Ogni membro può certificare al massimo 100 altre identità.</li><li> - Le certificazioni sono salvate con un intervallo di 5 giorni.</li><li> - Una nuova identità deve raccogliere almeno 5 certificazioni in meno di 2 mesi.</li><li> - Un membro deve rinnovare la sua iscrizione almeno una volta all'anno.</li><li> - Le certificazioni hanno una durata di due anni.</li></ul>"
+    },
     "WALLET_LIST": {
       "TITLE": "Portafoglio secondario",
       "BTN_NEW": "Aggiungi un portafoglio",
@@ -586,7 +604,7 @@
         "HELP": "Compila il nuovo nome",
         "NAME_HELP": "Nome del portafoglio"
       },
-        "IMPORT_MODAL": {
+      "IMPORT_MODAL": {
         "TITLE": "Importare un portafoglio secondario",
         "HELP": "Per <b>importare un portafoglio secondario</b>,per favore trascina il file nella casella sottostante, o fai click nella casella per cercare un file.",
         "WALLET_COUNT": "<b>{{count}}</b> Nuovo portafoglio{{count > 1 ? 's' : ''}}",
@@ -659,7 +677,7 @@
           "BAD_CHECKSUM": "Checksum errato"
         }
       }
-      },
+    },
     "FILE_NAME": "{{currency}} - Account statement {{pubkey|formatPubkey}} to {{currentTime|formatDateForFile}}.csv",
     "HEADERS": {
       "TIME": "Data",

@@ -400,7 +400,7 @@
       "IDLE_WARNING": "U wordt uitgelogd... {{countdown}}"
     },
     "METHOD": {
-      "SCRYPT_DEFAULT": "Geheime identificatie en wachtwoord",
+      "SCRYPT_DEFAULT": "Geheime gebruikersnaam en wachtwoord",
       "SCRYPT_ADVANCED": "Geavanceerde zoutvorming",
       "FILE": "Sleutelbestand",
       "PUBKEY": "Openbare sleutel of bijnaam",
@@ -496,6 +496,31 @@
     "POPUP_REGISTER": {
       "TITLE": "Voer een pseudoniem in",
       "HELP": "Een pseudoniem is nodig voor anderen om je te kunnen vinden."
+    },
+    "SELECT_IDENTITY_MODAL": {
+      "TITLE": "Identiteit selecteren",
+      "HELP": "Er zijn verschillende <b>identiteiten</b> verzonden voor de openbare sleutel <span class=\"gray\"><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</span>.<br/>Selecteer de te gebruiken map:"
+    },
+    "SELECT_WALLET_MODAL": {
+      "TITLE": "Portemonnee selecteren"
+    },
+    "CERTIFICATION_MODAL": {
+      "CHECKLIST_TITLE": "Controles vóór certificering",
+      "INFOS": "De veiligheid van de munteenheid Ğ1 is gebaseerd op elk lid. Voordat je de identiteit van deze persoon certificeert, moet je enkele controles over haar hebben uitgevoerd. Beantwoord de volgende vragen:",
+      "BTN_ALL_CHECK": "Certificeren",
+      "CHECKLIST_CONDITIONS_NOT_MET": "De certificering is niet verzonden. De controles lijken onvoldoende. Controleer elk punt opnieuw bij de persoon die moet worden gecertificeerd.",
+      "QUESTIONS": {
+        "WELL_KNOWN": "<b>Ken je</b> de persoon die je certificeert goed, en ken je ook mensen die haar goed kennen?",
+        "REVOCATION": "Heeft ze haar <b>herroepingsdocument</b> gedownload en weet ze waar ze het kan vinden?",
+        "CONTACT": "Heb je deze persoon op verschillende manieren <b>gecontacteerd</b> en heeft ze je geantwoord?",
+        "DOUBLE_IDENTITY": "De persoon moet <b>één actieve lididentiteit</b> hebben. Heeft ze er <b>een andere</b>?",
+        "MASTER_ACCOUNT": "Heeft ze controle over haar rekening, en heeft ze al <b>minstens één overboeking</b> gedaan vanaf haar rekening?",
+        "LICENSE": "Heeft ze de <b>licentie begrepen</b>, en gaat ze akkoord met de naleving ervan voor de certificering van andere leden?",
+        "CREDENTIALS": "Zijn de geheime identificatie en het wachtwoord van haar rekening <b>lang en complex</b> (wachtwoordzinnen)? Heeft ze begrepen dat de identificatie ook geheim moet blijven? Is ze er <b>zeker van dat ze deze zal onthouden</b> of terugvinden?",
+        "PUBLIC_KEY_DIFFERENT": "De <b>openbare sleutel</b> moet <b>identiek</b> zijn aan die welke deze persoon je heeft meegedeeld. Zijn de sleutels <b>verschillend</b>?"
+      },
+      "REMINDER_TITLE": "Herinnering",
+      "SHORT_LICENSE_REMINDER": "Je kunt de persoon eraan herinneren verschillende certificeringsparameters te certificeren:<br/><br/><ul><li> - Elk lid kan maximaal 100 andere identiteiten certificeren.</li><li> - De certificeringen worden met een interval van 5 dagen opgeslagen.</li><li> - Een nieuwe identiteit moet in minder dan 2 maanden minstens 5 certificeringen verzamelen.</li><li> - Een lid moet minstens eenmaal per jaar zijn lidmaatschap vernieuwen.</li><li> - Certificeringen hebben een levensduur van twee jaar.</li></ul>"
     },
     "FILE_NAME": "{{currency}} - Rekeningafschrift {{pubkey|formatPubkey}} {{currentTime|formatDateForFile}}.csv",
     "HEADERS": {
