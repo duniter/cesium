@@ -783,42 +783,33 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               return;
             }
 
-            if ( ! $scope.commonCertificationVerifications($scope.formData, wallet) ) {
+            if (!$scope.commonCertificationVerifications($scope.formData, wallet)) {
               return;
             }
 
-            // Prepare actions after user confirmation
-            var answers_are_right = $q.defer();
-            answers_are_right.promise.then( function (cert_status) {
-              return $scope.showLicenseReminderIfNewCert(cert_status);
-            })
-            .then(function(confirm){
-              if (!confirm) return;
-              UIUtils.loading.show();
-              wallet.certify($scope.formData.uid,
-                $scope.formData.pubkey,
-                $scope.formData.blockUid || ($scope.formData.requirements && $scope.formData.requirements.meta && $scope.formData.requirements.meta.timestamp),
-                $scope.formData.requirements && $scope.formData.requirements.meta && $scope.formData.requirements.meta.sig,
-                $scope.formData.isMember,
-                $scope.formData.wasMember)
-                .then(function(cert) {
-                  UIUtils.loading.hide();
-                  if (cert) {
-                    $scope.prepareNewCert(wallet, cert);
-                    $scope.alreadyCertified = true;
-                    UIUtils.toast.show('INFO.CERTIFICATION_DONE');
-                    $scope.formData.received_cert_pending.unshift(cert);
-                    $scope.formData.requirements.pendingCertificationCount++;
-                    $scope.doMotion();
-                  }
-                })
-                .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
-            })
-            .catch(
-              UIUtils.onError('ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_CONDITIONS_NOT_MET')
-            );
-
-            return $scope.displayConfirmationModalOrLicenseQuestions($scope.formData, wallet, answers_are_right);
+            return $scope.displayConfirmationModalOrLicenseQuestions($scope.formData, wallet);
+          })
+          .then(function(confirm){
+            if (!confirm) return;
+            UIUtils.loading.show();
+            wallet.certify($scope.formData.uid,
+              $scope.formData.pubkey,
+              $scope.formData.blockUid || ($scope.formData.requirements && $scope.formData.requirements.meta && $scope.formData.requirements.meta.timestamp),
+              $scope.formData.requirements && $scope.formData.requirements.meta && $scope.formData.requirements.meta.sig,
+              $scope.formData.isMember,
+              $scope.formData.wasMember)
+              .then(function(cert) {
+                UIUtils.loading.hide();
+                if (cert) {
+                  $scope.prepareNewCert(wallet, cert);
+                  $scope.alreadyCertified = true;
+                  UIUtils.toast.show('INFO.CERTIFICATION_DONE');
+                  $scope.formData.received_cert_pending.unshift(cert);
+                  $scope.formData.requirements.pendingCertificationCount++;
+                  $scope.doMotion();
+                }
+              })
+              .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
           })
           .catch(function(err) {
             if (err === 'CANCELLED') return;
@@ -827,23 +818,23 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
       });
   };
 
-  $scope.commonCertificationVerifications = function (receiver_idty, sender_wallet) {
+  $scope.commonCertificationVerifications = function(identity, wallet) {
 
     // Check it is no self-certification
-    if (receiver_idty.pubkey === sender_wallet.data.pubkey) {
+    if (identity.pubkey === wallet.data.pubkey) {
       UIUtils.alert.error('ERROR.SELF_CERTIFICATION');
       return false;
     }
 
     // Check identity not expired
-    if (receiver_idty.requirements.expired) {
+    if (identity.requirements.expired) {
       UIUtils.alert.error('ERROR.IDENTITY_EXPIRED');
       return false;
     }
 
     // Check not already certified
-    var previousCert = _.find(receiver_idty.received_cert, function (cert) {
-      return cert.pubkey === sender_wallet.data.pubkey && cert.valid && cert.expiresIn > csSettings.data.timeWarningExpire;
+    var previousCert = _.find(identity.received_cert, function (cert) {
+      return cert.pubkey === wallet.data.pubkey && cert.valid && cert.expiresIn > csSettings.data.timeWarningExpire;
     });
     if (previousCert) {
       $translate('ERROR.IDENTITY_ALREADY_CERTIFY', previousCert)
@@ -854,7 +845,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
     }
 
     // Check no pending certification
-    previousCert = _.findWhere(receiver_idty.received_cert_pending, { pubkey: sender_wallet.data.pubkey, valid: true });
+    previousCert = _.findWhere(identity.received_cert_pending, { pubkey: wallet.data.pubkey, valid: true });
     if (previousCert) {
       $translate('ERROR.IDENTITY_ALREADY_CERTIFY_PENDING', previousCert)
         .then(function (message) {
@@ -866,44 +857,48 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
     return true;
   };
 
-  $scope.showLicenseReminderIfNewCert = function (cert_status) {
-    if (cert_status === "new_cert") {
-      return UIUtils.alert.confirm(
-        'ACCOUNT.CERTIFICATION_MODAL.SHORT_LICENSE_REMINDER',
-        'ACCOUNT.CERTIFICATION_MODAL.REMINDER_TITLE',
-        {
-          cssClass: 'positive',
-          okText: 'COMMON.BTN_OK',
-          okType: 'button-positive'
-        }
-      );
-    }
-    return true;
+  $scope.showLicenseReminder = function() {
+    return UIUtils.alert.confirm(
+      'ACCOUNT.CERTIFICATION_MODAL.SHORT_LICENSE_REMINDER',
+      'ACCOUNT.CERTIFICATION_MODAL.REMINDER_TITLE',
+      {
+        cssClass: 'confirm large',
+        okText: 'COMMON.BTN_OK',
+        okType: 'button-positive'
+      }
+    );
   };
 
-  $scope.displayConfirmationModalOrLicenseQuestions = function (certified_idty, sender_wallet, answers_are_right) {
+  $scope.displayConfirmationModalOrLicenseQuestions = function(identity, wallet) {
 
-    if (isCertificationRenewal(certified_idty.received_cert, sender_wallet.data.pubkey)) {
-      return $scope.certRenewalConfirmationModal(answers_are_right);
+    // Renew: simple confirmation modal
+    if (isCertificationRenewal(identity.received_cert, wallet.data.pubkey)) {
+      return $scope.certRenewalConfirmationModal();
     }
 
+    // New certification: show questions modal
     return Modals.showCertificationCheckList({
-      answers_are_right: answers_are_right,
-      identity: certified_idty,
-    });
+        identity: identity
+      })
+      .then(function(confirm) {
+        if (!confirm) return false;
+
+        // Show license reminder modal
+        return $scope.showLicenseReminder();
+      })
+      .catch(function(err) {
+        if (err === 'CANCELLED') return false;
+        UIUtils.onError('ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_CONDITIONS_NOT_MET')(err);
+        return false;
+      });
   };
 
-  $scope.certRenewalConfirmationModal = function (answers_are_right) {
+  $scope.certRenewalConfirmationModal = function() {
     return UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', 'CONFIRM.CERTIFY_RULES_TITLE_UID', {
       cssClass: 'warning',
       okText: 'WOT.BTN_YES_CERTIFY',
       okType: 'button-assertive'
     })
-    .then(function (confirm) {
-      if (confirm) {
-        answers_are_right.resolve("renewal");
-      }
-    });
   };
 
   // Select an identity and certify
@@ -924,21 +919,19 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
             // Open Wot lookup modal
             return Modals.showWotLookup();
           })
-          .then(function (idty) {
-            if (!idty || !idty.pubkey) {
-              return; // cancelled
-            }
-            if (!idty.uid) { // not a member
+          .then(function(identity) {
+            if (!identity || !identity.pubkey) return; // cancelled
+            if (!identity.uid) { // not a member
               UIUtils.alert.error('ERROR.IDENTITY_TO_CERTIFY_HAS_NO_SELF');
               return;
             }
 
             UIUtils.loading.show();
 
-            var options = {cache: false, blockUid: idty.blockUid};
+            var options = {cache: false, blockUid: identity.blockUid};
 
             // load selected identity
-            return csWot.load(idty.pubkey, idty.uid, options);
+            return csWot.load(identity.pubkey, identity.uid, options);
           })
 
           .then(function (identity) {
@@ -949,47 +942,44 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               return;
             }
 
-            if ( ! $scope.commonCertificationVerifications(identity, wallet) ) {
+            if (!$scope.commonCertificationVerifications(identity, wallet)) {
               return;
             }
 
             // Prepare actions after user confirmation
-            var answers_are_right = $q.defer();
-            answers_are_right.promise.then(function (cert_status) {
-              return $scope.showLicenseReminderIfNewCert(cert_status);
-            })
-            .then(function(confirm){
-              if (!confirm) return;
-              UIUtils.loading.show();
-              // Send certification
-              wallet.certify(identity.uid,
-                identity.pubkey,
-                identity.blockUid || (identity.requirements && identity.requirements.meta && identity.requirements.meta.timestamp),
-                identity.requirements && identity.requirements.meta && identity.requirements.meta.sig,
-                identity.isMember,
-                identity.wasMember)
-                .then(function (cert) {
-                  UIUtils.loading.hide();
-                  if (!cert) return;
-                  return csWot.extendAll([cert], 'pubkey')
-                    .then(function () {
-                      UIUtils.toast.show('INFO.CERTIFICATION_DONE');
-                      $scope.formData.given_cert_pending.unshift(cert);
-                      $scope.doMotion();
-                    });
-                })
-                .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
-            })
-            .catch(UIUtils.onError('ACCOUNT.CERTIFICATION_MODAL.CHECKLIST_CONDITIONS_NOT_MET'));
-
-            return $scope.displayConfirmationModalOrLicenseQuestions(identity, wallet, answers_are_right);
-
+            return $scope.displayConfirmationModalOrLicenseQuestions(identity, wallet)
+              .then(function(confirm) {
+                if (!confirm) return;
+                return identity;
+              });
           })
-          .catch(function (err) {
-            if (err === 'CANCELLED') return;
-            UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED')(err);
+          .then(function(identity){
+            if (!identity) return;
+            UIUtils.loading.show();
+            // Send certification
+            wallet.certify(identity.uid,
+              identity.pubkey,
+              identity.blockUid || (identity.requirements && identity.requirements.meta && identity.requirements.meta.timestamp),
+              identity.requirements && identity.requirements.meta && identity.requirements.meta.sig,
+              identity.isMember,
+              identity.wasMember)
+              .then(function (cert) {
+                UIUtils.loading.hide();
+                if (!cert) return;
+                return csWot.extendAll([cert], 'pubkey')
+                  .then(function () {
+                    UIUtils.toast.show('INFO.CERTIFICATION_DONE');
+                    $scope.formData.given_cert_pending.unshift(cert);
+                    $scope.doMotion();
+                  });
+              })
+              .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
           });
-      });
+        })
+        .catch(function (err) {
+          if (err === 'CANCELLED') return;
+          UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED')(err);
+        });
   };
 
   // Add wallet's data to a new cert
@@ -1505,7 +1495,6 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
   // allow to display license
   $controller('CurrencyViewCtrl', {$scope: $scope});
 
-  var answers_are_right = parameters.answers_are_right;
   $scope.identity = parameters.identity;
 
   $scope.prepare_cert_checklist = function() {
@@ -1558,15 +1547,10 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
   $scope.cert_checklist = $scope.prepare_cert_checklist();
 
   $scope.verifyAnswers = function() {
-    $scope.cert_checklist.map(function(question) {
-      if (question.answer !== question.expected_answer) {
-        // TODO message should be changed.
-        answers_are_right.reject();
-      }
+    var ok = _.every($scope.cert_checklist, function(question) {
+      return (question.answer === question.expected_answer);
     });
-    answers_are_right.resolve("new_cert");
-
-    $scope.closeModal();
+    $scope.closeModal(ok);
   };
 }
 

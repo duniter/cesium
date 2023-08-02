@@ -233,7 +233,8 @@ angular.module('cesium.modal.services', ['cesium.utils.services'])
   }
 
   function showCertificationCheckList(parameters) {
-    return ModalUtils.show('templates/wot/modal_certification_checklist.html','WotCertificationChecklistCtrl', parameters);
+    return ModalUtils.show('templates/wot/modal_certification_checklist.html', 'WotCertificationChecklistCtrl',
+      parameters);
   }
 
   function showSelectPubkeyIdentity(parameters) {
