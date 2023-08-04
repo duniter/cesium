@@ -34,7 +34,7 @@
       "REASON_HELP": "I explain the problem...",
       "ASK_DELETE": "Request removal?",
       "CONFIRM": {
-        "SENT": "Request sent. Thnak you!"
+        "SENT": "Request sent. Thank you!"
       }
     }
   },
@@ -550,5 +550,35 @@
   "ERROR": {
     "ES_CONNECTION_ERROR": "Data node <b>{{server}}</b> unreachable or invalid address.<br/><br/>Cesium will continue to work, <b>without the Cesium+</b> extension (user profiles, private messages, maps and graphics).<br/><br/>Check your Internet connection, or change data node in <a class=\"positive\" ng-click=\"doQuickFix('settings')\">extension settings</a>.",
     "ES_MAX_UPLOAD_BODY_SIZE": "The volume of data to be sent exceeds the limit set by the server.<br/><br/>Please try again after, for example, deleting photos."
+  },
+  "ADMIN": {
+    "MESSAGE": {
+      "BTN_SEND_EMAIL": "Send a Group Email"
+    },
+    "LOG": {
+      "BTN_SHOW_LOG": "Blocked IP Logs",
+      "VIEW": {
+        "TITLE": "Logs",
+        "TIME": "Date",
+        "REQUEST_PATH": "Path",
+        "REQUEST_METHOD": "Method",
+        "INET_ADDRESS": "IP Address",
+        "ITEMS_DIVIDER": "List of Blocked Requests"
+      }
+    },
+    "MODERATOR": {
+      "BTN_SHOW_MODERATORS": "View Moderators",
+      "VIEW": {
+        "TITLE": "Moderators",
+        "MODERATORS_DIVIDER": "List of Moderators"
   }
+    },
+    "ERROR": {
+      "NO_SSL_ACCESS": "Access Denied Due to SSL Restrictions.",
+      "LOAD_LOG_FAILED": "Failed to Read Logs.",
+      "LOAD_MODERATORS_FAILED": "Failed to Read Moderators.",
+      "AUTH_ERROR": "Authentication Error with Pod"
+    }
+  }
+
 }

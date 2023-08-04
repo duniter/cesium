@@ -59,6 +59,14 @@
       <i class="icon ion-ios-arrow-right"></i>
     </ion-item>
 
+    <div class="item item-text-wrap item-icon-right ink"
+         ng-if="!loading && moderator"
+         ui-sref="app.view_es_peer">
+      <div class="input-label ng-binding" translate>PEER.BTN_SHOW_PEER</div>
+
+      <i class="icon ion-ios-arrow-right"></i>
+    </div>
+
     <span class="item item-divider hidden-readonly" translate>ES_SETTINGS.NOTIFICATIONS.DIVIDER</span>
 
     <!-- Enable HTML notifications -->

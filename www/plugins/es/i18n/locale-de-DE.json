@@ -609,16 +609,29 @@
       "BTN_SEND_EMAIL": "Gruppen-E-Mail senden"
     },
     "LOG": {
-      "BTN_SHOW_LOG": "Protokolle blockierter IP-Adressen",
+      "BTN_SHOW_LOG": "Logs der blockierten IPs",
       "VIEW": {
-        "TITLE": "Protokolle",
-        "LOG_REQUEST_DIVIDER": "Liste der blockierten Anfragen"
+        "TITLE": "Logs",
+        "TIME": "Datum",
+        "REQUEST_PATH": "Pfad",
+        "REQUEST_METHOD": "Methode",
+        "INET_ADDRESS": "IP-Adresse",
+        "ITEMS_DIVIDER": "Liste der blockierten Anfragen"
+      }
+    },
+    "MODERATOR": {
+      "BTN_SHOW_MODERATORS": "Moderatoren anzeigen",
+      "VIEW": {
+        "TITLE": "Moderatoren",
+        "MODERATORS_DIVIDER": "Liste der Moderatoren"
       }
     },
     "ERROR": {
-      "NO_SSL_ACCESS": "Zugriff aufgrund von TLS-Einschränkungen nicht möglich.",
-      "LOAD_LOG_FAILED": "Fehler beim Lesen der Protokolle.",
-      "AUTH_ERROR": "Fehler bei der POD-Authentifizierung"
+      "NO_SSL_ACCESS": "Zugang wegen SSL-Beschränkungen nicht möglich.",
+      "LOAD_LOG_FAILED": "Fehler beim Lesen der Logs.",
+      "LOAD_MODERATORS_FAILED": "Fehler beim Lesen der Moderatoren",
+      "AUTH_ERROR": "Authentifizierungsfehler im Pod"
     }
   }
+
 }

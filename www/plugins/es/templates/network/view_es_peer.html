@@ -107,9 +107,17 @@
         <cs-extension-point name="general"></cs-extension-point>
 
         <ion-item class="item item-icon-left item-icon-right item-text-wrap"
+                  ui-sref="app.es_peer_moderators({server: node.server, ssl: node.useSsl, tor: node.useTor})"
+                  ng-if="!loading && isReachable && (admin || moderator)">
+          <i class="icon ion-thumbsup"></i>
+          <span translate>ADMIN.MODERATOR.BTN_SHOW_MODERATORS</span>
+          <i class="gray icon ion-ios-arrow-right"></i>
+        </ion-item>
+
+        <ion-item class="item item-icon-left item-icon-right item-text-wrap"
                   ui-sref="app.es_peer_log({server: node.server, ssl: node.useSsl, tor: node.useTor})"
                   ng-if="!loading && isReachable && (admin || moderator)">
-          <i class="icon ion-document"></i>
+          <i class="icon ion-android-hand"></i>
           <span translate>ADMIN.LOG.BTN_SHOW_LOG</span>
           <i class="gray icon ion-ios-arrow-right"></i>
         </ion-item>

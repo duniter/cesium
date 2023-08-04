@@ -252,5 +252,34 @@
   "ERROR": {
     "ES_CONNECTION_ERROR": "Knooppunt <b>{{server}}</b> onbereikbaar of ongeldig adres.<br/><br/>Cesium zal verder weken, <b>zonder de Cesium+ uitbreiding</b> (gebruikersprofielens, privéberichten, kaarten en grafieken).<br/><br/>Controleer je internetverbinding, of verander je knooppunt in <a class=\"positive\" ng-click=\"doQuickFix('settings')\">instellingen</a>.",
     "ES_MAX_UPLOAD_BODY_SIZE": "De hoveelheid te verzenden gegevens is overschrijdt de serverlimiet.<br/><br/>Probeer het nogmaals na, bijvoorbeeld, het wissen foto's."
+  },
+  "ADMIN": {
+    "MESSAGE": {
+      "BTN_SEND_EMAIL": "Stuur een groepsemail"
+    },
+    "LOG": {
+      "BTN_SHOW_LOG": "Logs van geblokkeerde IP's",
+      "VIEW": {
+        "TITLE": "Logs",
+        "TIME": "Datum",
+        "REQUEST_PATH": "Pad",
+        "REQUEST_METHOD": "Methode",
+        "INET_ADDRESS": "IP-adres",
+        "ITEMS_DIVIDER": "Lijst van geblokkeerde verzoeken"
+      }
+    },
+    "MODERATOR": {
+      "BTN_SHOW_MODERATORS": "Bekijk moderators",
+      "VIEW": {
+        "TITLE": "Moderators",
+        "MODERATORS_DIVIDER": "Lijst van moderators"
+      }
+    },
+    "ERROR": {
+      "NO_SSL_ACCESS": "Toegang geweigerd vanwege SSL-beperkingen.",
+      "LOAD_LOG_FAILED": "Fout bij het lezen van logs.",
+      "LOAD_MODERATORS_FAILED": "Fout bij het lezen van moderators",
+      "AUTH_ERROR": "Authenticatiefout met de pod"
+    }
   }
 }

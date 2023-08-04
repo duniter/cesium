@@ -6,6 +6,10 @@
 
   <ion-content>
 
+    <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
+                   on-refresh="load()">
+    </ion-refresher>
+
     <div class="row no-padding">
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;
       </div>
@@ -27,27 +31,65 @@
 
         </ion-item>
 
-
-        <!-- Allow extension here -->
-        <cs-extension-point name="general"></cs-extension-point>
-
         <div class="item item-divider"translate>
-          ADMIN.LOG.VIEW.LOG_REQUEST_DIVIDER
+          ADMIN.LOG.VIEW.ITEMS_DIVIDER
         </div>
 
-        <div class="item center" ng-if="search.loading">
-            <ion-spinner class="icon" icon="android"></ion-spinner>
-        </div>
+        <ion-list class="list no-padding" ng-class="::motion.ionListClass">
 
-        <div class="list no-padding" ng-class="::motion.ionListClass">
+          <div class="item row row-header done in hidden-xs hidden-sm">
 
-          <div ng-repeat="item in search.results"
-               class="item item-peer item-icon-left ink"
-               ng-class="::ionItemClass">
-            {{item.time|formatDate}} - {{item.host}} - {{item.path}} ({{item.method}})
+            <a class="no-padding dark col col-header col-20"
+               ng-click="toggleSort('time')">
+              <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'time'"></cs-sort-icon>
+              {{'DOCUMENT.LOOKUP.HEADER_TIME' | translate}}
+            </a>
+            <a class="no-padding dark col col-header col-15"
+               ng-click="toggleSort('method')">
+              <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'method'"></cs-sort-icon>
+              {{'ADMIN.LOG.VIEW.REQUEST_METHOD' | translate}}
+            </a>
+            <a class="no-padding dark col col-header"
+               ng-click="toggleSort('path')">
+              <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'path'"></cs-sort-icon>
+              {{'ADMIN.LOG.VIEW.REQUEST_PATH' | translate}}
+            </a>
+            <a class="no-padding dark col col-header col-15"
+               ng-click="toggleSort('host')">
+              <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'host'"></cs-sort-icon>
+              {{'ADMIN.LOG.VIEW.INET_ADDRESS' | translate}}
+            </a>
           </div>
 
-        </div>
+
+          <div class="padding gray" ng-if=":rebind:!search.loading && !search.results.length" translate>
+            COMMON.SEARCH_NO_RESULT
+          </div>
+
+          <div class="text-center padding-top" ng-if="search.loading">
+            <ion-spinner icon="android"></ion-spinner>
+          </div>
+
+          <div ng-repeat="item in search.results"
+               class="item row item-request-log"
+               ng-class="::ionItemClass">
+            <div class="col col-20 text-center">
+              <span>{{item.time|formatDate}}<span>
+            </div>
+            <div class="col col-15 text-center  col-15">{{item.method}}</div>
+            <div class="col text-center">{{item.path}}</div>
+            <div class="col col-15 text-center">{{item.host}}</div>
+          </div>
+
+        </ion-list>
+
+
+        <ion-infinite-scroll
+          ng-if="!search.loading && search.hasMore"
+          spinner="android"
+          on-infinite="showMore()"
+          distance="1%">
+        </ion-infinite-scroll>
       </div>
 
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;

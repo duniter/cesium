@@ -605,5 +605,34 @@
   "ERROR": {
     "ES_CONNECTION_ERROR": "Nó de dados <b>{{server}}</b> indisponível ou endereço inválido.<br/><br/>Cesium continuará funcionando, <b>sem a extensão Cesium+</b> (perfis de usuário, mensagens privadas), mapas e gráficos).<br/><br/>Verifique a sua ligação à Internet, o altere o nó de dados em <a class=\"positive\" ng-click=\"doQuickFix('settings')\"> nas definições da extensão </a>.",
     "ES_MAX_UPLOAD_BODY_SIZE": "O volume de dados a enviar excede o limite estabelecido pelo servidor.<br/><br/>Por favor, tente novamente depois, por exemplo, apagando fotos."
+  },
+  "ADMIN": {
+    "MESSAGE": {
+      "BTN_SEND_EMAIL": "Enviar um email de grupo"
+    },
+    "LOG": {
+      "BTN_SHOW_LOG": "Logs de IPs bloqueados",
+      "VIEW": {
+        "TITLE": "Logs",
+        "TIME": "Data",
+        "REQUEST_PATH": "Caminho",
+        "REQUEST_METHOD": "Método",
+        "INET_ADDRESS": "Endereço IP",
+        "ITEMS_DIVIDER": "Lista de pedidos bloqueados"
+      }
+    },
+    "MODERATOR": {
+      "BTN_SHOW_MODERATORS": "Ver moderadores",
+      "VIEW": {
+        "TITLE": "Moderadores",
+        "MODERATORS_DIVIDER": "Lista de moderadores"
+      }
+    },
+    "ERROR": {
+      "NO_SSL_ACCESS": "Acesso negado devido a restrições SSL.",
+      "LOAD_LOG_FAILED": "Erro na leitura dos logs.",
+      "LOAD_MODERATORS_FAILED": "Erro na leitura dos moderadores",
+      "AUTH_ERROR": "Erro de autenticação com o pod"
+    }
   }
 }

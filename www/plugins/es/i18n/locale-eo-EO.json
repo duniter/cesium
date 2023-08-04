@@ -603,5 +603,34 @@
   "ERROR": {
     "ES_CONNECTION_ERROR": "Daten-nodo <b>{{server}}</b> neatingebla aŭ adreso nevalida.<br/><br/>Cesium daŭrigos funkcii, <b>sen la krom-programo Cesium+</b> (uzanto-profiloj, privataj mesaĝoj, mapoj kaj grafikoj)<br/><br/>Kontrolu vian ret-konekton, aŭ ŝanĝu daten-nodon ĉe la <a class=\"positive\" ng-click=\"doQuickFix('settings')\">parametroj de la krom-programo</a>.",
     "ES_MAX_UPLOAD_BODY_SIZE": "La kvanto de datenoj sendotaj superas la limon fiksitan de la servilo.<br/>Bonvolu reprovi post, ekzemple, forigo de fotoj."
+  },
+  "ADMIN": {
+    "MESSAGE": {
+      "BTN_SEND_EMAIL": "Sendi grupan retpoŝton"
+    },
+    "LOG": {
+      "BTN_SHOW_LOG": "Protokoloj de blokitaj IPoj",
+      "VIEW": {
+        "TITLE": "Protokoloj",
+        "TIME": "Dato",
+        "REQUEST_PATH": "Vojo",
+        "REQUEST_METHOD": "Metodo",
+        "INET_ADDRESS": "IP-adreso",
+        "ITEMS_DIVIDER": "Listo de blokitaj petoj"
+      }
+    },
+    "MODERATOR": {
+      "BTN_SHOW_MODERATORS": "Vidi moderantojn",
+      "VIEW": {
+        "TITLE": "Moderantoj",
+        "MODERATORS_DIVIDER": "Listo de moderantoj"
+      }
+    },
+    "ERROR": {
+      "NO_SSL_ACCESS": "Aliro malpermesita pro SSL-limigoj.",
+      "LOAD_LOG_FAILED": "Eraro en legado de protokoloj.",
+      "LOAD_MODERATORS_FAILED": "Eraro en legado de moderantoj.",
+      "AUTH_ERROR": "Aŭtentiga eraro en la pod"
+    }
   }
 }

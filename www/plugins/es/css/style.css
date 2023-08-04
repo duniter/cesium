@@ -341,3 +341,18 @@
 .view-wallet .item-wallet-help a {
   text-decoration: underline;
 }
+
+
+/**********
+   Admin request log
+**********/
+
+.item-request-log {
+  min-height: 30px !important;
+  max-height: 30px !important;
+  border-bottom: 0 !important;
+}
+
+.item-request-log .col{
+  padding-top: 7px;
+}

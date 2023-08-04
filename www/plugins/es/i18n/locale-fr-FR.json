@@ -612,12 +612,24 @@
       "BTN_SHOW_LOG": "Logs des IP bloquées",
       "VIEW": {
         "TITLE": "Logs",
-        "LOG_REQUEST_DIVIDER": "Liste des requêtes bloquées"
+        "TIME": "Date",
+        "REQUEST_PATH": "Chemin",
+        "REQUEST_METHOD": "Méthode",
+        "INET_ADDRESS": "Adresse IP",
+        "ITEMS_DIVIDER": "Liste des requêtes bloquées"
+      }
+    },
+    "MODERATOR": {
+      "BTN_SHOW_MODERATORS": "Voir les modérateurs",
+      "VIEW": {
+        "TITLE": "Modérateurs",
+        "MODERATORS_DIVIDER": "Liste des modérateurs"
       }
     },
     "ERROR": {
-      "NO_SSL_ACCESS": "Impossible d'accéder à cause des restriction SSL.",
+      "NO_SSL_ACCESS": "Impossible d'accéder à cause des restrictions SSL.",
       "LOAD_LOG_FAILED": "Erreur de lecture des logs impossible.",
+      "LOAD_MODERATORS_FAILED": "Erreur de lecture des modérateurs",
       "AUTH_ERROR": "Erreur d'authentification au pod"
     }
   }

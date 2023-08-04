@@ -36,14 +36,16 @@ angular.module('cesium.es.settings.controllers', ['cesium.es.services'])
 /*
  * Settings extend controller
  */
-function ESPluginSettingsController ($scope, $window, $q,  $translate, $ionicPopup,
-                                     UIUtils, Modals, csHttp, csConfig, csSettings, esHttp, esSettings, esModals) {
+function ESPluginSettingsController ($scope, $window, $q,  $translate, $ionicPopup, UIUtils, Modals,
+                                     csHttp, csConfig, csSettings, csWallet,
+                                     esHttp, esSettings, esModals) {
   'ngInject';
 
   $scope.hasWindowNotification = !!("Notification" in window);
   $scope.formData = {};
   $scope.popupData = {}; // need for the node popup
   $scope.loading = true;
+  $scope.showOpenNodeButton = false;
 
   $scope.enter= function(e, state) {
     $scope.load();
@@ -67,7 +69,17 @@ function ESPluginSettingsController ($scope, $window, $q,  $translate, $ionicPop
     $scope.isFallbackNode = $scope.formData.enable && esHttp.node.isFallback();
     $scope.server = $scope.getServer(esHttp);
 
-    $scope.loading = false;
+    // Load moderators
+    esHttp.node.moderators()
+      .then(function(res) {
+        $scope.moderator = csWallet.isLogin() && _.contains(res && res.moderators, csWallet.data.pubkey);
+        if ($scope.moderator) console.info("[ES] [peer] Wallet user is a moderator");
+        $scope.loading = false;
+      }).catch(function(err) {
+        console.error("[ES] [peer] Cannot load moderators. Too old Pod version ?");
+        $scope.moderator = false;
+        $scope.loading = false;
+      });
   };
 
   esSettings.api.state.on.changed($scope, function(enable) {

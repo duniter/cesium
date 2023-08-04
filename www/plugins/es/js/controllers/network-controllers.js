@@ -653,7 +653,8 @@ function ESPeerViewController($scope, $q, $window, $state, UIUtils, csWot, esHtt
           $scope.moderator = csWallet.isLogin() && _.contains(res && res.moderators, csWallet.data.pubkey);
           if ($scope.moderator) console.info("[ES] [peer] Wallet user is a moderator");
         }).catch(function(err) {
-          console.error("[peer] Cannot load moderators. Too old Pod version ?");
+          console.error("[ES] [peer] Cannot load moderators. Too old Pod version ?");
+          $scope.moderator = false;
         })
     ])
       .catch(UIUtils.onError(useTor ? "PEER.VIEW.ERROR.LOADING_TOR_NODE_ERROR" : "PEER.VIEW.ERROR.LOADING_NODE_ERROR"));
