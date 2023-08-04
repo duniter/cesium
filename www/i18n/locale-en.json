@@ -710,6 +710,7 @@
     "POPUP_TITLE": "Error",
     "UNKNOWN_ERROR": "Unknown error",
     "TIMEOUT_REACHED": "Peer timeout exceeded ({{timeout|formatDurationMs}}).<br/><br/><small>{{url}}</small>",
+    "TOO_MANY_REQUESTS": "You have made too many requests in a short period of time. Please wait a while before trying again.<br/><br/><small>{{url}}</small>",
     "CRYPTO_UNKNOWN_ERROR": "Your browser is not compatible with cryptographic features.",
     "DOWNLOAD_KEYFILE_FAILED": "Failed to generate the keychain file.",
     "EQUALS_TO_PSEUDO": "Must be different from pseudonym",

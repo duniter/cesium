@@ -15,6 +15,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       TIMEOUT: -1, // Timeout reached
       FORBIDDEN: 403,
       NOT_FOUND: 404,
+      TOO_MANY_REQUESTS: 429
     }
   ;
 
@@ -35,10 +36,11 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
   function processError(reject, data, url, status, config, startTime) {
     // Detected timeout error
+    var urlWithParenthesis = + (url ? ' ('+url+')' : '');
     var reachTimeout = status === -1 && (config && config.timeout > 0 && startTime > 0) && (Date.now() - startTime) >= config.timeout;
     if (reachTimeout) {
       console.error('[http] Request timeout on [{0}] after waiting {1}ms'.format(url, config.timeout));
-      $translate('ERROR.TIMEOUT_REACHED', {timeout: config.timeout, url: url || '?'})
+      $translate('ERROR.TIMEOUT_REACHED', {timeout: config.timeout, url: url || ''})
         .then(function(message) {
           reject({ucode: errorCodes.TIMEOUT, message: message});
         })
@@ -47,20 +49,30 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
           reject({ucode: errorCodes.TIMEOUT, message: 'Request timeout ({0})'.format(url)});
         });
     }
-
     else if (data && data.message) {
       reject(data);
     }
     else {
-      if (status == errorCodes.FORBIDDEN) {
-        reject({ucode: errorCodes.FORBIDDEN, message: 'Resource is forbidden' + (url ? ' ('+url+')' : '')});
+      if (status === errorCodes.FORBIDDEN) {
+        reject({ucode: errorCodes.FORBIDDEN, message: 'Resource is forbidden' + urlWithParenthesis});
       }
-      else if (status == errorCodes.NOT_FOUND) {
-        reject({ucode: errorCodes.NOT_FOUND, message: 'Resource not found' + (url ? ' ('+url+')' : '')});
+      else if (status === errorCodes.NOT_FOUND) {
+        reject({ucode: errorCodes.NOT_FOUND, message: 'Resource not found' + urlWithParenthesis});
+      }
+      else if (status === errorCodes.TOO_MANY_REQUESTS) {
+        console.error('[http] Too many request' + urlWithParenthesis);
+        $translate('ERROR.TOO_MANY_REQUESTS', {url: url || ''})
+          .then(function(message) {
+            reject({ucode: errorCodes.TOO_MANY_REQUESTS, message: message});
+          })
+          .catch(function() {
+            // No translation: use hardcoded message
+            reject({ucode: errorCodes.TOO_MANY_REQUESTS, message: 'Too many requests' + urlWithParenthesis});
+          });
       }
       else if (url) {
-        console.error('[http] Get HTTP error {status: {0}} on [{1}]'.format(status, url));
-        reject('Error while requesting [{0}}'.format(url));
+        console.error('[http] Get HTTP error {status: {0}}'.format(status) + urlWithParenthesis);
+        reject('Error while requesting network' + urlWithParenthesis);
       }
       else {
         reject('Unknown HTTP error');

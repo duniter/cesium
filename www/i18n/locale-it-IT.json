@@ -710,6 +710,7 @@
     "POPUP_TITLE": "Errore",
     "UNKNOWN_ERROR": "Errore",
     "TIMEOUT_REACHED": "Tempo di attesa del nodo superato ({{timeout|formatDurationMs}}).<br/><br/><small>{{url}}</small>",
+    "TOO_MANY_REQUESTS": "Hai inviato troppe richieste in un breve lasso di tempo. Attendere un attimo prima di riprovare.<br/><br/><small>{{url}}</small>",
     "CRYPTO_UNKNOWN_ERROR": "Il tuo navigatore non sembra compatibile con le funzionalità di cryptografia.",
     "DOWNLOAD_KEYFILE_FAILED": "Errore nel generare il file del portachiavi",
     "EQUALS_TO_PSEUDO": "Deve essere diverso dallo pseudonimo",

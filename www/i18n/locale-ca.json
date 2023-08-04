@@ -806,6 +806,7 @@
     "POPUP_TITLE": "Error",
     "UNKNOWN_ERROR": "Error desconocido",
     "TIMEOUT_REACHED": "S'ha superat el temps d'espera del node ({{timeout|formatDurationMs}}).<br/><br/><small>{{url}}</small>",
+    "TOO_MANY_REQUESTS": "Heu enviat massa sol·licituds en un curt període de temps. Espereu una estona abans de tornar-ho a provar.<br/><br/><small>{{url}}</small>",
     "CRYPTO_UNKNOWN_ERROR": "Su navegador parece incompatible con las funcionalidades de cryptografía.",
     "DOWNLOAD_KEYFILE_FAILED": "Error al generar el archivo de llaves.",
     "EQUALS_TO_PSEUDO": "Debe ser diferente del seudónimo.",

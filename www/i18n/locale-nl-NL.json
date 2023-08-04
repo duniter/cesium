@@ -549,6 +549,7 @@
     "POPUP_TITLE": "Error",
     "UNKNOWN_ERROR": "Unknown error",
     "TIMEOUT_REACHED": "Node timeout overschreden ({{timeout|formatDurationMs}}).<br/><br/><small>{{url}}</small>",
+    "TOO_MANY_REQUESTS": "U heeft te veel verzoeken in een korte tijd verzonden. Wacht even voordat u het opnieuw probeert.<br/><br/><small>{{url}}</small>",
     "CRYPTO_UNKNOWN_ERROR": "Your browser is not compatible with cryptographic features.",
     "FIELD_REQUIRED": "This field is required.",
     "FIELD_TOO_SHORT": "Value is too short (min {{minLength]] characters).",

@@ -709,6 +709,7 @@
     "PUBKEY_INVALID_CHECKSUM": "Clé publique invalide (bad checksum).",
     "POPUP_TITLE": "Erreur",
     "TIMEOUT_REACHED": "Délai d'attente du nœud dépassé ({{timeout|formatDurationMs}}).<br/><br/><small>{{url}}</small>",
+    "TOO_MANY_REQUESTS": "Vous avez envoyé trop de demandes dans un court laps de temps. Veuillez attendre un moment avant de réessayer.<br/><br/><small>{{url}}</small>",
     "UNKNOWN_ERROR": "Erreur inconnue",
     "CRYPTO_UNKNOWN_ERROR": "Votre navigateur ne semble pas compatible avec les fonctionnalités de cryptographie.",
     "DOWNLOAD_KEYFILE_FAILED": "Échec de la génération du fichier de trousseau.",

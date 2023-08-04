@@ -125,10 +125,12 @@ function ESAdminViewLogController($scope, $q, $window, $state, UIUtils, csWot, e
         $scope.search.fetchMore = items && items.length === options.size;
 
         // Set Motion
-        $scope.motion.show({
-          selector: '.item',
-          ink: false
-        });
+        if (items.length) {
+          $scope.motion.show({
+            selector: '.item',
+            ink: false
+          });
+        }
       })
       .catch(UIUtils.onError("ADMIN.ERROR.LOAD_LOG_FAILED"));
   };
