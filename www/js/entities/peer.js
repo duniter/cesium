@@ -66,10 +66,8 @@ Peer.prototype.getBMA = function() {
   if (this.bma) return this.bma;
   var bma = null;
   var path = null;
-  var bmaRegex = this.regexp.BMA_REGEXP;
-  var bmasRegex = this.regexp.BMAS_REGEXP;
   this.endpoints.forEach(function(ep){
-    var matches = !bma && bmaRegex.exec(ep);
+    var matches = !bma && this.regexp.BMA_REGEXP.exec(ep);
     if (matches) {
       path = matches[10];
       if (path && !path.startsWith('/')) path = '/' + path; // Fix path (add starting slash)
@@ -83,7 +81,7 @@ Peer.prototype.getBMA = function() {
         "useBma": true
       };
     }
-    matches = !bma && bmasRegex.exec(ep);
+    matches = !bma && this.regexp.BMAS_REGEXP.exec(ep);
     if (matches) {
       path = matches[10];
       if (path && !path.startsWith('/')) path = '/' + path; // Fix path (add starting slash)
@@ -190,7 +188,7 @@ Peer.prototype.isWs2p = function() {
 
 Peer.prototype.isBma = function() {
   var bma = this.bma || this.getBMA();
-  return !bma.useWs2p && !bma.useTor;
+  return !bma.useWs2p && !bma.useTor && !bma.useGva;
 };
 
 Peer.prototype.hasBma = function() {
