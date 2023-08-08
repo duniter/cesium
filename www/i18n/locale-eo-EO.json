@@ -766,7 +766,7 @@
     "IDENTITY_PENDING_REVOCATION": "La <b>nuligo de tiu ĉi identeco</b> estis petita kaj atendas traktadon. La atestado estas do malaktivigita.",
     "IDENTITY_INVALID_BLOCK_HASH": "Tiu ĉi aliĝo-peto ne plu validas (ĉar ĝi rilatas al bloko, kiun nuligis la nodoj de la reto): tiu persono devas refari sian aliĝo-peton <b>antaŭ ol</b> esti atestita.",
     "IDENTITY_EXPIRED": "La publikigo de tiu ĉi identeco finiĝis: tiu persono devas fari novan aliĝo-peton <b>antaŭ ol</b> esti atestita.",
-    "IDENTITY_SANDBOX_FULL": "La nodo Duniter uzata de Cesium ne plu povas ricevi novajn identecojn, ĉar ĝia atendo-vico estas plena.<br/><br/>Bonvolu reprovi poste aŭ ŝanĝi la nodon (per la menuo <b>Parametroj</b>).",
+    "IDENTITY_SANDBOX_FULL": "La nodo Duniter uzata de Cesium ne plu povas ricevi novajn identecojn, ĉar ĝia atendovico estas plena.<br/><br/>Bonvolu reprovi poste aŭ ŝanĝi la nodon (per la menuo <b>Parametroj</b>).",
     "IDENTITY_NOT_FOUND": "Identeco ne trovita.",
     "IDENTITY_TX_FAILED": "Malsukceso por ŝarĝi la spezojn.",
     "WOT_PENDING_INVALID_BLOCK_HASH": "Aliĝo ne valida.",
@@ -812,7 +812,9 @@
     "UNKNOWN_WALLET_ID": "Kroma monujo nekonata.",
     "RESTORE_WALLET_LIST_FAILED": "Malsukceso por restarigi la kromajn monujojn.",
     "INVALID_FILE_FORMAT": "Strukturo de dosiero nevalida.",
-    "SAME_TX_RECIPIENT": "La adresito devas malsami ol la sendanto."
+    "SAME_TX_RECIPIENT": "La adresito devas malsami ol la sendanto.",
+    "SELF_CERTIFICATION": "Vi ne povas certigi vian propran identecon.",
+    "TX_SANDBOX_FULL": "La nodo Duniter uzata de Cesium ne plu povas prilabori novajn elspezojn, ĉar ĝia atendovico estas plena.<br/><br/>Bonvolu provi denove poste aŭ ŝanĝi la nodon (en la <b>Agordoj</b>)."
   },
   "INFO": {
     "POPUP_TITLE": "Informo",

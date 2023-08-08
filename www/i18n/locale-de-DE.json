@@ -827,7 +827,9 @@
     "UNKNOWN_WALLET_ID": "Unbekannte sekundäre Brieftasche.",
     "RESTORE_WALLET_LIST_FAILED": "Konnte die Liste der Brieftaschen nicht wiederherstellen.",
     "INVALID_FILE_FORMAT": "Ungültiges Dateiformat.",
-    "SAME_TX_RECIPIENT": "Der Empfänger muss sich vom Auftraggeber unterscheiden."
+    "SAME_TX_RECIPIENT": "Der Empfänger muss sich vom Auftraggeber unterscheiden.",
+    "SELF_CERTIFICATION": "Sie können Ihre eigene Identität nicht zertifizieren.",
+    "TX_SANDBOX_FULL": "Der von Cesium verwendete Duniter-Knoten kann keine neuen Überweisungen mehr bearbeiten, da die Warteschlange voll ist.<br/><br/>Versuche es später erneut oder wähle einen anderen Duniter-Knoten (in den <b>Einstellungen</b>)."
   },
   "INFO": {
     "POPUP_TITLE": "Hinweis",

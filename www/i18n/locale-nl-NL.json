@@ -609,7 +609,9 @@
     "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "You must <b>be a member</b> in order to perform this action.",
     "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "You must have <b>published your identity</b> in order to perform this action.",
     "EXISTING_ACCOUNT": "Je gegevens komen overeen met een bestaande rekening, met de <a ng-click=\"showHelpModal('pubkey')\">publieke sleutel</a>:",
-    "EXISTING_ACCOUNT_REQUEST": "Gelieve je gegevens te wijzigen zodat ze met een niet gebruikte rekening overeenkomen."
+    "EXISTING_ACCOUNT_REQUEST": "Gelieve je gegevens te wijzigen zodat ze met een niet gebruikte rekening overeenkomen.",
+    "SELF_CERTIFICATION": "U kunt uw eigen identiteit niet certificeren.",
+    "TX_SANDBOX_FULL": "De Duniter-peer die door Cesium wordt gebruikt, kan geen nieuwe overschrijvingen meer verwerken, omdat de wachtrij vol is.<br/><br/>Probeer het later opnieuw of wijzig de peer (in de <b>Instellingen</b>)."
   },
   "INFO": {
     "POPUP_TITLE": "Informatie",

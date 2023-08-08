@@ -98,7 +98,7 @@
     "CURRENCY": "Moneda",
     "ACCOUNT": "Compte",
     "WALLETS": "Moneders",
-    "SETTINGS": "Ajustos",
+    "SETTINGS": "Configuració",
     "NETWORK": "Xarxa",
     "TRANSACTIONS": "Moviments"
   },
@@ -863,7 +863,7 @@
     "IDENTITY_PENDING_REVOCATION": "La <b>revocación de esta identidad</b> fue solicitado y esta en espera de tratamiento. Por lo que, la certificación es desactivada.",
     "IDENTITY_INVALID_BLOCK_HASH": "Esta solicitud de adhesión no es valida (porque denomina un bloque los nodos de la red han anulado): este individuo/a debe renovelar su solicitud de adhesión <b>antes que</b> estar certificada.",
     "IDENTITY_EXPIRED": "La publicación de esta identidad ha caducada: este individuo/a debe realizar una nueva solicitud de adhesión <b>antes que</b> estar certificada.",
-    "IDENTITY_SANDBOX_FULL": "EL nodo Duniter utilizado por Cesium ya no puede recibir más nuevas identidades, porque la fila de espera es llena.<br/><br/>Por favor, intenta ulteriormente o cambia de nodo (vía el menú <b>Ajustes</b>).",
+    "IDENTITY_SANDBOX_FULL": "EL node Duniter utilitzat per Cesium ja no pot rebre noves identidades perquè la cua està plena.<br/><br/>Torneu-ho a provar o canvieu els nodes (a través del menú <b>Configuració</b>).",
     "IDENTITY_NOT_FOUND": "Identidad no encontrada",
     "IDENTITY_TX_FAILED": "Error cargando las transacciones de la identidad",
     "WOT_PENDING_INVALID_BLOCK_HASH": "Adhesión no validada.",
@@ -898,7 +898,9 @@
     "GET_LICENSE_FILE_FAILED": "Error al obtener el archivo de licencia",
     "CHECK_NETWORK_CONNECTION": "No se puede conectar a ningún nodo.<br/><br/><b>Compruebe la conexión a Internet</b>.",
     "INVALID_FILE_FORMAT": "Formato de archivo inválido.",
-    "SAME_TX_RECIPIENT": "El destinatario debe ser diferente del emisor."
+    "SAME_TX_RECIPIENT": "El destinatario debe ser diferente del emisor.",
+    "SELF_CERTIFICATION": "No pots certificar la teva pròpia identitat.",
+    "TX_SANDBOX_FULL": "El node Duniter utilitzat per Cesium ja no pot rebre transferències noves, perquè la cua està plena.<br/><br/>Torneu-ho a provar o canvieu els nodes (a través del menú <b>Configuració</b>)."
   },
   "INFO": {
     "POPUP_TITLE": "Información",

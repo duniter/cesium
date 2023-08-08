@@ -235,9 +235,11 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
             _.forEach(res.peers, function(json) {
               // Exclude, if not UP or on a too old block
               if (json.status !== 'UP') return;
+
+              // Exclude if too old peering document
               json.blockNumber = buidBlockNumber(json.block);
               if (json.blockNumber && json.blockNumber < data.minOnlineBlockNumber) {
-                console.debug("[network] Exclude a too old peer document, on pubkey {0}".format(json.pubkey.substring(0,6)));
+                console.debug("[network] Exclude a too old peering document, on pubkey {0}".format(json.pubkey.substring(0,6)));
                 return;
               }
 
@@ -971,6 +973,12 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         console.debug('[network] BMA endpoint [{0}] is EXCLUDED (incompatible version {1})'.format(peer.getServer(), peer.version));
         return false;
       }
+
+     // Exclude g1.duniter.org, because of fail-over config, that can switch node
+     if (peer.host === 'g1.duniter.org') {
+       console.debug('[network] BMA endpoint [{0}] is EXCLUDED (fail-over config)'.format(peer.getServer()));
+       return false;
+     }
 
       // Keep only if store transactions
       if (!peer.storage && !peer.storage.transactions) {

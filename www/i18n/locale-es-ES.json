@@ -897,7 +897,9 @@
     "GET_LICENSE_FILE_FAILED": "Error al obtener el archivo de licencia",
     "CHECK_NETWORK_CONNECTION": "No se puede conectar a ningún nodo.<br/><br/><b>Compruebe la conexión a Internet</b>.",
     "INVALID_FILE_FORMAT": "Formato de archivo inválido.",
-    "SAME_TX_RECIPIENT": "El destinatario debe ser diferente del emisor."
+    "SAME_TX_RECIPIENT": "El destinatario debe ser diferente del emisor.",
+    "SELF_CERTIFICATION": "No puedes certificar tu propia identidad.",
+    "TX_SANDBOX_FULL": "El nodo Duniter utilizado por Cesium ya no puede procesar nuevas transferencias, ya que su cola está llena.<br/><br/>Por favor, inténtelo de nuevo más tarde o cambie de nodo (en las <b>Configuraciones</b>)."
   },
   "INFO": {
     "POPUP_TITLE": "Información",

@@ -1514,7 +1514,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
       // Append to logs (need to resolve issue #524)
       if (logs) {
-        if (destPub == data.pubkey) {
+        if (destPub === data.pubkey) {
           logs.push('[wallet] Creating new TX, using inputs:\n - minBase: '+inputs.minBase+'\n - maxBase: '+inputs.maxBase);
         }
         else {
@@ -1529,14 +1529,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       return CryptoUtils.sign(tx, keypair)
         .then(function(signature) {
           var signedTx = tx + signature + "\n";
-          return BMA.tx.process({transaction: signedTx})
-            .catch(function(err) {
-              if (err && err.ucode === BMA.errorCodes.TX_ALREADY_PROCESSED) {
-                // continue
-                return;
-              }
-              throw err;
-            })
+          return processTx(signedTx)
             .then(function() {
               return CryptoUtils.util.hash(signedTx);
             })
@@ -1553,6 +1546,70 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
                 sources: newSources
               };
             });
+        });
+    },
+
+    processTx = function(signedTx) {
+      // Send to default BMA node
+      return BMA.tx.process({transaction: signedTx})
+        .catch(function(err) {
+          if (err.ucode === BMA.errorCodes.TX_ALREADY_PROCESSED) {
+            return; // continue
+          }
+
+          // TX sandbox is full: retry using random peers
+          if (err.ucode === BMA.errorCodes.TRANSACTIONS_SANDBOX_FULL) {
+            console.warn('[wallet] Node sandbox is full! Will send TX to some random peers...');
+            return processTxRandomPeer(signedTx)
+              .then(function(success) {
+                if (success) return; // OK, continue
+
+                // If all random peers failed: rethrow the original error
+                throw {ucode: BMA.errorCodes.TRANSACTIONS_SANDBOX_FULL, message: 'ERROR.TX_SANDBOX_FULL'};
+              });
+          }
+
+          // Other error
+          throw err;
+        })
+        ;
+    },
+
+    processTxRandomPeer = function(signedTx, n, timeout) {
+      n = n || 3;
+      timeout = timeout || csConfig.timeout;
+
+      // Select some peers
+      var randomPeers = _.sample(csSettings.data.network && csSettings.data.network.peers || [], n);
+      if (!randomPeers.length) {
+        return $q.resolve(false); // Skip, if no peers
+      }
+
+      console.warn('[wallet] Sending TX to {0} random peers...'.format(randomPeers.length));
+
+      return $q.all(
+        _.map(randomPeers, function(peer) {
+          var bma = BMA.lightInstance(peer.host, peer.port, peer.path, peer.useSsl, timeout);
+          return bma.tx.process({transaction: signedTx})
+            .then(function() {
+              return true
+            })
+            .catch(function(err) {
+              if (err.ucode === BMA.errorCodes.TX_ALREADY_PROCESSED) {
+                return true
+              }
+              return false;
+            });
+        }))
+        .then(function(res) {
+          var succeedPeers = _.filter(randomPeers, function(peer, index) {
+            return res[index];
+          });
+          if (succeedPeers.length) {
+            console.info('[wallet] TX successfully sent to {0} random peers'.format(succeedPeers.length), succeedPeers);
+            return true; // succeed
+          }
+          return false; // succeed
         });
     },
 

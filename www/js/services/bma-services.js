@@ -53,6 +53,9 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         REVOCATION_ALREADY_REGISTERED: 1002,
         HTTP_LIMITATION: 1006,
         IDENTITY_SANDBOX_FULL: 1007,
+        CERTIFICATION_SANDBOX_FULL: 1008,
+        MEMBERSHIP_SANDBOX_FULL: 1009,
+        TRANSACTIONS_SANDBOX_FULL: 1010,
         NO_MATCHING_IDENTITY: 2001,
         UID_ALREADY_USED: 2003,
         NO_MATCHING_MEMBER: 2004,
@@ -465,6 +468,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       },
       node: {
         summary: get('/node/summary', csCache.constants.MEDIUM),
+        sandbox: get('/node/sandbox'),
         same: isSameNode,
         forceUseSsl: that.forceUseSsl
       },
@@ -520,7 +524,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           all: function(params) {
             return exports.raw.tx.history.all(params)
               .then(function(res) {
-                res.history = res.history || {};
+                res.history = res.history || {};
                 // Clean sending and pendings, because already returned by tx/history/:pubkey/pending
                 res.history.sending = [];
                 res.history.pendings = [];
@@ -531,7 +535,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
             // No cache by default
             return ((cache !== true) ? exports.raw.tx.history.times(params) : exports.raw.tx.history.timesWithCache(params))
               .then(function(res) {
-                res.history = res.history || {};
+                res.history = res.history || {};
                 // Clean sending and pendings, because already returned by tx/history/:pubkey/pending
                 res.history.sending = [];
                 res.history.pendings = [];
@@ -1121,7 +1125,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       server: csHttp.getServer(host, port),
       url: csHttp.getUrl(host, port, path, useSsl),
       node: {
-        summary: csHttp.getWithCache(host, port, path + '/node/summary', useSsl, csCache.constants.MEDIUM, false/*autoRefresh*/, timeout)
+        summary: csHttp.getWithCache(host, port, path + '/node/summary', useSsl, csCache.constants.MEDIUM, false/*autoRefresh*/, timeout),
+        sandbox: csHttp.get(host, port, path + '/node/sandbox', useSsl, timeout),
       },
       network: {
         peering: {
@@ -1134,6 +1139,9 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         stats: {
           hardship: csHttp.get(host, port, path + '/blockchain/hardship/:pubkey', useSsl, timeout)
         }
+      },
+      tx: {
+        process: csHttp.post(host, port, path + '/tx/process', useSsl, timeout)
       }
     };
   };

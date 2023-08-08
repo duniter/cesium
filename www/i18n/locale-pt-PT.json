@@ -862,7 +862,7 @@
     "IDENTITY_PENDING_REVOCATION": "A <b>revogação desta identidade</b> foi solicitada e encontra-se em espera de tratamento. Pelo que, a certificação está desativada.",
     "IDENTITY_INVALID_BLOCK_HASH": "Este pedido de adesão não é valido (porque o bloco foi anulado pelos nós da rede): este individuo/a deve renovar o seu pedido de adesão <b>antes de</b> estar certificado/a.",
     "IDENTITY_EXPIRED": "A publicação desta identidade está caducada: este individuo/a deve realizar um novo pedido de adesão <b>antes de</b> estar certificado/a.",
-    "IDENTITY_SANDBOX_FULL": "O nó Duniter utilizado por Cesium já não pode receber mais novas identidades, porque a fila de espera está cheia.<br/><br/>Por favor, tente mais tarde ou mude de nó (no menu <b>Definições</b>).",
+    "IDENTITY_SANDBOX_FULL": "O nó Duniter utilizado por Cesium já não pode receber mais novas identidades, porque a fila de espera está cheia.<br/><br/>Por favor, tente mais tarde ou mude de nó (nas <b>Definições</b>).",
     "IDENTITY_NOT_FOUND": "Identidade não encontrada",
     "IDENTITY_TX_FAILED": "Falha ao carregar as transações da identidade",
     "WOT_PENDING_INVALID_BLOCK_HASH": "Adesão não validada.",
@@ -897,7 +897,9 @@
     "GET_LICENSE_FILE_FAILED": "Falha ao obter o arquivo de licença",
     "CHECK_NETWORK_CONNECTION": "Não foi possível conectar a nenhum nó.<br/><br/><b>Comprove a ligação à Internet</b>.",
     "INVALID_FILE_FORMAT": "Formato de arquivo inválido.",
-    "SAME_TX_RECIPIENT": "O destinatário deve ser diferente do emissor."
+    "SAME_TX_RECIPIENT": "O destinatário deve ser diferente do emissor.",
+    "SELF_CERTIFICATION": "Não pode certificar a sua própria identidade.",
+    "TX_SANDBOX_FULL": "O nó Duniter utilizado por Cesium já não pode receber mais novas transferências, porque a fila de espera está cheia.<br/><br/>Por favor, tente mais tarde ou mude de nó (nas <b>Definições</b>)."
   },
   "INFO": {
     "POPUP_TITLE": "Informação",

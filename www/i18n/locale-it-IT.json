@@ -767,7 +767,7 @@
     "IDENTITY_PENDING_REVOCATION": "L'<b>annulamento di questa identità</b> è stata richiesta ed è in corso di valutazione. Capacità ad inviare certificazioni disabilitata",
     "IDENTITY_INVALID_BLOCK_HASH": "Questa richiesta di certificazione non è più valida (perche si riferisce ad un blocco che è stato eliminato dai nodi): la persona deve rinnovare la sua domanda di certificazione <b>prima</b> di essere certificata.",
     "IDENTITY_EXPIRED": "Questa identità è scaduta: la persona deve fare una nuova domanda di certificazione <b>prima di</b> essere certificata.",
-    "IDENTITY_SANDBOX_FULL": "Il nodo Duniter utilizzato dal Cesium non può ricevere altre domande di certificazione per ora, la lista d'attesa è piena.<br/><br/>Riprova più tardi o scegli un'altro nodo Duniter (nelle <b>Impostazioni</b>).",
+    "IDENTITY_SANDBOX_FULL": "Il nodo Duniter utilizzato dal Cesium non può ricevere altre domande di certificazione per ora, perché la lista d'attesa è piena.<br/><br/>Riprova più tardi o scegli un'altro nodo Duniter (nelle <b>Impostazioni</b>).",
     "IDENTITY_NOT_FOUND": "Identità non trovata",
     "IDENTITY_TX_FAILED": "Impossibile caricare le operazioni",
     "WOT_PENDING_INVALID_BLOCK_HASH": "Adesione non valida.",
@@ -813,8 +813,10 @@
     "UNKNOWN_WALLET_ID": "Portafoglio secondario sconosciuto.",
     "RESTORE_WALLET_LIST_FAILED": "Impossibile recuperare la lista dei portafogli.",
     "INVALID_FILE_FORMAT": "Formato file invalido.",
-    "SAME_TX_RECIPIENT": "Il destinatario deve essere diverso dall'emittente."
-   },
+    "SAME_TX_RECIPIENT": "Il destinatario deve essere diverso dall'emittente.",
+    "SELF_CERTIFICATION": "Non puoi certificare la tua stessa identità.",
+    "TX_SANDBOX_FULL": "Il nodo Duniter utilizzato dal Cesium non può più elaborare nuovi trasferimenti, perché la lista d'attesa è piena.<br/><br/>Riprova più tardi o scegli un'altro nodo Duniter (nelle <b>Impostazioni</b>)."
+  },
   "INFO": {
     "POPUP_TITLE": "Informazioni",
     "CERTIFICATION_DONE": "Identità firmata con successo",

@@ -233,8 +233,8 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
             console.info("[platform] Default peer [{0}] is well synchronized.".format(BMA.server));
 
             // Store sync peers in storage
-            //console.debug("[platform] Saving {0} other synchronized BMA peers in settings".format(otherPeers.length));
-            //csSettings.data.network.peers = otherPeers;
+            console.debug("[platform] Saving {0} other synchronized BMA peers in settings".format(otherPeers.length));
+            csSettings.data.network.peers = otherPeers;
 
             return true;
           }

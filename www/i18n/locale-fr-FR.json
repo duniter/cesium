@@ -767,7 +767,7 @@
     "IDENTITY_PENDING_REVOCATION": "La <b>révocation de cette identité</b> a été demandée et est en attente de traitement. La certification est donc désactivée.",
     "IDENTITY_INVALID_BLOCK_HASH": "Cette demande d'adhésion n'est plus valide (car elle référence un bloc que les nœuds du réseau ont annulé) : cette personne doit renouveler sa demande d'adhésion <b>avant</b> d'être certifiée.",
     "IDENTITY_EXPIRED": "La publication de cette identité a expiré : cette personne doit effectuer une nouvelle demande d'adhésion <b>avant</b> d'être certifiée.",
-    "IDENTITY_SANDBOX_FULL": "Le nœud Duniter utilisé par Cesium ne peut plus recevoir de nouvelles identités, car sa file d'attente est pleine.<br/><br/>Veuillez réessayer ultérieurement ou changer de nœud (via le menu <b>Paramètres</b>).",
+    "IDENTITY_SANDBOX_FULL": "Le nœud Duniter utilisé par Cesium ne peut plus recevoir de nouvelles identités, car sa file d'attente est pleine.<br/><br/>Veuillez réessayer ultérieurement ou changer de nœud (dans les <b>Paramètres</b>).",
     "IDENTITY_NOT_FOUND": "Identité non trouvée.",
     "IDENTITY_TX_FAILED": "Échec du chargement des opérations.",
     "WOT_PENDING_INVALID_BLOCK_HASH": "Adhésion non valide.",
@@ -814,7 +814,8 @@
     "RESTORE_WALLET_LIST_FAILED": "Échec de la restauration des portefeuilles secondaires.",
     "INVALID_FILE_FORMAT": "Format de fichier invalide.",
     "SAME_TX_RECIPIENT": "Le destinataire doit être différent de l'émetteur.",
-    "SELF_CERTIFICATION": "Vous ne pouvez pas certifier votre propre identité."
+    "SELF_CERTIFICATION": "Vous ne pouvez pas certifier votre propre identité.",
+    "TX_SANDBOX_FULL": "Le nœud Duniter utilisé par Cesium ne peut plus traité de nouveaux virements, car sa file d'attente est pleine.<br/><br/>Veuillez réessayer ultérieurement ou changer de nœud (dans les <b>Paramètres</b>)."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
