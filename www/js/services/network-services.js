@@ -601,7 +601,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
               }));
           }
 
-          // Get Version
+          // Get software, version and storage
           if (data.expertMode || data.filter.bma) {
             jobs.push(peer.api.node.summary()
               .then(function (res) {
@@ -615,6 +615,35 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
                 peer.storage = {transactions: false, wotwizard: false};
                 // continue
               }));
+          }
+
+          // Get sandboxes
+          if (data.expertMode) {
+            jobs.push(peer.api.node.sandboxes()
+              .catch(function(err) {
+                return {}; // continue
+              })
+              .then(function(res) {
+                peer.sandboxes = res || {};
+                peer.sandboxes.identities = peer.sandboxes.identities || {};
+                peer.sandboxes.memberships = peer.sandboxes.memberships || {};
+                peer.sandboxes.transactions = peer.sandboxes.transactions || {};
+
+                var full = false;
+                Object.keys(peer.sandboxes).forEach(function (key) {
+                  var sandbox = peer.sandboxes[key];
+                  sandbox.free = sandbox.free || -1;
+                  sandbox.size = sandbox.size || 0;
+                  if (sandbox.free >= 0 && sandbox.free <= sandbox.size) {
+                    sandbox.count = sandbox.size - sandbox.free;
+                    sandbox.percentage = (sandbox.count / sandbox.size) * 100;
+                  }
+                  full = full || sandbox.free === 0;
+                });
+                // Mark as full, if one sandbox is full
+                peer.sandboxes.full = full;
+              })
+            );
           }
 
           if (!jobs.length) return peer;
@@ -938,7 +967,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
               mainConsensusBlock,
               Date.now() - now));
 
-            // Exclude peers that are not compatible with Cesium (.e.g 1.9.0, or without TX storage)
+            // Exclude peers that are not compatible with Cesium
             peers = _.filter(peers, function(peer) {
               return isCompatibleBMAPeer(peer);
             });
@@ -968,23 +997,30 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
     isCompatibleBMAPeer = function(peer) {
       if (!peer && !peer.isBma() || !peer.version) return false;
 
-      // Exclude 1.9.0 version (=DEV)
-      if (peer.version.startsWith('1.9.0')) {
+      // Exclude beta versions (1.9.0, 1.9.0-dev and 1.8.7-rc4)
+      if (peer.version.startsWith('1.9.0') || peer.version.startsWith('1.8.7-rc')) {
         console.debug('[network] BMA endpoint [{0}] is EXCLUDED (incompatible version {1})'.format(peer.getServer(), peer.version));
         return false;
       }
 
-     // Exclude g1.duniter.org, because of fail-over config, that can switch node
-     if (peer.host === 'g1.duniter.org') {
-       console.debug('[network] BMA endpoint [{0}] is EXCLUDED (fail-over config)'.format(peer.getServer()));
-       return false;
-     }
-
-      // Keep only if store transactions
+      // Exclude if transactions not stored
       if (!peer.storage && !peer.storage.transactions) {
         console.debug('[network] BMA endpoint [{0}] is EXCLUDED (no transactions storage)'.format(peer.getServer()));
         return false;
       }
+
+      // Exclude g1.duniter.org, because of fail-over config, that can switch node
+      if (peer.host === 'g1.duniter.org') {
+        console.debug('[network] BMA endpoint [{0}] is EXCLUDED (fail-over config)'.format(peer.getServer()));
+        return false;
+      }
+
+      // Exclude if one sandbox is full
+     if (peer.sandboxes && peer.sandboxes.full) {
+       console.debug('[network] BMA endpoint [{0}] is EXCLUDED (one sandbox is full)'.format(peer.getServer()));
+       return false;
+     }
+
       return true;
     };
 

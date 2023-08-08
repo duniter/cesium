@@ -173,7 +173,9 @@
   padding-top: 9px;
   padding-bottom: 3px;
 }
-
+.list .item-peer .col h3 {
+  margin-bottom: 0 !important;
+}
 .list .item-peer .badge {
   top: 14px;
   right: 6%;
@@ -202,8 +204,53 @@
 .list .item-peer.compacted > * {
   display: none;
 }
-
-
+.list .item-peer .col-server {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.list .item-peer .col-api {
+  vertical-align: center;
+}
+.list .item-peer .col-api h4 {
+  min-width: 50px;
+  height: 100%;
+  white-space: normal;
+  padding-top: 5px;
+}
+.list .item-peer .col-api h4 span {
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 12px;
+}
+.list .item-peer .col-api h4 span small {
+  font-size: 85%;
+}
+.list .item-peer .col-sandboxes h3 {
+  display: block;
+  color: gray;
+  padding: 0;
+}
+.list .item-peer .col-sandboxes .progress-bar {
+  display: inline-block;
+  width: 50px;
+  position: relative;
+  height: 12px;
+  border-radius: 5px;
+  border: 1px solid gray;
+}
+.list .item-peer .col-sandboxes .progress-fill {
+  height: 100%;
+  background-color: currentColor;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 5px;
+}
+.list .item-peer .col-sandboxes .progress-text {
+  width: 100%;
+  font-size: 10px;
+  text-align: center;
+}
 /**********
    Block items
 **********/

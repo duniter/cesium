@@ -294,6 +294,9 @@
     "PEERS": "Knopen",
     "SIGNED_ON_BLOCK": "Getekend op blok",
     "MIRROR": "spiegel",
+    "SANDBOXES": "Wachtrij",
+    "PENDING_TX": "{{count}} transactie(s) / {{size}} max, {{free}} plaats(en) over",
+    "PENDING_MEMBERSHIPS": "{{count}} in afwachting van lidmaatschap(pen) / {{size}} max, {{free}} plaats(en) over",
     "CURRENT_BLOCK": "Blok #",
     "VIEW": {
       "TITLE": "Knoop",

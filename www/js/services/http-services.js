@@ -20,7 +20,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
   ;
 
   function getServer(host, port) {
-    // Remove port if 80 or 443
+    // Hide port if =80 or =443
     return  !host ? null : (host + (port && port != 80 && port != 443 ? (':' + port) : ''));
   }
 
@@ -33,7 +33,8 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
   function getWsUrl(host, port, path, useSsl) {
     var protocol = (port == 443 || useSsl) ? 'wss' : 'ws';
-    return  protocol + '://' + getServer(host, port) + (path ? path : '');
+    path = path && path !== '' && !path.startsWith('/') ? ('/' + path) : (path || '');
+    return  protocol + '://' + getServer(host, port) + path;
   }
 
   function processError(reject, data, url, status, config, startTime) {

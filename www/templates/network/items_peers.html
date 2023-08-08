@@ -9,6 +9,7 @@
       <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'uid'"></cs-sort-icon>
       {{:locale:'COMMON.UID' | translate}} / {{:locale:'COMMON.PUBKEY' | translate}}
     </a>
+
     <!-- API header -->
     <a class="no-padding dark hidden-md col col-15 col-header"
        ng-click="toggleSort('api')" ng-if=":rebind:!compactMode">
@@ -17,11 +18,21 @@
     </a>
     <div class="no-padding dark hidden-md col col-15 col-header" ng-if=":rebind:compactMode"></div>
 
-    <a class="no-padding dark col col-20 col-header"
+    <!-- Difficulty header -->
+    <a class="no-padding dark col col-15 col-header"
        ng-click="toggleSort('difficulty')">
       <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'difficulty'"></cs-sort-icon>
       {{:locale:'PEER.DIFFICULTY' | translate}}
     </a>
+
+    <!-- Sanboxes header -->
+    <a class="no-padding dark col col-15 col-header"
+       ng-click="toggleSort('sandboxes')">
+      <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'sandboxes'"></cs-sort-icon>
+      {{:locale:'PEER.SANDBOXES' | translate}}
+    </a>
+
+    <!-- Block header -->
     <a class="col col-20 col-header no-padding dark" ng-click="toggleSort('current_block')">
       <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'current_block'"></cs-sort-icon>
       {{:locale:'PEER.CURRENT_BLOCK' | translate}}

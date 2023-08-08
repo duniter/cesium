@@ -1126,7 +1126,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       url: csHttp.getUrl(host, port, path, useSsl),
       node: {
         summary: csHttp.getWithCache(host, port, path + '/node/summary', useSsl, csCache.constants.MEDIUM, false/*autoRefresh*/, timeout),
-        sandbox: csHttp.get(host, port, path + '/node/sandbox', useSsl, timeout),
+        sandboxes: csHttp.get(host, port, path + '/node/sandboxes', useSsl, timeout),
       },
       network: {
         peering: {

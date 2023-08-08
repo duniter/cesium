@@ -144,8 +144,16 @@ Peer.prototype.getHost = function(bma) {
 
 Peer.prototype.getPath = function(bma) {
   bma = bma || this.bma || this.getBMA();
-  // Add starting slash to path
-  return bma.path && bma.path !== '' && !bma.path.startsWith('/') ? ('/' + bma.path) : (bma.path || '');
+  var path = bma.path || '';
+  if (!path || bma.path === '') return '';
+
+  // Add starting slash
+  if (!path.startsWith('/')) path = '/' + path;
+
+  // Remove trailing slash
+  if (path.endsWith('/')) path = path.substring(0, path.length - 1);
+
+  return path;
 };
 
 Peer.prototype.getUrl = function(bma) {

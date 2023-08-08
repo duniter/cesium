@@ -9,7 +9,7 @@
     <b class="icon-secondary assertive ion-close-circled" ng-if=":rebind:!peer.online" style="left: 37px; top: -10px;"></b>
 
     <div class="row no-padding">
-      <div class="col no-padding">
+      <div class="col col-server no-padding">
         <h3 class="dark" ng-if=":rebind:!peer.bma.private">{{:rebind:peer.dns || peer.server}}</h3>
         <h4 class="gray" ng-if=":rebind:peer.bma.private"><i class="ion-flash"></i> {{:locale:'NETWORK.VIEW.PRIVATE_ACCESS'|translate}}</h4>
         <h4>
@@ -22,13 +22,21 @@
           <span class="gray" ng-if=":rebind:!compactMode">{{:rebind:peer.dns && (' | ' + peer.server) + (peer.bma.path||'') }}</span>
         </h4>
       </div>
-      <div class="col col-15 no-padding text-center hidden-xs hidden-sm" ng-if="::expertMode">
-        <div style="min-width: 50px; padding-top: 5px;" ng-if=":rebind:!compactMode">
+
+      <!-- API column -->
+      <div class="col col-15 col-api no-padding text-center hidden-xs hidden-sm" ng-if="::expertMode">
+        <h4 class="dark" ng-if=":rebind:!compactMode">
           <span ng-if=":rebind:peer.isSsl()" title="SSL">
-            <i class="ion-locked"></i><small class="hidden-md"> SSL</small>
+            <i class="ion-locked"></i><small class="hidden-md">&nbsp;SSL</small>
           </span>
           <span ng-if=":rebind:peer.isBma()" title="BMA">
-            <i class="ion-cloud"></i><small class="hidden-md"> BMA</small>
+            <i class="ion-cloud"></i><small class="hidden-md">&nbsp;BMA</small>
+          </span>
+          <span ng-if=":rebind:peer.storage.transactions" title="{{::'PEER.STORE_TX_HISTORY'|translate}}">
+            <i class="ion-card"></i><small class="hidden-md">&nbsp;TX</small>
+          </span>
+          <span ng-if=":rebind:peer.storage.wotwizard" title="{{::'PEER.STORE_WOT_WIZARD'|translate}}">
+            <i class="ion-wand"></i><small class="hidden-md">&nbsp;WW</small>
           </span>
           <span ng-if=":rebind:peer.isWs2p()"
                 ng-click="showWs2pPopover($event, peer)"
@@ -39,21 +47,25 @@
                 title="GVA">
             <i class="ion-arrow-swap"></i><small class="hidden-md"> GVA</small>
           </span>
-        </div>
-        <div ng-if=":rebind:!peer.isWs2p()&&peer.hasEndpoint('ES_USER_API')"
+        </h4>
+        <div ng-if=":rebind:!peer.isWs2p() && peer.hasEndpoint('ES_USER_API')"
              ng-click="showEndpointsPopover($event, peer, 'ES_USER_API')"
              title="Cesium+">
+          &nbsp;
           <i class="ion-es-user-api"></i>
           <b class="ion-plus dark" style="position: relative; left: -14px; top:-17px; font-size : 16px;"></b>
         </div>
-        <div ng-if=":rebind:!peer.isWs2p()&&peer.isTor()" ng-click="showEndpointsPopover($event, peer, 'BMATOR')">
+        <div ng-if=":rebind:!peer.isWs2p() && peer.isTor()" ng-click="showEndpointsPopover($event, peer, 'BMATOR')">
           <i class="ion-bma-tor-api"></i>
         </div>
-        <div ng-if=":rebind:peer.isWs2p()&&peer.isTor()" ng-click="showWs2pPopover($event, peer)">
+        <div ng-if=":rebind:peer.isWs2p() && peer.isTor()" ng-click="showWs2pPopover($event, peer)">
           <i class="ion-bma-tor-api"></i>
         </div>
       </div>
-      <div class="col col-20 no-padding text-center" ng-if="::expertMode && search.type != 'offline'">
+
+
+      <!-- Difficulty column -->
+      <div class="col col-15 no-padding text-center" ng-if="::expertMode && search.type != 'offline'">
         <h3 class="hidden-sm hidden-xs gray">
           <span ng-if=":rebind:peer.uid"><i class="ion-lock-combination"></i>{{:rebind:peer.difficulty||'?'}}</span>
           <span ng-if=":rebind:!peer.uid" translate>PEER.MIRROR</span>
@@ -62,6 +74,46 @@
           {{:rebind: peer.software !== 'duniter' ? peer.software : ''}}
           {{:rebind: peer.version ? ('v'+peer.version) : ''}}</h4>
       </div>
+
+      <!-- Sandboxes column -->
+      <div class="col col-15 col-sandboxes no-padding text-center" ng-if="::expertMode && search.type != 'offline'">
+        <!-- transactions sandbox -->
+        <h3 ng-if=":rebind:peer.sandboxes.transactions.free!==-1 && peer.isBma()"
+            title="{{::'PEER.PENDING_TX'|translate: peer.sandboxes.transactions}}">
+          <i class="ion-card gray"></i>&nbsp;
+          <div class="progress-bar"
+               ng-class=":rebind:{
+                'balanced': peer.sandboxes.transactions.percentage < 50,
+                'energized': peer.sandboxes.transactions.percentage >= 50 && peer.sandboxes.transactions.percentage < 80,
+                'assertive': peer.sandboxes.transactions.percentage >= 80
+                }">
+            <div class="progress-fill" style="width: {{peer.sandboxes.transactions.percentage + '%'}}">
+            </div>
+            <div class="progress-text gray">
+              {{:rebind:peer.sandboxes.transactions.percentage|formatInteger}}&nbsp;%
+            </div>
+          </div>
+        </h3>
+
+        <!-- memberships sandbox -->
+        <h3 ng-if=":rebind:peer.sandboxes.memberships.free!==-1 && peer.isBma()"
+            title="{{::'PEER.PENDING_MEMBERSHIPS'|translate: peer.sandboxes.memberships}}">
+          <i class="ion-person gray" style="width: 14px;"></i>&nbsp;
+          <div class="progress-bar" ng-class=":rebind:{
+          'balanced': peer.sandboxes.memberships.percentage < 50,
+          'energized': peer.sandboxes.memberships.percentage >= 50 && peer.sandboxes.memberships.percentage < 80,
+          'assertive': peer.sandboxes.memberships.percentage >= 80
+          }">
+            <div class="progress-fill" style="width: {{peer.sandboxes.memberships.percentage + '%'}}">
+            </div>
+            <div class="progress-text text-center gray">
+              {{:rebind:peer.sandboxes.memberships.percentage|formatInteger}}&nbsp;%
+            </div>
+          </div>
+        </h3>
+      </div>
+
+      <!-- Block column -->
       <div class="col col-20 no-padding text-center">
         <span id="{{$index === 0 ? helptipPrefix + '-peer-0-block' : ''}}"
             class="badge" ng-class=":rebind:{'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock, 'ng-hide': !peer.currentNumber && !peer.blockNumber }">

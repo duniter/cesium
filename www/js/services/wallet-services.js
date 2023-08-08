@@ -1592,11 +1592,11 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           var bma = BMA.lightInstance(peer.host, peer.port, peer.path, peer.useSsl, timeout);
           return bma.tx.process({transaction: signedTx})
             .then(function() {
-              return true
+              return true;
             })
             .catch(function(err) {
               if (err.ucode === BMA.errorCodes.TX_ALREADY_PROCESSED) {
-                return true
+                return true;
               }
               return false;
             });
