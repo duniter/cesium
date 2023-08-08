@@ -380,6 +380,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       // Analyze the peer document, and exclude using the online filter
       json.blockNumber = buidBlockNumber(json.block);
       json.oldBlock = (json.status === 'UP' && json.blockNumber && json.blockNumber < data.minOnlineBlockNumber);
+      delete json.version; // DO not keep peering document version
 
       var peers = createPeerEntities(json);
       var hasUpdates = false;
@@ -583,12 +584,12 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           return peer;
         })
         .then(function(peer) {
-          // Exit if offline, or not expert mode or too small device
-          if (!data.filter.online || !peer || !peer.online || !data.expertMode) return peer;
+          // Exit if offline, or not expert mode
+          if (!peer || (data.filter.online && !peer.online)) return peer;
           var jobs = [];
 
-          // Get hardship (only for a member peer)
-          if (peer.uid) {
+          // Get hardship (only for a member peer, and expert mode)
+          if (peer.uid && data.expertMode) {
             jobs.push(peer.api.blockchain.stats.hardship({pubkey: peer.pubkey})
               .then(function (res) {
                 peer.difficulty = res ? res.level : null;
@@ -599,15 +600,22 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           }
 
           // Get Version
-          jobs.push(peer.api.node.summary()
-            .then(function(res){
-              peer.software = res && res.duniter && res.duniter.software || undefined;
-              peer.version = res && res.duniter && res.duniter.version || '?';
-            })
-            .catch(function() {
-              peer.software = undefined;
-              peer.version = '?'; // continue
-            }));
+          if (data.expertMode || data.filter.bma) {
+            jobs.push(peer.api.node.summary()
+              .then(function (res) {
+                peer.software = res && res.duniter && res.duniter.software || undefined;
+                peer.version = res && res.duniter && res.duniter.version || '?';
+                peer.storage = res && res.duniter && res.duniter.storage || {transactions: false, wotwizard: false};
+              })
+              .catch(function () {
+                peer.software = undefined;
+                peer.version = '?';
+                peer.storage = {transactions: false, wotwizard: false};
+                // continue
+              }));
+          }
+
+          if (!jobs.length) return peer;
 
           return $q.all(jobs)
             .then(function(){
@@ -915,16 +923,23 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       return startIfNeed(bma, options)
         .then(function(data){
           var peers = data && _.filter(data.peers, function(peer) {
-            return peer.hasMainConsensusBlock && peer.isBma();
+            // Keep if on the main consensus block, and compatible with Cesium
+            return peer && peer.hasMainConsensusBlock && peer.isBma();
           });
 
           // Log
           if (peers && peers.length > 0) {
+            var mainConsensusBlock = peers[0] && peers[0].buid;
             console.info('[network] Found {0}/{1} BMA peers on main consensus block #{2} - in {3}ms'.format(
               peers.length,
               data.peers.length,
-              peers[0] && peers[0].buid,
+              mainConsensusBlock,
               Date.now() - now));
+
+            // Exclude peers that are not compatible with Cesium (.e.g 1.9.0, or without TX storage)
+            peers = _.filter(peers, function(peer) {
+              return isCompatibleBMAPeer(peer);
+            });
           }
           else {
             console.warn('[network] No synchronized BMA peers found, in {0}ms'.format(Date.now() - now));
@@ -941,6 +956,28 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
 
           throw err;
         });
+    },
+
+   /**
+    * Is the peer compatible with Cesium (should be a BMA endpoint )
+    * @param peer
+    * @returns {*}
+    */
+    isCompatibleBMAPeer = function(peer) {
+      if (!peer && !peer.isBma() || !peer.version) return false;
+
+      // Exclude 1.9.0 version (=DEV)
+      if (peer.version.startsWith('1.9.0')) {
+        console.debug('[network] BMA endpoint [{0}] is EXCLUDED (incompatible version {1})'.format(peer.getServer(), peer.version));
+        return false;
+      }
+
+      // Keep only if store transactions
+      if (!peer.storage && !peer.storage.transactions) {
+        console.debug('[network] BMA endpoint [{0}] is EXCLUDED (no transactions storage)'.format(peer.getServer()));
+        return false;
+      }
+      return true;
     };
 
   // Register extension points

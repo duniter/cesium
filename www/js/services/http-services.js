@@ -21,12 +21,14 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
   function getServer(host, port) {
     // Remove port if 80 or 443
-    return  !host ? null : (host + (port && port != 80 && port != 443 ? ':' + port : ''));
+    return  !host ? null : (host + (port && port != 80 && port != 443 ? (':' + port) : ''));
   }
 
   function getUrl(host, port, path, useSsl) {
     var protocol = (port == 443 || useSsl) ? 'https' : 'http';
-    return  protocol + '://' + getServer(host, port) + (path ? path : '');
+    // Add starting slash to path
+    path = path && path !== '' && !path.startsWith('/') ? ('/' + path) : (path || '');
+    return  protocol + '://' + getServer(host, port) + path;
   }
 
   function getWsUrl(host, port, path, useSsl) {

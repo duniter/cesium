@@ -202,7 +202,14 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       return csNetwork.getSynchronizedBmaPeers(BMA)
         .then(function(peers) {
 
-          if (!peers.length) return; // No peer found: exit
+          var consensusBlockNumber = peers.length ? peers[0].currentNumber : undefined;
+
+          // Serialize to JSON Object
+          peers = peers.reduce(function(res, peer) {
+            return res.concat(peer.toJSON());
+          }, []);
+
+          if (!peers.length) return false; // No peer found: exit
 
           // Not enough peers in network (isolated node). Should never occur. Make sure at least one known node exists
           if (peers.length < 10) {
@@ -214,46 +221,38 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
           console.info("[platform] Network scanned in {0}ms, {1} peers (UP and synchronized) found".format(Date.now() - now, peers.length));
 
-          // TODO: store sync peers in storage ?
-          //csSettings.data.
 
           // Try to find the current peer in the list of synchronized peers
-          var synchronized = _.some(peers, function(peer) {
-            return BMA.node.same({
-              host: peer.getHost(),
-              port: peer.getPort(),
-              path: peer.getPath(),
-              useSsl: peer.isSsl()
-            });
+          var otherPeers = _.filter(peers, function(peer) {
+            return !BMA.node.same(peer);
           });
 
-          // OK (BMA node is sync): continue
+          // OK (current BMA node is sync): continue
+          var synchronized = otherPeers.length < peers.length;
           if (synchronized) {
             console.info("[platform] Default peer [{0}] is well synchronized.".format(BMA.server));
+
+            // Store sync peers in storage
+            //console.debug("[platform] Saving {0} other synchronized BMA peers in settings".format(otherPeers.length));
+            //csSettings.data.network.peers = otherPeers;
+
             return true;
           }
 
           // Peer is not well synchronized!
-          var consensusBlockNumber = peers.length ? peers[0].currentNumber : undefined;
           console.warn("[platform] Default peer [{0}] not synchronized with consensus block #{1}".format(BMA.server, consensusBlockNumber));
 
           return csCurrency.blockchain.current()
             .then(function(block) {
-
               // Only one block late: keep current node
               if (Math.abs(block.number - consensusBlockNumber) <= 2) {
-                console.info("[platform] Keep BMA node [{0}], as current block #{1} is closed to consensus block #{2}".format(BMA.server, block.number, consensusBlockNumber));
+                console.info("[platform] Keep BMA node [{0}], as current block #{1} is very closed to the consensus block #{2}".format(BMA.server, block.number, consensusBlockNumber));
                 return true;
               }
 
-              var randomPeer = _.sample(peers);
-              var synchronizedNode = new Peer({
-                host: randomPeer.getHost(),
-                port: randomPeer.getPort(),
-                useSsl: randomPeer.isSsl(),
-                path: randomPeer.getPath(),
-                endpoints: randomPeer.endpoints
-              });
+              // Peek another peer
+              var randomPeer = _.sample(otherPeers);
+              var synchronizedNode = new Peer(randomPeer);
 
               // If Expert mode: ask user to select a node
               if (askUserConfirmation) {
@@ -278,22 +277,15 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         });
     }
 
+    /**
+     * Ask user to confirm, before switching to fallback node
+     * @param fallbackNode
+     * @param messageKey
+     * @returns {*}
+     */
     function askUseFallbackNode(fallbackNode, messageKey) {
-      // Ask user to confirm, before switching to fallback node
-      var server = fallbackNode.server || (typeof fallbackNode.getServer === 'function' ? fallbackNode.getServer() : new Peer(fallbackNode).getServer());
 
-      server += fallbackNode.path || '';
-
-      var confirmMsgParams = {old: BMA.server, new: server};
-
-      // Force to show port/ssl, if this is the only difference
-      if (confirmMsgParams.old === confirmMsgParams.new) {
-        if (BMA.port != fallbackNode.port) {
-          confirmMsgParams.new += ':' + fallbackNode.port;
-        } else if (BMA.useSsl == false && (fallbackNode.useSsl || fallbackNode.port == 443)) {
-          confirmMsgParams.new += ' (SSL)';
-        }
-      }
+      var confirmMsgParams = {old: BMA.url, new: fallbackNode.url};
 
       messageKey = messageKey || 'CONFIRM.USE_FALLBACK_NODE';
 

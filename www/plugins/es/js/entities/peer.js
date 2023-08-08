@@ -122,18 +122,6 @@ EsPeer.prototype.getHost = function() {
           (ep.ipv6 ? '[' + ep.ipv6 + ']' :'')));
 };
 
-EsPeer.prototype.getURL = function() {
-  var ep = this.ep || this.getEP();
-  var host = this.getHost();
-  var protocol = (ep.port == 443 || ep.useSsl) ? 'https' : 'http';
-  return protocol + '://' + host + (ep.port ? (':' + ep.port) : '');
-};
-
-EsPeer.prototype.getServer = function() {
-  var ep = this.ep || this.getEP();
-  var host = this.getHost();
-  return host + (host && ep.port ? (':' + ep.port) : '');
-};
 
 EsPeer.prototype.hasValid4 = function(ep) {
   return ep.ipv4 &&
@@ -158,6 +146,20 @@ EsPeer.prototype.isTor = function() {
 
 EsPeer.prototype.isHttp = function() {
   var ep = this.ep || this.getEP();
-  return !bma.useTor;
+  return !ep.useTor;
 };
+
+EsPeer.prototype.getServer = function() {
+  var ep = this.ep || this.getEP();
+  var host = this.getHost();
+  return host + (host && (ep.port && ep.port != 80 && ep.port != 443) ? (':' + ep.port) : '');
+};
+
+EsPeer.prototype.getUrl = function() {
+  var ep = this.ep || this.getEP();
+  var protocol = (ep.port == 443 || ep.useSsl) ? 'https' : 'http';
+  var path = ep.path && !ep.path.startsWith('/') ? ('/' + ep.path) : (ep.path || '');
+  return protocol + '://' + this.getServer() + path;
+};
+
 

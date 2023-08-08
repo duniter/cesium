@@ -97,6 +97,10 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     decimalCount: 4,
     uiEffects: true,
     blockValidityWindow: 6,
+    network: {
+      // Synchronized BMA peers found
+      peers: []
+    },
     helptip: {
       enable: true,
       installDocUrl: "https://duniter.org/en/wiki/duniter/install/",
