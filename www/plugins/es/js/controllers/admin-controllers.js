@@ -31,7 +31,7 @@ angular.module('cesium.es.admin.controllers', ['cesium.es.services'])
         data: {
           silentLocationChange: true
         }
-      });;
+      });
   })
 
   .controller('ESAdminViewAbstractCtrl', ESAdminViewAbstractController)
@@ -115,7 +115,7 @@ function ESAdminViewAbstractController($scope, $q, $window, $state, UIUtils,  es
   $scope.load = function(from, size, silent) {
     // Can be override
     return $q.resolve();
-  }
+  };
 
   $scope.toggleSort = function(sort){
     if ($scope.search.sort === sort && !$scope.search.asc) {
@@ -140,7 +140,7 @@ function ESAdminViewAbstractController($scope, $q, $window, $state, UIUtils,  es
         $scope.search.loadingMore = false;
         $scope.$broadcast('scroll.infiniteScrollComplete');
       });
-  }
+  };
 }
 
 function ESAdminViewLogController($controller, $scope, $q, $window, $state, UIUtils) {
@@ -219,7 +219,7 @@ function ESAdminViewModeratorController($controller, $scope, $q, $window, $state
 
     return $scope.node.node.moderators()
       .then(function (res) {
-        const items = _.map(res && res.moderators || [], function(pubkey) {
+        var items = _.map(res && res.moderators || [], function(pubkey) {
           return {pubkey: pubkey};
         });
         return csWot.extendAll(items);
