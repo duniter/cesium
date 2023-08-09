@@ -1072,40 +1072,29 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     };
 
     // Define get latest release (or fake function is no URL defined)
-    var duniterLatestReleaseUrl = csSettings.data.duniterLatestReleaseUrl && csHttp.uri.parse(csSettings.data.duniterLatestReleaseUrl);
-    exports.raw.getLatestRelease =
-      duniterLatestReleaseUrl ?
-        $q(function(resolve, reject) {
-          $http.get(csSettings.data.duniterLatestReleaseUrl, {
-            timeout: csConfig.timeout,
-            responseType: 'json',
-            headers: {
-              'X-Requested-With': 'XMLHttpRequest'
-            }
-          }).success(resolve).error(reject)
-        })
-      // csHttp.getWithCache(duniterLatestReleaseUrl.host,
-      //   duniterLatestReleaseUrl.port,
-      //   "/" + duniterLatestReleaseUrl.pathname,
-      //   /*useSsl*/ (+(duniterLatestReleaseUrl.port) === 443 || duniterLatestReleaseUrl.protocol === 'https:' || that.forceUseSsl),
-      //   csCache.constants.LONG
-      // )
-        :
-      // No URL define: use a fake function
-      function() {
+    if (csSettings.data.duniterLatestReleaseUrl) {
+      var releaseUri = csHttp.uri.parse(csSettings.data.duniterLatestReleaseUrl);
+      var releaseUriUseSsl = releaseUri.port == 443 || releaseUri.protocol === 'https:' || that.forceUseSsl;
+      exports.raw.getLatestRelease = csHttp.getWithCache(releaseUri.host, releaseUri.port, "/" + releaseUri.pathname, releaseUriUseSsl,
+        csCache.constants.LONG);
+    }
+    // No URL define: use a fake function
+    else {
+      exports.raw.getLatestRelease = function() {
         return $q.when();
       };
+    }
 
     exports.version.latest = function() {
       return exports.raw.getLatestRelease()
         .then(function (json) {
           if (!json) return;
 
-          // Gitlab release.json (used since Duniter 1.8)
+          // Gitlab
           if (Array.isArray(json)) {
             var releaseVersion = _.find(json, function(res) {
-              return res.tag&& res.description && res.description.contains(':white_check_mark: Release\n');
-            })
+              return res.tag && res.description && res.description.contains(':white_check_mark: Release\n');
+            });
             if (releaseVersion) {
               var version = releaseVersion.tag.startsWith('v') ? releaseVersion.tag.substring(1) : releaseVersion.tag;
               var url = (csSettings.data.duniterLatestReleaseUrl.endsWith('.json') ?
@@ -1114,9 +1103,11 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
               return {
                 version: version,
                 url: url
-              }
+              };
             }
           }
+
+          // Github
           if (json.name && json.html_url) {
             return {
               version: json.name,

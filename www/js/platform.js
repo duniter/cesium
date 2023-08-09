@@ -226,10 +226,10 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
           // Try to find the current peer in synchronized peers
           var synchronized = false;
           peers = peers && _.filter(peers, function(peer) {
-            if (BMA.url !== peer.url) return true
+            if (BMA.url !== peer.url) return true;
             synchronized = true;
             return false;
-          })
+          });
 
           // Saving other peers to settings
           console.debug("[platform] Saving {0} BMA peers in settings, for a later use".format(peers.length));
