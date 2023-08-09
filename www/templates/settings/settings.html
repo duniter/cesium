@@ -241,7 +241,7 @@
                 <span ng-bind-html="platform.loadingMessage | translate "></span>
               </h4>
             </ng-if>
-            <div class="badge badge-balanced" ng-class="{'badge-assertive': formData.node.temporary}">{{bma.server}}</div>
+            <div class="badge badge-balanced" ng-class="{'badge-assertive': formData.node.temporary}">{{bma.server}}{{bma.path||''}}</div>
           </ng-if>
 
           <!-- node selected automatically -->
@@ -250,7 +250,7 @@
               <span ng-bind-html="'SETTINGS.PEER_SELECTED_AUTOMATICALLY' | translate "></span>
             </h4>
             <ng-if ng-if="!platform.loading">
-              <div class="badge badge-balanced">{{bma.server}}</div>
+              <div class="badge badge-balanced">{{bma.server}}{{bma.path||''}}</div>
             </ng-if>
             <ng-if ng-if="platform.loading">
               <h4 class="gray text-italic">

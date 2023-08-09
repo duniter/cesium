@@ -268,18 +268,26 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 
           // Check duniter min version
           if (software === 'duniter' && json.duniter.version) {
-            isCompatible = csHttp.version.isCompatible(csSettings.data.minVersion, json.duniter.version);
-            // TODO check storage transaction ?
+            isCompatible = csHttp.version.isCompatible(csSettings.data.minVersion, json.duniter.version) &&
+              // version < 1.8.7 (no storage) OR transaction storage enabled
+              (!json.duniter.storage || json.duniter.storage.transactions === true);
+            if (!isCompatible) {
+              console.error('[BMA] Incompatible Duniter peer [{0}{1}] (actual version {2}): min expected version is {3} with transactions storage enabled'.format(
+                csHttp.getServer(node.host, node.port),
+                node.path ||'',
+                json.duniter.version || '?', csSettings.data.minVersion));
+            }
           }
           else {
-            console.debug('[BMA] Unknown node software [{0} v{1}]: could not check compatibility.'.format(software || '?', json.duniter.version || '?'));
-          }
-          if (!isCompatible && json && json.duniter) {
-            console.error('[BMA] Incompatible node [{0} v{1}]: expected at least v{2}'.format(software, json.duniter.version || '?', csSettings.data.minVersion));
+            console.warn('[BMA] Unknown software [{0}] found in peer [{1}{2}] (version {3}): could not check compatibility.'.format(
+              software || '?',
+              csHttp.getServer(node.host, node.port),
+              node.path ||'',
+              json.duniter.version || '?'));
           }
           return isCompatible;
         })
-        .catch(function() {
+        .catch(function(err) {
           return false; // Unreachable
         });
     };
@@ -352,7 +360,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         .then(function(alive) {
           that.alive = alive;
           if (!that.alive) {
-            console.error("[BMA] Could not start using peer [{0}{1}]: unreachable".format(that.server, that.path));
+            console.error("[BMA] Could not start using peer [{0}{1}]: unreachable or incompatible".format(that.server, that.path));
             that.started = true;
             delete that._startPromise;
             return false; // Not alive
@@ -415,15 +423,21 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         return !same;
       });
 
-
-      console.debug('[BMA] Getting alive fallback nodes... (temiout: {0}ms)'.format(timeout));
+      console.debug('[BMA] Getting alive fallback nodes... {timeout: {0}}'.format(timeout));
 
       var aliveNodes = [];
       return $q.all(_.map(fallbackNodes, function(node) {
         return that.isAlive(node, timeout)
           .then(function(alive) {
             if (alive) {
-              aliveNodes.push(node);
+              node.url = csHttp.getUrl(node);
+              node.server = csHttp.getUrl(node);
+              aliveNodes.push({
+                host: node.host,
+                port: node.port,
+                useSsl: node.useSsl || node.port == 443,
+                path: node.path
+              });
             }
             else {
               console.error('[BMA] Unreachable (or not compatible) fallback node [{0}]: skipping'.format(node.server));

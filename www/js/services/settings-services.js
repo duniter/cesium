@@ -72,7 +72,9 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     cacheTimeMs: 60000, /*1 min*/
     timeWarningExpireMembership: 2592000 * 2 /*=2 mois*/,
     timeWarningExpire: 2592000 * 3 /*=3 mois*/,
-    minVersion: '1.1.0', // TODO change into 1.8.7
+    minVersion: '1.8.0',
+    minVersionAtStartup: '1.8.7', // use for node auto-selection
+    minPeerCountAtStartup: 10, // use for node auto-selection
     sourceUrl: 'https://git.duniter.org/clients/cesium-grp/cesium',
     sourceLicenseUrl: 'https://git.duniter.org/clients/cesium-grp/cesium/-/raw/master/LICENSE',
     newIssueUrl: "https://git.duniter.org/clients/cesium-grp/cesium/issues/new",

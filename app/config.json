@@ -43,19 +43,7 @@
     },
     "fallbackNodes": [
       {
-        "host": "g1.cgeek.fr",
-        "port": 443
-      },
-      {
-        "host": "g1.cloud-libre.eu",
-        "port": 443
-      },
-      {
         "host": "g1.e-is.pro",
-        "port": 443
-      },
-      {
-        "host": "g1.mithril.re",
         "port": 443
       },
       {
@@ -63,11 +51,24 @@
         "port": 443
       },
       {
+        "host": "g1.cgeek.fr",
+        "port": 443
+      },
+      {
+        "host": "g1.mithril.re",
+        "port": 443
+      },
+      {
         "host": "g1.duniter.org",
         "port": 443
       },
       {
-        "host": "g1v1.p2p.legal",
+        "host": "duniter.moul.re",
+        "port": 443,
+        "path": "/bma"
+      },
+      {
+        "host": "duniter-v1-g1.axiom-team.fr",
         "port": 443
       }
     ],

@@ -66,8 +66,9 @@ Peer.prototype.getBMA = function() {
   if (this.bma) return this.bma;
   var bma = null;
   var path = null;
+  var that = this;
   this.endpoints.forEach(function(ep){
-    var matches = !bma && this.regexp.BMA_REGEXP.exec(ep);
+    var matches = !bma && that.regexp.BMA_REGEXP.exec(ep);
     if (matches) {
       path = matches[10];
       if (path && !path.startsWith('/')) path = '/' + path; // Fix path (add starting slash)
@@ -81,7 +82,7 @@ Peer.prototype.getBMA = function() {
         "useBma": true
       };
     }
-    matches = !bma && this.regexp.BMAS_REGEXP.exec(ep);
+    matches = !bma && that.regexp.BMAS_REGEXP.exec(ep);
     if (matches) {
       path = matches[10];
       if (path && !path.startsWith('/')) path = '/' + path; // Fix path (add starting slash)

@@ -570,12 +570,12 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
   function isVersionCompatible(minVersion, actualVersion) {
     var result = compareVersionNumbers(minVersion, actualVersion) <= 0;
-    console.debug('[http] Is actual version [{0}] compatible with min expected version [{1}] ? => {2}'.format(actualVersion, minVersion, result));
+    //console.debug('[http] Duniter version {0} is {1}compatible (min expected version {2})'.format(actualVersion, result ? '': 'NOT ', minVersion));
     return result;
   }
 
   function clearCache(cachePrefix) {
-    cachePrefix = cachePrefix || defaultCachePrefix;
+    cachePrefix = cachePrefix || defaultCachePrefix;
     console.debug("[http] Cleaning cache {prefix: '{0}'}...".format(cachePrefix));
     csCache.clear(cachePrefix);
   }

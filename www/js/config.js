@@ -51,34 +51,15 @@ angular.module("cesium.config", [])
 		"maxContentLength": 1300
 	},
 	"fallbackNodes": [
-		{
-			"host": "g1.cgeek.fr",
-			"port": 443
-		},
-		{
-			"host": "g1.cloud-libre.eu",
-			"port": 443
-		},
-		{
-			"host": "g1.e-is.pro",
-			"port": 443
-		},
-		{
-			"host": "g1.mithril.re",
-			"port": 443
-		},
-		{
-			"host": "vit.fdn.org",
-			"port": 443
-		},
-		{
-			"host": "g1.duniter.org",
-			"port": 443
-		},
-		{
-			"host": "g1v1.p2p.legal",
-			"port": 443
-		}
+    {
+      "host": "g1v1.p2p.legal",
+      "port": 443
+    },
+    {
+      "host": "duniter.moul.re",
+      "port": 443,
+      "path": "/bma"
+    }
 	],
 	"developers": [
 		{

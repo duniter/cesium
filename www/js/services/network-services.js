@@ -15,7 +15,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
     startPromise,
 
     data = {
-      pid: 0, // Start PID
+      pid: 0, // = not started
       bma: null,
       listeners: [],
       loading: true,
@@ -181,6 +181,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       data.loading = true;
       data.bma = data.bma || BMA;
       var newPeers = [];
+      var pid = data.pid;
 
       if (interval) {
         $interval.cancel(interval);
@@ -198,7 +199,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           // The peer lookup end, we can make a clean final report
           sortPeers(true/*update main buid*/);
 
-          console.debug('[network] {0} peer(s) found.'.format(data.peers.length));
+          console.debug('[network] [#{0}] {1} peer(s) found.'.format(pid, data.peers.length));
         }
       }, 1000);
 
@@ -239,7 +240,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
               // Exclude if too old peering document
               json.blockNumber = buidBlockNumber(json.block);
               if (json.blockNumber && json.blockNumber < data.minOnlineBlockNumber) {
-                console.debug("[network] Exclude a too old peering document, on pubkey {0}".format(json.pubkey.substring(0,6)));
+                console.debug("[network] [#{0}] Exclude a too old peering document, on pubkey {1}".format(pid, json.pubkey.substring(0,6)));
                 return;
               }
 
@@ -260,14 +261,14 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
             var privateWs2pHeads = _.values(data.ws2pHeads);
             if (privateWs2pHeads && privateWs2pHeads.length) {
               var privateEPCount = 0;
-              //console.debug("[http] Found WS2P endpoints without endpoint:", data.ws2pHeads);
+              //console.debug("[network] Found WS2P endpoints without endpoint:", data.ws2pHeads);
               _.forEach(privateWs2pHeads, function(head) {
 
                 if (!head.hasEndPoint) {
                   var currentNumber = buidBlockNumber(head.buid);
                   // Exclude if on a too old block
                   if (currentNumber && currentNumber < data.minOnlineBlockNumber) {
-                    console.debug("[network] Exclude a too old WS2P message, on pubkey {0}".format(head.pubkey.substring(0,6)));
+                    console.debug("[network] [#{0}] Exclude a too old WS2P message, on pubkey {1}".format(pid, head.pubkey.substring(0,6)));
                     return;
                   }
 
@@ -301,7 +302,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
               });
 
               if (privateEPCount) {
-                console.debug("[http] Found {0} WS2P endpoints without endpoint (private ?)".format(privateEPCount));
+                console.debug("[network] [#{0}] Found {1} WS2P endpoints without endpoint (private ?)".format(pid, privateEPCount));
               }
             }
 
@@ -386,6 +387,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
 
       var peers = createPeerEntities(json);
       var hasUpdates = false;
+      var pid = data.pid;
 
       var jobs = peers.reduce(function(jobs, peer) {
           var existingPeer = _.findWhere(data.peers, {id: peer.id});
@@ -407,32 +409,36 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
                   if (!refreshedPeer || (refreshedPeer.online !== data.filter.online && data.filter.online !== 'all')) {
                     var existingIndex = data.peers.indexOf(existingPeer);
                     if (existingIndex !== -1) {
-                      console.debug('[network] Peer [{0}] removed (cause: {1})'.format(peer.server, !refreshedPeer ? 'filtered' : (refreshedPeer.online ? 'UP' : 'DOWN')));
+                      console.debug('[network] [#{0}] Peer [{1}] removed (cause: {2})'.format(pid, peer.server, !refreshedPeer ? 'filtered' : (refreshedPeer.online ? 'UP' : 'DOWN')));
                       data.peers.splice(existingIndex, 1);
                       hasUpdates = true;
                     }
                   }
                   else if (refreshedPeer.buid !== existingMainBuid){
-                    console.debug('[network] {0} endpoint [{1}] new current block'.format(
+                    console.debug('[network] [#{0}] {1} endpoint [{2}] new current block'.format(
+                      pid,
                       api,
                       refreshedPeer.server));
                     hasUpdates = true;
                   }
                   else if (existingOnline !== refreshedPeer.online){
-                    console.debug('[network] {0} endpoint [{1}] is now {2}'.format(
+                    console.debug('[network] [#{0}] {1} endpoint [{2}] is now {3}'.format(
+                      pid,
                       api,
                       refreshedPeer.server,
                       refreshedPeer.online ? 'UP' : 'DOWN'));
                     hasUpdates = true;
                   }
                   else {
-                    console.debug("[network] {0} endpoint [{1}] unchanged".format(
+                    console.debug("[network] [#{0}] {1} endpoint [{2}] unchanged".format(
+                      pid,
                       api,
                       refreshedPeer.server));
                   }
                 }
                 else if (refreshedPeer && (refreshedPeer.online === data.filter.online || data.filter.online === 'all')) {
-                  console.debug("[network] {0} endpoint [{1}] is {2}".format(
+                  console.debug("[network] [#{0}] {1} endpoint [{2}] is {3}".format(
+                    pid,
                     api,
                     refreshedPeer.server,
                     refreshedPeer.online ? 'UP' : 'DOWN'
@@ -851,12 +857,17 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
 
       options = options || {};
       bma = bma || BMA;
-      var pid = data.pid;
+      var pid = 0;
 
       startPromise = bma.ready()
         .then(function() {
-          close(pid);
-          data.pid++;
+          // Stop previous network scan (if running)
+          close(data.pid);
+
+          // Compute next PID
+          pid = ++data.pid;
+
+          // Prepare data
           data.bma = bma;
           data.filter = options.filter ? angular.merge(data.filter, options.filter) : data.filter;
           data.sort = options.sort ? angular.merge(data.sort, options.sort) : data.sort;
@@ -880,13 +891,16 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         })
         .then(function() {
           var now = Date.now();
-          console.info('[network] Starting from [{0}{1}] {ssl: {2})'.format(bma.server, bma.path, bma.useSsl));
+          console.info('[network] [#{0}] Starting from [{1}{2}] {ssl: {3}}'.format(pid, bma.server, bma.path, bma.useSsl));
 
           addListeners();
 
           return loadPeers()
             .then(function(peers){
-              if (peers) console.debug('[network] Started in {0}ms, {1} peer(s) found'.format(Date.now() - now, peers.length));
+              if (peers) console.debug('[network] [#{0}] Started - {1} peer(s) found, in {2}ms'.format(
+                pid,
+                peers.length,
+                Date.now() - now));
               return data;
             });
         });
@@ -894,11 +908,11 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
     },
 
     close = function(pid) {
-        if (data.bma) {
-          console.info('[network] Stopping...');
-          removeListeners();
-          resetData();
-        }
+      console.info(pid > 0 ? '[network] [#{0}] Stopping...'.format(pid) : '[network] Stopping...');
+      if (data.bma) {
+        removeListeners();
+        resetData();
+      }
       if (interval && pid === data.pid && pid > 0) {
         $interval.cancel(interval);
       }
@@ -922,7 +936,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
 
     getMainBlockUid = function(bma, options) {
       var wasStarted = isStarted();
-      var pid = data.pid + 1;
+      var pid = wasStarted ? data.pid : data.pid + 1;
       return startIfNeed(bma, options)
         .then(function(data) {
           var buid = data.mainBlock && data.mainBlock.buid;
@@ -930,7 +944,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           return buid;
         })
         .catch(function(err) {
-          console.error('[network] Failed to get main block');
+          console.error('[network] [#{0}] Failed to get main block'.format(pid));
           if (!wasStarted) close(pid);
           throw err;
         });
@@ -941,50 +955,57 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       options = options || {};
       options.filter = options.filter || {};
       options.filter.bma = angular.isDefined(options.filter.bma) ? options.filter.bma : true;
-      options.filter.ssl = isHttpsMode ? true : undefined;
+      options.filter.ssl = isHttpsMode ? true : undefined /*= all */;
       options.filter.online = true;
-      options.filter.expertMode = false;
+      options.filter.expertMode = false; // Difficulties not need
       options.timeout = angular.isDefined(options.timeout) ? options.timeout : getDefaultTimeout();
 
-      var now = Date.now();
-      console.info('[network] Getting synchronized BMA peers... (timeout: {0}ms)'.format(options.timeout));
-
       var wasStarted = isStarted();
-      var pid = data.pid + 1;
+      var pid = wasStarted ? data.pid : data.pid + 1;
+
+      var now = Date.now();
+      console.info('[network] [#{0}] Getting synchronized BMA peers... {timeout: {1}}'.format(pid, options.timeout));
+
       return startIfNeed(bma, options)
         .then(function(data){
-          var peers = data && _.filter(data.peers, function(peer) {
-            // Keep if on the main consensus block, and compatible with Cesium
-            return peer && peer.hasMainConsensusBlock && peer.isBma();
-          });
+          var peerUrls = [];
+          var peers = data && data.peers.reduce(function(res, peer) {
+            // Exclude if not BMA or not on the main consensus block
+            if (!peer || !peer.isBma() || !peer.hasMainConsensusBlock) return res;
+
+            // Fill some properties compatible
+            peer.compatible = isCompatible(peer);
+            peer.url = peer.getUrl();
+
+            // Clean unused properties (e.g. the API, created by BMA.lightInstance())
+            delete peer.api;
+
+            // Remove duplicate
+            if (peerUrls.includes(peer.url)) return res;
+            peerUrls.push(peer.url);
+
+            return res.concat(peer);
+          }, []);
 
           // Log
           if (peers && peers.length > 0) {
             var mainConsensusBlock = peers[0] && peers[0].buid;
-            console.info('[network] Found {0}/{1} BMA peers on main consensus block #{2} - in {3}ms'.format(
+            console.info('[network] [#{0}] Found {0}/{1} BMA peers on main consensus block #{2} - in {3}ms'.format(
               peers.length,
               data.peers.length,
               mainConsensusBlock,
               Date.now() - now));
-
-            // Exclude peers that are not compatible with Cesium
-            peers = _.filter(peers, function(peer) {
-              return isCompatibleBMAPeer(peer);
-            });
           }
           else {
-            console.warn('[network] No synchronized BMA peers found, in {0}ms'.format(Date.now() - now));
+            console.warn('[network] [#{0}] No synchronized BMA peers found - in {1}ms'.format(pid, Date.now() - now));
           }
 
           if (!wasStarted) close(pid);
-
           return peers;
         })
         .catch(function(err) {
-          console.error('[network] Error while getting synchronized BMA peers', err);
-
+          console.error('[network] [#{0}] Error while getting synchronized BMA peers'.format(pid), err);
           if (!wasStarted) close(pid);
-
           throw err;
         });
     },
@@ -994,32 +1015,35 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
     * @param peer
     * @returns {*}
     */
-    isCompatibleBMAPeer = function(peer) {
+    isCompatible = function(peer) {
       if (!peer && !peer.isBma() || !peer.version) return false;
 
-      // Exclude beta versions (1.9.0, 1.9.0-dev and 1.8.7-rc4)
-      if (peer.version.startsWith('1.9.0') || peer.version.startsWith('1.8.7-rc')) {
-        console.debug('[network] BMA endpoint [{0}] is EXCLUDED (incompatible version {1})'.format(peer.getServer(), peer.version));
+      // CHeck version compatible, from min version
+     if (!peer.version || !csHttp.version.isCompatible(csSettings.data.minVersionAtStartup || csSettings.data.minVersion, peer.version) ||
+         // Exclude beta versions (1.9.0, 1.9.0-dev and 1.8.7-rc4)
+         peer.version.startsWith('1.9.0') || peer.version.startsWith('1.8.7-rc')
+       ) {
+        console.debug('[network] [#{0}] BMA endpoint [{1}] is EXCLUDED (incompatible version {2})'.format(data.pid, peer.getServer(), peer.version));
         return false;
       }
 
       // Exclude if transactions not stored
-      if (!peer.storage && !peer.storage.transactions) {
-        console.debug('[network] BMA endpoint [{0}] is EXCLUDED (no transactions storage)'.format(peer.getServer()));
+      if (!peer.storage && peer.storage.transactions !== true) {
+        console.debug('[network] [#{0}] BMA endpoint [{1}] is EXCLUDED (no transactions storage)'.format(data.pid, peer.getServer()));
         return false;
       }
 
       // Exclude g1.duniter.org, because of fail-over config, that can switch node
       if (peer.host === 'g1.duniter.org') {
-        console.debug('[network] BMA endpoint [{0}] is EXCLUDED (fail-over config)'.format(peer.getServer()));
+        console.debug('[network] [#{0}] BMA endpoint [{1}] is EXCLUDED (load-balancing nightmare)'.format(data.pid, peer.getServer()));
         return false;
       }
 
       // Exclude if one sandbox is full
-     if (peer.sandboxes && peer.sandboxes.full) {
-       console.debug('[network] BMA endpoint [{0}] is EXCLUDED (one sandbox is full)'.format(peer.getServer()));
-       return false;
-     }
+      if (peer.sandboxes && peer.sandboxes.full) {
+        console.debug('[network] [#{0}] BMA endpoint [{1}] is EXCLUDED (one sandbox is full)'.format(data.pid, peer.getServer()));
+        return false;
+      }
 
       return true;
     };
