@@ -240,7 +240,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
               // Exclude if too old peering document
               json.blockNumber = buidBlockNumber(json.block);
               if (json.blockNumber && json.blockNumber < data.minOnlineBlockNumber) {
-                console.debug("[network] [#{0}] Exclude a too old peering document, on pubkey {1}".format(pid, json.pubkey.substring(0,6)));
+                console.debug("[network] [#{0}] Exclude a too old peering document, on pubkey {1}".format(pid, json.pubkey.substring(0,8)));
                 return;
               }
 
@@ -268,7 +268,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
                   var currentNumber = buidBlockNumber(head.buid);
                   // Exclude if on a too old block
                   if (currentNumber && currentNumber < data.minOnlineBlockNumber) {
-                    console.debug("[network] [#{0}] Exclude a too old WS2P message, on pubkey {1}".format(pid, head.pubkey.substring(0,6)));
+                    console.debug("[network] [#{0}] Exclude a too old WS2P message, on pubkey {1}".format(pid, head.pubkey.substring(0,8)));
                     return;
                   }
 
@@ -1020,7 +1020,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
 
       // CHeck version compatible, from min version
      if (!peer.version || !csHttp.version.isCompatible(csSettings.data.minVersionAtStartup || csSettings.data.minVersion, peer.version) ||
-         // Exclude beta versions (1.9.0, 1.9.0-dev and 1.8.7-rc4)
+         // Exclude beta versions (1.9.0* and 1.8.7-rc*)
          peer.version.startsWith('1.9.0') || peer.version.startsWith('1.8.7-rc')
        ) {
         console.debug('[network] [#{0}] BMA endpoint [{1}] is EXCLUDED (incompatible version {2})'.format(data.pid, peer.getServer(), peer.version));

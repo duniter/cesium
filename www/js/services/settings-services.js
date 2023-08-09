@@ -80,7 +80,10 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     newIssueUrl: "https://git.duniter.org/clients/cesium-grp/cesium/issues/new",
     userForumUrl: "https://forum.monnaie-libre.fr",
     latestReleaseUrl: "https://api.github.com/repos/duniter/cesium/releases/latest",
-    duniterLatestReleaseUrl: "https://api.github.com/repos/duniter/duniter/releases/latest",
+    // FIXME: get release from gitlab
+    duniterLatestReleaseUrl: undefined, // disable for now
+    // "https://api.github.com/repos/duniter/duniter/releases/latest", // Github
+    // "https://git.duniter.org/nodes/typescript/duniter/-/releases.json" // Gitlab
     httpsMode: false
   },
   defaultSettings = angular.merge({

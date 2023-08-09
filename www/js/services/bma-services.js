@@ -2,7 +2,8 @@
 
 angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.settings.services'])
 
-.factory('BMA', function($q, $window, $rootScope, $timeout, csCrypto, Api, Device, UIUtils, csConfig, csSettings, csCache, csHttp) {
+.factory('BMA', function($q, $window, $rootScope, $timeout, $http,
+                         csCrypto, Api, Device, UIUtils, csConfig, csSettings, csCache, csHttp) {
   'ngInject';
 
   function BMA(host, port, path, useSsl, useCache, timeout) {
@@ -1072,13 +1073,24 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 
     // Define get latest release (or fake function is no URL defined)
     var duniterLatestReleaseUrl = csSettings.data.duniterLatestReleaseUrl && csHttp.uri.parse(csSettings.data.duniterLatestReleaseUrl);
-    exports.raw.getLatestRelease = duniterLatestReleaseUrl ?
-      csHttp.getWithCache(duniterLatestReleaseUrl.host,
-        duniterLatestReleaseUrl.port,
-        "/" + duniterLatestReleaseUrl.pathname,
-        /*useSsl*/ (+(duniterLatestReleaseUrl.port) === 443 || duniterLatestReleaseUrl.protocol === 'https:' || that.forceUseSsl),
-        csCache.constants.LONG
-      ) :
+    exports.raw.getLatestRelease =
+      duniterLatestReleaseUrl ?
+        $q(function(resolve, reject) {
+          $http.get(csSettings.data.duniterLatestReleaseUrl, {
+            timeout: csConfig.timeout,
+            responseType: 'json',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          }).success(resolve).error(reject)
+        })
+      // csHttp.getWithCache(duniterLatestReleaseUrl.host,
+      //   duniterLatestReleaseUrl.port,
+      //   "/" + duniterLatestReleaseUrl.pathname,
+      //   /*useSsl*/ (+(duniterLatestReleaseUrl.port) === 443 || duniterLatestReleaseUrl.protocol === 'https:' || that.forceUseSsl),
+      //   csCache.constants.LONG
+      // )
+        :
       // No URL define: use a fake function
       function() {
         return $q.when();
@@ -1088,6 +1100,23 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       return exports.raw.getLatestRelease()
         .then(function (json) {
           if (!json) return;
+
+          // Gitlab release.json (used since Duniter 1.8)
+          if (Array.isArray(json)) {
+            var releaseVersion = _.find(json, function(res) {
+              return res.tag&& res.description && res.description.contains(':white_check_mark: Release\n');
+            })
+            if (releaseVersion) {
+              var version = releaseVersion.tag.startsWith('v') ? releaseVersion.tag.substring(1) : releaseVersion.tag;
+              var url = (csSettings.data.duniterLatestReleaseUrl.endsWith('.json') ?
+                csSettings.data.duniterLatestReleaseUrl.substring(0, csSettings.data.duniterLatestReleaseUrl.length - 4) :
+                csSettings.data.duniterLatestReleaseUrl) + '/' + releaseVersion.tag;
+              return {
+                version: version,
+                url: url
+              }
+            }
+          }
           if (json.name && json.html_url) {
             return {
               version: json.name,

@@ -531,7 +531,7 @@ function PeerInfoPopoverController($scope, $q, csSettings, csCurrency, csHttp, B
       ])
       .then(function() {
         // Compare, to check if newer
-        if ($scope.formData.latestRelease && $scope.formData.software == 'duniter') {
+        if ($scope.formData.latestRelease && $scope.formData.software === 'duniter') {
           var compare = csHttp.version.compare($scope.formData.version, $scope.formData.latestRelease.version);
           $scope.formData.isPreRelease = compare > 0;
           $scope.formData.hasNewRelease = compare < 0;

@@ -206,6 +206,14 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
           var consensusBlockNumber = peers.length ? peers[0].currentNumber : undefined;
           var consensusPeerCount = peers.length;
 
+          // Not enough synchronized peers found (e.g. an isolated peer). Should never occur.
+          if (!consensusPeerCount || (minConsensusPeerCount > 0 && consensusPeerCount < minConsensusPeerCount)) {
+            console.warn("[platform] Not enough BMA peers on the main consensus block: {0} found. Will peek another peer...".format(consensusPeerCount));
+            // Retry using another fallback peer
+            return checkBmaNodeAlive(false)
+              .then(checkBmaNodeSynchronized); // Loop
+          }
+
           // Filter compatible peers
           peers = peers && peers.reduce(function(res, peer) {
             if (!peer.compatible) return res;
@@ -215,26 +223,20 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
           console.info("[platform] Found {0}/{1} BMA peers, synchronized and compatible, in {2}ms".format(peers.length, consensusPeerCount, Date.now() - now));
 
-          // Not enough synchronized peers found (e.g. an isolated peer). Should never occur.
-          if (!consensusPeerCount || (minConsensusPeerCount > 0 && consensusPeerCount < minConsensusPeerCount)) {
-            console.warn("[platform] Not enough BMA peers on the main consensus block: {0} found. Will peek another peer...".format(consensusPeerCount));
-            // Retry using another fallback peer
-            return checkBmaNodeAlive(false)
-              .then(checkBmaNodeSynchronized); // Loop
-          }
-
           // Try to find the current peer in synchronized peers
-          var synchronizedIndex = _.findIndex(peers, function(peer) {
-            return BMA.url === peer.url;
-          });
-          if (synchronizedIndex !== -1) peers.splice(synchronizedIndex, 1);
+          var synchronized = false;
+          peers = peers && _.filter(peers, function(peer) {
+            if (BMA.url !== peer.url) return true
+            synchronized = true;
+            return false;
+          })
 
           // Saving other peers to settings
           console.debug("[platform] Saving {0} BMA peers in settings, for a later use".format(peers.length));
           csSettings.data.network.peers = peers;
 
           // OK (current BMA node is sync and compatible): continue
-          if (synchronizedIndex !== -1) {
+          if (synchronized) {
             console.info("[platform] Default peer [{0}{1}] is eligible.".format(BMA.server, BMA.path));
             return true;
           }
@@ -244,7 +246,10 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
             BMA.server,
             BMA.path,
             consensusBlockNumber));
-          return csCurrency.blockchain.current()
+          return csCurrency.blockchain.current() // Use currency, to fill the cache
+            .catch(function() {
+              return {number: 0};
+            })
             .then(function(block) {
               // OK: only few blocks late, so we keep it
               if (Math.abs(block.number - consensusBlockNumber) <= 2) {
@@ -264,15 +269,14 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
               }
 
               // KO: peek another peer
-              var randomPeer = _.sample(peers);
-              var synchronizedNode = new Peer(randomPeer);
+              var randomSynchronizedPeer = _.sample(peers);
 
               // If Expert mode: ask user to select a node
               if (askUserConfirmation) {
-                return askUseFallbackNode(synchronizedNode, 'CONFIRM.USE_SYNC_FALLBACK_NODE');
+                return askUseFallbackNode(randomSynchronizedPeer, 'CONFIRM.USE_SYNC_FALLBACK_NODE');
               }
 
-              return synchronizedNode;
+              return randomSynchronizedPeer;
             })
             .then(function(node) {
               if (node === true) return true;
@@ -304,7 +308,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
      */
     function askUseFallbackNode(fallbackNode, messageKey) {
 
-      var newUrl = csHttp.getUrl(fallbackNode.host, fallbackNode.port, fallbackNode.path, fallbackNode.useSsl);
+      var newUrl = fallbackNode.url || csHttp.getUrl(fallbackNode.host, fallbackNode.port, fallbackNode.path, fallbackNode.useSsl);
       var confirmMsgParams = {old: BMA.url, new: newUrl};
 
       messageKey = messageKey || 'CONFIRM.USE_FALLBACK_NODE';
