@@ -117,6 +117,7 @@
   },
   "HOME": {
     "FEED_SOURCE": "Fonte",
+    "FEEDS_TITLE": "Notícias",
     "READ_MORE": "Ler mais",
     "SHOW_ALL_FEED": "Ver tudo",
     "TITLE": "Cesium",

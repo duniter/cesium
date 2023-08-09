@@ -135,7 +135,8 @@
     "NETWORK_CONNECTION_ERROR": "Reto neatingeblas.<br/><br/>Kontrolu vian interreta konekto, aŭ selektu nodon permane <a class=\"positive\" ng-click=\"doQuickFix('settings')\">en la agordoj</a>.",
     "SHOW_ALL_FEED": "Vidi ĉion",
     "READ_MORE": "Legi la sekvon",
-    "FEED_SOURCE": "Fonto"
+    "FEED_SOURCE": "Fonto",
+    "FEEDS_TITLE": "Novaĵoj"
   },
   "SETTINGS": {
     "TITLE": "Parametroj",

@@ -126,7 +126,8 @@
     "NETWORK_CONNECTION_ERROR": "Netwerk is niet bereikbaar.<br/><br/>Controleer uw internetverbinding, of selecteer een node handmatig <a class=\"positive\" ng-click=\"doQuickFix('settings')\">in de instellingen</a>.",
     "SHOW_ALL_FEED": "Alles weergeven",
     "READ_MORE": "Lees meer",
-    "FEED_SOURCE": "Bron"
+    "FEED_SOURCE": "Bron",
+    "FEEDS_TITLE": "Nieuws"
   },
   "SETTINGS": {
     "TITLE": "Instellingen",

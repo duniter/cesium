@@ -166,7 +166,7 @@
         <div class="feed padding-horizontal no-padding-xs padding-top">
           <h3 class="padding-left">
             <i class="icon ion-speakerphone"></i>
-            {{feed.title}}
+            {{feed.title|translate}}
             <small><a ng-click="openLink($event, feed.home_page_url)" class="gray">
               <span translate>HOME.SHOW_ALL_FEED</span>
               <i class="icon ion-chevron-right"></i>
@@ -191,7 +191,7 @@
                    title="{{item.time|formatDate}}"
                    ng-click="openLink($event, item.url)"
                    class="item-note ">
-                  <small><i class="icon ion-clock"></i>&nbsp;{{item.time|formatFromNow}}</small>
+                  <small><i class="icon ion-clock"></i>&nbsp;{{item.creationTime|formatFromNow}}</small>
                 </a>
               </div>
               <!-- title -->

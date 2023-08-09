@@ -135,7 +135,8 @@
     "NETWORK_CONNECTION_ERROR": "Rete non raggiungibile.<br/><br/>Controlla la tua connessione Internet, o seleziona un nodo manualmente <a class=\"positive\" ng-click=\"doQuickFix('settings')\">nelle impostazioni</a>.",
     "SHOW_ALL_FEED": "Mostra tutto",
     "READ_MORE": "Leggi di più",
-    "FEED_SOURCE": "Fonte"
+    "FEED_SOURCE": "Fonte",
+    "FEEDS_TITLE": "Notizie"
   },
   "SETTINGS": {
     "TITLE": "Impostazioni",

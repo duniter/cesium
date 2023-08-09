@@ -35,11 +35,12 @@
     },
     "feed": {
       "jsonFeed": {
-        "fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-fr.json",
-        "en": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-en.json",
+        "fr-FR": "https://forum.monnaie-libre.fr/c/tools/cesium/110.json",
+        "en": "https://forum.monnaie-libre.fr/t/actualites-fr/28088.json",
         "es": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-es.json"
       },
-      "maxContentLength": 1300
+      "maxContentLength": 1300,
+      "maxAgeInMonths": 3
     },
     "fallbackNodes": [
       {

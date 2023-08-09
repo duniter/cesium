@@ -135,7 +135,8 @@
     "NETWORK_CONNECTION_ERROR": "Réseau injoignable.<br/><br/>Vérifiez votre connexion Internet, ou sélectionnez un nœud manuellement <a class=\"positive\" ng-click=\"doQuickFix('settings')\">dans les paramètres</a>.",
     "SHOW_ALL_FEED": "Voir tout",
     "READ_MORE": "Lire la suite",
-    "FEED_SOURCE": "Source"
+    "FEED_SOURCE": "Source",
+    "FEEDS_TITLE": "Actualités"
   },
   "SETTINGS": {
     "TITLE": "Paramètres",

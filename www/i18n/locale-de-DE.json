@@ -139,7 +139,8 @@
     "NETWORK_CONNECTION_ERROR": "Netzwerk ist nicht erreichbar.<br/><br/>Überprüfen Sie Ihre Internetverbindung, oder wählen Sie einen Knoten manuell <a class=\"positive\" ng-click=\"doQuickFix('settings')\">in den Einstellungen</a> aus.",
     "SHOW_ALL_FEED": "Alles anzeigen",
     "READ_MORE": "Mehr lesen",
-    "FEED_SOURCE": "Quelle"
+    "FEED_SOURCE": "Quelle",
+    "FEEDS_TITLE": "Nachrichten"
   },
   "SETTINGS": {
     "TITLE": "Einstellungen",

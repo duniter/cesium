@@ -44,21 +44,18 @@ angular.module("cesium.config", [])
 	},
 	"feed": {
 		"jsonFeed": {
-			"fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-fr.json",
+			/*"fr-FR": "https://forum.monnaie-libre.fr/t/actualites-test/28088/2.json",*/
+      "fr-FR": "https://forum.monnaie-libre.fr/c/tools/cesium/110.json",
 			"en": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-en.json",
 			"es": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-es.json"
 		},
-		"maxContentLength": 1300
+		"maxContentLength": 1300,
+    "maxAgeInMonths": 15
 	},
 	"fallbackNodes": [
     {
-      "host": "g1v1.p2p.legal",
+      "host": "g1.e-is.pro",
       "port": 443
-    },
-    {
-      "host": "duniter.moul.re",
-      "port": 443,
-      "path": "/bma"
     }
 	],
 	"developers": [

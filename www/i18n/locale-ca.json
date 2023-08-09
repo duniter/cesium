@@ -117,6 +117,7 @@
   },
   "HOME": {
     "FEED_SOURCE": "Font",
+    "FEEDS_TITLE": "Notícies",
     "READ_MORE": "Amplia",
     "SHOW_ALL_FEED": "Mostra-m'ho tot",
     "TITLE": "Cesium",
