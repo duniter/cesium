@@ -1,0 +1,10 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "Actualités",
+  "user_comment": "Ce fichier permet la redirection vers le forum Duniter, via 'next_url'",
+
+  "home_page_url": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-fr-FR",
+  "feed_url": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-fr-FR.json",
+
+  "next_url": "https://forum.duniter.org/c/clients/cesium/22.json"
+}
