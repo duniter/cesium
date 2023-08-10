@@ -43,14 +43,21 @@ angular.module("cesium.config", [])
 		"de-DE": "license/license_g1-de-DE"
 	},
 	"feed": {
-		"jsonFeed": {
-			/*"fr-FR": "https://forum.monnaie-libre.fr/t/actualites-test/28088/2.json",*/
-      "fr-FR": "https://forum.monnaie-libre.fr/c/tools/cesium/110.json",
-			"en": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-en.json",
-			"es": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-es.json"
+    "jsonFeed": {
+      "ca": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-ca.json",
+      "de-DE": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-de-DE.json",
+      "en": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-en.json",
+      "en-GB": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-en-GB.json",
+      "eo-EO": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-eo-EO.json",
+      "es-ES": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-es-ES.json",
+      "fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-fr-FR.json",
+      "it-IT": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-it-IT.json",
+      "nl-NL": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-nl-NL.json",
+      "pt-PT": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-pt-PT.json"
 		},
 		"maxContentLength": 1300,
-    "maxAgeInMonths": 15
+    "maxAgeInMonths": -1,
+    "maxCount": 3
 	},
 	"fallbackNodes": [
     {

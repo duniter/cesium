@@ -1,0 +1,9 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "Noticias",
+  "user_comment": "Ce fichier redirige vers le forum Duniter (via 'next_url')",
+  "feed_url": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-es-ES.json",
+
+  "home_page_url": "https://forum.duniter.org/t/nueva-version-de-cesium-es/11459",
+  "next_url": "https://forum.duniter.org/t/nueva-version-de-cesium-es/11459.json"
+}

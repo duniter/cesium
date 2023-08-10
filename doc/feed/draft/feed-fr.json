@@ -1,23 +1,23 @@
 {
-  "version": "https://jsonfeed.org/version/1",
+  "version": "https://jsonfeed.org/version/1.1",
   "user_comment": "Feed that use the jsonFeed format (see jsonFeed.org for details).",
   "title": "Actualités",
   "description": "Actualités de Cesium",
   "home_page_url": "https://forum.monnaie-libre.fr/tag/cesium",
   "feed_url": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-fr.json",
-  "author": {
+  "authors": [{
     "name": "Benoit Lavenier",
     "url": "@BenoitLavenier",
     "avatar": "https://g1.data.duniter.fr/user/profile/38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE/_image/avatar.png"
-  },
+  }],
   "items": [
     {
       "title": "Cesium évolue ! Aïe, ça va piquer mais…",
-      "author": {
+      "authors": [{
         "name": "Elois",
         "url": "@elois",
         "avatar": "https://forum.monnaie-libre.fr/user_avatar/forum.monnaie-libre.fr/elois/45/185_2.png"
-      },
+      }],
       "date_published": "2020-03-07T19:42:00+01:00",
       "id": "https://forum.monnaie-libre.fr/t/cesium-evolue-aie-ca-va-piquer-mais/10015",
       "url": "https://forum.monnaie-libre.fr/t/cesium-evolue-aie-ca-va-piquer-mais/10015",

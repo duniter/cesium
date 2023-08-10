@@ -1,4 +1,4 @@
-<ion-view id="home" bind-notifier="{locale:$root.settings.locale.id}">
+<ion-view id="home" bind-notifier="{locale:$root.settings.locale.id, feed: showFeed}">
   <!-- no title -->
   <ion-nav-title></ion-nav-title>
 
@@ -156,62 +156,15 @@
 
         </div>
 
-
       </div>
-      <div class="col no-padding" ng-class="{'col-30': !feed, 'col-10': feed}">&nbsp;
+
+      <!-- left col spacer-->
+      <div class="col no-padding" ng-class=":feed:{'col-30': !showFeed, 'col-10': showFeed}">&nbsp;
       </div>
-      <div class="col col-30 no-padding" ng-if="feed">
 
-        <!-- feed -->
-        <div class="feed padding-horizontal no-padding-xs padding-top">
-          <h3 class="padding-left">
-            <i class="icon ion-speakerphone"></i>
-            {{feed.title|translate}}
-            <small><a ng-click="openLink($event, feed.home_page_url)" class="gray">
-              <span translate>HOME.SHOW_ALL_FEED</span>
-              <i class="icon ion-chevron-right"></i>
-            </a></small>
-          </h3>
-
-          <!-- feed items -->
-          <div class="animate-show-hide ng-hide" ng-show="feed">
-            <div ng-repeat="item in feed.items"
-                 class="card padding no-margin-xs">
-
-              <div class="header ">
-                <!-- author -->
-                <i ng-if="item.author.avatar" class="avatar" style="background-image: url({{item.author.avatar}});"></i>
-                <a ng-class="{'avatar-left-padding': item.author.avatar}" class="author"
-                   ng-click="item.author.url && openLink($event, item.author.url)">
-                  {{item.author.name}}
-                </a>
-
-                <!-- time -->
-                <a ng-if="item.time"
-                   title="{{item.time|formatDate}}"
-                   ng-click="openLink($event, item.url)"
-                   class="item-note ">
-                  <small><i class="icon ion-clock"></i>&nbsp;{{item.creationTime|formatFromNow}}</small>
-                </a>
-              </div>
-              <!-- title -->
-              <h2 class="title feed-title">
-                <a ng-click="openLink($event, item.url)">{{item.title}}</a></h2>
-              <div ng-if="item.content"
-                   class="content feed-content"
-                   trust-as-html="item.content"></div>
-
-              <!-- footer -->
-              <h4 class="card-footer feed-footer text-right positive-100">
-                <a ng-click="openLink($event, item.url)">
-                  <span ng-if="item.truncated" translate>HOME.READ_MORE</span>
-                  <span ng-if="!item.truncated" translate>COMMON.BTN_SHOW</span>
-                  <i class="icon ion-chevron-right"></i>
-                </a>
-              </h4>
-            </div>
-          </div>
-        </div>
+      <!-- include feeds -->
+      <div class="col col-30 no-padding animate-show-hide ng-hide" ng-show=":feed:showFeed">
+        <ng-include src="::'templates/feed/feed.html'"></ng-include>
       </div>
     </div>
 

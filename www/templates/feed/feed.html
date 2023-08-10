@@ -1,0 +1,62 @@
+
+  <!-- feed -->
+  <div class="feed padding-horizontal no-padding-xs padding-top"
+       ng-controller="FeedCtrl">
+    <h3 class="padding-left">
+      <i class="icon ion-speakerphone"></i>
+      {{feed.title|translate}}
+      <small><a ng-click="openLink($event, feed.home_page_url)" class="gray">
+        <span translate>HOME.SHOW_ALL_FEED</span>
+        <i class="icon ion-chevron-right"></i>
+      </a></small>
+    </h3>
+
+    <!-- card for each item -->
+    <div ng-repeat="item in feed.items" class="card padding no-margin-xs">
+
+      <div class="header">
+
+        <!-- authors -->
+        <ng-repeat ng-repeat="author in item.authors track by author.name">
+          <i ng-if="author.avatar" class="avatar" style="background-image: url({{author.avatar}});"></i>
+          <a ng-class="{'avatar-left-padding': author.avatar}" class="author"
+             ng-click="author.url && openLink($event, author.url)">
+            {{author.name}}
+          </a>
+        </ng-repeat>
+
+        <!-- time -->
+        <a ng-if="item.time"
+           title="{{item.time|formatDate}}"
+           ng-click="openLink($event, item.url)"
+           class="item-note ">
+          <small><i class="icon ion-clock"></i>&nbsp;{{item.creationTime|formatFromNow}}</small>
+        </a>
+      </div>
+
+      <!-- title -->
+      <h2 class="title feed-title">
+        <a ng-click="openLink($event, item.url)">{{item.title}}</a>
+
+        <!-- tags -->
+        <div class="tags" ng-if="item.tags && item.tags.length">
+          <span ng-repeat="tag in item.tags">#{{tag}}</span>
+        </div>
+      </h2>
+
+
+      <!-- content -->
+      <div ng-if="item.content"
+           class="content feed-content"
+           trust-as-html="item.content"></div>
+
+      <!-- footer -->
+      <h4 class="card-footer feed-footer text-right positive-100">
+        <a ng-click="openLink($event, item.url)">
+          <span ng-if="item.truncated" translate>HOME.READ_MORE</span>
+          <span ng-if="!item.truncated" translate>COMMON.BTN_SHOW</span>
+          <i class="icon ion-chevron-right"></i>
+        </a>
+      </h4>
+  </div>
+</div>

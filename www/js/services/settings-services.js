@@ -308,7 +308,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   function getFeedUrl() {
     var locale = data.locale && data.locale.id || csConfig.defaultLanguage || 'en';
     return (csConfig.feed && csConfig.feed.jsonFeed) ?
-      (csConfig.feed.jsonFeed[locale] ? csConfig.feed.jsonFeed[locale] : defaultSettings.feed.jsonFeed[csConfig.defaultLanguage || 'en'] || csConfig.feed) : undefined;
+      (csConfig.feed.jsonFeed[locale] ? csConfig.feed.jsonFeed[locale] : defaultSettings.feed.jsonFeed[csConfig.defaultLanguage || 'en'] || csConfig.feed.jsonFeed) : undefined;
   }
 
   // Detect locale successful changes, then apply to vendor libs

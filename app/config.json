@@ -35,12 +35,20 @@
     },
     "feed": {
       "jsonFeed": {
-        "fr-FR": "https://forum.monnaie-libre.fr/c/tools/cesium/110.json",
-        "en": "https://forum.monnaie-libre.fr/t/actualites-fr/28088.json",
-        "es": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-es.json"
+        "ca": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-ca.json",
+        "de-DE": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-de-DE.json",
+        "en": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-en.json",
+        "en-GB": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-en-GB.json",
+        "eo-EO": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-eo-EO.json",
+        "es-ES": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-es-ES.json",
+        "fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-fr-FR.json",
+        "it-IT": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-it-IT.json",
+        "nl-NL": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-nl-NL.json",
+        "pt-PT": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-pt-PT.json"
       },
       "maxContentLength": 1300,
-      "maxAgeInMonths": 3
+      "maxAgeInMonths": 3,
+      "maxCount": 3
     },
     "fallbackNodes": [
       {
