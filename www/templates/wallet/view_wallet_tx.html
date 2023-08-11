@@ -91,11 +91,11 @@
               ng-click="showTransferModal()">
         {{:locale:'COMMON.BTN_SEND_MONEY' | translate}}
       </button>
-  </div>
+    </div>
 
     <div class="row no-padding">
 
-      <div class="col col-15 hidden-xs hidden-sm">&nbsp;</div>
+      <div class="col col-10 hidden-xs hidden-sm hidden-md">&nbsp;</div>
 
       <div class="col">
 
@@ -120,7 +120,7 @@
             </span>
 
             <div class="item item-pending item-tx item-icon-left"
-                 ng-repeat="tx in formData.tx.pendings"
+                 ng-repeat="tx in formData.tx.pendings track by tx.hash"
                  ng-init="pending=true;"
                  ng-include="::'templates/wallet/item_tx.html'">
             </div>
@@ -135,7 +135,7 @@
             </span>
 
             <div class="item item-pending item-tx item-icon-left"
-                 ng-repeat="tx in formData.tx.validating"
+                 ng-repeat="tx in formData.tx.validating track by tx.hash"
                  ng-init="validating=true;"
                  ng-include="::!tx.isUD ? 'templates/wallet/item_tx.html' : 'templates/wallet/item_ud.html'">
             </div>
@@ -155,11 +155,12 @@
           <!-- Fix #780: do NOT use hash ash id
           <div ng-repeat="tx in formData.tx.history track by tx.hash"
           -->
-          <div ng-repeat="tx in formData.tx.history"
+          <div ng-repeat="tx in formData.tx.history track by tx.hash"
              class="item item-tx item-icon-left"
              ng-include="::!tx.isUD ? 'templates/wallet/item_tx.html' : 'templates/wallet/item_ud.html'">
           </div>
-          <div class="item item-text-wrap text-center" ng-if="formData.tx.fromTime > 0">
+
+          <div class="item item-text-wrap text-center" ng-if="!formData.tx.canFetchMore && formData.tx.fromTime > 0">
             <p>
               <a ng-click="showMoreTx()">{{:locale:'ACCOUNT.SHOW_MORE_TX'|translate}}</a>
               <span class="gray" translate="ACCOUNT.TX_FROM_DATE" translate-values="{fromTime: formData.tx.fromTime}"></span>
@@ -167,13 +168,19 @@
               <a ng-click="showMoreTx(-1)" translate>ACCOUNT.SHOW_ALL_TX</a>
             </p>
           </div>
+
         </div>
+
+        <ion-infinite-scroll
+          ng-if="formData.tx.canFetchMore"
+          spinner="android"
+          on-infinite="showMoreTx()"
+          distance="20%">
+        </ion-infinite-scroll>
+
       </div>
 
-      <div class="col col-15 hidden-xs hidden-sm">&nbsp;</div>
-
-    </div>
-
+      <div class="col col-10 hidden-xs hidden-sm hidden-md">&nbsp;</div>
 
     </div>
   </ion-content>

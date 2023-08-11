@@ -39,7 +39,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
   function processError(reject, data, url, status, config, startTime) {
     // Detected timeout error
-    var urlWithParenthesis = + (url ? ' ('+url+')' : '');
+    var urlWithParenthesis = url ? ' ('+url+')' : '';
     var reachTimeout = status === -1 && (config && config.timeout > 0 && startTime > 0) && (Date.now() - startTime) >= config.timeout;
     if (reachTimeout) {
       console.error('[http] Request timeout on [{0}] after waiting {1}ms'.format(url, config.timeout));

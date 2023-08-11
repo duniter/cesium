@@ -4,14 +4,16 @@
 <i class="avatar" ng-if="::tx.avatar" style="background-image: url({{::tx.avatar.src}})"></i>
 
 <div class="row no-padding">
+
+  <!-- TX issuer or recipient (uid, pubkey or name) -->
   <div class="col col-pubkey no-padding">
-    <a class="" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="::tx.uid">
+    <a ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="::tx.uid">
       {{::tx.name||tx.uid}}
     </a>
-    <a class="gray" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="::!tx.uid && tx.pubkey">
+    <a class="gray" ui-sref="app.wot_identity({pubkey:tx.pubkey})" ng-if="::!tx.uid && tx.pubkey">
       <i class="ion-key gray"></i>
       {{::tx.pubkey | formatPubkey}}
-      <span ng-if="::tx.name"> - {{::tx.name | truncText:40}}</span>
+      <span ng-if="::tx.name"> - {{::tx.name}}</span>
     </a>
     <p ng-if="::tx.pubkeys" class="pubkeys">
       <a class="gray" ng-repeat="pubkey in ::tx.pubkeys.slice(0, 4)"
@@ -20,11 +22,10 @@
       </a>
       <span ng-if="::tx.pubkeys.length &gt; 4">...</span>
     </p>
-    <p class="dark visible-xs comment text-italic"
+    <p class="dark visible-xs visible-sm comment text-italic text-wrap"
        ng-if="::tx.comment"
        title="{{::tx.comment}}">
-      <i class="ion-ios-chatbubble-outline"></i>
-      {{::tx.comment}}<br/>
+      <i class="ion-ios-chatbubble-outline"></i> {{::tx.comment}}
     </p>
     <h4>
       <a ng-if="::!pending" class="gray underline" ui-sref="app.view_block({number: tx.block_number})">
@@ -35,11 +36,15 @@
       </span>
     </h4>
   </div>
-  <div class="col col-50 col-comment no-padding padding-left hidden-xs" ng-if="::tx.comment">
-    <p class="vertical-center gray text-italic "
+
+  <!-- TX comment -->
+  <div class="col col-40 col-comment no-padding padding-left padding-right hidden-xs hidden-sm" ng-if="::tx.comment">
+    <p class="gray text-italic text-wrap"
        data-toggle="tooltip"
        title="{{::tx.comment}}">{{::tx.comment}}</p>
   </div>
+
+  <!-- TX amount -->
   <div class="col col-10 no-padding">
 
     <!-- not locked TX -->

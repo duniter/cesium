@@ -774,6 +774,10 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
   // Update view
   $scope.updateView = function() {
     if (!$scope.formData || $scope.loading) return;
+
+    var fetchMoreMinTime = csHttp.date.now() - csSettings.data.walletHistoryTimeSecond * 5;
+    $scope.formData.tx.canFetchMore = $scope.formData.tx.fromTime > 0 && $scope.formData.tx.fromTime > fetchMoreMinTime;
+
     $scope.$broadcast('$$rebind::balance'); // force rebind balance
     $scope.$broadcast('$$rebind::rebind'); // force rebind
     $scope.motion.show({selector: '.view-wallet-tx .item', ink: false});
@@ -813,7 +817,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
   };
 
   $scope.showQRCode = function(timeout) {
-    if (!wallet || !$scope.qrcodeId) return; // Skip
+    if (!wallet || !$scope.qrcodeId) return; // Skip
 
     // Get the DIV element
     var element = angular.element(document.querySelector('#' + $scope.qrcodeId + ' .content'));
@@ -903,26 +907,37 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
     return $scope.goState('app.view_wallet_tx_errors_by_id', {id: wallet.id});
   };
 
+
+
   $scope.showMoreTx = function(fromTime) {
+    if ($scope.formData.tx.loadingMore) return; // Skip
+
+    $scope.formData.tx.loadingMore = true;
 
     fromTime = fromTime ||
       ($scope.formData.tx.fromTime - csSettings.data.walletHistoryTimeSecond) ||
       (csHttp.date.now() - 2 * csSettings.data.walletHistoryTimeSecond);
 
-    UIUtils.loading.show();
+    console.info('[wallet-tx] Fetching more TX, since: ' + fromTime);
+
     return wallet.refreshData({tx: {enable: true, fromTime: fromTime}})
       .then(function() {
         $scope.updateView();
-        UIUtils.loading.hide();
+        $scope.formData.tx.loadingMore = false;
+        $scope.$broadcast('scroll.infiniteScrollComplete');
       })
       .catch(function(err) {
         // If http rest limitation: wait then retry
         if (err.ucode == BMA.errorCodes.HTTP_LIMITATION) {
           $timeout(function() {
-            return $scope.showMoreTx(fromTime);
+            return $scope.showMoreTx(fromTime); // Loop
           }, 2000);
         }
         else {
+          $scope.formData.tx.loadingMore = false;
+          $scope.formData.tx.canFetchMore = false;
+          $scope.$broadcast('scroll.infiniteScrollComplete');
+
           UIUtils.onError('ERROR.REFRESH_WALLET_DATA')(err);
         }
       });

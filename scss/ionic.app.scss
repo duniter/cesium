@@ -1296,7 +1296,6 @@ html, body {
   padding-top: 8px;
   margin: 0 !important;
 
-
   .badge-energized {
     background-color: rgba(255, 201, 0, 0.3);
     color: #888 !important;
@@ -1309,18 +1308,6 @@ html, body {
     background-color: white; // Fix issue #847
   }
 
-  .vertical-center{
-    position: absolute;
-    top: 30%;
-    width: 40%;
-  }
-
-  p.comment{
-    width: 100%;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
   p.text-wrap {
     white-space: normal;
     a {
@@ -1328,16 +1315,37 @@ html, body {
     }
   }
 
+  p.comment {
+    margin: 8px 0;
+    padding-left: 16px; // For icon
+
+    i.ion-ios-chatbubble-outline {
+      margin-left: -16px;
+      position: absolute;
+    }
+  }
+
   .col-pubkey {
     max-width: 80%;
 
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    a {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     .pubkeys {
       display: block;
-      white-space: nowrap;
-      text-overflow: ellipsis;
       max-height: 130px;
       overflow: hidden;
     }
+  }
+
+  .col-comment {
+    white-space: normal;
   }
 }
 
