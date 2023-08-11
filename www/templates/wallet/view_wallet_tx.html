@@ -152,15 +152,15 @@
             <span class="gray">{{:locale:'ACCOUNT.NO_TX'|translate}}</span>
           </span>
 
-          <!-- Fix #780: do NOT use hash ash id
+          <!-- Fix #780: do NOT use hash as id
           <div ng-repeat="tx in formData.tx.history track by tx.hash"
           -->
-          <div ng-repeat="tx in formData.tx.history track by tx.hash"
+          <div ng-repeat="tx in formData.tx.history track by tx.id"
              class="item item-tx item-icon-left"
              ng-include="::!tx.isUD ? 'templates/wallet/item_tx.html' : 'templates/wallet/item_ud.html'">
           </div>
 
-          <div class="item item-text-wrap text-center" ng-if="!formData.tx.canFetchMore && formData.tx.fromTime > 0">
+          <div class="item item-text-wrap text-center" ng-if="!canScrollMore && formData.tx.fromTime > 0">
             <p>
               <a ng-click="showMoreTx()">{{:locale:'ACCOUNT.SHOW_MORE_TX'|translate}}</a>
               <span class="gray" translate="ACCOUNT.TX_FROM_DATE" translate-values="{fromTime: formData.tx.fromTime}"></span>
@@ -172,7 +172,7 @@
         </div>
 
         <ion-infinite-scroll
-          ng-if="formData.tx.canFetchMore"
+          ng-if="canScrollMore"
           spinner="android"
           on-infinite="showMoreTx()"
           distance="20%">

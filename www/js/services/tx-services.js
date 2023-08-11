@@ -95,11 +95,12 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
         var txPubkeys = amount > 0 ? otherIssuers : otherRecipients;
         var time = tx.time || tx.blockstampTime;
 
-        // Avoid duplicated tx, or tx to him self
-        var txKey = (amount !== 0) && amount + ':' + tx.hash + ':' + time;
+        // Avoid duplicated tx, or tx to him self (if amount = 0)
+        var txKey = (amount !== 0) ? [amount, tx.hash, time].join(':') : undefined;
         if (txKey && !processedTxMap[txKey]) {
           processedTxMap[txKey] = true; // Mark as processed
           var newTx = {
+            id: txKey,
             time: time,
             amount: amount,
             pubkey: txPubkeys.length === 1 ? txPubkeys[0] : undefined,
@@ -139,6 +140,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
       };
 
       var processedTxMap = {};
+      var retryPendingCount = 0;
 
       var jobs = [
         // get current block
@@ -146,6 +148,15 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
         // get pending tx
         BMA.tx.history.pending({pubkey: pubkey})
+          .catch(function(err) {
+            if (err && err.ucode === BMA.errorCodes.HTTP_LIMITATION && retryPendingCount < 3) {
+              retryPendingCount++;
+              return $timeout(function() {
+                return BMA.tx.history.pending({pubkey: pubkey})
+              }, 2000 * retryPendingCount);
+            }
+            throw err;
+          })
           .then(function (res) {
             reduceTxAndPush(pubkey, res.history.sending, tx.pendings, processedTxMap, true /*allow pendings*/);
             reduceTxAndPush(pubkey, res.history.pending, tx.pendings, processedTxMap, true /*allow pendings*/);
@@ -176,9 +187,9 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
         // get TX from a given time
         if (fromTime > 0) {
-          jobs.push(slices.map(function(slice) {
-              return BMA.tx.history.times(slice.params, slice.cache).then(reduceTxFn);
-          }));
+          jobs.push($q.all(slices.map(function(slice) {
+            return BMA.tx.history.times(slice.params, slice.cache).then(reduceTxFn)
+          })));
         }
 
         // get all TX
@@ -194,6 +205,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
               if (ud.time < fromTime) return res; // skip to old UD
               var amount = powBase(ud.amount, ud.base);
               tx.history.push({
+                id: [amount, 'ud', ud.time].join(':'),
                 time: ud.time,
                 amount: amount,
                 isUD: true,
@@ -203,10 +215,10 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           };
 
           // get UD from a given time
-          if ( fromTime > 0) {
-            jobs.push(slices.map(function(slice) {
+          if (fromTime > 0) {
+            jobs.push($q.all(slices.map(function(slice) {
               return BMA.ud.history.times(slice.params, slice.cache).then(reduceUdFn);
-            }));
+            })));
           }
           // get all UD
           else {
@@ -310,38 +322,48 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
       function _processPendingTx(tx) {
         var consumedSources = [];
-        var valid = true;
-        if (tx.amount > 0) { // do not check sources from received TX
-          valid = false;
-          // TODO get sources from the issuer ?
+        // do not check sources from received TX
+        // => move this tx in errors (even if not really)
+        if (tx.amount > 0) {
+          txErrors.push(tx);
         }
         else {
+          var validInputs = true;
           _.find(tx.inputs, function(input) {
             var inputKey = input.split(':').slice(2).join(':');
             var srcIndex = data.sourcesIndexByKey[inputKey];
-            if (angular.isDefined(srcIndex)) {
-              consumedSources.push(data.sources[srcIndex]);
-            }
-            else {
-              valid = false;
+
+            // The input source not exists: mark as invalid
+            if (!angular.isDefined(srcIndex)) {
+              validInputs = false;
               return true; // break
             }
+
+            // Mark input source as consumed
+            consumedSources.push(data.sources[srcIndex]);
           });
-          if (tx.sources) { // add source output
-            addSources(data, tx.sources);
+
+          // Some input source not exist: mark as error
+          if (!validInputs) {
+            console.error("[tx] Pending TX '{}' use an unknown source as input: mark as error".format(tx.hash))
+            txErrors.push(tx);
           }
-          delete tx.sources;
-          delete tx.inputs;
-        }
-        if (valid) {
-          balanceWithPending += tx.amount; // update balance
-          txPendings.push(tx);
-          _.forEach(consumedSources, function(src) {
-            src.consumed=true;
-          });
-        }
-        else {
-          txErrors.push(tx);
+
+          // All tx inputs are valid
+          else {
+            // Add tx outputs has new sources
+            if (tx.sources) {
+              addSources(data, tx.sources);
+            }
+            delete tx.sources;
+            delete tx.inputs;
+
+            balanceWithPending += tx.amount; // update balance
+            txPendings.push(tx);
+            _.forEach(consumedSources, function(src) {
+              src.consumed = true;
+            });
+          }
         }
       }
 
@@ -376,7 +398,9 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
       var allTx = (data.tx.history || []).concat(data.tx.validating||[], data.tx.pendings||[], data.tx.errors||[]);
       return csWot.extendAll(allTx, 'pubkey')
         .then(function() {
-          console.debug('[tx] TX and sources loaded in {0}ms'.format(Date.now() - now));
+          console.debug('[tx] Sources and {0}TX loaded in {1}ms'.format(
+            fromTime === 'pending' ? 'pending ' : '',
+            Date.now() - now));
           return data;
         });
     })

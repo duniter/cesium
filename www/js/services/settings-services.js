@@ -89,12 +89,13 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   defaultSettings = angular.merge({
     timeout: -1, // -1 = auto
     useRelative: false,
-    useLocalStorage: !!$window.localStorage, // override to false if no device
+    useLocalStorage: !!$window.localStorage, // Overwritten to false if not a device
     useLocalStorageEncryption: false,
     persistCache: false, // disable by default (waiting resolution of issue #885)
-    walletHistoryTimeSecond: 30 * 24 * 60 * 60 /*30 days*/,
-    walletHistorySliceSecond: 5 * 24 * 60 * 60 /*download using 5 days slice*/,
-    walletHistoryAutoRefresh: true, // override to false if device
+    walletHistoryTimeSecond: 30 * 24 * 60 * 60, // 30 days
+    walletHistorySliceSecond: 5 * 24 * 60 * 60, // download using 5 days slice - need for cache
+    walletHistoryScrollMaxTimeSecond: 2 * 30 * 24 * 60 * 60, // Limit TX load infinite scroll to 2 month
+    walletHistoryAutoRefresh: true, // Reload TX history on new block ? Overwritten to false if device
     rememberMe: true,
     keepAuthIdle: 10 * 60,
     showUDHistory: true,

@@ -144,7 +144,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         })
         .catch(function(err) {
           // When too many request, retry in 3s
-          if (err && err.ucode == BMA.errorCodes.HTTP_LIMITATION) {
+          if (err && err.ucode === BMA.errorCodes.HTTP_LIMITATION) {
             return $timeout(function() {
               if (remainingTime() > 0) return loadW2spHeads();
             }, 3000);

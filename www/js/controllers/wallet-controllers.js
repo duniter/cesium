@@ -727,12 +727,14 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
     if (!wallet) return $q.reject('Missing wallet');
 
     var hasMinData = wallet.isDataLoaded({minData: true});
+    var fromTime = csHttp.date.now() - csSettings.data.walletHistoryTimeSecond;
     var options = {
       requirements: !hasMinData, // load requirements (=minData) once
       minData: !hasMinData,
       sources: true,
       tx: {
-        enable: true
+        enable: true,
+        fromTime: fromTime
       }
     };
 
@@ -773,10 +775,13 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
 
   // Update view
   $scope.updateView = function() {
-    if (!$scope.formData || $scope.loading) return;
+    if (!$scope.formData || !$scope.formData.tx || $scope.loading) return;
 
-    var fetchMoreMinTime = csHttp.date.now() - csSettings.data.walletHistoryTimeSecond * 5;
-    $scope.formData.tx.canFetchMore = $scope.formData.tx.fromTime > 0 && $scope.formData.tx.fromTime > fetchMoreMinTime;
+    $scope.minScrollMoreTime = moment().utc()
+      .subtract(csSettings.data.walletHistoryScrollMaxTimeSecond, 'second')
+      .startOf('day')
+      .unix();
+    $scope.canScrollMore = $scope.formData.tx.fromTime > $scope.minScrollMoreTime;
 
     $scope.$broadcast('$$rebind::balance'); // force rebind balance
     $scope.$broadcast('$$rebind::rebind'); // force rebind
@@ -793,7 +798,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
   // Updating wallet data
   $scope.doUpdate = function(silent) {
     console.debug('[wallet] TX history reloading...');
-    var fromTime = $scope.formData &&  $scope.formData.tx && $scope.formData.tx.fromTime || undefined;
+    var fromTime = $scope.formData && $scope.formData.tx && $scope.formData.tx.fromTime || undefined;
     var options = {
       sources: true,
       tx:  {
@@ -802,6 +807,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
       },
       api: false
     };
+
     return (silent ?
         // If silent: just refresh
         wallet.refreshData(options) :
@@ -910,9 +916,9 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
 
 
   $scope.showMoreTx = function(fromTime) {
-    if ($scope.formData.tx.loadingMore) return; // Skip
+    if ($scope.loadingMore) return; // Skip
 
-    $scope.formData.tx.loadingMore = true;
+    $scope.loadingMore = true;
 
     fromTime = fromTime ||
       ($scope.formData.tx.fromTime - csSettings.data.walletHistoryTimeSecond) ||
@@ -920,26 +926,24 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
 
     console.info('[wallet-tx] Fetching more TX, since: ' + fromTime);
 
-    return wallet.refreshData({tx: {enable: true, fromTime: fromTime}})
+    return wallet.refreshData({sources: true, tx: {enable: true, fromTime: fromTime}})
       .then(function() {
+        $scope.loadingMore = false;
         $scope.updateView();
-        $scope.formData.tx.loadingMore = false;
         $scope.$broadcast('scroll.infiniteScrollComplete');
       })
       .catch(function(err) {
         // If http rest limitation: wait then retry
-        if (err.ucode == BMA.errorCodes.HTTP_LIMITATION) {
-          $timeout(function() {
+        if (err.ucode === BMA.errorCodes.HTTP_LIMITATION) {
+          return $timeout(function() {
             return $scope.showMoreTx(fromTime); // Loop
           }, 2000);
         }
-        else {
-          $scope.formData.tx.loadingMore = false;
-          $scope.formData.tx.canFetchMore = false;
-          $scope.$broadcast('scroll.infiniteScrollComplete');
 
-          UIUtils.onError('ERROR.REFRESH_WALLET_DATA')(err);
-        }
+        $scope.loadingMore = false;
+        $scope.canScrollMore = false;
+        $scope.$broadcast('scroll.infiniteScrollComplete');
+        UIUtils.onError('ERROR.REFRESH_WALLET_DATA')(err);
       });
   };
 
