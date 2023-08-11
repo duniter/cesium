@@ -100,9 +100,9 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
   };
 
   $scope.toggleFeed = function(show) {
-    $scope.showFeed = (show !== undefined) ? show : !$scope.showFeed
+    $scope.showFeed = (show !== undefined) ? show : !$scope.showFeed;
     $scope.$broadcast('$$rebind::feed'); // force rebind feed
-  }
+  };
 
   /* -- show/hide locales popup -- */
 

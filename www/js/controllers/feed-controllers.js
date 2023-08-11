@@ -170,7 +170,7 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
         cache: csCache.get('csFeed-', csCache.constants.LONG)
       })
       .success(resolve)
-      .error(reject)
+      .error(reject);
     });
   };
 
@@ -188,7 +188,7 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
    * @returns {{content}|*}
    */
   $scope.prepareJsonFeedItem = function(item, feed) {
-    if ($scope.isEmptyFeedItem(item)) throw Error('Empty feed item')
+    if ($scope.isEmptyFeedItem(item)) throw Error('Empty feed item');
 
     var maxContentLength = $scope.search.maxContentLength;
 
@@ -303,7 +303,7 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
             console.error("[feed] Failed to load discourse topic from '{}'".format(topicUrl), err);
             return null; // continue
           })
-        )
+        );
       }, []))
       .then(function(topics) {
         feed.items = topics.reduce(function(res, topic) {
@@ -355,7 +355,7 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
         name: post.display_username,
         url: [baseUrl, 'u', post.username].join('/'),
         avatar: post.avatar_template ? (baseUrl + post.avatar_template.replace('{size}', '60')) : undefined
-      }
+      };
 
       // Try to resolve author pubkey, to replace author url by a link to wot identity
       var developer = _.find(csConfig.developers || [], function(developer) {

@@ -932,7 +932,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     */
     exports.blockchain.blocks = function(blockNumbers){
       return $q.all(blockNumbers.map(function(block) {
-        return exports.blockchain.block({block: block})
+        return exports.blockchain.block({block: block});
       }));
     };
 
@@ -942,7 +942,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
      */
     exports.network.peering.peersByLeaves = function(leaves){
       return $q.all(leaves.map(function(leaf) {
-        return exports.network.peering.peers({leaf: leaf})
+        return exports.network.peering.peers({leaf: leaf});
       }));
     };
 
@@ -952,7 +952,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       return $q(function(resolve, reject) {
         var result = [];
         var jobs = [];
-        var chunk = paramValues.slice(offset, offset+size)
+        var chunk = paramValues.slice(offset, offset+size);
         _.each(chunk, function(paramValue) {
           var requestParams = {};
           requestParams[paramName] = paramValue;
@@ -983,58 +983,6 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
                   });
               }, exports.constants.LIMIT_REQUEST_DELAY);
             }
-            else {
-              resolve(result);
-            }
-          })
-          .catch(function(err){
-            if (err && err.ucode === exports.errorCodes.HTTP_LIMITATION) {
-              resolve(result);
-            }
-            else {
-              reject(err);
-            }
-          });
-      });
-    };
-
-    function retryableSlices(getRequestFns, slices, offset, size) {
-      offset = angular.isDefined(offset) ? offset : 0;
-      size = size || exports.constants.LIMIT_REQUEST_COUNT;
-      return $q(function(resolve, reject) {
-        var result = [];
-        var jobs = [];
-        var chunk = slices.slice(offset, offset+size)
-        _.each(chunk, function(params) {
-          jobs.push(
-            getRequestFns(params)
-              .then(function(res){
-                if (!res) return;
-                result.push(res);
-              })
-          );
-        });
-
-        $q.all(jobs)
-          .then(function() {
-            if (offset < slices.length - 1) {
-              // Loop, with a new offset
-              $timeout(function() {
-                exports.raw.getHttpRecursive(getRequestFns, slices, offset+size, size)
-                  .then(function(res) {
-                    if (!res || !res.length) {
-                      resolve(result);
-                      return;
-                    }
-
-                    resolve(result.concat(res));
-                  })
-                  .catch(function(err) {
-                    reject(err);
-                  });
-              }, exports.constants.LIMIT_REQUEST_DELAY);
-            }
-            // End
             else {
               resolve(result);
             }

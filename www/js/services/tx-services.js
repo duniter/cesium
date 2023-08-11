@@ -152,7 +152,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             if (err && err.ucode === BMA.errorCodes.HTTP_LIMITATION && retryPendingCount < 3) {
               retryPendingCount++;
               return $timeout(function() {
-                return BMA.tx.history.pending({pubkey: pubkey})
+                return BMA.tx.history.pending({pubkey: pubkey});
               }, 2000 * retryPendingCount);
             }
             throw err;
@@ -188,7 +188,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
         // get TX from a given time
         if (fromTime > 0) {
           jobs.push($q.all(slices.map(function(slice) {
-            return BMA.tx.history.times(slice.params, slice.cache).then(reduceTxFn)
+            return BMA.tx.history.times(slice.params, slice.cache).then(reduceTxFn);
           })));
         }
 
@@ -345,7 +345,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
           // Some input source not exist: mark as error
           if (!validInputs) {
-            console.error("[tx] Pending TX '{}' use an unknown source as input: mark as error".format(tx.hash))
+            console.error("[tx] Pending TX '{}' use an unknown source as input: mark as error".format(tx.hash));
             txErrors.push(tx);
           }
 
