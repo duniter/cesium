@@ -28,9 +28,6 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
         return null;
       })
       .then(function(feed) {
-        // Clean title (remove duplicated titles)
-        $scope.prepareJsonFeed(feed);
-
         $scope.loading = false;
         $scope.feed = feed;
         var showFeed = feed && feed.items && feed.items.length > 0 || false;
@@ -49,14 +46,20 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
     var minDate = maxAgeInMonths > 0 ? moment().subtract(maxAgeInMonths, 'month').startOf('day').utc() : undefined;
     $scope.search.minTime = minDate && minDate.unix();
 
+    // Reset load counter
+    $scope.search.loadCount = 0;
+
     var now = Date.now();
     console.debug("[feed] Loading from {url: {0}, minTime: '{1}'}".format(feedUrl, minDate && minDate.toISOString() || 'all'));
 
-    return $scope.getJsonFeed(feedUrl)
+    return $scope.loadJsonFeed(feedUrl)
       .then(function (feed) {
         console.debug('[feed] {0} items loaded in {0}ms'.format(feed && feed.items && feed.items.length || 0, Date.now() - now));
 
         if (!feed || !feed.items) return null; // skip
+
+        // Clean title (remove duplicated titles)
+        $scope.cleanDuplicatedTitles(feed);
 
         return feed;
       })
@@ -66,26 +69,30 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
       });
   };
 
-  $scope.getJsonFeed = function(feedUrl, maxCount) {
+  /**
+   * Load a JSON file, from the given URL, and convert into the JSON Feed format
+   * @param feedUrl
+   * @param maxCount
+   * @returns {*}
+   */
+  $scope.loadJsonFeed = function(feedUrl, maxItemCount) {
     var locale = $translate.use();
-    maxCount = maxCount || $scope.search.maxCount;
     var minTime = $scope.search.minTime;
+    maxItemCount = maxItemCount || $scope.search.maxCount;
 
+    // Increment load counter (to avoid infinite loop)
     $scope.search.loadCount++;
+
     return $scope.getJson(feedUrl)
       .then(function(json) {
 
-        // Detect Discourse category, then convert
-        if ($scope.isDiscourseCategory(json)) {
-          return $scope.parseDiscourseCategory(feedUrl, json);
+        // Parse JSON from discourse
+        if ($scope.isJsonDiscourse(json)) {
+          return $scope.parseJsonDiscourse(feedUrl, json);
         }
 
-        // Detect Discourse topic, then convert
-        else if ($scope.isDiscourseTopic(json)) {
-          return $scope.parseDiscourseTopic(feedUrl, json);
-        }
-
-        return json;
+        // Return a copy (to avoid any change in cached data)
+        return angular.copy(json);
       })
       .then(function(feed) {
         if (!feed || !feed.items && !feed.next_url) return null; // skip
@@ -115,6 +122,7 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
           return res.concat(item);
         }, []);
 
+
         return feed;
       })
       .then(function(feed) {
@@ -122,23 +130,23 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
         feed.items = feed.items || [];
 
         // Slice to keep last (more recent) items
-        if (feed.items.length > maxCount) {
-          feed.items = feed.items.slice(feed.items.length - maxCount);
+        if (feed.items.length > maxItemCount) {
+          feed.items = feed.items.slice(feed.items.length - maxItemCount);
           return feed;
         }
 
         // Not enough items: try to fetch more
         var canFetchMore = feed.next_url && feed.next_url !== feedUrl && $scope.search.loadCount < $scope.search.maxLoadCount;
-        if (canFetchMore && feed.items.length < maxCount) {
+        if (canFetchMore && feed.items.length < maxItemCount) {
 
           console.debug("[feed] Loading from {next_url: '{0}'}".format(feed.next_url));
 
           // Fetch more
-          return $scope.getJsonFeed(feed.next_url, maxCount - feed.items.length)
+          return $scope.loadJsonFeed(feed.next_url, maxItemCount - feed.items.length)
             .then(function(moreFeed) {
               // Append new items
               if (moreFeed && moreFeed.items && moreFeed.items.length) {
-                feed.items = feed.items.concat(moreFeed.items.slice(0, maxCount - feed.items.length));
+                feed.items = feed.items.concat(moreFeed.items.slice(0, maxItemCount - feed.items.length));
               }
 
               return feed;
@@ -147,8 +155,13 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
 
         return feed;
       });
-  }
+  };
 
+  /**
+   * Fetch a JSON file, from a URL. Use a cache (of 1 hour) to avoid to many network request
+   * @param url
+   * @returns {*}
+   */
   $scope.getJson = function(url) {
     return $q(function(resolve, reject) {
       $http.get(url, {
@@ -165,6 +178,15 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
     return (!item || (!item.title && !item.content_text && !item.content_html));
   };
 
+  /**
+   * Prepare a feed for the template :
+   * - set 'time' with a unix timestamp
+   * - set 'content' with the HTML or text content (truncated if too long)
+   * - fill authors if not exists, using feed authors
+   * @param item
+   * @param feed
+   * @returns {{content}|*}
+   */
   $scope.prepareJsonFeedItem = function(item, feed) {
     if ($scope.isEmptyFeedItem(item)) throw Error('Empty feed item')
 
@@ -197,15 +219,14 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
     item.authors = item.authors || feed.authors;
 
     return item;
-  }
-
+  };
 
   /**
    * Prepare feed (e.g. clean duplicated title, when feed URL is a discourse topic, all item will have the same title)
    * @param feed
    * @returns {*}
    */
-  $scope.prepareJsonFeed = function(feed) {
+  $scope.cleanDuplicatedTitles = function(feed) {
     if (!feed || !feed.items) return feed;
 
     _.forEach(feed.items, function(item, index) {
@@ -216,12 +237,39 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
     return feed;
   };
 
+  /**
+   * Detect this the given JSON is from Discourse
+   * @param json
+   * @returns {*}
+   */
+  $scope.isJsonDiscourse = function(json) {
+    return $scope.isDiscourseCategory(json) || $scope.isDiscourseTopic(json);
+  };
+
+  /**
+   * Transform a JSON from Discourse into JSON feed
+   * @param feedUrl
+   * @param json
+   * @returns {*}
+   */
+  $scope.parseJsonDiscourse = function(feedUrl, json) {
+    // Detect if category category
+    if ($scope.isDiscourseCategory(json)) {
+      // Convert category to feed
+      return $scope.parseDiscourseCategory(feedUrl, json);
+    }
+
+    // Convert topic to feed
+    return $scope.parseDiscourseTopic(feedUrl, json);
+  };
+
   $scope.isDiscourseCategory = function(category) {
-    return category && category.topic_list && Array.isArray(category.topic_list.topics);
-  }
+    return category && category.topic_list && Array.isArray(category.topic_list.topics) &&
+      !!category.topic_list.more_topics_url || false;
+  };
 
   $scope.parseDiscourseCategory = function(url, category, locale) {
-    // Make sure this is a valid topic
+    // Check is a discourse category
     if (!$scope.isDiscourseCategory(category)) throw new Error('Not a discourse category');
 
     locale = locale || $translate.use();
@@ -242,28 +290,38 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
         // Exclude category description (=tag 'about-category')
         if (topic.tags && topic.tags.includes('about-category')) return res;
 
-        // Skip if not expected language
-        var language = $scope.getLanguageFromTitle(topic.title);
-        if (!$scope.isCompatibleLanguage(locale, language)) return res;
+        // Detect language, from the title. Then skip if not compatible with expected locale
+        var topicLanguage = $scope.getLanguageFromTitle(topic.title);
+        if (!$scope.isCompatibleLanguage(locale, topicLanguage)) return res;
 
+        // Compute the URL to load the topic
         var topicUrl = [baseUrl, 't', topic.slug, topic.id].join('/') + '.json';
-        return res.concat($scope.getJson(topicUrl))
-      }, [])
-    ).then(function(topics) {
-      feed.items = topics.reduce(function(res, topic) {
-        if (!$scope.isDiscourseTopic(topic)) return res; // Not a topic: skip
-        var feedTopic = $scope.parseDiscourseTopic(baseUrl, topic, feed);
 
-        if (!feedTopic.items || !feedTopic.items.length) return res; // Topic is empty: skip
-        return res.concat(feedTopic.items[0]);
-      }, []);
+        // Load topic JSON
+        return res.concat($scope.getJson(topicUrl)
+          .catch(function(err) {
+            console.error("[feed] Failed to load discourse topic from '{}'".format(topicUrl), err);
+            return null; // continue
+          })
+        )
+      }, []))
+      .then(function(topics) {
+        feed.items = topics.reduce(function(res, topic) {
+          if (!$scope.isDiscourseTopic(topic)) return res; // Not a topic: skip
+
+          var feedTopic = $scope.parseDiscourseTopic(baseUrl, topic, feed);
+
+          if (!feedTopic.items || !feedTopic.items.length) return res; // Topic is empty: skip
+
+          return res.concat(feedTopic.items[0]);
+        }, []);
       return feed;
     });
-  }
+  };
 
   $scope.isDiscourseTopic = function(topic) {
     return topic && topic.title && topic.post_stream && Array.isArray(topic.post_stream.posts);
-  }
+  };
 
   $scope.parseDiscourseTopic = function(url, topic, feed) {
     // Make sure this is a valid topic
@@ -273,7 +331,8 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
     var baseUrl = uri.protocol + '//' + uri.host + (uri.port != 443 && uri.port != 80 ? uri.port : '');
 
     // Clean title (e.g. remove '(fr)' or '(en)' or '(es)')
-    var title = $scope.cleanTitle(topic.title);
+    // Prefer unicode title (e.g. emoji are replaced)
+    var title = $scope.cleanTitle(topic.unicode_title || topic.title);
     var language = $scope.getLanguageFromTitle(topic.title);
 
     // Prepare root feed, if not yet exists
@@ -335,7 +394,7 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
   $scope.cleanTitle = function(title) {
     if (!title) return undefined;
     return title.replace(/\s\([a-z]{2}(:?-[A-Z]{2})?\)$/, '');
-  }
+  };
 
   /**
    * Clean a title : remove locale string at the end (e.g. '(fr)' or '(en)' or '(es)')
@@ -345,17 +404,17 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
     if (!title) return undefined;
     var matches = /\s\(([a-z]{2}(:?-[A-Z]{2})?)\)$/.exec(title);
     return matches && matches[1];
-  }
+  };
 
   $scope.isCompatibleLanguage = function(expectedLocale, language) {
     if (!expectedLocale || !language || expectedLocale === language) return true;
 
     // Extract the language from the locale, then compare
     // E.g. 'fr-FR' => 'fr'
-    const expectedLanguage = expectedLocale.split('-', 2)[0];
+    var expectedLanguage = expectedLocale.split('-', 2)[0];
 
     return expectedLanguage.toLowerCase() === language.toLowerCase();
-  }
+  };
 
   csSettings.api.locale.on.changed($scope, function() {
     if ($scope.loading) return;
