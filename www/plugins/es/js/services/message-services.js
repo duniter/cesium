@@ -86,7 +86,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
     }
 
     function countUnreadMessages(options) {
-      if (typeof options === 'string') throw new Error('Invalid argument options: expected an object, but get a string!')
+      if (typeof options === 'string') throw new Error('Invalid argument options: expected an object, but get a string!');
       options = options || {};
       var wallet = options.wallet ||
         (options.walletId && csWallet.children.get(options.walletId)) || csWallet;
