@@ -58,8 +58,8 @@
               </div>
             </div>
 
-            <div class="item item-complex card stable-bg item-icon-left item-icon-right ink hidden-xs"
-                 ng-click="selectOption('saveID')" ng-if="login && !$root.device.enable">
+            <div class="item item-complex card stable-bg item-icon-left item-icon-right ink"
+                 ng-click="selectOption('saveID')" ng-if="login">
               <div class="item-content item-text-wrap">
                 <i class="item-image dark icon ion-person"></i>
                 <b class="ion-ios-redo icon-secondary dark" style="top: -8px; left: 39px; font-size: 12px;"></b>
@@ -73,7 +73,7 @@
 
             <!-- keyfile generation (hidden if device enable, because we do not known were the file is stored) -->
             <div class="item item-complex card stable-bg item-icon-left item-icon-right ink hidden-xs"
-                 ng-click="selectOption('generateKeyfile')" ng-if="login && !$root.device.enable">
+                 ng-click="selectOption('generateKeyfile')" ng-if="login">
               <div class="item-content item-text-wrap">
                 <i class="item-image dark icon ion-document-text"></i>
                 <b class="ion-key icon-secondary dark" style="top: -8px; left: 42px; font-size: 12px;"></b>
@@ -84,8 +84,8 @@
               </div>
             </div>
 
-            <div class="item item-complex card stable-bg item-icon-left item-icon-right ink hidden-xs hidden-sm"
-                 ng-click="downloadRevokeFile()" ng-if="canRevoke && !$root.device.enable">
+            <div class="item item-complex card stable-bg item-icon-left item-icon-right ink"
+                 ng-click="downloadRevokeFile()" ng-if="canRevoke">
               <div class="item-content item-text-wrap">
                 <i class="item-image dark icon ion-person"></i>
                 <b class="ion-ios-redo icon-secondary dark" style="top: -8px; left: 39px; font-size: 12px;"></b>

@@ -1280,7 +1280,19 @@ function WotIdentityTxViewController($scope, $timeout, $q, BMA, csSettings, csWo
   $scope.downloadHistoryFile = function(options) {
     options = options || {};
     options.fromTime = options.fromTime || -1; // default: full history
-    csTx.downloadHistoryFile($scope.pubkey, options);
+
+    UIUtils.loading.show();
+
+    UIUtils.toast.show('INFO.DOWNLOADING_DOTS');
+    return csTx.downloadHistoryFile($scope.pubkey, options)
+      .then(UIUtils.toast.hide)
+      .then(function() {
+        UIUtils.toast.show('INFO.FILE_DOWNLOADED', 1000);
+      })
+      .catch(function(err){
+        if (err && err === 'CANCELLED') return;
+        UIUtils.onError('ERROR.DOWNLOAD_TX_HISTORY_FAILED')(err);
+      });
   };
 
   $scope.showMoreTx = function(fromTime) {
@@ -1309,6 +1321,25 @@ function WotIdentityTxViewController($scope, $timeout, $q, BMA, csSettings, csWo
       });
   };
 
+  /* -- popover -- */
+
+  $scope.showActionsPopover = function(event) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'templates/wot/popover_tx_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
+        $scope.actionsPopover = popover;
+      }
+    });
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
+    }
+  };
 }
 
 

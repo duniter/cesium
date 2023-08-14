@@ -51,6 +51,7 @@
     "LOADING": "Lade...",
     "LOADING_WAIT": "Lade...<br/><small>(Cesium fragt den Duniter-Knoten ab)</small>",
     "SEARCHING": "Suche...",
+    "DOWNLOADING_DOTS": "Herunterladen...",
     "FROM": "Von",
     "TO": "An",
     "COPY": "Kopieren",
@@ -615,7 +616,7 @@
       "NO_WALLET": "Keine sekundäre Brieftasche",
       "BTN_DELETE": "Eine sekundäre Brieftasche entfernen...",
       "BTN_RENAME": "Brieftasche umbenennen",
-      "EXPORT_FILENAME": "my_wallets-{{pubkey|formatPubkey}}-{{currency}}.csv",
+      "EXPORT_FILENAME": "{{currency}}-my_wallets-{{pubkey}}.csv",
       "TOTAL_DOTS": "Gesamt: ",
       "EDIT_POPOVER": {
         "TITLE": "Brieftasche umbenennen",
@@ -637,7 +638,7 @@
       "DOWNLOAD_REVOKE_HELP" : "Eine Sperrdatei ist wichtig, zum Beispiel bei Verlust von Zugangsdaten. Sie ermöglicht dir, <b>dieses Konto aus dem Netz des Vertrauens herauszuholen</b> und es zu einer einfachen Brieftasche zu machen.",
       "GENERATE_KEYFILE": "Meine Schlüsselbund-Datei generieren ...",
       "GENERATE_KEYFILE_HELP": "Generiere eine Datei, mit der du dich authentifizieren kannst, ohne deine Zugangsdaten einzugeben.<br/><b>Warnung:</b> Diese Datei enthält Ihren geheimen Schlüssel. Es ist daher sehr wichtig, sie an einem sicheren Ort aufzubewahren!",
-      "KEYFILE_FILENAME": "keychain-{{pubkey|formatPubkey}}-{{currency}}-{{format}}.dunikey",
+      "KEYFILE_FILENAME": "{{currency}}-keychain-{{pubkey}}-{{format}}.dunikey",
       "MEMBERSHIP_IN": "Als Mitglied registrieren...",
       "MEMBERSHIP_IN_HELP": "Ermöglicht es dir, ein einfaches Brieftaschen-Konto <b>in ein Mitgliedskonto umzuwandeln</b>, indem du eine Mitgliedschaftsanfrage sendest. Nur erlaubt, wenn du noch kein anderes Mitgliedskonto hast.",
       "SEND_IDENTITY": "Pseudonym veröffentlichen...",
@@ -673,9 +674,10 @@
       "REVOCATION_WITH_FILE_HELP": "Um ein Mitgliedskonto <b>dauerhaft zu widerrufen</b>, ziehe bitte die Widerrufsdatei in das Feld unten oder klicke in das Feld, um nach einer Datei zu suchen.",
       "REVOCATION_WALLET": "Dieses Konto sofort widerrufen",
       "REVOCATION_WALLET_HELP": "Die Anforderung des Widerrufs Ihrer Identität führt dazu, dass <b>Ihre Mitgliedschaft widerrufen wird</b> (auf jeden Fall für das zugehörige Pseudonym und den öffentlichen Schlüssel). Das Konto ist dann nicht mehr in der Lage, eine Universaldividende zu produzieren.<br/>Sie können es jedoch weiterhin als einfache Brieftasche verwenden.",
-      "REVOCATION_FILENAME": "revocation-{{uid}}-{{pubkey|formatPubkey}}-{{currency}}.txt",
+      "REVOCATION_FILENAME": "{{currency}}-revocation-{{uid}}-{{pubkey}}.txt",
       "SAVE_ID": "Meine Zugangsdaten speichern...",
       "SAVE_ID_HELP": "Erstellen einer Sicherungsdatei, um <b>dein Passwort</b> (und den geheimen Benutzernamen) <b>wiederzuerlangen, falls du es vergisst</b>. Die Datei ist mit personenbezogenen Fragen <b>gesichert</b> (verschlüsselt).",
+      "SAVE_ID_FILENAME": "{{currency}}-anmeldeinformationen-{{pubkey}}.txt",
       "STRONG_LEVEL": "Hoch <span class=\"hidden-xs \">(6 Fragen Minimum)</span>",
       "TITLE": "Konto and Sicherheit",
       "KEYFILE": {
@@ -696,7 +698,7 @@
         }
       }
     },
-    "FILE_NAME": "{{currency}} - Kontozusammenfassung {{pubkey|formatPubkey}} {{currentTime|formatDateForFile}}.csv",
+    "FILE_NAME": "{{currency}}-Kontozusammenfassung-{{pubkey}}-{{currentTime|formatDateForFile}}.csv",
     "HEADERS": {
       "TIME": "Datum",
       "AMOUNT": "Betrag",
@@ -809,6 +811,7 @@
     "GET_BLOCK_FAILED": "Fehler beim Holen eines Blocks",
     "INVALID_BLOCK_HASH": "Block nicht gefunden (falscher Hashwert)",
     "DOWNLOAD_REVOCATION_FAILED": "Fehler beim Herunterladen der Widerrufsdatei.",
+    "DOWNLOAD_SAVE_ID_FAILED": "Fehler beim Herunterladen der Sicherungsdatei für die Anmeldeinformationen.",
     "REVOCATION_FAILED": "Fehler bei dem Versuch, die Identität zu widerrufen.",
     "SALT_OR_PASSWORD_NOT_CONFIRMED": "Falscher geheimer Benutzername oder Passwort",
     "RECOVER_ID_FAILED": "Konnte Passwort nicht wiederherstellen",
@@ -833,7 +836,8 @@
     "INVALID_FILE_FORMAT": "Ungültiges Dateiformat.",
     "SAME_TX_RECIPIENT": "Der Empfänger muss sich vom Auftraggeber unterscheiden.",
     "SELF_CERTIFICATION": "Sie können Ihre eigene Identität nicht zertifizieren.",
-    "TX_SANDBOX_FULL": "Der von Cesium verwendete Duniter-Knoten kann keine neuen Überweisungen mehr bearbeiten, da die Warteschlange voll ist.<br/><br/>Versuche es später erneut oder wähle einen anderen Duniter-Knoten (in den <b>Einstellungen</b>)."
+    "TX_SANDBOX_FULL": "Der von Cesium verwendete Duniter-Knoten kann keine neuen Überweisungen mehr bearbeiten, da die Warteschlange voll ist.<br/><br/>Versuche es später erneut oder wähle einen anderen Duniter-Knoten (in den <b>Einstellungen</b>).",
+    "DOWNLOAD_TX_HISTORY_FAILED": "Fehler beim Herunterladen des Kontoauszugs"
   },
   "INFO": {
     "POPUP_TITLE": "Hinweis",
@@ -851,7 +855,8 @@
     "FEATURE_NOT_AVAILABLE_ON_DEMO": "Diese Funktion ist auf der Demo-Version nicht verfügbar.<br/>Aus <b>Sicherheitsgründen</b> empfehlen wir dir, eine Kopie der Software zu <b>installieren</b>.<br/>Besuche die Webseite <a href='https://cesium.app'>www.cesium.app</a> für Hilfe und weitere Informationen.",
     "FEATURES_NOT_IMPLEMENTED": "Diese Funktion ist noch nicht implementiert.<br/><br/>Warum nicht mitwirken, um sie schneller zu erhalten? ;)",
     "EMPTY_TX_HISTORY": "Keine Tansaktionen für den Export vorhanden.",
-    "LOADING_PENDING_TX": "Lade...<br/><small>(Abrufen von ausstehenden Operationen)</small>"
+    "LOADING_PENDING_TX": "Lade...<br/><small>(Abrufen von ausstehenden Operationen)</small>",
+    "FILE_DOWNLOADED": "Datei heruntergeladen"
   },
   "CONFIRM": {
     "CAN_CONTINUE": "<b>Bist du sicher</b>, dass du fortfahren möchtest?",

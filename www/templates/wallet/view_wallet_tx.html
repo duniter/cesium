@@ -8,6 +8,10 @@
 
   <ion-nav-buttons side="secondary">
     <cs-extension-point name="nav-buttons"></cs-extension-point>
+
+    <button class="button button-icon button-clear icon ion-android-more-vertical visible-xs visible-sm"
+            ng-click="showActionsPopover($event)">
+    </button>
   </ion-nav-buttons>
 
   <ion-content scroll="true" class="refresher-positive-900-bg"
@@ -70,7 +74,7 @@
     <!-- QR code -->
     <ng-include src="::'templates/common/qrcode.html'"></ng-include>
 
-    <!-- Buttons bar-->
+    <!-- Buttons bar -->
     <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
 
       <button class="button button-stable button-small-padding icon ion-loop ink"

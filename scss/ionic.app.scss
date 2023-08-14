@@ -1282,9 +1282,10 @@ html, body {
   }
 }
 
-.stable-100-bg {
-  background-color: $stable-100-bg !important;
+.popover-wallet-tx-actions {
+  height: 120px;
 }
+
 
 /******
 * TX view (wallet or identity)
@@ -1393,6 +1394,7 @@ html, body {
   opacity: 0.8;
   filter: alpha(opacity=80);
 }
+
 
 .card.stable-900-bg,
 .card .stable-900-bg,
@@ -2570,6 +2572,11 @@ div[drop-zone]:hover {
 /**********
   Wot identity
 **********/
+
+.stable-100-bg {
+  background-color: $stable-100-bg !important;
+}
+
 .hero.dark-100-bg {
   background-color: $dark-100-bg;
 }

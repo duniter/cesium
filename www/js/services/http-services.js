@@ -385,11 +385,11 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
     var searchParams;
     if (parser.search && parser.search.startsWith('?')) {
-      searchParams = parser.search.substr(1).split('&')
+      searchParams = parser.search.substring(1).split('&')
         .reduce(function(res, searchParam) {
           if (searchParam.indexOf('=') !== -1) {
-            var key = searchParam.substr(0, searchParam.indexOf('='));
-            var value = searchParam.substr(searchParam.indexOf('=') + 1);
+            var key = searchParam.substring(0, searchParam.indexOf('='));
+            var value = searchParam.substring(searchParam.indexOf('=') + 1);
             res[key] = value;
           }
           else {

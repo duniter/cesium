@@ -51,6 +51,7 @@
     "LOADING": "Even geduld...",
     "LOADING_WAIT": "Even geduld...<br/><small>(Cesium vraagt de Duniter-node op)</small>",
     "SEARCHING": "Zoeken...",
+    "DOWNLOADING_DOTS": "Downloaden...",
     "FROM": "Van",
     "TO": "Aan",
     "COPY": "Kopieren",
@@ -526,7 +527,10 @@
       "REMINDER_TITLE": "Herinnering",
       "SHORT_LICENSE_REMINDER": "Je kunt de persoon eraan herinneren verschillende certificeringsparameters te certificeren:<br/><br/><ul><li> - Elk lid kan maximaal 100 andere identiteiten certificeren.</li><li> - De certificeringen worden met een interval van 5 dagen opgeslagen.</li><li> - Een nieuwe identiteit moet in minder dan 2 maanden minstens 5 certificeringen verzamelen.</li><li> - Een lid moet minstens eenmaal per jaar zijn lidmaatschap vernieuwen.</li><li> - Certificeringen hebben een levensduur van twee jaar.</li></ul>"
     },
-    "FILE_NAME": "{{currency}} - Rekeningafschrift {{pubkey|formatPubkey}} {{currentTime|formatDateForFile}}.csv",
+    "SECURITY": {
+      "SAVE_ID_FILENAME": "{{currency}}-inloggegevens-{{pubkey}}.txt"
+    },
+    "FILE_NAME": "{{currency}}-rekeningafschrift-{{pubkey}}-{{currentTime|formatDateForFile}}.csv",
     "HEADERS": {
       "TIME": "Datum",
       "AMOUNT": "Bedrag",
@@ -579,6 +583,7 @@
     "GET_CURRENCY_PARAMETER": "Could not get currency parameters.",
     "GET_CURRENCY_FAILED": "Could not load currency.",
     "SEND_TX_FAILED": "Could not send transaction.",
+    "DOWNLOAD_SAVE_ID_FAILED": "Downloaden van het back-upbestand voor inloggegevens mislukt.",
     "ALL_SOURCES_USED": "Please wait the next block computation (All transaction sources has been used).",
     "NOT_ENOUGH_SOURCES": "Not enough changes to send this amount in one time.<br/>Maximum amount: {{amount}} {{unit}}<sub>{{subUnit}}</sub>.",
     "ACCOUNT_CREATION_FAILED": "Error while creating your member account.",
@@ -615,7 +620,8 @@
     "EXISTING_ACCOUNT": "Je gegevens komen overeen met een bestaande rekening, met de <a ng-click=\"showHelpModal('pubkey')\">publieke sleutel</a>:",
     "EXISTING_ACCOUNT_REQUEST": "Gelieve je gegevens te wijzigen zodat ze met een niet gebruikte rekening overeenkomen.",
     "SELF_CERTIFICATION": "U kunt uw eigen identiteit niet certificeren.",
-    "TX_SANDBOX_FULL": "De Duniter-peer die door Cesium wordt gebruikt, kan geen nieuwe overschrijvingen meer verwerken, omdat de wachtrij vol is.<br/><br/>Probeer het later opnieuw of wijzig de peer (in de <b>Instellingen</b>)."
+    "TX_SANDBOX_FULL": "De Duniter-peer die door Cesium wordt gebruikt, kan geen nieuwe overschrijvingen meer verwerken, omdat de wachtrij vol is.<br/><br/>Probeer het later opnieuw of wijzig de peer (in de <b>Instellingen</b>).",
+    "DOWNLOAD_TX_HISTORY_FAILED": "Fout bij het downloaden van het rekeningoverzicht"
   },
   "INFO": {
     "POPUP_TITLE": "Informatie",
@@ -630,7 +636,8 @@
     "REVOCATION_SENT_WAITING_PROCESS": "Intrekking <b>is succesvol verzonden</b>. Het wacht op verwerking.",
     "FEATURE_NOT_AVAILABLE_ON_DEMO": "Functionaliteit niet beschikbaar op deze demonstratiesite.<br/>Om <b>veiligheidsredenen</b> raden we u aan uw kopie van de software te <b>installeren</b>.<br/>Bezoek de website <a href='https://cesium.app'>www.cesium.app</a> voor hulp.",
     "EMPTY_TX_HISTORY": "Aucune operatie à exporteur",
-    "LOADING_PENDING_TX": "Even geduld...<br/><small>(Ophalen van hangende operaties)</small>"
+    "LOADING_PENDING_TX": "Even geduld...<br/><small>(Ophalen van hangende operaties)</small>",
+    "FILE_DOWNLOADED": "Bestand gedownload"
   },
   "CONFIRM": {
     "CAN_CONTINUE": "<b>Weet je zeker</b> dat je door wil gaan?",

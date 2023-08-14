@@ -51,6 +51,7 @@
     "LOADING": "Veuillez patienter...",
     "LOADING_WAIT": "Veuillez patienter...<br/><small>(Cesium interroge le nœud Duniter)</small>",
     "SEARCHING": "Recherche en cours...",
+    "DOWNLOADING_DOTS": "Téléchargement...",
     "FROM": "De",
     "TO": "À",
     "COPY": "Copier",
@@ -603,7 +604,7 @@
       "NO_WALLET": "Aucun portefeuille secondaire",
       "BTN_DELETE": "Retirer un portefeuille secondaire...",
       "BTN_RENAME": "Renommer le portefeuille",
-      "EXPORT_FILENAME": "mes_portefeuilles-{{pubkey|formatPubkey}}-{{currency}}.csv",
+      "EXPORT_FILENAME": "{{currency}}-mes_portefeuilles-{{pubkey}}.csv",
       "TOTAL_DOTS": "Total : ",
       "EDIT_POPOVER": {
         "TITLE": "Renommer le portefeuille",
@@ -625,7 +626,7 @@
       "DOWNLOAD_REVOKE_HELP": "Disposer d'un fichier de révocation est important, par exemple en cas de perte de vos identifiants. Il vous permet de <b>sortir ce compte de la toile de confiance</b>, en redevenant ainsi un simple portefeuille. Ne fonctionne pas sur smartphone.",
       "GENERATE_KEYFILE": "Générer mon fichier de trousseau...",
       "GENERATE_KEYFILE_HELP": "Génère un fichier permettant de vous authentifier sans saisir vos identifiants.<br/><b>Attention :</b> ce fichier contiendra votre trousseau de compte (clefs publique et secrète) ; il est donc très important de le mettre en lieu sûr !",
-      "KEYFILE_FILENAME": "trousseau-{{pubkey|formatPubkey}}-{{currency}}-{{format}}.dunikey",
+      "KEYFILE_FILENAME": "{{currency}}-trousseau-{{pubkey}}-{{format}}.dunikey",
       "MEMBERSHIP_IN": "Transformer en compte membre...",
       "MEMBERSHIP_IN_HELP": "Permet de <b>transformer</b> un compte simple portefeuille <b>en compte membre</b>, en envoyant une demande d'adhésion. Utile uniquement si vous n'avez pas déjà un autre compte membre.",
       "SEND_IDENTITY": "Publier son identité...",
@@ -661,9 +662,10 @@
       "REVOCATION_WITH_FILE_HELP": "Pour <b>révoquer définitivement</b> un compte membre, veuillez glisser dans la zone ci-dessous votre fichier de révocation, ou bien cliquer dans la zone pour rechercher un fichier.",
       "REVOCATION_WALLET": "Révoquer immédiatement ce compte",
       "REVOCATION_WALLET_HELP": "Demander la révocation de votre identité entraîne la <b>sortie de la toile de confiance</b> (définitive pour le pseudonyme et la clé publique associés). Le compte ne pourra plus produire de Dividende Universel.<br/>Vous pourrez toutefois encore vous y connecter, comme à un simple portefeuille.",
-      "REVOCATION_FILENAME": "revocation-{{uid}}-{{pubkey|formatPubkey}}-{{currency}}.txt",
+      "REVOCATION_FILENAME": "{{currency}}-revocation-{{uid}}-{{pubkey}}.txt",
       "SAVE_ID": "Sauvegarder mes identifiants...",
       "SAVE_ID_HELP": "Création d'un fichier de sauvegarde, pour <b>retrouver votre mot de passe</b> (et l'identifiant secret) <b>en cas de d'oubli</b>. Le fichier est <b>sécurisé</b> (chiffré) à l'aide de questions personnelles.",
+      "SAVE_ID_FILENAME": "{{currency}}-identifiants-{{pubkey}}.txt",
       "STRONG_LEVEL": "Fort <span class=\"hidden-xs \">(6 questions minimum)</span>",
       "TITLE": "Compte et sécurité",
       "KEYFILE": {
@@ -684,7 +686,7 @@
         }
       }
     },
-    "FILE_NAME": "{{currency}} - Relevé du compte {{pubkey|formatPubkey}} au {{currentTime|formatDateForFile}}.csv",
+    "FILE_NAME": "{{currency}}-historique-{{pubkey}}-{{currentTime|formatDateForFile}}.csv",
     "HEADERS": {
       "TIME": "Date",
       "AMOUNT": "Montant",
@@ -797,12 +799,13 @@
     "GET_BLOCK_FAILED": "Échec de la récupération du bloc.",
     "INVALID_BLOCK_HASH": "Bloc non trouvé (hash différent).",
     "DOWNLOAD_REVOCATION_FAILED": "Échec du téléchargement du fichier de révocation.",
+    "DOWNLOAD_SAVE_ID_FAILED": "Échec du téléchargement du fichier de sauvegarde des identifiants.",
     "REVOCATION_FAILED": "Échec de la révocation.",
     "SALT_OR_PASSWORD_NOT_CONFIRMED": "Identifiant secret ou mot de passe incorrect.",
     "RECOVER_ID_FAILED": "Échec de la récupération des identifiants",
     "LOAD_FILE_FAILED" : "Échec du chargement du fichier",
     "NOT_VALID_REVOCATION_FILE": "Fichier de révocation non valide (mauvais format de fichier)",
-    "NOT_VALID_SAVE_ID_FILE": "Fichier de récupération non valide (mauvais format de fichier)",
+    "NOT_VALID_SAVE_ID_FILE": "Fichier de sauvegarde non valide (mauvais format de fichier)",
     "NOT_VALID_KEY_FILE": "Fichier de trousseau non valide (format non reconnu)",
     "EXISTING_ACCOUNT": "Vos identifiants correspondent à un compte déjà existant, dont la <a ng-click=\"showHelpModal('pubkey')\">clef publique</a> est :",
     "EXISTING_ACCOUNT_REQUEST": "Veuillez modifier vos identifiants afin qu'ils correspondent à un compte non utilisé.",
@@ -821,7 +824,8 @@
     "INVALID_FILE_FORMAT": "Format de fichier invalide.",
     "SAME_TX_RECIPIENT": "Le destinataire doit être différent de l'émetteur.",
     "SELF_CERTIFICATION": "Vous ne pouvez pas certifier votre propre identité.",
-    "TX_SANDBOX_FULL": "Le nœud Duniter utilisé par Cesium ne peut plus traité de nouveaux virements, car sa file d'attente est pleine.<br/><br/>Veuillez réessayer ultérieurement ou changer de nœud (dans les <b>Paramètres</b>)."
+    "TX_SANDBOX_FULL": "Le nœud Duniter utilisé par Cesium ne peut plus traité de nouveaux virements, car sa file d'attente est pleine.<br/><br/>Veuillez réessayer ultérieurement ou changer de nœud (dans les <b>Paramètres</b>).",
+    "DOWNLOAD_TX_HISTORY_FAILED": "Erreur lors du téléchargement du relevé de compte"
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -838,7 +842,8 @@
     "REVOCATION_SENT_WAITING_PROCESS": "La <b>révocation de cette identité</b> a été demandée et est en attente de traitement.",
     "FEATURES_NOT_IMPLEMENTED": "Cette fonctionnalité est encore en cours de développement.<br/>Pourquoi ne pas <b>contribuer à Cesium</b>, pour l'obtenir plus rapidement ? ;)",
     "EMPTY_TX_HISTORY": "Aucune opération à exporter",
-    "LOADING_PENDING_TX": "Veuillez patienter...<br/><small>(Récupération des opérations en attente)</small>"
+    "LOADING_PENDING_TX": "Veuillez patienter...<br/><small>(Récupération des opérations en attente)</small>",
+    "FILE_DOWNLOADED": "Fichier téléchargé avec succès"
   },
   "CONFIRM": {
     "CAN_CONTINUE": "<b>Êtes-vous sûr</b> de vouloir continuer ?",

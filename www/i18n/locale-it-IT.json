@@ -51,6 +51,7 @@
     "LOADING": "Caricando...",
     "LOADING_WAIT": "Caricando...<br/><small>(Cesium interroga il nodo nodo Duniter)</small>",
     "SEARCHING": "Cercando...",
+    "DOWNLOADING_DOTS": "Scaricamento...",
     "FROM": "Da",
     "TO": "A",
     "COPY": "Copiare",
@@ -601,7 +602,7 @@
       "NO_WALLET": "Nessun portafoglio secondario",
       "BTN_DELETE": "Rimuovi un portafoglio secondario ...",
       "BTN_RENAME": "Rinominare il portafoglio",
-      "EXPORT_FILENAME": "my_wallets-{{pubkey|formatPubkey}}-{{currency}}.csv",
+      "EXPORT_FILENAME": "{{currency}}-my_wallets-{{pubkey}}.csv",
       "TOTAL_DOTS": "Totale: ",
       "EDIT_POPOVER": {
         "TITLE": "Rinominare il portafoglio",
@@ -623,7 +624,7 @@
       "DOWNLOAD_REVOKE_HELP" : "Avere une file di revoca è necessario in caso di smarrimento delle tue credenziali. Ti permette <b> di rimuovere tuo conto dalla Rete di Fiducia</b>, per farlo tornare ad essere un semplice portafoglio.",
       "GENERATE_KEYFILE": "Genera il mio file portachiavi ...",
       "GENERATE_KEYFILE_HELP": "Genera un file che ti permette di autenticarti senza digitare le tue credenziali.<br/><b>Attenzione:</b> questo file contiene la tua chiave segreta: è perciò oltremodo importante salvarlo in un posto sicuro!",
-      "KEYFILE_FILENAME": "portachiavi-{{pubkey|formatPubkey}}-{{currency}}-{{format}}.dunikey",
+      "KEYFILE_FILENAME": "{{currency}}-portachiavi-{{pubkey}}-{{format}}.dunikey",
       "MEMBERSHIP_IN": "Iscriviti come membro...",
       "MEMBERSHIP_IN_HELP": "Ti permette <b>convertire </b> un conto semplice <b>in un conto membro</b>, inviando una richiesta di adesione alla RdF. Utile solo se non sei già in possesso di un conto membro.",
       "SEND_IDENTITY": "Pubblica identità...",
@@ -659,9 +660,10 @@
       "REVOCATION_WITH_FILE_HELP": "Se hai <b>definitivamente perso le tue credenziali (o se la sicurezza del tuo conto è compromessa), puoi usare <b>il file di revoca</b> del conto <b>per uscire dalla Rete di Fiducia</b>.",
       "REVOCATION_WALLET": "Revocare immediatamente questo conto",
       "REVOCATION_WALLET_HELP": "Richiedere la cancellazione dell'identità <b>revocherà la tua adesione alla Rete di Fiducia</ b> (definitivamente per lo pseudonimo e per la chiave pubblica associata). Il conto non potrà più produrre il Dividendo Universale.<br/>Nonostante ciò, puoi ancora usare il conto come semplice portafoglio.",
-      "REVOCATION_FILENAME": "revocation-{{uid}}-{{pubkey|formatPubkey}}-{{currency}}.txt",
+      "REVOCATION_FILENAME": "{{currency}}-revocation-{{uid}}-{{pubkey}}.txt",
       "SAVE_ID": "Salvare le mie credenziali...",
       "SAVE_ID_HELP": "Creare un file di backup, per <b>recuperare la tua password</b> (e l'identificativo segreto) <b> in caso di smarrimento</b>. Il file è <b>sicuro</ b> (cifrato) utilizzando le domande personalizzate.",
+      "SAVE_ID_FILENAME": "{{currency}}-credenziali-{{pubkey}}.txt",
       "STRONG_LEVEL": "Alto <span class=\"hidden-xs \">(minimo di 6 domande)</span>",
       "TITLE": "Conto e sicurezza",
         "KEYFILE": {
@@ -795,6 +797,7 @@
     "GET_BLOCK_FAILED": "Impossibile caricare il blocco",
     "INVALID_BLOCK_HASH": "Blocco non trovato (hash errato)",
     "DOWNLOAD_REVOCATION_FAILED": "Errore avvenuto nel download del file di cancellazione d'identità.",
+    "DOWNLOAD_SAVE_ID_FAILED": "Scaricamento del file di backup delle credenziali non riuscito.",
     "REVOCATION_FAILED": "Errore avvenuto durante la richiesta di cancellazione dell'identità.",
     "SALT_OR_PASSWORD_NOT_CONFIRMED": "Identificativo segreto o password sbagliati",
     "RECOVER_ID_FAILED": "Impossibile recuperare la password",
@@ -819,7 +822,8 @@
     "INVALID_FILE_FORMAT": "Formato file invalido.",
     "SAME_TX_RECIPIENT": "Il destinatario deve essere diverso dall'emittente.",
     "SELF_CERTIFICATION": "Non puoi certificare la tua stessa identità.",
-    "TX_SANDBOX_FULL": "Il nodo Duniter utilizzato dal Cesium non può più elaborare nuovi trasferimenti, perché la lista d'attesa è piena.<br/><br/>Riprova più tardi o scegli un'altro nodo Duniter (nelle <b>Impostazioni</b>)."
+    "TX_SANDBOX_FULL": "Il nodo Duniter utilizzato dal Cesium non può più elaborare nuovi trasferimenti, perché la lista d'attesa è piena.<br/><br/>Riprova più tardi o scegli un'altro nodo Duniter (nelle <b>Impostazioni</b>).",
+    "DOWNLOAD_TX_HISTORY_FAILED": "Errore nel scaricare l'estratto conto"
   },
   "INFO": {
     "POPUP_TITLE": "Informazioni",
@@ -836,7 +840,8 @@
     "REVOCATION_SENT_WAITING_PROCESS": "Cancellazione dell'identità <b>inviata con successo</b>. In attesa di validazione.",
     "FEATURES_NOT_IMPLEMENTED": "Questa funzionalità non è ancora disponibile.<br/><br/>Vuoi contribuire per velocizzarne la disponibilità? ;)",
     "EMPTY_TX_HISTORY": "Nessuna operazione da esportare",
-    "LOADING_PENDING_TX": "Caricando...<br/><small>(Recupero delle operazioni in sospeso)</small>"
+    "LOADING_PENDING_TX": "Caricando...<br/><small>(Recupero delle operazioni in sospeso)</small>",
+    "FILE_DOWNLOADED": "File scaricato"
   },
   "CONFIRM": {
     "CAN_CONTINUE": "<b>Sei sicuro/a</b> di voler procedere?",

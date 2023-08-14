@@ -4,8 +4,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
 
 .factory('csWallet', function($q, $rootScope, $timeout, $translate, $filter, $ionicHistory, UIUtils,
-                              Api, Idle, localStorage, sessionStorage, Modals,
-                              CryptoUtils, csCrypto, BMA, csConfig, csSettings, FileSaver, Blob, csWot, csTx, csCurrency) {
+                              Api, Idle, localStorage, sessionStorage, Modals, Device,
+                              CryptoUtils, csCrypto, BMA, csConfig, csSettings, FileSaver, csWot, csTx, csCurrency) {
   'ngInject';
 
   var defaultBMA = BMA;
@@ -1875,10 +1875,21 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     },
 
     downloadSaveId = function(record){
-      return getSaveIDDocument(record)
-        .then(function(saveId) {
-          var saveIdFile = new Blob([saveId], {type: 'text/plain; charset=utf-8'});
-          FileSaver.saveAs(saveIdFile, '{0}-recover_ID.txt'.format(data.pubkey.substring(0,8)));
+
+      return $q.all([
+        csCurrency.get(),
+        getSaveIDDocument(record),
+      ])
+        .then(function(res) {
+          var currency = res[0];
+          var document= res[1];
+          return $translate('ACCOUNT.SECURITY.SAVE_ID_FILENAME', {
+            currency: currency.name,
+            pubkey: data.pubkey
+          })
+            .then(function(filename){
+              return Device.file.save(document, {filename: filename});
+            });
         });
     },
 
@@ -1914,8 +1925,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
               format: format,
             })
             .then(function(filename){
-              var file = new Blob([document], {type: 'text/plain; charset=utf-8'});
-              FileSaver.saveAs(file, filename);
+              return Device.file.save(document, {filename: filename});
             });
         });
 
@@ -2026,7 +2036,6 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
             addEvent({type: 'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'requirements'}, true);
           }
         });
-
     },
 
     downloadRevocation = function(){
@@ -2037,14 +2046,13 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         .then(function(res) {
           var currency = res[0];
           var revocation = res[1];
-          var revocationFile = new Blob([revocation], {type: 'text/plain; charset=utf-8'});
           return $translate('ACCOUNT.SECURITY.REVOCATION_FILENAME', {
             uid: data.uid,
             currency: currency.name,
             pubkey: data.pubkey
           })
-          .then(function (fileName) {
-            FileSaver.saveAs(revocationFile, fileName);
+          .then(function (filename) {
+            return Device.file.save(revocation, {filename: filename});
           });
         });
     },
@@ -2193,13 +2201,12 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           var content = (children||[]).reduce(function(res, wallet) {
             return res + [wallet.data.pubkey, wallet.data.uid, wallet.data.localName||wallet.data.name].join('\t') + '\n';
           }, '');
-          var file = new Blob([content], {type: 'text/plain; charset=utf-8'});
           return $translate('ACCOUNT.WALLET_LIST.EXPORT_FILENAME', {
               pubkey: data.pubkey,
               currency: currency.name,
             })
-            .then(function (fileName) {
-              FileSaver.saveAs(file, fileName);
+            .then(function(filename) {
+              return Device.file.save(content, {filename: filename});
             });
         });
     },

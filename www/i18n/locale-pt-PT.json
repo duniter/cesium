@@ -51,6 +51,7 @@
     "LOADING": "Aguarde por favor...",
     "LOADING_WAIT": "Aguarde por favor...<br/><small>(Cesium está a questionar o nó Duniter)</small>",
     "SEARCHING": "Procurando…",
+    "DOWNLOADING_DOTS": "Baixando...",
     "FROM": "De",
     "TO": "Para",
     "COPY": "Copiar",
@@ -693,7 +694,7 @@
       "NO_WALLET": "Sem carteira secundaria",
       "BTN_DELETE": "Eliminar una carteira secundaria…",
       "BTN_RENAME": "Renomear a carteira",
-      "EXPORT_FILENAME": "carteiras-{{pubkey|formatPubkey}}-{{currency}}.csv",
+      "EXPORT_FILENAME": "{{currency}}-carteiras-{{pubkey}}.csv",
       "TOTAL_DOTS": "Total : ",
       "EDIT_POPOVER": {
         "TITLE": "Renomear a carteira",
@@ -727,7 +728,7 @@
       "RECOVER_ID_SELECT_FILE": "Escolha o <b>arquivo para salvaguardar as suas credenciais</b> a utilizar :",
       "GENERATE_KEYFILE": "Gerar o meu arquivo de chaves…",
       "GENERATE_KEYFILE_HELP": "Gera um arquivo que permitirá autenticar se sem ter que introduzir as credenciais.<br/><b>Cuidado:</b> este arquivo conterá a sua chave secreta; É muito importante conservá-lo em lugar seguro!",
-      "KEYFILE_FILENAME": "llavero-{{pubkey|formatPubkey}}-{{currency}}-{{format}}.dunikey",
+      "KEYFILE_FILENAME": "{{currency}}-llavero-{{pubkey}}{{format}}.dunikey",
       "MEMBERSHIP_IN": "Registar como membro…",
       "MEMBERSHIP_IN_HELP": "Permite <b>transformar</b> uma conta de carteira simples <b>numa conta membro</b>, enviando um pedido de membro. Apenas se ainda não possui uma conta membro.",
       "SEND_IDENTITY": "Publicar identidade…",
@@ -759,14 +760,15 @@
       "REVOCATION_WITH_FILE": "Revogar uma identidade a partir de um ficheiro",
       "REVOCATION_WITH_FILE_DESCRIPTION": "Se perdeu de forma permanente as credenciais da sua conta de membro (ou a segurança da conta foi comprometida), pode usar <b>o arquivo de revogação da conta</b> para forçar a saída da Rede de Confiança.",
       "REVOCATION_WITH_FILE_HELP": "Para <b>revogar permanentemente</b> uma conta de membro, arraste o arquivo de revogação no quadro seguinte ou faça clique no quadro para selecionar um arquivo.",
-      "REVOCATION_FILENAME": "revogação-{{uid}}-{{pubkey|formatPubkey}}-{{currency}}.txt",
+      "REVOCATION_FILENAME": "{{currency}}-revogação-{{uid}}-{{pubkey}}.txt",
       "REVOCATION_WALLET": "Revogar esta identidade",
       "SAVE_ID": "Guardar as minhas credenciais",
       "STRONG_LEVEL": "Alto <span class=\"hidden-xs \">(6 perguntas min.)</span>",
       "TITLE": "Conta e segurança",
       "RECOVER_ID_HELP": "Se possui um <b>arquivo de recuperação das suas credenciais</b>, pode recuperá-las respondendo corretamente às perguntas pessoais escolhidas por si.",
       "REVOCATION_WALLET_HELP": "Pedir a revogação da sua identidade acarreta a <b>saída da rede de confiança</b> (definitiva para o seu pseudónimo e a chave pública associada). A conta não produzirá mais o Dividendo Universal.<br/>Poderá continuar a usar carteira simples.",
-      "SAVE_ID_HELP": "Criação de um arquivo de recuperação, para <b>recuperar a sua contra senha</b> (e frase secreta) em caso de esquecimento. O arquivo <b>cifra-se</b> com a ajuda das perguntas pessoais escolhidas."
+      "SAVE_ID_HELP": "Criação de um arquivo de recuperação, para <b>recuperar a sua contra senha</b> (e frase secreta) em caso de esquecimento. O arquivo <b>cifra-se</b> com a ajuda das perguntas pessoais escolhidas.",
+      "SAVE_ID_FILENAME": "{{currency}}-credenciais-{{pubkey}}.txt"
     },
     "FILE_NAME": "{{currency}}_HistoricoDaConta_{{pubkey|formatPubkey}}_{{currentTime|formatDateForFile}}.csv",
     "HEADERS": {
@@ -889,6 +891,7 @@
     "GET_BLOCK_FAILED": "Falha na recuperação do bloco",
     "INVALID_BLOCK_HASH": "Bloco não encontrado (hash diferente)",
     "DOWNLOAD_REVOCATION_FAILED": "Deve selecionar um ficheiro de texto",
+    "DOWNLOAD_SAVE_ID_FAILED": "Falha no download do arquivo de backup das credenciais.",
     "REVOCATION_FAILED": "Falha na revogação.",
     "SALT_OR_PASSWORD_NOT_CONFIRMED": "Frase secreta o contra senha incorretos",
     "RECOVER_ID_FAILED": "Falha na recuperação das credenciais",
@@ -903,7 +906,8 @@
     "INVALID_FILE_FORMAT": "Formato de arquivo inválido.",
     "SAME_TX_RECIPIENT": "O destinatário deve ser diferente do emissor.",
     "SELF_CERTIFICATION": "Não pode certificar a sua própria identidade.",
-    "TX_SANDBOX_FULL": "O nó Duniter utilizado por Cesium já não pode receber mais novas transferências, porque a fila de espera está cheia.<br/><br/>Por favor, tente mais tarde ou mude de nó (nas <b>Definições</b>)."
+    "TX_SANDBOX_FULL": "O nó Duniter utilizado por Cesium já não pode receber mais novas transferências, porque a fila de espera está cheia.<br/><br/>Por favor, tente mais tarde ou mude de nó (nas <b>Definições</b>).",
+    "DOWNLOAD_TX_HISTORY_FAILED": "Erro ao baixar o extrato da conta"
   },
   "INFO": {
     "POPUP_TITLE": "Informação",
@@ -920,7 +924,8 @@
     "REVOCATION_SENT_WAITING_PROCESS": "A <b>revogação desta identidade</b> foi solicitada e aguarda ser processada.",
     "FEATURES_NOT_IMPLEMENTED": "Esta funcionalidade encontra-se em desenvolvimento.<br/><br/>Porque não <b>contribuir com Cesium</b>, para obtê-la mais rápido? ;)",
     "EMPTY_TX_HISTORY": "Nenhuma operação a exportar",
-    "LOADING_PENDING_TX": "Aguarde por favor...<br/><small>(A recuperar operações pendentes)</small>"
+    "LOADING_PENDING_TX": "Aguarde por favor...<br/><small>(A recuperar operações pendentes)</small>",
+    "FILE_DOWNLOADED": "Arquivo baixado"
   },
   "CONFIRM": {
     "CAN_CONTINUE": "<b>Deseja</b> continuar?",

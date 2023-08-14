@@ -51,6 +51,7 @@
     "LOADING": "Bonvolu pacienci...",
     "LOADING_WAIT": "Bonvolu pacienci...<br/><small>(Cesium demandas la Duniter-nodon)</small>",
     "SEARCHING": "Serĉanta...",
+    "DOWNLOADING_DOTS": "Elŝutanta...",
     "FROM": "De",
     "TO": "Al",
     "COPY": "Kopii",
@@ -600,7 +601,7 @@
       "NO_WALLET": "Neniu kroma monujo",
       "BTN_DELETE": "Forigi kroman monujon...",
       "BTN_RENAME": "Renomi la monujon",
-      "EXPORT_FILENAME": "miaj_monujoj-{{pubkey|formatPubkey}}-{{currency}}.csv",
+      "EXPORT_FILENAME": "{{currency}}-miaj_monujoj-{{pubkey}}.csv",
       "TOTAL_DOTS": "Sumo: ",
       "EDIT_POPOVER": {
         "TITLE": "Renomi la monujon",
@@ -622,7 +623,7 @@
       "DOWNLOAD_REVOKE_HELP": "Disponi dosieron pri nuligo estas grave, ekzemple kaze de perdo de viaj identigiloj. Ĝi ebligas al vi <b>elirigi tiun konton el la reto de fido</b>, tiel ke ĝi refariĝu simpla monujo.",
       "GENERATE_KEYFILE": "Krei mian dosieron pri ŝlosilaro...",
       "GENERATE_KEYFILE_HELP": "Kreas dosieron, kiu ebligas al vi aŭtentiĝi sen tajpi viajn identigilojn.<br/><b>Atenton:</b> tiu dosiero entenos vian konto-ŝlosilaron (publikan kaj sekretan ŝlosilojn); do tre gravas meti ĝin en sekuran lokon!",
-      "KEYFILE_FILENAME": "ŝlosilaro-{{pubkey|formatPubkey}}-{{currency}}-{{format}}.dunikey",
+      "KEYFILE_FILENAME": "{{currency}}-ŝlosilaro-{{pubkey}}-{{format}}.dunikey",
       "MEMBERSHIP_IN": "Transformi en membro-konton...",
       "MEMBERSHIP_IN_HELP": "Ebligas <b>transformi</b> simplan monujo-konton <b>en membro-konton</b>, sendante aliĝo-peton. Utilas nur se vi ne havas jam alian membro-konton.",
       "SEND_IDENTITY": "Publikigi sian identecon...",
@@ -658,9 +659,10 @@
       "REVOCATION_WITH_FILE_HELP": "Por <b>definitive nuligi</b> membro-konton, bonvolu glitigi en la ĉi-suban zonon vian dosieron pri nuligo, aŭ alklaki la zonon por serĉadi dosieron.",
       "REVOCATION_WALLET": "Nuligi tiun ĉi konton tuj",
       "REVOCATION_WALLET_HELP": "Peti la nuligon de via identeco estigas la <b>eliradon el la reto de fido</b> (definitivan por la pseŭdonimo kaj la publika ŝlosilo kunligitaj). La konto ne plu povos produkti Universalan Dividendon.<br/>Vi tamen daŭre povos konektiĝi al ĝi, kiel al simpla monujo.",
-      "REVOCATION_FILENAME": "nuligo-{{uid}}-{{pubkey|formatPubkey}}-{{currency}}.txt",
+      "REVOCATION_FILENAME": "{{currency}}-nuligo-{{uid}}-{{pubkey}}.txt",
       "SAVE_ID": "Konservi miajn identigilojn...",
       "SAVE_ID_HELP": "Kreado de konserv-dosiero, por <b>retrovi vian pasvorton</b> (kaj la sekretan identigilon) <b>kaze de forgeso</b>. La dosiero estas <b>sekurigita</b> (ĉifrita) dank'al personaj demandoj.",
+      "SAVE_ID_FILENAME": "{{currency}}-ensalutigiloj-{{pubkey}}.txt",
       "STRONG_LEVEL": "Forta <span class=\"hidden-xs \">(6 demandoj minimume)</span>",
       "TITLE": "Konto kaj sekureco",
       "KEYFILE": {
@@ -794,6 +796,7 @@
     "GET_BLOCK_FAILED": "Malsukceso por ricevi la blokon.",
     "INVALID_BLOCK_HASH": "Bloko ne trovita (haketo malsama)",
     "DOWNLOAD_REVOCATION_FAILED": "Malsukceso por elŝuti la dosieron pri nuligo.",
+    "DOWNLOAD_SAVE_ID_FAILED": "Malsukcesis elŝuti la dosieron por konservi la ensalutigilojn.",
     "REVOCATION_FAILED": "Malsukceso pri nuligo.",
     "SALT_OR_PASSWORD_NOT_CONFIRMED": "Sekreta identigilo aŭ pasvorto malĝusta.",
     "RECOVER_ID_FAILED": "Malsukceso por ricevi la identigilojn",
@@ -818,7 +821,8 @@
     "INVALID_FILE_FORMAT": "Strukturo de dosiero nevalida.",
     "SAME_TX_RECIPIENT": "La adresito devas malsami ol la sendanto.",
     "SELF_CERTIFICATION": "Vi ne povas certigi vian propran identecon.",
-    "TX_SANDBOX_FULL": "La nodo Duniter uzata de Cesium ne plu povas prilabori novajn elspezojn, ĉar ĝia atendovico estas plena.<br/><br/>Bonvolu provi denove poste aŭ ŝanĝi la nodon (en la <b>Agordoj</b>)."
+    "TX_SANDBOX_FULL": "La nodo Duniter uzata de Cesium ne plu povas prilabori novajn elspezojn, ĉar ĝia atendovico estas plena.<br/><br/>Bonvolu provi denove poste aŭ ŝanĝi la nodon (en la <b>Agordoj</b>).",
+    "DOWNLOAD_TX_HISTORY_FAILED": "Eraro dum la elŝuto de la konta raporto"
   },
   "INFO": {
     "POPUP_TITLE": "Informo",
@@ -835,7 +839,8 @@
     "REVOCATION_SENT_WAITING_PROCESS": "La <b>nuligo de tiu ĉi identeco</b> estis petita kaj atendas traktadon.",
     "FEATURES_NOT_IMPLEMENTED": "Tiu ĉi funkciaro ankoraŭ estas programiĝanta.<br/>Kial ne <b>kontribui al Cesium</b>, por ekhavi ĝin pli rapide? ;)",
     "EMPTY_TX_HISTORY": "Neniu spezo elportota",
-    "LOADING_PENDING_TX": "Bonvolu pacienci...<br/><small>(Prenado de pendaj operacioj)</small>"
+    "LOADING_PENDING_TX": "Bonvolu pacienci...<br/><small>(Prenado de pendaj operacioj)</small>",
+    "FILE_DOWNLOADED": "Dosiero elŝutita"
   },
   "CONFIRM": {
     "CAN_CONTINUE": "<b>Ĉu vi certas</b>, ke vi volas daŭrigi?",

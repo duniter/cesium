@@ -51,6 +51,7 @@
     "LOADING": "Loading...",
     "LOADING_WAIT": "Loading...<br/><small>(Cesium is querying the Duniter peer)</small>",
     "SEARCHING": "Searching...",
+    "DOWNLOADING_DOTS": "Downloading...",
     "FROM": "From",
     "TO": "To",
     "COPY": "Copy",
@@ -601,7 +602,7 @@
       "NO_WALLET": "No secondary wallet",
       "BTN_DELETE": "Remove a secondary wallet...",
       "BTN_RENAME": "Rename the wallet",
-      "EXPORT_FILENAME": "my_wallets-{{pubkey|formatPubkey}}-{{currency}}.csv",
+      "EXPORT_FILENAME": "{{currency}}-my_wallets-{{pubkey}}.csv",
       "TOTAL_DOTS": "Total: ",
       "EDIT_POPOVER": {
         "TITLE": "Rename the wallet",
@@ -623,7 +624,7 @@
       "DOWNLOAD_REVOKE_HELP" : "Having a revocation file is important, for example in case of loss of identifiers. It allows you to <b>get this account out of the Web Of Trust</b>, thus becoming a simple wallet.",
       "GENERATE_KEYFILE": "Generate my keychain file ...",
       "GENERATE_KEYFILE_HELP": "Generate a file allowing you to authenticate without entering your identifiers.<br/><b>Warning:</b> this file will contain your secret key; It is therefore very important to put it in a safe place!",
-      "KEYFILE_FILENAME": "keychain-{{pubkey|formatPubkey}}-{{currency}}-{{format}}.dunikey",
+      "KEYFILE_FILENAME": "{{currency}}-keychain-{{pubkey}}-{{format}}.dunikey",
       "MEMBERSHIP_IN": "Register as member...",
       "MEMBERSHIP_IN_HELP": "Allows you to <b>transform </b> a simple wallet account <b>into a member account</b>, by sending a membership request. Useful only if you do not already have another member account.",
       "SEND_IDENTITY": "Publish identity...",
@@ -659,7 +660,7 @@
       "REVOCATION_WITH_FILE_HELP": "To <b>permanently revoke</ b> a member account, please drag the revocation file in the box below, or click in the box to search for a file.",
       "REVOCATION_WALLET": "Revoke this account immediately",
       "REVOCATION_WALLET_HELP": "Requesting revocation of your identity causes <b>will revoke your membership</ b> (definitely for the associated pseudonym and public key). The account will no longer be able to produce a Universal Dividend.<br/>However, you can still use it as a simple wallet.",
-      "REVOCATION_FILENAME": "revocation-{{uid}}-{{pubkey|formatPubkey}}-{{currency}}.txt",
+      "REVOCATION_FILENAME": "{{currency}}-revocation-{{uid}}-{{pubkey}}.txt",
       "SAVE_ID": "Save my credentials...",
       "SAVE_ID_HELP": "Creating a backup file, to <b>retrieve your password</b> (and the secret identifier) <b> in case of forgetting</b>. The file is <b>secured</ b> (encrypted) using personal questions.",
       "STRONG_LEVEL": "Strong <span class=\"hidden-xs \">(6 questions minimum)</span>",
@@ -795,6 +796,7 @@
     "GET_BLOCK_FAILED": "Error while getting block",
     "INVALID_BLOCK_HASH": "Block not found (incorrect hash)",
     "DOWNLOAD_REVOCATION_FAILED": "Error while downloading revocation file.",
+    "DOWNLOAD_SAVE_ID_FAILED": "Failed to download the credentials backup file.",
     "REVOCATION_FAILED": "Error while trying to revoke the identity.",
     "SALT_OR_PASSWORD_NOT_CONFIRMED": "Wrong secret identifier or password ",
     "RECOVER_ID_FAILED": "Could not recover password",
@@ -819,7 +821,8 @@
     "INVALID_FILE_FORMAT": "Invalid file format.",
     "SAME_TX_RECIPIENT": "The recipient must be different from the issuer.",
     "SELF_CERTIFICATION": "You cannot certify your own identity.",
-    "TX_SANDBOX_FULL": "The Duniter peer used by Cesium can no longer process new transfers, as its queue is full.<br/><br/>Please try again later or change the peer (in the <b>Settings</b>)."
+    "TX_SANDBOX_FULL": "The Duniter peer used by Cesium can no longer process new transfers, as its queue is full.<br/><br/>Please try again later or change the peer (in the <b>Settings</b>).",
+    "DOWNLOAD_TX_HISTORY_FAILED": "Error downloading the account statement"
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -836,7 +839,8 @@
     "REVOCATION_SENT_WAITING_PROCESS": "Revocation <b>has been sent successfully</b>. It is awaiting processing.",
     "FEATURES_NOT_IMPLEMENTED": "This features is not implemented yet.<br/><br/>Why not to contribute to get it faster? ;)",
     "EMPTY_TX_HISTORY": "No operations to export",
-    "LOADING_PENDING_TX": "Please wait...<br/><small>(Retrieving pending operations)</small>"
+    "LOADING_PENDING_TX": "Please wait...<br/><small>(Retrieving pending operations)</small>",
+    "FILE_DOWNLOADED": "File downloaded"
   },
   "CONFIRM": {
     "CAN_CONTINUE": "<b>Are you sure</b> you want to continue?",

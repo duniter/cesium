@@ -233,11 +233,9 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
             }
             throw err;
           });
-      }
+      };
       return wrappedRequest;
     }
-
-
 
     function incrementGetUsageCount(path, limitRequestCount) {
       limitRequestCount = limitRequestCount || constants.LIMIT_REQUEST_COUNT;

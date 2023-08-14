@@ -2,7 +2,7 @@
 angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
   'cesium.settings.services', 'cesium.wot.services' ])
 
-.factory('csTx', function($q, $timeout, $filter, $translate, FileSaver, UIUtils, BMA, Api,
+.factory('csTx', function($q, $timeout, $filter, $translate, FileSaver, UIUtils, Device, BMA, Api,
                           csConfig, csSettings, csWot, csCurrency) {
   'ngInject';
 
@@ -458,11 +458,9 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                 tx.pubkey,
                 formatDecimal(tx.amount/100),
                 '"' + (tx.isUD ? translations['COMMON.UNIVERSAL_DIVIDEND'] : tx.comment) + '"'
-              ].join(';') + '\n');
-            }, [headers.join(';') + '\n']);
-
-            var file = new Blob(content, {type: 'text/plain; charset=utf-8'});
-            FileSaver.saveAs(file, filename);
+              ].join(';'));
+            }, [headers.join(';')]).join('\n');
+            return Device.file.save(content, {filename: filename});
           });
       });
   }

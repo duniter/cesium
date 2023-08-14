@@ -794,7 +794,19 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
     options = options || {};
     options.fromTime = options.fromTime || -1; // default: full history
     var pubkey = $scope.formData.pubkey;
-    csTx.downloadHistoryFile(pubkey, options);
+
+    $scope.hideActionsPopover();
+
+    UIUtils.toast.show('COMMON.DOWNLOADING_DOTS');
+    return csTx.downloadHistoryFile(pubkey, options)
+      .then(UIUtils.toast.hide)
+      .then(function() {
+        UIUtils.toast.show('INFO.FILE_DOWNLOADED', 1000);
+      })
+      .catch(function(err){
+        if (err && err === 'CANCELLED') return;
+        UIUtils.onError('ERROR.DOWNLOAD_TX_HISTORY_FAILED')(err);
+      });
   };
 
   // Updating wallet data
@@ -978,6 +990,24 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
   };
 
   /* -- popover -- */
+
+  $scope.showActionsPopover = function(event) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'templates/wallet/popover_tx_actions.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
+        $scope.actionsPopover = popover;
+      }
+    });
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+      $scope.actionsPopover = null;
+    }
+  };
 
   var paddingIndent = 10;
 
@@ -1410,9 +1440,18 @@ function WalletSecurityModalController($scope, UIUtils, csConfig, csWallet, $tra
 
         return wallet.getCryptedId(record)
           .then(function(record){
-            wallet.downloadSaveId(record);
             $scope.closeModal();
-          });
+
+            return wallet.downloadSaveId(record)
+              .then(function() {
+                UIUtils.toast.show('INFO.FILE_DOWNLOADED', 1000);
+              })
+              .catch(function(err){
+                if (err && err === 'CANCELLED') return;
+                UIUtils.onError('ERROR.DOWNLOAD_SAVE_ID_FAILED')(err);
+              });
+          })
+          ;
       })
       ;
   };
@@ -1445,15 +1484,15 @@ function WalletSecurityModalController($scope, UIUtils, csConfig, csWallet, $tra
         return wallet.downloadRevocation();
       })
 
+      .then(UIUtils.loading.hide)
       .then(function() {
-        UIUtils.loading.hide();
+        UIUtils.toast.show('INFO.FILE_DOWNLOADED', 1000);
       })
 
       .catch(function(err){
         if (err && err === 'CANCELLED') return;
         UIUtils.onError('ERROR.DOWNLOAD_REVOCATION_FAILED')(err);
-      })
-      ;
+      });
 
   };
 

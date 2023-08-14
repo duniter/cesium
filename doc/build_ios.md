@@ -82,7 +82,7 @@ npm install -g nw-gyp node-pre-gyp
 
 2. Install global dependencies (see [Development Guide](./development_guide.md) for versions to used) :
 ```
-npm install -g yarn gulp@3.9.1 cordova @ionic/cli@6.6.0
+npm install -g yarn gulp cordova @ionic/cli@6.20.9
 ```
 
 3. Install project dependencies :
