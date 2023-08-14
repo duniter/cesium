@@ -86,12 +86,21 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
     }
 
     function countUnreadMessages(options) {
-      options = options || {};
+      if (typeof options === 'string') throw new Error('Invalid argument options: expected an object, but get a string!')
+      options = options || {};
       var wallet = options.wallet ||
         (options.walletId && csWallet.children.get(options.walletId)) || csWallet;
       var pubkey = options.pubkey || (wallet && wallet.data && wallet.data.pubkey);
       if (!pubkey) {
-        throw new Error('no pubkey or wallet found in options, and user not connected.');
+        return $q.reject('[ES] [message] No pubkey or wallet found in options, and user not connected.');
+      }
+
+      if (!options.readTime) {
+        return loadLastReadTime(pubkey)
+          .then(function(readTime){
+            options.readTime = readTime || -1; // SKip 0 or undefined, to avoid infinite loop
+            return countUnreadMessages(options); // Loop
+          });
       }
 
       var request = {
@@ -105,9 +114,48 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
         }
       };
 
+      // Filter on time
+      if (options.readTime > 0) {
+        request.query.bool.must.push({range: {time: {gt: options.readTime}}});
+      }
+
       return esHttp.post('/message/inbox/_count')(request)
         .then(function(res) {
           return res.count;
+        });
+    }
+
+    function loadLastReadTime(pubkey) {
+      if (!pubkey) {
+        return $q.reject('[ES] [message] Unable to load - missing pubkey');
+      }
+
+      var request = {
+        query: {
+          bool: {
+            must: [
+              {term: {recipient: pubkey}},
+              {exists: { field : "read_signature" }}
+            ]
+          }
+        },
+        sort : [
+          { "time" : {"order" : "desc"}}
+        ],
+        from: 0,
+        size: 1,
+        _source: ['time']
+      };
+
+      return esHttp.post('/message/inbox/_search')(request)
+        .then(function(res) {
+          if (!res || !res.hits || !res.hits.total || !res.hits.hits) return undefined;
+          return res.hits.hits[0] && res.hits.hits[0]._source && res.hits.hits[0]._source.time;
+        })
+        .catch(function(err) {
+          console.error('[ES] [message] Failed to load the last read time', err);
+          //return undefined; // Continue
+          throw err;
         });
     }
 
@@ -195,6 +243,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       if (!wallet.isLogin()) {
         return $q.when([]); // Should never happen
       }
+
       var request = {
         sort: {
           "time" : "desc"
@@ -428,7 +477,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
     function removeMessage(id, type, options) {
       type = type || 'inbox';
 
-      var wallet = options.wallet || (options.walletId && csWallet.children.get(options.walletId)) || csWallet;
+      var wallet = options.wallet || (options.walletId && csWallet.children.get(options.walletId)) || csWallet;
 
       return esHttp.record.remove('message', type)(id, {wallet: wallet})
         .then(function(res) {

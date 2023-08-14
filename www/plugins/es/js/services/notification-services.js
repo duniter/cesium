@@ -86,25 +86,68 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
     }
 
     // Filter on time
-    if (options.readTime) {
+    if (options.readTime > 0) {
       query.bool.must.push({range: {time: {gt: options.readTime}}});
     }
     return query;
   }
 
-  // Load unread notifications count
-  function loadUnreadNotificationsCount(pubkey, options) {
+  // Count unread notifications
+  function countUnreadNotifications(pubkey, options) {
     if (!pubkey) {
       return $q.reject('[ES] [notification] Unable to load - missing pubkey');
     }
-    var request = {
+    options = options || {};
+
+    // readTime is missing (e.g. first connection): try to compute the last read time
+    if (!options.readTime) {
+      return loadLastReadTime(pubkey, options)
+        .then(function(readTime){
+          options.readTime = readTime || -1; // SKip 0 or undefined, to avoid infinite loop
+          return countUnreadNotifications(pubkey, options); // Loop
+        });
+    }
+
+    var countRequest = {
       query: createFilterQuery(pubkey, options)
     };
     // Filter unread only
-    request.query.bool.must.push({missing: { field : "read_signature" }});
-    return that.raw.postCount(request)
+    countRequest.query.bool.must.push({missing: { field : "read_signature" }});
+    return that.raw.postCount(countRequest)
       .then(function(res) {
         return res.count;
+      });
+  }
+
+  function loadLastReadTime(pubkey, options) {
+    if (!pubkey) {
+      return $q.reject('[ES] [notification] Unable to load - missing pubkey');
+    }
+
+    // Copy options, and reset readTime (to avoid createFilterQuery() to use it)
+    options = angular.merge({}, options, {readTime: null});
+
+    // readTime is missing (e.g. first connection): try to compute the last read time
+    var request = {
+      query: createFilterQuery(pubkey, options),
+      sort : [
+        { "time" : {"order" : "desc"}}
+      ],
+      from: 0,
+      size: 1,
+      _source: ['time']
+    };
+    // Filter on read notifications
+    request.query.bool.must.push({exists: { field : "read_signature" }});
+
+    return that.raw.postSearch(request)
+      .then(function(res) {
+        if (!res || !res.hits || !res.hits.total || !res.hits.hits) return undefined;
+        return res.hits.hits[0] && res.hits.hits[0]._source && res.hits.hits[0]._source.time;
+      })
+      .catch(function(err) {
+        console.error('[ES] [notification] Failed to load the last read time', err);
+        return undefined; // Continue
       });
   }
 
@@ -353,7 +396,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
     console.debug('[ES] [notification] Loading count...' + data.pubkey.substr(0,8));
 
     // Load unread notifications count
-    loadUnreadNotificationsCount(
+    countUnreadNotifications(
         data.pubkey, {
           readTime: data.notifications && data.notifications.time || 0,
           excludeCodes: constants.EXCLUDED_CODES
@@ -464,7 +507,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
 
   // Exports
   that.load = loadNotifications;
-  that.unreadCount = loadUnreadNotificationsCount;
+  that.unreadCount = countUnreadNotifications;
   that.html5 = {
     emit: emitHtml5Notification
   };
