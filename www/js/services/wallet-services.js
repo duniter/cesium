@@ -133,7 +133,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     addSources = function(sources) {
       data.sources = data.sources || [];
       data.sourcesIndexByKey = data.sourcesIndexByKey || {};
-      _(sources).forEach(function(src) {
+      _.forEach(sources, function(src) {
         addSource(src, data.sources, data.sourcesIndexByKey);
       });
     },
@@ -727,7 +727,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     loadTxAndSources = function(fromTime) {
       // DEBUG
-      //console.debug('[wallet-service] Calling loadTxAndSources()');
+      //console.debug('[wallet-service] Calling loadTxAndSources() from time ' + fromTime);
 
       if (fromTime === 'pending') {
         UIUtils.loading.update({template: "INFO.LOADING_PENDING_TX"});

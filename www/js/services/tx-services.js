@@ -140,7 +140,6 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
       };
 
       var processedTxMap = {};
-      var retryPendingCount = 0;
 
       var jobs = [
         // get current block
@@ -148,15 +147,6 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
         // get pending tx
         BMA.tx.history.pending({pubkey: pubkey})
-          .catch(function(err) {
-            if (err && err.ucode === BMA.errorCodes.HTTP_LIMITATION && retryPendingCount < 3) {
-              retryPendingCount++;
-              return $timeout(function() {
-                return BMA.tx.history.pending({pubkey: pubkey});
-              }, 2000 * retryPendingCount);
-            }
-            throw err;
-          })
           .then(function (res) {
             reduceTxAndPush(pubkey, res.history.sending, tx.pendings, processedTxMap, true /*allow pendings*/);
             reduceTxAndPush(pubkey, res.history.pending, tx.pendings, processedTxMap, true /*allow pendings*/);
@@ -264,7 +254,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
   }
 
   function addSources(result, sources) {
-    _(sources).forEach(function(src) {
+    _.forEach(sources, function(src) {
       addSource(src, result.sources, result.sourcesIndexByKey);
     });
   }
@@ -355,8 +345,9 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             if (tx.sources) {
               addSources(data, tx.sources);
             }
-            delete tx.sources;
-            delete tx.inputs;
+            // DO NOT modify a cached data
+            //delete tx.sources;
+            //delete tx.inputs;
 
             balanceWithPending += tx.amount; // update balance
             txPendings.push(tx);

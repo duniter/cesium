@@ -293,10 +293,11 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
             decrementGetPathCount(path, constants.LIMIT_REQUEST_DELAY - (Date.now() - start));
             return res;
           })
-          .catch(function (err) {
+          .catch(function(err) {
             decrementGetPathCount(path, constants.LIMIT_REQUEST_DELAY - (Date.now() - start));
             // When too many request, retry in 3s
             if (err && err.ucode === errorCodes.HTTP_LIMITATION) {
+
               // retry
               return $timeout(function () {
                 return wrappedRequest(params);
@@ -650,7 +651,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
               });
           },
           /*blocks: get('/tx/history/:pubkey/blocks/:from/:to', csCache.constants.LONG),*/
-          pending: get('/tx/history/:pubkey/pending')
+          pending: getHighUsage('/tx/history/:pubkey/pending')
         }
       },
       ud: {
