@@ -204,7 +204,42 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       return wrappedRequest;
     }
 
-    function incrementGetPathCount(path, limitRequestCount) {
+    function get(path, cacheTime, forcedTimeout) {
+      var request = getCacheable(path, cacheTime, forcedTimeout);
+
+      var execCount = 1;
+      var wrappedRequest = function(params) {
+        return request(params)
+          .then(function(res) {
+            execCount--;
+            return res;
+          })
+          .catch(function(err){
+            // If node return too many requests error
+            if (err && err.ucode === exports.errorCodes.HTTP_LIMITATION) {
+              // If max number of retry not reach
+              if (execCount <= exports.constants.LIMIT_REQUEST_COUNT) {
+                if (execCount === 1) {
+                  console.warn("[BMA] Too many HTTP requests: Will wait then retry...");
+                  // Update the loading message (if exists)
+                  UIUtils.loading.update({template: "COMMON.LOADING_WAIT"});
+                }
+                // Wait 1s then retry
+                return $timeout(function() {
+                  execCount++;
+                  return wrappedRequest(params); // Loop
+                }, exports.constants.LIMIT_REQUEST_DELAY);
+              }
+            }
+            throw err;
+          });
+      }
+      return wrappedRequest;
+    }
+
+
+
+    function incrementGetUsageCount(path, limitRequestCount) {
       limitRequestCount = limitRequestCount || constants.LIMIT_REQUEST_COUNT;
       // Wait if too many requests on this path
       if (that.raw.getCountByPath[path] >= limitRequestCount) {
@@ -213,7 +248,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         //console.debug("[BMA] Delaying request '{0}' to avoid a quota error...".format(path));
 
         return $timeout(function() {
-          return incrementGetPathCount(path, limitRequestCount);
+          return incrementGetUsageCount(path, limitRequestCount);
         }, constants.LIMIT_REQUEST_DELAY);
       }
 
@@ -232,7 +267,16 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       }
     }
 
-    function get(path, cacheTime, forcedTimeout, limitRequestCount) {
+    /**
+     * Allow to call GET requests, with a limited rate (in Duniter node). Parallel execution will be done,
+     * until the max limitRequestCount, then BMA will wait few times, and continue.
+     * @param path
+     * @param cacheTime
+     * @param forcedTimeout
+     * @param limitRequestCount
+     * @returns {function(*): *}
+     */
+    function getHighUsage(path, cacheTime, forcedTimeout, limitRequestCount) {
       limitRequestCount = limitRequestCount || constants.LIMIT_REQUEST_COUNT;
 
       that.raw.getCountByPath[path] = that.raw.getCountByPath[path] || 0;
@@ -241,7 +285,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       var wrappedRequest = function(params) {
 
         var start = Date.now();
-        return incrementGetPathCount(path, limitRequestCount)
+        return incrementGetUsageCount(path, limitRequestCount)
           .then(function() {
             return request(params);
           })
@@ -336,7 +380,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           }
           return isCompatible;
         })
-        .catch(function(err) {
+        .catch(function() {
           return false; // Unreachable
         });
     };
@@ -538,7 +582,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       network: {
         peering: {
           self: get('/network/peering'),
-          peers: get('/network/peering/peers', null, null, 10)
+          peers: getHighUsage('/network/peering/peers', null, null, 10)
         },
         peers: get('/network/peers'),
         ws2p: {
@@ -581,7 +625,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         }
       },
       tx: {
-        sources: get('/tx/sources/:pubkey', csCache.constants.SHORT, constants.TIMEOUT.VERY_LONG),
+        sources: get('/tx/sources/:pubkey', csCache.constants.SHORT),
         process: post('/tx/process'),
         history: {
           all: function(params) {
@@ -632,8 +676,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         },
         tx: {
           history: {
-            timesWithCache: get('/tx/history/:pubkey/times/:from/:to', csCache.constants.LONG),
-            times: get('/tx/history/:pubkey/times/:from/:to'),
+            timesWithCache: getHighUsage('/tx/history/:pubkey/times/:from/:to', csCache.constants.LONG),
+            times: getHighUsage('/tx/history/:pubkey/times/:from/:to'),
             all: get('/tx/history/:pubkey')
           }
         },
@@ -938,7 +982,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 
     /**
      * Return all expected blocks
-     * @param blockNumbers a rray of block number
+     * @param leaves
      */
     exports.network.peering.peersByLeaves = function(leaves){
       return $q.all(leaves.map(function(leaf) {
@@ -946,57 +990,6 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       }));
     };
 
-    exports.raw.getHttpRecursive = function(httpGetRequest, paramName, paramValues, offset, size) {
-      offset = angular.isDefined(offset) ? offset : 0;
-      size = size || exports.constants.LIMIT_REQUEST_COUNT;
-      return $q(function(resolve, reject) {
-        var result = [];
-        var jobs = [];
-        var chunk = paramValues.slice(offset, offset+size);
-        _.each(chunk, function(paramValue) {
-          var requestParams = {};
-          requestParams[paramName] = paramValue;
-          jobs.push(
-            httpGetRequest(requestParams)
-              .then(function(res){
-                if (!res) return;
-                result.push(res);
-              })
-          );
-        });
-
-        $q.all(jobs)
-          .then(function() {
-            if (offset < paramValues.length - 1) {
-              $timeout(function() {
-                exports.raw.getHttpRecursive(httpGetRequest, paramName, paramValues, offset+size, size)
-                  .then(function(res) {
-                    if (!res || !res.length) {
-                      resolve(result);
-                      return;
-                    }
-
-                    resolve(result.concat(res));
-                  })
-                  .catch(function(err) {
-                    reject(err);
-                  });
-              }, exports.constants.LIMIT_REQUEST_DELAY);
-            }
-            else {
-              resolve(result);
-            }
-          })
-          .catch(function(err){
-            if (err && err.ucode === exports.errorCodes.HTTP_LIMITATION) {
-              resolve(result);
-            }
-            else {
-              reject(err);
-            }
-          });
-      });
-    };
 
     exports.blockchain.lastUd = function() {
       return exports.blockchain.stats.ud()
