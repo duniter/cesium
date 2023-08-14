@@ -687,6 +687,8 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
   'ngInject';
 
   $scope.loading = true;
+  $scope.loadingMore = false;
+  $scope.lastMoreTxTime = null;
   $scope.settings = csSettings.data;
   $scope.listeners = [];
   $scope.qrcodeId = 'qrcode-wallet-tx-' + $scope.$id;
@@ -913,12 +915,19 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
     return $scope.goState('app.view_wallet_tx_errors_by_id', {id: wallet.id});
   };
 
-
-
   $scope.showMoreTx = function(fromTime) {
     if ($scope.loadingMore) return; // Skip
 
+    // Add a delay if previous load has been done recently
+    var waitDelayMs = $scope.lastMoreTxTime ? Date.now() - $scope.lastMoreTxTime : BMA.constants.LIMIT_REQUEST_DELAY;
+    if (waitDelayMs > 0 && waitDelayMs < BMA.constants.LIMIT_REQUEST_DELAY) {
+      return $timeout(function() {
+        return $scope.showMoreTx(fromTime);
+      }, waitDelayMs);
+    }
+
     $scope.loadingMore = true;
+    $scope.loadingMoreTime = Date.now();
 
     fromTime = fromTime ||
       ($scope.formData.tx.fromTime - csSettings.data.walletHistoryTimeSecond) ||
