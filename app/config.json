@@ -76,14 +76,13 @@
         "host": "duniter.moul.re",
         "port": 443,
         "path": "/bma"
-      },
-      {
-        "host": "duniter-v1-g1.axiom-team.fr",
-        "port": 443
       }
     ],
     "developers": [
-      {"name": "Benoit Lavenier", "pubkey": "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE"}
+      {"name": "Benoit Lavenier", "pubkey": "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE"},
+      {"name": "Cédric Moreau", "pubkey": "2ny7YAdmzReQxAayyJZsyVYwYhVyax2thKcGknmQy5nQ"},
+      {"name": "Kapis", "pubkey": "24jaf8XhYZyDyUb7hMcy5qsanaHBC11AwPefcCQRBQNA"},
+      {"name": "Matograine", "pubkey": "CmFKubyqbmJWbhyH2eEPVSSs4H4NeXGDfrETzEnRFtPd"}
     ],
     "plugins":{
       "es": {
