@@ -189,7 +189,8 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
         // get UD history
         if (csSettings.data.showUDHistory) {
-          var reduceUdFn = function(res) {
+          // FIXME: cannot use BMA here, because it return only NOT consumed UD !
+          /*var reduceUdFn = function(res) {
             if (!res || !res.history || !res.history.history) return;
             _.forEach(res.history.history, function(ud){
               if (ud.time < fromTime) return res; // skip to old UD
@@ -213,7 +214,26 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           // get all UD
           else {
             jobs.push(BMA.ud.history.all({pubkey: pubkey}).then(reduceUdFn));
-          }
+          }*/
+
+          // API extension
+          jobs.push(
+            api.data.raisePromise.loadUDs({
+              pubkey: pubkey,
+              fromTime: fromTime
+            })
+              .then(function(res) {
+                if (!res || !res.length) return;
+                _.forEach(res, function(hits) {
+                  tx.history.push(hits);
+                });
+              })
+
+              .catch(function(err) {
+                console.debug('Error while loading UDs history, on extension point.');
+                console.error(err);
+              })
+          );
         }
       }
 

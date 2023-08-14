@@ -226,7 +226,8 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
   };
 
   $scope.onAmountChanged = function() {
-    if ($scope.sending) return; // skip if sending TX
+    if (!$scope.form || !$scope.form.amount) return; // skip if modal has been destroyed
+    if ($scope.sending || !$scope.form.amount) return; // skip if sending TX
 
     var amount = $scope.formData.amount;
     if (amount && typeof amount === "string") {

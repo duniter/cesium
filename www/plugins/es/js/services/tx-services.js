@@ -32,6 +32,8 @@ angular.module('cesium.es.tx.services', ['ngResource', 'cesium.services', 'cesiu
       options = options || {};
       if (!options.pubkey) deferred.reject('Missing [pubkey] when calling [loadUDs] extension point');
 
+      console.debug('[ES] [tx] Loading UD from time: ' + (options.fromTime || -1));
+
       $q.all([
           // Get currency
           csCurrency.get(),
@@ -47,9 +49,13 @@ angular.module('cesium.es.tx.services', ['ngResource', 'cesium.services', 'cesiu
           // Filter memberships using options.fromTime
           if (options.fromTime !== -1) {
             memberships = memberships.reduce(function(res, membership) {
+              // Exclude membership periods when BEFORE formTime
               if (membership.leaveTime < options.fromTime) return res;
-              membership.joinTime = Math.max(membership.joinTime, options.fromTime);
-              return res.concat(membership);
+              // Do a copy, to avoid to change cached data
+              return res.concat({
+                joinTime: Math.max(membership.joinTime, options.fromTime),
+                leaveTime: membership.leaveTime
+              });
             }, []);
           }
 
@@ -89,19 +95,21 @@ angular.module('cesium.es.tx.services', ['ngResource', 'cesium.services', 'cesiu
         })
         .then(function(res){
           if (!res || !res.length) return;
-          return res.reduce(function(uds, res){
+          return res.reduce(function(uds, res) {
 
             if (!res.hits.total || !res.hits.hits.length) return res;
 
-            return uds.concat(res.hits.hits.reduce(function(res, hit){
+            return res.hits.hits.reduce(function(res, hit){
               var block = hit._source;
+              var amount = _powBase(block.dividend, block.unitbase);
               return res.concat({
+                id: [amount, 'ud', block.medianTime].join(':'),
                 time: block.medianTime,
-                amount: _powBase(block.dividend, block.unitbase),
+                amount: amount,
                 isUD: true,
                 block_number: block.number
               });
-            }, []));
+            }, uds);
 
           }, []);
 
