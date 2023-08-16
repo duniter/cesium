@@ -45,16 +45,16 @@ angular.module("cesium.config", [])
 	},
 	"feed": {
 		"jsonFeed": {
-			"ca": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-ca.json",
-			"de-DE": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-de-DE.json",
-			"en": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-en.json",
-			"en-GB": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-en-GB.json",
-			"eo-EO": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-eo-EO.json",
-			"es-ES": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-es-ES.json",
-			"fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-fr-FR.json",
-			"it-IT": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-it-IT.json",
-			"nl-NL": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-nl-NL.json",
-			"pt-PT": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/feed-pt-PT.json"
+			"ca": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-ca.json",
+			"de-DE": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-de-DE.json",
+			"en": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/draft/feed-en.json",
+			"en-GB": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-en-GB.json",
+			"eo-EO": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-eo-EO.json",
+			"es-ES": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/draft/feed-es.json",
+			"fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/draft/feed-fr.json",
+			"it-IT": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-it-IT.json",
+			"nl-NL": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-nl-NL.json",
+			"pt-PT": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-pt-PT.json"
 		},
 		"maxContentLength": 1300,
 		"maxAgeInMonths": 3,
@@ -147,7 +147,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "1.7.7",
-	"build": "2023-08-14T16:19:15.798Z",
+	"build": "2023-08-14T17:05:16.324Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 

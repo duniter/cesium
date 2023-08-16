@@ -42,7 +42,7 @@
         "en-GB": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-en-GB.json",
         "eo-EO": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-eo-EO.json",
         "es-ES": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-es-ES.json",
-        "fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1/feed-fr.json",
+        "fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-fr.json",
         "it-IT": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-it-IT.json",
         "nl-NL": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-nl-NL.json",
         "pt-PT": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-pt-PT.json"
