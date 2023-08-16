@@ -371,6 +371,19 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       if (hostname.indexOf('?') !== -1) {
         hostname = hostname.substr(0, path.indexOf('?'));
       }
+
+      if (hostname.indexOf(':') !== -1) {
+        var port = hostname.substring(path.indexOf(':')+1);
+        var cleanHostName = hostname.substr(0, path.indexOf(':'));
+        // Invalid port (e.g. a checksum) => remove it (otherwise net <a> parser will failed to parse the URI)
+        if (isNaN(parseInt(port))) {
+          path = cleanHostName + path.substring(hostname.length);
+        }
+        else {
+          hostname = cleanHostName;
+        }
+      }
+      // Clean path
       uri = 'http://' + path;
     }
 

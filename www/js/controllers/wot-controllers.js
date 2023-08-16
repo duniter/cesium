@@ -541,7 +541,7 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
           return;
         }
         BMA.uri.parse(result)
-          .then(function(obj){
+          .then(function(obj) {
             if (obj.pubkey) {
               $scope.search.text = obj.pubkey;
             }

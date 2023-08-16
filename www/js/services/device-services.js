@@ -88,7 +88,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
     }
 
     function scan(n) {
-      if (!exports.enable) {
+      if (!exports.barcode.enable) {
         return $q.reject("Barcode scanner not enable. Please call 'ionicReady()' once before use (e.g in app.js).");
       }
       var deferred = $q.defer();

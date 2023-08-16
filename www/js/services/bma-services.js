@@ -1016,14 +1016,14 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         }
 
         // Uid
-        else if (uri.startsWith('@') && exports.regexp.USER_ID.test(uid.substr(1))) {
+        else if (uri.startsWith('@') && exports.regexp.USER_ID.test(uid.substring(1))) {
           resolve({
-            uid: uid.substr(1)
+            uid: uid.substring(1)
           });
         }
 
         // G1 protocols
-        else if(uri.startsWith('june:') || uri.startsWith('web+june:')) {
+        else if (uri.startsWith('june:') || uri.startsWith('web+june:')) {
           var parser = csHttp.uri.parse(uri);
 
           // Pubkey (explicit path)
@@ -1052,9 +1052,9 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           }
 
           // UID
-          else if (parser.hostname && parser.hostname.startsWith('@') && exports.regexp.USER_ID.test(parser.hostname.substr(1))) {
+          else if (parser.hostname && parser.hostname.startsWith('@') && exports.regexp.USER_ID.test(parser.hostname.substring(1))) {
             resolve({
-              uid: parser.hostname.substr(1),
+              uid: parser.hostname.substring(1),
               pathSegments: parser.pathSegments,
               params: parser.searchParams
             });
@@ -1088,12 +1088,14 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         // Validate checksum
         if (result.pubkey && exports.regexp.PUBKEY_WITH_CHECKSUM.test(result.pubkey)) {
           console.debug("[BMA.parse] Validating pubkey checksum... ");
-          var matches = exports.regexp.PUBKEY_WITH_CHECKSUM.exec(uri);
+          var matches = exports.regexp.PUBKEY_WITH_CHECKSUM.exec(result.pubkey);
           pubkey = matches[1];
           var checksum = matches[2];
           var expectedChecksum = csCrypto.util.pkChecksum(pubkey);
           if (checksum !== expectedChecksum) {
-            console.warn("[BMA.parse] Detecting a pubkey {"+pubkey+"} with checksum {" + checksum + "}, but expecting checksum is {" + expectedChecksum + "}");
+            console.warn("[BMA.parse] Detecting a pubkey {{0}} with checksum {{1}}, but expecting checksum is {{2}}".format(
+              pubkey, checksum, expectedChecksum
+            ));
             throw {message: 'ERROR.PUBKEY_INVALID_CHECKSUM'};
           }
           result.pubkey = pubkey;
