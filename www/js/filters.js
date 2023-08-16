@@ -8,35 +8,50 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     var
       started = false,
       startPromise,
+      defaults = {
+        MEDIAN_TIME_OFFSET: 3600  /*G1 default value*/,
+        DATE_PATTERN: 'YYYY-MM-DD HH:mm',
+        DATE_SHORT_PATTERN: 'YYYY-MM-DD',
+        DATE_MONTH_YEAR_PATTERN: 'MMM YY',
+        DAYS: 'days',
+        UD: 'UD'
+      },
       that = this;
 
-    that.MEDIAN_TIME_OFFSET = 3600  /*G1 default value*/;
+    // Default values
+    angular.merge(that, defaults);
 
     // Update some translations, when locale changed
     function onLocaleChange() {
-      console.debug('[filter] Loading translations for locale [{0}]'.format($translate.use()));
+      // DEBUG
+      //console.debug('[filter] Loading translations for locale [{0}]'.format($translate.use()));
+
       return $translate(['COMMON.DATE_PATTERN', 'COMMON.DATE_SHORT_PATTERN', 'COMMON.UD', 'COMMON.DAYS'])
         .then(function(translations) {
           that.DATE_PATTERN = translations['COMMON.DATE_PATTERN'];
           if (that.DATE_PATTERN === 'COMMON.DATE_PATTERN') {
-            that.DATE_PATTERN = 'YYYY-MM-DD HH:mm';
+            that.DATE_PATTERN = defaults.DATE_PATTERN;
           }
           that.DATE_SHORT_PATTERN = translations['COMMON.DATE_SHORT_PATTERN'];
           if (that.DATE_SHORT_PATTERN === 'COMMON.DATE_SHORT_PATTERN') {
-            that.DATE_SHORT_PATTERN = 'YYYY-MM-DD';
+            that.DATE_SHORT_PATTERN = defaults.DATE_SHORT_PATTERN;
           }
           that.DATE_MONTH_YEAR_PATTERN = translations['COMMON.DATE_MONTH_YEAR_PATTERN'];
           if (that.DATE_MONTH_YEAR_PATTERN === 'COMMON.DATE_MONTH_YEAR_PATTERN') {
-            that.DATE_MONTH_YEAR_PATTERN = 'MMM YY';
+            that.DATE_MONTH_YEAR_PATTERN = defaults.DATE_MONTH_YEAR_PATTERN;
           }
           that.DAYS = translations['COMMON.DAYS'];
           if (that.DAYS === 'COMMON.DAYS') {
-            that.DAYS = 'days';
+            that.DAYS = defaults.DAYS;
           }
           that.UD = translations['COMMON.UD'];
           if (that.UD === 'COMMON.UD') {
-            that.UD = 'UD';
+            that.UD = defaults.UD;
           }
+        })
+        .catch(function(err) {
+          console.error('[filter] Failed to load translations for locale [{0}]'.format($translate.use()), err);
+          angular.merge(that, defaults);
         });
     }
 
@@ -81,13 +96,13 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
 
   .filter('formatAmount', function(csConfig, csSettings, csCurrency, $filter) {
     'ngInject';
-    var pattern = '0,0.0' + Array(csConfig.decimalCount || 4).join('0');
+    var pattern = '0,0.0' + Array(csConfig.decimalCount || 2).join('0');
     var patternBigNumber = '0,0.000 a';
     var currencySymbol = $filter('currencySymbol');
 
     // Always add one decimal for relative unit
     var patternRelative = pattern + '0';
-    var minValueRelative = 1 / Math.pow(10, (csConfig.decimalCount || 4) + 1 /*add one decimal in relative*/);
+    var minValueRelative = 1 / Math.pow(10, (csConfig.decimalCount || 2) + 1 /*add one decimal in relative*/);
 
     function formatRelative(input, options) {
       var currentUD = options && options.currentUD ? options.currentUD : csCurrency.data.currentUD;
@@ -169,9 +184,11 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     'ngInject';
     return function(input, useRelative) {
       if (!input) return '';
-      return (angular.isDefined(useRelative) ? useRelative : csSettings.data.useRelative) ?
-        (filterTranslations.UD + '<sub>' + $filter('abbreviate')(input) + '</sub>') :
-        $filter('abbreviate')(input);
+      var symbol = $filter('abbreviate')(input);
+      if (angular.isDefined(useRelative) ? useRelative : csSettings.data.useRelative) {
+        return filterTranslations.UD + '<sub>' + $filter('abbreviate')(input) + '</sub>';
+      }
+      return symbol;
     };
   })
 
