@@ -165,6 +165,10 @@ function ESCommentsController($scope, $filter, $state, $focus, $timeout, $anchor
   $scope.$on('$recordView.load', function(event, id, service) {
     $scope.id = id || $scope.id;
     $scope.service = service.comment || $scope.service;
+    if (!$scope.service) {
+      console.debug("[ES] [comment] Missing required argument 'service'");
+      return;
+    }
     console.debug("[ES] [comment] Will use {" + $scope.service.index + "} service");
     if ($scope.id) {
       $scope.load($scope.id)
@@ -257,6 +261,10 @@ function ESCommentsController($scope, $filter, $state, $focus, $timeout, $anchor
 
   $scope.save = function() {
     if (!$scope.formData.message || !$scope.formData.message.length) return;
+    if (!$scope.service) {
+      console.error('[ES] [comment] No service defined yet. Cannot post comment!');
+      return;
+    }
 
     $scope.loadWallet({minData: true, auth: true})
       .then(function() {
