@@ -511,6 +511,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   $scope.registerProtocolHandlers = function() {
+    if (csConfig.demo) return; // Skip if demo
+
     var protocols = ['web+june'];
 
     _.each(protocols, function(protocol) {
