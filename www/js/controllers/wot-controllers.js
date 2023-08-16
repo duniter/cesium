@@ -536,25 +536,25 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
       return;
     }
     Device.barcode.scan()
-    .then(function(result) {
-      if (!result) {
-        return;
-      }
-      BMA.uri.parse(result)
-      .then(function(obj){
-        if (obj.pubkey) {
-          $scope.search.text = obj.pubkey;
+      .then(function(result) {
+        if (!result) {
+          return;
         }
-        else if (result.uid) {
-          $scope.search.text = obj.uid;
-        }
-        else {
-          $scope.search.text = result;
-        }
-        $scope.doSearch();
-      });
-    })
-    .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
+        BMA.uri.parse(result)
+          .then(function(obj){
+            if (obj.pubkey) {
+              $scope.search.text = obj.pubkey;
+            }
+            else if (result.uid) {
+              $scope.search.text = obj.uid;
+            }
+            else {
+              $scope.search.text = result;
+            }
+            $scope.doSearch();
+          });
+      })
+      .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
   };
 
   // Show help tip (show only not already shown)
