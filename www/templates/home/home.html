@@ -1,4 +1,4 @@
-<ion-view id="home" bind-notifier="{locale:$root.settings.locale.id, feed: showFeed}">
+<ion-view id="home" bind-notifier="{locale:$root.settings.locale.id, feed: showFeed, loading: loading}">
   <!-- no title -->
   <ion-nav-title></ion-nav-title>
 
@@ -41,14 +41,14 @@
         <div class="center padding" ng-if="loading">
           <p class="text-center" translate>COMMON.LOADING</p>
 
-          <div class="progress-bar" ng-if="loadingPct">
-            <div class="progress-fill" style="width: {{loadingPct + '%'}}">
+          <div class="progress-bar" >
+            <div class="progress-fill" style="width: {{:loading:loadingPct + '%'}}">
             </div>
           </div>
 
-          <p class="text-italic progress-text" ng-if="loadingPct">
-            <span translate-values=":currency:{currency: $root.currency.name}" translate>{{loadingMessage}}</span>
-            <span>({{loadingPct|formatInteger}}&nbsp;%)</small>
+          <p class="text-italic progress-text">
+            {{:loading:loadingMessage|translate:{currency: $root.currency.name} }}
+            <small>({{:loading:loadingPct|formatInteger}}&nbsp;%)</small>
           </p>
         </div>
 

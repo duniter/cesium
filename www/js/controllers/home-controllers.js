@@ -64,16 +64,18 @@ function HomeController($scope, $state, $timeout, $interval, $ionicHistory, $tra
       var interval = $interval(function(){
         var duration = Date.now() - startTime;
         var timeout = Math.max(csNetwork.data.timeout, duration);
-        console.debug('[home] Start duration: ' + duration);
         // Waiting to start
         if (!$scope.loadingMessage) {
-          $scope.loadingPct = Math.min($scope.loadingPct+2, 99);
+          $scope.loadingPct = Math.min($scope.loadingPct + 0.5, 98);
         }
-        if (duration < timeout) {
-          var loadingPct = duration / timeout * 100;
-          $scope.loadingPct = Math.min(loadingPct, 99);
+        else if (duration < timeout) {
+          var loadingPct = Math.min(duration / timeout * 100, 98);
+          if (loadingPct > $scope.loadingPct) {
+            $scope.loadingPct = loadingPct;
+          }
         }
-      }, 100);
+        $scope.$broadcast('$$rebind::loading'); // force rebind loading
+      }, 200);
 
       // Wait platform to be ready
       csPlatform.ready()
@@ -88,6 +90,7 @@ function HomeController($scope, $state, $timeout, $interval, $ionicHistory, $tra
           $scope.loading = false;
           $scope.loadingMessage = '';
           $scope.loadingPct = 100;
+          $scope.$broadcast('$$rebind::loading'); // force rebind loading
         });
     }
   };

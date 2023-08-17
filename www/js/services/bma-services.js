@@ -106,10 +106,10 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       console.debug('[BMA] Enable SSL (forced by config or detected in URL)');
     }
 
-    if (host)  init(host, port, path, useSsl);
+    if (host) init(host, port, path, useSsl, timeout);
     that.useCache = angular.isDefined(useCache) ? useCache : true; // need here because used in get() function
 
-    function init(host, port, path, useSsl) {
+    function init(host, port, path, useSsl, timeout) {
       if (that.started) that.stop();
       that.alive = false;
 
@@ -134,6 +134,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       that.useSsl = angular.isDefined(useSsl) ? useSsl : (that.port == 443 || that.forceUseSsl);
       that.server = csHttp.getServer(that.host, that.port);
       that.url = csHttp.getUrl(that.host, that.port, that.path, that.useSsl);
+      that.timeout = timeout || (csSettings.data.expertMode && csSettings.data.timeout > 0 ? csSettings.data.timeout : Device.network.timeout());
     }
 
     function exact(regexpContent) {
@@ -160,16 +161,33 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       csCache.clear(cachePrefix);
 
       // Clean raw requests by path cache
+      cleanRawRequests();
+    }
+
+    /**
+     * Clean raw requests by path cache
+     */
+    function cleanRawRequests() {
       that.raw.getByPath = {};
       that.raw.getCountByPath = {};
       that.raw.postByPath = {};
       that.raw.wsByPath = {};
     }
 
+    function setTimeout(newTimeout) {
+      if (that.timeout === newTimeout && newTimeout > 0) return; // Skip if same, or invalid
+
+      console.debug('[BMA] Using timeout: {0}ms'.format(newTimeout));
+      that.timeout = newTimeout;
+
+      // Clean raw requests by path cache
+      cleanRawRequests();
+    }
+
     function getCacheable(path, cacheTime, forcedTimeout) {
 
       cacheTime = that.useCache && cacheTime || 0 /* no cache*/ ;
-      forcedTimeout = forcedTimeout || timeout;
+      forcedTimeout = forcedTimeout || that.timeout;
       var cacheKey = path + (cacheTime ? ('#'+cacheTime) : '');
 
       // Store requestFn into a variable a function, to be able to call it to loop
@@ -347,13 +365,15 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       };
     }
 
-    that.isAlive = function(node, timeout) {
+    that.isAlive = function(node, forcedTimeout) {
       node = node || that;
+      forcedTimeout = forcedTimeout || that.timeout;
+
       // WARN:
       //  - Cannot use previous get() function, because
       //    node can be !=that, or not be started yet
       //  - Do NOT use cache here
-      return csHttp.get(node.host, node.port, (node.path || '') + '/node/summary', node.useSsl || that.forceUseSsl, timeout)()
+      return csHttp.get(node.host, node.port, (node.path || '') + '/node/summary', node.useSsl || that.forceUseSsl, forcedTimeout)()
         .then(function(json) {
           var software = json && json.duniter && json.duniter.software;
           var isCompatible = true;
@@ -408,7 +428,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     function addListeners() {
       listeners = [
         // Listen if node changed
-        csSettings.api.data.on.changed($rootScope, onSettingsChanged, this)
+        csSettings.api.data.on.changed($rootScope, onSettingsChanged, this),
+        Device.api.network.on.changed($rootScope, onNetworkChanged, this)
       ];
     }
 
@@ -417,6 +438,13 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       $timeout(function() {
         exports.copy(settings.node);
       }, 1000);
+    }
+
+    function onNetworkChanged(connectionType) {
+      connectionType = connectionType || Device.network.connectionType();
+      if (connectionType !== 'none') {
+        setTimeout(Device.network.timeout());
+      }
     }
 
     that.isStarted = function() {
@@ -476,7 +504,6 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       if (!that.started && !that._startPromise) return $q.when(); // Skip multiple call
 
       console.debug('[BMA] Stopping...');
-
       removeListeners();
       delete that._startPromise;
 
@@ -494,8 +521,10 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     };
 
     that.restart = function() {
-      that.stop();
-      return $timeout(that.start, 200)
+      return that.stop()
+        .then(function() {
+          return $timeout(that.start, 200);
+        })
         .then(function(alive) {
           if (alive) {
             that.api.node.raise.restart();
@@ -504,8 +533,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         });
     };
 
-    that.filterAliveNodes = function(fallbackNodes, timeout) {
-      timeout = timeout || csSettings.data.timeout;
+    that.filterAliveNodes = function(fallbackNodes, forcedTimeout) {
+      forcedTimeout = forcedTimeout || csSettings.data.timeout > 0 ? csSettings.data.timeout : that.timeout;
 
       // Filter to exclude the current BMA node
       fallbackNodes = _.filter(fallbackNodes || [], function(node) {
@@ -515,7 +544,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         return !same;
       });
 
-      console.debug('[BMA] Getting alive fallback nodes... {timeout: {0}}'.format(timeout));
+      console.debug('[BMA] Getting alive fallback nodes... {timeout: {0}}'.format(forcedTimeout));
 
       var aliveNodes = [];
       return $q.all(_.map(fallbackNodes, function(node) {
@@ -1180,7 +1209,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
   service.lightInstance = function(host, port, path, useSsl, timeout) {
     port = port || 80;
     useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443);
-    timeout = timeout || csSettings.data.timeout;
+    timeout = timeout || (csSettings.data.expertMode && csSettings.data.timeout > 0 ? csSettings.data.timeout : Device.network.timeout());
     path = path || (host.indexOf('/') !== -1 ? host.substring(host.indexOf('/')) : '');
     if (!path.startsWith('/')) path = '/' + path; // Add starting slash
     if (path.endsWith('/')) path = path.substring(0, path.length - 1); // Remove trailing slash
@@ -1194,7 +1223,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       url: csHttp.getUrl(host, port, path, useSsl),
       node: {
         summary: csHttp.getWithCache(host, port, path + '/node/summary', useSsl, csCache.constants.MEDIUM, false/*autoRefresh*/, timeout),
-        sandboxes: csHttp.get(host, port, path + '/node/sandboxes', useSsl, timeout),
+        sandboxes: csHttp.get(host, port, path + '/node/sandboxes', useSsl, Math.max(1000, timeout)), // sandboxes request can be long
       },
       network: {
         peering: {

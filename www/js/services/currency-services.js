@@ -212,15 +212,26 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
     return (startPromise || start());
   }
 
-  function stop() {
+  function stop(options) {
+    if (!started && !startPromise) return $q.when();
+
     console.debug('[currency] Stopping...');
     removeListeners();
-    resetData();
+
+    // Clean data
+    if (!options || options.emitEvent !== false) {
+      resetData();
+    }
+
+    return $q.when();
   }
 
-  function restart() {
-    stop();
-    return $timeout(start, 200);
+  function restart(startDelayMs) {
+    return stop()
+      .then(function () {
+        if (startDelayMs === 0) return start();
+        return $timeout(start, startDelayMs || 200);
+      });
   }
 
   function start(bmaAlive) {

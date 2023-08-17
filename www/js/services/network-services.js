@@ -62,7 +62,8 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
     },
 
     resetData = function() {
-      data.starCounter = 0;
+      // Keep previous PID
+      //data.pid = 0;
       data.bma = null;
       data.listeners = [];
       data.peers.splice(0);
@@ -90,7 +91,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       data.searchingPeersOnNetwork = false;
       data.difficulties = null;
       data.ws2pHeads = null;
-      data.timeout = getDefaultTimeout();
+      data.timeout = data.timeout || getDefaultTimeout();
       data.startTime = null;
     },
 
@@ -544,7 +545,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         return $q.when(peer);
       }
 
-      var timeout = Math.max(500, remainingTime()); // >= 500ms
+      var timeout = Math.max(data.timeout / 2, remainingTime()); // >= 500ms
       peer.api = peer.api || BMA.lightInstance(peer.getHost(), peer.getPort(), peer.getPath(), peer.isSsl(), timeout);
 
       // Get current block
@@ -908,8 +909,8 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
     },
 
     close = function(pid) {
-      console.info(pid > 0 ? '[network] [#{0}] Stopping...'.format(pid) : '[network] Stopping...');
       if (data.bma) {
+        console.info(pid > 0 ? '[network] [#{0}] Stopping...'.format(pid) : '[network] Stopping...');
         removeListeners();
         resetData();
       }

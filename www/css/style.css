@@ -43,6 +43,7 @@
   left: 0;
   top: 0;
   border-radius: 5px;
+  transition: width 0.2s ease;
 }
 #home .progress-text {
   font-size: 12px;
@@ -268,6 +269,7 @@
   left: 0;
   top: 0;
   border-radius: 5px;
+  transition: width 0.2s ease;
 }
 .list .item-peer .col-sandboxes .progress-text {
   width: 100%;

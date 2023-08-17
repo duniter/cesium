@@ -151,47 +151,59 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
     };
     exports.network = {
       connectionType: function () {
-
-        // If desktop: use ethernet as default connection type
-        if (exports.isDesktop()) {
-          return 'ethernet';
-        }
-
         try {
-          var connectionType = navigator.connection && (navigator.connection.effectiveType || navigator.connection.type) || 'unknown';
-          console.debug('[device] Navigator connection type: ' + connectionType);
-          switch (connectionType) {
-            case 'slow-2g':
-            case '2g':
-            case 'cell_2g':
-              return 'cell_2g';
-            case '3g':
-            case 'cell_3g':
-              return 'cell_3g';
-            case 'cell': // iOS
-            case '4g':
-            case 'cell_4g':
-              return 'cell_4g';
-            case '5g':
-            case 'cell_5g':
-              return 'cell_5g';
-            case 'wifi':
-              return 'wifi';
-            case 'ethernet':
-              return 'ethernet';
-            case 'none':
-              return 'none';
-            default:
-              return 'unknown';
+          // If mobile: use the Cordova network plugin
+          if (exports.network.enable) {
+            return navigator.connection.type || 'unknown';
           }
-        } catch (err) {
+
+          // Continue using browser API
+          if (navigator.onLine === false) {
+            return 'none';
+          }
+
+          var connection = navigator.connection;
+          var connectionType = connection && connection.effectiveType || 'unknown';
+
+          // Si la vitesse de liaison descendante est de 0 mais que le type est '4g', cela signifie probablement que nous sommes hors ligne
+          if (connection && connection.downlink === 0) {
+            //console.debug('[device] Navigator connection type: none (downlink=0)');
+            return 'none';
+          }
+          else {
+            //console.debug('[device] Navigator connection type: ' + connectionType);
+            switch (connectionType) {
+              case 'slow-2g':
+              case '2g':
+                return 'cell_2g';
+              case '3g':
+                return 'cell_3g';
+              case '4g':
+                if (exports.isDesktop()) return 'ethernet';
+                return 'cell_4g';
+              case '5g':
+                if (exports.isDesktop()) return 'ethernet';
+                return 'cell_5g';
+              case 'unknown':
+                if (exports.isDesktop()) return 'ethernet';
+                return 'unknown';
+              default:
+                return connectionType
+            }
+          }
+
+        }
+        catch(err) {
           console.error('[device] Cannot get connection type: ' + (err && err.message || err), err);
           return 'unknown';
         }
       },
       isOnline: function () {
         try {
-          return exports.network.connectionType() !== 'none';
+          if (exports.network.enable) {
+            return navigator.connection.type !== Connection.NONE;
+          }
+          return angular.isDefined(navigator.onLine) ? navigator.onLine : true;
         } catch (err) {
           console.error('[device] Cannot check if online: ' + (err && err.message || err), err);
           return true;
@@ -199,7 +211,10 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
       },
       isOffline: function () {
         try {
-          return exports.network.connectionType() === 'none';
+          if (exports.network.enable) {
+            return navigator.connection.type === Connection.NONE;
+          }
+          return angular.isDefined(navigator.onLine) ? !navigator.onLine : false;
         } catch (err) {
           console.error('[device] Cannot check if offline: ' + (err && err.message || err), err);
           return true;
@@ -224,13 +239,13 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
               break;
             case 'cell': // (e.g. iOS)
             case 'cell_4g':
-              timeout = 5000;
+              timeout = 4000; // 4s
               break;
             case 'cell_3g':
-              timeout = 10000; // 10s
+              timeout = 5000; // 5s
               break;
             case 'cell_2g':
-              timeout = 30000; // 30s
+              timeout = 10000; // 10s
               break;
             case 'none':
               timeout = 0;
@@ -240,7 +255,9 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
               timeout = defaultTimeout;
               break;
           }
-          console.debug('[device] Using timeout: {1}ms (connection type: \'{0}\')'.format(connectionType, timeout));
+
+          // DEBUG
+          //console.debug('[device] Using timeout: {1}ms (connection type: \'{0}\')'.format(connectionType, timeout));
 
           return timeout;
         } catch (err) {
@@ -537,12 +554,12 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
             console.debug('[device] Windows plugins: ' + Object.keys(window.plugins));
 
             exports.camera.enable = !!navigator.camera;
-            exports.keyboard.enable = cordova && cordova.plugins && !!cordova.plugins.Keyboard;
-            exports.barcode.enable = cordova && cordova.plugins && !!cordova.plugins.barcodeScanner && (!exports.isOSX() || exports.isIOS());
-            exports.clipboard.enable = cordova && cordova.plugins && !!cordova.plugins.clipboard;
-            exports.intent.enable = window && !!window.plugins.launchmyapp;
-            exports.clipboard.enable = cordova && cordova.plugins && !!cordova.plugins.clipboard;
-            exports.network.enable = navigator.connection && !!navigator.connection.type;
+            exports.keyboard.enable = cordova && cordova.plugins && !!cordova.plugins.Keyboard || false;
+            exports.barcode.enable = cordova && cordova.plugins && !!cordova.plugins.barcodeScanner && (!exports.isOSX() || exports.isIOS()) || false;
+            exports.clipboard.enable = cordova && cordova.plugins && !!cordova.plugins.clipboard || false;
+            exports.intent.enable = window && !!window.plugins.launchmyapp || false;
+            exports.clipboard.enable = cordova && cordova.plugins && !!cordova.plugins.clipboard || false;
+            exports.network.enable = navigator.connection && !!navigator.connection.type || false;
             exports.file.enable = !!cordova.file && (exports.isAndroid() || exports.isIOS());
 
             if (exports.keyboard.enable) {
@@ -566,17 +583,37 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
 
             // Add network listeners
             if (exports.network.enable) {
-              document.addEventListener("offline", function () {
+              document.addEventListener('offline', function () {
                 console.info('[device] Network is offline');
                 api.network.raise.offline();
               }, false);
-              document.addEventListener("online", function () {
+              document.addEventListener('online', function () {
                 console.info('[device] Network is online');
                 api.network.raise.online();
               }, false);
             }
+
           } else {
             console.debug('[device] Ionic platform ready - no device detected.');
+
+            // Add network listeners
+            window.addEventListener('offline', function () {
+              console.info('[device] Network is offline');
+              api.network.raise.offline();
+            }, false);
+            window.addEventListener('online', function () {
+              console.info('[device] Network is online');
+              api.network.raise.online();
+            }, false);
+
+            // Listen connection type change
+            if (navigator.connection) {
+              navigator.connection.addEventListener('change', function() {
+                var connectionType = exports.network.connectionType();
+                console.info('[device] Network connection type changed: ' + connectionType);
+                api.network.raise.changed(connectionType);
+              });
+            }
           }
 
           started = true;
@@ -589,6 +626,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
     api.registerEvent('intent', 'new');
     api.registerEvent('network', 'offline');
     api.registerEvent('network', 'online');
+    api.registerEvent('network', 'changed');
 
     // Export the event api (see ngApi)
     exports.api = api;

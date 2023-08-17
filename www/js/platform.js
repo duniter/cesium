@@ -398,11 +398,12 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       return startPromise || start();
     }
 
-    function restart() {
-      console.debug('[platform] restarting csPlatform');
+    function restart(startDelayMs) {
+      console.debug('[platform] Restarting ...');
       return stop()
         .then(function () {
-          return $timeout(start, 200);
+          if (startDelayMs === 0) return start();
+          return $timeout(start, startDelayMs || 200);
         });
     }
 
@@ -460,18 +461,22 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     }
 
     function stop() {
-      if (!started) return $q.when();
+      if (!started && !startPromise) return $q.when();
       removeListeners();
 
-      csWallet.stop();
-      csCurrency.stop();
-      BMA.stop();
+      return $q.all([
+        csWallet.stop({emitEvent: false}),
+        csCurrency.stop({emitEvent: false}),
+        BMA.stop()
+      ])
+      .then(function() {
+        return $timeout(function() {
+          enableChangeState();
+          started = false;
+          startPromise = null;
+        }, 200);
+      });
 
-      return $timeout(function() {
-        enableChangeState();
-        started = false;
-        startPromise = null;
-      }, 500);
     }
 
     api.registerEvent('start', 'message');

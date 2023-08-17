@@ -2425,16 +2425,29 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       return startPromise || start();
     }
 
-    function stop() {
+    function stop(options) {
+      if (!started && !startPromise) return $q.when();
+
       var wasLogin = isLogin();
       var wasAuth = isAuth();
+
       console.debug('[wallet] Stopping...');
       removeListeners();
-      resetData();
 
-      // Send logout/unauth events
-      if (wasLogin) api.data.raise.logout();
-      if (wasAuth) api.data.raise.unauth();
+      if (!options || options.emitEvent !== false) {
+        // Reset all data
+        resetData();
+
+        // Send logout/unauth events
+        if (wasLogin) api.data.raise.logout();
+        if (wasAuth) api.data.raise.unauth();
+      }
+      else {
+        // Just mark as need to reload
+        data.loaded = false;
+      }
+
+      return $q.when();
     }
 
     function restart() {
