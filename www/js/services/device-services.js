@@ -188,7 +188,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
                 if (exports.isDesktop()) return 'ethernet';
                 return 'unknown';
               default:
-                return connectionType
+                return connectionType;
             }
           }
 
