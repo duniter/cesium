@@ -30,7 +30,7 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
     certification: {
       get: esHttp.get('/invitation/certification/:id?_source:fields'),
       add: esHttp.record.post('/invitation/certification'),
-      postSearch: esHttp.post('/invitation/certification/_search'),
+      search: esHttp.post('/invitation/certification/_search'),
       remove: esHttp.record.remove('invitation', 'certification'),
       getIds: esHttp.get('/invitation/certification/_search?q=recipient::pubkey&_source=false&size=1000'),
       count: esHttp.post('/invitation/certification/_count')
@@ -93,15 +93,15 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
     if (!csWallet.data.invitations || !csWallet.data.invitations.list) return;
 
     // Search on invitations
-    var invitationstoRemove = _.where(csWallet.data.invitations.list, {
+    var invitationsToRemove = _.where(csWallet.data.invitations.list, {
       type: 'certification',
       pubkey: cert.pubkey
     });
-    if (!invitationstoRemove || !invitationstoRemove.length) return;
+    if (!invitationsToRemove || !invitationsToRemove.length) return;
 
     // Remove all invitations related to this pubkey
     return $q.all(
-      invitationstoRemove.reduce(function(res, invitation) {
+      invitationsToRemove.reduce(function(res, invitation) {
         return res.concat(
           deleteInvitation(invitation)
         );
@@ -153,7 +153,7 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
 
     // TODO : count using size=0
     // and with 'group by' on type
-    return that.raw.count(request)
+    return that.raw.certification.count(request)
       .then(function(res) {
         return res.count;
       });
@@ -221,7 +221,7 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
       query.bool.must = [{range: {time: {gt: options.readTime}}}];
     }
 
-    return that.raw.certification.postSearch(request)
+    return that.raw.certification.search(request)
       .then(function(res) {
         if (!res || !res.hits || !res.hits.total) return [];
 
