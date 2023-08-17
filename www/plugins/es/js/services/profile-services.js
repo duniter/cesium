@@ -387,13 +387,13 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
     }
 
     function refreshState() {
-      var enable = esHttp.alive;
+      var enable = esSettings.isEnable() && esHttp.alive;
       if (!enable && listeners && listeners.length > 0) {
-        console.debug("[ES] [profile] Disable");
+        console.debug("[ES] [profile] WoT extend disable");
         removeListeners();
       }
       else if (enable && (!listeners || listeners.length === 0)) {
-        console.debug("[ES] [profile] Enable");
+        console.debug("[ES] [profile] WoT extend enable");
         addListeners();
       }
     }

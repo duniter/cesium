@@ -32,7 +32,8 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
       add: esHttp.record.post('/invitation/certification'),
       postSearch: esHttp.post('/invitation/certification/_search'),
       remove: esHttp.record.remove('invitation', 'certification'),
-      getIds: esHttp.get('/invitation/certification/_search?q=recipient::pubkey&_source=false&size=1000')
+      getIds: esHttp.get('/invitation/certification/_search?q=recipient::pubkey&_source=false&size=1000'),
+      count: esHttp.post('/invitation/certification/_count')
     }
   };
 
@@ -152,7 +153,7 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
 
     // TODO : count using size=0
     // and with 'group by' on type
-    return esHttp.post('/invitation/certification/_count')(request)
+    return that.raw.count(request)
       .then(function(res) {
         return res.count;
       });

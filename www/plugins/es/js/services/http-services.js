@@ -127,7 +127,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
       if (!that.raw) return;
 
-      console.warn('[ES] [http] Closing all websockets...');
+      console.debug('[ES] [http] Closing all websockets...');
       _.keys(that.raw.wsByPath||{}).forEach(function(key) {
         var sock = that.raw.wsByPath[key];
         sock.close();
@@ -326,6 +326,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     that.start = function(skipInit) {
       if (that._startPromise) return that._startPromise;
       if (that.started) return $q.when(that.alive);
+
+      console.debug('[ES] [http] Starting...');
 
       that._startPromise = csPlatform.ready()
         .then(function() {

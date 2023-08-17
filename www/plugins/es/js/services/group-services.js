@@ -23,7 +23,11 @@ angular.module('cesium.es.group.services', ['cesium.platform', 'cesium.es.http.s
       notifications: ["issuer", "time", "hash", "read_signature"]
     },
     exports = {
-      _internal: {}
+      raw: {
+        search: esHttp.post('/group/record/_search'),
+        get: esHttp.get('/group/record/:id'),
+        getCommons: esHttp.get('/group/record/:id?_source=' + fields.commons.join(','))
+      }
     };
 
   function onWalletInit(data) {
@@ -100,10 +104,9 @@ angular.module('cesium.es.group.services', ['cesium.platform', 'cesium.es.http.s
     return record;
   }
 
-  exports._internal.search = esHttp.post('/group/record/_search');
 
   function _executeSearchRequest(request) {
-    return exports._internal.search(request)
+    return exports.raw.search(request)
       .then(function(res) {
         if (!res || !res.hits || !res.hits.total) {
           return [];
@@ -185,8 +188,6 @@ angular.module('cesium.es.group.services', ['cesium.platform', 'cesium.es.http.s
     return _executeSearchRequest(request);
   }
 
-  exports._internal.get = esHttp.get('/group/record/:id');
-  exports._internal.getCommons = esHttp.get('/group/record/:id?_source=' + fields.commons.join(','));
 
   function loadData(id, options) {
     options = options || {};
@@ -195,8 +196,8 @@ angular.module('cesium.es.group.services', ['cesium.platform', 'cesium.es.http.s
 
     // Do get source
     var promise = options.fecthPictures ?
-      exports._internal.get({id: id}) :
-      exports._internal.getCommons({id: id});
+      exports.raw.get({id: id}) :
+      exports.raw.getCommons({id: id});
 
     return promise
       .then(function(hit) {

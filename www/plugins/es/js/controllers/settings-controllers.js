@@ -69,17 +69,26 @@ function ESPluginSettingsController ($scope, $window, $q,  $translate, $ionicPop
     $scope.isFallbackNode = $scope.formData.enable && esHttp.node.isFallback();
     $scope.server = $scope.getServer(esHttp);
 
-    // Load moderators
-    esHttp.node.moderators()
-      .then(function(res) {
-        $scope.moderator = csWallet.isLogin() && _.contains(res && res.moderators, csWallet.data.pubkey);
-        if ($scope.moderator) console.info("[ES] [peer] Wallet user is a moderator");
-        $scope.loading = false;
-      }).catch(function(err) {
-        console.error("[ES] [peer] Cannot load moderators. Too old Pod version ?");
-        $scope.moderator = false;
-        $scope.loading = false;
-      });
+    // Disable : ok
+    if (!$scope.formData.enable) {
+      $scope.moderator = false;
+      $scope.loading = false;
+      return $q.when();
+    }
+    else {
+
+      // Load moderators
+      return esHttp.node.moderators()
+        .then(function(res) {
+          $scope.moderator = csWallet.isLogin() && _.contains(res && res.moderators, csWallet.data.pubkey);
+          if ($scope.moderator) console.info("[ES] [http] Wallet user is a moderator");
+          $scope.loading = false;
+        }).catch(function(err) {
+          console.error("[ES] [http] Cannot load moderators. Too old Pod version ?", err);
+          $scope.moderator = false;
+          $scope.loading = false;
+        });
+    }
   };
 
   esSettings.api.state.on.changed($scope, function(enable) {

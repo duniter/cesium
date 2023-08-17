@@ -24,10 +24,11 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
         notifications: ["issuer", "time", "hash", "read_signature"]
       },
       raw = {
-        postSearch: esHttp.post('/message/inbox/_search'),
-        postSearchByType: esHttp.post('/message/:type/_search'),
+        search: esHttp.post('/message/inbox/_search'),
+        searchByType: esHttp.post('/message/:type/_search'),
         getByTypeAndId : esHttp.get('/message/:type/:id'),
-        postReadById: esHttp.post('/message/inbox/:id/_read')
+        postReadById: esHttp.post('/message/inbox/:id/_read'),
+        count: esHttp.post('/message/inbox/_count')
       },
       listeners,
       api = new Api(this, 'esMessage');
@@ -119,7 +120,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
         request.query.bool.must.push({range: {time: {gt: options.readTime}}});
       }
 
-      return esHttp.post('/message/inbox/_count')(request)
+      return raw.count(request)
         .then(function(res) {
           return res.count;
         });
@@ -147,7 +148,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
         _source: ['time']
       };
 
-      return esHttp.post('/message/inbox/_search')(request)
+      return raw.search(request)
         .then(function(res) {
           if (!res || !res.hits || !res.hits.total || !res.hits.hits) return undefined;
           return res.hits.hits[0] && res.hits.hits[0]._source && res.hits.hits[0]._source.time;
@@ -254,7 +255,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
         _source: fields.notifications
       };
 
-      return raw.postSearch(request)
+      return raw.search(request)
         .then(function(res) {
           if (!res || !res.hits || !res.hits.total) return [];
           var notifications = res.hits.hits.reduce(function(result, hit) {
@@ -286,14 +287,14 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
         _source: options._source
       };
 
-      if (options.type == 'inbox') {
+      if (options.type === 'inbox') {
         request.query = {bool: {filter: {term: {recipient: pubkey}}}};
       }
       else {
         request.query = {bool: {filter: {term: {issuer: pubkey}}}};
       }
 
-      return raw.postSearchByType(request, {type: options.type})
+      return raw.searchByType(request, {type: options.type})
         .then(function(res) {
           if (!res || !res.hits || !res.hits.total) {
             return [];
@@ -301,7 +302,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
           var messages = res.hits.hits.reduce(function(res, hit) {
             var msg = hit._source || {};
             msg.id = hit._id;
-            msg.read = (options.type == 'outbox') || !!msg.read_signature;
+            msg.read = (options.type === 'outbox') || !!msg.read_signature;
             delete msg.read_signature; // not need anymore
             return res.concat(msg);
           }, []);
@@ -390,7 +391,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
               if (!hit.found) return;
               var msg = hit._source;
               msg.id = hit._id;
-              msg.read = (type == 'outbox') || !!msg.read_signature;
+              msg.read = (type === 'outbox') || !!msg.read_signature;
               delete msg.read_signature; // not need anymore
 
               // Decrypt message
@@ -398,7 +399,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
 
               // Add avatar
                 .then(function(){
-                  var avatarField = (type == 'inbox') ? 'issuer' : 'recipient';
+                  var avatarField = (type === 'inbox') ? 'issuer' : 'recipient';
                   return csWot.extend(msg, avatarField);
                 });
             });
@@ -469,7 +470,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       if (message.content) {
         message.summary = message.content.replace(/(^|[\n\r]+)\s*>[^\n\r]*/g, '').trim();
         if (message.summary.length > 140) {
-          message.summary = message.summary.substr(0, 137) + '...';
+          message.summary = message.summary.substring(0, 137) + '...';
         }
       }
     }
@@ -748,7 +749,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
 
     return {
       api: api,
-      search: raw.postSearch,
+      search: raw.search,
       notifications: {
         load: loadMessageNotifications
       },
