@@ -172,6 +172,37 @@ function appConfig() {
     .pipe(gulp.dest('www/js'));
 }
 
+function appConfigTest() {
+  const allConfig = JSON.parse(fs.readFileSync('./app/config.json', 'utf8'));
+
+  // Determine which environment to use when building config.
+  const env = 'g1-test';
+  const config = allConfig[env];
+
+  if (!config) {
+    throw new Error(colors.red("=> Could not load `" + env + "` environment!"));
+  }
+
+  log(colors.green("Building App test config at `www/js/config-test.js` for `" + env + "` environment..."));
+
+  const project = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+  config['version'] = project.version;
+  config['build'] = (new Date()).toJSON();
+  config['newIssueUrl'] = project.bugs.new;
+
+  return ngConstant({
+    name: 'cesium.config',
+    constants: {"csConfig": config},
+    stream: true,
+    dest: 'config-test.js'
+  })
+    // Add a warning header
+    .pipe(header("/******\n* !! WARNING: This is a generated file !!\n*\n* PLEASE DO NOT MODIFY DIRECTLY\n*\n* => Changes should be done on file 'app/config.json'.\n******/\n\n"))
+    // Writes into file www/js/config-test.js
+    .pipe(rename('config-test.js'))
+    .pipe(gulp.dest('www/js'));
+}
+
 function appAndPluginLint() {
   log(colors.green('Linting JS files...'));
 
@@ -1330,6 +1361,7 @@ const appAndPluginSass = gulp.series(appSass, pluginSass);
 const app = gulp.series(appSass, appNgTemplate, appNgAnnotate, appNgTranslate);
 const plugin = gulp.series(pluginSass, pluginNgTemplate, pluginNgAnnotate, pluginNgTranslate);
 const build = gulp.series(appLicense, app, plugin);
+const config = gulp.series(appConfig, appConfigTest);
 
 const webApp = gulp.series(appSass, webCopyFiles, webNgTemplate, webAppNgAnnotate);
 const webPlugin = gulp.series(pluginSass, webPluginCopyFiles, webPluginNgTemplate, webPluginNgAnnotate);
@@ -1372,6 +1404,7 @@ const webExtBuild = gulp.series(
 
 exports.help = help;
 exports.config = appConfig;
+exports.configTest = appConfigTest;
 exports.license = appLicense;
 exports.sass = appAndPluginSass;
 exports.translate = translate;
@@ -1415,6 +1448,6 @@ const cdvBeforeCompile = gulp.series(
 );
 exports.cdvBeforeCompile = cdvAsHook(cdvBeforeCompile);
 
-exports.default = gulp.series(appConfig, build);
+exports.default = gulp.series(config, build);
 exports.serveBefore = gulp.series(build, appAndPluginWatch);
 exports['ionic:serve:before'] = exports.serveBefore; // Alias need by @ionic/cli

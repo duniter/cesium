@@ -9,6 +9,7 @@
     "timeout": 30000,
     "timeWarningExpireMembership": 5184000,
     "timeWarningExpire": 7776000,
+    "minPeerCountAtStartup": 10,
     "keepAuthIdle": 600,
     "useLocalStorage": true,
     "useRelative": false,
@@ -133,19 +134,22 @@
     "readonly": false,
     "fallbackLanguage": "en",
     "rememberMe": true,
-    "timeout": 300000,
+    "showUDHistory": true,
+    "timeout": 30000,
     "timeWarningExpireMembership": 5184000,
     "timeWarningExpire": 7776000,
+    "minPeerCountAtStartup": 2,
     "useLocalStorage": true,
     "useRelative": false,
     "expertMode": true,
     "decimalCount": 2,
+    "httpsMode": false,
     "shareBaseUrl": "https://g1-test.cesium.app",
     "helptip": {
       "enable": false,
       "installDocUrl": {
         "fr-FR": "https://duniter.fr/wiki/doc/installer/",
-        "en": "https://duniter.org/en/wiki/duniter/install/"
+        "en": "https://duniter.org/wiki/doc/install/"
       }
     },
     "node": {
@@ -154,23 +158,25 @@
     },
     "fallbackNodes": [
       {
-        "host": "g1-test.cgeek.fr",
-        "port": 443
+        "host": "gt.moul.re",
+        "port": 10902
       },
       {
-        "host": "gtest.jytou.fr",
-        "port": 443
-      },
-      {
-        "host": "ts.gt.elo.tf",
+        "host": "g1-test.duniter.org",
         "port": 443
       }
     ],
+    "developers": [
+      {"name": "Benoit Lavenier", "pubkey": "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE"},
+      {"name": "Cédric Moreau", "pubkey": "2ny7YAdmzReQxAayyJZsyVYwYhVyax2thKcGknmQy5nQ"},
+      {"name": "Kapis", "pubkey": "24jaf8XhYZyDyUb7hMcy5qsanaHBC11AwPefcCQRBQNA"},
+      {"name": "Matograine", "pubkey": "CmFKubyqbmJWbhyH2eEPVSSs4H4NeXGDfrETzEnRFtPd"}
+    ],
     "plugins":{
       "es": {
-        "enable": true,
-        "askEnable": true,
-        "useRemoteStorage": true,
+        "enable": false,
+        "askEnable": false,
+        "useRemoteStorage": false,
         "host": "g1-test.data.e-is.pro",
         "port": 443,
         "notifications": {

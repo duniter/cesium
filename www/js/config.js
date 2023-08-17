@@ -15,9 +15,10 @@ angular.module("cesium.config", [])
 	"fallbackLanguage": "en",
 	"rememberMe": true,
 	"showUDHistory": true,
-	"timeout": 40000,
+	"timeout": 30000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
+	"minPeerCountAtStartup": 10,
 	"keepAuthIdle": 600,
 	"useLocalStorage": true,
 	"useRelative": false,
@@ -47,11 +48,11 @@ angular.module("cesium.config", [])
 		"jsonFeed": {
 			"ca": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-ca.json",
 			"de-DE": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-de-DE.json",
-			"en": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/draft/feed-en.json",
+			"en": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-en.json",
 			"en-GB": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-en-GB.json",
 			"eo-EO": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-eo-EO.json",
-			"es-ES": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/draft/feed-es.json",
-			"fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/draft/feed-fr.json",
+			"es-ES": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-es-ES.json",
+			"fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-fr.json",
 			"it-IT": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-it-IT.json",
 			"nl-NL": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-nl-NL.json",
 			"pt-PT": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-pt-PT.json"
@@ -147,7 +148,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "1.7.7",
-	"build": "2023-08-14T17:05:16.324Z",
+	"build": "2023-08-17T12:58:05.172Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
