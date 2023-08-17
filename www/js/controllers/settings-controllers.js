@@ -20,7 +20,7 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
   .controller('SettingsCtrl', SettingsController)
 ;
 
-function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $timeout, $translate, $ionicPopover,
+function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $timeout, $translate, $ionicPopover, $ionicScrollDelegate,
                             UIUtils, Modals, BMA, csHttp, csConfig, csCurrency, csSettings, csPlatform) {
   'ngInject';
 
@@ -481,6 +481,7 @@ function SettingsController($scope, $q, $window, $ionicHistory, $ionicPopup, $ti
     var helptipScope = $scope.createHelptipScope(tour);
     if (!helptipScope) return; // could be undefined, if a global tour already is already started
 
+    $ionicScrollDelegate.scrollTop(true);
     return helptipScope.startSettingsTour(index, false)
       .then(function(endIndex) {
         helptipScope.$destroy();
