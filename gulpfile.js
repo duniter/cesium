@@ -422,6 +422,11 @@ function webCopyFiles() {
       .pipe(htmlmin())
       .pipe(gulp.dest(targetPath + '/api')),
 
+    // Copy config-test.js
+    gulp.src('./www/js/config*.js')
+      .pipe(debug(debugOptions))
+      .pipe(gulp.dest(targetPath)),
+
     // Copy fonts
     gulp.src('./www/fonts/**/*.*')
       .pipe(debug(debugOptions))
@@ -561,7 +566,7 @@ function webUglify() {
     log(colors.green('Minify JS and CSS files...'));
 
     const indexFilter = filter('**/index.html', {restore: true});
-    const jsFilter = filter(["**/*.js", '!**/config.js'], {restore: true});
+    const jsFilter = filter(["**/*.js", '!**/config.js', '!**/config-test.js'], {restore: true});
     const cssFilter = filter("**/*.css", {restore: true});
 
     // Process index.html
@@ -619,7 +624,7 @@ function webApiUglify() {
   const targetPath = './dist/web/www';
   const version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
 
-  const jsFilter = filter(["**/*.js", '!**/config.js'], {restore: true});
+  const jsFilter = filter(["**/*.js", '!**/config.js', '!**/config-test.js'], {restore: true});
   const cssFilter = filter("**/*.css", {restore: true});
   const indexFilter = filter('**/index.html', {restore: true});
 
@@ -640,7 +645,7 @@ function webApiUglify() {
 
       // Process CSS
       .pipe(cssFilter)
-      .pipe(csso())               // Minify any CSS sources
+      .pipe(csso()) // Minify any CSS sources
       .pipe(cssFilter.restore)
 
       .pipe(indexFilter)
@@ -652,6 +657,7 @@ function webApiUglify() {
       .pipe(replace("dist_js", "../dist_js"))
       .pipe(replace("dist_css", "../dist_css"))
       .pipe(replace("config.js", "../config.js"))
+      .pipe(replace("config-test.js", "../config-test.js"))
       .pipe(indexFilter.restore)
 
       .pipe(sourcemaps.write('maps'))
@@ -669,6 +675,7 @@ function webApiUglify() {
       .pipe(replace("dist_js", "../dist_js"))
       .pipe(replace("dist_css", "../dist_css"))
       .pipe(replace("config.js", "../config.js"))
+      .pipe(replace("config-test.js", "../config-test.js"))
       .pipe(indexFilter.restore)
 
       .pipe(gulp.dest(targetPath));
@@ -707,6 +714,9 @@ function webCleanUnusedFiles(done) {
 
       // Unused maps/config.js.map
       gulp.src(targetPath + '/maps/config.js.map', {read: false, allowEmpty: true})
+        .pipe(debug(debugOptions))
+        .pipe(clean()),
+      gulp.src(targetPath + '/maps/config-test.js.map', {read: false, allowEmpty: true})
         .pipe(debug(debugOptions))
         .pipe(clean())
     )
