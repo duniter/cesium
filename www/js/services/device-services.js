@@ -151,9 +151,39 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
     };
     exports.network = {
       connectionType: function () {
-        if (!exports.network.enable) return 'unknown';
+
+        // If desktop: use ethernet as default connection type
+        if (exports.isDesktop()) {
+          return 'ethernet';
+        }
+
         try {
-          return navigator.connection.type || 'unknown';
+          var connectionType = navigator.connection && (navigator.connection.effectiveType || navigator.connection.type) || 'unknown';
+          console.debug('[device] Navigator connection type: ' + connectionType);
+          switch (connectionType) {
+            case 'slow-2g':
+            case '2g':
+            case 'cell_2g':
+              return 'cell_2g';
+            case '3g':
+            case 'cell_3g':
+              return 'cell_3g';
+            case 'cell': // iOS
+            case '4g':
+            case 'cell_4g':
+              return 'cell_4g';
+            case '5g':
+            case 'cell_5g':
+              return 'cell_5g';
+            case 'wifi':
+              return 'wifi';
+            case 'ethernet':
+              return 'ethernet';
+            case 'none':
+              return 'none';
+            default:
+              return 'unknown'
+          }
         } catch (err) {
           console.error('[device] Cannot get connection type: ' + (err && err.message || err), err);
           return 'unknown';
@@ -161,7 +191,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
       },
       isOnline: function () {
         try {
-          return navigator.connection.type !== Connection.NONE;
+          return exports.network.connectionType() !== 'none';
         } catch (err) {
           console.error('[device] Cannot check if online: ' + (err && err.message || err), err);
           return true;
@@ -169,7 +199,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
       },
       isOffline: function () {
         try {
-          return navigator.connection.type === Connection.NONE;
+          return exports.network.connectionType() === 'none';
         } catch (err) {
           console.error('[device] Cannot check if offline: ' + (err && err.message || err), err);
           return true;
@@ -182,11 +212,6 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
         try {
           var connectionType = exports.network.connectionType();
 
-          // If desktop: use ethernet as default connection type
-          if (connectionType === 'unknown' && exports.isDesktop()) {
-            connectionType = 'ethernet';
-          }
-
           switch (connectionType) {
             case 'ethernet':
               timeout = 1000; // 1 s
@@ -194,10 +219,10 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
             case 'wifi':
               timeout = 2000;
               break;
-            case 'cell': // (e.g. iOS)
             case 'cell_5g':
               timeout = 3000;
               break;
+            case 'cell': // (e.g. iOS)
             case 'cell_4g':
               timeout = 5000;
               break;
@@ -205,7 +230,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
               timeout = 10000; // 10s
               break;
             case 'cell_2g':
-              timeout = 40000; // 40s
+              timeout = 30000; // 30s
               break;
             case 'none':
               timeout = 0;

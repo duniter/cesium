@@ -39,8 +39,17 @@
         </h4>
 
         <div class="center padding" ng-if="loading">
-          <ion-spinner icon="android" ></ion-spinner>
-          <p class="text-italic" translate-values=":currency:{currency: $root.currency.name}" translate>{{loadingMessage}}</p>
+          <p class="text-center" translate>COMMON.LOADING</p>
+
+          <div class="progress-bar" ng-if="loadingPct">
+            <div class="progress-fill" style="width: {{loadingPct + '%'}}">
+            </div>
+          </div>
+
+          <p class="text-italic progress-text" ng-if="loadingPct">
+            <span translate-values=":currency:{currency: $root.currency.name}" translate>{{loadingMessage}}</span>
+            <span>({{loadingPct|formatInteger}}&nbsp;%)</small>
+          </p>
         </div>
 
         <div class="center padding animate-fade-in animate-show-hide ng-hide" ng-show="!loading && error">
@@ -145,17 +154,16 @@
           </p>
 
 
-          <div class="text-center no-padding visible-xs stable">
-            <br/>
-            <!-- version -->
-            {{:locale:'COMMON.APP_VERSION'|translate:{version: config.version} }}
-            |
-            <!-- about -->
-            <a href="#" ng-click="showAboutModal()" translate>HOME.BTN_ABOUT</a>
-          </div>
-
         </div>
 
+        <div class="text-center no-padding visible-xs stable">
+          <br/>
+          <!-- version -->
+          {{:locale:'COMMON.APP_VERSION'|translate:{version: config.version} }}
+          |
+          <!-- about -->
+          <a href="#" ng-click="showAboutModal()" translate>HOME.BTN_ABOUT</a>
+        </div>
       </div>
 
       <!-- left col spacer-->

@@ -27,6 +27,29 @@
   color: grey;
 }
 
+#home .progress-bar {
+  display: inline-block;
+  width: 50vw;
+  max-width: 300px;
+  position: relative;
+  height: 12px;
+  border-radius: 5px;
+  border: 1px solid gray;
+}
+#home .progress-fill {
+  height: 100%;
+  background-color: currentColor;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 5px;
+}
+#home .progress-text {
+  font-size: 12px;
+  color: currentColor !important;
+  opacity: 0.7;
+}
+
 #modal-license {
   color:rgb(0, 0, 0);
 }

@@ -22,6 +22,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
       -1,
       500,
       1000,
+      2000,
+      3000,
       5000,
       10000,
       30000,
@@ -94,7 +96,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     persistCache: false, // disable by default (waiting resolution of issue #885)
     walletHistoryTimeSecond: 30 * 24 * 60 * 60, // 30 days
     walletHistorySliceSecond: 5 * 24 * 60 * 60, // download using 5 days slice - need for cache
-    walletHistoryScrollMaxTimeSecond: 2 * 30 * 24 * 60 * 60, // Limit TX load infinite scroll to 2 month
+    walletHistoryScrollMaxTimeSecond: 3 * 30 * 24 * 60 * 60, // Limit TX load infinite scroll to 3 month
     walletHistoryAutoRefresh: true, // Reload TX history on new block ? Overwritten to false if device
     rememberMe: true,
     keepAuthIdle: 10 * 60,

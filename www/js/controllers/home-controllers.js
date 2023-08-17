@@ -24,11 +24,12 @@ angular.module('cesium.home.controllers', ['cesium.platform', 'cesium.services']
   .controller('HomeCtrl', HomeController)
 ;
 
-function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $http, $q, $location,
-                        UIUtils, BMA, Device, csConfig, csHttp, csCache, csPlatform, csCurrency, csSettings) {
+function HomeController($scope, $state, $timeout, $interval, $ionicHistory, $translate, $http, $q, $location,
+                        UIUtils, BMA, Device, csConfig, csHttp, csCache, csPlatform, csNetwork, csCurrency, csSettings) {
   'ngInject';
 
   $scope.loading = true;
+  $scope.loadingPct = 0;
   $scope.loadingMessage = '';
   $scope.locales = angular.copy(csSettings.locales);
   $scope.smallscreen = UIUtils.screen.isSmall();
@@ -58,6 +59,22 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
     }
     else {
 
+      // Loading progress percent
+      var startTime = Date.now();
+      var interval = $interval(function(){
+        var duration = Date.now() - startTime;
+        var timeout = Math.max(csNetwork.data.timeout, duration);
+        console.debug('[home] Start duration: ' + duration);
+        // Waiting to start
+        if (!$scope.loadingMessage) {
+          $scope.loadingPct = Math.min($scope.loadingPct+2, 99);
+        }
+        if (duration < timeout) {
+          var loadingPct = duration / timeout * 100;
+          $scope.loadingPct = Math.min(loadingPct, 99);
+        }
+      }, 100);
+
       // Wait platform to be ready
       csPlatform.ready()
         .catch(function(err) {
@@ -65,8 +82,12 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
           $scope.error = err;
         })
         .then(function() {
+          // Stop progression
+          $interval.cancel(interval);
+          // Mark as loaded
           $scope.loading = false;
           $scope.loadingMessage = '';
+          $scope.loadingPct = 100;
         });
     }
   };
@@ -74,6 +95,8 @@ function HomeController($scope, $state, $timeout, $ionicHistory, $translate, $ht
 
   $scope.reload = function() {
     $scope.loading = true;
+    $scope.loadingPct = 0;
+    $scope.loadingMessage = '';
     delete $scope.error;
 
     $timeout($scope.enter, 200);
