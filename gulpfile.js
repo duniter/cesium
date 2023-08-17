@@ -1403,8 +1403,7 @@ const webExtBuild = gulp.series(
    --------------------------------------------------------------------------*/
 
 exports.help = help;
-exports.config = appConfig;
-exports.configTest = appConfigTest;
+exports.config = config;
 exports.license = appLicense;
 exports.sass = appAndPluginSass;
 exports.translate = translate;

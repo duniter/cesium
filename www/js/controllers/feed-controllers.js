@@ -106,7 +106,7 @@ function FeedController($scope, $timeout, $http, $translate, $q, csConfig, csHtt
         // Migrate from old version 1.0 to 1.1
         if (feed.version === 'https://jsonfeed.org/version/1') {
           if (feed.author && !feed.authors) {
-            feed.authors = [feed.author]
+            feed.authors = [feed.author];
             delete feed.author;
           }
           (feed.items || []).forEach(function (item) {

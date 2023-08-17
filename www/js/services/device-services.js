@@ -182,7 +182,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
             case 'none':
               return 'none';
             default:
-              return 'unknown'
+              return 'unknown';
           }
         } catch (err) {
           console.error('[device] Cannot get connection type: ' + (err && err.message || err), err);
