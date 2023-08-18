@@ -43,8 +43,11 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       searchingPeersOnNetwork: false,
       difficulties: null,
       ws2pHeads: null,
-      timeout: csConfig.timeout,
-      startTime: null
+      timeout: csConfig.timeout, // Max timeout
+      startTime: null,
+      autoRefresh: true,
+      flushIntervalMs: 1000,
+      withSandboxes: null
     },
 
     // Return the block uid
@@ -91,14 +94,16 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       data.searchingPeersOnNetwork = false;
       data.difficulties = null;
       data.ws2pHeads = null;
-      data.timeout = data.timeout || getDefaultTimeout();
+      data.timeout = data.timeout || getDeviceTimeout(); // Keep it is already set
       data.startTime = null;
+      data.autoRefresh = true;
+      data.flushIntervalMs = null;
     },
 
    /**
     * Compute a timeout, depending on connection type (wifi, ethernet, cell, etc.)
     */
-   getDefaultTimeout = function () {
+   getDeviceTimeout = function () {
      // Using timeout from settings
      if (csSettings.data.expertMode && csSettings.data.timeout > 0) {
        console.debug('[network] Using user defined timeout: {0}ms'.format(csSettings.data.timeout));
@@ -148,7 +153,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           if (err && err.ucode === BMA.errorCodes.HTTP_LIMITATION) {
             return $timeout(function() {
               if (remainingTime() > 0) return loadW2spHeads();
-            }, 3000);
+            }, BMA.constants.LIMIT_REQUEST_DELAY);
           }
           console.error(err); // can occur on duniter v1.6
           data.ws2pHeads = {};
@@ -166,10 +171,10 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         })
         .catch(function(err) {
           // When too many request, retry in 3s
-          if (err && err.ucode == BMA.errorCodes.HTTP_LIMITATION) {
+          if (err && err.ucode === BMA.errorCodes.HTTP_LIMITATION) {
             return $timeout(function() {
               if (remainingTime() > 0) return loadDifficulties();
-            }, 3000);
+            }, BMA.constants.LIMIT_REQUEST_DELAY);
           }
           console.error(err);
           data.difficulties = {};
@@ -201,8 +206,9 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           sortPeers(true/*update main buid*/);
 
           console.debug('[network] [#{0}] {1} peer(s) found.'.format(pid, data.peers.length));
+
         }
-      }, 1000);
+      }, data.flushIntervalMs || 1000);
 
       var initJobs = [
         // Load uids
@@ -545,7 +551,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         return $q.when(peer);
       }
 
-      var timeout = Math.max(data.timeout / 2, remainingTime()); // >= 500ms
+      var timeout = Math.max(1000, remainingTime()); // >= 500ms
       peer.api = peer.api || BMA.lightInstance(peer.getHost(), peer.getPort(), peer.getPath(), peer.isSsl(), timeout);
 
       // Get current block
@@ -625,7 +631,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           }
 
           // Get sandboxes
-          if (data.expertMode) {
+          if (data.expertMode && data.withSandboxes !== false) {
             jobs.push(peer.api.node.sandboxes()
               .catch(function(err) {
                 return {}; // continue
@@ -665,17 +671,20 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
     flushNewPeersAndSort = function(newPeers, updateMainBuid) {
       newPeers = newPeers || data.newPeers;
       if (!newPeers.length) return;
-      var ids = _.map(data.peers, function(peer){
-        return peer.id;
-      });
+      var ids = _.pluck(data.peers, 'id');
       var hasUpdates = false;
       var newPeersAdded = 0;
       _.forEach(newPeers.splice(0), function(peer) {
-        if (!ids[peer.id]) {
+        if (!ids.includes(peer.id)) {
           data.peers.push(peer);
-          ids[peer.id] = peer;
+          ids.push(peer.id);
           hasUpdates = true;
           newPeersAdded++;
+        }
+        else {
+          // Skip if exists
+          //data.peers[ids.indexOf(peer.id)] = peer;
+          //hasUpdates = true;
         }
       });
       if (hasUpdates) {
@@ -873,8 +882,11 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           data.filter = options.filter ? angular.merge(data.filter, options.filter) : data.filter;
           data.sort = options.sort ? angular.merge(data.sort, options.sort) : data.sort;
           data.expertMode = angular.isDefined(options.expertMode) ? options.expertMode : data.expertMode;
-          data.timeout = angular.isDefined(options.timeout) ? options.timeout : getDefaultTimeout();
+          data.timeout = angular.isDefined(options.timeout) ? options.timeout : getDeviceTimeout(); // Fore recompute
           data.startTime = Date.now();
+          data.autoRefresh = angular.isDefined(options.autoRefresh) ? data.autoRefresh : true;
+          data.flushIntervalMs = angular.isDefined(options.flushIntervalMs) ? options.flushIntervalMs : 1000;
+          data.withSandboxes = angular.isDefined(options.withSandboxes) ? options.withSandboxes : true;
 
           // Init a min block number
           var mainBlockNumber = data.mainBlock && buidBlockNumber(data.mainBlock.buid);
@@ -892,9 +904,10 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
         })
         .then(function() {
           var now = Date.now();
-          console.info('[network] [#{0}] Starting from [{1}{2}] {ssl: {3}}'.format(pid, bma.server, bma.path, bma.useSsl));
+          console.info('[network] [#{0}] Starting from [{1}{2}] {ssl: {3}, expertMode: {4}, sandboxes: {5}}'.format(pid, bma.server, bma.path, bma.useSsl, data.expertMode, data.withSandboxes));
 
-          addListeners();
+          // Start listener to auto refresh peers
+          if (data.autoRefresh) addListeners();
 
           return loadPeers()
             .then(function(peers){
@@ -910,7 +923,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
 
     close = function(pid) {
       if (data.bma) {
-        console.info(pid > 0 ? '[network] [#{0}] Stopping...'.format(pid) : '[network] Stopping...');
+        console.info(pid > 0 ? '[network] [#{0}] Stopping'.format(pid) : '[network] Stopping');
         removeListeners();
         resetData();
       }
@@ -959,34 +972,85 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       options.filter.ssl = isHttpsMode ? true : undefined /*= all */;
       options.filter.online = true;
       options.filter.expertMode = false; // Difficulties not need
-      options.timeout = angular.isDefined(options.timeout) ? options.timeout : getDefaultTimeout();
+      options.timeout = angular.isDefined(options.timeout) ? options.timeout : getDeviceTimeout();
+      options.minConsensusPeerCount = options.minConsensusPeerCount > 0 ? options.minConsensusPeerCount : -1;
+      options.autoRefresh = options.autoRefresh === true; // false by default (dont need to detecte changes, using websockets)
+      options.flushIntervalMs = angular.isDefined(options.flushIntervalMs) ? options.flushIntervalMs : 1000;
+      options.withSandboxes = angular.isDefined(options.withSandboxes) ? options.withSandboxes : false;
+
+      // Compute minConsensusPeerCount, from statistics
+      if (options.minConsensusPeerCount <= 0) {
+        // Init using default config value
+        options.minConsensusPeerCount = csSettings.data.minConsensusPeerCount > 0 ? csSettings.data.minConsensusPeerCount : -1;
+
+        // Override with stats value (if greater)
+        var avgPeerCount = csSettings.stats.computeAvgPeerCount(options);
+        var avgPeerCount80pct = avgPeerCount > 0 && Math.floor(avgPeerCount * 0.8) || -1;
+        if (avgPeerCount80pct > options.minConsensusPeerCount) {
+          console.debug('[network] Using computed minConsensusPeerCount={0} (=80% of average peer count {1})'.format(avgPeerCount80pct, avgPeerCount));
+          options.minConsensusPeerCount = avgPeerCount80pct;
+        }
+      }
 
       var wasStarted = isStarted();
       var pid = wasStarted ? data.pid : data.pid + 1;
+      console.info('[network] [#{0}] Getting synchronized BMA peers... {timeout: {1}, minConsensusPeerCount: {2}, flushIntervalMs: {3}}'.format(pid,
+        options.timeout, options.minConsensusPeerCount, options.flushIntervalMs));
 
-      var now = Date.now();
-      console.info('[network] [#{0}] Getting synchronized BMA peers... {timeout: {1}}'.format(pid, options.timeout));
+      var filterPeers = function(peers) {
+        var peerUrls = [];
+        return peers.reduce(function(res, peer) {
+          // Exclude if not BMA or not on the main consensus block
+          if (!peer || !peer.isBma() || !peer.hasMainConsensusBlock) return res;
 
-      return startIfNeed(bma, options)
-        .then(function(data){
-          var peerUrls = [];
-          var peers = data && data.peers.reduce(function(res, peer) {
-            // Exclude if not BMA or not on the main consensus block
-            if (!peer || !peer.isBma() || !peer.hasMainConsensusBlock) return res;
+          // Fill some properties compatible
+          peer.compatible = isCompatible(peer);
+          peer.url = peer.getUrl();
 
-            // Fill some properties compatible
-            peer.compatible = isCompatible(peer);
-            peer.url = peer.getUrl();
+          // Clean unused properties (e.g. the API, created by BMA.lightInstance())
+          delete peer.api;
 
-            // Clean unused properties (e.g. the API, created by BMA.lightInstance())
-            delete peer.api;
+          // Remove duplicate
+          if (peerUrls.includes(peer.url)) return res;
+          peerUrls.push(peer.url);
 
-            // Remove duplicate
-            if (peerUrls.includes(peer.url)) return res;
-            peerUrls.push(peer.url);
+          return res.concat(peer);
+        }, []);
+      };
 
-            return res.concat(peer);
-          }, []);
+
+      var deferred = $q.defer();
+      var checkEnoughListener = null;
+
+      // Stop when enough peers, on the main consensus block
+      if (options.minConsensusPeerCount > 0) {
+        checkEnoughListener = api.data.on.changed($rootScope, function(data) {
+          console.debug('[network] [#{0}] {1} peers'.format(pid, data.peers.length));
+          var peers = filterPeers(data.peers);
+          var consensusPeerCount = peers.length;
+          // Stop here, if reach minConsensusPeerCount
+          if (consensusPeerCount >= options.minConsensusPeerCount) {
+            if (checkEnoughListener) {
+              checkEnoughListener();
+              checkEnoughListener = null;
+
+              console.debug('[network] [#{0}] Found enough peers on main consensus - in {1}ms (timeout {2}ms) '.format(pid, Date.now() - data.startTime, options.timeout));
+              deferred.resolve(peers);
+            }
+          }
+        });
+      }
+
+      // Start network scan
+      startIfNeed(bma, options)
+        .then(function(data) {
+          var peers = filterPeers(data.peers);
+          deferred.resolve(peers);
+        })
+        .catch(deferred.reject);
+
+      return deferred.promise
+        .then(function(peers){
 
           // Log
           if (peers && peers.length > 0) {
@@ -995,18 +1059,24 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
               peers.length,
               data.peers.length,
               mainConsensusBlock,
-              Date.now() - now));
+              Date.now() - data.startTime));
           }
           else {
-            console.warn('[network] [#{0}] No synchronized BMA peers found - in {1}ms'.format(pid, Date.now() - now));
+            console.warn('[network] [#{0}] No synchronized BMA peers found - in {1}ms'.format(pid, Date.now() - data.startTime));
           }
 
+          // Stop network
           if (!wasStarted) close(pid);
+          if (checkEnoughListener) checkEnoughListener();
+
           return peers;
         })
         .catch(function(err) {
           console.error('[network] [#{0}] Error while getting synchronized BMA peers'.format(pid), err);
+
           if (!wasStarted) close(pid);
+          if (checkEnoughListener) checkEnoughListener();
+
           throw err;
         });
     },

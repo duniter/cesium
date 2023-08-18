@@ -18,7 +18,7 @@ angular.module("cesium.config", [])
 	"timeout": 30000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
-	"minPeerCountAtStartup": 10,
+	"minConsensusPeerCount": 10,
 	"keepAuthIdle": 600,
 	"useLocalStorage": true,
 	"useRelative": false,

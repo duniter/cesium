@@ -403,8 +403,11 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     console.info('[app] Trying to parse as uri: ', uri);
     var fromHomeState = $state.current && $state.current.name === 'app.home';
 
-    // Parse the URI
-    return BMA.uri.parse(uri)
+    return (!csPlatform.isStarted() ? csPlatform.ready() : $q.when())
+      // Parse the URI
+      .then(function() {
+        return BMA.uri.parse(uri);
+      })
       .then(function(res) {
         if (!res) throw {message: 'ERROR.UNKNOWN_URI_FORMAT'}; // Continue
 
@@ -469,7 +472,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
           reject(err);
           return;
         }
-        console.error("[home] Error while handle uri {" + uri + "': ", err);
+        console.error("[home] Error while handle uri '{0}'".format(uri), JSON.stringify(err));
         return UIUtils.onError(uri)(err);
       });
   };

@@ -194,19 +194,19 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       if (!alive) return false;
       var now = Date.now();
 
-      console.info("[platform] Checking peer [{0}] is well synchronized...".format(BMA.server));
+      console.info('[platform] Checking peer [{0}] is well synchronized...'.format(BMA.server));
       api.start.raise.message('NETWORK.INFO.ANALYZING_NETWORK');
 
       var askUserConfirmation = csSettings.data.expertMode;
-      var minConsensusPeerCount = csSettings.data.minPeerCountAtStartup || -1;
+      var minConsensusPeerCount = csSettings.data.minConsensusPeerCount || -1;
 
-      return csNetwork.getSynchronizedBmaPeers(BMA)
+      return csNetwork.getSynchronizedBmaPeers(BMA, {autoRefresh: false})
         .then(function(peers) {
 
           var consensusBlockNumber = peers.length ? peers[0].currentNumber : undefined;
           var consensusPeerCount = peers.length;
 
-          // Not enough synchronized peers found (e.g. an isolated peer). Should never occur.
+          // Not enough peers on main consensus (e.g. an isolated peer). Should never occur.
           if (!consensusPeerCount || (minConsensusPeerCount > 0 && consensusPeerCount < minConsensusPeerCount)) {
             console.warn("[platform] Not enough BMA peers on the main consensus block: {0} found. Will peek another peer...".format(consensusPeerCount));
             // Retry using another fallback peer
@@ -214,26 +214,25 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
               .then(checkBmaNodeSynchronized); // Loop
           }
 
-          // Filter compatible peers
-          peers = peers && peers.reduce(function(res, peer) {
+          // Filter on compatible peers
+          peers = peers.reduce(function(res, peer) {
             if (!peer.compatible) return res;
             // Serialize to JSON, then append
             return res.concat(peer.toJSON());
           }, []);
 
-          console.info("[platform] Found {0}/{1} BMA peers, synchronized and compatible, in {2}ms".format(peers.length, consensusPeerCount, Date.now() - now));
+          console.info("[platform] Keep {0}/{1} BMA peers, synchronized and compatible, in {2}ms".format(peers.length, consensusPeerCount, Date.now() - now));
 
           // Try to find the current peer in synchronized peers
           var synchronized = false;
-          peers = peers && _.filter(peers, function(peer) {
+          peers = _.filter(peers, function(peer) {
             if (BMA.url !== peer.url) return true;
             synchronized = true;
             return false;
           });
 
-          // Saving other peers to settings
-          console.debug("[platform] Saving {0} BMA peers in settings, for a later use".format(peers.length));
-          csSettings.data.network.peers = peers;
+          // Saving others peers to settings
+          csSettings.savePeers(peers);
 
           // OK (current BMA node is sync and compatible): continue
           if (synchronized) {

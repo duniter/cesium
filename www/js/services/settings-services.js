@@ -1,7 +1,7 @@
 
 angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
-.factory('csSettings', function($rootScope, $q, $window, Api, localStorage, $translate, csConfig) {
+.factory('csSettings', function($rootScope, $q, $window, $timeout, Api, localStorage, $translate, csConfig) {
   'ngInject';
 
   // Define app locales
@@ -76,7 +76,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     timeWarningExpire: 2592000 * 3 /*=3 mois*/,
     minVersion: '1.8.0',
     minVersionAtStartup: '1.8.7', // use for node auto-selection
-    minPeerCountAtStartup: 10, // use for node auto-selection (avoid to start if no few peers found)
+    minConsensusPeerCount: 10, // use for node auto-selection (avoid to start if no few peers found)
     sourceUrl: 'https://git.duniter.org/clients/cesium-grp/cesium',
     sourceLicenseUrl: 'https://git.duniter.org/clients/cesium-grp/cesium/-/raw/master/LICENSE',
     newIssueUrl: "https://git.duniter.org/clients/cesium-grp/cesium/issues/new",
@@ -107,7 +107,10 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     blockValidityWindow: 6,
     network: {
       // Synchronized BMA peers found
-      peers: []
+      peers: [],
+      stats: [],
+      statsWindowSecond: (csConfig.network && csConfig.network.statsWindowSecond || 10 * 24 * 60 * 60), // 10 days
+      statsPeriodSecond: 5 * 60 // 5 min
     },
     helptip: {
       enable: true,
@@ -302,6 +305,85 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
         });
   }
 
+  /**
+  * Save synchronized BMA peers, after a network scan
+  * @param newData
+  */
+  function savePeers(peers, options) {
+    if (!peers) return; // skip empty
+
+    console.debug("[settings] Saving {0} BMA peers...".format(peers.length));
+
+    data.network = data.network || {};
+    data.network.peers = peers;
+
+    // Update peer stats
+    var statsWindowSecond = options && options.statsWindowSecond || data.network.statsWindowSecond;
+    if (statsWindowSecond > 0) {
+
+      // Clean stats outside the stats window
+      var now = Date.now();
+      var minTime = now - statsWindowSecond * 1000;
+      data.network.stats = _.filter(data.network.stats || [], function(stat) {
+        return stat.time > minTime;
+      });
+
+      var currentStat = {
+        time: now,
+        peerCount: peers.length + 1 /*current BMA peer*/
+      };
+
+      // If previous stats is recent (< 5min)
+      // this is used to avoid too many stats, but keep the must fresh value
+      var previousStats = data.network.stats.length ? data.network.stats[data.network.stats.length-1] : undefined;
+      var previousAgeSecond = previousStats && (now - previousStats.time) / 1000;
+      var statsPeriodSecond = data.network.statsPeriodSecond || 5 * 60; // 5 min;
+      if (previousAgeSecond && previousAgeSecond < statsPeriodSecond) {
+        if (currentStat.peerCount === previousStats.peerCount) {
+          console.debug("[settings] Skip network stats (recent stats exists)");
+        }
+        // Replace it peer count change
+        else {
+          angular.merge(previousStats, currentStat);
+        }
+      }
+      else {
+        // Insert
+        data.network.stats.push(currentStat);
+      }
+    }
+
+    // Storing, with a delay 2s
+    $timeout(store, 2000);
+  }
+
+  function computeAvgPeerCount(options) {
+    if (!data.network || !data.network.stats || !data.network.stats.length) return undefined; // Cannot compute
+
+    var statsWindowSecond = options && options.statsWindowSecond || data.network.statsWindowSecond || -1;
+    if (statsWindowSecond > data.network.statsWindowSecond) {
+      console.warn('[settings] Peer stats windows ({0}s) should not be greater than the collected windows ({1}s)'.format(
+        statsWindowSecond,
+        data.statsWindowSecond
+      ));
+      statsWindowSecond = data.network.statsWindowSecond;
+    }
+
+    var now = Date.now();
+    var minTime = now - statsWindowSecond * 1000;
+
+    // Select stats inside the expected window
+    var stats = _.filter(data.network.stats || [], function(stat) {
+      return stat.time > minTime && stat.peerCount > 1;
+    });
+
+    if (!stats.length) return undefined; // Not enough stats to compute something
+
+    // Compute the AVG(peerCount)
+    var sum = _.reduce(stats, function(sum, stat) { return sum + stat.peerCount; }, 0);
+    return Math.floor(sum / stats.length);
+  }
+
   function getLicenseUrl() {
     var locale = data.locale && data.locale.id || csConfig.defaultLanguage || 'en';
     return (csConfig.license) ?
@@ -408,6 +490,10 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     restore: restore,
     getLicenseUrl: getLicenseUrl,
     getFeedUrl: getFeedUrl,
+    savePeers: savePeers,
+    stats: {
+      computeAvgPeerCount: computeAvgPeerCount
+    },
     defaultSettings: defaultSettings,
     // api extension
     api: api,

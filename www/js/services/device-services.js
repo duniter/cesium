@@ -150,45 +150,61 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
       }
     };
     exports.network = {
+      constants: {
+        NONE: 'none',
+        CELL: 'cellular',
+        CELL_2G: '2g',
+        CELL_3G: '3g',
+        CELL_4G: '4g',
+        CELL_5G: '5g',
+        ETHERNET: 'ethernet',
+        WIFI: 'wifi',
+        UNKOWN: 'unknown',
+      },
       connectionType: function () {
+        var type;
         try {
           // If mobile: use the Cordova network plugin
           if (exports.network.enable) {
-            return navigator.connection.type || 'unknown';
+            type = navigator.connection.type || Connection.CELL_2G;
+            console.debug('[device] Network plugin connection type: {0}'.format(type));
+            return type;
           }
 
           // Continue using browser API
           if (navigator.onLine === false) {
-            return 'none';
+            return exports.network.constants.NONE;
           }
 
           var connection = navigator.connection;
-          var connectionType = connection && connection.effectiveType || 'unknown';
+          type = connection && connection.effectiveType || exports.network.constants.UNKNOWN;
 
           // Si la vitesse de liaison descendante est de 0 mais que le type est '4g', cela signifie probablement que nous sommes hors ligne
           if (connection && connection.downlink === 0) {
             //console.debug('[device] Navigator connection type: none (downlink=0)');
-            return 'none';
+            return exports.network.constants.NONE;
           }
           else {
-            //console.debug('[device] Navigator connection type: ' + connectionType);
-            switch (connectionType) {
+            //console.debug('[device] Navigator connection type: ' + type);
+            switch (type) {
               case 'slow-2g':
               case '2g':
-                return 'cell_2g';
+                return exports.network.constants.CELL_2G;
               case '3g':
-                return 'cell_3g';
+                return exports.network.constants.CELL_3G;
               case '4g':
-                if (exports.isDesktop()) return 'ethernet';
-                return 'cell_4g';
+                if (exports.isDesktop()) return exports.network.constants.ETHERNET;
+                return exports.network.constants.CELL_4G;
               case '5g':
-                if (exports.isDesktop()) return 'ethernet';
-                return 'cell_5g';
+                if (exports.isDesktop()) return exports.network.constants.ETHERNET;
+                return exports.network.constants.CELL_5G;
               case 'unknown':
-                if (exports.isDesktop()) return 'ethernet';
-                return 'unknown';
+                if (exports.isDesktop()) return exports.network.constants.ETHERNET;
+                return exports.network.constants.UNKNOWN;
+              case 'none':
+                return exports.network.constants.NONE;
               default:
-                return connectionType;
+                return type;
             }
           }
 
@@ -228,30 +244,25 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
           var connectionType = exports.network.connectionType();
 
           switch (connectionType) {
-            case 'ethernet':
-              timeout = 1000; // 1 s
-              break;
-            case 'wifi':
-              timeout = 2000;
-              break;
-            case 'cell_5g':
-              timeout = 3000;
-              break;
-            case 'cell': // (e.g. iOS)
-            case 'cell_4g':
+            case exports.network.constants.ETHERNET:
+            case exports.network.constants.WIFI:
+            case exports.network.constants.CELL: // (e.g. iOS)
+            case exports.network.constants.CELL_4G:
+            case exports.network.constants.CELL_5G:
               timeout = 4000; // 4s
               break;
-            case 'cell_3g':
+            case exports.network.constants.CELL_3G:
               timeout = 5000; // 5s
               break;
-            case 'cell_2g':
+            case exports.network.constants.CELL_2G:
               timeout = 10000; // 10s
               break;
-            case 'none':
+            case exports.network.constants.NONE:
               timeout = 0;
               break;
-            case 'unknown':
+            case exports.network.constants.UNKNOWN:
             default:
+              console.warn('[device] Fallback to default timeout ({0}ms) - connectionType: {1}'.format(defaultTimeout, connectionType));
               timeout = defaultTimeout;
               break;
           }
@@ -452,7 +463,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
             var paths = (modelPath || '').split('.');
             var property = paths.length && paths[paths.length - 1];
             paths.reduce(function (res, path) {
-              if (path == property) {
+              if (path === property) {
                 res[property] = value;
                 return;
               }
@@ -518,7 +529,6 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
     exports.isDesktop = function () {
       if (!angular.isDefined(cache.isDesktop)) {
         try {
-
           cache.isDesktop = !exports.enable && (
             exports.isUbuntu() ||
             exports.isWindows() ||
@@ -581,22 +591,45 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
               window.open = cordova.InAppBrowser.open;
             }
 
-            // Add network listeners
+            // Add network listeners, using cordova network plugin
             if (exports.network.enable) {
+              // Override constants, because it depends on OS version
+              exports.network.constants.NONE = Connection.NONE;
+              exports.network.constants.CELL = Connection.CELL;
+              exports.network.constants.CELL_2G = Connection.CELL_2G;
+              exports.network.constants.CELL_3G = Connection.CELL_3G;
+              exports.network.constants.CELL_4G = Connection.CELL_4G;
+              exports.network.constants.WIFI = Connection.WIFI;
+              exports.network.constants.ETHERNET = Connection.ETHERNET;
+              exports.network.constants.UNKNOWN = Connection.UNKNOWN;
+
+
+              var previousConnectionType;
               document.addEventListener('offline', function () {
                 console.info('[device] Network is offline');
                 api.network.raise.offline();
+                previousConnectionType = 'none';
               }, false);
               document.addEventListener('online', function () {
                 console.info('[device] Network is online');
-                api.network.raise.online();
+                if (!previousConnectionType || previousConnectionType === 'none') {
+                  api.network.raise.online();
+                  previousConnectionType = exports.network.connectionType();
+                }
+                else {
+                  var connectionType = exports.network.connectionType();
+                  if (connectionType !== previousConnectionType) {
+                    console.info('[device] Network connection type changed: ' + connectionType);
+                    api.network.raise.changed(connectionType);
+                  }
+                }
               }, false);
             }
 
           } else {
             console.debug('[device] Ionic platform ready - no device detected.');
 
-            // Add network listeners
+            // Add network listeners, using browser events
             window.addEventListener('offline', function () {
               console.info('[device] Network is offline');
               api.network.raise.offline();

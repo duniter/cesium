@@ -48,7 +48,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 ;
 
 function NetworkLookupController($scope,  $state, $location, $ionicPopover, $window, $translate,
-                                 BMA, UIUtils, csConfig, csSettings, csCurrency, csNetwork, csWot) {
+                                 BMA, Device, UIUtils, csConfig, csSettings, csCurrency, csNetwork, csWot) {
   'ngInject';
 
   $scope.networkStarted = false;
@@ -149,7 +149,8 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
         asc : $scope.search.asc
       },
       expertMode: $scope.expertMode,
-      timeout: angular.isDefined($scope.timeout) ? $scope.timeout : Device.network.timeout()
+      timeout: angular.isDefined($scope.timeout) ? $scope.timeout : Device.network.timeout(),
+      withSandboxes: $scope.expertMode && Device.isDesktop() // SKip sandboxes if mobile
     };
     return options;
   };

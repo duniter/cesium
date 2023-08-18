@@ -1118,15 +1118,21 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           var matches = exports.regexp.PUBKEY_WITH_CHECKSUM.exec(result.pubkey);
           pubkey = matches[1];
           var checksum = matches[2];
-          var expectedChecksum = csCrypto.util.pkChecksum(pubkey);
-          if (checksum !== expectedChecksum) {
-            console.warn("[BMA.parse] Detecting a pubkey {{0}} with checksum {{1}}, but expecting checksum is {{2}}".format(
-              pubkey, checksum, expectedChecksum
-            ));
-            throw {message: 'ERROR.PUBKEY_INVALID_CHECKSUM'};
-          }
-          result.pubkey = pubkey;
-          result.pubkeyChecksum = checksum;
+          return csCrypto.ready()
+            .then(function() {
+              return csCrypto.util.pkChecksum(pubkey);
+            })
+            .then(function(expectedChecksum){
+              if (checksum !== expectedChecksum) {
+                console.warn("[BMA.parse] Detecting a pubkey {{0}} with checksum {{1}}, but expecting checksum is {{2}}".format(
+                  pubkey, checksum, expectedChecksum
+                ));
+                throw {message: 'ERROR.PUBKEY_INVALID_CHECKSUM'};
+              }
+              result.pubkey = pubkey;
+              result.pubkeyChecksum = checksum;
+              return result;
+            });
         }
         return result;
       });
@@ -1221,7 +1227,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       url: csHttp.getUrl(host, port, path, useSsl),
       node: {
         summary: csHttp.getWithCache(host, port, path + '/node/summary', useSsl, csCache.constants.MEDIUM, false/*autoRefresh*/, timeout),
-        sandboxes: csHttp.get(host, port, path + '/node/sandboxes', useSsl, Math.max(1000, timeout)), // sandboxes request can be long
+        sandboxes: csHttp.get(host, port, path + '/node/sandboxes', useSsl, timeout ? Math.max(timeout * 2, 3000) : undefined), // /!\ sandboxes request can be long
       },
       network: {
         peering: {
