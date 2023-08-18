@@ -18,7 +18,7 @@ angular.module("cesium.config", [])
 	"timeout": 30000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
-	"minConsensusPeerCount": 2,
+	"minConsensusPeerCount": -1,
 	"useLocalStorage": true,
 	"useRelative": false,
 	"expertMode": true,
@@ -80,8 +80,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "1.7.8",
-	"build": "2023-08-17T17:00:38.095Z",
+	"version": "1.7.9",
+	"build": "2023-08-18T17:40:40.222Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
