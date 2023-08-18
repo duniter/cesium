@@ -52,7 +52,7 @@ angular.module("cesium.config", [])
 			"en-GB": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-en-GB.json",
 			"eo-EO": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-eo-EO.json",
 			"es-ES": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-es-ES.json",
-			"fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-fr.json",
+			"fr-FR": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-fr-FR.json",
 			"it-IT": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-it-IT.json",
 			"nl-NL": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-nl-NL.json",
 			"pt-PT": "https://raw.githubusercontent.com/duniter/cesium/master/doc/feed/1.1/feed-pt-PT.json"
@@ -147,8 +147,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "1.7.8",
-	"build": "2023-08-17T17:00:38.038Z",
+	"version": "1.7.9",
+	"build": "2023-08-18T17:40:40.184Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
