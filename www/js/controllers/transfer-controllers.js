@@ -129,11 +129,13 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       $scope.destPub = parameters.pubkey;
     }
     if (parameters.amount) {
-      $scope.formData.amount = parameters.amount;
+      var amount = parseInt(parameters.amount); // Parse as integer - see issue #1001)
+      $scope.formData.amount = !isNaN(amount) ? amount : null;
       $scope.formData.useRelative=false;
     }
     else if (parameters.udAmount) {
-      $scope.formData.amount = parameters.udAmount;
+      var udAmount = Number(parameters.udAmount);
+      $scope.formData.amount = !isNaN(udAmount) ? udAmount : null;
       $scope.formData.useRelative=true;
     }
     if (parameters.comment) {

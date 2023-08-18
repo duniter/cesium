@@ -409,12 +409,27 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         if (!res) throw {message: 'ERROR.UNKNOWN_URI_FORMAT'}; // Continue
 
         if (res.pubkey) {
-           $state.go('app.wot_identity',
-            angular.merge({
-              pubkey: res.pubkey,
-              action: res.params && (res.params.amount || res.params.comment) ? 'transfer' : undefined
-            }, res.params),
-            {reload: true});
+          var action = res.params && (angular.isDefined(res.params.amount) || res.params.comment) ? 'transfer' : undefined;
+
+          console.info('[app] Redirecting from URI to identity {{0}} {1} {2}'.format(
+            res.pubkey.substring(0,8),
+            action ? ('with action ' + action) : '',
+            res.params ? JSON.stringify(res.params) : ''
+          ), uri);
+
+          // Redirect to an owned wallet
+          if (!action && (csWallet.isUserPubkey(res.pubkey) || csWallet.children.isUserPubkey(res.pubkey))) {
+            var wallet = csWallet.getByPubkey(res.pubkey);
+            return $state.go('app.view_wallet_by_id', {id: wallet.id});
+          }
+          else {
+            return $state.go('app.wot_identity',
+              angular.merge({
+                pubkey: res.pubkey,
+                action: action
+              }, res.params),
+              {reload: true});
+          }
         }
         else if (res.uid) {
           return $state.go('app.wot_identity_uid',

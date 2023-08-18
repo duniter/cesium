@@ -358,6 +358,9 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
   function parseUri(uri) {
     var protocol, hostname;
 
+    // Use a <a> element to parse
+    var parser = document.createElement('a');
+
     // G1 URI (see G1lien)
     if (uri.startsWith('june:') || uri.startsWith('web+june:')) {
       protocol = 'june:';
@@ -366,30 +369,25 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       // Store hostname here, because parse will apply a lowercase
       hostname = path;
       if (hostname.indexOf('/') !== -1) {
-        hostname = hostname.substr(0, path.indexOf('/'));
+        hostname = hostname.substring(0, path.indexOf('/'));
       }
       if (hostname.indexOf('?') !== -1) {
-        hostname = hostname.substr(0, path.indexOf('?'));
+        hostname = hostname.substring(0, path.indexOf('?'));
       }
 
+      // Avoid checksum to be parsed as an port (integer): remove it from the path (see issue #1001)
       if (hostname.indexOf(':') !== -1) {
-        var port = hostname.substring(path.indexOf(':')+1);
-        var cleanHostName = hostname.substr(0, path.indexOf(':'));
-        // Invalid port (e.g. a checksum) => remove it (otherwise net <a> parser will failed to parse the URI)
-        if (isNaN(parseInt(port))) {
-          path = cleanHostName + path.substring(hostname.length);
-        }
-        else {
-          hostname = cleanHostName;
-        }
+        // Removing checksum from the path, to be parseable
+        path = hostname.substring(0, path.indexOf(':')) + path.substring(hostname.length);
       }
-      // Clean path
-      uri = 'http://' + path;
+
+      // Clean path (parsable by the <a> element)
+      parser.href = 'https://' + path;
     }
 
-    // Use a <a> element to parse
-    var parser = document.createElement('a');
-    parser.href = uri;
+    else {
+      parser.href = uri;
+    }
 
     var pathname = parser.pathname;
     if (pathname && pathname.startsWith('/')) {
@@ -397,6 +395,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     }
 
     var searchParams;
+
     if (parser.search && parser.search.startsWith('?')) {
       searchParams = parser.search.substring(1).split('&')
         .reduce(function(res, searchParam) {

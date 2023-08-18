@@ -1058,14 +1058,12 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           // Pubkey (explicit path)
           var pubkey;
           if (parser.hostname === 'wallet' || parser.hostname === 'pubkey') {
-            if (exports.regexp.PUBKEY.test(parser.pathSegments[0]) || exports.regexp.PUBKEY_WITH_CHECKSUM.test(parser.pathSegments[0])) {
-              pubkey = parser.pathSegments[0];
-              parser.pathSegments = parser.pathSegments.slice(1);
-            }
-            else {
+            pubkey = parser.pathSegments[0];
+            if (!exports.regexp.PUBKEY.test(pubkey) && !exports.regexp.PUBKEY_WITH_CHECKSUM.test(pubkey)) {
               reject({message: 'ERROR.INVALID_PUBKEY'});
               return;
             }
+            parser.pathSegments = parser.pathSegments.slice(1);
           }
           else if (parser.hostname &&
             (exports.regexp.PUBKEY.test(parser.hostname) || exports.regexp.PUBKEY_WITH_CHECKSUM.test(parser.hostname))) {
