@@ -491,7 +491,7 @@ $screen-menu:                     $screen-sm;
     }
 
     .bar-header {
-      background-color: $positive-900-bg;
+      background-color: $positive;
       color: #fff;
       height: 150px;
       padding-right: 0 !important;
@@ -938,13 +938,20 @@ html, body {
   display: inline-block !important;
   vertical-align: bottom;
 }
+.loader {
+  zoom: unset;
+  top: 49px;
+  width: 100%;
+}
+
+.loader .logo,
 #home .logo {
   margin-top: 15px;
   width: 100%;
   background-position: center center;
   background-repeat: no-repeat;
 }
-
+.loader .center,
 #home .center {
   float: none;
   text-align: center;
@@ -955,7 +962,8 @@ html, body {
   display: inline-block;
 }
 
-@media screen and (max-width: $screen-xs-max) {
+@media screen and (max-width: $screen-xxs-max) {
+  .loader .logo,
   #home .logo {
     height: 96px;
     background-image: url('../img/logo_96px.png');
@@ -966,7 +974,9 @@ html, body {
   }
 }
 
-@media screen and (min-width: $screen-sm) and (max-width: $screen-sm-max) {
+
+@media screen and (min-width: $screen-xs) and (max-width: $screen-sm-max) {
+  .loader .logo,
   #home .logo {
     height: 144px;
     background-image: url('../img/logo_144px.png');
@@ -979,6 +989,7 @@ html, body {
 }
 
 @media screen and (min-width: $screen-md) {
+  .loader .logo,
   #home .logo {
     height: 200px;
     background-image: url('../img/logo_200px.png');
@@ -991,16 +1002,23 @@ html, body {
   }
 }
 
+.circle-bg-dark {
+  background-image: url('../../resources/logo/svg/white/logo.large.empty.transparent.svg');
+  background-repeat: no-repeat;
+  background-position: -725px -145px;
+  background-size: 1024px 1024px;
+}
+
+@media screen and (max-width: $screen-sm-max) {
+  .circle-bg-dark {
+    background-blend-mode: soft-light;
+  }
+}
 
 @media screen and (min-width: $screen-md) {
-
   .circle-bg-dark {
-    background-image: url('../../resources/logo/svg/white/logo.large.empty.transparent.svg');
-    background-repeat: no-repeat;
-    background-position: -725px -145px;
-    background-size: 1024px 1024px;
+    background-blend-mode: hard-light;
   }
-
 }
 
 .gray {

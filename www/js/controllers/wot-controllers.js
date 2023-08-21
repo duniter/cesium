@@ -43,7 +43,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wot_identity', {
-        url: "/wot/:pubkey/:uid?action&block&amount&comment",
+        url: "/wot/:pubkey/:uid?action&block&amount&comment&udAmount&restPub&wallet",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_identity.html",
@@ -1110,18 +1110,22 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
 
   $scope.$on('$ionicView.enter', function(e, state) {
 
-    var onLoadSuccess = function() {
-      $scope.doMotion();
+    var doAction = function() {
       if (state.stateParams && state.stateParams.action) {
         $timeout(function() {
           $scope.doAction(state.stateParams.action.trim(), state.stateParams);
         }, 100);
-
-        $scope.removeActionParamInLocationHref(state);
-
-        // Need by like controller
-        $scope.likeData.id = $scope.formData.pubkey;
       }
+
+      $scope.removeActionParamInLocationHref(state);
+    }
+    var onLoadSuccess = function() {
+      $scope.doMotion();
+
+      doAction();
+
+      // Need by like controller
+      $scope.likeData.id = $scope.formData.pubkey;
 
       $scope.showQRCode();
     };
@@ -1133,11 +1137,16 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
     if (state.stateParams &&
       state.stateParams.pubkey &&
       state.stateParams.pubkey.trim().length > 0) {
-      if ($scope.loading) { // load once
 
+      // First time: load identity data
+      if ($scope.loading) {
         return $scope.load(state.stateParams.pubkey.trim(), state.stateParams.uid, options)
           .then(onLoadSuccess)
           .catch(UIUtils.onError("ERROR.LOAD_IDENTITY_FAILED"));
+      }
+      // Do action
+      else {
+        doAction();
       }
     }
 
@@ -1147,6 +1156,9 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
       if ($scope.loading) { // load once
         return $scope.load(null, state.stateParams.uid, options)
           .then(onLoadSuccess);
+      }
+      else {
+        doAction();
       }
     }
 
@@ -1310,7 +1322,7 @@ function WotIdentityTxViewController($scope, $timeout, $q, BMA, csSettings, csWo
       })
       .catch(function(err) {
         // If http rest limitation: wait then retry
-        if (err.ucode == BMA.errorCodes.HTTP_LIMITATION) {
+        if (err.ucode === BMA.errorCodes.HTTP_LIMITATION) {
           $timeout(function() {
             return $scope.showMoreTx(fromTime);
           }, 2000);

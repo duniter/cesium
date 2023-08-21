@@ -38,7 +38,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         PUBKEY: pubkey,
         PUBKEY_WITH_CHECKSUM: "(" + pubkey +"):([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{3})",
         COMMENT: "[ a-zA-Z0-9-_:/;*\\[\\]()?!^\\+=@&~#{}|\\\\<>%.]*",
-        INVALID_COMMENT_CHARS: "[^ a-zA-Z0-9-_:/;*\\[\\]()?!^\\+=@&~#{}|\\\\<>%.]*",
+        INVALID_COMMENT_CHARS: "[^ a-zA-Z0-9-_:/;*\\[\\]()?!^\\+=@&~#{}|\\\\<>%.]+",
         // duniter://[uid]:[pubkey]@[host]:[port]
         URI_WITH_AT: "duniter://(?:([A-Za-z0-9_-]+):)?("+pubkey+"@([a-zA-Z0-9-.]+.[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+)",
         URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/("+pubkey+")(?:/([A-Za-z0-9_-]+))?",
@@ -580,6 +580,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       regexp: {
         USER_ID: exact(regexp.USER_ID),
         COMMENT: exact(regexp.COMMENT),
+        INVALID_COMMENT_CHARS: test(regexp.INVALID_COMMENT_CHARS),
         PUBKEY: exact(regexp.PUBKEY),
         PUBKEY_WITH_CHECKSUM: exact(regexp.PUBKEY_WITH_CHECKSUM),
         CURRENCY: exact(regexp.CURRENCY),

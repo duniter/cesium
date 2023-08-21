@@ -129,8 +129,9 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       $scope.destPub = parameters.pubkey;
     }
     if (parameters.amount) {
-      var amount = parseInt(parameters.amount); // Parse as integer - see issue #1001)
-      $scope.formData.amount = !isNaN(amount) ? amount : null;
+      var amount = Number(parameters.amount)
+      // Trunc at 2 decimals
+      $scope.formData.amount = !isNaN(amount) ? Math.trunc(parseFloat(parameters.amount) * 100) / 100 : null;
       $scope.formData.useRelative=false;
     }
     else if (parameters.udAmount) {
@@ -139,8 +140,13 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       $scope.formData.useRelative=true;
     }
     if (parameters.comment) {
-      $scope.formData.useComment=true;
-      $scope.formData.comment = parameters.comment;
+      var cleanComment = parameters.comment.trim()
+        .replaceAll(new RegExp(BMA.constants.regexp.INVALID_COMMENT_CHARS, 'g'), ' ')
+        .replaceAll(/\s+/g, ' ');
+      if (cleanComment.length > 0) {
+        $scope.formData.useComment = true;
+        $scope.formData.comment = cleanComment;
+      }
     }
     if (parameters.restPub || parameters.all) {
       $scope.restUid = '';
@@ -158,6 +164,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       $scope.formData.walletId = parameters.wallet;
     }
   };
+
   // Read default parameters
   $scope.setParameters(parameters);
 
@@ -166,7 +173,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
 
     wallet = $scope.enableSelectWallet && ($scope.formData.walletId ? csWallet.children.get($scope.formData.walletId) : csWallet) || csWallet;
     if (!wallet.isDefault()) {
-      console.debug("[transfer] Using wallet {" + wallet.id + "}");
+      console.debug("[transfer] Using wallet {{0}}".format(wallet.id));
     }
     // Make to sure to load full wallet data (balance)
     return wallet.login({sources: true, silent: true})
@@ -325,7 +332,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
               amount = amount.toFixed(2) * 100; // remove 2 decimals on quantitative mode
             }
 
-            // convert comment: trim, then null if empty
+            // Trim comment to null
             var comment = $scope.formData.comment && $scope.formData.comment.trim();
             if (comment && !comment.length) {
               comment = null;

@@ -402,7 +402,12 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
           if (searchParam.indexOf('=') !== -1) {
             var key = searchParam.substring(0, searchParam.indexOf('='));
             var value = searchParam.substring(searchParam.indexOf('=') + 1);
-            res[key] = value;
+            try {
+              res[key] = decodeURIComponent(value);
+            } catch (e) {
+              // Ignore any invalid uri component.
+              res[key] = value;
+            }
           }
           else {
             res[searchParam] = true; // default value
