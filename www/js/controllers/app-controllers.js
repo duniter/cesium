@@ -204,8 +204,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       if (csConfig.httpsMode && $window.location && $window.location.protocol !== 'https:') {
         var href = $window.location.href;
         var hashIndex = href.indexOf('#');
-        var rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
-        rootPath = 'https' + rootPath.substr(4);
+        var rootPath = (hashIndex !== -1) ? href.substring(0, hashIndex) : href;
+        rootPath = 'https' + rootPath.substring(4);
         href = rootPath + $state.href(state);
         if (csConfig.httpsModeDebug) {
           // Debug mode: just log, then continue
@@ -569,19 +569,41 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     var skip = $scope.fullscreen || !UIUtils.screen.isSmall() || !Device.isWeb();
     if (skip) return;
 
+    // Already ask
+    if (csSettings.data.useFullscreen === false) {
+      $scope.toggleFullscreen(false);
+      return;
+    }
+
+    // User already say 'yes' => need o ask again (chrome will avoid changed if no gesture has been done)
+    //if (csSettings.data.useFullscreen === true) {
+    //  $scope.toggleFullscreen(true);
+    //  return;
+    //}
+
     return UIUtils.alert.confirm('CONFIRM.FULLSCREEN', undefined, {
       cancelText: 'COMMON.BTN_NO',
       okText: 'COMMON.BTN_YES'
     })
       .then(function(confirm) {
-        if (!confirm) return;
-        $scope.toggleFullscreen();
+        $scope.toggleFullscreen(confirm);
       });
   };
 
-  $scope.toggleFullscreen = function() {
-    $scope.fullscreen = !UIUtils.screen.fullscreen.isEnabled();
-    UIUtils.screen.fullscreen.toggleAll();
+  $scope.toggleFullscreen = function(enable, options) {
+    enable = angular.isDefined(enable) ? enable : !UIUtils.screen.fullscreen.isEnabled();
+
+    $scope.fullscreen = enable;
+
+    if (enable !== UIUtils.screen.fullscreen.isEnabled()) {
+      UIUtils.screen.fullscreen.toggleAll();
+    }
+
+    // Save into settings
+    if ((csSettings.data.useFullscreen !== enable) && (!options || options.emitEvent !== false)) {
+      csSettings.data.useFullscreen = enable;
+      return $timeout(csSettings.store, 2000);
+    }
   };
 
   // removeIf(no-device)

@@ -129,7 +129,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       $scope.destPub = parameters.pubkey;
     }
     if (parameters.amount) {
-      var amount = Number(parameters.amount)
+      var amount = Number(parameters.amount);
       // Trunc at 2 decimals
       $scope.formData.amount = !isNaN(amount) ? Math.trunc(parseFloat(parameters.amount) * 100) / 100 : null;
       $scope.formData.useRelative=false;

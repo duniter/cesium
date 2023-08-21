@@ -7,7 +7,7 @@ angular.module('cesium.home.controllers', ['cesium.platform', 'cesium.services']
 
 
       .state('app.home', {
-        url: "/home?error&uri",
+        url: "/home?error&uri&login",
         views: {
           'menuContent': {
             templateUrl: "templates/home/home.html",
@@ -25,7 +25,7 @@ angular.module('cesium.home.controllers', ['cesium.platform', 'cesium.services']
 ;
 
 function HomeController($scope, $state, $timeout, $interval, $ionicHistory, $translate, $http, $q, $location,
-                        UIUtils, BMA, Device, csConfig, csHttp, csCache, csPlatform, csNetwork, csCurrency, csSettings) {
+                        UIUtils, BMA, Device, csConfig, csHttp, csCache, csPlatform, csNetwork, csCurrency, csSettings, csWallet) {
   'ngInject';
 
   $scope.loading = true;
@@ -45,7 +45,6 @@ function HomeController($scope, $state, $timeout, $interval, $ionicHistory, $tra
     }
 
     if (state && state.stateParams && state.stateParams.uri) {
-
       return $scope.handleUri(state.stateParams.uri)
         .then(function() {
           $scope.loading = false;
@@ -56,6 +55,7 @@ function HomeController($scope, $state, $timeout, $interval, $ionicHistory, $tra
       $scope.node = csCurrency.data.node;
       $scope.loading = false;
       $scope.cleanLocationHref(state);
+      return $q.when();
     }
     else {
 
@@ -77,8 +77,10 @@ function HomeController($scope, $state, $timeout, $interval, $ionicHistory, $tra
         $scope.$broadcast('$$rebind::loading'); // force rebind loading
       }, 200);
 
+      var hasLoginParam = state && state.stateParams && state.stateParams.login || false;
+
       // Wait platform to be ready
-      csPlatform.ready()
+      return csPlatform.ready()
         .catch(function(err) {
           $scope.node =  csCurrency.data.node;
           $scope.error = err;
@@ -91,6 +93,14 @@ function HomeController($scope, $state, $timeout, $interval, $ionicHistory, $tra
           $scope.loadingMessage = '';
           $scope.loadingPct = 100;
           $scope.$broadcast('$$rebind::loading'); // force rebind loading
+          $scope.$broadcast('$$rebind::feed'); // force rebind feed
+
+          // Open the login modal
+          if (hasLoginParam && !csWallet.isLogin() && !$scope.error) {
+            $scope.cleanLocationHref(state);
+
+            return csWallet.login();
+          }
         });
     }
   };
@@ -126,8 +136,11 @@ function HomeController($scope, $state, $timeout, $interval, $ionicHistory, $tra
   };
 
   $scope.toggleFeed = function(show) {
+
     $scope.showFeed = (show !== undefined) ? show : !$scope.showFeed;
-    $scope.$broadcast('$$rebind::feed'); // force rebind feed
+    if (!this.loading) {
+      $scope.$broadcast('$$rebind::feed'); // force rebind feed
+    }
   };
 
   /* -- show/hide locales popup -- */
@@ -152,10 +165,13 @@ function HomeController($scope, $state, $timeout, $interval, $ionicHistory, $tra
 
   // remove '?uri&error' from the location URI, and inside history
   $scope.cleanLocationHref = function(state) {
+    state = state || {stateName: 'app.home'};
+    state.stateParams = state.stateParams || {};
     if (state && state.stateParams) {
       var stateParams = angular.copy(state.stateParams);
       delete stateParams.uri;
       delete stateParams.error;
+      delete stateParams.login;
 
       $location.search(stateParams).replace();
 
@@ -167,7 +183,7 @@ function HomeController($scope, $state, $timeout, $interval, $ionicHistory, $tra
       });
       return $state.go(state.stateName, stateParams, {
           reload: false,
-          inherit: true,
+          inherit: false,
           notify: false
         });
     }

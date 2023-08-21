@@ -93,6 +93,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     useRelative: false,
     useLocalStorage: !!$window.localStorage, // Overwritten to false if not a device
     useLocalStorageEncryption: false,
+    useFullscreen: null,
     persistCache: false, // disable by default (waiting resolution of issue #885)
     walletHistoryTimeSecond: 30 * 24 * 60 * 60, // 30 days
     walletHistorySliceSecond: 5 * 24 * 60 * 60, // download using 5 days slice - need for cache

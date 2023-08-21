@@ -1118,7 +1118,8 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, $s
       }
 
       $scope.removeActionParamInLocationHref(state);
-    }
+    };
+
     var onLoadSuccess = function() {
       $scope.doMotion();
 

@@ -1,47 +1,12 @@
 
 angular.module('cesium.login.controllers', ['cesium.services'])
 
-  .config(function($stateProvider) {
-    'ngInject';
-
-    $stateProvider
-      .state('app.login', {
-        url: "/login",
-        views: {
-          'menuContent': {
-            templateUrl: "templates/home/home.html",
-            controller: 'LoginCtrl'
-          }
-        }
-      })
-    ;
-  })
-
-  .controller('LoginCtrl', LoginController)
-
   .controller('LoginModalCtrl', LoginModalController)
 
   .controller('AuthCtrl', AuthController)
 
 ;
 
-
-function LoginController($scope, $timeout, $controller, csWallet) {
-  'ngInject';
-
-  // Initialize the super class and extend it.
-  angular.extend(this, $controller('HomeCtrl', {$scope: $scope}));
-
-  $scope.showLoginModal = function() {
-    if ($scope.loading) return $timeout($scope.showLoginModal, 500); // recursive call
-
-    if (!csWallet.isLogin() && !$scope.error) {
-      return $timeout(csWallet.login, 300);
-    }
-  };
-  $scope.$on('$ionicView.enter', $scope.showLoginModal);
-
-}
 
 function LoginModalController($scope, $timeout, $q, $ionicPopover, $window, CryptoUtils, csCrypto, ionicReady,
                               UIUtils, BMA, Modals, csConfig, csSettings, Device, parameters) {

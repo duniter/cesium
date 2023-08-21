@@ -68,7 +68,8 @@
 
       <div class="visible-sm visible-xs hero">
         <div class="content">
-          <i class="avatar avatar-member hero-icon" ng-if="!walletData.avatar" ng-class="{'royal-bg': login, 'stable-bg': !login}" ng-click="!login ? showHome() : loginAndGo()" menu-close></i>
+          <i class="avatar avatar-member hero-icon" ng-if="!walletData.avatar" ng-class="{'royal-bg': login, 'stable-bg': !login}"
+             ng-click="loginAndGo()" menu-close></i>
           <a class="avatar hero-icon" ng-if="walletData.avatar" style="background-image: url('{{walletData.avatar.src}}')" ui-sref="app.view_wallet" menu-close></a>
           <h4 ng-if="login">
             <a class="light" ui-sref="app.view_wallet" menu-close>
@@ -77,8 +78,7 @@
             </a>
           </h4>
           <h4 ng-if="!login">
-            <a class="light" ui-sref="app.login"
-               menu-close>
+            <a class="light" ng-click="loginAndGo()" menu-close>
               {{'COMMON.BTN_LOGIN'|translate}}
               <i class="ion-arrow-right-b"></i>
             </a>
