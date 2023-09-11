@@ -79,6 +79,9 @@ const uglifyBaseOptions = {
     max_line_len: 120000
   }
 };
+const cleanCssOptions = {
+  specialComments: 0 // new name of 'keepSpecialComments', since 4.0
+}
 const debugBaseOptions = {
   title: 'Processing',
   minimal: true,
@@ -134,9 +137,7 @@ function appSass() {
       maxImageSize: 14 * 1024
     }))
     .pipe(gulp.dest('./www/css/'))
-    .pipe(cleanCss({
-      keepSpecialComments: 0
-    }))
+    .pipe(cleanCss(cleanCssOptions))
     .pipe(rename({ extname: '.min.css' }))
     .pipe(gulp.dest('./www/css/'));
 }
@@ -365,9 +366,7 @@ function pluginSass() {
         deleteAfterEncoding: false
       }))
       .pipe(gulp.dest('./www/css/'))
-      .pipe(cleanCss({
-        keepSpecialComments: 0
-      }))
+      .pipe(cleanCss(cleanCssOptions))
       .pipe(rename({ extname: '.min.css' }))
       .pipe(gulp.dest('./www/css/'))
   );
