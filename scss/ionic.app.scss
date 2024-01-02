@@ -1964,9 +1964,18 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   }
 }
 
+/**********
+   About modal
+**********/
 
 .modal.about .bar.bar-header .button + .title {
   left: 0 !important; /* avoid title offset on large screens, if button are 'visible-xs')'*/
+}
+
+.modal.about {
+  .ion-telegram:before {
+    content: url('../img/logo_telegram.svg');
+  }
 }
 
 /**********

@@ -111,7 +111,11 @@
     "CODE": "Source code:",
     "OFFICIAL_WEB_SITE": "Official web site:",
     "DEVELOPERS": "Developers:",
-    "FORUM": "Forum:",
+    "USER_FORUM": "User forum:",
+    "TECH_FORUM": "Technical forum:",
+    "TELEGRAM": "Telegram group:",
+    "USER_HELP_DIVIDER": "Community",
+    "CONTRIBUTE_DIVIDER": "Contribute",
     "PLEASE_REPORT_ISSUE": "Please report any issue to us!",
     "REPORT_ISSUE": "Report an issue",
     "BTN_OPEN_DEV_WINDOW": "Open the debug window"

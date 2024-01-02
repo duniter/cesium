@@ -111,7 +111,11 @@
     "CODE": "Fonto-kodo:",
     "OFFICIAL_WEB_SITE": "Oficiala retejo:",
     "DEVELOPERS": "Programita de:",
-    "FORUM": "Forumo:",
+    "USER_FORUM": "Uzant-Forumo:",
+    "TECH_FORUM": "Teknika Forumo:",
+    "TELEGRAM": "Telegram-Grupo:",
+    "USER_HELP_DIVIDER": "Komunumo",
+    "CONTRIBUTE_DIVIDER": "Kontribui",
     "PLEASE_REPORT_ISSUE": "Ne hezitu sciigi al ni la renkontitajn fuŝaĵojn",
     "REPORT_ISSUE": "Sciigi problemon",
     "BTN_OPEN_DEV_WINDOW": "Malfermi la fenestron pri malfuŝigado"

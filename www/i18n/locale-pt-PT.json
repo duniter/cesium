@@ -112,7 +112,11 @@
     "CODE": "Código fonte:",
     "OFFICIAL_WEB_SITE": "Site oficial:",
     "DEVELOPERS": "Desenvolvido por:",
-    "FORUM": "Fórum:",
+    "USER_FORUM": "Fórum de usuários:",
+    "TECH_FORUM": "Fórum Técnico:",
+    "TELEGRAM": "Grupo Telegram:",
+    "USER_HELP_DIVIDER": "Comunidade",
+    "CONTRIBUTE_DIVIDER": "Contribuir",
     "PLEASE_REPORT_ISSUE": "Não se iniba de nos informar sobre anomalias encontradas",
     "REPORT_ISSUE": "Reportar um problema"
   },
