@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Cesium",
-  "version": "1.7.11",
+  "version": "1.7.12",
   "default_locale": "fr",
   "description": "Cesium Wallet for Ğ1 libre currency",
   "icons": {
