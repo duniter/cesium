@@ -6,16 +6,10 @@ is_installed() {
   type "$1" > /dev/null 2>&1
 }
 
-if [ "_$1" != "_" ]; then
-  CESIUM_DIR="$1"
-fi
-if [ "_$CESIUM_DIR" = "_" ]; then
-  DIRNAME=`pwd`
-  CESIUM_DIR="$DIRNAME/cesium"
-fi
+CESIUM_DIR=${1:-$(pwd)/cesium}
 
 latest_version() {
-  echo "v1.7.11" #lastest
+  echo "v1.7.11" # lastest
 }
 
 api_release_url() {
@@ -39,40 +33,39 @@ download() {
 
 install_from_github() {
 
-  local RELEASE=`curl -XGET -i $(api_release_url)`
-  local CESIUM_URL=`echo "$RELEASE" | grep -P "\"browser_download_url\": \"[^\"]+" | grep -oP "https://[a-zA-Z0-9/.-]+-web.zip"`
-  local CESIUM_ARCHIVE=$CESIUM_DIR/cesium.zip
-  if [ -d "$CESIUM_DIR" ]; then
-    if [ -f "$CESIUM_ARCHIVE" ]; then
-      echo "WARNING: Deleting existing archive [$CESIUM_ARCHIVE]"
-      rm $CESIUM_ARCHIVE
-    fi
-  else
+  local RELEASE=$(curl -XGET -i "$(api_release_url)")
+  local CESIUM_URL=$(echo "$RELEASE" | grep -P '"browser_download_url": "[^"]+' | grep -oP "https://[a-zA-Z0-9/.-]+-web.zip" | head -n 1)
+  local CESIUM_ARCHIVE="$CESIUM_DIR/cesium.zip"
+
+  if [ ! -d "$CESIUM_DIR" ]; then
     mkdir -p "$CESIUM_DIR"
+  elif [ -f "$CESIUM_ARCHIVE" ]; then
+    echo "WARNING: Deleting existing archive [$CESIUM_ARCHIVE]"
+    rm "$CESIUM_ARCHIVE"
   fi
 
   echo "Downloading [$CESIUM_URL]"
   download "$CESIUM_URL" -o "$CESIUM_ARCHIVE" || {
-      echo >&2 "Failed to download '$CESIUM_URL'"
-      return 4
-    }
-  echo "Unarchive to $CESIUM_DIR"
-  unzip -o $CESIUM_ARCHIVE -d $CESIUM_DIR
-  rm $CESIUM_ARCHIVE
+    echo >&2 "Failed to download '$CESIUM_URL'"
+    return 4
+  }
 
-  echo
+  echo "Unarchiving to $CESIUM_DIR"
+  unzip -o "$CESIUM_ARCHIVE" -d "$CESIUM_DIR"
+  rm "$CESIUM_ARCHIVE"
 
   echo "Cesium successfully installed at $CESIUM_DIR"
 }
 
 do_install() {
 
-  if [! is_installed "curl"] | [! is_installed "wget"]; then
-    echo "=> curl is not available. You will likely need to install 'curl' or 'wget' package."
+  if ! is_installed "curl" && ! is_installed "wget"; then
+    echo "=> Neither 'curl' nor 'wget' is available. Please install one of them."
     exit 1
   fi
+
   if ! is_installed "unzip"; then
-    echo "=> unzip is not available. You will likely need to install 'unzip' package."
+    echo "=> 'unzip' is not available. You will likely need to install the 'unzip' package."
     exit 1
   fi
 
@@ -84,10 +77,9 @@ do_install() {
 # during the execution of the install script
 #
 reset() {
-  unset -f reset is_installed latest_version \
-    download install_from_github do_install
+  unset -f reset is_installed latest_version api_release_url download install_from_github do_install
 }
 
-[ "_$CESIUM_ENV" = "_testing" ] || do_install $1
+[ "_$CESIUM_ENV" = "_testing" ] || do_install "$1"
 
 } # this ensures the entire script is downloaded #
