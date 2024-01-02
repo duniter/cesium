@@ -853,7 +853,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     that.api.registerEvent('node', 'stop');
 
 
-    var exports = {
+    angular.merge(that, {
       getServer: csHttp.getServer,
       node: {
         summary: that.get('/node/summary'),
@@ -909,11 +909,9 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         findObjectInTree: findObjectInTree
       },
       constants: constants
-    };
-    exports.constants.regexp = regexp;
-    angular.merge(that, exports);
+    });
+    that.constants.regexp = regexp;
   }
-
 
   // Default instance
   var service = new EsHttp(undefined, undefined, undefined, true);

@@ -19,7 +19,7 @@ angular.module('cesium.app.controllers', ['cesium.platform', 'cesium.services'])
         cache: false,
         url: "/lock",
         views: {
-          'menuContent': {
+          menuContent: {
             templateUrl: "templates/common/view_passcode.html",
             controller: 'PassCodeCtrl'
           }
@@ -421,7 +421,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
           ), uri);
 
           // Redirect to an owned wallet
-          if (!action && (csWallet.isUserPubkey(res.pubkey) || csWallet.children.isUserPubkey(res.pubkey))) {
+          if (!action && (csWallet.isUserPubkey(res.pubkey) || csWallet.children.hasPubkey(res.pubkey))) {
             var wallet = csWallet.getByPubkey(res.pubkey);
             return $state.go('app.view_wallet_by_id', {id: wallet.id});
           }
