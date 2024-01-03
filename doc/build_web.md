@@ -8,7 +8,7 @@ Cesium can be build as a simple web application, portable and runnable anywhere.
 
 Follow all the steps defined in the [Development guide](./development_guide.md).
 
-After that you should be able to start the application using `npm start`or `yarn run start`, and to test it.
+After that you should be able to start the application using `npm start`or `yarn start`, and to test it.
 
 ## Build the unhosted web application
 
@@ -23,4 +23,4 @@ After that you should be able to start the application using `npm start`or `yarn
 
 ## Publishing to a web site 
 
-Uncompress the web archive, then open the `ìndex.html` file in your web browser.
+Decompress the web archive, then open the `ìndex.html` file in your web browser.

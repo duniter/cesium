@@ -1,38 +1,47 @@
 {
-  "manifest_version": 3,
+  "short_name": "Cesium",
   "name": "Cesium",
+  "manifest_version": 1,
   "version": "1.7.12",
   "default_locale": "fr",
   "description": "Cesium Wallet for Ğ1 libre currency",
-  "icons": {
-    "32": "img/logo_32px.png",
-    "96": "img/logo_96px.png",
-    "144": "img/logo_144px.png",
-    "192": "img/logo.svg"
-  },
-  "permissions": [
-    "storage"
-  ],
-  "host_permissions": [
-    "file:///*"
-  ],
-  "theme": {
-    "colors": {
-      "frame": "#1a237e",
-      "toolbar": "#1a237e",
-      "ntp_background": "#1a237e",
-      "ntp_text": "#1a237e",
-      "button_background": "#1a237e"
+  "icons": [
+    {
+      "src": "img/logo_32px.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "img/logo_96px.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "img/logo_144px.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "img/logo.svg",
+      "sizes": "192x192",
+      "type": "image/svg"
     }
-  },
+  ],
+  "background_color": "#1a237e",
+  "theme_color": "black",
+  "dir": "ltr",
+  "start_url": "/#/app/home",
+  "display": "standalone",
   "protocol_handlers": [
     {
       "protocol": "june",
-      "uriTemplate": "/#/app/home?uri=%s"
+      "name": "Ğ1",
+      "uriTemplate": "#/app/home?uri=%s"
     },
     {
       "protocol": "web+june",
-      "uriTemplate": "/#/app/home?uri=%s"
+      "name": "web Ğ1",
+      "uriTemplate": "#/app/home?uri=%s"
     }
   ]
 }

@@ -13,14 +13,23 @@
       "32": "img/logo_32px.png",
       "60": "img/logo_60px.png",
       "96": "img/logo_96px.png",
-      "128": "img/logo_128px.png"
+      "128": "img/logo_128px.png",
+      "192": "img/logo.svg"
     }
   },
   "icons": {
     "32": "img/logo_32px.png",
     "60": "img/logo_60px.png",
     "96": "img/logo_96px.png",
-    "128": "img/logo_128px.png"
+    "128": "img/logo_128px.png",
+    "192": "img/logo.svg"
   },
+  "protocol_handlers": [
+    {
+      "protocol": "web+june",
+      "name": "web Ğ1",
+      "uriTemplate": "index.html#/app/home?uri=%s"
+    }
+  ],
   "manifest_version": 2
 }

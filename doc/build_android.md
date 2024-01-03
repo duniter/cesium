@@ -16,9 +16,9 @@ After that you should be able to start the application using `npm start`, and to
 
 You can choose to install
  
-- on Linux, install OpenJDK 8:
+- on Linux, install OpenJDK 11:
  
-  * ``sudo apt-get install openjdk-8-jdk``
+  * ``sudo apt-get install openjdk-11-jdk``
     
 - or Oracle JDK 8 (all platforms supported):
   
