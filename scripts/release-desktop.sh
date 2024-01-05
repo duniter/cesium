@@ -57,7 +57,8 @@ if [[ "${DESKTOP_ASSETS}" == "linux" ]]; then
 
   echo "Skipping windows assets, because DESKTOP_ASSETS env was set to 'linux'."
   EXPECTED_ASSETS="${PROJECT_NAME}-desktop-v$current-linux-x64.deb
-${PROJECT_NAME}-desktop-v$current-linux-x64.tar.gz"
+${PROJECT_NAME}-desktop-v$current-linux-x64.tar.gz
+${PROJECT_NAME}-desktop-v$current-linux-x64.AppImage"
 fi
 
 # Build desktop assets
