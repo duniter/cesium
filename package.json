@@ -1,8 +1,8 @@
 {
-  "name": "cesium",
-  "version": "1.7.13",
-  "description": "Cesium Wallet for G1 libre currency",
-  "author": "Benoit Lavenier <benoit.lavenier@e-is.pro>",
+  "name": "june-cheques",
+  "version": "0.0.1",
+  "description": "June-cheque cash for G1 libre currency",
+  "author": "Paolo Ganci <paolo@ganci.ch>",
   "license": "AGPL-3.0",
   "homepage": "https://cesium.app",
   "repository": {

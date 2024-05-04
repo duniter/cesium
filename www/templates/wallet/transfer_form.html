@@ -55,7 +55,7 @@
     <ion-item class="item-input item-floating-label item-button-right"
               ng-class="{'item-input-error': form.$submitted && form.amount.$invalid}">
       <div class="input-label">
-        <span translate>TRANSFER.AMOUNT</span>
+        <span translate>TRANSFER.CHEQUE_AMOUNT</span>
         (<span ng-bind-html="$root.currency.name | currencySymbol:formData.useRelative"></span>)
       </div>
       <input type="text"
@@ -63,7 +63,7 @@
              autocomplete="off"
              class="hidden-device"
              name="amount"
-             placeholder="{{::'TRANSFER.AMOUNT_HELP' | translate}}"
+             placeholder="{{::'TRANSFER.CHEQUE_AMOUNT_HELP' | translate}}"
              ng-model="formData.amount"
              required
              number-float>
@@ -74,7 +74,7 @@
              autocomplete="off"
              class="hidden-no-device"
              name="amount"
-             placeholder="{{::'TRANSFER.AMOUNT_HELP' | translate}}"
+             placeholder="{{::'TRANSFER.CHEQUE_AMOUNT_HELP' | translate}}"
              ng-model="formData.amount"
              required
              number-float>

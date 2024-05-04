@@ -1,65 +1,23 @@
 ![Cesium logo](https://github.com/duniter/cesium/raw/master/www/img/logo_144px.png)
 
-# Cesium
+# June-Cheque-App
 
-Cesium is wallet client software for [Duniter](https://duniter.org) crypto-currency, like Ğ1.
-Cesium allow you to manage your wallet, certify your friends, and more!
+June-Cheque-App is a web application where you can easily cash cheques created by the [June-Cheque](https://github.com/paolomaria/june-cheque) project.
 
-Cesium is an [Unhosted](https://unhosted.org) Progressive Web Application (PWA), using AngularJS and Ionic.
+It has been forked from the [Cesium](https://github.com/duniter/cesium) project and the not needed parts have been removed.
 
-Please visit th Cesium web site: [cesium.app](https://cesium.app)
+It can be built like described in the [Cesium](https://github.com/duniter/cesium) project.
 
-## Install
+Only the unhosted web application package has been tested.
 
-### As a web extension (Firefox, Chrome)
+**IMPORTANT**: this project is still experimental. Use it at your own risk !!
 
- - Download the [latest extension release](https://github.com/duniter/cesium/releases/latest)
- 
- - Drag/drop the file into your browser;
- 
- - Confirm the installation.
- 
- That's it! A new button is appeared, on the top right corner.
- 
-### On desktop computer
-
- - Download the [latest release](https://github.com/duniter/cesium/releases/latest)
- 
- - Then install, depending on your operating system:  
-    * Ubuntu: Double click the `.deb` file
-    * Debian: Run the command `sudo dpkg -i *.deb`
-    * Windows: Double click on the `.exe` file
-    * Mac OSx: Unzip the osx `.zip` file, then drop Cesium into your `Applications` folder 
-    * Other operating systems:  
-       * Unpack the ZIP archive (file `cesium-vX.Y.Z-web.zip`) into an empty folder;
-       * Open the file `index.html` in your web browser;
-
-### On smartphone
-
- - Android: 
-    * Manual installation: download then install the `.apk` from your smartphone;
-    * [Play Store](https://play.google.com/store/apps/details?id=fr.duniter.cesium);
- - iOS
-    * [App Store](https://apps.apple.com/us/app/cesium-%C4%9F1/id1471028018);
-
-
- 
-#### Yunohost package
-    
-There is a [package](https://github.com/duniter/cesium_ynh) for [YunoHost self-hosting distribution](https://yunohost.org).
-
-## Contribute
-
-A [Development Guide](doc/development_guide.md) is available to learn :
- - How to install your development environment.
- - Development best practices.
- 
-A [development tutorial](doc/fr/development_tutorial-01.md) (in French) is also available.
-The [first 3 lessons of the tutorial](doc/en/development_tutorial-01.md) have also been translated into english.
 
 ## Donate
 
-To help developers with donation, use the [Cesium Team Ğ1 account](https://demo.cesium.app#/app/wot/CitdnuQgZ45tNFCagay7Wh12gwwHM8VLej1sWmfHWnQX/) (public key: `CitdnuQgZ45tNFCagay7Wh12gwwHM8VLej1sWmfHWnQX`) 
+Every donation is very welcome. You can transfer some Junes to the following public key: `Bv8hAiQAvKWUhRgGtYBzEV2ig8ARqUvXHkD5wq4XrWiN:J1s`
+
+To help the Cesium Team developers with a donation, use the [Cesium Team Ğ1 account](https://demo.cesium.app#/app/wot/CitdnuQgZ45tNFCagay7Wh12gwwHM8VLej1sWmfHWnQX/) (public key: `CitdnuQgZ45tNFCagay7Wh12gwwHM8VLej1sWmfHWnQX`) 
 
 ## License
 

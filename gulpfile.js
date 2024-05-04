@@ -785,7 +785,7 @@ function webZip() {
     .pipe(header('\ufeff'))
     .pipe(txtFilter.restore)
 
-    .pipe(zip('cesium-v'+version+'-web.zip'))
+    .pipe(zip('june-cheque-v'+version+'-web.zip'))
 
     .pipe(gulp.dest('./dist/web/build'));
 }
@@ -842,19 +842,19 @@ function webExtensionZip() {
   const version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
 
   return gulp.src(srcPath + '/**/*.*')
-    .pipe(zip('cesium-v'+version+'-extension.zip'))
+    .pipe(zip('june-cheque-v'+version+'-extension.zip'))
     .pipe(gulp.dest(distPath));
 }
 
 function webBuildSuccess(done) {
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
-  log(colors.green("Web artifact created at: 'dist/web/build/cesium-v" + version + "-web.zip'"));
+  log(colors.green("Web artifact created at: 'dist/web/build/june-cheque-v" + version + "-web.zip'"));
   if (done) done();
 }
 
 function webExtBuildSuccess(done) {
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
-  log(colors.green("Web extension artifact created at: 'dist/web/build/cesium-v" + version + "-extension.zip'"));
+  log(colors.green("Web extension artifact created at: 'dist/web/build/june-cheque-v" + version + "-extension.zip'"));
   if (done) done();
 }
 

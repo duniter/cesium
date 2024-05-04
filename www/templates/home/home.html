@@ -30,8 +30,8 @@
         </div>
 
         <h4 class="welcome" ng-if="::!$root.config.readonly">
-          <p class="hidden-xs" translate>HOME.WELCOME</p>
-          <b ng-show="!loading" translate-values=":currency:{currency: $root.currency.name}" translate>HOME.MESSAGE</b>
+          <p class="hidden-xs" translate>HOME.WELCOME_CASH_CHEQUE</p>
+          <b ng-show="!loading" translate-values=":currency:{currency: $root.currency.name}" translate>HOME.MESSAGE_CASH_CHEQUE</b>
         </h4>
         <h4 class="welcome" ng-if="::$root.config.readonly">
           <p translate>HOME.WELCOME_READONLY</p>
@@ -88,7 +88,7 @@
 
           <button type="button"
                   class="button button-block button-positive button-raised ink-dark"
-                  ng-click="showJoinModal()" ng-if="!$root.config.readonly && !login" translate>LOGIN.CREATE_FREE_ACCOUNT</button>
+                  ng-click="showTransferModal()" translate>COMMON.BTN_CASH_CHEQUE</button>
 
           <button type="button"
                   class="item button button-block button-raised icon icon-left ion-person ink-dark"
@@ -102,24 +102,7 @@
             <span translate>MENU.TRANSACTIONS</span>
           </button>
 
-          <button type="button"
-                  class="item button button-block button-positive button-raised icon icon-left ion-paper-airplane ink-dark visible-xs"
-                  ng-click="showTransferModal()" ng-if="login" translate>COMMON.BTN_SEND_MONEY</button>
-
           <br class="visible-xs visible-sm"/>
-
-          <!-- join link -->
-          <div class="text-center no-padding"
-               ng-if="::!$root.config.readonly"
-               ng-show="!login">
-            <br class="visible-xs visible-sm"/>
-            <span translate>LOGIN.HAVE_ACCOUNT_QUESTION</span>
-            <b>
-              <a class="assertive hidden-xs hidden-sm" ui-sref="app.view_wallet" translate>
-                COMMON.BTN_LOGIN
-              </a>
-            </b>
-          </div>
 
           <!-- disconnect link -->
           <div class="text-center no-padding" ng-show="login">

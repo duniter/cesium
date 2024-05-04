@@ -216,6 +216,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
 
   $scope.cancel = function() {
     $scope.closeModal();
+	wallet.logout();
     wallet = null;
   };
 
@@ -286,7 +287,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
 
   $scope.doTransfer = function() {
     if ($scope.loading) return; // Skip
-
+	
     $scope.form.$submitted=true;
 
     if(!$scope.form.$valid || !$scope.formData.destPub || !$scope.formData.amount) {
@@ -334,8 +335,8 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
 
             // Trim comment to null
             var comment = $scope.formData.comment && $scope.formData.comment.trim();
-            if (comment && !comment.length) {
-              comment = null;
+            if (!comment || (comment && !comment.length)) {
+              comment = "Paiement par cheque";
             }
             var hasRest = $scope.formData.all  && $scope.formData.restAmount > 0;
             if (hasRest) {
@@ -346,6 +347,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
             }
           })
           .then(function() {
+		  	wallet.logout();
             UIUtils.loading.hide();
             return $scope.closeModal(true);
           })
