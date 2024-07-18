@@ -9,7 +9,7 @@ fi;
 
 cd ${PROJECT_DIR}
 
-### Control that the script is run on `dev` branch
+### Control that the script is run on `master` branch
 branch=$(git rev-parse --abbrev-ref HEAD)
 if [[ ! "$branch" == "master" ]];
 then
