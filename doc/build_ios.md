@@ -60,7 +60,7 @@ sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
 ## Install Node JS
 
 1. Install NVM (node.js version manager) :
-2. Install node.js v5  
+2. Install node.js 16
 3. Install common node.js dependencies
  
 ```bash
@@ -70,7 +70,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 # Node.js
-nvm install 6
+nvm install 16
 
 # node-pre-gyp
 npm install -g nw-gyp node-pre-gyp
