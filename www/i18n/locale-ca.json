@@ -112,7 +112,11 @@
     "CODE": "Codi font:",
     "OFFICIAL_WEB_SITE": "Web oficial:",
     "DEVELOPERS": "Desenvolupat per:",
-    "FORUM": "Fòrum:",
+    "USER_FORUM": "Fòrum d'usuaris:",
+    "TECH_FORUM": "Fòrum Tècnic:",
+    "TELEGRAM": "Grup de Telegram:",
+    "USER_HELP_DIVIDER": "Comunitat",
+    "CONTRIBUTE_DIVIDER": "Contribuir",
     "PLEASE_REPORT_ISSUE": "Si trobeu errors no us ho penseu i informeu-nos",
     "REPORT_ISSUE": "Informa d'un problema"
   },

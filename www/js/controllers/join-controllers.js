@@ -396,7 +396,7 @@ function JoinModalController($scope, $state, $interval, $q, $timeout, Device, UI
           csSettings.data.wallet.alertIfUnusedWallet = false; // do not alert if empty
 
           var needSelf = angular.isUndefined(parameters.uid) || angular.isUndefined(parameters.blockUid) ||
-            (parameters.uid.toUpperCase() !== $scope.formData.pseudo.toUpperCase());
+            (parameters.uid !== $scope.formData.pseudo);
           if (!needSelf) {
             wallet.setSelf(parameters.uid, parameters.blockUid);
           }
@@ -518,11 +518,11 @@ function JoinModalController($scope, $state, $interval, $q, $timeout, Device, UI
       return;
     }
 
-    var uid = $scope.formData.pseudo.toUpperCase();
+    var uid = $scope.formData.pseudo;
     $scope.formData.computing=true;
 
     // Same has given uid + self block: skip control
-    if (parameters.uid && uid === parameters.uid.toUpperCase()) {
+    if (parameters.uid && uid === parameters.uid) {
       $scope.formData.computing=false;
       $scope.uiAlreadyUsed = false;
       return;
@@ -533,7 +533,7 @@ function JoinModalController($scope, $state, $interval, $q, $timeout, Device, UI
         .then(function(res) {
           $scope.uiAlreadyUsed = (res.results || []).some(function(pub){
               return (pub.uids || []).some(function(idty) {
-                  return (idty.uid.toUpperCase() === uid); // same Uid
+                  return (idty.uid === uid); // same Uid
                 });
             });
           $scope.formData.computing=false;

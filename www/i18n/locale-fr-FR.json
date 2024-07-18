@@ -111,9 +111,13 @@
     "CODE": "Code source :",
     "OFFICIAL_WEB_SITE": "Site web officiel :",
     "DEVELOPERS": "Développé par :",
-    "FORUM": "Forum :",
+    "USER_FORUM": "Forum utilisateur:",
+    "TECH_FORUM": "Forum technique :",
+    "TELEGRAM": "Groupe Telegram :",
     "PLEASE_REPORT_ISSUE": "N'hésitez pas à nous remonter les anomalies rencontrées",
     "REPORT_ISSUE": "Remonter un problème",
+    "USER_HELP_DIVIDER": "Communauté",
+    "CONTRIBUTE_DIVIDER": "Contribuer",
     "BTN_OPEN_DEV_WINDOW": "Ouvrir la fenêtre de debuggage"
   },
   "HOME": {

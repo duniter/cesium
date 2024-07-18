@@ -2,7 +2,7 @@
   "short_name": "Cesium",
   "name": "Cesium",
   "manifest_version": 1,
-  "version": "1.7.10",
+  "version": "1.7.13",
   "default_locale": "fr",
   "description": "Cesium Wallet for Ğ1 libre currency",
   "icons": [
@@ -35,13 +35,13 @@
   "protocol_handlers": [
     {
       "protocol": "june",
-      "name": "Cesium",
-      "uriTemplate": "/#/app/home?uri=%s"
+      "name": "Ğ1",
+      "uriTemplate": "#/app/home?uri=%s"
     },
     {
       "protocol": "web+june",
-      "name": "Cesium",
-      "uriTemplate": "/#/app/home?uri=%s"
+      "name": "web Ğ1",
+      "uriTemplate": "#/app/home?uri=%s"
     }
   ]
 }

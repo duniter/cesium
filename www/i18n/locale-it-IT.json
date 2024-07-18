@@ -111,7 +111,11 @@
     "CODE": "Codice sorgente:",
     "OFFICIAL_WEB_SITE": "Pagina web ufficiale:",
     "DEVELOPERS": "Sviluppatori:",
-    "FORUM": "Forum:",
+    "USER_FORUM": "Forum degli utenti:",
+    "TECH_FORUM": "Forum tecnico:",
+    "TELEGRAM": "Gruppo Telegram:",
+    "USER_HELP_DIVIDER": "Comunità",
+    "CONTRIBUTE_DIVIDER": "Contribuire",
     "PLEASE_REPORT_ISSUE": "Per favore comunicaci qualunque problema!",
     "REPORT_ISSUE": "Comunica un problema",
     "BTN_OPEN_DEV_WINDOW": "Apri la finestra di debug"

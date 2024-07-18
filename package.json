@@ -1,6 +1,6 @@
 {
   "name": "cesium",
-  "version": "1.7.10",
+  "version": "1.7.13",
   "description": "Cesium Wallet for G1 libre currency",
   "author": "Benoit Lavenier <benoit.lavenier@e-is.pro>",
   "license": "AGPL-3.0",
@@ -16,7 +16,7 @@
     "lint": "gulp lint",
     "install-platforms": "ionic cordova prepare",
     "start": "ionic serve",
-    "start:webExt": "gulp webExtCompile && web-ext run --source-dir ./dist/web/ext/",
+    "start:webExt": "gulp webExtCompile && web-ext run --source-dir ./dist/web/ext/ --devtools",
     "start:android": "ionic cordova run android --color",
     "docker:build": "sudo docker build . -t cesium/release",
     "docker:run": "sudo docker run -ti --rm -p 8100:8100 -p 35729:35729 -v .:/cesium:rw cesium/release",
@@ -69,7 +69,7 @@
     "@bower_components/ionic": "driftyco/ionic-bower#v1.3.5",
     "@bower_components/ionic-material": "zachsoft/Ionic-Material#v0.4.2",
     "@bower_components/jdenticon": "dmester/jdenticon#3.1.0",
-    "@bower_components/js-nacl": "tonyg/js-nacl#1.3.2",
+    "@bower_components/js-nacl": "tonyg/js-nacl#1.4.0",
     "@bower_components/js-scrypt": "tonyg/js-scrypt#v1.2.0",
     "@bower_components/leaflet": "Leaflet/Leaflet#v0.7.7",
     "@bower_components/leaflet-search": "stefanocudini/leaflet-search#v2.7.2",
@@ -160,7 +160,7 @@
     "phonegap-plugin-barcodescanner": "^8.1.0",
     "playup": "^1.1.0",
     "vinyl-fs": "^3.0.3",
-    "web-ext": "^7.6.2",
+    "web-ext": "^7.9.0",
     "yargs": "^5.0.0"
   },
   "peerDependencies": {

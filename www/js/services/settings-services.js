@@ -81,6 +81,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     sourceLicenseUrl: 'https://git.duniter.org/clients/cesium-grp/cesium/-/raw/master/LICENSE',
     newIssueUrl: "https://git.duniter.org/clients/cesium-grp/cesium/issues/new",
     userForumUrl: "https://forum.monnaie-libre.fr",
+    userTelegramUrl: "https://t.me/monnaielibrejune",
+    techForumUrl: "https://forum.duniter.org",
     latestReleaseUrl: "https://api.github.com/repos/duniter/cesium/releases/latest",
     // FIXME: get release from gitlab
     duniterLatestReleaseUrl: undefined, // disable for now

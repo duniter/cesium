@@ -37,12 +37,25 @@
         </h3>
       </ion-item>
 
+      <div class="item item-divider no-border">
+        <p translate>ABOUT.USER_HELP_DIVIDER</p>
+      </div>
+
       <!-- forum -->
       <ion-item class="item-icon-left">
         <i class="item-image icon ion-chatbubbles"></i>
-        {{'ABOUT.FORUM' | translate}}
+        {{'ABOUT.USER_FORUM' | translate}}
         <h3><a ng-click="openLink($event, $root.settings.userForumUrl)">{{::$root.settings.userForumUrl}}</a></h3>
       </ion-item>
+      <ion-item class="item-icon-left">
+        <i class="item-image icon ion-telegram"></i>
+        {{'ABOUT.TELEGRAM' | translate}}
+        <h3><a ng-click="openLink($event, $root.settings.userTelegramUrl)">{{::$root.settings.userTelegramUrl}}</a></h3>
+      </ion-item>
+
+      <div class="item item-divider no-border">
+        <p translate>ABOUT.CONTRIBUTE_DIVIDER</p>
+      </div>
 
       <!-- report issue -->
       <ion-item class="item-icon-left item-text-wrap">
@@ -58,6 +71,13 @@
         <i class="item-image icon ion-network"></i>
         {{'ABOUT.CODE' | translate}}
         <h3><a ng-click="openLink($event, $root.settings.sourceUrl)">{{$root.settings.sourceUrl}}</a></h3>
+      </ion-item>
+
+      <!-- tech forum -->
+      <ion-item class="item-icon-left">
+        <i class="item-image icon ion-chatbubbles"></i>
+        {{'ABOUT.TECH_FORUM' | translate}}
+        <h3><a ng-click="openLink($event, $root.settings.techForumUrl)">{{::$root.settings.techForumUrl}}</a></h3>
       </ion-item>
 
       <!-- team -->
