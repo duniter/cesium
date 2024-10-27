@@ -2900,3 +2900,40 @@ div[drop-zone]:hover {
 
 
 }
+
+.migration-popup {
+  .popup {
+    width: 90% !important;
+    max-width: 320px;
+    
+    .popup-head {
+      border-bottom: 2px solid #387ef5;
+      padding: 15px;
+      
+      h3 {
+        font-size: 18px;
+        margin: 0;
+        color: #387ef5;
+      }
+    }
+    
+    .popup-body {
+      .migration-message {
+        font-size: 16px;
+        line-height: 1.5;
+        padding: 10px 0;
+      }
+    }
+    
+    .popup-buttons {
+      padding: 10px;
+      
+      .button {
+        margin: 0;
+        border-radius: 4px;
+        font-size: 16px;
+        min-height: 44px;
+      }
+    }
+  }
+}

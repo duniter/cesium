@@ -728,5 +728,10 @@
       "END_LOGIN": "This guided visit has <b>ended</b>.<br/><br/>Welcome to the <b>free economy</b>!",
       "END_NOT_LOGIN": "This guided visit has <b>ended</b>.<br/><br/>If you wish to join the currency {{currency|capitalize}}, simply click <b>{{'LOGIN.CREATE_ACCOUNT'|translate}}</b> below."
     }
+  },
+  "MIGRATION": {
+    "UPDATE_REQUIRED": "Update vereist",
+    "UPDATE_REQUIRED_MESSAGE": "Update Cesium voordat je verder gaat.<br/><br/><a href=\"https://monnaie-libre.fr/maj-v2/\" target=\"_blank\">Meer informatie</a>",
+    "UPDATE_ACTION": "Bijwerken"
   }
 }

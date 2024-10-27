@@ -1067,5 +1067,10 @@
         "EXAMPLE_BUTTON_ICON_G1_BLACK": "Logo Ğ1 (noir)"
       }
     }
+  },
+  "MIGRATION": {
+    "UPDATE_REQUIRED": "Mise à jour requise",
+    "UPDATE_REQUIRED_MESSAGE": "Veuillez mettre à jour Cesium avant de continuer.<br><br><a href=\"https://monnaie-libre.fr/maj-v2/\" target=\"_blank\">En savoir plus</a>",
+    "UPDATE_ACTION": "Mettre à jour"
   }
 }

@@ -24,11 +24,14 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngSanitize',
   })
 
   .run(function($rootScope, $translate, $state, $window, $urlRouter, ionicReady,
-                Device, UIUtils, $ionicConfig, PluginService, csPlatform, csWallet) {
+                Device, UIUtils, $ionicConfig, $ionicPopup, PluginService, csPlatform, csWallet, csMigration) {
     'ngInject';
 
     // Must be done before any other $stateChangeStart listeners
     csPlatform.disableChangeState();
+
+    // Launch migration check
+    csMigration.check();
 
     var preventStateChange = false; // usefull to avoid duplicate login, when a first page with auth
     $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
