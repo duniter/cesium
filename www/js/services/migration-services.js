@@ -8,17 +8,12 @@ angular.module('cesium.services')
 
   // Check migration state
   function checkMigrationState() {
-    // Skip migration check if not on mobile platform
-    if (!ionic.Platform.isAndroid() && !ionic.Platform.isIOS()) {
-      return Promise.resolve();
-    }
-
     const primaryUrl = 'https://v2s-migration-state.axiom-team.fr';
     const backupUrl = 'https://v2s-migration-state.duniter.org';
     
     // First attempt
     return $http.get(primaryUrl, {
-      timeout: 2000
+      timeout: 3000
     })
       .then(function(response) {
         if (response.data && response.data.migration === true) {
@@ -28,7 +23,7 @@ angular.module('cesium.services')
       .catch(function() {
         // If first route fails, try backup route
         return $http.get(backupUrl, {
-          timeout: 3000
+          timeout: 5000
         })
           .then(function(response) {
             if (response.data && response.data.migration === true) {
@@ -57,14 +52,51 @@ angular.module('cesium.services')
         text: '<b>' + $translate.instant('MIGRATION.UPDATE_ACTION') + '</b>',
         type: 'button-positive button-large',
         onTap: function(e) {
-          e.preventDefault();
-          var storeUrl = ionic.Platform.isAndroid() ?
-            'https://play.google.com/store/apps/details?id=fr.duniter.cesium' :
-            'https://apps.apple.com/us/app/cesium-%C4%9F1/id1471028018';
-          $window.open(storeUrl, '_system');
+          e.preventDefault(); // Do not close popup on tap
+          openStore();
         }
       }]
     });
+  }
+
+  function getStoreUrls() {
+    if (ionic.Platform.isAndroid()) {
+      return {
+        storeUrl: 'market://details?id=fr.duniter.cesium',
+        fallbackUrl: 'https://play.google.com/store/apps/details?id=fr.duniter.cesium'
+      };
+    }
+    if (ionic.Platform.isIOS()) {
+      return {
+        storeUrl: 'itms-apps://itunes.apple.com/app/id1471028018',
+        fallbackUrl: 'https://apps.apple.com/us/app/cesium-%C4%9F1/id1471028018'
+      };
+    }
+    return {
+      storeUrl: 'https://cesium.app',
+      fallbackUrl: 'https://cesium.app'
+    };
+  }
+
+  function openStore() {
+    const urls = getStoreUrls();
+    try {
+      // Try to open with InAppBrowser first for better integration
+      if (window.cordova && window.cordova.InAppBrowser) {
+        cordova.InAppBrowser.open(urls.storeUrl, '_system');
+      } else {
+        // Fallback to direct window.open for web browsers
+        $window.open(urls.storeUrl, '_system');
+      }
+    } catch(e) {
+      // If deep link fails, fallback to direct URL
+      console.error('Error opening store:', e);
+      if (window.cordova && window.cordova.InAppBrowser) {
+        cordova.InAppBrowser.open(urls.fallbackUrl, '_system');
+      } else {
+        $window.open(urls.fallbackUrl, '_system');
+      }
+    }
   }
 
   return service;
