@@ -300,18 +300,12 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       }
       var newServer = csHttp.getServer(fallbackNode.host, fallbackNode.port);
       UIUtils.loading.hide();
-      return $translate('CONFIRM.ES_USE_FALLBACK_NODE', {old: that.server, new: newServer})
-        .then(UIUtils.alert.confirm)
-        .then(function (confirm) {
-          if (!confirm) return false; // stop the loop
+      that.cleanCache();
 
-          that.cleanCache();
+      that.init(fallbackNode.host, fallbackNode.port, fallbackNode.useSsl || fallbackNode.port == 443);
 
-          that.init(fallbackNode.host, fallbackNode.port, fallbackNode.useSsl || fallbackNode.port == 443);
-
-          // check is alive then loop
-          return that.isAlive().then(that.checkNodeAlive);
-        });
+      // check is alive then loop
+      return that.isAlive().then(that.checkNodeAlive);
     };
 
     that.isStarted = function() {
