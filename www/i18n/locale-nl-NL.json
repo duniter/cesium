@@ -662,8 +662,6 @@
     "SAVE_BEFORE_LEAVE": "Wil je <b>je wijzigingen opslaan</b> voor je de pagina verlaat?",
     "SAVE_BEFORE_LEAVE_TITLE": "Wijzigingen niet opgeslagen",
     "LOGOUT": "Weet u zeker dat u wilt uitloggen?",
-    "USE_FALLBACK_NODE": "Node <b>{{old}}</b> is onbereikbaar of het adres is ongeldig.<br/><br/>Wilt u tijdelijk de node <b>{{new}}</b> gebruiken?",
-    "USE_SYNC_FALLBACK_NODE": "Node <b>{{old}}</b> lijkt niet gesynchroniseerd te zijn.<br/><br/>Wilt u tijdelijk de gesynchroniseerde node <b>{{new}}</b> gebruiken?",
     "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Waarschuwing:</b> Wil je het knooppunt <b>handmatig wijzigen</b>?<br/><br/>Als je doorgaat:<ul><li> - De <b>expertmodus</b> wordt geactiveerd;</li><li> - Je kunt terugkeren naar automatische knooppuntselectie door eenvoudigweg de <b>expertmodus uit te schakelen</b>.</li></ul>"
   },
   "DOWNLOAD": {

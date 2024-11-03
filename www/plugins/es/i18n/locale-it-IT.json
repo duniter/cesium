@@ -525,9 +525,6 @@
        "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha modificato sua risposta sul suo commento a proposito del riferimento: <b>{{params[2]}}</b>"
      }
    },
-   "CONFIRM": {
-    "ES_USE_FALLBACK_NODE": "Nodo<b>{{old}}</b> irraggiungibile o indirizzo sbagliato.<br/><br/>Vuoi utilizzare temporaneamente il nodo di dati <b>{{new}}</b> ?"
-  },
    "ERROR": {
     "ES_CONNECTION_ERROR": "Nodo di dati<b>{{server}}</b>  irraggiungibile o indirizzo sbagliato.<br/><br/>Cesium continuerà a funzionare <b>senza l'estensione Cesium+</b> (profili utenti, messaggi privati, mappe e grafici)<br/><br/>Verifica tua connessione o cambia nodo <a class=\"positive\" ng-click=\"doQuickFix('settings')\">impostazioni dell'estensione</a>.",
      "ES_MAX_UPLOAD_BODY_SIZE": "Il volume di data da inviare supera il limite imposto dal server.<br/><br/>Suggeriamo di riprovare dopo aver eliminato delle foto, per esempio."

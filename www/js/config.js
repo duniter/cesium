@@ -147,8 +147,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "1.7.14",
-	"build": "2024-07-18T16:14:19.519Z",
+	"version": "1.7.15",
+	"build": "2024-11-03T20:12:42.182Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 

@@ -544,9 +544,6 @@
       "FAILED_TOGGLE_LIKE": "Unable to execute this action."
     }
   },
-  "CONFIRM": {
-    "ES_USE_FALLBACK_NODE": "Data node <b>{{old}}</b> unreachable or invalid address.<br/><br/>Do you want to temporarily use the data node <b>{{new}}</b>?"
-  },
   "ERROR": {
     "ES_CONNECTION_ERROR": "Data node <b>{{server}}</b> unreachable or invalid address.<br/><br/>Cesium will continue to work, <b>without the Cesium+</b> extension (user profiles, private messages, maps and graphics).<br/><br/>Check your Internet connection, or change data node in <a class=\"positive\" ng-click=\"doQuickFix('settings')\">extension settings</a>.",
     "ES_MAX_UPLOAD_BODY_SIZE": "The volume of data to be sent exceeds the limit set by the server.<br/><br/>Please try again after, for example, deleting photos."

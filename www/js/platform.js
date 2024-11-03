@@ -147,7 +147,6 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     function checkBmaNodeAlive(alive) {
       if (alive) return true; // Ok, current node is alive
 
-      var askUserConfirmation = checkBmaNodeAliveCounter === 0 && csSettings.data.expertMode;
       checkBmaNodeAliveCounter++;
       if (checkBmaNodeAliveCounter > 3)  throw 'ERROR.CHECK_NETWORK_CONNECTION'; // Avoid infinite loop
 
@@ -160,11 +159,6 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
           return _.sample(fallbackNodes); // Random select
         })
         .then(function(fallbackNode) {
-
-          // Ask user before using the fallback node
-          if (fallbackNode && askUserConfirmation) {
-            return askUseFallbackNode(fallbackNode);
-          }
 
           return fallbackNode;
         })
@@ -270,11 +264,6 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
               // KO: peek another peer
               var randomSynchronizedPeer = _.sample(peers);
 
-              // If Expert mode: ask user to select a node
-              if (askUserConfirmation) {
-                return askUseFallbackNode(randomSynchronizedPeer, 'CONFIRM.USE_SYNC_FALLBACK_NODE');
-              }
-
               return randomSynchronizedPeer;
             })
             .then(function(node) {
@@ -296,27 +285,6 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
 
               return BMA.copy(node);
             });
-        });
-    }
-
-    /**
-     * Ask user to confirm, before switching to fallback node
-     * @param fallbackNode
-     * @param messageKey
-     * @returns {*}
-     */
-    function askUseFallbackNode(fallbackNode, messageKey) {
-
-      var newUrl = fallbackNode.url || csHttp.getUrl(fallbackNode.host, fallbackNode.port, fallbackNode.path, fallbackNode.useSsl);
-      var confirmMsgParams = {old: BMA.url, new: newUrl};
-
-      messageKey = messageKey || 'CONFIRM.USE_FALLBACK_NODE';
-
-      return $translate(messageKey, confirmMsgParams)
-        .then(UIUtils.alert.confirm)
-        .then(function (confirm) {
-          if (!confirm) return; // Stop
-          return fallbackNode;
         });
     }
 

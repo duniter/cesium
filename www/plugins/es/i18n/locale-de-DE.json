@@ -597,9 +597,6 @@
       "FAILED_TOGGLE_LIKE": "Diese Aktion kann nicht ausgeführt werden."
     }
   },
-  "CONFIRM": {
-    "ES_USE_FALLBACK_NODE": "Datenknoten <b>{{old}}</b> nicht erreichbar oder ungültige Adresse.<br/><br/>Möchtest du Datenknoten <b>{{new}}</b> vorübergehend verwenden?"
-  },
   "ERROR": {
     "ES_CONNECTION_ERROR": "Datenknoten <b>{{server}}</b> nicht erreichbar oder ungültige Adresse.<br/><br/>Cesium wird weiterhin betrieben, <b>ohne die Erweiterung Cesium+</b> (Benutzerprofile, private Nachrichten, Karten und Grafiken)<br/><br/>Überprüfe deine Internetverbindung oder ändere den Datenknoten in den <a class=\"positive\" ng-click=\"doQuickFix('settings')\">Einstellungen der Erweiterung</a>.",
     "ES_MAX_UPLOAD_BODY_SIZE": "Die zu sendende Datenmenge überschreitet das vom Server festgelegte Limit.<br/>Bitte versuche es erneut, nachdem du z.B. Fotos gelöscht hast."

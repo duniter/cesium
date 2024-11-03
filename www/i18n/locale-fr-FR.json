@@ -874,8 +874,6 @@
     "SAVE_BEFORE_LEAVE": "Voulez-vous <b>sauvegarder vos modifications</b> avant de quitter la page ?",
     "SAVE_BEFORE_LEAVE_TITLE": "Modifications non enregistrées",
     "LOGOUT": "Êtes-vous sûr de vouloir vous déconnecter ?",
-    "USE_FALLBACK_NODE": "Nœud <b>{{old}}</b> injoignable ou adresse invalide.<br/><br/>Voulez-vous temporairement utiliser le nœud <b>{{new}}</b> ?",
-    "USE_SYNC_FALLBACK_NODE": "Nœud <b>{{old}}</b> semble désynchronisé.<br/><br/>Voulez-vous temporairement utiliser le nœud <b>{{new}}</b> ?",
     "ISSUE_524_SEND_LOG": "La transaction a été rejetée, à cause d'une anomalie connue (ticket #524) mais <b>non reproduite</b>.<br/><br/>Pour aider les développeurs à corriger cette erreur, <b>acceptez-vous la transmission de vos logs</b> par message ?<br/><small>(aucune donnée confidentielle n'est envoyée)</small>.",
     "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Avertissement :</b> Voulez-vous <b>changer manuellement</b> le nœud ?<br/><br/>Si vous continuez :<ul><li> - Le <b>mode expert</b> sera activé;</li><li> - Vous pourrez revenir à la sélection automatique du nœud, simplement <b>en désactivant le mode expert</b>.</li></ul>"
   },

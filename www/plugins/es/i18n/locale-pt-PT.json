@@ -599,9 +599,6 @@
       "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> modificou a reposta ao seu comentário sobre a referencia : <b>{{params[2]}}</b>"
     }
   },
-  "CONFIRM": {
-    "ES_USE_FALLBACK_NODE": "Nó de dados <b>{{old}}</b> indisponível ou endereço inválido.<br/><br/>Deseja utilizar temporariamente o nó de dados <b>{{new}}</b>?"
-  },
   "ERROR": {
     "ES_CONNECTION_ERROR": "Nó de dados <b>{{server}}</b> indisponível ou endereço inválido.<br/><br/>Cesium continuará funcionando, <b>sem a extensão Cesium+</b> (perfis de usuário, mensagens privadas), mapas e gráficos).<br/><br/>Verifique a sua ligação à Internet, o altere o nó de dados em <a class=\"positive\" ng-click=\"doQuickFix('settings')\"> nas definições da extensão </a>.",
     "ES_MAX_UPLOAD_BODY_SIZE": "O volume de dados a enviar excede o limite estabelecido pelo servidor.<br/><br/>Por favor, tente novamente depois, por exemplo, apagando fotos."

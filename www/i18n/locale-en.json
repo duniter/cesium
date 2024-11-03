@@ -872,8 +872,6 @@
     "SAVE_BEFORE_LEAVE": "Do you want to <b>save your changes</b> before leaving the page?",
     "SAVE_BEFORE_LEAVE_TITLE": "Changes not saved",
     "LOGOUT": "Are you sure you want to logout?",
-    "USE_FALLBACK_NODE": "Peer <b>{{old}}</b> unreachable or invalid address.<br/><br/>Do you want to temporarily use the <b>{{new}}</b> peer?",
-    "USE_SYNC_FALLBACK_NODE": "Peer <b>{{old}}</b> seems to be out of sync.<br/><br/>Do you want to temporarily use the synchronized peer <b>{{new}}</b>?",
     "ISSUE_524_SEND_LOG": "The transaction was rejected because of a known problem (issue #524) but not reproduced.<br/><br/>To help developers correct this error, do you accept <b>the transmission of your logs</b> per message?<br/><small>(No confidential data is sent)</small>",
     "ENABLE_EXPERT_MODE_TO_CHANGE_NODE": "<b class=\"assertive\">Warning:</b> Do you want to <b>manually change</b> the Duniter peer?<br/><br/>If you continue:<ul><li> - <b>Expert mode</b> will be activated;</li><li> - You can return to automatic peer selection by simply <b>deactivating expert mode</b>.</li></ul>"
   },

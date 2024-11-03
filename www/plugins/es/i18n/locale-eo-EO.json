@@ -597,9 +597,6 @@
       "FAILED_TOGGLE_LIKE": "Ne eblas fari tiun ĉi agon."
     }
   },
-  "CONFIRM": {
-    "ES_USE_FALLBACK_NODE": "Daten-nodo <b>{{old}}</b> neatingebla aŭ adreso nevalida.<br/><br/>Ĉu vi volas provizore uzi la daten-nodon <b>{{new}}</b> ?"
-  },
   "ERROR": {
     "ES_CONNECTION_ERROR": "Daten-nodo <b>{{server}}</b> neatingebla aŭ adreso nevalida.<br/><br/>Cesium daŭrigos funkcii, <b>sen la krom-programo Cesium+</b> (uzanto-profiloj, privataj mesaĝoj, mapoj kaj grafikoj)<br/><br/>Kontrolu vian ret-konekton, aŭ ŝanĝu daten-nodon ĉe la <a class=\"positive\" ng-click=\"doQuickFix('settings')\">parametroj de la krom-programo</a>.",
     "ES_MAX_UPLOAD_BODY_SIZE": "La kvanto de datenoj sendotaj superas la limon fiksitan de la servilo.<br/>Bonvolu reprovi post, ekzemple, forigo de fotoj."
