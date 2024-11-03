@@ -1082,17 +1082,17 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
     },
 
    /**
-    * Is the peer compatible with Cesium (should be a BMA endpoint )
+    * Is the peer compatible with Cesium
     * @param peer
     * @returns {*}
     */
     isCompatible = function(peer) {
       if (!peer && !peer.isBma() || !peer.version) return false;
 
-      // CHeck version compatible, from min version
+      // Check version compatible, from min version
      if (!peer.version || !csHttp.version.isCompatible(csSettings.data.minVersionAtStartup || csSettings.data.minVersion, peer.version) ||
-         // Exclude beta versions (1.9.0* and 1.8.7-rc*)
-         peer.version.startsWith('1.9.0') || peer.version.startsWith('1.8.7-rc')
+         // Exclude beta versions (1.8.7-rc*)
+         peer.version.startsWith('1.8.7-rc')
        ) {
         console.debug('[network] [#{0}] BMA endpoint [{1}] is EXCLUDED (incompatible version {2})'.format(data.pid, peer.getServer(), peer.version));
         return false;
