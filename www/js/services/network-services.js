@@ -395,6 +395,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       var peers = createPeerEntities(json);
       var hasUpdates = false;
       var pid = data.pid;
+      var running = true;
 
       var jobs = peers.reduce(function(jobs, peer) {
           var existingPeer = _.findWhere(data.peers, {id: peer.id});
@@ -404,6 +405,9 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
           return jobs.concat(
             refreshPeer(peer)
               .then(function (refreshedPeer) {
+                running = running && data.listeners && data.listeners.length > 0;
+                if (!running) return; // Skip if stopped
+
                 var api = refreshedPeer &&
                   refreshedPeer.bma && (
                     (refreshedPeer.bma.useBma && 'BMA') ||
@@ -416,7 +420,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
                   if (!refreshedPeer || (refreshedPeer.online !== data.filter.online && data.filter.online !== 'all')) {
                     var existingIndex = data.peers.indexOf(existingPeer);
                     if (existingIndex !== -1) {
-                      console.debug('[network] [#{0}] Peer [{1}] removed (cause: {2})'.format(pid, peer.server, !refreshedPeer ? 'filtered' : (refreshedPeer.online ? 'UP' : 'DOWN')));
+                      if (!stop) console.debug('[network] [#{0}] Peer [{1}] removed (cause: {2})'.format(pid, peer.server, !refreshedPeer ? 'filtered' : (refreshedPeer.online ? 'UP' : 'DOWN')));
                       data.peers.splice(existingIndex, 1);
                       hasUpdates = true;
                     }
@@ -458,7 +462,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
       }, []);
       return (jobs.length === 1 ? jobs[0] : $q.all(jobs))
         .then(function() {
-          return hasUpdates;
+          return !stop && hasUpdates;
         });
     },
 
@@ -1034,7 +1038,10 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.currency.services', 
               checkEnoughListener();
               checkEnoughListener = null;
 
-              console.debug('[network] [#{0}] Found enough peers on main consensus - in {1}ms (timeout {2}ms) '.format(pid, Date.now() - data.startTime, options.timeout));
+              console.debug('[network] [#{0}] Found enough peers on main consensus ({1} peers)- in {2}ms (timeout {3}ms) '.format(pid,
+                consensusPeerCount,
+                Date.now() - data.startTime,
+                options.timeout));
               deferred.resolve(peers);
             }
           }
