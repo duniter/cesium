@@ -98,7 +98,7 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
               reject(err);
             },
             key, value,
-            null // Cipher mode  - "CCM" (default) or "GCM" (Galois/Counter Mode)
+            'CCM' // Cipher mode  - "CCM" (default) or "GCM" (Galois/Counter Mode)
           );
         }
         // Remove
@@ -153,7 +153,7 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
             },
             key,
             JSON.stringify(value),
-            null // Cipher mode  - "CCM" (default) or "GCM" (Galois/Counter Mode)
+            'CCM' // Cipher mode  - "CCM" (default) or "GCM" (Galois/Counter Mode)
           );
         }
         else {

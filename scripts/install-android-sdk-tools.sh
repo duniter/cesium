@@ -53,7 +53,7 @@ echo y | sdkmanager "build-tools;${ANDROID_SDK_VERSION}" --sdk_root=${ANDROID_SD
 [[ $? -ne 0 ]] && exit 1
 
 # Install platforms
-TARGET_VERSIONS="22 23 24 25 26 27 28 29 30 31 32 33"
+TARGET_VERSIONS="33 34 35"
 for TARGET_VERSION in $TARGET_VERSIONS
 do
   echo "-------------------------------------------"
@@ -63,10 +63,11 @@ do
 done
 
 # Install NDK
-echo "-------------------------------------------"
-echo "--- Installing Android NDK..."
-echo y | sdkmanager "ndk;22.0.7026061" --sdk_root=${ANDROID_SDK_ROOT} | tee -a sdkmanager.log
+# BLA 05/01/2025 - not more need this, since we remove usage of libsodium
+#echo "-------------------------------------------"
+#echo "--- Installing Android NDK..."
+#echo y | sdkmanager "ndk;22.0.7026061" --sdk_root=${ANDROID_SDK_ROOT} | tee -a sdkmanager.log
 #echo y | sdkmanager "ndk;25.2.9519653" --sdk_root=${ANDROID_SDK_ROOT} | tee -a sdkmanager.log
-echo y | sdkmanager "ndk;${ANDROID_NDK_VERSION}" --sdk_root=${ANDROID_SDK_ROOT} | tee -a sdkmanager.log
+#echo y | sdkmanager "ndk;${ANDROID_NDK_VERSION}" --sdk_root=${ANDROID_SDK_ROOT} | tee -a sdkmanager.log
 
 echo "--- Installing Android [OK]"

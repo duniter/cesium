@@ -25,7 +25,7 @@ NODE_VERSION=16
 IONIC_CLI_VERSION=6.20.9
 
 ANDROID_NDK_VERSION=21.0.6113669 # Should be compatible with 'cordova-sqlite-storage' plugin
-ANDROID_SDK_VERSION=33.0.2
+ANDROID_SDK_VERSION=34.0.0
 ANDROID_SDK_CLI_VERSION=8512546 # See https://developer.android.com/studio#command-tools
 ANDROID_SDK_ROOT="${HOME}/Android/Sdk"
 ANDROID_ALTERNATIVE_SDK_ROOT=/usr/lib/android-sdk
@@ -48,8 +48,8 @@ WEB_EXT_ID=${WEB_EXT_ID:-"{6f9922f7-a054-4609-94ce-d269993246a5}"}
 # /!\ WARN can be define in your <project>/.local/env.sh file
 #JAVA_HOME=
 
-GRADLE_VERSION=6.7.1
-GRADLE_HOME=${HOME}/.gradle/${GRADLE_VERSION}
+GRADLE_VERSION=8.7
+GRADLE_HOME=${PROJECT_DIR}/platforms/android/.gradle/${GRADLE_VERSION}
 CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL=https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-all.zip
 GRADLE_OPTS=-Dorg.gradle.jvmargs=-Xmx512m
 
@@ -74,11 +74,11 @@ if test -d "${JAVA_HOME}"; then
   if test $? -ne 0 || test -z "${JAVA_VERSION}"; then
     echo "No Java JRE 1.8 found in machine. This is required for Android artifacts."
   else
-    if ! test "${JAVA_VERSION}" -eq "11"; then
+    if ! test "${JAVA_VERSION}" -eq "17"; then
       JAVA_MAJOR_VERSION=$(echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[1]}')
       JAVA_MINOR_VERSION=$(echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[2]}')
-      if ! test "${JAVA_MAJOR_VERSION}" -eq "11" || ! test "${JAVA_MINOR_VERSION}" -eq "0"; then
-        echo "ERROR: Require a Java SDK in version 11, but found ${JAVA_VERSION}. You can override your default JAVA_HOME in '.local/env.sh'."
+      if ! test "${JAVA_MAJOR_VERSION}" -eq "17" || ! test "${JAVA_MINOR_VERSION}" -eq "0"; then
+        echo "ERROR: Require a Java SDK in version 17, but found ${JAVA_VERSION}. You can override your default JAVA_HOME in '.local/env.sh'."
       fi
     fi
   fi

@@ -59,6 +59,7 @@ if test -z "$(which gradle)" && ! test -d "${GRADLE_HOME}"; then
   if test $? -ne 0; then
     echo "ERROR: Unable to install Gradle"
   fi
+  cd "${PROJECT_DIR}"
 fi
 
 # Prepare Android platform
