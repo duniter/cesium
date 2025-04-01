@@ -1,8 +1,8 @@
-﻿Licence Ğ1 - v0.2.9
+Licence Ğ1 - v0.3.0
 ===================
 
 :Date: 2017-04-04 12:59
-:Modified: 2021-04-20 21:00
+:Modified: 2025-02-11 21:30
 
 **Licence de la monnaie et engagement de responsabilité.**
 
@@ -95,3 +95,33 @@ Les logiciels Ğ1 permettant aux utilisateurs de gérer leur utilisation de Ğ1 
 Pour plus de précisions dans les détails techniques il est possible de consulter directement le code de Duniter qui est un logiciel libre ainsi que les données de la blockchain Ğ1 en les récupérant via une instance (ou nœud) Duniter Ğ1.
 
 Plus d'informations sur le site de l'équipe Duniter https://www.duniter.org
+
+Règles de modifications du présent document
+-------------------------------------------
+
+**Note introductive :**
+
+Les personnes qui émettent des propositions, qui les soutiennent ou qui les votent doivent être membres de la TDC.
+
+**Processus :**
+
+1. Étape optionelle : Il est possible de partager son processus d'élaboration d'une proposition sur les plateformes de communication de la Ǧ1 (forum Monnaie Libre, forum Duniter, Télégram monnaie libre...).
+
+2. Quand une proposition est considérée comme finalisée, il faut :
+
+   - Créer un compte portefeuille pour chaque option : un "pour", un "contre".
+   - Créer dans la catégorie dédiée du forum monnaie libre un sujet reprenant la proposition finale suivie des clefs publiques associées à chaque option.
+   - Toute modification (réédition) du texte de la proposition finale entraine l'annulation du vote.
+
+3. Les personnes votantes sont invitées à se prononcer par virement depuis leur compte membre vers le compte associé à leur choix de vote (le montant est ignoré). Si un compte membre émet plusieurs virements vers un même compte, un seul vote sera comptabilisé. Des virements du même compte membre vers les deux comptes ("pour" et "contre") sont considérés comme nuls.
+
+4. 30 jours après publication de la proposition finale sur le forum les résultats du vote sont dépouillés :
+
+   - Si la proposition a récolté au moins 20 votes/virements "pour" et aucun vote "contre", elle est adoptée.
+   - Pour chaque vote "contre", 5 votes "pour" supplémentaires sont nécessaires pour que la proposition puisse être adoptée. (25 "pour" si 1 "contre", 30 "pour" si 2 "contre"...)
+   - Si les conditions d'adoption ne sont pas réunies, la proposition est rejetée.
+
+Une fois le vote clos, les Ǧ1 versées à l'occasion des votes peuvent être reversées ou non à une caisse (Mégadon, soutiens aux devs, remuniter...). Cela n'impacte pas la validité du vote.
+
+Si vous avez besoin d'aide pour suivre ce processus de mise au vote, rendez-vous sur :
+[Comment mettre au vote une proposition d'évolution ?](https://forum.monnaie-libre.fr/t/a-propos-de-la-categorie-modifications-de-la-licence/31065)
