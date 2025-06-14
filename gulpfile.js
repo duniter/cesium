@@ -836,6 +836,46 @@ function webExtCopyFiles() {
   .pipe(gulp.dest('./dist/web/ext'));
 }
 
+function chromeExtCopyFiles() {
+  const wwwPath = './dist/web/www';
+  const resourcesPath = './resources/chrome-ext';
+  log(colors.green('Copy chrome extension files...'));
+
+  const version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+  const manifestFilter = filter(["**/manifest.json"], { restore: true });
+  const txtFilter = filter(["**/*.txt"], { restore: true });
+
+  // Copy files
+  return gulp.src([
+    wwwPath + '/**/*',
+
+    // Skip API files
+    '!' + wwwPath + '/api',
+    '!' + wwwPath + '/dist_js/*-api.js',
+    '!' + wwwPath + '/dist_css/*-api.css',
+    '!' + wwwPath + '/maps/dist_js/*-api.js.map',
+    '!' + wwwPath + '/maps/dist_css/*-api.css.map',
+
+    // Skip web manifest
+    '!' + wwwPath + '/manifest.json',
+
+    // Add specific resource (and overwrite the default 'manifest.json')
+    resourcesPath + '/**/*.*'
+  ])
+
+  // Process TXT files: Add the UTF-8 BOM character
+  .pipe(txtFilter)
+  .pipe(header('\ufeff'))
+  .pipe(txtFilter.restore)
+
+  // Replace version in 'manifest.json' file
+  .pipe(manifestFilter)
+  .pipe(replace(/\"version\": \"[^\"]*\"/, '"version": "' + version + '"'))
+  .pipe(manifestFilter.restore)
+
+  .pipe(gulp.dest('./dist/web/ext'));
+}
+
 function webExtensionZip() {
   const srcPath = './dist/web/ext';
   const distPath = './dist/web/build';
@@ -1398,10 +1438,22 @@ const webExtCompile = gulp.series(
   webExtCopyFiles
 );
 
+const chromeExtCompile = gulp.series(
+  webExtClean, // reuse, to clean dist/web/ext
+  webCompile,
+  chromeExtCopyFiles
+);
+
 // note : Do not call config, to keep same config between web and webExt artifacts
 const webExtBuild = gulp.series(
   webExtCompile,
   webExtensionZip,
+  webExtBuildSuccess
+);
+
+const chromeExtBuild = gulp.series(
+  chromeExtCompile,
+  webExtensionZip, // we can reuse the same zipping function
   webExtBuildSuccess
 );
 
@@ -1435,6 +1487,10 @@ exports.webExtCompile = webExtCompile;
 exports.webExtBuild = webExtBuild;
 exports.webExtCopyFiles = webExtCopyFiles;
 exports['build:webExt'] = exports.webExtBuild; // Alias
+
+// Chrome extension
+exports.chromeExtBuild = chromeExtBuild;
+exports['build:chromeExt'] = exports.chromeExtBuild; // Alias
 
 // Cordova (hooks)
 const cdvAfterPrepare = gulp.series(

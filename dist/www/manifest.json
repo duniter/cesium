@@ -11,8 +11,7 @@
     "192": "img/logo.svg"
   },
   "permissions": [
-    "storage",
-    "alarms"
+    "storage"
   ],
   "host_permissions": [
     "*://*/*"
@@ -29,8 +28,5 @@
       "144": "img/logo_144px.png",
       "192": "img/logo.svg"
     }
-  },
-  "content_security_policy": {
-    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
   }
 }
