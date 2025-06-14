@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Cesium",
+  "version": "1.7.15",
+  "description": "Cesium Wallet for Ğ1 libre currency",
+  "icons": {
+    "32": "img/logo_32px.png",
+    "60": "img/logo_60px.png",
+    "96": "img/logo_96px.png",
+    "144": "img/logo_144px.png",
+    "192": "img/logo.svg"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Cesium",
+    "default_icon": {
+      "32": "img/logo_32px.png",
+      "60": "img/logo_60px.png",
+      "96": "img/logo_96px.png",
+      "144": "img/logo_144px.png",
+      "192": "img/logo.svg"
+    }
+  }
+}
