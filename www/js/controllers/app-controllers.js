@@ -529,9 +529,14 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   $scope.registerProtocolHandlers = function() {
-    if (csConfig.demo) return; // Skip if demo
+    // Protocol handlers are not supported in Chrome extensions
+    if (window.chrome && chrome.runtime && chrome.runtime.id) {
+      console.debug("Running as a browser extension, skipping protocol handler registration.");
+      return;
+    }
 
-    var protocols = ['web+june'];
+    var protocolHandlers = csConfig.protocolHandlers || {};
+    var protocols = Object.keys(protocolHandlers);
 
     _.each(protocols, function(protocol) {
       console.debug("[app] Registering protocol '{0}'...".format(protocol));
