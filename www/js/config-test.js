@@ -81,7 +81,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "1.7.15",
-	"build": "2025-08-27T13:29:48.867Z",
+	"build": "2025-08-27T12:59:01.073Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
