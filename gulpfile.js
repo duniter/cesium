@@ -792,7 +792,13 @@ function webZip() {
 
 function webExtClean() {
   return del([
-    './dist/web/ext'
+    './dist/web/ext',
+  ]);
+}
+
+function chromeExtClean() {
+  return del([
+    './dist/web/chrome-ext'
   ]);
 }
 
@@ -1455,7 +1461,7 @@ const webExtCompile = gulp.series(
 );
 
 const chromeExtCompile = gulp.series(
-  webExtClean, // reuse, to clean dist/web/ext
+  chromeExtClean,
   webCompile,
   chromeExtCopyFiles
 );
