@@ -158,6 +158,22 @@ else
   missing_file=true
 fi
 
+
+# Upload chrome extension (XPI) file
+CHROME_EXT_BASENAME="${PROJECT_NAME}-v$current-extension-chrome.zip"
+CHROME_EXT_FILE="${DIST_WEB}/${CHROME_EXT_BASENAME}"
+if [[ -f "${CHROME_EXT_FILE}" ]]; then
+  result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: application/zip' -T "${CHROME_EXT_FILE}" "${upload_url}?name=${CHROME_EXT_BASENAME}")
+  browser_download_url=$(echo "$result" | grep -P "\"browser_download_url\":[ ]?\"[^\"]+" | grep -oP "\"browser_download_url\":[ ]?\"[^\"]+"  | grep -oP "https://[A-Za-z0-9/.-]+")
+  CHROME_EXT_SHA256=$(cd ${DIST_WEB} && sha256sum "${CHROME_EXT_BASENAME}")
+  echo " - ${browser_download_url}  | Checksum: ${CHROME_EXT_SHA256}"
+  echo "${CHROME_EXT_SHA256}  ${CHROME_EXT_BASENAME}" > "${CHROME_EXT_FILE}.sha256"
+  result=$(curl -s -H ''"$GITHUT_AUTH"'' -H 'Content-Type: text/plain' -T "${CHROME_EXT_FILE}.sha256" "${upload_url}?name=${CHROME_EXT_BASENAME}.sha256")
+else
+  echo " - ERROR: Chrome signed extension artifact not found! Skipping."
+  missing_file=true
+fi
+
 # Upload Android APK file
 APK_BASENAME="${PROJECT_NAME}-v${current}-android.apk"
 APK_FILE="${DIST_ANDROID}/${APK_BASENAME}"

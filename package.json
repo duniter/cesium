@@ -1,6 +1,6 @@
 {
   "name": "cesium",
-  "version": "1.7.14",
+  "version": "1.7.15",
   "description": "Cesium Wallet for G1 libre currency",
   "author": "Benoit Lavenier <benoit.lavenier@e-is.pro>",
   "license": "AGPL-3.0",
@@ -12,19 +12,20 @@
   "scripts": {
     "clean": "gulp clean webClean webExtClean && rm -rf dist/web dist/android && rm -f desktop/**/cesium-*.deb desktop/**/cesium-*.exe platforms/android/**/*.apk",
     "postinstall": "node scripts/node/postinstall.js",
-    "gulp": "gulp",
-    "lint": "gulp lint",
+    "gulp": "npx gulp",
+    "lint": "npx gulp lint",
     "install-platforms": "ionic cordova prepare",
     "start": "ionic serve",
-    "start:webExt": "gulp webExtCompile && web-ext run --source-dir ./dist/web/ext/ --devtools",
+    "start:webExt": "npx gulp webExtCompile && web-ext run --source-dir ./dist/web/ext/ --devtools",
     "start:android": "ionic cordova run android --color",
     "docker:build": "sudo docker build . -t cesium/release",
     "docker:run": "sudo docker run -ti --rm -p 8100:8100 -p 35729:35729 -v .:/cesium:rw cesium/release",
-    "build": "gulp build",
-    "build:web": "gulp config --env default && gulp webBuild --release",
-    "build:webExt": "gulp config --env default && gulp webExtBuild --release",
+    "build": "npx gulp build",
+    "build:web": "npx gulp config --env default && npx gulp webBuild --release",
+    "build:webExt": "npx gulp config --env default && npx gulp webExtBuild --release",
     "build:android": "ionic cordova build android --warning-mode=none --color --release -- -- --packageType=apk",
-    "build:ios": "ionic cordova build ios --warning-mode=none --color --release"
+    "build:ios": "ionic cordova build ios --warning-mode=none --color --release",
+    "build:chromeExt": "npx gulp config --env default && npx gulp chromeExtBuild --release"
   },
   "keywords": [
     "duniter",

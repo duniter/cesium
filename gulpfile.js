@@ -836,13 +836,63 @@ function webExtCopyFiles() {
   .pipe(gulp.dest('./dist/web/ext'));
 }
 
-function webExtensionZip() {
+function chromeExtCopyFiles() {
+  const wwwPath = './dist/web/www';
+  const resourcesPath = './resources/chrome-ext';
+  log(colors.green('Copy chrome extension files...'));
+
+  const version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+  const manifestFilter = filter(["**/manifest.json"], { restore: true });
+  const txtFilter = filter(["**/*.txt"], { restore: true });
+
+  // Copy files
+  return gulp.src([
+    wwwPath + '/**/*',
+
+    // Skip API files
+    '!' + wwwPath + '/api',
+    '!' + wwwPath + '/dist_js/*-api.js',
+    '!' + wwwPath + '/dist_css/*-api.css',
+    '!' + wwwPath + '/maps/dist_js/*-api.js.map',
+    '!' + wwwPath + '/maps/dist_css/*-api.css.map',
+
+    // Skip web manifest
+    '!' + wwwPath + '/manifest.json',
+
+    // Add specific resources (and overwrite the default 'manifest.json')
+    resourcesPath + '/**/*.*'
+  ])
+
+  // Process TXT files: Add the UTF-8 BOM character
+  .pipe(txtFilter)
+  .pipe(header('\ufeff'))
+  .pipe(txtFilter.restore)
+
+  // Replace version in 'manifest.json' file
+  .pipe(manifestFilter)
+  .pipe(replace(/\"version\": \"[^\"]*\"/, '"version": "' + version + '"'))
+  .pipe(manifestFilter.restore)
+
+  .pipe(gulp.dest('./dist/web/chrome-ext'));
+}
+
+function webExtZip() {
   const srcPath = './dist/web/ext';
   const distPath = './dist/web/build';
   const version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
 
   return gulp.src(srcPath + '/**/*.*')
     .pipe(zip('cesium-v'+version+'-extension.zip'))
+    .pipe(gulp.dest(distPath));
+}
+
+function chromeExtZip() {
+  const srcPath = './dist/web/chrome-ext';
+  const distPath = './dist/web/build';
+  const version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+
+  return gulp.src(srcPath + '/**/*.*')
+    .pipe(zip('cesium-v'+version+'-extension-chrome.zip'))
     .pipe(gulp.dest(distPath));
 }
 
@@ -855,6 +905,12 @@ function webBuildSuccess(done) {
 function webExtBuildSuccess(done) {
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
   log(colors.green("Web extension artifact created at: 'dist/web/build/cesium-v" + version + "-extension.zip'"));
+  if (done) done();
+}
+
+function chromeExtBuildSuccess(done) {
+  var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+  log(colors.green("Web extension artifact created at: 'dist/web/build/cesium-v" + version + "-extension-chrome.zip'"));
   if (done) done();
 }
 
@@ -1398,11 +1454,23 @@ const webExtCompile = gulp.series(
   webExtCopyFiles
 );
 
+const chromeExtCompile = gulp.series(
+  webExtClean, // reuse, to clean dist/web/ext
+  webCompile,
+  chromeExtCopyFiles
+);
+
 // note : Do not call config, to keep same config between web and webExt artifacts
 const webExtBuild = gulp.series(
   webExtCompile,
-  webExtensionZip,
+  webExtZip,
   webExtBuildSuccess
+);
+
+const chromeExtBuild = gulp.series(
+  chromeExtCompile,
+  chromeExtZip,
+  chromeExtBuildSuccess
 );
 
 
@@ -1435,6 +1503,10 @@ exports.webExtCompile = webExtCompile;
 exports.webExtBuild = webExtBuild;
 exports.webExtCopyFiles = webExtCopyFiles;
 exports['build:webExt'] = exports.webExtBuild; // Alias
+
+// Chrome extension
+exports.chromeExtBuild = chromeExtBuild;
+exports['build:chromeExt'] = exports.chromeExtBuild; // Alias
 
 // Cordova (hooks)
 const cdvAfterPrepare = gulp.series(

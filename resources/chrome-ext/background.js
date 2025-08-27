@@ -30,7 +30,7 @@ if (browserExtensionRequirements) {
   // Adding browser action
   action.onClicked.addListener(openInTab);
 
-  // FIXME: finish this code
+  // FIXME: This code has been updated to use the chrome.alarms API for Manifest V3 compatibility.
   function checkNotifications() {
     console.debug("[extension] Checking for notifications...");
 
@@ -40,13 +40,22 @@ if (browserExtensionRequirements) {
     action.setBadgeBackgroundColor({
       color: '#387EF5' // = $positive color - see the SCSS theme
     });
-
-    // Loop, after a delay
-    setTimeout(function() {
-      checkNotifications();
-    }, 60 * 1000 /*1min*/);
   }
-  //checkNotifications();
+
+  // Create an alarm to run the notification check periodically.
+  // The minimum period for Manifest V3 is 1 minute.
+  chrome.alarms.create('notificationTimer', {
+    periodInMinutes: 1
+  });
+
+  // Add a listener for when the alarm goes off.
+  chrome.alarms.onAlarm.addListener(alarm => {
+    if (alarm.name === 'notificationTimer') {
+      checkNotifications();
+    }
+  });
+
+  checkNotifications();
 }
 else {
   console.error("[extension] Cannot init extension: missing some API requirements (action or tabs");
