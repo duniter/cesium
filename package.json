@@ -161,7 +161,7 @@
     "phonegap-plugin-barcodescanner": "^8.1.0",
     "playup": "^1.1.0",
     "vinyl-fs": "^3.0.3",
-    "web-ext": "^7.9.0",
+    "web-ext": "^8.9.0",
     "yargs": "^5.0.0"
   },
   "peerDependencies": {

@@ -74,12 +74,11 @@ if test -d "${JAVA_HOME}"; then
   if test $? -ne 0 || test -z "${JAVA_VERSION}"; then
     echo "No Java JRE 1.8 found in machine. This is required for Android artifacts."
   else
-    if ! test "${JAVA_VERSION}" -eq "11"; then
-      JAVA_MAJOR_VERSION=$(echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[1]}')
-      JAVA_MINOR_VERSION=$(echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[2]}')
-      if ! test "${JAVA_MAJOR_VERSION}" -eq "11" || ! test "${JAVA_MINOR_VERSION}" -eq "0"; then
-        echo "ERROR: Require a Java SDK in version 11, but found ${JAVA_VERSION}. You can override your default JAVA_HOME in '.local/env.sh'."
-      fi
+    JAVA_MAJOR_VERSION=$(echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[1]}')
+    JAVA_MINOR_VERSION=$(echo ${JAVA_VERSION} | awk '{split($0, array, ".")} END{print array[2]}')
+    if ! test "${JAVA_MAJOR_VERSION}" -ne 11 || ! test "${JAVA_MINOR_VERSION}" -ne 0; then
+      echo "ERROR: Require a Java JRE in version 11.0, but found ${JAVA_VERSION}. You can override your default JAVA_HOME in '.local/env.sh'."
+      #exit 1
     fi
   fi
 fi

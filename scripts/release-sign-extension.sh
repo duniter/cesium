@@ -40,11 +40,17 @@ if [[ "_" == "_${AMO_JWT_ISSUER}" || "_" == "_${AMO_JWT_SECRET}" ]]; then
     exit 1
 fi
 
+nvm use 20
+
+webExtVersion=$(web-ext --version)
+echo "Web-Ext version: ${webExtVersion}"
+
 ### Sign extension
 case "$1" in
   pre)
-      echo "web-ext sign \"--api-key=${AMO_JWT_ISSUER}\" \"--api-secret=${AMO_JWT_SECRET}\" \"--source-dir=${PROJECT_DIR}/dist/web/ext\" \"--artifacts-dir=${PROJECT_DIR}/dist/web/build\"  --id=${WEB_EXT_ID} --channel=unlisted"
-      web-ext sign "--api-key=${AMO_JWT_ISSUER}" "--api-secret=${AMO_JWT_SECRET}" "--source-dir=${PROJECT_DIR}/dist/web/ext" "--artifacts-dir=${PROJECT_DIR}/dist/web/build"  --id=${WEB_EXT_ID} --channel=unlisted
+      #echo "web-ext sign \"--api-key=${AMO_JWT_ISSUER}\" \"--api-secret=${AMO_JWT_SECRET}\" \"--source-dir=${PROJECT_DIR}/dist/web/ext\" \"--artifacts-dir=${PROJECT_DIR}/dist/web/build\" --channel=unlisted"
+      npx web-ext sign --upload-source-code "--api-key=${AMO_JWT_ISSUER}" "--api-secret=${AMO_JWT_SECRET}" "--source-dir=${PROJECT_DIR}/dist/web/ext" "--artifacts-dir=${PROJECT_DIR}/dist/web/build" --channel=unlisted
+
       if [[ $? -ne 0 ]]; then
         if [[ -f "${XPI_FILE}" || -f "${XPI_FINAL_FILE}" ]]; then
           echo "WARN: web-ext failed! Continue anyway, because output file exists"
@@ -54,7 +60,8 @@ case "$1" in
       fi
     ;;
   rel)
-      web-ext sign "--api-key=${AMO_JWT_ISSUER}" "--api-secret=${AMO_JWT_SECRET}" "--source-dir=${PROJECT_DIR}/dist/web/ext" "--artifacts-dir=${PROJECT_DIR}/dist/web/build"  --id=${WEB_EXT_ID} --channel=listed
+      web-ext sign --no-config-discovery --upload-source-code "--api-key=${AMO_JWT_ISSUER}" "--api-secret=${AMO_JWT_SECRET}" "--source-dir=${PROJECT_DIR}/dist/web/ext" "--artifacts-dir=${PROJECT_DIR}/dist/web/build" --channel=listed
+
       # Comment out, because always failed with message:
       #   "Your add-on has been submitted for review. It passed validation but could not be automatically signed because this is a listed add-on."
       #if [[ $? -ne 0 ]]; then
