@@ -76,6 +76,18 @@
       {
         "host": "g1.le-sou.org",
         "port": 443
+      },
+      {
+        "host": "duniter.pini.fr",
+        "port": 443
+      },
+      {
+        "host": "g1.moul.re",
+        "port": 443
+      },
+      {
+        "host": "duniter-v1.comunes.net",
+        "port": 443
       }
     ],
     "developers": [
