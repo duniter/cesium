@@ -91,7 +91,7 @@ echo "- Building Android artifact..."
 echo "----------------------------------"
 cd ${PROJECT_DIR}/scripts || exit 1
 ./release-android.sh
-#[[ $? -ne 0 ]] && exit 1
+[[ $? -ne 0 ]] && exit 1
 
 
 echo "----------------------------------"

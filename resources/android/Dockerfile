@@ -2,16 +2,16 @@ FROM     ubuntu:18.04
 LABEL maintainer="benoit [dot] lavenier [at] e-is [dot] pro"
 
 ENV DEBIAN_FRONTEND=noninteractive \
-    ANDROID_HOME=/opt/android-sdk-linux \
-    NODE_VERSION=10.20.0 \
-    NPM_VERSION=6.14.4 \
-    YARN_VERSION=1.22.4 \
-    IONIC_CLI_VERSION=6.5.0 \
-    CORDOVA_VERSION=8.1.2 \
-    CORDOVA_RES_VERSION=0.11.0 \
-    NATIVE_RUN_VERSION=1.0.0 \
-    GRADLE_VERSION=4.10.3 \
-    GULP_VERSION=2.2.0 \
+    ANDROID_SDK_ROOT=/opt/android-sdk-linux \
+    NODE_VERSION=16.20.2 \
+    NPM_VERSION=8.19.4 \
+    YARN_VERSION=1.22.22 \
+    IONIC_CLI_VERSION=6.20.9 \
+    CORDOVA_VERSION=12.0.0 \
+    CORDOVA_RES_VERSION=0.15.4 \
+    NATIVE_RUN_VERSION=2.0.0 \
+    GRADLE_VERSION=8.7 \
+    GULP_VERSION=4.0.2 \
     ANDROID_NDK_VERSION=r19c \
     ANDROID_SDK_VERSION=r29.0.2
 
@@ -33,7 +33,7 @@ RUN npm install -g cordova@"$CORDOVA_VERSION" cordova-res@"$CORDOVA_RES_VERSION"
     npm cache clear --force
 
 # Install Android prerequisites
-RUN echo ANDROID_HOME="${ANDROID_HOME}" >> /etc/environment && \
+RUN echo ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT}" >> /etc/environment && \
     dpkg --add-architecture i386 && \
     apt-get update && \
     apt-get -y install openjdk-11-jdk-headless && \
@@ -65,13 +65,13 @@ RUN echo ANDROID_HOME="${ANDROID_HOME}" >> /etc/environment && \
 
 # Setup environment
 
-#ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:/opt/tools:/opt/gradle/gradle-"$GRADLE_VERSION"/bin
+#ENV PATH ${PATH}:${ANDROID_SDK_ROOT}/tools:${ANDROID_SDK_ROOT}/platform-tools:/opt/tools:/opt/gradle/gradle-"$GRADLE_VERSION"/bin
 
 # Install sdk elements
 #COPY resources/android/build/tools /opt/tools
 #RUN chmod u+x /opt/tools/*.sh
 #RUN ["/opt/tools/android-accept-licenses.sh", "android update sdk --all --no-ui --filter platform-tools,tools,build-tools-29.0.0,android-29,build-tools-26.0.0,android-26,build-tools-25.0.0,android-25,extra-android-support,extra-android-m2repository,extra-google-m2repository"]
-#RUN unzip ${ANDROID_HOME}/temp/*.zip -d ${ANDROID_HOME}
+#RUN unzip ${ANDROID_SDK_ROOT}/temp/*.zip -d ${ANDROID_SDK_ROOT}
 
 
 # Install source code

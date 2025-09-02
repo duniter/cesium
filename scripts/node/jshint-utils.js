@@ -21,7 +21,7 @@ async function lintFolder(dir) {
 
 function lintFile(file) {
   return new Promise((resolve, reject) => {
-    log(colors.grey('Processing file ./' + file + '...'));
+    log(colors.grey('Processing file ' + file + '...'));
     fs.readFile(file, (err, data) => {
       if(err) {
         log(colors.red('Error: ' + err));

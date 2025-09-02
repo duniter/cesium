@@ -74,6 +74,7 @@ fi
 # Copy local files
 ANDROID_OVERWRITE_DIR=${PROJECT_DIR}/.local/android
 if test -d "${ANDROID_OVERWRITE_DIR}"; then
+  echo ""
   echo "Copying files from directory '${ANDROID_OVERWRITE_DIR}' into '${PROJECT_DIR}/platforms/android'..."
   cp -rf ${ANDROID_OVERWRITE_DIR}/* ${PROJECT_DIR}/platforms/android
   if test $? -ne 0; then

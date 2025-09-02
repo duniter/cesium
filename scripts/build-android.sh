@@ -27,4 +27,4 @@ rm -f ${ANDROID_OUTPUT_APK_RELEASE}/*.apk*
 
 echo "Running cordova build android..."
 ionic cordova build android --warning-mode=none --color $* -- -- --packageType=apk
-#ionic cordova build android --warning-mode=none --color --verbose -- -- --packageType=apk
+#ionic cordova build android --warning-mode=none --color --verbose -- -- --packageType=apk --stacktrace --debug
