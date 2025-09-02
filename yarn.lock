@@ -3366,6 +3366,11 @@ cordova-plugin-file@^8.1.3:
   resolved "http://nexus.e-is.pro/repository/npmjs/cordova-plugin-file/-/cordova-plugin-file-8.1.3.tgz#2fe4405a7dfdab1bfc2ccc882c37b1e8029f81b6"
   integrity sha512-KlnP3CapNIsKncoWV5lYcIFYDPl0aZ1J3AH3QESlQX1Cb6Ct0p6GrAUvINyrFsjPbWHj8i0b6la6udVsghbATg==
 
+cordova-plugin-inappbrowser@^6.0.0:
+  version "6.0.0"
+  resolved "http://nexus.e-is.pro/repository/npmjs/cordova-plugin-inappbrowser/-/cordova-plugin-inappbrowser-6.0.0.tgz#d236ebef23543d128b0f5613d8b8fd3bbcb0dafc"
+  integrity sha512-nMJ67YQZwkx1WMfA4tKFdVdTg6FNkh/nQflP1uMw0RVe/cP2kfDrO3SbpUr8yKahpWdSQl1Lmd8D3KKzuAjucA==
+
 cordova-plugin-ionic-keyboard@^2.2.0:
   version "2.2.0"
   resolved "https://registry.npmjs.org/cordova-plugin-ionic-keyboard/-/cordova-plugin-ionic-keyboard-2.2.0.tgz#53ba9ccd5e765165446a094cfe042a2ddd87d81d"

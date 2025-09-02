@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Get to the root project
-SCRIPT_DIR=$(dirname "$(readlink "$BASH_SOURCE" || echo "$BASH_SOURCE")")
+SCRIPT_DIR=$(dirname $0)
 PROJECT_DIR=$(cd "${SCRIPT_DIR}/.." && pwd -P)
 export PROJECT_DIR
 

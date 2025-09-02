@@ -133,13 +133,17 @@
         <div class="item" ng-if="formData.category || formData.address">
           <h4 ng-if="formData.category">
             <span class="gray" translate>REGISTRY.VIEW.CATEGORY</span>
-            <a class="positive" ng-if="formData.category" ui-sref="app.wot_lookup.tab_registry({category:formData.category.id})">
+            <a class="positive" ng-if="formData.category"
+               ui-sref="app.wot_lookup.tab_registry({category:formData.category.id})">
               <span ng-bind-html="formData.category.name"></span>
             </a>
           </h4>
           <h4 ng-if="formData.address">
             <span class="gray" translate>REGISTRY.VIEW.LOCATION</span>
-            <a class="positive" target="_system" href="https://www.openstreetmap.org/search?query={{formData.address}},%20{{formData.city}}">
+            <a class="positive" target="_system"
+               href="https://www.openstreetmap.org/search?query={{formData.address}},%20{{formData.city}}"
+               onclick="window.open('https://www.openstreetmap.org/search?query={{formData.address}},%20{{formData.city}}', '_system');return false;"
+            >
               <span ng-bind-html="formData.address"></span>
               <span ng-if="formData.city"> - </span>
               <span ng-bind-html="formData.city"></span>

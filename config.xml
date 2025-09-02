@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="107154" id="fr.duniter.cesium" ios-CFBundleIdentifier="org.duniter.cesium" version="1.7.15" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="107156" id="fr.duniter.cesium" ios-CFBundleIdentifier="org.duniter.cesium" version="1.7.15" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Cesium</name>
     <description>
-    An simple App for Duniter wallet
-  </description>
+      Cesium Wallet for Ğ1 libre currency
+    </description>
     <author email="contact@e-is.pro">
-    E-IS PRO
-  </author>
+      E-IS PRO
+    </author>
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
@@ -27,7 +27,7 @@
     <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="SplashScreen" value="screen" />
-    <preference name="SplashScreenDelay" value="4000" />
+    <preference name="SplashScreenDelay" value="2500" />
     <preference name="KeyboardDisplayRequiresUserAction" value="false" />
     <preference name="KeyboardResizeMode" value="ionic" />
     <preference name="xwalkVersion" value="19" />

@@ -514,6 +514,10 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
       return !!navigator.userAgent.match(/Macintosh/i) || ionic.Platform.is("osx");
     };
 
+    exports.isMobile = function () {
+      return exports.isAndroid() || exports.isIOS();
+    };
+
     exports.isIOS = function () {
       return !!navigator.userAgent.match(/iPhone | iPad | iPod/i) || (!!navigator.userAgent.match(/Mobile/i) && !!navigator.userAgent.match(/Macintosh/i)) || ionic.Platform.isIOS();
     };
@@ -588,7 +592,17 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
 
             if (cordova.InAppBrowser) {
               console.debug('[device] Enabling InAppBrowser');
-              window.open = cordova.InAppBrowser.open;
+              window.open = function(url, target, options) {
+                // Pour les liens externes, utiliser _system pour ouvrir dans le navigateur natif
+                if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+                  return cordova.InAppBrowser.open(url, '_system', options);
+                } else {
+                  // Pour les autres cas, utiliser le comportement par défaut
+                  return cordova.InAppBrowser.open(url, target || '_blank', options);
+                }
+              };
+
+
             }
 
             // Add network listeners, using cordova network plugin

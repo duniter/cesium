@@ -99,7 +99,7 @@
         <ion-item>
           <h4 ng-if="formData.address">
             <span class="gray" translate>REGISTRY.VIEW.LOCATION</span>
-            <a class="positive" target='_blank' href="https://www.google.fr/maps/?q={{formData.address}},%20{{formData.city}}">
+            <a class="positive" target='_system' href="https://www.google.fr/maps/?q={{formData.address}},%20{{formData.city}}">
               <span ng-bind-html="formData.address"></span>
               <span ng-if="formData.city"> - </span>
               <span ng-bind-html="formData.city"></span>
@@ -117,7 +117,7 @@
                ng-class="{'ion-bookmark': social.type == 'other', 'ion-link': social.type == 'web', 'ion-email': social.type == 'email'}"></i>
             <p ng-if="social.type && social.type != 'web'">{{social.type}}</p>
             <h2>
-              <a href="{{social.url}}" ng-if="social.type != 'email'" target="_blank">{{social.url}}</a>
+              <a href="{{social.url}}" ng-if="social.type != 'email'" target="_system">{{social.url}}</a>
               <a href="mailto:{{social.url}}" ng-if="social.type == 'email'">{{social.url}}</a>
             </h2>
           </ion-item>
