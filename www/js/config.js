@@ -85,6 +85,18 @@ angular.module("cesium.config", [])
 		{
 			"host": "g1.le-sou.org",
 			"port": 443
+		},
+		{
+			"host": "duniter.pini.fr",
+			"port": 443
+		},
+		{
+			"host": "g1.moul.re",
+			"port": 443
+		},
+		{
+			"host": "duniter-v1.comunes.net",
+			"port": 443
 		}
 	],
 	"developers": [
@@ -147,8 +159,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "1.7.15",
-	"build": "2025-08-27T12:59:01.062Z",
+	"version": "1.7.16",
+	"build": "2025-09-03T16:15:46.628Z",
 	"newIssueUrl": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
 })
 
