@@ -25,7 +25,7 @@ NODE_VERSION=16
 IONIC_CLI_VERSION=6.20.9
 
 ANDROID_NDK_VERSION=21.0.6113669 # Should be compatible with 'cordova-sqlite-storage' plugin
-ANDROID_SDK_VERSION=34.0.0
+ANDROID_SDK_VERSION=35.0.0
 ANDROID_SDK_CLI_VERSION=8512546 # See https://developer.android.com/studio#command-tools
 ANDROID_SDK_ROOT="${HOME}/Android/Sdk"
 ANDROID_ALTERNATIVE_SDK_ROOT=/usr/lib/android-sdk
