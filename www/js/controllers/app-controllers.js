@@ -367,12 +367,13 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   // WARN: publish to root scope, to make sure popover (with new scope) can use it
   $rootScope.openLink = function($event, uri, options) {
+    if ($event.defaultPrevented) return false;
     $event.stopPropagation();
     $event.preventDefault();
 
     // Read URL like '@UID' (Used by home page, in feed's author url)
     if (uri && uri.startsWith('@')) {
-      var uid = uri.substr(1);
+      var uid = uri.substring(1);
       if (BMA.regexp.USER_ID.test(uid)) {
         $state.go('app.wot_identity_uid', {uid: uid});
         return false;

@@ -133,16 +133,17 @@
         <div class="item" ng-if="formData.category || formData.address">
           <h4 ng-if="formData.category">
             <span class="gray" translate>REGISTRY.VIEW.CATEGORY</span>
-            <a class="positive" ng-if="formData.category"
+            <span class="positive visible-xs visible-sm" ng-bind-html="formData.category.name"></span>
+            <a class="positive hidden-xs hidden-sm"
                ui-sref="app.wot_lookup.tab_registry({category:formData.category.id})">
               <span ng-bind-html="formData.category.name"></span>
             </a>
           </h4>
           <h4 ng-if="formData.address">
             <span class="gray" translate>REGISTRY.VIEW.LOCATION</span>
-            <a class="positive" target="_system"
+            <a class="positive" target="_blank"
                href="https://www.openstreetmap.org/search?query={{formData.address}},%20{{formData.city}}"
-               onclick="window.open('https://www.openstreetmap.org/search?query={{formData.address}},%20{{formData.city}}', '_system');return false;"
+               ng-click="openLink($event, 'https://www.openstreetmap.org/search?query={{formData.address}},%20{{formData.city}}')"
             >
               <span ng-bind-html="formData.address"></span>
               <span ng-if="formData.city"> - </span>
@@ -194,6 +195,5 @@
           ng-if="formData.pubkey && !isUserPubkey(formData.pubkey)"
           ng-click="showTransferModal({pubkey: formData.pubkey, uid: formData.title})">
   </button>
-
 
 </ion-view>

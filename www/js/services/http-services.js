@@ -476,29 +476,26 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     var openTarget = (options.target || (Device.enable ? '_system' : '_blank'));
 
     // If desktop, try to open into external browser
-    if (openTarget === '_blank' || openTarget === '_system'  && Device.isDesktop()) {
+    if ((openTarget === '_blank' || openTarget === '_system') && Device.isDesktop()) {
       try {
         nw.Shell.openExternal(uri);
-        return;
+        return false;
       }
       catch(err) {
         console.error("[http] Failed not open URI into external browser.");
       }
     }
 
-    // If desktop, should always open in new window (no tabs)
-    var openOptions;
-    if (openTarget === '_blank' && Device.isDesktop()) {
-
-      if (nw && nw.Shell) {
-        nw.Shell.openExternal(uri);
-        return false;
-      }
+    var centerWindow = false;
+    var openOptions = typeof options === 'string' ? options : undefined;
+    if (!openOptions && openTarget === '_blank' && Device.isDesktop()) {
       // Override default options
-      openOptions= "location=1,titlebar=1,status=1,menubar=1,toolbar=1,resizable=1,scrollbars=1";
+      openOptions = "location=1,titlebar=1,status=1,menubar=1,toolbar=1,resizable=1,scrollbars=1";
+
       // Add width/height
       if ($window.screen && $window.screen.width && $window.screen.height) {
         openOptions += ",width={0},height={1}".format(Math.trunc($window.screen.width/2), Math.trunc($window.screen.height/2));
+        centerWindow = true;
       }
     }
 
@@ -507,7 +504,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       openOptions);
 
     // Center the opened window
-    if (openOptions && $window.screen && $window.screen.width && $window.screen.height) {
+    if (win && centerWindow && $window.screen && $window.screen.width && $window.screen.height) {
       win.moveTo($window.screen.width/2/2, $window.screen.height/2/2);
       win.focus();
     }

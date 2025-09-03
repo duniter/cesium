@@ -38,8 +38,8 @@
         {{social.type}}
         <i class="ion-locked" ng-if="social.recipient"></i>
       </p>
-      <h4>
-        <a on-tap="openSocial($event, social)" href="{{::social.url}}" target="_blank">{{::social.url}}</a>
+      <h4 class="positive">
+        <a ng-click="$event.preventDefault()" href="{{::social.url}}" target="_blank">{{::social.url}}</a>
       </h4>
     </ion-item>
   </div>

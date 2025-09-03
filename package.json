@@ -100,8 +100,8 @@
     "cordova-fetch": "^5.0.0",
     "cordova-ios": "^7.1.1",
     "cordova-plugin-androidx-adapter": "^1.1.3",
-    "cordova-plugin-camera": "^8.0.0",
     "cordova-plugin-inappbrowser": "^6.0.0",
+    "cordova-plugin-camera": "^8.0.0",
     "cordova-plugin-customurlscheme": "^5.0.2",
     "cordova-plugin-device": "^3.0.0",
     "cordova-plugin-dialogs": "^2.0.2",
@@ -183,7 +183,6 @@
         "PHOTOLIBRARY_USAGE_DESCRIPTION": "Take a picture for the user profile",
         "ANDROID_SUPPORT_V4_VERSION": "28.+"
       },
-      "cordova-plugin-inappbrowser": {},
       "cordova-plugin-device": {},
       "cordova-plugin-dialogs": {},
       "cordova-plugin-splashscreen": {},

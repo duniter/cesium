@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="107156" id="fr.duniter.cesium" ios-CFBundleIdentifier="org.duniter.cesium" version="1.7.15" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="107163" id="fr.duniter.cesium" ios-CFBundleIdentifier="org.duniter.cesium" version="1.7.15" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Cesium</name>
     <description>
       Cesium Wallet for Ğ1 libre currency
@@ -82,6 +82,9 @@
         <splash density="port-xhdpi" src="resources/android/splash/drawable-port-xhdpi-screen.png" />
         <splash density="port-xxhdpi" src="resources/android/splash/drawable-port-xxhdpi-screen.png" />
         <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
+        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
+            <application android:networkSecurityConfig="@xml/network_security_config" />
+        </edit-config>
     </platform>
     <platform name="ios">
         <preference name="BackupWebStorage" value="local" />

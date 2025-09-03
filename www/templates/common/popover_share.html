@@ -20,15 +20,9 @@
         </a>
 
         <a class="button button-icon positive icon ion-social-twitter"
-           href="https://twitter.com/intent/tweet?url={{postUrl|formatEncodeURI}}&amp;text={{postMessage|formatEncodeURI}}"
+           href="https://x.com/intent/tweet?url={{postUrl|formatEncodeURI}}&amp;text={{postMessage|formatEncodeURI}}"
            onclick="window.open(this.href, '_system','menubar=no,toolbar=no,resizable=yes,scrollbars=yes,width=580,height=296');return false;"
            title="{{'COMMON.POPOVER_SHARE.SHARE_ON_TWITTER'|translate}}">
-        </a>
-
-        <a class="button button-icon positive icon ion-social-googleplus"
-           href="https://plus.google.com/share?url={{postUrl|formatEncodeURI}}"
-           onclick="window.open(this.href, '_system', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=296,width=580');return false;"
-           title="{{'COMMON.POPOVER_SHARE.SHARE_ON_GOOGLEPLUS'|translate}}">
         </a>
 
         <a class="button button-icon positive icon ion-social-diaspora"
@@ -39,7 +33,7 @@
 
         <a class="button-close"
            title="{{'COMMON.BTN_CLOSE'|translate}}"
-        ng-click="closePopover()">
+           ng-click="closePopover()">
           <i class="icon ion-close"></i>
         </a>
         </div>

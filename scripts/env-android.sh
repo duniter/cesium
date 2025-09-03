@@ -1,10 +1,9 @@
 #!/bin/sh
 
 # Get to the root project
-SCRIPT_DIR=$(dirname $0)
+SCRIPT_DIR=$(dirname "$0")
 PROJECT_DIR=$(cd "${SCRIPT_DIR}/.." && pwd -P)
 export PROJECT_DIR
-
 
 # Preparing environment
 . "${PROJECT_DIR}/scripts/env-global.sh"

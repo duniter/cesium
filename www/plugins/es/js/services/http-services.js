@@ -4,7 +4,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
  * Elastic Search Http
  */
 .factory('esHttp', function($q, $timeout, $rootScope, $state, $sce, $translate, $window, $filter,
-                            CryptoUtils, UIUtils, csHttp, csConfig, csSettings, csCache, BMA, csWallet, csPlatform, Api) {
+                            CryptoUtils, UIUtils, Device, csHttp, csConfig, csSettings, csCache, BMA, csWallet, csPlatform, Api) {
   'ngInject';
 
   // Allow to force SSL connection with port different from 443
@@ -471,9 +471,9 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         var urls = parseUrlsFromText(content);
         _.forEach(urls, function(url){
           // Make sure protocol is defined
-          var href = (url.startsWith('http://') || url.startsWith('https://')) ? url : ('http://' + url);
+          var href = (url.startsWith('http://') || url.startsWith('https://')) ? url : ('https://' + url);
           // Redirect URL to the function 'openLink', to open a new window if need (e.g. desktop app)
-          var link = '<a on-tap=\"openLink($event, \'{0}\')\" href=\"{1}\" target="_blank">{2}</a>'.format(href, href, truncUrlFilter(url));
+          var link = '<a ng-click=\"openLink($event, \'{0}\')\" href=\"{1}\" target="_blank">{2}</a>'.format(href, href, truncUrlFilter(url));
           content = content.replace(url, link);
         });
 
