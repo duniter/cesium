@@ -1,9 +1,11 @@
 #!/bin/sh
 
 # Get to the root project
-SCRIPT_DIR=$(dirname "$0")
-PROJECT_DIR=$(cd "${SCRIPT_DIR}/.." && pwd -P)
-export PROJECT_DIR
+if [[ "_" == "_${PROJECT_DIR}" ]]; then
+  SCRIPT_DIR=$(dirname "$(readlink "$BASH_SOURCE" || echo "$BASH_SOURCE")")
+  PROJECT_DIR=$(cd "${SCRIPT_DIR}/.." && pwd -P)
+  export PROJECT_DIR
+fi;
 
 # Preparing environment
 . "${PROJECT_DIR}/scripts/env-global.sh"
