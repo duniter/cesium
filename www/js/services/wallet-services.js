@@ -417,7 +417,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           // Use local storage for pubkey
           jobs.push(localStorage.put(constants.STORAGE_PUBKEY, data.pubkey));
 
-          // If web extension: store in the extension storage
+          // If web extension: store in the extension storage (need by the service worker - see background.js)
           if (Device.isWebExtension()) {
             jobs.push(extensionStorage.put(constants.STORAGE_PUBKEY, data.pubkey));
           }

@@ -19,26 +19,25 @@ function promiseAll(promises) {
   var results = [];
   var counter = 0;
   return new Promise(function(resolve, reject) {
-    for (var i = 0; i < promises.length; i++) {
-      var promise = promises[i];
-      var index = i;
-      results.push(undefined);
+    promises.reduce(function(res, promise, index) {
+      res.push();
       promise
         .then(function(json) {
-          results[index] = json;
+          res[index] = json;
           counter++;
         })
         .catch(function(err) {
           console.error(err);
-          results[index] = undefined;
+          res[index] = undefined;
           counter++;
         })
         .then(function() {
           if (counter === promises.length) {
-            resolve(results);
+            resolve(res);
           }
         });
-    }
+      return res;
+    }, []);
   })
 }
 
@@ -65,7 +64,7 @@ var browserExtensionRequirements = browser.tabs && action && action.onClicked;
 var storageObj = storage.local && storage.local.get ? storage.local :
   (storage.session && storage.session.get ? storage.session : null);
 
-var notificationCheckTime = undefined;
+var notificationReadTime = undefined;
 
 // If integrated as a browser extension
 if (browserExtensionRequirements) {
@@ -81,8 +80,8 @@ if (browserExtensionRequirements) {
     });
 
     // Reset last notification check
-    if (notificationCheckTime > 0) {
-      setStorageValue('lastNotificationCheck', notificationCheckTime);
+    if (notificationReadTime > 0) {
+      setStorageValue('lastNotificationCheck', notificationReadTime);
     }
 
     resetNotifications();
@@ -143,31 +142,34 @@ if (browserExtensionRequirements) {
     return storageObj.set(entry);
   }
 
+  function getStorageValueObject(key) {
+    return getStorageValue(key)
+      .then(function(strValue) {
+        return JSON.parse(strValue || 'null');
+      })
+  }
+
   function getWalletPubkey() {
     return getStorageValue('pubkey')
   }
 
   function getSettings() {
-    return getStorageValue('settings');
+    return getStorageValueObject('settings');
   }
 
   function getData() {
-    var data = {pubkey: undefined, config: undefined, settings: undefined, lastNotificationCheck: undefined};
-    return getWalletPubkey()
-      .then(function(pubkey) {
-        data.pubkey = pubkey;
-        return getConfig();
-      })
-      .then(function(config) {
-        data.config = config;
-        return getSettings();
-      })
-      .then(function(settings) {
-        data.settings = settings;
-        return getStorageValue('lastNotificationCheck');
-      })
-      .then(function(lastNotificationCheck) {
-        data.lastNotificationCheck = lastNotificationCheck;
+    return promiseAll([
+      getWalletPubkey(),
+      getConfig(),
+      getSettings(),
+      getStorageValue('lastNotificationCheck')
+    ])
+      .then(function(res) {
+        var data = {};
+        data.pubkey = res[0];
+        data.config = res[1];
+        data.settings = res[2];
+        data.lastNotificationCheck = res[3];
         console.debug("[extension] Data loaded:", data);
         return data;
       });
@@ -262,7 +264,7 @@ if (browserExtensionRequirements) {
 
             // Update the check time
             if (count !== -1) {
-              notificationCheckTime = Date.now();
+              notificationReadTime = Date.now();
             }
 
             return count;

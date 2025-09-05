@@ -1,7 +1,7 @@
 
 angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
-.factory('csSettings', function($rootScope, $q, $window, $timeout, Api, localStorage, $translate, csConfig) {
+.factory('csSettings', function($rootScope, $q, $window, $timeout, Api, localStorage, extensionStorage, $translate, csConfig, Device) {
   'ngInject';
 
   // Define app locales
@@ -206,22 +206,33 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
     var promise;
     if (data.useLocalStorage) {
+      var savedData = data;
       // When node is temporary (fallback node): keep previous node address - issue #476
       if (data.node && data.node.temporary === true) {
         promise = localStorage.getObject(constants.STORAGE_KEY)
           .then(function(previousSettings) {
-            var savedData = angular.copy(data);
+            savedData = angular.copy(data);
             savedData.node = previousSettings && previousSettings.node || {};
             delete savedData.temporary; // never store temporary flag
+
             return localStorage.setObject(constants.STORAGE_KEY, savedData);
           });
       }
       else {
-        promise = localStorage.setObject(constants.STORAGE_KEY, data);
+        promise = localStorage.setObject(constants.STORAGE_KEY, savedData);
       }
     }
     else {
+      savedData = null;
       promise  = localStorage.setObject(constants.STORAGE_KEY, null);
+    }
+
+    // If web extension: store in the extension storage (need by the service worker - see background.js)
+    if (Device.isWebExtension()) {
+      promise = $q.all([
+        promise,
+        extensionStorage.setObject(constants.STORAGE_KEY, savedData)
+      ]);
     }
 
     return promise

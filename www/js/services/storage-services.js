@@ -298,6 +298,11 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
       return $q.when();
     }
 
+    exports.setObject = function(key, obj) {
+      var strValue = obj ? JSON.stringify(obj) : null;
+      return exports.put(key, strValue);
+    }
+
     return exports;
   })
 ;
