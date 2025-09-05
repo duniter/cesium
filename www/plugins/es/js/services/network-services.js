@@ -508,7 +508,7 @@ angular.module('cesium.es.network.services', ['ngApi', 'cesium.es.http.services'
       },
 
       removeListeners = function() {
-        _.forEach(data.listeners, function(remove){
+        _.forEach(data.listeners, function(remove) {
           remove();
         });
         data.listeners = [];

@@ -4,7 +4,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
 
 .factory('csWallet', function($q, $rootScope, $timeout, $translate, $filter, $ionicHistory, UIUtils,
-                              Api, Idle, localStorage, sessionStorage, Modals, Device,
+                              Api, Idle, localStorage, sessionStorage, extensionStorage, Modals, Device,
                               CryptoUtils, csCrypto, BMA, csConfig, csSettings, FileSaver, csWot, csTx, csCurrency) {
   'ngInject';
 
@@ -417,6 +417,11 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           // Use local storage for pubkey
           jobs.push(localStorage.put(constants.STORAGE_PUBKEY, data.pubkey));
 
+          // If web extension: store in the extension storage
+          if (Device.isWebExtension()) {
+            jobs.push(extensionStorage.put(constants.STORAGE_PUBKEY, data.pubkey));
+          }
+
           // Use local storage for uid - fix #625
           if (data.uid) {
             jobs.push(localStorage.put(constants.STORAGE_UID, data.uid));
@@ -435,6 +440,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           return $q.all([
             sessionStorage.put(constants.STORAGE_SECKEY, null),
             localStorage.put(constants.STORAGE_PUBKEY, null),
+            extensionStorage.put(constants.STORAGE_PUBKEY, null),
             localStorage.put(constants.STORAGE_UID, null),
             // Clean data (only in the session storage - keep local)
             pubkey ? sessionStorage.put(constants.STORAGE_DATA_PREFIX + pubkey, null) : $q.when()

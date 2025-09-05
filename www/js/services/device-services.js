@@ -518,6 +518,18 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
       return exports.isAndroid() || exports.isIOS();
     };
 
+    exports.isChromeExtension = function () {
+      return window.location.protocol === 'chrome-extension:' && chrome && chrome.storage && chrome.storage.local;
+    };
+
+    exports.isMozillaExtension = function () {
+      return window.location.protocol === 'moz-extension:';
+    };
+
+    exports.isWebExtension = function () {
+      return exports.isChromeExtension() || exports.isMozillaExtension();
+    };
+
     exports.isIOS = function () {
       return !!navigator.userAgent.match(/iPhone | iPad | iPod/i) || (!!navigator.userAgent.match(/Mobile/i) && !!navigator.userAgent.match(/Macintosh/i)) || ionic.Platform.isIOS();
     };

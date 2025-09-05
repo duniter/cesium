@@ -280,4 +280,24 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
   })
 
 
+  .factory('extensionStorage', function($window, $q, $log, Device) {
+    'ngInject';
+
+    var exports = {};
+
+    exports.put = function(key, value) {
+      var entry = {};
+      entry[key] = value;
+      if (Device.isChromeExtension()) {
+        return new Promise(function(resolve, reject) {
+          chrome.storage.local.set(entry, resolve);
+        })
+      } else if (Device.isMozillaExtension()) {
+        $log.debug('[extension-storage] Add storage into Mozilla storage');
+      }
+      return $q.when();
+    }
+
+    return exports;
+  })
 ;
